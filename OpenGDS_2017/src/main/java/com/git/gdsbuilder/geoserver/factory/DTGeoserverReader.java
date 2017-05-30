@@ -44,6 +44,7 @@ package com.git.gdsbuilder.geoserver.factory;
 
 import java.net.MalformedURLException;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -158,6 +159,22 @@ public class DTGeoserverReader extends GeoServerRESTReader {
 			collectionTree = new GeoserverLayerCollectionTree(typeList);
 		}
 		return collectionTree;
+	}
+	
+	public List<String> getGeoserverContainNames(String workspace,String name){
+		List<String> containNames = new ArrayList<String>();
+		RESTFeatureTypeList featureTypeList = getFeatureTypes(workspace);
+		List<String> layerNames =new ArrayList<String>();
+		
+		layerNames = featureTypeList.getNames();
+		
+		
+		for(String layerName : layerNames){
+			if(layerName.contains(name)){
+				containNames.add(layerName);
+			}
+		}
+		return containNames;
 	}
 	
     private String load(String url) {
