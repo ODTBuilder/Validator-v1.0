@@ -77,20 +77,6 @@ function fixUrlPath(url) {
 	return url;
 }
 
-function loadImageShow(){
-	/**
-	 * 웹페이지를 로딩할 때 초기화를 한다.
-	 * 1. loadimage 초기화
-	 * */
-	$("#loadimage").css("left", $(window).width()/2-80).css("bottom", $(window).height()/2).css("display","block").css("z-index",999);
-	$("#loadimage").show();
-	$("#mask").show();
-}
-
-function loadImageHide(){
-	$("#loadimage").hide();
-	$("#mask").hide();
-}
 
 /**
  * 해당 path로 POST 요청한다.

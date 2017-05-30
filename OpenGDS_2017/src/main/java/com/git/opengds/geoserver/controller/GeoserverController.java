@@ -36,6 +36,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.git.gdsbuilder.geolayer.data.DTGeoGroupLayerList;
 import com.git.gdsbuilder.geolayer.data.DTGeoLayerList;
 import com.git.opengds.geoserver.service.GeoserverLayerProxyService;
+import com.git.opengds.geoserver.service.GeoserverLayerProxyServiceImpl;
 import com.git.opengds.geoserver.service.GeoserverService;
 import com.git.opengds.geoserver.service.GeoserverServiceImpl;
 
@@ -55,7 +56,7 @@ public class GeoserverController{
 	private GeoserverService geoserverService = new GeoserverServiceImpl();
 	
 	@Autowired
-	private GeoserverLayerProxyService proService = new GeoserverLayerProxyService();
+	private GeoserverLayerProxyService proService = new GeoserverLayerProxyServiceImpl();
 	
 	/**
 	 * 트리 형태의 GeoLayerCollection 객체 생성
@@ -91,6 +92,12 @@ public class GeoserverController{
 	@ResponseBody
 	public void geoserverWFSLoad(HttpServletRequest request , HttpServletResponse response) throws ServletException, IOException {
 		proService.requestWFSLayer(request, response);
+	}
+ 	
+ 	@RequestMapping(value="geoserverWFSGetFeature.ajax")
+	@ResponseBody
+	public void geoserverWFSGetFeature(HttpServletRequest request , HttpServletResponse response) throws ServletException, IOException {
+		proService.requestGetFeature(request, response);
 	}
 	
 	/**
