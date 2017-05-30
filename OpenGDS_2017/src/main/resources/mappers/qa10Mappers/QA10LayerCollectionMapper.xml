@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.git.mappers.qa10Mappers.QA10LayerCollectionMapper">
+
+	<!-- qa10_layer_tb -->
+	<select id="createQA10LayerTb" parameterType="hashMap">
+		${createQuery}
+	</select>
+
+	<!-- qa10_layer -->
+	<insert id="insertQA10Layer" parameterType="hashmap">
+		${insertQuery}
+	</insert>
+
+</mapper>

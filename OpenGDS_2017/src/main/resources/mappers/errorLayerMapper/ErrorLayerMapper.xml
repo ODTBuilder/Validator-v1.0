@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.git.mappers.errLayerMapper.ErrorLayerMapper">
+
+	<!-- create error_layer_tb -->
+	<select id="createErrorLayerTb" parameterType="hashMap">
+		${createQuery}
+	</select>
+
+	<!-- insert error_layer_tb -->
+	<select id="insertErrorFeature" parameterType="hashMap">
+		${insertQuery}
+	</select>
+
+	<!-- select error_layer_tb -->
+	<select id="selectErrorFeatures" parameterType="hashMap"
+		resultType="hashMap">
+		${selectQuery}
+	</select>
+
+	<select id="selectAllErrorFeatures" parameterType="hashMap"
+		resultType="hashMap">
+		${selectAllQuery}
+	</select>
+
+
+
+</mapper>

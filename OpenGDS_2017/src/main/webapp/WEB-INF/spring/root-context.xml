@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.2.xsd">
+
+	<!-- Root Context: defines shared resources visible to all other web components -->
+
+	<!-- JDBC의 연결을 처리하는 기능을 가진 DataSource -->
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close">
+		<property name="driverClassName" value="org.postgresql.Driver" />
+		<property name="url"
+			value="jdbc:postgresql://175.116.181.42:5433/admin" />
+		<property name="username" value="postgis" />
+		<property name="password" value="postgis" />
+	</bean>
+
+	<!-- SqlSessionFactoryBean 생성 -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<!-- mybatis-config.xml 파일이 스프링이 동작할 때 같이 동작하도록 설정한 것. -->
+		<property name="configLocation" value="classpath:mybatis-config.xml"></property>
+		<property name="dataSource" ref="dataSource"></property>
+		<property name="mapperLocations" value="classpath:mappers/**/**/*.xml"></property>
+	</bean>
+
+	<!-- sqlSession 을 SqlSessionTemplate으로 만든다. -->
+	<bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate">
+		<constructor-arg index="0" ref="sqlSessionFactory" />
+	</bean>
+
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+	<!-- 예제 test -->
+	<context:component-scan base-package="com.git.dbtest.persistence" />
+	<context:component-scan base-package="com.git.opengds"/>
+</beans>

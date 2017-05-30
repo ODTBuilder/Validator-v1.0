@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<style type="text/css">
+.tblLayerDetail{border-collapse:collapse; width:100%; text-align:left;}
+.tblLayerDetail thead th{padding:5px 5px 5px 5px; background:#eee; border:1px solid #ddd;}
+.tblLayerDetail tbody td{padding:5px 5px 5px 10px; border:1px solid #eee;}
+.tblLayerDetail .alignL {text-align: left;}
+
+.layerInfo{
+	font-weight: bold
+}
+</style>
+</head>
+<body>
+<div>
+    	<table class="tblLayerDetail">
+			<colgroup>
+				<col style="width:35%">
+				<col style="width:65%">
+			</colgroup>
+			<thead id="th01">								
+				<tr>
+					<th scope="col" align="center" colspan="5">Layer Information</th>
+				</tr>
+			</thead>
+			<tbody id="tb01">			
+				<tr>
+					<td colspan="1">Name</td>
+					<td colspan="4"><span class=layerInfo></span></td>
+				</tr>
+				<tr>
+					<td colspan="1">DataStore</td>
+					<td colspan="4"><span class=layerInfo></span></td>
+				</tr>
+				<tr>
+					<td colspan="1">DataStoreType</td>
+					<td colspan="4"><span class=layerInfo></span></td>
+				</tr>
+				<tr>
+					<td colspan="1">GeomType</td>
+					<td colspan="4"><span class=layerInfo></span></td>
+				</tr>
+				<tr>
+					<td colspan="1">Projection</td>
+					<td colspan="4"><span class=layerInfo></span></td>
+				</tr>
+				<tr>
+					<td colspan="1" rowspan="2">Boundary</td>
+					<td>minx</td>
+					<td><span class=layerInfo></span></td>
+					<td>miny</td>
+					<td><span class=layerInfo></span></td>
+				</tr>
+				<tr>
+					<td>maxx</td>
+					<td><span class=layerInfo></span></td>
+					<td>maxy</td>
+					<td><span class=layerInfo></span></td>
+				</tr>
+			</tbody>
+			<thead id="th02">								
+				<tr>
+					<th scope="col" align="center" colspan="3">Attribute Information</th>
+				</tr>
+			</thead>	 
+			<tbody id="tb02">
+				<tr id="tr02_1">
+					<td>Type</td>
+					<td>Name</td>
+					<td>Value</td>
+				</tr>
+				<tr id="tr02_2">
+					<td colspan='5' align='center'>
+							<input type='button' class='button' id='btnDelivery' style='margin:5px 1px 5px 1px;width:300px;height:65px' value='확인' onclick=''/>					
+					</td>
+				</tr>	
+			</tbody>
+		</table>
+       </div>	
+</body>
+</html>

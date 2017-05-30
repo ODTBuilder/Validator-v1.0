@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.git.mappers.qa20Mappers.QA20LayerCollectionMapper">
+
+	<!-- qa20_LayerCollection -->
+	<insert id="insertQA20LayerCollection" parameterType="hashmap">
+		insert into
+		qa20_layercollection(file_name)
+		values( #{file_name} );
+	</insert>
+
+	<!-- qa20_layer_tb -->
+	<select id="createQA20LayerTb" parameterType="hashMap">
+		${createQuery}
+	</select>
+
+	<!-- qa20_layer -->
+	<insert id="insertQA20Layer" parameterType="hashmap">
+		${insertQuery}
+	</insert>
+
+	<!-- qa20_layer_metadata -->
+	<insert id="insertQA20LayerMetadata" parameterType="hashmap">
+
+		<selectKey keyProperty="c_idx_seq" resultType="integer"
+			order="BEFORE">
+			select currval('qa20_layercollection_c_idx_seq')
+		</selectKey>
+
+		insert into
+		qa20_layer_metadata(layer_id, layer_name, layer_t_name,
+		file_version,
+		ngi_dim, ngi_bound, ngi_mask_point, ngi_mask_linestring,
+		ngi_mask_region,
+		ngi_mask_text, c_idx)
+		values(#{layerID},
+		#{layerName},
+		#{tableName}, #{version},
+		#{ngiDim},
+		#{ngiBound}, #{ptRepresent},
+		#{lnRepresent},
+		#{rgRepresent}, #{txRepresent}, #{c_idx_seq})
+	</insert>
+
+	<!-- nda_aspatial_field_def -->
+	<insert id="insertNdaAspatialFieldDefs" parameterType="hashmap">
+
+		<selectKey keyProperty="lm_idx_seq" resultType="integer"
+			order="BEFORE">
+			select currval('qa20_layer_metadata_lm_idx_seq')
+		</selectKey>
+
+		insert into nda_aspatial_field_def
+		(f_name, f_type, f_size, f_decimal,
+		f_isunique, lm_idx)
+		values
+		(#{name}, #{type}, #{size}, #{decimal},
+		#{isunique}, #{lm_idx_seq})
+
+	</insert>
+
+	<!-- ngi_point_represent -->
+	<insert id="insertPointRepresent" parameterType="hashmap">
+
+		<selectKey keyProperty="lm_idx_seq" resultType="integer"
+			order="BEFORE">
+			select currval('qa20_layer_metadata_lm_idx_seq')
+		</selectKey>
+
+		insert into ngi_point_represent
+		(p_rep_no, p_rep_value, lm_idx)
+		values
+		(#{pRepNo}, #{pRepValue}, #{lm_idx_seq});
+	</insert>
+
+	<!-- ngi_linestring_represent -->
+	<insert id="insertLineStringRepresent" parameterType="hashmap">
+		<selectKey keyProperty="lm_idx_seq" resultType="integer"
+			order="BEFORE">
+			select currval('qa20_layer_metadata_lm_idx_seq')
+		</selectKey>
+
+		insert into ngi_linestring_represent
+		(l_rep_no, l_rep_value, lm_idx)
+		values
+		(#{lRepNo}, #{lRepValue}, #{lm_idx_seq});
+	</insert>
+
+
+	<!-- ngi_region_represent -->
+	<insert id="insertRegionRepresent" parameterType="hashmap">
+		<selectKey keyProperty="lm_idx_seq" resultType="integer"
+			order="BEFORE">
+			select currval('qa20_layer_metadata_lm_idx_seq')
+		</selectKey>
+
+		insert into ngi_region_represent
+		(r_rep_no, r_rep_value, lm_idx)
+		values
+		(#{rRepNo}, #{rRepValue}, #{lm_idx_seq});
+	</insert>
+
+
+	<!-- ngi_text_represent -->
+	<insert id="insertTextRepresent" parameterType="hashmap">
+		<selectKey keyProperty="lm_idx_seq" resultType="integer"
+			order="BEFORE">
+			select currval('qa20_layer_metadata_lm_idx_seq')
+		</selectKey>
+
+		insert into ngi_text_represent
+		(t_rep_no, t_rep_value, lm_idx)
+		values
+		(#{tRepNo}, #{tRepValue}, #{lm_idx_seq});
+	</insert>
+
+	<select id="selectCountAllFeatures" parameterType="hashMap"
+		resultType="hashMap">
+		${countQuery}
+	</select>
+
+
+</mapper>
