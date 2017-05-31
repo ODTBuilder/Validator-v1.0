@@ -34,6 +34,8 @@
 
 package com.git.gdsbuilder.validator.collection;
 
+import static org.hamcrest.CoreMatchers.instanceOf;
+
 import java.util.List;
 
 import org.geotools.feature.SchemaException;
@@ -50,6 +52,7 @@ import com.git.gdsbuilder.type.validate.error.ErrorLayer;
 import com.git.gdsbuilder.type.validate.error.ErrorLayerList;
 import com.git.gdsbuilder.type.validate.layer.ValidateLayerType;
 import com.git.gdsbuilder.type.validate.layer.ValidateLayerTypeList;
+import com.git.gdsbuilder.type.validate.option.BuildingOpen;
 import com.git.gdsbuilder.type.validate.option.ConBreak;
 import com.git.gdsbuilder.type.validate.option.ConIntersected;
 import com.git.gdsbuilder.type.validate.option.ConOverDegree;
@@ -60,8 +63,10 @@ import com.git.gdsbuilder.type.validate.option.SelfEntity;
 import com.git.gdsbuilder.type.validate.option.SmallArea;
 import com.git.gdsbuilder.type.validate.option.SmallLength;
 import com.git.gdsbuilder.type.validate.option.UnderShoot;
+import com.git.gdsbuilder.type.validate.option.UselessEntity;
 import com.git.gdsbuilder.type.validate.option.UselessPoint;
 import com.git.gdsbuilder.type.validate.option.ValidatorOption;
+import com.git.gdsbuilder.type.validate.option.WaterOpen;
 import com.git.gdsbuilder.type.validate.option.Z_ValueAmbiguous;
 import com.git.gdsbuilder.validator.layer.LayerValidatorImpl;
 
@@ -216,6 +221,15 @@ public class CollectionValidator {
 							if (option instanceof UnderShoot) {
 								double tolerence = ((UnderShoot) option).getTolerence();
 								typeErrorLayer = layerValidator.validateUnderShoot(neatLayer, tolerence);
+							}
+							if(option instanceof UselessEntity){
+								typeErrorLayer = layerValidator.validateUselessEntity();
+							}
+							if(option instanceof BuildingOpen){
+								typeErrorLayer = layerValidator.validateBuildingOpen();
+							}
+							if(option instanceof WaterOpen){
+								typeErrorLayer = layerValidator.validateWaterOpen();
 							}
 							if (typeErrorLayer != null) {
 								errLayer.mergeErrorLayer(typeErrorLayer);

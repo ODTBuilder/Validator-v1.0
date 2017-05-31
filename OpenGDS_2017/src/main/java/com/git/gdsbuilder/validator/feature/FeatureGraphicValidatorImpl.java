@@ -34,8 +34,16 @@
 
 package com.git.gdsbuilder.validator.feature;
 
+import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.lang.model.element.AnnotationMirror;
+import javax.lang.model.element.Element;
+import javax.lang.model.type.ErrorType;
+import javax.lang.model.type.TypeKind;
+import javax.lang.model.type.TypeMirror;
+import javax.lang.model.type.TypeVisitor;
 
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureIterator;
@@ -51,6 +59,7 @@ import org.opengis.referencing.operation.TransformException;
 
 import com.git.gdsbuilder.type.validate.error.ErrorFeature;
 import com.git.gdsbuilder.type.validate.error.ErrorLayer;
+import com.git.gdsbuilder.type.validate.option.BuildingOpen;
 import com.git.gdsbuilder.type.validate.option.ConBreak;
 import com.git.gdsbuilder.type.validate.option.ConIntersected;
 import com.git.gdsbuilder.type.validate.option.ConOverDegree;
@@ -61,7 +70,9 @@ import com.git.gdsbuilder.type.validate.option.SelfEntity;
 import com.git.gdsbuilder.type.validate.option.SmallArea;
 import com.git.gdsbuilder.type.validate.option.SmallLength;
 import com.git.gdsbuilder.type.validate.option.UnderShoot;
+import com.git.gdsbuilder.type.validate.option.UselessEntity;
 import com.git.gdsbuilder.type.validate.option.UselessPoint;
+import com.git.gdsbuilder.type.validate.option.WaterOpen;
 import com.vividsolutions.jts.algorithm.Angle;
 import com.vividsolutions.jts.algorithm.CentroidPoint;
 import com.vividsolutions.jts.geom.Coordinate;
@@ -371,9 +382,9 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 				}
 			}
 			if (typeJ.equals("LineString") || typeJ.equals("MultiLineString")) {
-//				if (geometryI.crosses(geometryJ) || geometryI.contains(geometryJ) || geometryI.intersects(geometryJ)) {
-//					returnGeom = geometryI.intersection(geometryJ);
-//				}
+				//				if (geometryI.crosses(geometryJ) || geometryI.contains(geometryJ) || geometryI.intersects(geometryJ)) {
+				//					returnGeom = geometryI.intersection(geometryJ);
+				//				}
 				boolean isTrue = false;
 				GeometryFactory factory = new GeometryFactory();
 				Coordinate[] coors = geometryJ.getCoordinates();
@@ -465,7 +476,7 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 			SimpleFeature simpleFeatureJ = iterator.next();
 			Geometry relationGeometry = (Geometry) simpleFeatureJ.getDefaultGeometry(); // aop
 			Geometry aopBuffer = relationGeometry.buffer(tolerence); // tolerence
-																		// : 사용자
+			// : 사용자
 			// 입력 파라미터
 			Geometry envelope = relationGeometry.getEnvelope();
 			GeometryFactory factory = new GeometryFactory();
@@ -500,7 +511,7 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 			SimpleFeature relationSimpleFeature = iterator.next();
 			Geometry geometryRelation = (Geometry) relationSimpleFeature.getDefaultGeometry(); // aop
 			Geometry aopBuffer = geometryRelation.buffer(tolerence); // tolerence
-																		// : 사용자
+			// : 사용자
 			// 입력 파라미터
 			Geometry envelope = geometryRelation.getEnvelope();
 			GeometryFactory factory = new GeometryFactory();
@@ -528,5 +539,68 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 		} else {
 			return null;
 		}
+	}
+
+	/*********************************************** 추가 ***************/
+	public ErrorFeature validateUselessEntity(SimpleFeature simpleFeature, String layerType) throws SchemaException {
+
+		String upperType = layerType.toUpperCase();
+		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
+
+		if(!(upperType.equals("POINT") && upperType.equals("LiNESTRING") && upperType.equals("POLYGON") 
+				&& upperType.equals("MULTIPOINT") && upperType.equals("MULTILINESTRING") && upperType.equals("MULTIPOLYGON")
+				&& upperType.equals("TEXT") && upperType.equals("LINE") && upperType.equals("INSERT") && upperType.equals("POLYLINE"))){
+
+			ErrorFeature errorFeature = new ErrorFeature(simpleFeature.getID(), UselessEntity.Type.USELESSENTITY.errType(),
+					UselessEntity.Type.USELESSENTITY.errName(), geometry.getInteriorPoint());
+			return errorFeature;
+		}else{
+			return null;
+		}
+	}
+
+	public ErrorFeature validateBuildingOpen(SimpleFeature simpleFeature) throws SchemaException {
+
+		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
+		Coordinate[] coordinates = geometry.getCoordinates();
+		int coorSize = coordinates.length;
+		Coordinate start = coordinates[0];
+		Coordinate end = coordinates[coorSize - 1];
+
+		if(coorSize > 4){
+			if(!(start.equals2D(end))){
+				ErrorFeature errorFeature = new ErrorFeature(simpleFeature.getID(), BuildingOpen.Type.BUILDINGOPEN.errType(),
+						BuildingOpen.Type.BUILDINGOPEN.errName(), geometry.getInteriorPoint());
+				return errorFeature;
+			}else{
+				return null;	
+			}
+		}else{
+			ErrorFeature errorFeature = new ErrorFeature(simpleFeature.getID(), BuildingOpen.Type.BUILDINGOPEN.errType(),
+					BuildingOpen.Type.BUILDINGOPEN.errName(), geometry.getInteriorPoint());
+			return errorFeature;
+		}
+	}
+	
+	public ErrorFeature validateWaterOpen(SimpleFeature simpleFeature) throws SchemaException{
+		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
+		Coordinate[] coordinates = geometry.getCoordinates();
+		int coorSize = coordinates.length;
+		Coordinate start = coordinates[0];
+		Coordinate end = coordinates[coorSize - 1];
+		
+		if(coorSize > 4){
+			if(!(start.equals2D(end))){
+				ErrorFeature errorFeature = new ErrorFeature(simpleFeature.getID(), WaterOpen.Type.WATEROPEN.errType(),
+					WaterOpen.Type.WATEROPEN.errName(), geometry.getInteriorPoint());
+				return errorFeature;
+			}else{
+				return null;
+			}
+		}else{
+			ErrorFeature errorFeature = new ErrorFeature(simpleFeature.getID(), WaterOpen.Type.WATEROPEN.errType(),
+					WaterOpen.Type.WATEROPEN.errName(), geometry.getInteriorPoint());
+				return errorFeature;
+		}		
 	}
 }

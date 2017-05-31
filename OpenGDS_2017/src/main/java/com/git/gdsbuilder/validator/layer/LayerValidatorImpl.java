@@ -41,6 +41,7 @@ import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureIterator;
 import org.geotools.feature.SchemaException;
 import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.type.FeatureType;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.operation.TransformException;
@@ -469,6 +470,75 @@ public class LayerValidatorImpl implements LayerValidator {
 		} else {
 			return null;
 		}
-
 	}
+	
+	/****************************************** 추가 **********************/
+	public ErrorLayer validateUselessEntity() throws SchemaException{
+		ErrorLayer errLayer = new ErrorLayer();
+		SimpleFeatureCollection sfc = validatorLayer.getSimpleFeatureCollection();
+		String layerName = validatorLayer.getLayerName();
+		int dash = layerName.indexOf("_");
+		String nativeLayerType = layerName.substring(dash+1);
+		
+			SimpleFeatureIterator simpleFeatureIterator = sfc.features();
+			while (simpleFeatureIterator.hasNext()) {
+				SimpleFeature simpleFeature = simpleFeatureIterator.next();
+				ErrorFeature errFeature = graphicValidator.validateUselessEntity(simpleFeature, nativeLayerType);
+				if (errFeature != null) {
+					errFeature.setLayerName(validatorLayer.getLayerName());
+					errLayer.addErrorFeature(errFeature);
+				} else {
+					continue;
+				}
+			}
+			if (errLayer.getErrFeatureList().size() > 0) {
+			return errLayer;
+		} else {
+			return null;
+		}
+	}
+	
+	public ErrorLayer validateBuildingOpen() throws SchemaException{
+		ErrorLayer errorLayer = new ErrorLayer();
+		SimpleFeatureCollection sfc = validatorLayer.getSimpleFeatureCollection();
+		SimpleFeatureIterator simpleFeatureIterator = sfc.features();
+		while (simpleFeatureIterator.hasNext()) {
+			SimpleFeature simpleFeature = simpleFeatureIterator.next();
+			ErrorFeature errFeature = graphicValidator.validateBuildingOpen(simpleFeature);
+			if(errFeature != null){
+				errFeature.setLayerName(validatorLayer.getLayerName());
+				errorLayer.addErrorFeature(errFeature);
+			}else {
+				continue;
+			}
+		}
+		if(errorLayer.getErrFeatureList().size() > 0){
+			return errorLayer;
+		}else{
+			return null;
+		}
+	}
+	
+	public ErrorLayer validateWaterOpen() throws SchemaException{
+		ErrorLayer errorLayer = new ErrorLayer();
+		SimpleFeatureCollection sfc = validatorLayer.getSimpleFeatureCollection();
+		SimpleFeatureIterator simpleFeatureIterator = sfc.features();
+		while (simpleFeatureIterator.hasNext()) {
+			SimpleFeature simpleFeature = simpleFeatureIterator.next();
+			ErrorFeature errFeature = graphicValidator.validateWaterOpen(simpleFeature);
+			if(errFeature != null){
+				errFeature.setLayerName(validatorLayer.getLayerName());
+				errorLayer.addErrorFeature(errFeature);
+			}else{
+				continue;
+			}
+		}
+		if(errorLayer.getErrFeatureList().size() > 0){
+			return errorLayer;
+		}else{
+			return null;
+		}
+	}
+	
+	
 }
