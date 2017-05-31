@@ -40,7 +40,7 @@ gb.interaction.SelectWMS.prototype.handleEvent = function(evt) {
 	var that = this;
 	this.map_ = evt.map;
 	if (evt.type === "singleclick") {
-		console.log(evt);
+//		console.log(evt);
 		var ext = [evt.coordinate[0] , evt.coordinate[1] , evt.coordinate[0] , evt.coordinate[1]];
 		this.setExtent(ext);
 	}
@@ -76,10 +76,11 @@ gb.interaction.SelectWMS.prototype.setExtent = function(extent) {
 			"bbox" : extent.toString(),
 			"format_options" : "callback:getJson"
 	};
-	var addr = "http://175.116.181.42:9990/geoserver/ows?"+ $.param(param);
+	var addr = "geoserver2/geoserverWFSGetFeature.ajax";
 	console.log(addr);
 	$.ajax({
 		url : addr,
+		data : param,
 		dataType : 'jsonp',
 		jsonpCallback : 'getJson',
 		beforeSend : function(){

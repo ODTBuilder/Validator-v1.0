@@ -55,10 +55,10 @@ gitbuilder.ui.EditingTool = $.widget("gitbuilder.editingtool",
 			mouseY : undefined,
 			_create : function() {
 				var that = this;
-				$(document).mousemove(function(e) {
-					that.mouseX = e.pageX;
-					that.mouseY = e.pageY;
-				});
+//				$(document).mousemove(function(e) {
+//					that.mouseX = e.pageX;
+//					that.mouseY = e.pageY;
+//				});
 
 				this.featureTB = $("<table>").addClass("table").addClass("table-hover").addClass("table-condensed").css({
 					"margin-bottom" : 0,
@@ -349,13 +349,15 @@ gitbuilder.ui.EditingTool = $.widget("gitbuilder.editingtool",
 					});
 					this.interaction.select.on("select", function(evt) {
 						console.log(evt);
+						that.mouseX = evt.mapBrowserEvent.pixel[0];
+						that.mouseY = evt.mapBrowserEvent.pixel[1];
 					});
 					this.interaction.select.getFeatures().on("change:length", function(evt) {
 						console.log(that.interaction.select.getFeatures());
 						console.log(evt);
 						that.features = that.interaction.select.getFeatures();
 						$(that.featureTB).empty();
-
+						console.log(that.features.getLength());
 						if (that.features.getLength() > 1) {
 							for (var i = 0; i < that.features.getLength(); i++) {
 								console.log(that.features.item(i).getId());
@@ -373,8 +375,10 @@ gitbuilder.ui.EditingTool = $.widget("gitbuilder.editingtool",
 							$(that.featurePop).position({
 								"my" : "left center",
 								"at" : "left+" + that.mouseX + " " + "top+" + that.mouseY,
-								"of" : document
+								"of" : "#"+that.map.getTarget()
 							});
+							console.log(that.mouseX);
+							console.log(that.mouseY);
 							$(that.featurePop).show();
 						} else {
 							$(that.featurePop).hide();
