@@ -40,7 +40,6 @@ gb.interaction.SelectWMS.prototype.handleEvent = function(evt) {
 	var that = this;
 	this.map_ = evt.map;
 	if (evt.type === "singleclick") {
-//		console.log(evt);
 		var ext = [evt.coordinate[0] , evt.coordinate[1] , evt.coordinate[0] , evt.coordinate[1]];
 		this.setExtent(ext);
 	}
@@ -60,7 +59,6 @@ gb.interaction.SelectWMS.prototype.setExtent = function(extent) {
 	if (!(this.layer.getSource().getParams().CRS || this.layer.getSource().getParams().SRS)) {
 		console.error("no params");
 	}
-// this.map_ = evt.map;
 	this.extent_ = extent;
 	var that = this;
 	var url = this.layer.getSource().getGetFeatureInfoUrl(extent, this.map_.getView().getResolution(),
@@ -77,7 +75,6 @@ gb.interaction.SelectWMS.prototype.setExtent = function(extent) {
 			"format_options" : "callback:getJson"
 	};
 	var addr = "geoserver2/geoserverWFSGetFeature.ajax";
-	console.log(addr);
 	$.ajax({
 		url : addr,
 		data : param,
@@ -96,7 +93,6 @@ gb.interaction.SelectWMS.prototype.setExtent = function(extent) {
 			for (var i = 0; i < features.length; i++) {
 				ids.push(features[i].getId());
 			}
-// that.features_.extend();
 			that.destination_.getSource().addFeatures(features);
 			that.destination_.setMap(that.map_);
 			that.select_.getFeatures().clear();

@@ -53,26 +53,33 @@ gitbuilder.ui.EditingTool = $.widget("gitbuilder.editingtool",
 			featureTB : undefined,
 			mouseX : undefined,
 			mouseY : undefined,
+			tempSelectSource : undefined,
 			_create : function() {
 				var that = this;
-//				$(document).mousemove(function(e) {
-//					that.mouseX = e.pageX;
-//					that.mouseY = e.pageY;
-//				});
+				$(document).mousemove(function(e) {
+					that.mouseX = e.pageX;
+					that.mouseY = e.pageY;
+				});
 
 				this.featureTB = $("<table>").addClass("table").addClass("table-hover").addClass("table-condensed").css({
 					"margin-bottom" : 0,
 					"table-layout" : "fixed"
 				});
-				var flist = $("<div>").addClass("panel-body").append(this.featureTB);
+				var fhead = $("<div>").addClass("panel-heading").css({
+					"padding" : 0
+				}).append("　");
+				var flist = $("<div>").addClass("panel-body").addClass("gb-edit-sel-fpan").css({
+					"max-height" : "300px",
+					"overflow-y" : "auto"
+				}).append(this.featureTB);
 				this.featurePop = $("<div>").css({
 					"width" : "250px",
-					// "height" : "400px",
+//					"max-height" : "300px",
 					"top" : 0,
 					"right" : 0,
 					"position" : "absolute",
 					"z-Index" : "999",
-				}).addClass("panel").addClass("panel-default").append(flist);
+				}).addClass("panel").addClass("panel-default").append(fhead).append(flist);
 				$("body").append(this.featurePop);
 				$(this.featurePop).hide();
 				$(this.featurePop).draggable({
@@ -221,6 +228,21 @@ gitbuilder.ui.EditingTool = $.widget("gitbuilder.editingtool",
 				$(this.window).draggable({
 					appendTo : "body",
 				});
+
+				$(document).on("mouseover", ".gb-edit-sel-flist", function() {
+					var feature = that.tempSelectSource.getFeatureById($(this).text());
+					that.map.getView().fit(feature.getGeometry().getExtent(), that.map.getSize());
+				});
+				$(document).on("click", ".gb-edit-sel-flist", function() {
+					var feature = that.tempSelectSource.getFeatureById($(this).text());
+					that.interaction.select.getFeatures().clear();
+					that.interaction.select.getFeatures().push(feature);
+					console.log(feature);
+				});
+				$(document).on("mouseleave", ".gb-edit-sel-fpan", function() {
+					that.map.getView().fit(that.tempSelectSource.getExtent(), that.map.getSize());
+				});
+
 			},
 			_init : function() {
 				var that = this;
@@ -333,6 +355,11 @@ gitbuilder.ui.EditingTool = $.widget("gitbuilder.editingtool",
 								|| sourceLayer.get("git").geometry === "Polygon" || sourceLayer.get("git").geometry === "MultiPoint"
 								|| sourceLayer.get("git").geometry === "MultiLineString" || sourceLayer.get("git").geometry === "MultiPolygon")) {
 					console.log("image-select");
+					if (!this.tempSelectSource) {
+						this.tempSelectSource = new ol.source.Vector();
+					} else {
+						this.tempSelectSource.clear();
+					}
 					this.map.removeInteraction(this.interaction.select);
 					this.interaction.select = new ol.interaction.Select({
 						layers : [ this.tempVector ],
@@ -347,20 +374,14 @@ gitbuilder.ui.EditingTool = $.widget("gitbuilder.editingtool",
 					this.interaction.dragbox.on('boxend', function() {
 						that.interaction.selectWMS.setExtent(this.getGeometry().getExtent());
 					});
-					this.interaction.select.on("select", function(evt) {
-						console.log(evt);
-						that.mouseX = evt.mapBrowserEvent.pixel[0];
-						that.mouseY = evt.mapBrowserEvent.pixel[1];
-					});
 					this.interaction.select.getFeatures().on("change:length", function(evt) {
-						console.log(that.interaction.select.getFeatures());
-						console.log(evt);
 						that.features = that.interaction.select.getFeatures();
 						$(that.featureTB).empty();
-						console.log(that.features.getLength());
+						that.tempSelectSource.clear();
+						that.tempSelectSource.addFeatures(that.features.getArray());
 						if (that.features.getLength() > 1) {
+							$(that.featurePop).hide();
 							for (var i = 0; i < that.features.getLength(); i++) {
-								console.log(that.features.item(i).getId());
 								var anc = $("<a>").addClass("gb-edit-sel-flist").css("cursor", "pointer").attr({
 									"title" : that.features.item(i).getId()
 								}).text(that.features.item(i).getId());
@@ -372,14 +393,13 @@ gitbuilder.ui.EditingTool = $.widget("gitbuilder.editingtool",
 								var tr = $("<tr>").append(td);
 								$(that.featureTB).append(tr);
 							}
+
+							$(that.featurePop).show();
 							$(that.featurePop).position({
 								"my" : "left center",
 								"at" : "left+" + that.mouseX + " " + "top+" + that.mouseY,
-								"of" : "#"+that.map.getTarget()
+								"of" : document
 							});
-							console.log(that.mouseX);
-							console.log(that.mouseY);
-							$(that.featurePop).show();
 						} else {
 							$(that.featurePop).hide();
 						}
@@ -411,8 +431,6 @@ gitbuilder.ui.EditingTool = $.widget("gitbuilder.editingtool",
 							this.deactiveIntrct("move");
 							this.deactiveBtn("moveBtn");
 							this.map.removeLayer(this.managed);
-							// this.deactiveIntrct([ "select",
-							// "selectWMS" ]);
 						}
 						return;
 					}
@@ -425,13 +443,8 @@ gitbuilder.ui.EditingTool = $.widget("gitbuilder.editingtool",
 					}
 					this.interaction.move = new ol.interaction.Translate({
 						features : this.interaction.select.getFeatures()
-					// ,
-					// layers : [ this.interaction.selectWMS.getActive()
-					// ? this.tempVector : layer ]
 					});
 					this.map.addInteraction(this.interaction.move);
-
-					// this.tempVector.setMap(this.map);
 					this.deactiveIntrct([ "select", "selectWMS" ]);
 					this.activeIntrct("move");
 					this.activeBtn("moveBtn");
