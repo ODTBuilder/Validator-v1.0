@@ -346,7 +346,6 @@ gitbuilder.ui.Validation = $.widget("gitbuilder.validation", {
 			var codes = ldef[lkeys[i]].code;
 			for (var j = 0; j < codes.length; j++) {
 				var name = codes[j] + "_" + (ldef[lkeys[i]].geom.toUpperCase());
-//				layers.push(name);
 				tLayers.push(name);
 			}
 			var tvObj = {
@@ -359,8 +358,7 @@ gitbuilder.ui.Validation = $.widget("gitbuilder.validation", {
 			}
 			typeValidate.push(tvObj);
 		}
-//		console.log(names[0]);
-//		console.log($(this.tree).jstree("get_node", names[0]));
+		
 		var inner = [];
 		for (var i = 0; i < names.length; i++) {
 			inner = inner.concat($(this.tree).jstree("get_node", names[i]).children);
@@ -373,11 +371,6 @@ gitbuilder.ui.Validation = $.widget("gitbuilder.validation", {
 		for (var i = 0; i < keys.length; i++) {
 			layers.push($(this.tree).jstree("get_node", keys[i]).text);
 		}
-		
-//		var chil = $(this.tree).jstree("get_node", names[0]).children;
-//		for (var i = 0; i < chil.length; i++) {
-//		layers.push($(this.tree).jstree("get_node", chil[i]).text);
-//		}
 
 		layerColl["layers"] = layers;
 		totalObj["layerCollections"] = layerColl;
