@@ -104,4 +104,9 @@ public class QA20LayerCollectionDAOImpl implements QA20LayerCollectionDAO {
 	public HashMap<String, Object> selectQA20LayerBD(HashMap<String, Object> selectBDQuery) {
 		return sqlSession.selectOne(namespace + ".selectLayerBD", selectBDQuery);
 	}
+
+	@Override
+	public HashMap<String, Object> selectQA20LayerCollectionIdx(HashMap<String, Object> selectLayerCollectionIdxQuery) {
+		return sqlSession.selectOne(namespace + ".selectLayerCollectionIdx", selectLayerCollectionIdxQuery);
+	}
 }

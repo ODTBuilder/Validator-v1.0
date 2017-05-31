@@ -41,26 +41,28 @@ import java.util.Iterator;
 import org.geotools.feature.SchemaException;
 import org.json.simple.JSONObject;
 
+import com.git.gdsbuilder.edit.qa20.EditQA20Collection;
+import com.git.gdsbuilder.edit.qa20.EditQA20LayerCollectionList;
 import com.git.gdsbuilder.type.qa20.collection.QA20LayerCollectionList;
-import com.git.gdsbuilder.type.simple.collection.LayerCollection;
 import com.git.gdsbuilder.type.simple.collection.LayerCollectionList;
 import com.vividsolutions.jts.io.ParseException;
 
 /**
  * JSONObject를 QA20LayerCollectionList 객체로 파싱하는 클래스
+ * 
  * @author DY.Oh
  * @Date 2017. 3. 11. 오후 1:47:16
- * */
+ */
 public class EditLayerCollectionListParser {
 
 	JSONObject collectionListObj;
 	String type;
-	LayerCollectionList layerCollectionList;
-	QA20LayerCollectionList qa20LayerCollectionList;
-	
+	EditQA20LayerCollectionList edtCollectionList;
+
 	/**
 	 * EditayerCollectionListParser 생성자
-	 * @param type 
+	 * 
+	 * @param type
 	 * @param collectionListObj
 	 * @throws FileNotFoundException
 	 * @throws IOException
@@ -71,77 +73,39 @@ public class EditLayerCollectionListParser {
 			throws FileNotFoundException, IOException, ParseException, SchemaException {
 		this.type = type;
 		this.collectionListObj = collectionListObj;
-		if(type.equals("ngi")) {
+		if (type.equals("ngi")) {
 			ngiCollectionListParse();
 		}
-		
+
 	}
 
-	/**
-	 * collectionListObj getter
-	 * @author DY.Oh
-	 * @Date 2017. 3. 11. 오후 1:47:20
-	 * @return JSONObject
-	 * @throws
-	 * */
-	public JSONObject getCollectionListObj() {
-		return collectionListObj;
+	public String getType() {
+		return type;
 	}
 
-	/**
-	 *
-	 * @author DY.Oh
-	 * @Date 2017. 3. 11. 오후 1:47:22
-	 * @param collectionListObj void
-	 * @throws
-	 * */
-	public void setCollectionListObj(JSONObject collectionListObj) {
-		this.collectionListObj = collectionListObj;
+	public void setType(String type) {
+		this.type = type;
 	}
 
-	/**
-	 * qa20LayerCollectionList getter
-	 * @author DY.Oh
-	 * @Date 2017. 3. 11. 오후 1:47:25
-	 * @return QA20LayerCollectionList
-	 * @throws
-	 * */
-	public LayerCollectionList getLayerCollectionList() {
-		return layerCollectionList;
+	public EditQA20LayerCollectionList getEdtCollectionList() {
+		return edtCollectionList;
 	}
 
-	/**
-	 *
-	 * @author DY.Oh
-	 * @Date 2017. 3. 11. 오후 1:47:27
-	 * @param qa20LayerCollectionList void
-	 * @throws
-	 * */
-	public void setLayerCollectionList(LayerCollectionList layerCollectionList) {
-		this.layerCollectionList = layerCollectionList;
+	public void setEdtCollectionList(EditQA20LayerCollectionList edtCollectionList) {
+		this.edtCollectionList = edtCollectionList;
 	}
 
-	/**
-	 * JSONObject를 QA20LayerCollectionList 객체로 파싱
-	 * @author DY.Oh
-	 * @Date 2017. 3. 11. 오후 1:47:29
-	 * @throws FileNotFoundException
-	 * @throws IOException
-	 * @throws ParseException
-	 * @throws SchemaException void
-	 * @throws
-	 * */
 	public void ngiCollectionListParse() throws FileNotFoundException, IOException, ParseException, SchemaException {
 
-		LayerCollectionList collectionList = new LayerCollectionList();
+		edtCollectionList = new EditQA20LayerCollectionList();
 		Iterator editCollections = collectionListObj.keySet().iterator();
-		while(editCollections.hasNext()) {
+		while (editCollections.hasNext()) {
 			String collectionName = (String) editCollections.next();
 			JSONObject collectionObj = (JSONObject) collectionListObj.get(collectionName);
 			EditLayerCollectionParser collectionParser = new EditLayerCollectionParser(type, collectionObj);
-			LayerCollection collection = collectionParser.getLayerCollection();
-			collectionList.add(collection);
+			EditQA20Collection dtCollection = collectionParser.getEditCollection();
+			dtCollection.setCollectionName(collectionName);
+			edtCollectionList.add(dtCollection);
 		}
-		this.layerCollectionList = collectionList;
 	}
 }

@@ -42,9 +42,8 @@ import org.geotools.feature.SchemaException;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
-import com.git.gdsbuilder.type.qa20.collection.QA20LayerCollection;
+import com.git.gdsbuilder.edit.qa20.EditQA20Collection;
 import com.git.gdsbuilder.type.qa20.layer.QA20LayerList;
-import com.git.gdsbuilder.type.simple.collection.LayerCollection;
 import com.vividsolutions.jts.io.ParseException;
 
 /**
@@ -55,15 +54,9 @@ import com.vividsolutions.jts.io.ParseException;
  */
 public class EditLayerCollectionParser {
 
-	protected static final int none = 0;
-	protected static final int isEdited = 1;
-	protected static final int isCreated = 2;
-	protected static final int isDeleted = 3;
-
 	JSONObject collectionObj;
 	String type;
-	LayerCollection layerCollection;
-	QA20LayerCollection qa20LayerCollection;
+	EditQA20Collection editCollection;
 
 	/**
 	 * EditLayerCollectionParser 생성자
@@ -95,31 +88,34 @@ public class EditLayerCollectionParser {
 		this.type = type;
 	}
 
-	public LayerCollection getLayerCollection() {
-		return layerCollection;
+	public EditQA20Collection getEditCollection() {
+		return editCollection;
 	}
 
-	public void setLayerCollection(LayerCollection layerCollection) {
-		this.layerCollection = layerCollection;
+	public void setEditCollection(EditQA20Collection editCollection) {
+		this.editCollection = editCollection;
 	}
 
 	public void ngiCollectionParser() throws ParseException {
 
-		QA20LayerList layerList = new QA20LayerList();
+		this.editCollection = new EditQA20Collection();
 		Iterator iterator = collectionObj.keySet().iterator();
 		while (iterator.hasNext()) {
 			String state = (String) iterator.next();
 			if (state.equals("create")) {
+				QA20LayerList qa20LayerList = new QA20LayerList();
 				JSONArray layerArr = (JSONArray) collectionObj.get(state);
 				for (int i = 0; i < layerArr.size(); i++) {
 					JSONObject layerObj = (JSONObject) layerArr.get(i);
 					EditLayerParser layerParser = new EditLayerParser(type, layerObj);
-					layerList.add(layerParser.getQa20Layer());
+					qa20LayerList.add(layerParser.getQa20Layer());
 				}
+				editCollection.addAllCreateLayer(qa20LayerList);
+				editCollection.setCreated(true);
 			} else if (state.equals("remove")) {
-
+				QA20LayerList qa20LayerList = new QA20LayerList();
 			} else if (state.equals("modify")) {
-
+				QA20LayerList qa20LayerList = new QA20LayerList();
 			}
 		}
 	}
