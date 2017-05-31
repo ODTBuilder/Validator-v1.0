@@ -56,16 +56,17 @@ gitbuilder.ui.EditingTool = $.widget("gitbuilder.editingtool",
 			_create : function() {
 				var that = this;
 				$(document).mousemove(function(e) {
-				    that.mouseX = e.pageX;
-				    that.mouseY = e.pageY;
+					that.mouseX = e.pageX;
+					that.mouseY = e.pageY;
 				});
-				
-				this.featureTB = $("<table>").addClass("table").css({
-					"margin-bottom" : 0
+
+				this.featureTB = $("<table>").addClass("table").addClass("table-hover").addClass("table-condensed").css({
+					"margin-bottom" : 0,
+					"table-layout" : "fixed"
 				});
 				var flist = $("<div>").addClass("panel-body").append(this.featureTB);
 				this.featurePop = $("<div>").css({
-					"width" : "300px",
+					"width" : "250px",
 					// "height" : "400px",
 					"top" : 0,
 					"right" : 0,
@@ -346,27 +347,35 @@ gitbuilder.ui.EditingTool = $.widget("gitbuilder.editingtool",
 					this.interaction.dragbox.on('boxend', function() {
 						that.interaction.selectWMS.setExtent(this.getGeometry().getExtent());
 					});
-
-					this.interaction.select.getFeatures().on("add", function(evt) {
+					this.interaction.select.on("select", function(evt) {
+						console.log(evt);
+					});
+					this.interaction.select.getFeatures().on("change:length", function(evt) {
 						console.log(that.interaction.select.getFeatures());
-//						console.log(evt);
+						console.log(evt);
 						that.features = that.interaction.select.getFeatures();
 						$(that.featureTB).empty();
 
 						if (that.features.getLength() > 1) {
 							for (var i = 0; i < that.features.getLength(); i++) {
 								console.log(that.features.item(i).getId());
-								var anc = $("<a>").text(that.features.item(i).getId());
-								var td = $("<td>").append(anc);
+								var anc = $("<a>").addClass("gb-edit-sel-flist").css("cursor", "pointer").attr({
+									"title" : that.features.item(i).getId()
+								}).text(that.features.item(i).getId());
+								var td = $("<td>").css({
+									"text-overflow" : "ellipsis",
+									"overflow" : "hidden",
+									"text-align" : "right"
+								}).append(anc);
 								var tr = $("<tr>").append(td);
 								$(that.featureTB).append(tr);
-								$(that.featurePop).show();
-//								$(that.featurePop).position({
-//									"my" : "center",
-//									"at" : ,
-//									"of" : document
-//								});
 							}
+							$(that.featurePop).position({
+								"my" : "left center",
+								"at" : "left+" + that.mouseX + " " + "top+" + that.mouseY,
+								"of" : document
+							});
+							$(that.featurePop).show();
 						} else {
 							$(that.featurePop).hide();
 						}

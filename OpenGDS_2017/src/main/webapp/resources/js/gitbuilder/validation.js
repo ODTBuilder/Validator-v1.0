@@ -107,7 +107,7 @@ gitbuilder.ui.Validation = $.widget("gitbuilder.validation", {
 			var i, j, r = [];
 			for (i = 0, j = data.selected.length; i < j; i++) {
 				if (data.instance.get_node(data.selected[i]).type === "n_ngi_group" || data.instance.get_node(data.selected[i]).type === "n_dxf_group") {
-					r.push(data.instance.get_node(data.selected[i]).text);
+					r.push(data.instance.get_node(data.selected[i]));
 				} else {
 					data.instance.deselect_node(data.instance.get_node(data.selected[i]));
 					that.updateLayerList(r);
@@ -262,33 +262,33 @@ gitbuilder.ui.Validation = $.widget("gitbuilder.validation", {
 	},
 	start : function() {
 		var that = this;
-		 if (!!this.valiDef) {
-			 console.log(this.valiDef);
-			 $.ajax({
-					url : that.options.validatorURL,
-					type : "POST",
-					contentType : "application/json; charset=UTF-8",
-					cache : false,
-					async : true,
-					data : JSON.stringify(this.valiDef),
-					beforeSend : function() { // 호출전실행
-// loadImageShow();
-					},
-					traditional : true,
-					success : function(data, textStatus, jqXHR) {
-						console.log(data);
-						if (!data.ErrorLayer && !data["Publising ErrorLayer"]) {
-							that.setMessage("No errors. Not published.");
-							that.setProgress(0);
-						} else if(data.ErrorLayer && data["Publising ErrorLayer"]){
-							that.setMessage("Validation complete");
-							that.setProgress(100);
-						} else if(data.ErrorLayer && !data["Publising ErrorLayer"]){
-							that.setMessage("Error detected. Not published.");
-							that.setProgress(0);
-						}
+		if (!!this.valiDef) {
+			console.log(this.valiDef);
+			$.ajax({
+				url : that.options.validatorURL,
+				type : "POST",
+				contentType : "application/json; charset=UTF-8",
+				cache : false,
+				async : true,
+				data : JSON.stringify(this.valiDef),
+				beforeSend : function() { // 호출전실행
+//					loadImageShow();
+				},
+				traditional : true,
+				success : function(data, textStatus, jqXHR) {
+					console.log(data);
+					if (!data.ErrorLayer && !data["Publising ErrorLayer"]) {
+						that.setMessage("No errors. Not published.");
+						that.setProgress(0);
+					} else if(data.ErrorLayer && data["Publising ErrorLayer"]){
+						that.setMessage("Validation complete");
+						that.setProgress(100);
+					} else if(data.ErrorLayer && !data["Publising ErrorLayer"]){
+						that.setMessage("Error detected. Not published.");
+						that.setProgress(0);
 					}
-				});
+				}
+			});
 		}
 	},
 	setProgress : function(figure) {
@@ -306,7 +306,7 @@ gitbuilder.ui.Validation = $.widget("gitbuilder.validation", {
 		$(this.tbody).empty();
 		for (var i = 0; i < names.length; i++) {
 			var td1 = $("<td>").text((i + 1));
-			var td2 = $("<td>").text(names[i]);
+			var td2 = $("<td>").text(names[i].text);
 			var td3 = $("<td>");
 			var tr = $("<tr>").append(td1).append(td2).append(td3);
 			$(this.tbody).append(tr);
@@ -322,9 +322,14 @@ gitbuilder.ui.Validation = $.widget("gitbuilder.validation", {
 				return;
 			}
 		}
+		console.log(names);
+		var newNames = [];
+		for (var i = 0; i < names.length; i++) {
+			newNames.push(names[i].text);
+		}
 		var totalObj = {};
 		var layerColl = {
-			"collectionName" : names
+				"collectionName" : newNames
 		};
 		var ldef = this.getLayerDefinition();
 		var odef = this.getOptionDefinition();
@@ -341,23 +346,36 @@ gitbuilder.ui.Validation = $.widget("gitbuilder.validation", {
 			var codes = ldef[lkeys[i]].code;
 			for (var j = 0; j < codes.length; j++) {
 				var name = codes[j] + "_" + (ldef[lkeys[i]].geom.toUpperCase());
-				layers.push(name);
 				tLayers.push(name);
 			}
 			var tvObj = {
-				"typeName" : lkeys[i],
-				"layers" : tLayers,
-				"weight" : ldef[lkeys[i]].weight
+					"typeName" : lkeys[i],
+					"layers" : tLayers,
+					"weight" : ldef[lkeys[i]].weight
 			};
 			if (odef.hasOwnProperty(lkeys[i])) {
 				tvObj["option"] = odef[lkeys[i]];
 			}
 			typeValidate.push(tvObj);
 		}
+		
+		var inner = [];
+		for (var i = 0; i < names.length; i++) {
+			inner = inner.concat($(this.tree).jstree("get_node", names[i]).children);
+		}
+		var map = {};
+		for (var i = 0; i < inner.length; i++) {
+		map[inner[i]] = 0;
+		}
+		var keys = Object.keys(map);
+		for (var i = 0; i < keys.length; i++) {
+			layers.push($(this.tree).jstree("get_node", keys[i]).text);
+		}
+
 		layerColl["layers"] = layers;
 		totalObj["layerCollections"] = layerColl;
 		totalObj["typeValidate"] = typeValidate;
-// console.log(totalObj);
+		console.log(totalObj);
 		this.valiDef = totalObj;
 		// return totalObj;
 	},
@@ -368,7 +386,7 @@ gitbuilder.ui.Validation = $.widget("gitbuilder.validation", {
 		var i, j, r = [];
 		for (i = 0, j = arr.length; i < j; i++) {
 			if ($(this.tree).jstree("get_node", arr[i]).type === "n_ngi_group" || $(this.tree).jstree("get_node", arr[i]).type === "n_dxf_group") {
-				r.push($(this.tree).jstree("get_node", arr[i]).text);
+				r.push($(this.tree).jstree("get_node", arr[i]));
 			} else {
 				$(this.tree).jstree("deselect_node", $(this.tree).jstree("get_node", arr[i]));
 				this.updateLayerList(r);
@@ -407,9 +425,9 @@ gitbuilder.ui.Validation = $.widget("gitbuilder.validation", {
 		add = (typeof add === "boolean") ? add : extra;
 		var shift = (typeof element === "string" || element === null), options = {
 			extra : shift ? keys : extra,
-			keys : shift ? element : keys,
-			element : shift ? this.element : element,
-			add : add
+					keys : shift ? element : keys,
+							element : shift ? this.element : element,
+									add : add
 		};
 		options.element.toggleClass(this._classes(options), add);
 		return this;
