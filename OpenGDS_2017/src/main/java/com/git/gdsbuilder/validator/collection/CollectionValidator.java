@@ -138,6 +138,9 @@ public class CollectionValidator {
 		ValidateLayerTypeList types = validateLayerCollectionList.getValidateLayerTypeList();
 		GeoLayerCollectionList layerCollections = validateLayerCollectionList.getLayerCollectionList();
 
+		
+		System.out.println();
+		
 		// layerMiss 검수
 		layerMissValidate(types, layerCollections);
 
