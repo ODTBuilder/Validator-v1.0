@@ -39,11 +39,6 @@ import com.vividsolutions.jts.io.ParseException;
  */
 public class EditLayerParser {
 
-	protected static final int isNone = 0;
-	protected static final int isEdited = 1;
-	protected static final int isCreated = 2;
-	protected static final int isDeleted = 3;
-
 	JSONObject layerObj;
 	String type;
 	Layer layer;
@@ -138,9 +133,11 @@ public class EditLayerParser {
 						+ maxXY.get(0).toString() + ", " + maxXY.get(1).toString() + ")";
 				ngiHeader.setBound(bound);
 			} else if (key.equals("represent")) {
-
+				String test = "1 REGIONATTR(SOLID, 1, 14606014, SOLID100, 14606014, 14606014)";
+				ngiHeader.addRegion_represent(test);
 			}
 		}
+		qa20Layer.setLayerID("1");
 		qa20Layer.setNgiHeader(ngiHeader);
 		qa20Layer.setNdaHeader(ndaHeader);
 		this.qa20Layer = qa20Layer;

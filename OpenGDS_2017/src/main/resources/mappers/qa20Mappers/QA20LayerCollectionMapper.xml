@@ -11,15 +11,24 @@
 		values( #{file_name} );
 	</insert>
 
-	<!-- qa20_layer_tb -->
+	<select id="selectLayerCollectionIdx" parameterType="hashMap"
+		resultType="hashMap">
+		${selectQuery}
+	</select>
+
+	<!-- qa20_layer -->
 	<select id="createQA20LayerTb" parameterType="hashMap">
 		${createQuery}
 	</select>
 
-	<!-- qa20_layer -->
 	<insert id="insertQA20Layer" parameterType="hashmap">
 		${insertQuery}
 	</insert>
+
+	<select id="selectCountAllFeatures" parameterType="hashMap"
+		resultType="hashMap">
+		${countQuery}
+	</select>
 
 	<!-- qa20_layer_metadata -->
 	<insert id="insertQA20LayerMetadata" parameterType="hashmap">
@@ -115,11 +124,5 @@
 		values
 		(#{tRepNo}, #{tRepValue}, #{lm_idx_seq});
 	</insert>
-
-	<select id="selectCountAllFeatures" parameterType="hashMap"
-		resultType="hashMap">
-		${countQuery}
-	</select>
-
 
 </mapper>

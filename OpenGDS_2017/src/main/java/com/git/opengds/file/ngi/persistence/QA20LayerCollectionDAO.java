@@ -27,8 +27,22 @@ public interface QA20LayerCollectionDAO {
 	// qa20_layerCollection
 	public void insertQA20LayerCollection(Map<String, Object> collection);
 
+	public HashMap<String, Object> selectQA20LayerCollectionIdx(HashMap<String, Object> selectLayerCollectionIdxQuery);
+
 	// qa20_layer
+	public void createQA20LayerTb(HashMap<String, Object> qa20Layertb) throws PSQLException;
+
 	public void insertQA20Layer(HashMap<String, Object> layers) throws PSQLException;
+
+	public HashMap<String, Object> selectCountAllFeatures(HashMap<String, Object> countquery);
+
+	public HashMap<String, Object> selectFeatureIdx(HashMap<String, Object> selectQuery);
+
+	public int deleteFeature(HashMap<String, Object> deleteQuery);
+
+	public void insertFeature(HashMap<String, Object> insertQuery);
+
+	public HashMap<String, Object> selectQA20LayerBD(HashMap<String, Object> selectBDQuery);
 
 	// qa20_layer_metadata
 	public void insertQA20LayerMetadatas(Map<String, Object> metadata) throws PSQLException;
@@ -48,15 +62,4 @@ public interface QA20LayerCollectionDAO {
 	// ngi_region_represent
 	public void insertRegionRepresent(HashMap<String, Object> hashMap) throws PSQLException;
 
-	public void createQA20LayerTb(HashMap<String, Object> qa20Layertb) throws PSQLException;
-
-	public HashMap<String, Object> selectCountAllFeatures(HashMap<String, Object> countquery);
-
-	public HashMap<String, Object> selectFeatureIdx(HashMap<String, Object> selectQuery);
-
-	public int deleteFeature(HashMap<String, Object> deleteQuery);
-
-	public void insertFeature(HashMap<String, Object> insertQuery);
-
-	public HashMap<String, Object> selectQA20LayerBD(HashMap<String, Object> selectBDQuery);
 }
