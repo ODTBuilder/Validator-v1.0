@@ -35,6 +35,7 @@
 package com.git.gdsbuilder.validator.layer;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.geotools.data.simple.SimpleFeatureCollection;
@@ -538,6 +539,42 @@ public class LayerValidatorImpl implements LayerValidator {
 		}else{
 			return null;
 		}
+	}
+	
+	public ErrorLayer validateLayerMiss(List<String> typeNames) throws SchemaException{
+		ErrorLayer errorLayer = new ErrorLayer();
+		SimpleFeatureCollection sfc = validatorLayer.getSimpleFeatureCollection();
+		SimpleFeatureIterator simpleFeatureIterator = sfc.features();
+		String layerName = validatorLayer.getLayerName();
+		int dash = layerName.indexOf("_");
+		String layerType = layerName.substring(dash+1);
+		Boolean flag  = true;
+		
+		for (int i = 0; i < typeNames.size(); i++) {
+			String typeName = typeNames.get(i);
+			if(typeName.equals(layerType)){
+				flag = true;
+			}else{
+				flag = false;
+				break;
+			}
+		}
+
+		if(flag = false){
+			
+		}else{
+			
+		}
+		
+		while (simpleFeatureIterator.hasNext()) {
+			SimpleFeature simpleFeature = simpleFeatureIterator.next();
+			ErrorFeature errorFeature = graphicValidator.validateLayerMiss(simpleFeature);
+			
+		}
+		
+		
+		
+		return null;
 	}
 	
 	

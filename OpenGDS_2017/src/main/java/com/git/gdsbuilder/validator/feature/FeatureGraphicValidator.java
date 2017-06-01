@@ -211,5 +211,6 @@ public interface FeatureGraphicValidator {
 	public ErrorFeature validateUselessEntity(SimpleFeature simpleFeature, String layerType) throws SchemaException ;
 	public ErrorFeature validateBuildingOpen(SimpleFeature simpleFeature) throws SchemaException ;
 	public ErrorFeature validateWaterOpen(SimpleFeature simpleFeature) throws SchemaException ;
+	public ErrorFeature validateLayerMiss(SimpleFeature simpleFeature)throws SchemaException;
 
 }

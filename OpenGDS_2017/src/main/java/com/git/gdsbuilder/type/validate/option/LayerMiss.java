@@ -3,6 +3,7 @@
  */
 package com.git.gdsbuilder.type.validate.option;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /** 
@@ -50,6 +51,15 @@ public class LayerMiss extends ValidatorOption{
 		super();
 		this.layerType = layerType;
 	}
+	
+	/**
+	 * SelfEntity 생성자
+	 */
+	public LayerMiss() {
+		super();
+		this.layerType = new ArrayList<String>();
+	}
+	
 
 	/**
 	 * @return the layerType

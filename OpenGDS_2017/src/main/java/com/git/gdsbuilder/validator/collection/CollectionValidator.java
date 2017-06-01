@@ -57,6 +57,7 @@ import com.git.gdsbuilder.type.validate.option.ConBreak;
 import com.git.gdsbuilder.type.validate.option.ConIntersected;
 import com.git.gdsbuilder.type.validate.option.ConOverDegree;
 import com.git.gdsbuilder.type.validate.option.EntityDuplicated;
+import com.git.gdsbuilder.type.validate.option.LayerMiss;
 import com.git.gdsbuilder.type.validate.option.OutBoundary;
 import com.git.gdsbuilder.type.validate.option.OverShoot;
 import com.git.gdsbuilder.type.validate.option.SelfEntity;
@@ -250,13 +251,13 @@ public class CollectionValidator {
 								double tolerence = ((UnderShoot) option).getTolerence();
 								typeErrorLayer = layerValidator.validateUnderShoot(neatLayer, tolerence);
 							}
-							if(option instanceof UselessEntity){
+							if (option instanceof UselessEntity){
 								typeErrorLayer = layerValidator.validateUselessEntity();
 							}
-							if(option instanceof BuildingOpen){
+							if (option instanceof BuildingOpen){
 								typeErrorLayer = layerValidator.validateBuildingOpen();
 							}
-							if(option instanceof WaterOpen){
+							if (option instanceof WaterOpen){
 								typeErrorLayer = layerValidator.validateWaterOpen();
 							}
 							if (typeErrorLayer != null) {
@@ -274,9 +275,36 @@ public class CollectionValidator {
 
 	}
 
-	private void layerMissValidate(ValidateLayerTypeList types, GeoLayerCollectionList layerCollections) {
+	private void layerMissValidate(ValidateLayerTypeList types, GeoLayerCollectionList layerCollections) throws SchemaException {
 		// TODO Auto-generated method stub
-
+		for (int i = 0; i < layerCollections.size(); i++) {
+			GeoLayerCollection collection = layerCollections.get(i);
+			ErrorLayer errLayer = new ErrorLayer();
+			for(int j=0; j < types.size(); j++){
+				ValidateLayerType type = types.get(j);
+				GeoLayerList typeLayers = validateLayerCollectionList.getTypeLayers(type.getTypeName(), collection);
+				List<ValidatorOption> options = type.getOptionList();
+				if(options != null){
+					ErrorLayer typeErrorLayer = null;
+					for(int k = 0; k<options.size(); k++){
+						ValidatorOption option = options.get(k);
+						for (int l = 0; l < typeLayers.size(); l++) {
+							GeoLayer typeLayer = typeLayers.get(l);
+							if(typeLayer == null){
+								continue;
+							}
+							LayerValidatorImpl layerValidator = new LayerValidatorImpl(typeLayer);
+							if (option instanceof LayerMiss){
+								List<String> typeNames = ((LayerMiss) option).getLayerType();
+								typeErrorLayer = layerValidator.validateLayerMiss(typeNames);
+							}
+						}
+					}
+				}
+			}
+			errLayer.setCollectionName(collection.getCollectionName());
+			errLayerList.add(errLayer);
+		}
 	}
 
 }

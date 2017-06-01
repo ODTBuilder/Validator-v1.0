@@ -64,6 +64,7 @@ import com.git.gdsbuilder.type.validate.option.ConBreak;
 import com.git.gdsbuilder.type.validate.option.ConIntersected;
 import com.git.gdsbuilder.type.validate.option.ConOverDegree;
 import com.git.gdsbuilder.type.validate.option.EntityDuplicated;
+import com.git.gdsbuilder.type.validate.option.LayerMiss;
 import com.git.gdsbuilder.type.validate.option.OutBoundary;
 import com.git.gdsbuilder.type.validate.option.OverShoot;
 import com.git.gdsbuilder.type.validate.option.SelfEntity;
@@ -603,4 +604,12 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 				return errorFeature;
 		}		
 	}
+	
+	public ErrorFeature validateLayerMiss(SimpleFeature simpleFeature)throws SchemaException{
+		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
+		ErrorFeature errorFeature = new ErrorFeature(simpleFeature.getID(), LayerMiss.Type.LAYERMISS.errType(),
+				LayerMiss.Type.LAYERMISS.errName(), geometry.getInteriorPoint());
+		return errorFeature;
+	}
+	
 }

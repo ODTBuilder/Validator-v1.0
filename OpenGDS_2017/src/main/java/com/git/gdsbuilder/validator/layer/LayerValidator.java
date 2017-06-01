@@ -190,5 +190,6 @@ public interface LayerValidator {
 	public ErrorLayer validateUselessEntity() throws SchemaException;
 	public ErrorLayer validateBuildingOpen() throws SchemaException;
 	public ErrorLayer validateWaterOpen() throws SchemaException;
+	public ErrorLayer validateLayerMiss(List<String> typeNames) throws SchemaException;
 
 }
