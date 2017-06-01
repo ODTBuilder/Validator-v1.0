@@ -20,8 +20,7 @@ package com.git.opengds.editor.service;
 import org.postgresql.util.PSQLException;
 
 import com.git.gdsbuilder.edit.qa20.EditQA20Collection;
-import com.git.gdsbuilder.edit.qa20.EditQA20LayerCollectionList;
-import com.git.gdsbuilder.type.simple.collection.LayerCollectionList;
+import com.git.gdsbuilder.type.qa20.feature.QA20Feature;
 
 public interface EditDBManagerService {
 
@@ -33,5 +32,10 @@ public interface EditDBManagerService {
 	public Integer checkCollectionName(String collectionName);
 
 	public void createQa20LayerCollection(String type, EditQA20Collection editCollection) throws Exception;
+
+	public void createQa20Layers(String type, Integer collectionIdx, EditQA20Collection editCollection)
+			throws PSQLException;
+
+	public void insertCreateFeature(String layerName, QA20Feature createFeature);
 
 }
