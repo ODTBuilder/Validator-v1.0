@@ -477,14 +477,11 @@ public class LayerValidatorImpl implements LayerValidator {
 	public ErrorLayer validateUselessEntity() throws SchemaException{
 		ErrorLayer errLayer = new ErrorLayer();
 		SimpleFeatureCollection sfc = validatorLayer.getSimpleFeatureCollection();
-		String layerName = validatorLayer.getLayerName();
-		int dash = layerName.indexOf("_");
-		String nativeLayerType = layerName.substring(dash+1);
 		
 			SimpleFeatureIterator simpleFeatureIterator = sfc.features();
 			while (simpleFeatureIterator.hasNext()) {
 				SimpleFeature simpleFeature = simpleFeatureIterator.next();
-				ErrorFeature errFeature = graphicValidator.validateUselessEntity(simpleFeature, nativeLayerType);
+				ErrorFeature errFeature = graphicValidator.validateUselessEntity(simpleFeature);
 				if (errFeature != null) {
 					errFeature.setLayerName(validatorLayer.getLayerName());
 					errLayer.addErrorFeature(errFeature);
@@ -545,7 +542,7 @@ public class LayerValidatorImpl implements LayerValidator {
 		ErrorLayer errorLayer = new ErrorLayer();
 		SimpleFeatureCollection sfc = validatorLayer.getSimpleFeatureCollection();
 		SimpleFeatureIterator simpleFeatureIterator = sfc.features();
-		String layerName = validatorLayer.getLayerName();
+		/*String layerName = validatorLayer.getLayerName();
 		int dash = layerName.indexOf("_");
 		String layerType = layerName.substring(dash+1);
 		Boolean flag  = true;
@@ -564,15 +561,13 @@ public class LayerValidatorImpl implements LayerValidator {
 			
 		}else{
 			
-		}
+		}*/
 		
 		while (simpleFeatureIterator.hasNext()) {
 			SimpleFeature simpleFeature = simpleFeatureIterator.next();
-			ErrorFeature errorFeature = graphicValidator.validateLayerMiss(simpleFeature);
+			ErrorFeature errorFeature = graphicValidator.validateLayerMiss(simpleFeature, typeNames);
 			
 		}
-		
-		
 		
 		return null;
 	}

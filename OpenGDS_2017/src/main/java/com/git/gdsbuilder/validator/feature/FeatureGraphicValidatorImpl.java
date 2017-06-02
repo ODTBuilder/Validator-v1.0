@@ -543,11 +543,11 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 	}
 
 	/*********************************************** 추가 ***************/
-	public ErrorFeature validateUselessEntity(SimpleFeature simpleFeature, String layerType) throws SchemaException {
-
-		String upperType = layerType.toUpperCase();
+	public ErrorFeature validateUselessEntity(SimpleFeature simpleFeature) throws SchemaException {
+		
+		String upperType = simpleFeature.getAttribute("feateure_type").toString().toUpperCase();
 		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
-
+		
 		if(!(upperType.equals("POINT") && upperType.equals("LiNESTRING") && upperType.equals("POLYGON") 
 				&& upperType.equals("MULTIPOINT") && upperType.equals("MULTILINESTRING") && upperType.equals("MULTIPOLYGON")
 				&& upperType.equals("TEXT") && upperType.equals("LINE") && upperType.equals("INSERT") && upperType.equals("POLYLINE"))){
@@ -605,11 +605,28 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 		}		
 	}
 	
-	public ErrorFeature validateLayerMiss(SimpleFeature simpleFeature)throws SchemaException{
+	public ErrorFeature validateLayerMiss(SimpleFeature simpleFeature, List<String> typeNames)throws SchemaException{
 		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
-		ErrorFeature errorFeature = new ErrorFeature(simpleFeature.getID(), LayerMiss.Type.LAYERMISS.errType(),
-				LayerMiss.Type.LAYERMISS.errName(), geometry.getInteriorPoint());
-		return errorFeature;
+		String upperType = simpleFeature.getAttribute("feature_type").toString().toUpperCase();
+		Boolean flag = true;
+		
+		for (int i = 0; i < typeNames.size(); i++) {
+			String typeName = typeNames.get(i);
+			if(typeName.equals(upperType)){
+				flag = true;
+			}else{
+				flag = false;
+				break;
+			}
+		}
+		if(flag = false){
+			
+			ErrorFeature errorFeature = new ErrorFeature(simpleFeature.getID(), LayerMiss.Type.LAYERMISS.errType(),
+					LayerMiss.Type.LAYERMISS.errName(), geometry.getInteriorPoint());
+			return errorFeature;
+		}else{
+			return null;
+		}
 	}
 	
 }

@@ -277,6 +277,7 @@ public class CollectionValidator {
 
 	private void layerMissValidate(ValidateLayerTypeList types, GeoLayerCollectionList layerCollections) throws SchemaException {
 		// TODO Auto-generated method stub
+
 		for (int i = 0; i < layerCollections.size(); i++) {
 			GeoLayerCollection collection = layerCollections.get(i);
 			ErrorLayer errLayer = new ErrorLayer();

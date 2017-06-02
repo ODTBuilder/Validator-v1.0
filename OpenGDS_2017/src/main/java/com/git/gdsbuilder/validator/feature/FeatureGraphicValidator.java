@@ -208,9 +208,9 @@ public interface FeatureGraphicValidator {
 	public List<ErrorFeature> validateUnderShoot(SimpleFeature simpleFeature, SimpleFeatureCollection aop,
 			double tolerence) throws SchemaException;
 	
-	public ErrorFeature validateUselessEntity(SimpleFeature simpleFeature, String layerType) throws SchemaException ;
+	public ErrorFeature validateUselessEntity(SimpleFeature simpleFeature) throws SchemaException ;
 	public ErrorFeature validateBuildingOpen(SimpleFeature simpleFeature) throws SchemaException ;
 	public ErrorFeature validateWaterOpen(SimpleFeature simpleFeature) throws SchemaException ;
-	public ErrorFeature validateLayerMiss(SimpleFeature simpleFeature)throws SchemaException;
+	public ErrorFeature validateLayerMiss(SimpleFeature simpleFeature, List<String> typeNames)throws SchemaException;
 
 }

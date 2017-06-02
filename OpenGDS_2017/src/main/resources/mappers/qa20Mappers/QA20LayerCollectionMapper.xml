@@ -53,6 +53,14 @@
 		#{rgRepresent}, #{txRepresent}, #{c_idx_seq})
 	</insert>
 
+	<insert id="insertQA20LayerMetadataEdit" parameterType="hashmap"
+		useGeneratedKeys="true">
+		${insertQuery}
+		<selectKey keyProperty="lm_idx" resultType="int" order="AFTER">
+			select currval('qa20_layer_metadata_lm_idx_seq')
+		</selectKey>
+	</insert>
+
 	<!-- nda_aspatial_field_def -->
 	<insert id="insertNdaAspatialFieldDefs" parameterType="hashmap">
 
@@ -124,5 +132,26 @@
 		values
 		(#{tRepNo}, #{tRepValue}, #{lm_idx_seq});
 	</insert>
+
+	<insert id="insertNdaAspatialFieldDefsEdit" parameterType="hashmap">
+		${insertQuery}
+	</insert>
+
+	<insert id="insertPointRepresentEdit" parameterType="hashmap">
+		${insertQuery}
+	</insert>
+
+	<insert id="insertLineStringRepresentEdit" parameterType="hashmap">
+		${insertQuery}
+	</insert>
+
+	<insert id="insertRegionRepresentEdit" parameterType="hashmap">
+		${insertQuery}
+	</insert>
+
+	<insert id="insertTextRepresentEdit" parameterType="hashmap">
+		${insertQuery}
+	</insert>
+
 
 </mapper>

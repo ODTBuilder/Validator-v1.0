@@ -21,5 +21,5 @@ import com.git.opengds.upload.domain.FileMeta;
 
 public interface QA20FileUploadService {
 
-	public FileMeta insertFile(FileMeta fileMeta) throws Exception;
+	public FileMeta ngiUpload(FileMeta fileMeta) throws Exception;
 }

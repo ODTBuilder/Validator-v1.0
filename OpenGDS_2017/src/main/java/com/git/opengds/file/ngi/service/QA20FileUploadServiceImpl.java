@@ -50,9 +50,9 @@ public class QA20FileUploadServiceImpl implements QA20FileUploadService {
 	@Inject
 	private EditService editService;
 
-	public FileMeta insertFile(FileMeta fileMeta) throws Exception {
+	public FileMeta ngiUpload(FileMeta fileMeta) throws Exception {
 
-	//	editService.editTest();
+		// editService.editTest();
 
 		// validatorService.validate();
 		FileMeta file = fileMeta;
