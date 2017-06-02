@@ -515,7 +515,8 @@ gitbuilder.ui.QAEdit = $.widget("gitbuilder.qaedit", {
 						}
 
 						$.ajax({
-							url : "geoserver2/geoserverWFSLayerLoad.do?" + $.param(defaultParameters),
+							url : "geoserver2/geoserverWFSGetFeature.ajax",
+							data : defaultParameters,
 							dataType : 'jsonp',
 							jsonpCallback : 'getJson',
 							success : handleJson
