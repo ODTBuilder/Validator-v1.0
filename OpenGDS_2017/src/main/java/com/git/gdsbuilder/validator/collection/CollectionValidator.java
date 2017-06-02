@@ -47,6 +47,7 @@ import com.git.gdsbuilder.type.geoserver.collection.GeoLayerCollection;
 import com.git.gdsbuilder.type.geoserver.collection.GeoLayerCollectionList;
 import com.git.gdsbuilder.type.geoserver.layer.GeoLayer;
 import com.git.gdsbuilder.type.geoserver.layer.GeoLayerList;
+import com.git.gdsbuilder.type.simple.collection.LayerCollectionList;
 import com.git.gdsbuilder.type.validate.collection.ValidateLayerCollectionList;
 import com.git.gdsbuilder.type.validate.error.ErrorLayer;
 import com.git.gdsbuilder.type.validate.error.ErrorLayerList;
@@ -275,6 +276,7 @@ public class CollectionValidator {
 
 	}
 
+	@SuppressWarnings("unused")
 	private void layerMissValidate(ValidateLayerTypeList types, GeoLayerCollectionList layerCollections) throws SchemaException {
 		// TODO Auto-generated method stub
 
@@ -298,11 +300,13 @@ public class CollectionValidator {
 							if (option instanceof LayerMiss){
 								List<String> typeNames = ((LayerMiss) option).getLayerType();
 								typeErrorLayer = layerValidator.validateLayerMiss(typeNames);
+								layerCollections.remove(typeLayer);  // 레이어 삭제 
 							}
 						}
 					}
 				}
 			}
+			
 			errLayer.setCollectionName(collection.getCollectionName());
 			errLayerList.add(errLayer);
 		}

@@ -542,33 +542,10 @@ public class LayerValidatorImpl implements LayerValidator {
 		ErrorLayer errorLayer = new ErrorLayer();
 		SimpleFeatureCollection sfc = validatorLayer.getSimpleFeatureCollection();
 		SimpleFeatureIterator simpleFeatureIterator = sfc.features();
-		/*String layerName = validatorLayer.getLayerName();
-		int dash = layerName.indexOf("_");
-		String layerType = layerName.substring(dash+1);
-		Boolean flag  = true;
-		
-		for (int i = 0; i < typeNames.size(); i++) {
-			String typeName = typeNames.get(i);
-			if(typeName.equals(layerType)){
-				flag = true;
-			}else{
-				flag = false;
-				break;
-			}
-		}
-
-		if(flag = false){
-			
-		}else{
-			
-		}*/
-		
 		while (simpleFeatureIterator.hasNext()) {
 			SimpleFeature simpleFeature = simpleFeatureIterator.next();
 			ErrorFeature errorFeature = graphicValidator.validateLayerMiss(simpleFeature, typeNames);
-			
 		}
-		
 		return null;
 	}
 	
