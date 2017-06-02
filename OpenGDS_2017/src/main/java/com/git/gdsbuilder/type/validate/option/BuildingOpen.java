@@ -14,7 +14,7 @@ public class BuildingOpen extends ValidatorOption{
 
 public enum Type{
 		
-		BUILDINGOPEN("BuilingOpen", "GeometricError");
+		BUILDINGOPEN("BuildingOpen", "GeometricError");
 
 		String errName;
 		String errType;
