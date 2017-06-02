@@ -109,4 +109,36 @@ public class QA20LayerCollectionDAOImpl implements QA20LayerCollectionDAO {
 	public HashMap<String, Object> selectQA20LayerCollectionIdx(HashMap<String, Object> selectLayerCollectionIdxQuery) {
 		return sqlSession.selectOne(namespace + ".selectLayerCollectionIdx", selectLayerCollectionIdxQuery);
 	}
+
+	@Override
+	public int insertQA20LayerMetadataEdit(HashMap<String, Object> metadata) throws PSQLException {
+		sqlSession.insert(namespace + ".insertQA20LayerMetadataEdit", metadata);
+		return (Integer) metadata.get("lm_idx");
+	}
+
+	// Edit
+	@Override
+	public void insertNdaAspatialFieldDefsEdit(HashMap<String, Object> hashMap) {
+		sqlSession.insert(namespace + ".insertNdaAspatialFieldDefsEdit", hashMap);
+	}
+
+	@Override
+	public void insertPointRepresentEdit(HashMap<String, Object> hashMap) {
+		sqlSession.insert(namespace + ".insertPointRepresentEdit", hashMap);
+	}
+
+	@Override
+	public void insertLineStringRepresentEdit(HashMap<String, Object> hashMap) {
+		sqlSession.insert(namespace + ".insertLineStringRepresentEdit", hashMap);
+	}
+
+	@Override
+	public void insertRegionRepresentEdit(HashMap<String, Object> hashMap) {
+		sqlSession.insert(namespace + ".insertRegionRepresentEdit", hashMap);
+	}
+
+	@Override
+	public void insertTextRepresentEdit(HashMap<String, Object> hashMap) {
+		sqlSession.insert(namespace + ".insertTextRepresentEdit", hashMap);
+	}
 }

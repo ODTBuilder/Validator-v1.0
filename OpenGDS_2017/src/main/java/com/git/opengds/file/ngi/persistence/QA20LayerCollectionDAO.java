@@ -47,6 +47,8 @@ public interface QA20LayerCollectionDAO {
 	// qa20_layer_metadata
 	public void insertQA20LayerMetadatas(Map<String, Object> metadata) throws PSQLException;
 
+	public int insertQA20LayerMetadataEdit(HashMap<String, Object> metadata) throws PSQLException;
+
 	// nda_aspatial_field_def
 	public void insertNdaAspatialFieldDefs(HashMap<String, Object> fieldDef) throws PSQLException;
 
@@ -61,5 +63,16 @@ public interface QA20LayerCollectionDAO {
 
 	// ngi_region_represent
 	public void insertRegionRepresent(HashMap<String, Object> hashMap) throws PSQLException;
+
+	// Edit
+	public void insertNdaAspatialFieldDefsEdit(HashMap<String, Object> hashMap);
+
+	public void insertPointRepresentEdit(HashMap<String, Object> hashMap);
+
+	public void insertLineStringRepresentEdit(HashMap<String, Object> hashMap);
+
+	public void insertRegionRepresentEdit(HashMap<String, Object> hashMap);
+
+	public void insertTextRepresentEdit(HashMap<String, Object> hashMap);
 
 }
