@@ -145,7 +145,7 @@ public class CollectionValidator {
 		GeoLayerCollectionList layerCollections = validateLayerCollectionList.getLayerCollectionList();
 
 		// layerMiss 검수
-		layerMissValidate(types, layerCollections);
+		//layerMissValidate(types, layerCollections);
 
 		// geometric 검수
 		geometricValidate(types, layerCollections);
@@ -171,7 +171,7 @@ public class CollectionValidator {
 
 	private void geometricValidate(ValidateLayerTypeList types, GeoLayerCollectionList layerCollections)
 			throws SchemaException, NoSuchAuthorityCodeException, FactoryException, TransformException {
-
+		System.out.println();
 		for (int j = 0; j < layerCollections.size(); j++) {
 			GeoLayerCollection collection = layerCollections.get(j);
 			GeoLayer neatLayer = collection.getNeatLine();
