@@ -18,24 +18,28 @@ gitbuilder.ui.EditingTool = $.widget("gitbuilder.editingtool",
 				map : undefined,
 				user : undefined,
 				selected : undefined,
-				appendTo : "body"
+				appendTo : "body",
+				record : undefined
 			},
 			map : undefined,
 			layers : undefined,
 			layer : undefined,
 			isOn : {
 				select : false,
-				move : false
+				move : false,
+				remove : false,
+				modify : false,
+				rotate : false
 			},
 			interaction : {
 				select : undefined,
 				selectWMS : undefined,
 				dragbox : undefined,
 				// draw : ,
-				move : undefined
-			// rotate : ,
-			// modify : ,
-			// remove :
+				move : undefined,
+				rotate : undefined,
+				modify : undefined,
+				remove : undefined
 			},
 			btn : {
 				selectBtn : undefined,
@@ -74,7 +78,7 @@ gitbuilder.ui.EditingTool = $.widget("gitbuilder.editingtool",
 				}).append(this.featureTB);
 				this.featurePop = $("<div>").css({
 					"width" : "250px",
-//					"max-height" : "300px",
+					// "max-height" : "300px",
 					"top" : 0,
 					"right" : 0,
 					"position" : "absolute",
@@ -97,12 +101,6 @@ gitbuilder.ui.EditingTool = $.widget("gitbuilder.editingtool",
 				// this.tempVector.set("type", "Vector");
 				// this.tempVector.set("name", "temp_vector");
 				// this.tempVector.set("id", "temp_vector");
-				this.tempSource.on("changefeature", function(evt) {
-					console.log(evt);
-				});
-				this.features.on("change:length", function(evt) {
-					console.log(evt);
-				});
 				this._on(false, this.element, {
 					click : function(event) {
 						if (event.target === that.element[0]) {
@@ -243,6 +241,16 @@ gitbuilder.ui.EditingTool = $.widget("gitbuilder.editingtool",
 					that.map.getView().fit(that.tempSelectSource.getExtent(), that.map.getSize());
 				});
 
+				this.map.on('postcompose', function(evt) {
+					that.map.getInteractions().forEach(function(interaction) {
+						if (interaction instanceof gb.interaction.MultiTransform) {
+							if (interaction.getFeatures().getLength()) {
+								interaction.drawMbr(evt);
+							}
+						}
+					});
+				});
+
 			},
 			_init : function() {
 				var that = this;
@@ -281,6 +289,7 @@ gitbuilder.ui.EditingTool = $.widget("gitbuilder.editingtool",
 						}
 						if (intrct[j] === "select" || intrct[j] === "selectWMS") {
 							this.isOn["select"] = false;
+							$(this.featurePop).hide();
 						} else {
 							this.isOn[intrct[j]] = false;
 							this.map.removeLayer(this.managed);
@@ -424,6 +433,7 @@ gitbuilder.ui.EditingTool = $.widget("gitbuilder.editingtool",
 				this.activeBtn("drawBtn");
 			},
 			move : function(layer) {
+				var that = this;
 				if (this.interaction.select.getFeatures().getLength() > 0) {
 					if (this.isOn.move) {
 						if (!!this.interaction.move) {
@@ -444,8 +454,21 @@ gitbuilder.ui.EditingTool = $.widget("gitbuilder.editingtool",
 					this.interaction.move = new ol.interaction.Translate({
 						features : this.interaction.select.getFeatures()
 					});
+					this.interaction.move.on("translateend", function(evt) {
+						console.log(evt);
+						var layers = that.options.selected();
+						if (layers.length !== 1) {
+							return;
+						}
+						if (that.layer.get("id") === layers[0].get("id")) {
+							var features = evt.features;
+							for (var i = 0; i < features.getLength(); i++) {
+								that.options.record.update(layers[0], features.item(i));
+							}
+						}
+					});
 					this.map.addInteraction(this.interaction.move);
-					this.deactiveIntrct([ "select", "selectWMS" ]);
+					this.deactiveIntrct([ "select", "selectWMS", "modify" ]);
 					this.activeIntrct("move");
 					this.activeBtn("moveBtn");
 				} else {
@@ -453,13 +476,129 @@ gitbuilder.ui.EditingTool = $.widget("gitbuilder.editingtool",
 				}
 			},
 			rotate : function(layer) {
-				this.activeBtn("rotateBtn");
+				var that = this;
+				if (this.interaction.select.getFeatures().getLength() > 0) {
+					if (this.isOn.rotate) {
+						if (!!this.interaction.rotate) {
+							this.interaction.select.getFeatures().clear();
+							this.deactiveIntrct("rotate");
+							this.deactiveBtn("rotateBtn");
+							this.map.removeLayer(this.managed);
+						}
+						return;
+					}
+					if (!this.managed) {
+						this.managed = new ol.layer.Vector({
+							source : this.tempSource
+						});
+						this.managed.set("name", "temp_vector");
+						this.managed.set("id", "temp_vector");
+					}
+					this.interaction.rotate = new gb.interaction.MultiTransform({
+						features : this.interaction.select.getFeatures()
+					});
+					// this.interaction.MultiTransform.on("modifyend",
+					// function(evt) {
+					// console.log(evt);
+					// var layers = that.options.selected();
+					// if (layers.length !== 1) {
+					// return;
+					// }
+					// if (that.layer.get("id") === layers[0].get("id")) {
+					// var features = evt.features;
+					// for (var i = 0; i < features.getLength(); i++) {
+					// that.options.record.update(layers[0], features.item(i));
+					// }
+					// }
+					// });
+					this.map.addInteraction(this.interaction.rotate);
+					this.deactiveIntrct([ "select", "selectWMS", "move", "modify" ]);
+					this.activeIntrct("rotate");
+					this.activeBtn("rotateBtn");
+				} else {
+					console.error("select features");
+				}
 			},
 			modify : function(layer) {
-				this.activeBtn("modiBtn");
+				var that = this;
+				if (this.interaction.select.getFeatures().getLength() > 0) {
+					if (this.isOn.modify) {
+						if (!!this.interaction.modify) {
+							this.interaction.select.getFeatures().clear();
+							this.deactiveIntrct("modify");
+							this.deactiveBtn("modiBtn");
+							this.map.removeLayer(this.managed);
+						}
+						return;
+					}
+					if (!this.managed) {
+						this.managed = new ol.layer.Vector({
+							source : this.tempSource
+						});
+						this.managed.set("name", "temp_vector");
+						this.managed.set("id", "temp_vector");
+					}
+					this.interaction.modify = new ol.interaction.Modify({
+						features : this.interaction.select.getFeatures()
+					});
+					this.interaction.modify.on("modifyend", function(evt) {
+						console.log(evt);
+						var layers = that.options.selected();
+						if (layers.length !== 1) {
+							return;
+						}
+						if (that.layer.get("id") === layers[0].get("id")) {
+							var features = evt.features;
+							for (var i = 0; i < features.getLength(); i++) {
+								that.options.record.update(layers[0], features.item(i));
+							}
+						}
+					});
+					this.map.addInteraction(this.interaction.modify);
+					this.deactiveIntrct([ "select", "selectWMS", "move" ]);
+					this.activeIntrct("modify");
+					this.activeBtn("modiBtn");
+				} else {
+					console.error("select features");
+				}
 			},
 			remove : function(layer) {
-				this.activeBtn("delBtn");
+				var that = this;
+				if (this.interaction.select.getFeatures().getLength() > 0) {
+					if (this.isOn.remove) {
+						if (!!this.interaction.remove) {
+							this.interaction.select.getFeatures().clear();
+							// this.deactiveIntrct("move");
+							this.deactiveBtn("removeBtn");
+							this.map.removeLayer(this.managed);
+						}
+						return;
+					}
+					if (!this.managed) {
+						this.managed = new ol.layer.Vector({
+							source : this.tempSource
+						});
+						this.managed.set("name", "temp_vector");
+						this.managed.set("id", "temp_vector");
+					}
+					this.map.addLayer(this.managed);
+					var layers = that.options.selected();
+					if (layers.length !== 1) {
+						return;
+					}
+					if (that.layer.get("id") === layers[0].get("id")) {
+						var features = this.interaction.select.getFeatures();
+						for (var i = 0; i < features.getLength(); i++) {
+							this.managed.getSource().removeFeature(features.item(i));
+							that.options.record.remove(layers[0], features.item(i));
+						}
+					}
+					this.interaction.select.getFeatures().clear();
+					this.map.removeLayer(this.managed);
+
+				} else {
+					console.error("select features");
+				}
 			},
 			setSelected : function(layers) {
 				this.layers = layers;
