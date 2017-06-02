@@ -468,7 +468,7 @@ gitbuilder.ui.EditingTool = $.widget("gitbuilder.editingtool",
 						}
 					});
 					this.map.addInteraction(this.interaction.move);
-					this.deactiveIntrct([ "select", "selectWMS", "modify" ]);
+					this.deactiveIntrct([ "select", "selectWMS", "modify", "rotate" ]);
 					this.activeIntrct("move");
 					this.activeBtn("moveBtn");
 				} else {
@@ -485,6 +485,10 @@ gitbuilder.ui.EditingTool = $.widget("gitbuilder.editingtool",
 							this.deactiveBtn("rotateBtn");
 							this.map.removeLayer(this.managed);
 						}
+						return;
+					}
+					if (this.interaction.select.getFeatures().getLength() !== 1) {
+						console.error("select 1 feature");
 						return;
 					}
 					if (!this.managed) {
@@ -555,7 +559,7 @@ gitbuilder.ui.EditingTool = $.widget("gitbuilder.editingtool",
 						}
 					});
 					this.map.addInteraction(this.interaction.modify);
-					this.deactiveIntrct([ "select", "selectWMS", "move" ]);
+					this.deactiveIntrct([ "select", "selectWMS", "move", "rotate" ]);
 					this.activeIntrct("modify");
 					this.activeBtn("modiBtn");
 				} else {

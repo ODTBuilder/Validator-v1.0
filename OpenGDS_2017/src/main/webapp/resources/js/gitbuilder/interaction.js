@@ -105,6 +105,11 @@ gb.interaction.SelectWMS.prototype.setExtent = function(extent) {
 	});
 };
 
+gb.interaction.MultiTransformEventType = {
+		TRANSFORMSTART : 'transformstart',
+		TRANSFORM : 'transformend'
+};
+
 gb.interaction.MultiTransform = function(opt_options) {
 
 	var options = opt_options ? opt_options : {};
@@ -365,6 +370,11 @@ gb.interaction.MultiTransform.prototype.handleUpEvent = function(evt) {
 		this.flatInteriorPoint = null;
 		element.style.cursor = '';
 	}
+	this.dispatchEvent(
+			new gb.interaction.MultiTransform.Event(
+					gb.interaction.MultiTransformEventType.TRANSFORMEND, feature,
+					evt.coordinate)
+			);
 	return false;
 };
 
