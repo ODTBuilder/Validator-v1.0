@@ -369,6 +369,9 @@ gitbuilder.ui.EditingTool = $.widget("gitbuilder.editingtool",
 					} else {
 						this.tempSelectSource.clear();
 					}
+					if (this.interaction.select instanceof ol.interaction.Select) {
+						this.interaction.select.getFeatures().clear();
+					}
 					this.map.removeInteraction(this.interaction.select);
 					this.interaction.select = new ol.interaction.Select({
 						layers : [ this.tempVector ],
@@ -425,7 +428,7 @@ gitbuilder.ui.EditingTool = $.widget("gitbuilder.editingtool",
 					this.activeIntrct([ "select", "selectWMS", "dragbox" ]);
 					this.isOn.select = true;
 					this.activeBtn("selectBtn");
-					this.deactiveIntrct("move");
+					this.deactiveIntrct([ "move", "rotate" ]);
 				}
 			},
 
@@ -483,7 +486,6 @@ gitbuilder.ui.EditingTool = $.widget("gitbuilder.editingtool",
 							this.interaction.select.getFeatures().clear();
 							this.deactiveIntrct("rotate");
 							this.deactiveBtn("rotateBtn");
-							this.map.removeLayer(this.managed);
 						}
 						return;
 					}
@@ -508,8 +510,8 @@ gitbuilder.ui.EditingTool = $.widget("gitbuilder.editingtool",
 							return;
 						}
 						if (that.layer.get("id") === layers[0].get("id")) {
-							var features = evt.features;
-							that.options.record.update(layers[0], features);
+							var feature = evt.feature;
+							that.options.record.update(layers[0], feature);
 						}
 					});
 					this.map.addInteraction(this.interaction.rotate);
