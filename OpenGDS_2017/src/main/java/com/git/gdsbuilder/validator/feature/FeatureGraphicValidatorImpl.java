@@ -34,16 +34,8 @@
 
 package com.git.gdsbuilder.validator.feature;
 
-import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.lang.model.element.AnnotationMirror;
-import javax.lang.model.element.Element;
-import javax.lang.model.type.ErrorType;
-import javax.lang.model.type.TypeKind;
-import javax.lang.model.type.TypeMirror;
-import javax.lang.model.type.TypeVisitor;
 
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureIterator;
@@ -619,8 +611,7 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 				break;
 			}
 		}
-		if(flag = false){
-			
+		if(flag == false){
 			ErrorFeature errorFeature = new ErrorFeature(simpleFeature.getID(), LayerMiss.Type.LAYERMISS.errType(),
 					LayerMiss.Type.LAYERMISS.errName(), geometry.getInteriorPoint());
 			return errorFeature;

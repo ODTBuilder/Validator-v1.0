@@ -146,7 +146,7 @@ public class CollectionValidator {
 		GeoLayerCollectionList layerCollections = validateLayerCollectionList.getLayerCollectionList();
 
 		// layerMiss 검수
-		//layerMissValidate(types, layerCollections);
+		layerMissValidate(types, layerCollections);
 
 		// geometric 검수
 		geometricValidate(types, layerCollections);
@@ -155,6 +155,7 @@ public class CollectionValidator {
 		attributeValidate(types, layerCollections);
 
 		// 인접도엽 검수
+		
 		closeCollectionValidate(types, layerCollections);
 
 	}
@@ -172,11 +173,12 @@ public class CollectionValidator {
 
 	private void geometricValidate(ValidateLayerTypeList types, GeoLayerCollectionList layerCollections)
 			throws SchemaException, NoSuchAuthorityCodeException, FactoryException, TransformException {
-		System.out.println();
+		ErrorLayerList geoErrorList = new ErrorLayerList();
 		for (int j = 0; j < layerCollections.size(); j++) {
 			GeoLayerCollection collection = layerCollections.get(j);
 			GeoLayer neatLayer = collection.getNeatLine();
 			ErrorLayer errLayer = new ErrorLayer();
+			
 			for (int i = 0; i < types.size(); i++) {
 				// getType
 				ValidateLayerType type = types.get(i);
@@ -271,9 +273,21 @@ public class CollectionValidator {
 				}
 			}
 			errLayer.setCollectionName(collection.getCollectionName());
-			errLayerList.add(errLayer);
+			//errLayerList.add(errLayer);
+			geoErrorList.add(errLayer);
 		}
-
+		
+		for (int i = 0; i < errLayerList.size(); i++) {
+			ErrorLayer errorLayer = errLayerList.get(i);
+			String errorLayerName = errorLayer.getCollectionName();
+			for (int j = 0; j < geoErrorList.size(); j++) {
+				ErrorLayer geoErrLayer = geoErrorList.get(j);
+				String geoErrLayerName = geoErrLayer.getCollectionName();
+				if(errorLayerName.equals(geoErrLayerName)){
+					errorLayer.mergeErrorLayer(geoErrLayer);
+				}
+			}
+		}
 	}
 
 	@SuppressWarnings("unused")
@@ -286,6 +300,7 @@ public class CollectionValidator {
 			for(int j=0; j < types.size(); j++){
 				ValidateLayerType type = types.get(j);
 				GeoLayerList typeLayers = validateLayerCollectionList.getTypeLayers(type.getTypeName(), collection);
+				//System.out.println("type : " +type.getTypeName());
 				List<ValidatorOption> options = type.getOptionList();
 				if(options != null){
 					ErrorLayer typeErrorLayer = null;
@@ -301,6 +316,7 @@ public class CollectionValidator {
 								List<String> typeNames = ((LayerMiss) option).getLayerType();
 								typeErrorLayer = layerValidator.validateLayerMiss(typeNames);
 								layerCollections.remove(typeLayer);  // 레이어 삭제 
+								System.out.println();
 							}
 						}
 					}
