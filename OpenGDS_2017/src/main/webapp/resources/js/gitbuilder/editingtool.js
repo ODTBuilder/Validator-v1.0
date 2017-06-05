@@ -501,20 +501,17 @@ gitbuilder.ui.EditingTool = $.widget("gitbuilder.editingtool",
 					this.interaction.rotate = new gb.interaction.MultiTransform({
 						features : this.interaction.select.getFeatures()
 					});
-					// this.interaction.MultiTransform.on("modifyend",
-					// function(evt) {
-					// console.log(evt);
-					// var layers = that.options.selected();
-					// if (layers.length !== 1) {
-					// return;
-					// }
-					// if (that.layer.get("id") === layers[0].get("id")) {
-					// var features = evt.features;
-					// for (var i = 0; i < features.getLength(); i++) {
-					// that.options.record.update(layers[0], features.item(i));
-					// }
-					// }
-					// });
+					this.interaction.rotate.on("transformend", function(evt) {
+						console.log(evt);
+						var layers = that.options.selected();
+						if (layers.length !== 1) {
+							return;
+						}
+						if (that.layer.get("id") === layers[0].get("id")) {
+							var features = evt.features;
+							that.options.record.update(layers[0], features);
+						}
+					});
 					this.map.addInteraction(this.interaction.rotate);
 					this.deactiveIntrct([ "select", "selectWMS", "move", "modify" ]);
 					this.activeIntrct("rotate");

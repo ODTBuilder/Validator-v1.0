@@ -105,11 +105,6 @@ gb.interaction.SelectWMS.prototype.setExtent = function(extent) {
 	});
 };
 
-gb.interaction.MultiTransformEventType = {
-		TRANSFORMSTART : 'transformstart',
-		TRANSFORM : 'transformend'
-};
-
 gb.interaction.MultiTransform = function(opt_options) {
 
 	var options = opt_options ? opt_options : {};
@@ -254,6 +249,11 @@ gb.interaction.MultiTransform.prototype.handleDownEvent = function(evt) {
 			this.flatInteriorPoint_ = [ x, y ];
 		}
 	}
+	this.dispatchEvent(
+			new gb.interaction.MultiTransform.Event(
+					gb.interaction.MultiTransformEventType.TRANSFORMSTART, feature,
+					evt)
+	);
 	return (!!feature && !!this.task_);
 };
 
@@ -289,7 +289,11 @@ gb.interaction.MultiTransform.prototype.handleDragEvent = function(evt) {
 			feature.getGeometry().scale(magni[1], magni[1], this.flatInteriorPoint_);
 		}
 	}
-
+	this.dispatchEvent(
+			new gb.interaction.MultiTransform.Event(
+					gb.interaction.MultiTransformEventType.TRANSFORMING, feature,
+					evt)
+	);
 	this.prevCursor_ = evt.coordinate;
 };
 
@@ -373,8 +377,8 @@ gb.interaction.MultiTransform.prototype.handleUpEvent = function(evt) {
 	this.dispatchEvent(
 			new gb.interaction.MultiTransform.Event(
 					gb.interaction.MultiTransformEventType.TRANSFORMEND, feature,
-					evt.coordinate)
-			);
+					evt)
+	);
 	return false;
 };
 
@@ -703,6 +707,51 @@ gb.interaction.MultiTransform.prototype.flipAlgorithm_ = function(feature, direc
 	}
 	feature.setGeometry(newGeometry);
 };
+
+/*
+ * MultiTransform event type
+ */
+gb.interaction.MultiTransformEventType = {
+		TRANSFORMSTART : 'transformstart',
+		TRANSFORMING : 'transforming',
+		TRANSFORMEND : 'transformend'
+};
+
+/**
+ * @classdesc Events emitted by {@link gb.interaction.MultiTransform} instances
+ *            are instances of this type.
+ * 
+ * @constructor
+ * @extends {ol.events.Event}
+ * @param {ol.interaction.MultiTransformEventType}
+ *            type Type.
+ * @param {ol.Feature}
+ *            feature The feature modified.
+ * @param {ol.MapBrowserPointerEvent}
+ *            mapBrowserPointerEvent Associated
+ *            {@link ol.MapBrowserPointerEvent}.
+ */
+gb.interaction.MultiTransform.Event = function(type, features, mapBrowserPointerEvent) {
+
+	ol.events.Event.call(this, type);
+
+	/**
+	 * The features being modified.
+	 * 
+	 * @type {ol.Collection.<ol.Feature>}
+	 * @api
+	 */
+	this.features = features;
+
+	/**
+	 * Associated {@link ol.MapBrowserEvent}.
+	 * 
+	 * @type {ol.MapBrowserEvent}
+	 * @api
+	 */
+	this.mapBrowserEvent = mapBrowserPointerEvent;
+};
+ol.inherits(gb.interaction.MultiTransform.Event, ol.events.Event);
 
 gb.interaction.MeasureTip = function(opt_options) {
 
