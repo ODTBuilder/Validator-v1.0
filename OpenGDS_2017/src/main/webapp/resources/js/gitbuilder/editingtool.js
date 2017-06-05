@@ -468,7 +468,7 @@ gitbuilder.ui.EditingTool = $.widget("gitbuilder.editingtool",
 						}
 					});
 					this.map.addInteraction(this.interaction.move);
-					this.deactiveIntrct([ "select", "selectWMS", "modify" ]);
+					this.deactiveIntrct([ "select", "selectWMS", "modify", "rotate" ]);
 					this.activeIntrct("move");
 					this.activeBtn("moveBtn");
 				} else {
@@ -487,6 +487,10 @@ gitbuilder.ui.EditingTool = $.widget("gitbuilder.editingtool",
 						}
 						return;
 					}
+					if (this.interaction.select.getFeatures().getLength() !== 1) {
+						console.error("select 1 feature");
+						return;
+					}
 					if (!this.managed) {
 						this.managed = new ol.layer.Vector({
 							source : this.tempSource
@@ -497,20 +501,17 @@ gitbuilder.ui.EditingTool = $.widget("gitbuilder.editingtool",
 					this.interaction.rotate = new gb.interaction.MultiTransform({
 						features : this.interaction.select.getFeatures()
 					});
-					// this.interaction.MultiTransform.on("modifyend",
-					// function(evt) {
-					// console.log(evt);
-					// var layers = that.options.selected();
-					// if (layers.length !== 1) {
-					// return;
-					// }
-					// if (that.layer.get("id") === layers[0].get("id")) {
-					// var features = evt.features;
-					// for (var i = 0; i < features.getLength(); i++) {
-					// that.options.record.update(layers[0], features.item(i));
-					// }
-					// }
-					// });
+					this.interaction.rotate.on("transformend", function(evt) {
+						console.log(evt);
+						var layers = that.options.selected();
+						if (layers.length !== 1) {
+							return;
+						}
+						if (that.layer.get("id") === layers[0].get("id")) {
+							var features = evt.features;
+							that.options.record.update(layers[0], features);
+						}
+					});
 					this.map.addInteraction(this.interaction.rotate);
 					this.deactiveIntrct([ "select", "selectWMS", "move", "modify" ]);
 					this.activeIntrct("rotate");
@@ -555,7 +556,7 @@ gitbuilder.ui.EditingTool = $.widget("gitbuilder.editingtool",
 						}
 					});
 					this.map.addInteraction(this.interaction.modify);
-					this.deactiveIntrct([ "select", "selectWMS", "move" ]);
+					this.deactiveIntrct([ "select", "selectWMS", "move", "rotate" ]);
 					this.activeIntrct("modify");
 					this.activeBtn("modiBtn");
 				} else {
