@@ -1,5 +1,7 @@
 /**
- * 피처 편집 이력을 관리하는 객체 @ author 소이준 @ date 2017.05.18
+ * 피처 편집 이력을 관리하는 객체 
+ * @author 소이준 
+ * @date 2017.05.18
  */
 
 var gb;
@@ -12,6 +14,15 @@ gb.edit.FeatureRecord = function(obj) {
 	this.modified = {};
 	this.removed = {};
 }
+gb.edit.FeatureRecord.prototype.getCreated = function(){
+	return this.created;
+};
+gb.edit.FeatureRecord.prototype.getModified = function(){
+	return this.modified;
+};
+gb.edit.FeatureRecord.prototype.getRemoved = function(){
+	return this.removed;
+};
 gb.edit.FeatureRecord.prototype.create = function(layer, feature) {
 	if (!this.created[layer.get("id")]) {
 		this.created[layer.get("id")] = {};
@@ -44,9 +55,6 @@ gb.edit.FeatureRecord.prototype.update = function(layer, feature) {
 	}
 	this.modified[layer.get("id")][feature.getId()] = new ol.format.GeoJSON().writeFeature(feature);
 	console.log(this.modified);
-}
-gb.edit.FeatureRecord.prototype.getModified = function() {
-	return this.modified;
 }
 gb.edit.FeatureRecord.prototype.getStructure = function() {
 	var obj = {};
