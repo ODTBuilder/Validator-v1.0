@@ -28,6 +28,7 @@ gb.edit.FeatureRecord.prototype.create = function(layer, feature) {
 		this.created[layer.get("id")] = {};
 	}
 	this.created[layer.get("id")][feature.getId()] = feature;
+	console.log(this.created);
 }
 gb.edit.FeatureRecord.prototype.remove = function(layer, feature) {
 	if (!this.removed[layer.get("id")]) {
