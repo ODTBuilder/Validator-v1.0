@@ -29,6 +29,8 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.springframework.stereotype.Service;
 
+import com.git.gdsbuilder.edit.qa20.EditQA20Collection;
+import com.git.gdsbuilder.edit.qa20.EditQA20LayerCollectionList;
 import com.git.gdsbuilder.type.qa20.feature.QA20Feature;
 import com.git.gdsbuilder.type.qa20.feature.QA20FeatureList;
 import com.git.opengds.file.ngi.service.QA20DBManagerService;
@@ -61,38 +63,46 @@ public class EditServiceImpl implements EditService {
 		Object obj = parser.parse(new FileReader("D:\\editFinal.txt"));
 		JSONObject collectionObject = (JSONObject) obj;
 
-		// JSONObject layerEditObj = (JSONObject) collectionObject.get("layer");
-		// Map<String, Object> edtCollectionListObj =
-		// BuilderJSONParser.parseEditLayerObj(layerEditObj);
-		// Iterator edtLayerIterator = edtCollectionListObj.keySet().iterator();
-		// while (edtLayerIterator.hasNext()) {
-		// String type = (String) edtLayerIterator.next();
-		// EditQA20LayerCollectionList edtCollectionList =
-		// (EditQA20LayerCollectionList) edtCollectionListObj
-		// .get(type);
-		// if (type.equals(this.isNgi)) {
-		// for (int i = 0; i < edtCollectionList.size(); i++) {
-		// EditQA20Collection editCollection = edtCollectionList.get(i);
-		// String collectionName = editCollection.getCollectionName();
-		// // collection 중복 여부 확인
-		// Integer collectionIdx =
-		// editDBManager.checkCollectionName(collectionName);
-		// if (collectionIdx != null) {
-		// // 1. 중복되었을 시(이미 존재하는 collection에 레이어 테이블만 create)
-		// editDBManager.createQa20Layers(type, collectionIdx, editCollection);
-		// } else {
-		// // 2. 중복되지 않았을 시 collection insert 후 레이어 테이블 create
-		// editDBManager.createQa20LayerCollection(type, editCollection);
-		// }
-		// }
-		//
-		// } else if (type.equals(this.isDxf)) {
-		//
-		// } else if (type.equals(this.isShp)) {
-		//
-		// }
-		// }
+		// layerEdit
+		JSONObject layerEditObj = (JSONObject) collectionObject.get("layer");
+		Map<String, Object> edtCollectionListObj = BuilderJSONParser.parseEditLayerObj(layerEditObj);
+		Iterator edtLayerIterator = edtCollectionListObj.keySet().iterator();
+		while (edtLayerIterator.hasNext()) {
+			String type = (String) edtLayerIterator.next();
+			EditQA20LayerCollectionList edtCollectionList = (EditQA20LayerCollectionList) edtCollectionListObj
+					.get(type);
+			if (type.equals(this.isNgi)) {
+				for (int i = 0; i < edtCollectionList.size(); i++) {
+					EditQA20Collection editCollection = edtCollectionList.get(i);
+					String collectionName = editCollection.getCollectionName();
+					if (editCollection.isCreated()) {
+						// collection 중복 여부 확인
+						Integer collectionIdx = editDBManager.checkCollectionName(collectionName);
+						if (collectionIdx != null) {
+							// 1. 중복되었을 시(이미 존재하는 collection에 레이어 테이블만 create)
+							editDBManager.createQa20Layers(type, collectionIdx, editCollection);
+						} else {
+							// 2. 중복되지 않았을 시 collection insert 후 레이어 테이블 create
+							editDBManager.createQa20LayerCollection(type, editCollection);
+						}
+					}
+					if (editCollection.isModified()) {
 
+					}
+					if (editCollection.isDeleted()) {
+						editDBManager.dropQa20LayerCollection(type, editCollection);
+					}
+				}
+			} else if (type.equals(this.isDxf)) {
+
+			} else if (type.equals(this.isShp)) {
+
+			}
+		}
+
+		System.out.println("");
+
+		// featureEdit
 		JSONObject featureEditObj = (JSONObject) collectionObject.get("feature");
 		Map<String, Object> edtFeatureListObj = BuilderJSONParser.parseEditFeatureObj(featureEditObj);
 		Iterator edtFeatureIterator = edtFeatureListObj.keySet().iterator();
@@ -107,17 +117,23 @@ public class EditServiceImpl implements EditService {
 					for (int i = 0; i < createFeatureList.size(); i++) {
 						QA20Feature createFeature = createFeatureList.get(i);
 						editDBManager.insertCreateFeature(layerName, createFeature);
-	
 					}
-					System.out.println("");
 				} else if (state.equals("modified")) {
-					QA20Feature createFeature = (QA20Feature) editMap.get(state);
-					System.out.println("");
+					QA20FeatureList modifyFeatureList = (QA20FeatureList) editMap.get(state);
+					for (int i = 0; i < modifyFeatureList.size(); i++) {
+						QA20Feature modifyFeature = modifyFeatureList.get(i);
+						editDBManager.updateModifyFeature(layerName, modifyFeature);
+					}
 				} else if (state.equals("removed")) {
 					List<String> featureIdList = (List<String>) editMap.get(state);
-					System.out.println("");
+					for (int i = 0; i < featureIdList.size(); i++) {
+						String featureId = featureIdList.get(i);
+						editDBManager.deleteRemovedFeature(layerName, featureId);
+					}
 				}
 			}
 		}
+
+		System.out.println("");
 	}
 }
