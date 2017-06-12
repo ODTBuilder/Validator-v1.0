@@ -249,5 +249,10 @@ public class NGIHeader {
 	public void setText_represent(List<String> text_represent) {
 		this.text_represent = text_represent;
 	}
+	
+	
+	public void addRegion_represent(String region_represent) {
+		this.region_represent.add(region_represent);
+	}
 
 }

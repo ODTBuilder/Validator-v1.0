@@ -37,11 +37,6 @@ import com.vividsolutions.jts.io.geojson.GeoJsonReader;
  */
 public class EditFeatureParser {
 
-	protected static final String none = "none";
-	protected static final String isEdited = "modify";
-	protected static final String isCreated = "create";
-	protected static final String isDeleted = "delete";
-
 	JSONObject featureObj;
 	Feature feature;
 	QA20Feature qa20Feature;
@@ -93,6 +88,6 @@ public class EditFeatureParser {
 			Object value = propertiesObj.get(key);
 			properties.put(key, value);
 		}
-		qa20Feature = new QA20Feature(featureID, featureType, numparts, coorSize, geom, null);
+		qa20Feature = new QA20Feature(featureID, featureType, numparts, coorSize, geom, null, properties);
 	}
 }

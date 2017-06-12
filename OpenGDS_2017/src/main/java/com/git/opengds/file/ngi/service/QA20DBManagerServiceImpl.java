@@ -46,11 +46,12 @@ public class QA20DBManagerServiceImpl implements QA20DBManagerService {
 
 	@Inject
 	private QA20LayerCollectionDAO dao;
-	
+
 	@Inject
 	private GeoserverService geoserverService;
 
-	public GeoLayerInfo insertQA20LayerCollection(QA20LayerCollection dtCollection, GeoLayerInfo layerInfo) throws Exception {
+	public GeoLayerInfo insertQA20LayerCollection(QA20LayerCollection dtCollection, GeoLayerInfo layerInfo)
+			throws Exception {
 
 		DefaultTransactionDefinition def = new DefaultTransactionDefinition();
 		def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
@@ -78,11 +79,13 @@ public class QA20DBManagerServiceImpl implements QA20DBManagerService {
 				for (int j = 0; j < qa20Layers.size(); j++) {
 					dao.insertQA20Layer(qa20Layers.get(j));
 				}
-				
+
 				// select Boundary
-//				HashMap<String, Object> selectBDQuery = dbManager.qa20LayerTbBoundaryQuery(layerID);
-//				HashMap<String, Object> boundryMap = dao.selectQA20LayerBD(selectBDQuery);
-				
+				// HashMap<String, Object> selectBDQuery =
+				// dbManager.qa20LayerTbBoundaryQuery(layerID);
+				// HashMap<String, Object> boundryMap =
+				// dao.selectQA20LayerBD(selectBDQuery);
+
 				// aspatial_field_def
 				List<HashMap<String, Object>> fieldDefs = dbManager.aspatialFieldDefs(layerID);
 				if (fieldDefs != null) {
@@ -122,7 +125,6 @@ public class QA20DBManagerServiceImpl implements QA20DBManagerService {
 						dao.insertTextRepresent(txtReps.get(j));
 					}
 				}
-
 				// geoLayerInfo
 				String layerName = (String) metadata.get("layerName");
 				layerInfo.putLayerName(layerName);
@@ -130,7 +132,7 @@ public class QA20DBManagerServiceImpl implements QA20DBManagerService {
 				layerInfo.putLayerType(layerName, layerType);
 				List<String> columns = dbManager.getLayerCoulmns(layerID);
 				layerInfo.putLayerColumns(layerName, columns);
-				//layerInfo.putLayerBoundary(layerName, boundryMap);
+				// layerInfo.putLayerBoundary(layerName, boundryMap);
 			}
 		} catch (Exception e) {
 			txManager.rollback(status);

@@ -11,15 +11,24 @@
 		values( #{file_name} );
 	</insert>
 
-	<!-- qa20_layer_tb -->
+	<select id="selectLayerCollectionIdx" parameterType="hashMap"
+		resultType="hashMap">
+		${selectQuery}
+	</select>
+
+	<!-- qa20_layer -->
 	<select id="createQA20LayerTb" parameterType="hashMap">
 		${createQuery}
 	</select>
 
-	<!-- qa20_layer -->
 	<insert id="insertQA20Layer" parameterType="hashmap">
 		${insertQuery}
 	</insert>
+
+	<select id="selectCountAllFeatures" parameterType="hashMap"
+		resultType="hashMap">
+		${countQuery}
+	</select>
 
 	<!-- qa20_layer_metadata -->
 	<insert id="insertQA20LayerMetadata" parameterType="hashmap">
@@ -42,6 +51,14 @@
 		#{ngiBound}, #{ptRepresent},
 		#{lnRepresent},
 		#{rgRepresent}, #{txRepresent}, #{c_idx_seq})
+	</insert>
+
+	<insert id="insertQA20LayerMetadataEdit" parameterType="hashmap"
+		useGeneratedKeys="true">
+		${insertQuery}
+		<selectKey keyProperty="lm_idx" resultType="int" order="AFTER">
+			select currval('qa20_layer_metadata_lm_idx_seq')
+		</selectKey>
 	</insert>
 
 	<!-- nda_aspatial_field_def -->
@@ -116,10 +133,25 @@
 		(#{tRepNo}, #{tRepValue}, #{lm_idx_seq});
 	</insert>
 
-	<select id="selectCountAllFeatures" parameterType="hashMap"
-		resultType="hashMap">
-		${countQuery}
-	</select>
+	<insert id="insertNdaAspatialFieldDefsEdit" parameterType="hashmap">
+		${insertQuery}
+	</insert>
+
+	<insert id="insertPointRepresentEdit" parameterType="hashmap">
+		${insertQuery}
+	</insert>
+
+	<insert id="insertLineStringRepresentEdit" parameterType="hashmap">
+		${insertQuery}
+	</insert>
+
+	<insert id="insertRegionRepresentEdit" parameterType="hashmap">
+		${insertQuery}
+	</insert>
+
+	<insert id="insertTextRepresentEdit" parameterType="hashmap">
+		${insertQuery}
+	</insert>
 
 
 </mapper>

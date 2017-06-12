@@ -22,7 +22,7 @@ public class QA10FileUploadServiceImpl implements QA10FileUploadService {
 	private GeoserverService geoserverService;
 
 	@Override
-	public FileMeta test(FileMeta fileMeta) throws Exception {
+	public FileMeta dxfUpload(FileMeta fileMeta) throws Exception {
 
 		FileMeta file = fileMeta;
 		file.setOriginSrc("EPSG:5186");

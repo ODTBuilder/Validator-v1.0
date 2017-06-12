@@ -36,8 +36,11 @@ package com.git.opengds.parser.json;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import org.geotools.feature.SchemaException;
 import org.json.simple.JSONArray;
@@ -45,6 +48,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import com.git.gdsbuilder.edit.qa20.EditQA20LayerCollectionList;
 import com.git.gdsbuilder.type.geoserver.collection.GeoLayerCollectionList;
 import com.git.gdsbuilder.type.geoserver.parser.GeoLayerCollectionParser;
 import com.git.gdsbuilder.type.qa20.feature.QA20Feature;
@@ -96,29 +100,37 @@ public class BuilderJSONParser {
 		}
 	}
 
-	public static HashMap<String, Object> parseEditObj(JSONObject editObj)
+	public static Map<String, Object> parseEditLayerObj(JSONObject editLayerObj)
 			throws FileNotFoundException, IOException, com.vividsolutions.jts.io.ParseException, SchemaException {
 
-		JSONObject layerEditObj = (JSONObject) editObj.get("layer");
-		Iterator layerIterator = layerEditObj.keySet().iterator();
+		// layer 편집
+		Map<String, Object> editLayerListMap = new HashMap<String, Object>();
+		Iterator layerIterator = editLayerObj.keySet().iterator();
 		while (layerIterator.hasNext()) {
 			String type = (String) layerIterator.next();
-			JSONObject collectionListObj = (JSONObject) layerEditObj.get(type);
+			JSONObject collectionListObj = (JSONObject) editLayerObj.get(type);
 			EditLayerCollectionListParser editLayerCollectionListParser = new EditLayerCollectionListParser(type,
 					collectionListObj);
+			EditQA20LayerCollectionList edtCollectionList = editLayerCollectionListParser.getEdtCollectionList();
+			editLayerListMap.put(type, edtCollectionList);
 		}
+		return editLayerListMap;
+	}
 
-		JSONObject featureEditObj = (JSONObject) editObj.get("feature");
-		QA20LayerList layerList = new QA20LayerList();
-		Iterator featureIterator = featureEditObj.keySet().iterator();
+	public static Map<String, Object> parseEditFeatureObj(JSONObject editFeatureObj)
+			throws com.vividsolutions.jts.io.ParseException {
+		// feature 편집
+		Map<String, Object> editFeatureListMap = new HashMap<String, Object>();
+		Iterator featureIterator = editFeatureObj.keySet().iterator();
 		while (featureIterator.hasNext()) {
 			String layerName = (String) featureIterator.next();
-			JSONObject stateObj = (JSONObject) featureEditObj.get(layerName);
-			QA20FeatureList featureList = new QA20FeatureList();
+			Map<String, Object> editFeatureMap = new HashMap<String, Object>();
+			JSONObject stateObj = (JSONObject) editFeatureObj.get(layerName);
 			Iterator stateIterator = stateObj.keySet().iterator();
 			while (stateIterator.hasNext()) {
 				String state = (String) stateIterator.next();
 				if (state.equals("created")) {
+					QA20FeatureList featureList = new QA20FeatureList();
 					JSONObject featuresObj = (JSONObject) stateObj.get(state);
 					JSONArray featuresArry = (JSONArray) featuresObj.get("features");
 					for (int i = 0; i < featuresArry.size(); i++) {
@@ -127,16 +139,20 @@ public class BuilderJSONParser {
 						QA20Feature feature = featureParser.getQa20Feature();
 						featureList.add(feature);
 					}
+					editFeatureMap.put("created", featureList);
 				} else if (state.equals("modified")) {
-
 				} else if (state.equals("removed")) {
-
+					List<String> featureIdList = new ArrayList<String>();
+					JSONArray featuresArr = (JSONArray) stateObj.get(state);
+					for (int i = 0; i < featuresArr.size(); i++) {
+						String featureId = (String) featuresArr.get(i);
+						featureIdList.add(featureId);
+					}
+					editFeatureMap.put("removed", featureIdList);
 				}
 			}
-			QA20Layer layer = new QA20Layer();
-			layer.setFeatures(featureList);
-			layerList.add(layer);
+			editFeatureListMap.put(layerName, editFeatureMap);
 		}
-		return null;
+		return editFeatureListMap;
 	}
 }

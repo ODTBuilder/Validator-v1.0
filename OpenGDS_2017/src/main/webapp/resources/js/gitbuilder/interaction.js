@@ -40,7 +40,6 @@ gb.interaction.SelectWMS.prototype.handleEvent = function(evt) {
 	var that = this;
 	this.map_ = evt.map;
 	if (evt.type === "singleclick") {
-		console.log(evt);
 		var ext = [evt.coordinate[0] , evt.coordinate[1] , evt.coordinate[0] , evt.coordinate[1]];
 		this.setExtent(ext);
 	}
@@ -60,7 +59,6 @@ gb.interaction.SelectWMS.prototype.setExtent = function(extent) {
 	if (!(this.layer.getSource().getParams().CRS || this.layer.getSource().getParams().SRS)) {
 		console.error("no params");
 	}
-// this.map_ = evt.map;
 	this.extent_ = extent;
 	var that = this;
 	var url = this.layer.getSource().getGetFeatureInfoUrl(extent, this.map_.getView().getResolution(),
@@ -77,10 +75,10 @@ gb.interaction.SelectWMS.prototype.setExtent = function(extent) {
 			"format_options" : "callback:getJson"
 	};
 	var addr = "geoserver2/geoserverWFSGetFeature.ajax";
-	console.log(addr);
+
 	$.ajax({
 		url : addr,
-		data : params,
+		data : param,
 		dataType : 'jsonp',
 		jsonpCallback : 'getJson',
 		beforeSend : function(){
@@ -96,7 +94,6 @@ gb.interaction.SelectWMS.prototype.setExtent = function(extent) {
 			for (var i = 0; i < features.length; i++) {
 				ids.push(features[i].getId());
 			}
-// that.features_.extend();
 			that.destination_.getSource().addFeatures(features);
 			that.destination_.setMap(that.map_);
 			that.select_.getFeatures().clear();
@@ -253,6 +250,11 @@ gb.interaction.MultiTransform.prototype.handleDownEvent = function(evt) {
 			this.flatInteriorPoint_ = [ x, y ];
 		}
 	}
+	this.dispatchEvent(
+			new gb.interaction.MultiTransform.Event(
+					gb.interaction.MultiTransformEventType.TRANSFORMSTART, feature,
+					evt)
+	);
 	return (!!feature && !!this.task_);
 };
 
@@ -288,7 +290,11 @@ gb.interaction.MultiTransform.prototype.handleDragEvent = function(evt) {
 			feature.getGeometry().scale(magni[1], magni[1], this.flatInteriorPoint_);
 		}
 	}
-
+	this.dispatchEvent(
+			new gb.interaction.MultiTransform.Event(
+					gb.interaction.MultiTransformEventType.TRANSFORMING, feature,
+					evt)
+	);
 	this.prevCursor_ = evt.coordinate;
 };
 
@@ -369,6 +375,11 @@ gb.interaction.MultiTransform.prototype.handleUpEvent = function(evt) {
 		this.flatInteriorPoint = null;
 		element.style.cursor = '';
 	}
+	this.dispatchEvent(
+			new gb.interaction.MultiTransform.Event(
+					gb.interaction.MultiTransformEventType.TRANSFORMEND, feature,
+					evt)
+	);
 	return false;
 };
 
@@ -697,6 +708,51 @@ gb.interaction.MultiTransform.prototype.flipAlgorithm_ = function(feature, direc
 	}
 	feature.setGeometry(newGeometry);
 };
+
+/*
+ * MultiTransform event type
+ */
+gb.interaction.MultiTransformEventType = {
+		TRANSFORMSTART : 'transformstart',
+		TRANSFORMING : 'transforming',
+		TRANSFORMEND : 'transformend'
+};
+
+/**
+ * @classdesc Events emitted by {@link gb.interaction.MultiTransform} instances
+ *            are instances of this type.
+ * 
+ * @constructor
+ * @extends {ol.events.Event}
+ * @param {ol.interaction.MultiTransformEventType}
+ *            type Type.
+ * @param {ol.Feature}
+ *            feature The feature modified.
+ * @param {ol.MapBrowserPointerEvent}
+ *            mapBrowserPointerEvent Associated
+ *            {@link ol.MapBrowserPointerEvent}.
+ */
+gb.interaction.MultiTransform.Event = function(type, features, mapBrowserPointerEvent) {
+
+	ol.events.Event.call(this, type);
+
+	/**
+	 * The features being modified.
+	 * 
+	 * @type {ol.Collection.<ol.Feature>}
+	 * @api
+	 */
+	this.features = features;
+
+	/**
+	 * Associated {@link ol.MapBrowserEvent}.
+	 * 
+	 * @type {ol.MapBrowserEvent}
+	 * @api
+	 */
+	this.mapBrowserEvent = mapBrowserPointerEvent;
+};
+ol.inherits(gb.interaction.MultiTransform.Event, ol.events.Event);
 
 gb.interaction.MeasureTip = function(opt_options) {
 

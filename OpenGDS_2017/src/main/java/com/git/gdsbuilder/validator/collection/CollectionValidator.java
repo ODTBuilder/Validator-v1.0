@@ -138,6 +138,34 @@ public class CollectionValidator {
 		ValidateLayerTypeList types = validateLayerCollectionList.getValidateLayerTypeList();
 		GeoLayerCollectionList layerCollections = validateLayerCollectionList.getLayerCollectionList();
 
+		// layerMiss 검수
+		layerMissValidate(types, layerCollections);
+
+		// geometric 검수
+		geometricValidate(types, layerCollections);
+
+		// attribute 검수
+		attributeValidate(types, layerCollections);
+
+		// 인접도엽 검수
+		closeCollectionValidate(types, layerCollections);
+
+	}
+	// closeValidate
+
+	private void closeCollectionValidate(ValidateLayerTypeList types, GeoLayerCollectionList layerCollections) {
+		// TODO Auto-generated method stub
+
+	}
+
+	private void attributeValidate(ValidateLayerTypeList types, GeoLayerCollectionList layerCollections) {
+		// TODO Auto-generated method stub
+
+	}
+
+	private void geometricValidate(ValidateLayerTypeList types, GeoLayerCollectionList layerCollections)
+			throws SchemaException, NoSuchAuthorityCodeException, FactoryException, TransformException {
+
 		for (int j = 0; j < layerCollections.size(); j++) {
 			GeoLayerCollection collection = layerCollections.get(j);
 			GeoLayer neatLayer = collection.getNeatLine();
@@ -149,7 +177,7 @@ public class CollectionValidator {
 				GeoLayerList typeLayers = validateLayerCollectionList.getTypeLayers(type.getTypeName(), collection);
 				// getTypeOption
 				List<ValidatorOption> options = type.getOptionList();
-				if (options != null){
+				if (options != null) {
 					// typeValidate
 					ErrorLayer typeErrorLayer = null;
 					for (int k = 0; k < options.size(); k++) {
@@ -229,7 +257,11 @@ public class CollectionValidator {
 			errLayer.setCollectionName(collection.getCollectionName());
 			errLayerList.add(errLayer);
 		}
+
 	}
-	// closeValidate
+
+	private void layerMissValidate(ValidateLayerTypeList types, GeoLayerCollectionList layerCollections) {
+		// TODO Auto-generated method stub
+	}
 
 }
