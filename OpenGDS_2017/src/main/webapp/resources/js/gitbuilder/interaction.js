@@ -67,7 +67,7 @@ gb.interaction.SelectWMS.prototype.setExtent = function(extent) {
 			this.layer.getSource().getParams().CRS ? this.layer.getSource().getParams().CRS : this.layer.getSource().getParams().SRS, {
 				'INFO_FORMAT' : 'text/html'
 			});
-	var param = {
+	var params = {
 			"service" : "WFS",
 			"version" : "1.0.0",
 			"request" : "GetFeature",
@@ -76,10 +76,11 @@ gb.interaction.SelectWMS.prototype.setExtent = function(extent) {
 			"bbox" : extent.toString(),
 			"format_options" : "callback:getJson"
 	};
-	var addr = "http://175.116.181.42:9990/geoserver/ows?"+ $.param(param);
+	var addr = "geoserver2/geoserverWFSGetFeature.ajax";
 	console.log(addr);
 	$.ajax({
 		url : addr,
+		data : params,
 		dataType : 'jsonp',
 		jsonpCallback : 'getJson',
 		beforeSend : function(){

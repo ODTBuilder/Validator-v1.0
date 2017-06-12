@@ -58,6 +58,13 @@ public class GeoserverController{
 	@Autowired
 	private GeoserverLayerProxyService proService = new GeoserverLayerProxyServiceImpl();
 	
+	
+	@RequestMapping(value="/downloadRequest.do")
+	public void geoserverDataDownload(HttpServletRequest request , HttpServletResponse response){
+		proService.requestGeoserverDataOutput(request, response);
+	}
+	
+	
 	/**
 	 * 트리 형태의 GeoLayerCollection 객체 생성
 	 * @author JY.Kim
@@ -82,18 +89,39 @@ public class GeoserverController{
  	 * @throws IOException void
  	 * @throws
  	 * */
- 	@RequestMapping(value="geoserverWMSLayerLoad.do")
+ /*	@RequestMapping(value="geoserverWMSLayerLoad.do")
 	@ResponseBody
 	public void geoserverWMSLoad(HttpServletRequest request , HttpServletResponse response) throws ServletException, IOException {
 		proService.requestWMSLayer(request, response);
-	}
+	}*/
  	
- 	@RequestMapping(value="geoserverWFSLayerLoad.do")
+	/**
+ 	 * WMS레이어 요청
+ 	 * @author SG.Lee
+ 	 * @Date 2017. 4
+ 	 * @param request
+ 	 * @param response
+ 	 * @throws ServletException
+ 	 * @throws IOException void
+ 	 * @throws
+ 	 * */
+ 	@RequestMapping(value="geoserverWMSLayerLoad.do")
 	@ResponseBody
-	public void geoserverWFSLoad(HttpServletRequest request , HttpServletResponse response) throws ServletException, IOException {
-		proService.requestWFSLayer(request, response);
+	public void geoserverWMSLoad(HttpServletRequest request , HttpServletResponse response) throws ServletException, IOException {
+ 		proService.requestGeoserverDataOutput(request, response);
 	}
  	
+ 	
+ 	/**
+ 	 * WFSGetFeature 
+ 	 * @author SG.Lee
+ 	 * @Date 2017. 6. 5. 오전 11:50:04
+ 	 * @param request
+ 	 * @param response
+ 	 * @throws ServletException
+ 	 * @throws IOException void
+ 	 * @throws
+ 	 * */
  	@RequestMapping(value="geoserverWFSGetFeature.ajax")
 	@ResponseBody
 	public void geoserverWFSGetFeature(HttpServletRequest request , HttpServletResponse response) throws ServletException, IOException {
@@ -116,7 +144,7 @@ public class GeoserverController{
 		List<String> geoLayerList = new ArrayList<String>();
 		geoLayerList = (ArrayList<String>) jsonObject.get("geoLayerList");
 		if(geoLayerList.size()==0){
-			return null;
+			return null; 
 		}
 		else
 			return geoserverService.getGeoLayerList((ArrayList<String>) geoLayerList);
@@ -144,4 +172,43 @@ public class GeoserverController{
 		else
 			return geoserverService.getGeoGroupLayerList((ArrayList<String>) geoLayerList);
 	}
+	
+	
+	@RequestMapping(value="publishGeoserverStyle.do")
+	@ResponseBody
+	public void publishGeoserverStyle(HttpServletRequest request , @RequestBody JSONObject jsonObject){
+		String sldBody = (String) jsonObject.get("sldBody");
+		String name = (String) jsonObject.get("name");
+		
+		geoserverService.publishStyle(sldBody, name);
+	}
+	
+	@RequestMapping(value="updateGeoserverStyle.do")
+	@ResponseBody
+	public void updateGeoserverStyle(HttpServletRequest request , @RequestBody JSONObject jsonObject){
+		String sldBody = (String) jsonObject.get("sldBody");
+		String name = (String) jsonObject.get("name");
+		
+		geoserverService.updateStyle(sldBody, name);
+	}
+	
+	@RequestMapping(value="removeGeoserverStyle.do")
+	@ResponseBody
+	public void removeGeoserverStyle(HttpServletRequest request , @RequestBody JSONObject jsonObject){
+		String name = (String) jsonObject.get("name");
+		
+		geoserverService.removeStyle(name);
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 }

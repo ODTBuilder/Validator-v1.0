@@ -1,19 +1,22 @@
 package com.git.gdsbuilder.geoserver.service.wfs;
 
+import com.git.gdsbuilder.geoserver.service.en.EnGeoserverService;
+
 public class WFSGetFeature {
-	private final static String SERVICE = "WFS";
+	private final static String SERVICE = EnGeoserverService.WFS.getState();
 	private final static String REQUEST = "GetFeature";
 	
 	private String serverURL ="";
 	private String version="1.1.1";
 	private String typeName="";
 	private String outputformat="text/javascript";
+	private int maxFeatures = 0; 
 	private String bbox="";
-	private String format_options="callback:getJson";
+	private String format_options="";
 	
 	public WFSGetFeature(){};
 	
-	public WFSGetFeature(String serverURL, String version, String typeName, String outputformat, String bbox,
+	public WFSGetFeature(String serverURL, String version, String typeName, String outputformat, int maxFeatures, String bbox,
 			String format_options) {
 		super();
 		if(!serverURL.trim().equals("")){
@@ -27,6 +30,9 @@ public class WFSGetFeature {
 		}
 		if (!outputformat.trim().equals("")) {
 			this.outputformat = outputformat;
+		}
+		if (maxFeatures!=0) {
+			this.maxFeatures = maxFeatures;
 		}
 		if (!bbox.trim().equals("")) {
 			this.bbox = bbox;
@@ -76,6 +82,12 @@ public class WFSGetFeature {
 	public void setOutputformat(String outputformat) {
 		this.outputformat = outputformat;
 	}
+	public int getMaxFeatures() {
+		return maxFeatures;
+	}
+	public void setMaxFeatures(int maxFeatures) {
+		this.maxFeatures = maxFeatures;
+	}
 	public String getBbox() {
 		return bbox;
 	}
@@ -97,29 +109,33 @@ public class WFSGetFeature {
 	
 	public String getWFSGetFeatureURL(){
 		StringBuffer urlBuffer = new StringBuffer();
-		if(!this.serverURL.equals("")){
+		if(!this.serverURL.trim().equals("")){
 			urlBuffer.append(serverURL);
 			urlBuffer.append("?");
 			urlBuffer.append("request="+REQUEST);
 			urlBuffer.append("&");
 			urlBuffer.append("service="+SERVICE);
-			if(!this.version.equals("")){
+			if(!this.version.trim().equals("")){
 				urlBuffer.append("&");
 				urlBuffer.append("version="+version);
 			}
-			if(!this.typeName.equals("")){
+			if(!this.typeName.trim().equals("")){
 				urlBuffer.append("&");
 				urlBuffer.append("typeName="+typeName);
 			}
-			if(!this.outputformat.equals("")){
+			if(!this.outputformat.trim().equals("")){
 				urlBuffer.append("&");
 				urlBuffer.append("outputformat="+outputformat);
 			}
-			if(!this.bbox.equals("")){
+			if(this.maxFeatures!=0){
+				urlBuffer.append("&");
+				urlBuffer.append("maxFeatures="+String.valueOf(maxFeatures));
+			}
+			if(!this.bbox.trim().equals("")){
 				urlBuffer.append("&");
 				urlBuffer.append("bbox="+bbox);
 			}
-			if(!this.format_options.equals("")){
+			if(!this.format_options.trim().equals("")){
 				urlBuffer.append("&");
 				urlBuffer.append("format_options="+format_options);
 			}

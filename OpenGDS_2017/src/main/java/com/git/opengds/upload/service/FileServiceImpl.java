@@ -58,7 +58,7 @@ public class FileServiceImpl implements FileService {
 		//최상위 디렉토리 생성
 		if(!dir.exists()){
 			dir.mkdirs();
-		}	
+		}
 		
 		//사용자별 디렉토리 생성
 		if(!targetDir.exists()){
