@@ -30,8 +30,8 @@ ol.interaction.Draw.prototype.switchType_ = function(){
 	this.mode_ = ol.interaction.Draw.getMode_(this.type_);
 	/**
 	 * The number of points that must be drawn before a polygon ring or line
-	 * string can be finished. The default is 3 for polygon rings and 2 for
-	 * line strings.
+	 * string can be finished. The default is 3 for polygon rings and 2 for line
+	 * strings.
 	 * 
 	 * @type {number}
 	 * @private
@@ -41,63 +41,67 @@ ol.interaction.Draw.prototype.switchType_ = function(){
 	} else {
 		this.minPoints_ = 2;
 	}
-	
-	  var geometryFunction;
-	  if (!geometryFunction) {
-	    if (this.type_ === ol.geom.GeometryType.CIRCLE) {
-	      /**
-	       * @param {ol.Coordinate|Array.<ol.Coordinate>|Array.<Array.<ol.Coordinate>>} coordinates
-	       *     The coordinates.
-	       * @param {ol.geom.SimpleGeometry=} opt_geometry Optional geometry.
-	       * @return {ol.geom.SimpleGeometry} A geometry.
-	       */
-	      geometryFunction = function(coordinates, opt_geometry) {
-	        var circle = opt_geometry ? /** @type {ol.geom.Circle} */ (opt_geometry) :
-	            new ol.geom.Circle([NaN, NaN]);
-	        var squaredLength = ol.coordinate.squaredDistance(
-	            coordinates[0], coordinates[1]);
-	        circle.setCenterAndRadius(coordinates[0], Math.sqrt(squaredLength));
-	        return circle;
-	      };
-	    } else {
-	      var Constructor;
-	      var mode = this.mode_;
-	      if (mode === ol.interaction.Draw.Mode_.POINT) {
-	        Constructor = ol.geom.Point;
-	      } else if (mode === ol.interaction.Draw.Mode_.LINE_STRING) {
-	        Constructor = ol.geom.LineString;
-	      } else if (mode === ol.interaction.Draw.Mode_.POLYGON) {
-	        Constructor = ol.geom.Polygon;
-	      }
-	      /**
-	       * @param {ol.Coordinate|Array.<ol.Coordinate>|Array.<Array.<ol.Coordinate>>} coordinates
-	       *     The coordinates.
-	       * @param {ol.geom.SimpleGeometry=} opt_geometry Optional geometry.
-	       * @return {ol.geom.SimpleGeometry} A geometry.
-	       */
-	      geometryFunction = function(coordinates, opt_geometry) {
-	        var geometry = opt_geometry;
-	        if (geometry) {
-	          if (mode === ol.interaction.Draw.Mode_.POLYGON) {
-	            geometry.setCoordinates([coordinates[0].concat([coordinates[0][0]])]);
-	          } else {
-	            geometry.setCoordinates(coordinates);
-	          }
-	        } else {
-	          geometry = new Constructor(coordinates);
-	        }
-	        return geometry;
-	      };
-	    }
-	  }
 
-	  /**
-	   * @type {ol.DrawGeometryFunctionType}
-	   * @private
-	   */
-	  this.geometryFunction_ = geometryFunction;
-	  console.log(this.sketchCoords_);
-	  console.log(this.sketchLineCoords_);
+	var geometryFunction;
+	if (!geometryFunction) {
+		if (this.type_ === ol.geom.GeometryType.CIRCLE) {
+			/**
+			 * @param {ol.Coordinate|Array.
+			 *            <ol.Coordinate>|Array.<Array.<ol.Coordinate>>}
+			 *            coordinates The coordinates.
+			 * @param {ol.geom.SimpleGeometry=}
+			 *            opt_geometry Optional geometry.
+			 * @return {ol.geom.SimpleGeometry} A geometry.
+			 */
+			geometryFunction = function(coordinates, opt_geometry) {
+				var circle = opt_geometry ? /** @type {ol.geom.Circle} */ (opt_geometry) :
+					new ol.geom.Circle([NaN, NaN]);
+				var squaredLength = ol.coordinate.squaredDistance(
+						coordinates[0], coordinates[1]);
+				circle.setCenterAndRadius(coordinates[0], Math.sqrt(squaredLength));
+				return circle;
+			};
+		} else {
+			var Constructor;
+			var mode = this.mode_;
+			if (mode === ol.interaction.Draw.Mode_.POINT) {
+				Constructor = ol.geom.Point;
+			} else if (mode === ol.interaction.Draw.Mode_.LINE_STRING) {
+				Constructor = ol.geom.LineString;
+			} else if (mode === ol.interaction.Draw.Mode_.POLYGON) {
+				Constructor = ol.geom.Polygon;
+			}
+			/**
+			 * @param {ol.Coordinate|Array.
+			 *            <ol.Coordinate>|Array.<Array.<ol.Coordinate>>}
+			 *            coordinates The coordinates.
+			 * @param {ol.geom.SimpleGeometry=}
+			 *            opt_geometry Optional geometry.
+			 * @return {ol.geom.SimpleGeometry} A geometry.
+			 */
+			geometryFunction = function(coordinates, opt_geometry) {
+				var geometry = opt_geometry;
+				if (geometry) {
+					if (mode === ol.interaction.Draw.Mode_.POLYGON) {
+						geometry.setCoordinates([coordinates[0].concat([coordinates[0][0]])]);
+					} else {
+						geometry.setCoordinates(coordinates);
+					}
+				} else {
+					geometry = new Constructor(coordinates);
+				}
+				return geometry;
+			};
+		}
+	}
+
+	/**
+	 * @type {ol.DrawGeometryFunctionType}
+	 * @private
+	 */
+	this.geometryFunction_ = geometryFunction;
+	console.log(this.sketchCoords_);
+	console.log(this.sketchLineCoords_);
 }
 /**
  * 드로우 인터렉션 핸들다운 이벤트 오버라이드
@@ -149,6 +153,7 @@ gb.interaction.SelectWMS = function(opt_options) {
 	this.destination_ = options.destination ? options.destination : new ol.layer.Vector({
 		source : this.source_
 	});
+	this.record = options.record;
 	ol.interaction.Interaction.call(this, {
 		handleEvent : gb.interaction.SelectWMS.prototype.handleEvent
 	});
@@ -214,10 +219,25 @@ gb.interaction.SelectWMS.prototype.setExtent = function(extent) {
 			}
 			that.destination_.getSource().addFeatures(features);
 			that.destination_.setMap(that.map_);
+
+			var selFeatures = that.select_.getFeatures();
+			var cFeatures = [];
+			for (var k = 0; k < selFeatures.getLength(); k++) {
+				if (selFeatures.item(k).getId().search(that.layer.get("id")+".new") !== -1) {
+					cFeatures.push(selFeatures.item(k));
+				} else {
+					if (!that.record.isRemoved(that.layer, selFeatures.item(k))) {
+						cFeatures.push(selFeatures.item(k));
+					}
+				}
+			}
 			that.select_.getFeatures().clear();
+			that.select_.getFeatures().extend(cFeatures);
 			var newFeatures = [];
 			for (var j = 0; j < ids.length; j++) {
-				newFeatures.push(that.destination_.getSource().getFeatureById(ids[j]));
+				if (!that.record.isRemoved(that.layer, that.destination_.getSource().getFeatureById(ids[j]))) {
+					newFeatures.push(that.destination_.getSource().getFeatureById(ids[j]));	
+				}
 			}
 			that.select_.getFeatures().extend(newFeatures);
 		}

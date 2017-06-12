@@ -280,7 +280,9 @@ html {
 			}
 		});
 
-		var record = new gb.edit.FeatureRecord();
+		var record = new gb.edit.FeatureRecord({
+			id : "feature_id"
+		});
 
 		$("#edit").editingtool({
 			geoserverURL : "http://175.116.181.42:9990/geoserver/",
