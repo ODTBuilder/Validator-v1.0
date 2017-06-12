@@ -69,10 +69,14 @@ gb.edit.FeatureRecord.prototype.update = function(layer, feature) {
 	if (!this.modified) {
 		this.modified = {};
 	}
-	if (!this.modified[layer.get("id")]) {
-		this.modified[layer.get("id")] = {};
+	if (feature.getId().search(".new") !== -1) {
+		this.created[layer.get("id")][feature.getId()] = feature;
+	} else {
+		if (!this.modified[layer.get("id")]) {
+			this.modified[layer.get("id")] = {};
+		}
+		this.modified[layer.get("id")][this.id ? feature.get(this.id) : feature.getId()] = feature;
 	}
-	this.modified[layer.get("id")][this.id ? feature.get(this.id) : feature.getId()] = feature;
 	// this.modified[layer.get("id")][this.id ? feature.get(this.id) :
 	// feature.getId()] = new ol.format.GeoJSON().writeFeature(feature);
 	console.log(this.modified);
