@@ -1,6 +1,8 @@
 package com.git.gdsbuilder.type.qa10.en;
 
+import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.List;
 
 import com.git.gdsbuilder.type.qa10.feature.style.DTDXFInsertStyle;
 

@@ -194,7 +194,7 @@ gitbuilder.method ={};
 	        document.querySelector("#total-progress").style.opacity = "1";
 
 			var myDropzone = new Dropzone(document.body, { // Make the whole body a dropzone
-				url: "http://localhost:8080/opengds/file/fileUpload.do", // Set the url
+				url: "http://175.116.181.30:8089/opengds/file/fileUpload.do", // Set the url
 				thumbnailWidth: 80,
 			        thumbnailHeight: 80,
 			        parallelUploads: 20,

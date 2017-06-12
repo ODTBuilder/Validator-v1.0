@@ -53,6 +53,8 @@ import com.git.gdsbuilder.type.geoserver.collection.GeoLayerCollectionList;
 import com.git.gdsbuilder.type.geoserver.parser.GeoLayerCollectionParser;
 import com.git.gdsbuilder.type.qa20.feature.QA20Feature;
 import com.git.gdsbuilder.type.qa20.feature.QA20FeatureList;
+import com.git.gdsbuilder.type.qa20.layer.QA20Layer;
+import com.git.gdsbuilder.type.qa20.layer.QA20LayerList;
 import com.git.gdsbuilder.type.validate.layer.ValidateLayerTypeList;
 import com.git.opengds.parser.edit.feature.EditFeatureParser;
 import com.git.opengds.parser.edit.layer.EditLayerCollectionListParser;
@@ -139,16 +141,6 @@ public class BuilderJSONParser {
 					}
 					editFeatureMap.put("created", featureList);
 				} else if (state.equals("modified")) {
-					QA20FeatureList featureList = new QA20FeatureList();
-					JSONObject featuresObj = (JSONObject) stateObj.get(state);
-					JSONArray featuresArry = (JSONArray) featuresObj.get("features");
-					for (int i = 0; i < featuresArry.size(); i++) {
-						JSONObject featureObj = (JSONObject) featuresArry.get(i);
-						EditFeatureParser featureParser = new EditFeatureParser(featureObj, state);
-						QA20Feature feature = featureParser.getQa20Feature();
-						featureList.add(feature);
-					}
-					editFeatureMap.put("modified", featureList);
 				} else if (state.equals("removed")) {
 					List<String> featureIdList = new ArrayList<String>();
 					JSONArray featuresArr = (JSONArray) stateObj.get(state);

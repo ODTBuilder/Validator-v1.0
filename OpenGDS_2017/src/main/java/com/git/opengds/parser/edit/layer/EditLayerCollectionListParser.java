@@ -43,6 +43,8 @@ import org.json.simple.JSONObject;
 
 import com.git.gdsbuilder.edit.qa20.EditQA20Collection;
 import com.git.gdsbuilder.edit.qa20.EditQA20LayerCollectionList;
+import com.git.gdsbuilder.type.qa20.collection.QA20LayerCollectionList;
+import com.git.gdsbuilder.type.simple.collection.LayerCollectionList;
 import com.vividsolutions.jts.io.ParseException;
 
 /**
