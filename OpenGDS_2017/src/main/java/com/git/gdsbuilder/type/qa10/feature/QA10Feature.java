@@ -10,20 +10,19 @@ public class QA10Feature {
 	String featureType;
 	String layerID;
 	Geometry geom;
-	Hashtable<String, Object> properties;
+	// Hashtable<String, Object> properties;
 
 	public QA10Feature(String featureID) {
 		super();
 		this.featureID = featureID;
 		this.featureType = "";
 		this.layerID = "";
-		this.properties = new Hashtable<String, Object>();
+		// this.properties = new Hashtable<String, Object>();
 	}
 
-	public QA10Feature(String featureID, String featureType, String layerID, Geometry geom,
-			Hashtable<String, Object> properties) {
+	public QA10Feature(String featureID, String featureType, String layerID, Geometry geom) {
 		super();
-		this.properties = properties;
+		// this.properties = properties;
 	}
 
 	public String getFeatureID() {
@@ -57,21 +56,4 @@ public class QA10Feature {
 	public void setGeom(Geometry geom) {
 		this.geom = geom;
 	}
-
-	public Hashtable<String, Object> getProperties() {
-		return properties;
-	}
-
-	public void setProperties(Hashtable<String, Object> properties) {
-		this.properties = properties;
-	}
-
-	public void putAllProperties(Hashtable<String, Object> properties) {
-		this.properties.putAll(properties);
-	}
-
-	public void putProperty(String key, Object value) {
-		this.properties.put(key, value);
-	}
-
 }

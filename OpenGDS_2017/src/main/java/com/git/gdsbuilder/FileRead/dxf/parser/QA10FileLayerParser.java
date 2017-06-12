@@ -1,6 +1,5 @@
 package com.git.gdsbuilder.FileRead.dxf.parser;
 
-import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
@@ -11,7 +10,6 @@ import org.kabeja.dxf.DXFLayer;
 
 import com.git.gdsbuilder.type.qa10.en.EnDXFArc;
 import com.git.gdsbuilder.type.qa10.en.EnDXFCircle;
-import com.git.gdsbuilder.type.qa10.en.EnDXFCommon;
 import com.git.gdsbuilder.type.qa10.en.EnDXFInsert;
 import com.git.gdsbuilder.type.qa10.en.EnDXFLWPolyline;
 import com.git.gdsbuilder.type.qa10.en.EnDXFPolyline;
@@ -31,7 +29,7 @@ public class QA10FileLayerParser {
 			String layerId = dxfLayer.getName() + "_" + type;
 			QA10Layer dtlayer = new QA10Layer(layerId);
 			dtlayer.setLayerType(type);
-			dtlayer.setLayerColumns(getLayerColumns(type));
+		//	dtlayer.setLayerColumns(getLayerColumns(type));
 			List<DXFEntity> dxfEntities = (List<DXFEntity>) dxfLayer.getDXFEntities(type);
 			boolean typeValid = true;
 			for (int i = 0; i < dxfEntities.size(); i++) {
@@ -43,7 +41,6 @@ public class QA10FileLayerParser {
 				} else if (type.equals("POLYLINE")) {
 					feature = QA10FileFeatureParser.parseDTPolylineFeature(dxfEntity);
 					dtlayer.setLayerType("LineString");
-					// dtlayer.addQA10Feature(feature);
 				} else if (type.equals("LWPOLYLINE")) {
 					feature = QA10FileFeatureParser.parseDTLWPolylineFeature(dxfEntity);
 					dtlayer.setLayerType("LineString");
