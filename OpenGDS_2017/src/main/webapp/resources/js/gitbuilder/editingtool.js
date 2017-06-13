@@ -60,6 +60,9 @@ gitbuilder.ui.EditingTool = $.widget("gitbuilder.editingtool",
 			mouseX : undefined,
 			mouseY : undefined,
 			tempSelectSource : undefined,
+			attrPop : undefined,
+			attrTB : undefined,
+			feature : undefined,
 			_create : function() {
 				var that = this;
 				$(document).mousemove(function(e) {
@@ -91,6 +94,33 @@ gitbuilder.ui.EditingTool = $.widget("gitbuilder.editingtool",
 				$("body").append(this.featurePop);
 				$(this.featurePop).hide();
 				$(this.featurePop).draggable({
+					appendTo : "body",
+					containment : "#" + that.map.getTarget()
+				});
+
+				this.attrTB = $("<table>").addClass("table").addClass("table-hover").addClass("table-condensed").css({
+					"margin-bottom" : 0,
+					"table-layout" : "fixed"
+				});
+				var ahead = $("<div>").addClass("panel-heading").css({
+					"padding" : 0
+				}).append("　");
+				var alist = $("<div>").addClass("panel-body").addClass("gb-edit-sel-apan").css({
+					"max-height" : "300px",
+					"overflow-y" : "auto"
+				}).append(this.attrTB);
+				this.attrPop = $("<div>").css({
+					"width" : "250px",
+					// "max-height" : "300px",
+					"top" : 0,
+					"right" : 0,
+					"position" : "absolute",
+					"z-Index" : "999",
+					"margin-bottom" : 0
+				}).addClass("panel").addClass("panel-default").append(ahead).append(alist);
+				$("body").append(this.attrPop);
+				$(this.attrPop).hide();
+				$(this.attrPop).draggable({
 					appendTo : "body",
 					containment : "#" + that.map.getTarget()
 				});
@@ -242,6 +272,12 @@ gitbuilder.ui.EditingTool = $.widget("gitbuilder.editingtool",
 				});
 				$(document).on("mouseleave", ".gb-edit-sel-fpan", function() {
 					that.map.getView().fit(that.tempSelectSource.getExtent(), that.map.getSize());
+				});
+				$(document).on("input", ".gb-edit-sel-alist", function() {
+					var obj = {};
+					obj[$(this).parent().prev().text()] = $(this).val();
+					that.feature.setProperties(obj);
+					that.options.record.update(that.layer, that.feature);
 				});
 
 				this.map.on('postcompose', function(evt) {
@@ -425,13 +461,45 @@ gitbuilder.ui.EditingTool = $.widget("gitbuilder.editingtool",
 
 							$(that.featurePop).show();
 							$(that.featurePop).position({
+								"my" : "right center",
+								"at" : "right center",
+								"of" : document,
+								"collision" : "fit"
+							});
+							$(that.attrPop).hide();
+						} else if (that.features.getLength() === 1) {
+							$(that.featurePop).hide();
+							$(that.attrTB).empty();
+							that.layer = that.updateSelected();
+							var attrInfo = that.layer.get("git").attribute;
+							that.feature = that.features.item(0);
+							var attr = that.features.item(0).getProperties();
+							var keys = Object.keys(attrInfo);
+							for (var i = 0; i < keys.length; i++) {
+								if (keys[i] === "geometry") {
+									continue;
+								}
+								var td1 = $("<td>").text(keys[i]);
+								var tform = $("<input>").addClass("gb-edit-sel-alist").attr({
+									"type" : "text"
+								}).css({
+									"width" : "100%",
+									"border" : "none"
+								}).val(attr[keys[i]]);
+								var td2 = $("<td>").append(tform);
+								var tr = $("<tr>").append(td1).append(td2);
+								that.attrTB.append(tr);
+							}
+							$(that.attrPop).show();
+							$(that.attrPop).position({
 								"my" : "right bottom",
-								"at" : "right bottom+50",
+								"at" : "right bottom+100",
 								"of" : document,
 								"collision" : "fit"
 							});
 						} else {
 							$(that.featurePop).hide();
+							$(that.attrPop).hide();
 						}
 
 					});
