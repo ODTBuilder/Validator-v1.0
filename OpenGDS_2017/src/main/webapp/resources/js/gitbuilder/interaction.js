@@ -16,7 +16,130 @@ gb.interaction.DeleteVertex = function() {
 		condition : gb.interaction.DeleteVertex.prototype.condition
 	});
 };
+/**
+ * 드로우 인터렉션에 그리는중에 타입을 바꾸는 함수 추가
+ */
+ol.interaction.Draw.prototype.switchType_ = function(){
+	this.type_ = this.selectedType();
+	/**
+	 * Drawing mode (derived from geometry type.
+	 * 
+	 * @type {ol.interaction.Draw.Mode_}
+	 * @private
+	 */
+	this.mode_ = ol.interaction.Draw.getMode_(this.type_);
+	/**
+	 * The number of points that must be drawn before a polygon ring or line
+	 * string can be finished. The default is 3 for polygon rings and 2 for line
+	 * strings.
+	 * 
+	 * @type {number}
+	 * @private
+	 */
+	if (this.mode_ === ol.interaction.Draw.Mode_.POLYGON) {
+		this.minPoints_ = 3;
+	} else {
+		this.minPoints_ = 2;
+	}
 
+	var geometryFunction;
+	if (!geometryFunction) {
+		if (this.type_ === ol.geom.GeometryType.CIRCLE) {
+			/**
+			 * @param {ol.Coordinate|Array.
+			 *            <ol.Coordinate>|Array.<Array.<ol.Coordinate>>}
+			 *            coordinates The coordinates.
+			 * @param {ol.geom.SimpleGeometry=}
+			 *            opt_geometry Optional geometry.
+			 * @return {ol.geom.SimpleGeometry} A geometry.
+			 */
+			geometryFunction = function(coordinates, opt_geometry) {
+				var circle = opt_geometry ? /** @type {ol.geom.Circle} */ (opt_geometry) :
+					new ol.geom.Circle([NaN, NaN]);
+				var squaredLength = ol.coordinate.squaredDistance(
+						coordinates[0], coordinates[1]);
+				circle.setCenterAndRadius(coordinates[0], Math.sqrt(squaredLength));
+				return circle;
+			};
+		} else {
+			var Constructor;
+			var mode = this.mode_;
+			if (mode === ol.interaction.Draw.Mode_.POINT) {
+				Constructor = ol.geom.Point;
+			} else if (mode === ol.interaction.Draw.Mode_.LINE_STRING) {
+				Constructor = ol.geom.LineString;
+			} else if (mode === ol.interaction.Draw.Mode_.POLYGON) {
+				Constructor = ol.geom.Polygon;
+			}
+			/**
+			 * @param {ol.Coordinate|Array.
+			 *            <ol.Coordinate>|Array.<Array.<ol.Coordinate>>}
+			 *            coordinates The coordinates.
+			 * @param {ol.geom.SimpleGeometry=}
+			 *            opt_geometry Optional geometry.
+			 * @return {ol.geom.SimpleGeometry} A geometry.
+			 */
+			geometryFunction = function(coordinates, opt_geometry) {
+				var geometry = opt_geometry;
+				if (geometry) {
+					if (mode === ol.interaction.Draw.Mode_.POLYGON) {
+						geometry.setCoordinates([coordinates[0].concat([coordinates[0][0]])]);
+					} else {
+						geometry.setCoordinates(coordinates);
+					}
+				} else {
+					geometry = new Constructor(coordinates);
+				}
+				return geometry;
+			};
+		}
+	}
+
+	/**
+	 * @type {ol.DrawGeometryFunctionType}
+	 * @private
+	 */
+	this.geometryFunction_ = geometryFunction;
+	console.log(this.sketchCoords_);
+	console.log(this.sketchLineCoords_);
+}
+/**
+ * 드로우 인터렉션 핸들다운 이벤트 오버라이드
+ * 
+ * @param {ol.MapBrowserPointerEvent}
+ *            event Event.
+ * @return {boolean} Start drag sequence?
+ * @this {ol.interaction.Draw}
+ * @private
+ */
+ol.interaction.Draw.handleDownEvent_ = function(event) {
+	this.switchType_();
+	this.shouldHandle_ = !this.freehand_;
+
+	if (this.freehand_) {
+		this.downPx_ = event.pixel;
+		if (!this.finishCoordinate_) {
+			this.startDrawing_(event);
+		}
+		return true;
+	} else if (this.condition_(event)) {
+		this.downPx_ = event.pixel;
+		return true;
+	} else {
+		return false;
+	}
+};
+
+/**
+ * WMS레이어의 선택 위치의 피처를 요청한다.
+ * 
+ * @param {ol.interaction.Select}
+ *            select 연동할 실렉트 인터렉션
+ * @param {ol.layer.Vector}
+ *            destination 선택한 피처가 편입될 벡터레이어
+ * @param {function ||
+ *            ol.layer.Tile} layer 선택한 레이어 또는 레이어를 반환할 함수
+ */
 gb.interaction.SelectWMS = function(opt_options) {
 	var options = opt_options ? opt_options : {};
 	this.map_ = null;
@@ -30,6 +153,7 @@ gb.interaction.SelectWMS = function(opt_options) {
 	this.destination_ = options.destination ? options.destination : new ol.layer.Vector({
 		source : this.source_
 	});
+	this.record = options.record;
 	ol.interaction.Interaction.call(this, {
 		handleEvent : gb.interaction.SelectWMS.prototype.handleEvent
 	});
@@ -96,10 +220,25 @@ gb.interaction.SelectWMS.prototype.setExtent = function(extent) {
 			}
 			that.destination_.getSource().addFeatures(features);
 			that.destination_.setMap(that.map_);
+
+			var selFeatures = that.select_.getFeatures();
+			var cFeatures = [];
+			for (var k = 0; k < selFeatures.getLength(); k++) {
+				if (selFeatures.item(k).getId().search(that.layer.get("id")+".new") !== -1) {
+					cFeatures.push(selFeatures.item(k));
+				} else {
+					if (!that.record.isRemoved(that.layer, selFeatures.item(k))) {
+						cFeatures.push(selFeatures.item(k));
+					}
+				}
+			}
 			that.select_.getFeatures().clear();
+			that.select_.getFeatures().extend(cFeatures);
 			var newFeatures = [];
 			for (var j = 0; j < ids.length; j++) {
-				newFeatures.push(that.destination_.getSource().getFeatureById(ids[j]));
+				if (!that.record.isRemoved(that.layer, that.destination_.getSource().getFeatureById(ids[j]))) {
+					newFeatures.push(that.destination_.getSource().getFeatureById(ids[j]));	
+				}
 			}
 			that.select_.getFeatures().extend(newFeatures);
 		}
@@ -732,17 +871,17 @@ gb.interaction.MultiTransformEventType = {
  *            mapBrowserPointerEvent Associated
  *            {@link ol.MapBrowserPointerEvent}.
  */
-gb.interaction.MultiTransform.Event = function(type, features, mapBrowserPointerEvent) {
+gb.interaction.MultiTransform.Event = function(type, feature, mapBrowserPointerEvent) {
 
 	ol.events.Event.call(this, type);
 
 	/**
 	 * The features being modified.
 	 * 
-	 * @type {ol.Collection.<ol.Feature>}
+	 * @type {ol.Feature}
 	 * @api
 	 */
-	this.features = features;
+	this.feature = feature;
 
 	/**
 	 * Associated {@link ol.MapBrowserEvent}.
