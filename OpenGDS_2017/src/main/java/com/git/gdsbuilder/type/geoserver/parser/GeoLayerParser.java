@@ -149,7 +149,8 @@ public class GeoLayerParser {
 	public GeoLayer layerParse() throws FileNotFoundException, IOException, ParseException, SchemaException {
 
 		JsonFromUrl jsonFromUrl = new JsonFromUrl();
-		SimpleFeatureCollection sfc = jsonFromUrl.readJsonFromUrl(collectionName, layerName, 10000, true, "ngi");
+		//SimpleFeatureCollection sfc = jsonFromUrl.readJsonFromUrl(collectionName, layerName, 10000, true, "ngi");
+		SimpleFeatureCollection sfc = jsonFromUrl.readJsonFromUrl(collectionName, layerName, 10000, true, "dxf");
 
 		if(sfc != null) {
 			GeoLayer layer = new GeoLayer();
