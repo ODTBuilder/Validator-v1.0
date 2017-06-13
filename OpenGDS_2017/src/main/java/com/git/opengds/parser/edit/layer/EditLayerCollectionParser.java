@@ -36,6 +36,7 @@ package com.git.opengds.parser.edit.layer;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Iterator;
 
 import org.geotools.feature.SchemaException;
@@ -43,6 +44,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import com.git.gdsbuilder.edit.qa20.EditQA20Collection;
+import com.git.gdsbuilder.type.qa20.layer.QA20Layer;
 import com.git.gdsbuilder.type.qa20.layer.QA20LayerList;
 import com.vividsolutions.jts.io.ParseException;
 
@@ -113,9 +115,19 @@ public class EditLayerCollectionParser {
 				editCollection.addAllCreateLayer(qa20LayerList);
 				editCollection.setCreated(true);
 			} else if (state.equals("remove")) {
-				QA20LayerList qa20LayerList = new QA20LayerList();
+				JSONObject removeObj = (JSONObject) collectionObj.get(state);
+				JSONArray layerNames = (JSONArray) removeObj.get("layer");
+				QA20LayerList deletedLayerList = new QA20LayerList();
+				for (int i = 0; i < layerNames.size(); i++) {
+					String layerName = (String) layerNames.get(i);
+					EditLayerParser layerParser = new EditLayerParser(layerName);
+					QA20Layer deleteLayer = layerParser.getQa20Layer();
+					deletedLayerList.add(deleteLayer);
+				}
+				editCollection.addAllDeleteLayer(deletedLayerList);
+				editCollection.setDeleted(true);
 			} else if (state.equals("modify")) {
-				QA20LayerList qa20LayerList = new QA20LayerList();
+
 			}
 		}
 	}

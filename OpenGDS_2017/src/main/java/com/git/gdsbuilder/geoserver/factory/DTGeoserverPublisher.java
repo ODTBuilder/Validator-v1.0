@@ -41,16 +41,19 @@
  */
 package com.git.gdsbuilder.geoserver.factory;
 
-import java.util.ArrayList;
+import java.net.MalformedURLException;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.git.gdsbuilder.geosolutions.geoserver.rest.GeoServerRESTPublisher;
+import com.git.gdsbuilder.geosolutions.geoserver.rest.HTTPUtils;
 import com.git.gdsbuilder.geosolutions.geoserver.rest.encoder.GSLayerEncoder;
 import com.git.gdsbuilder.geosolutions.geoserver.rest.encoder.GSLayerGroupEncoder;
 import com.git.gdsbuilder.geosolutions.geoserver.rest.encoder.GSResourceEncoder.ProjectionPolicy;
 import com.git.gdsbuilder.geosolutions.geoserver.rest.encoder.feature.GSFeatureTypeEncoder;
 import com.git.gdsbuilder.type.geoserver.layer.GeoLayerInfo;
-import com.git.opengds.upload.domain.FileMeta;
 
 
 /** 
@@ -61,59 +64,31 @@ import com.git.opengds.upload.domain.FileMeta;
 */
 public class DTGeoserverPublisher extends GeoServerRESTPublisher{
 
+	/** The logger for this class */
+    private static final Logger LOGGER = LoggerFactory.getLogger(DTGeoserverPublisher.class);
+	
+
+    /**
+     * GeoServer instance base URL. E.g.: <TT>http://localhost:8080/geoserver</TT>.
+     */
+    private final String restURL;
+
+    /**
+     * GeoServer instance privileged username, with read & write permission on REST API
+     */
+    private final String gsuser;
+
+    /**
+     * GeoServer instance password for privileged username with r&w permission on REST API
+     */
+    private final String gspass;
+    
+    
 	public DTGeoserverPublisher(String restURL, String username, String password) {
 		super(restURL, username, password);
-		// TODO Auto-generated constructor stub
-	}
-	
-	/**
-	 * Geoserver DBLayer 발행하기
-	 * @author JY.Kim
-	 * @Date 2017. 5. 2. 오전 11:00:32
-	 * @param layerInfo - 레이어 정보
-	 * @param wsName - 작업공간명
-	 * @param dsName - 파일명
-	 * @return FileMeta - 파일 메타 정보
-	 * */
-	public FileMeta publishGeoLayer(GeoLayerInfo layerInfo, String wsName, String dsName){
-		
-		FileMeta fileMeta = new FileMeta();
-		
-		String fileName = layerInfo.getFileName();
-		List<String> layerNameList = layerInfo.getLayerNames();
-		String originSrc = layerInfo.getOriginSrc();
-		List<String> successLayerList = new ArrayList<String>();
-		boolean flag = false;
-		
-		for (int i = 0; i < layerNameList.size(); i++) {
-			GSFeatureTypeEncoder fte = new GSFeatureTypeEncoder();
-			GSLayerEncoder layerEncoder = new GSLayerEncoder();
-			String layerName = layerNameList.get(i);
-			String layerFullName = "geo_" + fileName + "_" + layerName;
-			
-			fte.setProjectionPolicy(ProjectionPolicy.REPROJECT_TO_DECLARED); 
-			fte.setTitle(layerFullName); // 제목
-			fte.setName(layerFullName); // 이름
-			fte.setSRS(originSrc); // 좌표
-			fte.setNativeCRS(originSrc);
-			fte.setNativeName(layerFullName); // nativeName
-			
-			layerEncoder.setDefaultStyle("defaultStyle");
-			
-			flag = super.publishDBLayer(wsName, dsName, fte, layerEncoder);
-			
-			if(flag == false){
-				super.removeLayer(wsName, layerName);
-				fileMeta.setServerPublishFlag(flag);
-				return fileMeta;
-			}
-			successLayerList.add(layerFullName);
-		}
-		
-		this.createLayersGroup(wsName, fileName, successLayerList);
-		fileMeta.setServerPublishFlag(flag);
-		
-		return fileMeta;
+		this.restURL = HTTPUtils.decurtSlash(restURL);
+        this.gsuser = username;
+        this.gspass = password;
 	}
 	
 	/**
@@ -132,6 +107,7 @@ public class DTGeoserverPublisher extends GeoServerRESTPublisher{
 		}
 		super.createLayerGroup(wsName,fileName, group);
 	}
+	
 	
 	/**
 	 * 에러 레이어 발행하기
@@ -160,4 +136,120 @@ public class DTGeoserverPublisher extends GeoServerRESTPublisher{
 		boolean flag = super.publishDBLayer(wsName, dsName, fte, layerEncoder);
 		return flag;
 	}
+	
+	/**
+	 * 여러 레이어 삭제
+	 * @author JY.Kim
+	 * @Date 2017. 4. 12 오전 9:52:31
+	 * @param wsName - 작업공간명
+	 * @param layerNameList - 레이어리스트
+	 * @throws IllegalArgumentException
+	 * @throws MalformedURLException
+	 */
+	public boolean removeLayers(String wsName, List<String> layerNameList){
+		boolean flag = false;
+		int flagCount = 0;
+		for (int i = 0; i < layerNameList.size(); i++) {
+			String layerName = layerNameList.get(i);
+			flag = this.removeLayer(wsName, layerName);
+			if(flag==false){
+				flagCount++;
+			}
+		}
+		//삭제 실패를 하나라도 할경우 false 반환
+		if(flagCount>0){
+			flag=false;
+		}
+		else
+			flag = true;
+		
+		return flag;
+	}
+	
+	
+	public boolean updateDBLayer(final String workspace, final String storename, final String layername,
+            final GSFeatureTypeEncoder fte, final GSLayerEncoder layerEncoder) {
+		String ftypeXml = fte.toString();
+        /*StringBuilder putUrl = new StringBuilder(restURL).append("/rest/workspaces/")
+                .append(workspace).append("/datastores/").append(storename).append("/featuretypes");*/
+        
+        StringBuilder putUrl = new StringBuilder(restURL).append("/rest/workspaces/")
+                .append(workspace).append("/datastores/").append(storename).append("/featuretypes/").append(layername+".xml");
+
+        if (layername == null || layername.isEmpty()) {
+            if (LOGGER.isErrorEnabled())
+                LOGGER.error("GSFeatureTypeEncoder has no valid name associated, try using GSFeatureTypeEncoder.setName(String)");
+            return false;
+        }
+
+        String configuredResult = HTTPUtils.putXml(putUrl.toString(), ftypeXml, this.gsuser,
+                this.gspass);
+        boolean updated = configuredResult != null;
+        boolean configured = false;
+
+        if (!updated) {
+            LOGGER.warn("Error in updating (" + configuredResult + ") " + workspace + ":"
+                    + storename + "/" + layername);
+        } else {
+            LOGGER.info("DB layer successfully updated (layer:" + layername + ")");
+
+            if (layerEncoder == null) {
+                if (LOGGER.isErrorEnabled())
+                    LOGGER.error("GSLayerEncoder is null: Unable to find the defaultStyle for this layer");
+                return false;
+            }
+
+            configured = configureLayer(workspace, layername, layerEncoder);
+
+            if (!configured) {
+                LOGGER.warn("Error in configuring (" + configuredResult + ") " + workspace + ":"
+                        + storename + "/" + layername);
+            } else {
+                LOGGER.info("DB layer successfully configured (layer:" + layername + ")");
+            }
+        }
+        return updated && configured;
+    }
+	
+	public boolean recalculate(final String workspace, final String storename, final String layername,
+            final GSFeatureTypeEncoder fte, final GSLayerEncoder layerEncoder) {
+		String ftypeXml = fte.toString();
+        StringBuilder putUrl = new StringBuilder(restURL).append("/rest/workspaces/")
+                .append(workspace).append("/datastores/").append(storename).append("/featuretypes/").append(layername+"?recalculate=nativebbox,latlonbbox");
+
+        if (layername == null || layername.isEmpty()) {
+            if (LOGGER.isErrorEnabled())
+                LOGGER.error("GSFeatureTypeEncoder has no valid name associated, try using GSFeatureTypeEncoder.setName(String)");
+            return false;
+        }
+        String configuredResult = HTTPUtils.putXml(putUrl.toString(), null, this.gsuser,
+                this.gspass);
+/*        String configuredResult = HTTPUtils.putXml(putUrl.toString(), ftypeXml, this.gsuser,
+                this.gspass);*/
+        boolean updated = configuredResult != null;
+        boolean configured = false;
+
+        if (!updated) {
+            LOGGER.warn("Error in updating (" + configuredResult + ") " + workspace + ":"
+                    + storename + "/" + layername);
+        } else {
+            LOGGER.info("DB layer successfully updated (layer:" + layername + ")");
+
+            if (layerEncoder == null) {
+                if (LOGGER.isErrorEnabled())
+                    LOGGER.error("GSLayerEncoder is null: Unable to find the defaultStyle for this layer");
+                return false;
+            }
+
+            configured = configureLayer(workspace, layername, layerEncoder);
+
+            if (!configured) {
+                LOGGER.warn("Error in configuring (" + configuredResult + ") " + workspace + ":"
+                        + storename + "/" + layername);
+            } else {
+                LOGGER.info("DB layer successfully configured (layer:" + layername + ")");
+            }
+        }
+        return updated && configured;
+    }
 }

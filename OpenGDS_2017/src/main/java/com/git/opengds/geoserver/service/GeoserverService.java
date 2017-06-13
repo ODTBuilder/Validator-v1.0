@@ -19,11 +19,14 @@ package com.git.opengds.geoserver.service;
 
 import java.net.MalformedURLException;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.json.simple.JSONArray;
 
 import com.git.gdsbuilder.geolayer.data.DTGeoGroupLayerList;
 import com.git.gdsbuilder.geolayer.data.DTGeoLayerList;
+import com.git.gdsbuilder.geosolutions.geoserver.rest.encoder.GSLayerEncoder;
+import com.git.gdsbuilder.geosolutions.geoserver.rest.encoder.feature.GSFeatureTypeEncoder;
 import com.git.gdsbuilder.type.geoserver.layer.GeoLayerInfo;
 import com.git.gdsbuilder.type.geoserver.layer.GeoLayerInfoList;
 import com.git.opengds.upload.domain.FileMeta;
@@ -65,8 +68,6 @@ public interface GeoserverService {
 	 * */
 	public JSONArray getGeoserverLayerCollectionTree();
 	
-	
-	
 	/**
 	 * DTGeoLayerList를 조회한다.
 	 * @author SG.Lee
@@ -79,13 +80,82 @@ public interface GeoserverService {
 	
 	/**
 	 * DTGeoGroupLayerList를 조회한다.
-	 * @author SG.Lee
+	 * @author SG.Lee 
 	 * @Date 2017. 4
 	 * @param groupList
 	 * @return DTGeoGroupLayerList - 그룹레이어명 리스트
 	 * @throws
 	 * */
 	public DTGeoGroupLayerList getGeoGroupLayerList(ArrayList<String> groupList);
+	
+	/**
+	 * 단일 레이어를 삭제한다.
+	 * @author SG.Lee
+	 * @Date 2017. 6. 5. 오전 10:40:14
+	 * @param layerName 삭제할 레이어 이름
+	 * @return boolean - 삭제여부
+	 * @throws
+	 * */
+	public boolean removeGeoserverLayer(String layerName);
+	
+	/**
+	 * 다중 레이어를 삭제한다.
+	 * @author SG.Lee
+	 * @Date 2017. 6. 5. 오전 10:40:17
+	 * @param layerNameList 삭제할 레이어 이름 리스트
+	 * @return boolean - 삭제여부
+	 * @throws
+	 * */
+	public boolean removeGeoserverLayers(List<String> layerNameList);
+	
+	/**
+	 *
+	 * @author SG.Lee
+	 * @Date 2017. 6. 5. 오전 11:08:03
+	 * @param groupLayerName 삭제할 그룹레이어
+	 * @return boolean - 삭제여부
+	 * @throws
+	 * */
+	public boolean removeGeoserverGroupLayer(String groupLayerName);
+	
+	
+	
+	/**
+	 * Geoserver 스타일을 생성한다.
+	 * @author SG.Lee
+	 * @Date 2017. 6. 7. 오후 6:15:55
+	 * @param sldBody
+	 * @param name
+	 * @return boolean
+	 * @throws
+	 * */
+	public boolean publishStyle(final String sldBody, final String name);
+	
+	/**
+	 * Geoserver 스타일을 수정한다.
+	 * @author SG.Lee
+	 * @Date 2017. 6. 7. 오후 6:15:57
+	 * @param sldBody
+	 * @param name
+	 * @return boolean
+	 * @throws
+	 * */
+	public boolean updateStyle(final String sldBody, final String name);
+	
+	/**
+	 * Geoserver 스타일을 삭제한다.
+	 * @author SG.Lee
+	 * @Date 2017. 6. 7. 오후 6:16:01
+	 * @param styleName
+	 * @return boolean
+	 * @throws
+	 * */
+	public boolean removeStyle(String styleName);
+	
+	
+	
+	
+	public boolean updateDBLayer(String workspace, String storename, String layername,GSFeatureTypeEncoder fte, GSLayerEncoder layerEncoder);
 }
 
 

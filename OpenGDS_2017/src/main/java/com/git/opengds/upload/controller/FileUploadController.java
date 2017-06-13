@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import com.git.opengds.geoserver.service.GeoserverService;
 import com.git.opengds.upload.domain.FileMeta;
 import com.git.opengds.upload.service.FileService;
 
@@ -49,6 +50,8 @@ public class FileUploadController {
 	private FileService fileService;
 
 	
+	@Autowired
+	private GeoserverService geoserverService;
 	
 	/**
 	 * 파일업로드
@@ -65,6 +68,9 @@ public class FileUploadController {
 			HttpServletResponse response) throws Exception {
 		LinkedList<FileMeta> files = new LinkedList<FileMeta>();
 		files = fileService.filesUpload(request, response);
+		
+//		geoserverService.updateDBLayer("admin", "admin", "geo_ngi_00000738000124_E0052114_POLYGON", null, null);
+		
 		return files;
 	}
 	

@@ -5420,8 +5420,7 @@ to {
 }
 
 }
-@
--o-keyframes progress-bar-stripes {
+@keyframes progress-bar-stripes {
 	from {background-position: 40px 0
 }
 

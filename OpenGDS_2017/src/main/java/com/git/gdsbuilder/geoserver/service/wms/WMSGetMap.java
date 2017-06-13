@@ -6,15 +6,15 @@ public class WMSGetMap {
 	
 	private String serverURL ="";
 	private String version="1.0.0";
-	private String format="image/png";
+	private String format="";
 	private String layers="";
-	private boolean tiled=false;
-	private boolean transparent=false;
+	private String tiled="";
+	private String transparent="";
 	private String bgcolor="";
 	private String crs="";
 	private String bbox="";
-	private int width=320;
-	private int height=320;
+	private int width=0;
+	private int height=0;
 	private String styles="";
 	private String exceptions = "application/vnd.ogc.se_xml"; 
 	private String time="";
@@ -23,7 +23,7 @@ public class WMSGetMap {
 	
 	public WMSGetMap(){};
 	
-	public WMSGetMap(String serverURL, String version, String format, String layers, boolean tiled, boolean transparent,
+	public WMSGetMap(String serverURL, String version, String format, String layers, String tiled, String transparent,
 			String bgcolor, String crs, String bbox, int width, int height, String styles, String exceptions,
 			String time, String sld, String sld_body) {
 		super();
@@ -66,12 +66,16 @@ public class WMSGetMap {
 		if (!sld_body.trim().equals("")) {
 			this.sld_body = sld_body;
 		}
+		if (!tiled.trim().equals("")) {
+			this.tiled = tiled;
+		}
+		if (!transparent.trim().equals("")) {
+			this.transparent = transparent;
+		}
 		
-		this.tiled = tiled;
-		this.transparent = transparent;
 	}
 	
-	public WMSGetMap(String serverURL, String version, String format, String layers, boolean tiled, String crs, String bbox, int width, int height, String styles) {
+	public WMSGetMap(String serverURL, String version, String format, String layers, String tiled, String crs, String bbox, int width, int height, String styles) {
 		super();
 		if (!serverURL.trim().equals("")) {
 			this.serverURL = serverURL;
@@ -85,7 +89,7 @@ public class WMSGetMap {
 		if (!layers.trim().equals("")) {
 			this.layers = layers;
 		}
-		if (!layers.trim().equals("")) {
+		if (!tiled.trim().equals("")) {
 			this.tiled = tiled;
 		}
 		if (!crs.trim().equals("")) {
@@ -129,16 +133,16 @@ public class WMSGetMap {
 	public void setLayers(String layers) {
 		this.layers = layers;
 	}
-	public boolean isTiled() {
+	public String isTiled() {
 		return tiled;
 	}
-	public void setTiled(boolean tiled) {
+	public void setTiled(String tiled) {
 		this.tiled = tiled;
 	}
-	public boolean isTransparent() {
+	public String isTransparent() {
 		return transparent;
 	}
-	public void setTransparent(boolean transparent) {
+	public void setTransparent(String transparent) {
 		this.transparent = transparent;
 	}
 	public String getBgcolor() {
@@ -210,41 +214,41 @@ public class WMSGetMap {
 	
 	public String getWMSGetMapURL(){
 		StringBuffer urlBuffer = new StringBuffer();
-		if(!this.serverURL.equals("")){
+		if(!this.serverURL.trim().equals("")){
 			urlBuffer.append(serverURL);
 			urlBuffer.append("?");
 			urlBuffer.append("request="+REQUEST);
 			urlBuffer.append("&");
 			urlBuffer.append("service="+SERVICE);
-			if(!this.version.equals("")){
+			if(!this.version.trim().equals("")){
 				urlBuffer.append("&");
 				urlBuffer.append("version="+version);
 			}
-			if(!this.format.equals("")){
+			if(!this.format.trim().equals("")){
 				urlBuffer.append("&");
 				urlBuffer.append("format="+format);
 			}
-			if(!this.layers.equals("")){
+			if(!this.layers.trim().equals("")){
 				urlBuffer.append("&");
 				urlBuffer.append("layers="+layers);
 			}
-			if(!this.bgcolor.equals("")){
+			if(!this.bgcolor.trim().equals("")){
 				urlBuffer.append("&");
 				urlBuffer.append("bgcolor="+bgcolor);
 			}
-			if(!this.crs.equals("")){
+			if(!this.crs.trim().equals("")){
 				urlBuffer.append("&");
 				urlBuffer.append("crs="+crs);
 			}
-			if(!this.bbox.equals("")){
+			if(!this.bbox.trim().equals("")){
 				urlBuffer.append("&");
 				urlBuffer.append("bbox="+bbox);
 			}
-			if(!this.styles.equals("")){
+			if(!this.styles.trim().equals("")){
 				urlBuffer.append("&");
 				urlBuffer.append("styles="+styles);
 			}
-			if(!this.exceptions.equals("")){
+			if(!this.exceptions.trim().equals("")){
 				urlBuffer.append("&");
 				urlBuffer.append("exceptions="+exceptions);
 			}
@@ -252,23 +256,31 @@ public class WMSGetMap {
 				urlBuffer.append("&");
 				urlBuffer.append("time="+time);
 			}*/
-			if(!this.sld.equals("")){
+			if(!this.sld.trim().equals("")){
 				urlBuffer.append("&");
 				urlBuffer.append("sld="+sld);
 			}
-			if(!this.sld_body.equals("")){
+			if(!this.sld_body.trim().equals("")){
 				urlBuffer.append("&");
 				urlBuffer.append("sld_body="+sld_body);
 			}
+			if(!this.tiled.trim().equals("")){
+				urlBuffer.append("&");
+				urlBuffer.append("tiled="+tiled);
+			}
+			if(!this.transparent.trim().equals("")){
+				urlBuffer.append("&");
+				urlBuffer.append("transparent="+transparent);
+			}
+			if(this.width!=0){
+				urlBuffer.append("&");
+				urlBuffer.append("width="+String.valueOf(this.width));
+			}
+			if(this.height!=0){
+				urlBuffer.append("&");
+				urlBuffer.append("height="+String.valueOf(this.height));
+			}
 			
-			urlBuffer.append("&");
-			urlBuffer.append("width="+String.valueOf(this.width));
-			urlBuffer.append("&");
-			urlBuffer.append("height="+String.valueOf(this.height));
-			urlBuffer.append("&");
-			urlBuffer.append("tiled="+String.valueOf(tiled));
-			urlBuffer.append("&");
-			urlBuffer.append("transparent="+String.valueOf(transparent));
 		}
 		else
 			return "";
