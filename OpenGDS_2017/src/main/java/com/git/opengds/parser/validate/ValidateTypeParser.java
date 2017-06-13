@@ -26,6 +26,7 @@ import org.json.simple.JSONObject;
 
 import com.git.gdsbuilder.type.validate.layer.ValidateLayerType;
 import com.git.gdsbuilder.type.validate.layer.ValidateLayerTypeList;
+import com.git.gdsbuilder.type.validate.option.B_SymbolOutSided;
 import com.git.gdsbuilder.type.validate.option.BuildingOpen;
 import com.git.gdsbuilder.type.validate.option.ConBreak;
 import com.git.gdsbuilder.type.validate.option.ConIntersected;
@@ -324,6 +325,26 @@ public class ValidateTypeParser {
 					optionList.add(waterOpen);
 				}
 			}
+			
+			if(optionName.equalsIgnoreCase(B_SymbolOutSided.Type.B_SYMBOLOUTSIDED.errName())){
+				Object b_SymbolOutSidedObj = qaOptions.get("B_SymbolOutSided");
+				if(b_SymbolOutSidedObj == null){
+					continue;
+				}else{
+					List<String> relations = new ArrayList<String>();
+					JSONObject b_SymbolOutSidedValue = (JSONObject) b_SymbolOutSidedObj;
+					JSONArray relationValues = (JSONArray) b_SymbolOutSidedValue.get("relation");
+					int valueSize = relationValues.size();
+					for (int i = 0; i < valueSize; i++) {
+						String relationID = (String) relationValues.get(i);
+						relations.add(relationID);
+					}
+					ValidatorOption b_SymbolOutSided = new B_SymbolOutSided(relations);
+					optionList.add(b_SymbolOutSided);
+				}
+				
+			}
+			
 			if (optionName.equalsIgnoreCase(PointDuplicated.Type.POINTDUPLICATED.errName())) {
 				Boolean isTrue = (Boolean) qaOptions.get("PointDuplicated");
 				if (isTrue) {

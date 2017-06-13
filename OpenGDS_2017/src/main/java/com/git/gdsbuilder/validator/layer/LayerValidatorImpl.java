@@ -242,7 +242,7 @@ public class LayerValidatorImpl implements LayerValidator {
 				for (ErrorFeature errFeature : errFeatures) {
 					errFeature.setLayerName(validatorLayer.getLayerName());
 					errLayer.addErrorFeature(errFeature);
-				}
+				} 
 			} else {
 				continue;
 			}
@@ -541,13 +541,75 @@ public class LayerValidatorImpl implements LayerValidator {
 	public ErrorLayer validateLayerMiss(List<String> typeNames) throws SchemaException{
 		ErrorLayer errorLayer = new ErrorLayer();
 		SimpleFeatureCollection sfc = validatorLayer.getSimpleFeatureCollection();
-		SimpleFeatureIterator simpleFeatureIterator = sfc.features();
+		SimpleFeatureIterator simpleFeatureIterator = sfc.features(); 
 		while (simpleFeatureIterator.hasNext()) {
 			SimpleFeature simpleFeature = simpleFeatureIterator.next();
 			ErrorFeature errorFeature = graphicValidator.validateLayerMiss(simpleFeature, typeNames);
+			if(errorFeature != null){
+				errorFeature.setLayerName(validatorLayer.getLayerName());
+				errorLayer.addErrorFeature(errorFeature);
+			}else{
+				continue;
+			}
 		}
-		return null;
+		if(errorLayer.getErrFeatureList().size() > 0){
+			return errorLayer;
+		}else{
+			return null;
+		}
 	}
 	
+	public ErrorLayer vallidateB_SymbolOutSided(List<GeoLayer> relationLayers) throws SchemaException{
+		ErrorLayer errorLayer = new ErrorLayer();
+		
+		SimpleFeatureCollection sfc = validatorLayer.getSimpleFeatureCollection();
+		List<SimpleFeature> simpleFeatures = new ArrayList<SimpleFeature>();
+		SimpleFeatureIterator simpleFeatureIterator = sfc.features();
+		
+		while (simpleFeatureIterator.hasNext()) {
+			SimpleFeature simpleFeature = simpleFeatureIterator.next();
+			simpleFeatures.add(simpleFeature);
+		}
+		
+		for (int i = 0; i < relationLayers.size(); i++) {
+			GeoLayer relationLayer = relationLayers.get(i);
+			SimpleFeatureCollection realtationSfc = relationLayer.getSimpleFeatureCollection();
+			//List<SimpleFeature> relationSimpleFeatures = new ArrayList<SimpleFeature>();
+			SimpleFeatureIterator relationSimpleFeatureIterator = realtationSfc.features();
+			while (relationSimpleFeatureIterator.hasNext()) {
+				SimpleFeature relationSimpleFeature = relationSimpleFeatureIterator.next();
+				ErrorFeature errorFeature = graphicValidator.validateB_SymbolOutSided(simpleFeatures, relationSimpleFeature);
+				if(errorFeature != null){
+					errorFeature.setLayerName(validatorLayer.getLayerName());
+					errorLayer.addErrorFeature(errorFeature);
+				}else{
+					continue;
+				}
+				//relationSimpleFeatures.add(simpleFeature);
+			}
+			//ErrorFeature relationErrorLayer = graphicValidator.validateB_SymbolOutSided(simpleFeatures, relationSimpleFeatures);
+		}
+		return errorLayer;
+	}
+	
+	/*
+	private ErrorLayer b_SymbolOutSided(List<SimpleFeature> simpleFeatures, List<SimpleFeature> relationSimpleFeatures) throws SchemaException{
+		ErrorLayer errorLayer = new ErrorLayer();
+		
+		for (int i = 0; i < relationSimpleFeatures.size(); i++) {
+			SimpleFeature relationSimpleFeature = relationSimpleFeatures.get(i);
+			ErrorFeature errorFeature = graphicValidator.validateB_SymbolOutSided(simpleFeatures, relationSimpleFeature);
+		}
+		for (int i = 0; i < simpleFeatures.size(); i++) {
+			SimpleFeature simpleFeatureI = simpleFeatures.get(i);
+			for (int j = 0; j < relationSimpleFeatures.size(); j++) {
+				SimpleFeature simpleFeatureJ = relationSimpleFeatures.get(j);
+				//ErrorFeature errFeatures = graphicValidator.vallidateB_SymbolOutSided(simpleFeatureI, simpleFeatureJ);
+			}
+		}
+		
+		return null;
+	}
+	*/
 	
 }

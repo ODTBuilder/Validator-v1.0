@@ -191,5 +191,6 @@ public interface LayerValidator {
 	public ErrorLayer validateBuildingOpen() throws SchemaException;
 	public ErrorLayer validateWaterOpen() throws SchemaException;
 	public ErrorLayer validateLayerMiss(List<String> typeNames) throws SchemaException;
+	public ErrorLayer vallidateB_SymbolOutSided(List<GeoLayer> relationLayers) throws SchemaException;
 
 }
