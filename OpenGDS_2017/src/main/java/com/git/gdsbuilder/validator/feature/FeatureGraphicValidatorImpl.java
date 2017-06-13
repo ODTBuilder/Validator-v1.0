@@ -632,10 +632,8 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 		for (int i = 0; i < simpleFeatures.size(); i++) {
 			SimpleFeature simpleFeature = simpleFeatures.get(i);
 			Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
-			String upperType = geometry.getGeometryType().toUpperCase();
-			//String upperType = simpleFeature.getAttribute("feature_type").toString().toUpperCase();
-			
-			
+			//String upperType = geometry.getGeometryType().toUpperCase();
+			String upperType = simpleFeature.getAttribute("feature_type").toString().toUpperCase();
 			
 			if(upperType.equals("POINT")){
 				if((geometry.equals(relationGeometry))){
@@ -644,7 +642,7 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 				}
 			}
 			if(upperType.equals("LINESTRING") && upperType.equals("LINE")){
-				/*GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory();
+				GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory();
 				Coordinate[] coordinates = geometry.getCoordinates();
 				Coordinate start = coordinates[0];
 				Coordinate end = coordinates[coordinates.length-1];
@@ -656,12 +654,12 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 					flag = true;
 					break;
 				}
-				}*/
-
+				}
+/*
 				if((geometry.contains(relationGeometry))){
 					flag = true;
 					break;
-				}
+				}*/
 			}
 			if(upperType.equals("LWPOLYLINE")&& upperType.equals("POLYLINE")){
 

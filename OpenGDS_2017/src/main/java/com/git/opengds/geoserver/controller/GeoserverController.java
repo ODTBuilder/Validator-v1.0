@@ -108,7 +108,7 @@ public class GeoserverController{
  	@RequestMapping(value="geoserverWMSLayerLoad.do")
 	@ResponseBody
 	public void geoserverWMSLoad(HttpServletRequest request , HttpServletResponse response) throws ServletException, IOException {
- 		proService.requestGeoserverDataOutput(request, response);
+ 		proService.requestWMSLayer(request, response);
 	}
  	
  	
