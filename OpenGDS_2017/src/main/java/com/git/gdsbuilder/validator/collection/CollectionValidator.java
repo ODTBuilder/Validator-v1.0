@@ -34,8 +34,6 @@
 
 package com.git.gdsbuilder.validator.collection;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-
 import java.util.List;
 
 import org.geotools.feature.SchemaException;
@@ -47,12 +45,12 @@ import com.git.gdsbuilder.type.geoserver.collection.GeoLayerCollection;
 import com.git.gdsbuilder.type.geoserver.collection.GeoLayerCollectionList;
 import com.git.gdsbuilder.type.geoserver.layer.GeoLayer;
 import com.git.gdsbuilder.type.geoserver.layer.GeoLayerList;
-import com.git.gdsbuilder.type.simple.collection.LayerCollectionList;
 import com.git.gdsbuilder.type.validate.collection.ValidateLayerCollectionList;
 import com.git.gdsbuilder.type.validate.error.ErrorLayer;
 import com.git.gdsbuilder.type.validate.error.ErrorLayerList;
 import com.git.gdsbuilder.type.validate.layer.ValidateLayerType;
 import com.git.gdsbuilder.type.validate.layer.ValidateLayerTypeList;
+import com.git.gdsbuilder.type.validate.option.B_SymbolOutSided;
 import com.git.gdsbuilder.type.validate.option.BuildingOpen;
 import com.git.gdsbuilder.type.validate.option.ConBreak;
 import com.git.gdsbuilder.type.validate.option.ConIntersected;
@@ -155,7 +153,6 @@ public class CollectionValidator {
 		attributeValidate(types, layerCollections);
 
 		// 인접도엽 검수
-		
 		closeCollectionValidate(types, layerCollections);
 
 	}
@@ -263,6 +260,13 @@ public class CollectionValidator {
 							if (option instanceof WaterOpen){
 								typeErrorLayer = layerValidator.validateWaterOpen();
 							}
+							if (option instanceof B_SymbolOutSided){
+								List<String> relationNames = ((B_SymbolOutSided) option).getRelationType();
+								for (int l = 0; l < relationNames.size(); l++) {
+									typeErrorLayer = layerValidator.vallidateB_SymbolOutSided(validateLayerCollectionList
+											.getTypeLayers(relationNames.get(l), collection));
+								}
+							}
 							if (typeErrorLayer != null) {
 								errLayer.mergeErrorLayer(typeErrorLayer);
 							}
@@ -273,21 +277,11 @@ public class CollectionValidator {
 				}
 			}
 			errLayer.setCollectionName(collection.getCollectionName());
-			//errLayerList.add(errLayer);
 			geoErrorList.add(errLayer);
+			this.errLayerMerge(geoErrorList);
+			//errLayerList.add(errLayer);
 		}
-		
-		for (int i = 0; i < errLayerList.size(); i++) {
-			ErrorLayer errorLayer = errLayerList.get(i);
-			String errorLayerName = errorLayer.getCollectionName();
-			for (int j = 0; j < geoErrorList.size(); j++) {
-				ErrorLayer geoErrLayer = geoErrorList.get(j);
-				String geoErrLayerName = geoErrLayer.getCollectionName();
-				if(errorLayerName.equals(geoErrLayerName)){
-					errorLayer.mergeErrorLayer(geoErrLayer);
-				}
-			}
-		}
+
 	}
 
 	@SuppressWarnings("unused")
@@ -296,6 +290,7 @@ public class CollectionValidator {
 
 		for (int i = 0; i < layerCollections.size(); i++) {
 			GeoLayerCollection collection = layerCollections.get(i);
+			List<GeoLayer> collectionList = collection.getLayers();
 			ErrorLayer errLayer = new ErrorLayer();
 			for(int j=0; j < types.size(); j++){
 				ValidateLayerType type = types.get(j);
@@ -303,7 +298,7 @@ public class CollectionValidator {
 				//System.out.println("type : " +type.getTypeName());
 				List<ValidatorOption> options = type.getOptionList();
 				if(options != null){
-					ErrorLayer typeErrorLayer = null;
+					ErrorLayer typeErrorLayer = null; 
 					for(int k = 0; k<options.size(); k++){
 						ValidatorOption option = options.get(k);
 						for (int l = 0; l < typeLayers.size(); l++) {
@@ -315,16 +310,34 @@ public class CollectionValidator {
 							if (option instanceof LayerMiss){
 								List<String> typeNames = ((LayerMiss) option).getLayerType();
 								typeErrorLayer = layerValidator.validateLayerMiss(typeNames);
-								layerCollections.remove(typeLayer);  // 레이어 삭제 
-								System.out.println();
+								if (typeErrorLayer != null) {
+									errLayer.mergeErrorLayer(typeErrorLayer);
+								}
+								collectionList.remove(typeLayer);
+								//collection.setLayers(collectionList);
 							}
 						}
 					}
 				}
 			}
-			
-			errLayer.setCollectionName(collection.getCollectionName());
-			errLayerList.add(errLayer);
+			if (errLayer != null) {
+				errLayer.setCollectionName(collection.getCollectionName());
+				errLayerList.add(errLayer);
+			}
+		}
+	}
+	
+	private void errLayerMerge(ErrorLayerList geoErrorList){
+		for (int i = 0; i < errLayerList.size(); i++) {
+			ErrorLayer errorLayer = errLayerList.get(i);
+			String errorLayerName = errorLayer.getCollectionName();
+			for (int j = 0; j < geoErrorList.size(); j++) {
+				ErrorLayer geoErrLayer = geoErrorList.get(j);
+				String geoErrLayerName = geoErrLayer.getCollectionName();
+				if(errorLayerName.equals(geoErrLayerName)){
+					errorLayer.mergeErrorLayer(geoErrLayer);
+				}
+			}
 		}
 	}
 
