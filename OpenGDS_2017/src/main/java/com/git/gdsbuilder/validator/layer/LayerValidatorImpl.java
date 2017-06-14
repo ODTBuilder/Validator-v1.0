@@ -574,7 +574,6 @@ public class LayerValidatorImpl implements LayerValidator {
 		for (int i = 0; i < relationLayers.size(); i++) {
 			GeoLayer relationLayer = relationLayers.get(i);
 			SimpleFeatureCollection realtationSfc = relationLayer.getSimpleFeatureCollection();
-			//List<SimpleFeature> relationSimpleFeatures = new ArrayList<SimpleFeature>();
 			SimpleFeatureIterator relationSimpleFeatureIterator = realtationSfc.features();
 			while (relationSimpleFeatureIterator.hasNext()) {
 				SimpleFeature relationSimpleFeature = relationSimpleFeatureIterator.next();
@@ -585,31 +584,8 @@ public class LayerValidatorImpl implements LayerValidator {
 				}else{
 					continue;
 				}
-				//relationSimpleFeatures.add(simpleFeature);
 			}
-			//ErrorFeature relationErrorLayer = graphicValidator.validateB_SymbolOutSided(simpleFeatures, relationSimpleFeatures);
 		}
 		return errorLayer;
 	}
-	
-	/*
-	private ErrorLayer b_SymbolOutSided(List<SimpleFeature> simpleFeatures, List<SimpleFeature> relationSimpleFeatures) throws SchemaException{
-		ErrorLayer errorLayer = new ErrorLayer();
-		
-		for (int i = 0; i < relationSimpleFeatures.size(); i++) {
-			SimpleFeature relationSimpleFeature = relationSimpleFeatures.get(i);
-			ErrorFeature errorFeature = graphicValidator.validateB_SymbolOutSided(simpleFeatures, relationSimpleFeature);
-		}
-		for (int i = 0; i < simpleFeatures.size(); i++) {
-			SimpleFeature simpleFeatureI = simpleFeatures.get(i);
-			for (int j = 0; j < relationSimpleFeatures.size(); j++) {
-				SimpleFeature simpleFeatureJ = relationSimpleFeatures.get(j);
-				//ErrorFeature errFeatures = graphicValidator.vallidateB_SymbolOutSided(simpleFeatureI, simpleFeatureJ);
-			}
-		}
-		
-		return null;
-	}
-	*/
-	
 }

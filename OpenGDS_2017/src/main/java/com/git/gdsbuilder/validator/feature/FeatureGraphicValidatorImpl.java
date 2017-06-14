@@ -37,6 +37,8 @@ package com.git.gdsbuilder.validator.feature;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.management.relation.RelationServiceMBean;
+
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureIterator;
 import org.geotools.feature.SchemaException;
@@ -76,6 +78,7 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
+import com.vividsolutions.jtsexample.geom.ExtendedCoordinate;
 
 public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 
@@ -543,10 +546,10 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 		String upperType = simpleFeature.getAttribute("feature_type").toString().toUpperCase();
 		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
 
-		if(!(upperType.equals("POINT") && upperType.equals("LINESTRING") && upperType.equals("POLYGON") 
-				&& upperType.equals("MULTIPOINT") && upperType.equals("MULTILINESTRING") && upperType.equals("MULTIPOLYGON")
-				&& upperType.equals("TEXT") && upperType.equals("LINE") && upperType.equals("INSERT") 
-				&& upperType.equals("LWPOLYLINE") && upperType.equals("POLYLINE"))){
+		if(!(upperType.equals("POINT") || upperType.equals("LINESTRING") || upperType.equals("POLYGON") 
+				|| upperType.equals("MULTIPOINT") || upperType.equals("MULTILINESTRING") || upperType.equals("MULTIPOLYGON")
+				|| upperType.equals("TEXT") || upperType.equals("LINE") || upperType.equals("INSERT") 
+				|| upperType.equals("LWPOLYLINE") || upperType.equals("POLYLINE"))){
 
 			ErrorFeature errorFeature = new ErrorFeature(simpleFeature.getID(), UselessEntity.Type.USELESSENTITY.errType(),
 					UselessEntity.Type.USELESSENTITY.errName(), geometry.getInteriorPoint());
@@ -604,15 +607,15 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 	public ErrorFeature validateLayerMiss(SimpleFeature simpleFeature, List<String> typeNames)throws SchemaException{
 		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
 		String upperType = simpleFeature.getAttribute("feature_type").toString().toUpperCase();
-		Boolean flag = true;
+		Boolean flag = false;
 
 		for (int i = 0; i < typeNames.size(); i++) {
 			String typeName = typeNames.get(i);
 			if(typeName.equals(upperType)){
 				flag = true;
+				break;
 			}else{
 				flag = false;
-				break;
 			}
 		}
 		if(flag == false){
@@ -632,46 +635,46 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 		for (int i = 0; i < simpleFeatures.size(); i++) {
 			SimpleFeature simpleFeature = simpleFeatures.get(i);
 			Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
-			String upperType = geometry.getGeometryType().toUpperCase();
-			//String upperType = simpleFeature.getAttribute("feature_type").toString().toUpperCase();
-			
-			
-			
-			if(upperType.equals("POINT")){
+			//String upperType = geometry.getGeometryType().toUpperCase();
+			String upperType = simpleFeature.getAttribute("feature_type").toString().toUpperCase();
+
+			if(upperType.equals("POINT") || upperType.equals("TEXT")){
 				if((geometry.equals(relationGeometry))){
 					flag = true;
 					break;
 				}
 			}
-			if(upperType.equals("LINESTRING") && upperType.equals("LINE")){
-				/*GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory();
-				Coordinate[] coordinates = geometry.getCoordinates();
-				Coordinate start = coordinates[0];
-				Coordinate end = coordinates[coordinates.length-1];
-				if(start.equals2D(end)){
-				LinearRing ring = geometryFactory.createLinearRing(coordinates);
-				LinearRing holes[] = null;
-				Polygon polygon = geometryFactory.createPolygon(ring, holes);
-				if(polygon.contains(relationGeometry)){
-					flag = true;
-					break;
-				}
-				}*/
-
+			if(upperType.equals("LINESTRING") || upperType.equals("LINE")){
 				if((geometry.contains(relationGeometry))){
 					flag = true;
 					break;
 				}
 			}
-			if(upperType.equals("LWPOLYLINE")&& upperType.equals("POLYLINE")){
+			if(upperType.equals("LWPOLYLINE") || upperType.equals("POLYLINE")){
 
 				// create Polygon
 				GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory();
+				List<Coordinate> list = new ArrayList<Coordinate>();
 				Coordinate[] coordinates = geometry.getCoordinates();
 				Coordinate start = coordinates[0];
 				Coordinate end = coordinates[coordinates.length-1];
 				if(start.equals2D(end)){
 					LinearRing ring = geometryFactory.createLinearRing(coordinates);
+					LinearRing holes[] = null;
+					Polygon polygon = geometryFactory.createPolygon(ring, holes);
+					if(polygon.contains(relationGeometry)){
+						flag = true;
+						break;
+					}
+				}else{
+					for (int j = 0; j < coordinates.length; j++) {
+						Coordinate coordinate = coordinates[j];
+						list.add(coordinate);
+					}
+					list.add(start);
+					Coordinate[] coordinates2 = new Coordinate[list.size()];
+					list.toArray(coordinates2);
+					LinearRing ring = geometryFactory.createLinearRing(coordinates2);
 					LinearRing holes[] = null;
 					Polygon polygon = geometryFactory.createPolygon(ring, holes);
 					if(polygon.contains(relationGeometry)){
@@ -690,46 +693,6 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 			return null;
 		}
 	}
-
-
-	/*	public ErrorFeature vallidateB_SymbolOutSided(SimpleFeature simpleFeatureI, SimpleFeature simpleFeatureJ) throws SchemaException{
-
-		Geometry geometryI = (Geometry) simpleFeatureI.getDefaultGeometry();
-		Geometry geometryJ = (Geometry) simpleFeatureJ.getDefaultGeometry();
-
-		String geomIType = geometryI.getGeometryType().toUpperCase();
-
-		//String upperType = simpleFeatureI.getAttribute("feature_type").toString().toUpperCase();
-
-		if(geomIType.equals("POINT")){
-			if(!(geometryI.equals(geometryJ))){
-				ErrorFeature errFeature = new ErrorFeature(simpleFeatureI.getID(), B_SymbolOutSided.Type.B_SYMBOLOUTSIDED.errType(),
-						B_SymbolOutSided.Type.B_SYMBOLOUTSIDED.errName(), geometryJ.getInteriorPoint());
-				return errFeature;
-			}
-		}
-		if(geomIType.equals("LINESTRING")){
-			if(!(geometryI.contains(geometryJ))){
-				ErrorFeature errFeature = new ErrorFeature(simpleFeatureI.getID(), B_SymbolOutSided.Type.B_SYMBOLOUTSIDED.errType(),
-						B_SymbolOutSided.Type.B_SYMBOLOUTSIDED.errName(), geometryJ.getInteriorPoint());
-				return errFeature;
-			}
-		}
-		if(geomIType.equals("LWPOLYLINE")){
-			// polyline -> polygon
-			GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory();
-			Coordinate[] coordinates = geometryI.getCoordinates();
-			LinearRing ring = geometryFactory.createLinearRing(coordinates);
-			LinearRing holes[] = null;
-			Polygon polygon = geometryFactory.createPolygon(ring, holes);
-			if(!(polygon.contains(geometryJ))){
-				ErrorFeature errFeature = new ErrorFeature(simpleFeatureI.getID(), B_SymbolOutSided.Type.B_SYMBOLOUTSIDED.errType(),
-						B_SymbolOutSided.Type.B_SYMBOLOUTSIDED.errName(), geometryJ.getInteriorPoint());
-				return errFeature;
-			}
-		}
-		return null;
-	}*/
 
 
 }

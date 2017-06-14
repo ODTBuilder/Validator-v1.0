@@ -295,7 +295,6 @@ public class CollectionValidator {
 			for(int j=0; j < types.size(); j++){
 				ValidateLayerType type = types.get(j);
 				GeoLayerList typeLayers = validateLayerCollectionList.getTypeLayers(type.getTypeName(), collection);
-				//System.out.println("type : " +type.getTypeName());
 				List<ValidatorOption> options = type.getOptionList();
 				if(options != null){
 					ErrorLayer typeErrorLayer = null; 
@@ -314,7 +313,6 @@ public class CollectionValidator {
 									errLayer.mergeErrorLayer(typeErrorLayer);
 								}
 								collectionList.remove(typeLayer);
-								//collection.setLayers(collectionList);
 							}
 						}
 					}
