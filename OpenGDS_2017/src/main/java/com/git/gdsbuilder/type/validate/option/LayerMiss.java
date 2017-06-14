@@ -8,7 +8,7 @@ import java.util.List;
 
 /** 
 * @ClassName: LayerMiss 
-* @Description: 
+* @Description: LayerMiss 정보를 담고 있는 클래스
 * @author JY.Kim 
 * @date 2017. 5. 30. 오후 1:58:27 
 *  

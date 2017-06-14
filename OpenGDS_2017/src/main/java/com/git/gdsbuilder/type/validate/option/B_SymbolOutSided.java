@@ -8,7 +8,7 @@ import java.util.List;
 
 /** 
  * @ClassName: B_SymbolOutSided 
- * @Description: 
+ * @Description: B_SymbolOutSided 정보를 담고 있는 클래스
  * @author JY.Kim 
  * @date 2017. 6. 8. 오전 9:55:47 
  *  

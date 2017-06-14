@@ -5,7 +5,7 @@ package com.git.gdsbuilder.type.validate.option;
 
 /** 
 * @ClassName: UselessEntity 
-* @Description: 
+* @Description: UselessEntity 정보를 담고 있는 클래스
 * @author JY.Kim 
 * @date 2017. 5. 30. 오후 1:56:22 
 *  

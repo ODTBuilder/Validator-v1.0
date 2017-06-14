@@ -4,17 +4,16 @@
 package com.git.gdsbuilder.type.validate.option;
 
 /** 
-* @ClassName: WaterOpen 
-* @Description: WaterOpen 정보를 담고 있는 클래스 
-* @author JY.Kim 
-* @date 2017. 5. 30. 오후 1:57:50 
-*  
-*/
-public class WaterOpen extends ValidatorOption{
-
+ * @ClassName: Z_ValueMiss 
+ * @Description: Z_ValueMiss 정보를 담고 있는 클래스
+ * @author JY.Kim 
+ * @date 2017. 6. 13. 오후 4:54:10 
+ *  
+ */
+public class Z_ValueMiss extends ValidatorOption{
 	public enum Type{
 
-		WATEROPEN("WaterOpen", "GeometricError");
+		Z_VALUEMISS("Z_ValueMiss", "GeometricError");
 
 		String errName;
 		String errType;

@@ -5,7 +5,7 @@ package com.git.gdsbuilder.type.validate.option;
 
 /** 
 * @ClassName: BuildingOpen 
-* @Description: 
+* @Description: BuildingOpen 정보를 담고 있는 클래스
 * @author JY.Kim 
 * @date 2017. 5. 30. 오후 1:57:08 
 *  

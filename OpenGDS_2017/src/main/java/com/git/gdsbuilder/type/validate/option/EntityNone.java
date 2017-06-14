@@ -4,17 +4,16 @@
 package com.git.gdsbuilder.type.validate.option;
 
 /** 
-* @ClassName: WaterOpen 
-* @Description: WaterOpen 정보를 담고 있는 클래스 
+* @ClassName: EntityNone 
+* @Description: EntityNone 정보를 담고 있는 클래스
 * @author JY.Kim 
-* @date 2017. 5. 30. 오후 1:57:50 
+* @date 2017. 6. 13. 오후 4:56:22 
 *  
 */
-public class WaterOpen extends ValidatorOption{
-
+public class EntityNone {
 	public enum Type{
 
-		WATEROPEN("WaterOpen", "GeometricError");
+		ENTITYNONE("EntityNone", "GeometricError");
 
 		String errName;
 		String errType;
