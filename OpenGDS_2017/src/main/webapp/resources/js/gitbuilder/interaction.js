@@ -202,7 +202,7 @@ gb.interaction.SelectWMS.prototype.setExtent = function(extent) {
 
 	$.ajax({
 		url : addr,
-		data : param,
+		data : params,
 		dataType : 'jsonp',
 		jsonpCallback : 'getJson',
 		beforeSend : function(){
