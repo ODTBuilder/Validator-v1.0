@@ -24,12 +24,14 @@ gb.edit.RecordTransfer.prototype.getStructure = function() {
 	if (this.feature instanceof gb.edit.FeatureRecord) {
 		obj["feature"] = this.feature.getStructure();
 	}
+	console.log(obj);
 	return obj;
 };
 
 gb.edit.RecordTransfer.prototype.sendStructure = function() {
 	$.ajax({
 		url : this.url,
+		type : "POST",
 		data : this.getStructure(),
 		dataType : 'json',
 		beforeSend : function() {
