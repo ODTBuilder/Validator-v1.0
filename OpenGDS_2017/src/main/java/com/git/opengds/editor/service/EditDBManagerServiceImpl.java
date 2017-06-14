@@ -18,6 +18,7 @@
 package com.git.opengds.editor.service;
 
 import java.net.MalformedURLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -243,8 +244,9 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 	}
 
 	@Override
-	public void dropQa20LayerCollection(String type, EditQA20Collection editCollection) {
+	public List<String> dropQa20LayerCollection(String type, EditQA20Collection editCollection) {
 
+		List<String> layerNames = new ArrayList<String>();
 		String collectionName = editCollection.getCollectionName();
 		QA20LayerList layerList = editCollection.getDeletedLayerList();
 		for (int i = 0; i < layerList.size(); i++) {
@@ -254,10 +256,9 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 			HashMap<String, Object> dropQuery = queryManager.getDropLayer(type, collectionName, layerName);
 			int isSuccessed = dao.dropLayer(dropQuery);
 			if (isSuccessed == 0) {
-
-			} else {
-
+				layerNames.add("\"geo" + "_" + type + "_" + collectionName + "_" + layerName + "\"");
 			}
 		}
+		return layerNames;
 	}
 }

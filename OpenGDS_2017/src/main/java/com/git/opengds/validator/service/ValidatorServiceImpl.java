@@ -32,14 +32,9 @@ public class ValidatorServiceImpl implements ValidatorService {
 	@Autowired
 	private ErrorLayerService errorLayerService;
 
-	@Autowired
-	private EditService editService;
-
 	@SuppressWarnings("unchecked")
 	@Override
 	public JSONObject validate(String jsonObject) throws Exception {
-
-		editService.editTest();
 
 		// try {
 		// // 파라미터 파싱

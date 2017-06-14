@@ -4,6 +4,44 @@
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.git.mappers.qa10Mappers.QA10LayerCollectionMapper">
 
+	<!-- qa10_LayerCollection -->
+	<insert id="insertQA10LayerCollection" parameterType="hashmap">
+		${insertQuery}
+
+		<selectKey keyProperty="c_idx" resultType="int" order="AFTER">
+			select currval('qa10_layercollection_c_idx_seq')
+		</selectKey>
+	</insert>
+
+	<!-- qa10_LayerCollection_header -->
+	<insert id="insertQA10LayerCollectionHeader" parameterType="hashmap">
+		${insertQuery}
+	</insert>
+
+	<!-- qa10_layercollection_tables -->
+	<insert id="insertQA10LayerCollectionTables" parameterType="hashmap">
+		${insertQuery}
+
+		<selectKey keyProperty="tb_idx" resultType="int" order="AFTER">
+			select currval('qa10_layercollection_tables_tb_idx_seq')
+		</selectKey>
+	</insert>
+
+	<!-- qa10_layer -->
+	<insert id="insertQA10LayerCollectionLineTypes" parameterType="hashmap">
+		${insertQuery}
+	</insert>
+
+	<!-- qa10_layer -->
+	<insert id="insertQA10LayerCollectionLayers" parameterType="hashmap">
+		${insertQuery}
+	</insert>
+
+	<!-- qa10_layer -->
+	<insert id="insertQA10LayerCollectionStyles" parameterType="hashmap">
+		${insertQuery}
+	</insert>
+
 	<!-- qa10_layer_tb -->
 	<select id="createQA10LayerTb" parameterType="hashMap">
 		${createQuery}
@@ -11,6 +49,11 @@
 
 	<!-- qa10_layer -->
 	<insert id="insertQA10Layer" parameterType="hashmap">
+		${insertQuery}
+	</insert>
+
+	<!-- qa10_layer_metadata -->
+	<insert id="insertQA10LayerMetadata" parameterType="hashmap">
 		${insertQuery}
 	</insert>
 
