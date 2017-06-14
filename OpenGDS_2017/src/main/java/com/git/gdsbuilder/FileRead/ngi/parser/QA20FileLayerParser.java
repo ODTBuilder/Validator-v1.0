@@ -91,6 +91,8 @@ public class QA20FileLayerParser {
 		String layerID = getLayerID();
 		String layerName = getLayerName().replaceAll("\"", "");
 
+		System.out.println(layerName);
+		
 		NGIHeader ngiHeader = getNgiHeader();
 		NDAHeader ndaHeader = getNdaHeader();
 		String[] layerTypes = getLayerTypes(ngiHeader);

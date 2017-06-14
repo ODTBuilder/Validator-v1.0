@@ -189,7 +189,7 @@ gb.interaction.SelectWMS.prototype.setExtent = function(extent) {
 			this.layer.getSource().getParams().CRS ? this.layer.getSource().getParams().CRS : this.layer.getSource().getParams().SRS, {
 				'INFO_FORMAT' : 'text/html'
 			});
-	var param = {
+	var params = {
 			"service" : "WFS",
 			"version" : "1.0.0",
 			"request" : "GetFeature",
@@ -199,6 +199,7 @@ gb.interaction.SelectWMS.prototype.setExtent = function(extent) {
 			"format_options" : "callback:getJson"
 	};
 	var addr = "geoserver2/geoserverWFSGetFeature.ajax";
+
 	$.ajax({
 		url : addr,
 		data : param,

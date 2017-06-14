@@ -22,7 +22,7 @@ public class QA10FileUploadServiceImpl implements QA10FileUploadService {
 	private GeoserverService geoserverService;
 
 	@Override
-	public FileMeta test(FileMeta fileMeta) throws Exception {
+	public FileMeta dxfUpload(FileMeta fileMeta) throws Exception {
 
 		FileMeta file = fileMeta;
 		file.setOriginSrc("EPSG:5186");
@@ -32,8 +32,8 @@ public class QA10FileUploadServiceImpl implements QA10FileUploadService {
 		QA10FileReader fileReader = new QA10FileReader();
 		QA10LayerCollection collection = fileReader.read(file);
 
-//		TestJTS test = new TestJTS();
-//		QA10LayerCollection newCollection = test.testJTS(collection);
+		// TestJTS test = new TestJTS();
+		// QA10LayerCollection newCollection = test.testJTS(collection);
 
 		// create GeoLayerInfo
 		GeoLayerInfo layerInfo = new GeoLayerInfo();
@@ -44,8 +44,9 @@ public class QA10FileUploadServiceImpl implements QA10FileUploadService {
 		layerInfo.setTransSrc("EPSG:3857");
 
 		// input DB layer
-		GeoLayerInfo returnInfo = dbmanagerService.insertQA10LayerCollection(collection, layerInfo);
-		//GeoLayerInfo returnInfo1 = dbmanagerService.insertQA10LayerCollection(collection, layerInfo);
+		GeoLayerInfo returnInfo = dbmanagerService.insertQA10LayerCollectiontest(collection, layerInfo);
+		// GeoLayerInfo returnInfo1 =
+		// dbmanagerService.insertQA10LayerCollection(collection, layerInfo);
 
 		// publish Layer
 		if (returnInfo != null) {

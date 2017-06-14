@@ -262,7 +262,6 @@ public class CollectionValidator {
 
 	private void layerMissValidate(ValidateLayerTypeList types, GeoLayerCollectionList layerCollections) {
 		// TODO Auto-generated method stub
-
 	}
 
 }

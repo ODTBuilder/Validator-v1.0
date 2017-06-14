@@ -33,7 +33,6 @@ import com.git.gdsbuilder.FileRead.ngi.reader.QA20FileReader;
 import com.git.gdsbuilder.type.geoserver.layer.GeoLayerInfo;
 import com.git.gdsbuilder.type.qa20.collection.QA20LayerCollection;
 import com.git.opengds.editor.service.EditService;
-import com.git.opengds.geoserver.service.GeoserverService;
 import com.git.opengds.upload.domain.FileMeta;
 import com.git.opengds.validator.service.ValidatorService;
 
@@ -50,9 +49,9 @@ public class QA20FileUploadServiceImpl implements QA20FileUploadService {
 	@Inject
 	private EditService editService;
 
-	public FileMeta insertFile(FileMeta fileMeta) throws Exception {
+	public FileMeta ngiUpload(FileMeta fileMeta) throws Exception {
 
-	//	editService.editTest();
+		// editService.editTest();
 
 		// validatorService.validate();
 		FileMeta file = fileMeta;

@@ -34,9 +34,22 @@ public class QA20LayerCollectionDAOImpl implements QA20LayerCollectionDAO {
 
 	private static final String namespace = "com.git.mappers.qa20Mappers.QA20LayerCollectionMapper";
 
+	// qa20_LayerCollection
 	@Override
-	public void insertQA20LayerCollection(Map<String, Object> collection) {
+	public int insertQA20LayerCollection(Map<String, Object> collection) {
 		sqlSession.insert(namespace + ".insertQA20LayerCollection", collection);
+		return (Integer) collection.get("c_idx");
+	}
+
+	@Override
+	public HashMap<String, Object> selectQA20LayerCollectionIdx(HashMap<String, Object> selectLayerCollectionIdxQuery) {
+		return sqlSession.selectOne(namespace + ".selectLayerCollectionIdx", selectLayerCollectionIdxQuery);
+	}
+
+	// qa20_Layer
+	@Override
+	public void createQA20LayerTb(HashMap<String, Object> hashMap) throws PSQLException {
+		sqlSession.update(namespace + ".createQA20LayerTb", hashMap);
 	}
 
 	@Override
@@ -45,39 +58,50 @@ public class QA20LayerCollectionDAOImpl implements QA20LayerCollectionDAO {
 	}
 
 	@Override
-	public void insertQA20LayerMetadatas(Map<String, Object> metadatas) throws PSQLException {
-		sqlSession.insert(namespace + ".insertQA20LayerMetadata", metadatas);
+	public int dropLayer(HashMap<String, Object> dropQuery) {
+		return sqlSession.update(namespace + ".dropQA20Layer", dropQuery);
 	}
 
+	@Override
+	public void insertQA20Feature(HashMap<String, Object> insertQuertMap) {
+		sqlSession.insert(namespace + ".insertFeature", insertQuertMap);
+	}
+
+	// qa20_layer_metadata
+	@Override
+	public int insertQA20LayerMetadata(HashMap<String, Object> metadata) throws PSQLException {
+		sqlSession.insert(namespace + ".insertQA20LayerMetadata", metadata);
+		return (Integer) metadata.get("lm_idx");
+	}
+
+	// nda_aspatial_field_def
 	@Override
 	public void insertNdaAspatialFieldDefs(HashMap<String, Object> fieldDef) throws PSQLException {
 		sqlSession.insert(namespace + ".insertNdaAspatialFieldDefs", fieldDef);
 	}
 
-	@Override
-	public void insertTextRepresent(HashMap<String, Object> hashMap) throws PSQLException {
-		sqlSession.insert(namespace + ".insertTextRepresent", hashMap);
-	}
-
+	// ngi_point_represent
 	@Override
 	public void insertPointRepresent(HashMap<String, Object> hashMap) throws PSQLException {
 		sqlSession.insert(namespace + ".insertPointRepresent", hashMap);
-
 	}
 
+	// ngi_linestring_represent
 	@Override
 	public void insertLineStringRepresent(HashMap<String, Object> hashMap) throws PSQLException {
 		sqlSession.insert(namespace + ".insertLineStringRepresent", hashMap);
 	}
 
+	// ngi_region_represents
 	@Override
 	public void insertRegionRepresent(HashMap<String, Object> hashMap) throws PSQLException {
 		sqlSession.insert(namespace + ".insertRegionRepresent", hashMap);
 	}
 
+	// ngi_text_represent
 	@Override
-	public void createQA20LayerTb(HashMap<String, Object> hashMap) throws PSQLException {
-		sqlSession.update(namespace + ".createQA20LayerTb", hashMap);
+	public void insertTextRepresent(HashMap<String, Object> hashMap) throws PSQLException {
+		sqlSession.insert(namespace + ".insertTextRepresent", hashMap);
 	}
 
 	@Override
@@ -97,16 +121,12 @@ public class QA20LayerCollectionDAOImpl implements QA20LayerCollectionDAO {
 
 	@Override
 	public void insertFeature(HashMap<String, Object> insertQuery) {
-		sqlSession.insert(namespace + ".insertFeature", insertQuery);
+		sqlSession.insert(namespace + ".insertFeatureEdit", insertQuery);
 	}
 
-	@Override
-	public HashMap<String, Object> selectQA20LayerBD(HashMap<String, Object> selectBDQuery) {
-		return sqlSession.selectOne(namespace + ".selectLayerBD", selectBDQuery);
-	}
+//	@Override
+//	public HashMap<String, Object> selectQA20LayerBD(HashMap<String, Object> selectBDQuery) {
+//		return sqlSession.selectOne(namespace + ".selectLayerBD", selectBDQuery);
+//	}
 
-	@Override
-	public HashMap<String, Object> selectQA20LayerCollectionIdx(HashMap<String, Object> selectLayerCollectionIdxQuery) {
-		return sqlSession.selectOne(namespace + ".selectLayerCollectionIdx", selectLayerCollectionIdxQuery);
-	}
 }

@@ -7182,7 +7182,7 @@
 											params : {
 												'LAYERS' : data[i].lName,
 												'TILED' : true,
-												// 'FORMAT' : 'image/png8',
+												'FORMAT' : 'image/png',
 												'VERSION' : '1.1.0',
 												'CRS' : 'EPSG:5186',
 												'SRS' : 'EPSG:5186',

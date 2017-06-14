@@ -120,7 +120,7 @@
       withCredentials: false,
       parallelUploads: 2,
       uploadMultiple: false,
-      duplicate : false, //중복허용여부
+//      duplicate : false, //중복허용여부
       uploading : false, //업로드 진행여부
       maxFilesize: 256,
       paramName: "file",
@@ -634,9 +634,9 @@
         return function(file) {
           if (_this.getAddedFiles().length === 0 && _this.getUploadingFiles().length === 0 && _this.getQueuedFiles().length === 0) {
         	//모든 파일 업로드 및 발행완료시 변환
+        	  //진행중
         	if(this.options.uploading){ // 업로드 진행중일시
 	        	$('#total-progress-in').text('Uploaded and published successfully.');
-	        	$('#total-progress-in').removeClass("progress-bar-info");
 	        	$('#total-progress-in').addClass("progress-bar-success");
 	        	$('#total-progress').removeClass("active");
         	}
@@ -1053,7 +1053,12 @@
             done(this.options.dictMaxFilesExceeded.replace("{{maxFiles}}", this.options.maxFiles));
             return this.emit("maxfilesexceeded", file);
           } else {
-            return Dropzone.prototype.duplicationCheckAjax(this,file, done);
+        	/*  if(this.options.duplicate==true){ // 중복허용
+        		  return this.options.accept.call(this, file, done);
+        	  }
+        	  else{//중복허용하지 않음
+*/        		  return Dropzone.prototype.duplicationCheckAjax(this,file, done);
+        	  //}
           }
       }
     };
@@ -1132,6 +1137,10 @@
 
     Dropzone.prototype.enqueueFiles = function(files) {
       var file, _i, _len;
+      
+      //파일프로그레스바 초기화
+      $('#total-progress-in').removeClass("progress-bar-success");
+  	  $('#total-progress').addClass("active");
       for (_i = 0, _len = files.length; _i < _len; _i++) {
         file = files[_i];
         this.enqueueFile(file);

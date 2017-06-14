@@ -2,6 +2,7 @@
 	// ==========================================================================================================
 	/*코딩시작*/
 
+
 var gitbuilder = {};
 //변수객체
 gitbuilder.variable = {};
@@ -103,14 +104,11 @@ gitbuilder.method ={};
 			fileWindow += '</select>';
 			fileWindow += '</div>'
 			//중복파일 
-		/*	fileWindow += '<div class="checkbox checkbox-primary checkbox-single" >';
-			fileWindow += '<input type="checkbox" id="isdupbox"><label>Do you want to overwrite duplicate files?</label>';
-			fileWindow += '</div>'*/
-			fileWindow += '<div class="col-lg-3 text-right checkbox checkbox-secondary checkbox-single" style="padding-right:0px">';
-			fileWindow += '<input type="checkbox" data-toggle="tooltip" data-placement="bottom" title="Tooltip on bottom" id="dupchk"><label>Duplicate approvals</label><br>';
-			fileWindow += '</div>';
+		/*	fileWindow += '<div class="col-lg-3 text-right checkbox checkbox-secondary checkbox-single" style="padding-right:0px">';
+			fileWindow += '<input type="checkbox" data-toggle="tooltip" data-placement="bottom" title="Upon duplicate approval, The existing file is overwritten." id="dupchk"><label>Duplicate approvals</label><br>';
+			fileWindow += '</div>';*/
         	fileWindow += '<!-- The fileinput-button span is used to style the file input field as button -->';
-			fileWindow += '<div class="col-lg-6 text-right" style="padding-left: 0px;">';
+			fileWindow += '<div class="col-lg-9 text-right" style="padding-left: 0px;">';
         	fileWindow += '<span id="addfileBtn" class="btn btn-success fileinput-button">';
         	fileWindow += '<i class="glyphicon glyphicon-plus"></i>';
         	fileWindow += '<span>Add files...</span>';
@@ -194,7 +192,7 @@ gitbuilder.method ={};
 	        document.querySelector("#total-progress").style.opacity = "1";
 
 			var myDropzone = new Dropzone(document.body, { // Make the whole body a dropzone
-				url: "http://175.116.181.30:8089/opengds/file/fileUpload.do", // Set the url
+				url: "http://localhost:8080/opengds/file/fileUpload.do", // Set the url
 				thumbnailWidth: 80,
 			        thumbnailHeight: 80,
 			        parallelUploads: 20,
@@ -272,26 +270,44 @@ gitbuilder.method ={};
 						gitbuilder.variable.myDropzone.options.acceptedFiles = ".shp,.dbf,.shx,.prj";
 						gitbuilder.variable.myDropzone.hiddenFileInput.setAttribute("accept",".shp,.dbf,.shx,.prj");
 				    }
-				    gitbuilder.variable.myDropzone.initFileTypeChange();
+				    gitbuilder.variable.myDropzone.initFileTypeChange(); //파일리스트 초기화
 				});
 			      $(".file-message").show();
 		}
 		$('#' + gitbuilder.variable.elementid.fileWindow).modal('show');
 	}
 	
+	/*$(document).on("change","#dupchk",function () {
+		var ischecked = $('input:checkbox[id="dupchk"]').is(":checked");
+	       if(ischecked){
+	    	   var content ={};
+				var confirmFunc;
+				content = {
+					    title : 'File duplication approved.',
+					    text : 'Upon duplicate approval, The existing file is overwritten.',
+					    type : 'warning',
+					    confirmButtonColor : '#3085d6',
+					    confirmButtonText : 'OK',
+					    confirmButtonClass : 'btn btn-danger',
+					    buttonsStyling : false
+					  };
+				confirmFunc = function(isConfirm){
+					    if (isConfirm) {
+					    	gitbuilder.variable.myDropzone.options.duplicate = true;
+					    	gitbuilder.variable.myDropzone.initFileTypeChange(); //파일리스트 초기화
+					  }
+				}
+				alertConfirmPopup(content,confirmFunc);
+	       }
+	       else{
+	    	   gitbuilder.variable.myDropzone.options.duplicate = false;
+	    	   gitbuilder.variable.myDropzone.initFileTypeChange(); //파일리스트 초기화
+	       }
+	});*/
 
-	gitbuilder.method.fileDuplicateCheck = function(fileName) {
-		var returnFlag = false;
-		if (fileName != null) {
-			var url = CONTEXT + "/file/fileNameDupCheckAjax.ajax";
-			var params = {
-				fileName : fileName
-			};
-			sendJsonRequest(url, params, result);
-		} else {
-			throw new Error("File name error.");
-		}
-}
+	
+
+	
 	
 
 	
