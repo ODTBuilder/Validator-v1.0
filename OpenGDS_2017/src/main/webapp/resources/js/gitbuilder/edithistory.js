@@ -98,7 +98,12 @@ gb.edit.FeatureRecord.prototype.getStructure = function() {
 			if (!obj[cLayers[j]].hasOwnProperty("created")) {
 				obj[cLayers[j]]["created"] = {};
 			}
-			obj[cLayers[j]]["created"][names[k]] = format.writeFeature(this.created[cLayers[j]][names[k]]);
+			if (!obj[cLayers[j]]["created"].hasOwnProperty("features")) {
+				obj[cLayers[j]]["created"]["features"] = [];
+			}
+			obj[cLayers[j]]["created"]["features"].push(format.writeFeature(this.created[cLayers[j]][names[k]]));
+			// obj[cLayers[j]]["created"][features][names[k]] =
+			// format.writeFeature(this.created[cLayers[j]][names[k]]);
 		}
 	}
 
@@ -116,7 +121,16 @@ gb.edit.FeatureRecord.prototype.getStructure = function() {
 			if (!obj[mLayers[j]].hasOwnProperty("modified")) {
 				obj[mLayers[j]]["modified"] = {};
 			}
-			obj[mLayers[j]]["modified"][names[k]] = format.writeFeature(this.modified[mLayers[j]][names[k]]);
+			if (!obj[mLayers[j]]["modified"].hasOwnProperty("features")) {
+				obj[mLayers[j]]["modified"]["features"] = [];
+			}
+			var clone = this.modified[mLayers[j]][names[k]];
+			if (this.id) {
+				clone.setId(clone.get(this.id));
+			}
+			obj[mLayers[j]]["modified"]["features"].push(format.writeFeature(clone));
+			// obj[mLayers[j]]["modified"][names[k]] =
+			// format.writeFeature(this.modified[mLayers[j]][names[k]]);
 		}
 	}
 
