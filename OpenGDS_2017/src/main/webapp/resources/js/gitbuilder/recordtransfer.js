@@ -32,7 +32,8 @@ gb.edit.RecordTransfer.prototype.sendStructure = function() {
 	$.ajax({
 		url : this.url,
 		type : "POST",
-		data : this.getStructure(),
+		data : JSON.stringify(this.getStructure()),
+		contentType : "application/json; charset=UTF-8",
 		dataType : 'json',
 		beforeSend : function() {
 			$("body").css("cursor", "wait");
