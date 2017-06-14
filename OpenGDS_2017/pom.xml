@@ -277,8 +277,6 @@
 			<version>2.6</version>
 		</dependency>
 
-
-
 		<!-- Test -->
 		<dependency>
 			<groupId>junit</groupId>

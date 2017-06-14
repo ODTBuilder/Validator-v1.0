@@ -34,6 +34,7 @@ import com.git.gdsbuilder.edit.qa20.EditQA20LayerCollectionList;
 import com.git.gdsbuilder.type.qa20.feature.QA20Feature;
 import com.git.gdsbuilder.type.qa20.feature.QA20FeatureList;
 import com.git.opengds.file.ngi.service.QA20DBManagerService;
+import com.git.opengds.geoserver.service.GeoserverService;
 import com.git.opengds.parser.json.BuilderJSONParser;
 
 @Service
@@ -54,8 +55,11 @@ public class EditServiceImpl implements EditService {
 	@Inject
 	QA20DBManagerService qa20DBManager;
 
+	@Inject
+	GeoserverService geoserver;
+
 	@Override
-	public void editTest() throws Exception {
+	public void editLayerCollection(String editJSON) throws Exception {
 
 		JSONParser parser = new JSONParser();
 
@@ -90,7 +94,11 @@ public class EditServiceImpl implements EditService {
 
 					}
 					if (editCollection.isDeleted()) {
-						editDBManager.dropQa20LayerCollection(type, editCollection);
+						List<String> deletedLayerNames = editDBManager.dropQa20LayerCollection(type, editCollection);
+						geoserver.removeGeoserverLayers(deletedLayerNames);
+						if(editCollection.isDeleteAll()) {
+							geoserver.removeGeoserverGroupLayer(editCollection.getCollectionName());
+						}
 					}
 				}
 			} else if (type.equals(this.isDxf)) {

@@ -36,7 +36,6 @@ package com.git.opengds.parser.edit.layer;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Iterator;
 
 import org.geotools.feature.SchemaException;
@@ -117,6 +116,10 @@ public class EditLayerCollectionParser {
 			} else if (state.equals("remove")) {
 				JSONObject removeObj = (JSONObject) collectionObj.get(state);
 				JSONArray layerNames = (JSONArray) removeObj.get("layer");
+				String scope = (String) removeObj.get("scope");
+				if (scope.equals("all")) {
+					editCollection.setDeleteAll(true);
+				}
 				QA20LayerList deletedLayerList = new QA20LayerList();
 				for (int i = 0; i < layerNames.size(); i++) {
 					String layerName = (String) layerNames.get(i);

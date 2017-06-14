@@ -18,6 +18,7 @@
 package com.git.opengds.editor.service;
 
 import java.net.MalformedURLException;
+import java.util.List;
 
 import org.postgresql.util.PSQLException;
 
@@ -45,6 +46,6 @@ public interface EditDBManagerService {
 
 	public void deleteRemovedFeature(String layerName, String featureId);
 
-	public void dropQa20LayerCollection(String type, EditQA20Collection editCollection);
+	public List<String> dropQa20LayerCollection(String type, EditQA20Collection editCollection);
 
 }

@@ -81,7 +81,7 @@ html {
 					Save</a>
 				<ul class="dropdown-menu" role="menu">
 					<li><a href="#">as a SHP</a></li>
-					<li><a href="#">to Server</a></li>
+					<li><a href="#" id="save">to Server</a></li>
 				</ul></li>
 
 			<li><a href="#" title="Edit" id="edit"><i
@@ -283,6 +283,15 @@ html {
 		var record = new gb.edit.FeatureRecord({
 			id : "feature_id"
 		});
+		
+		var transfer = new gb.edit.RecordTransfer({
+			url : "editLayerCollection/editLayerCollection.ajax",
+			feature : record
+		});
+		
+		$("#save").click(function(){
+			transfer.sendStructure();
+		});
 
 		$("#edit").editingtool({
 			geoserverURL : "http://175.116.181.42:9990/geoserver/",
@@ -293,7 +302,7 @@ html {
 				return $('#builderClientLayer').jstreeol3("get_selected_layer");
 			}
 		});
-
+		
 		$("#changeBase").changebase({
 			map : map2
 		});
@@ -429,6 +438,12 @@ html {
 			}
 		});
 
+		$("#weight").layerweight({
+			updateOptionDef : function(){
+				return $("#validDefinition").optiondefinition("getDefinition");
+			}
+		});
+		
 		$("#validation").validation({
 			validatorURL : "validator/validate.ajax",
 			layerDefinition : function() {

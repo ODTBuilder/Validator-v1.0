@@ -59,6 +59,9 @@
 <%-- 검수 옵션 정의 --%>
 <script src="${pageContext.request.contextPath}/resources/js/gitbuilder/optiondefinition.js"></script>
 
+<%-- 가중치 정의 --%>
+<script src="${pageContext.request.contextPath}/resources/js/gitbuilder/layerweight.js"></script>
+
 <%-- 검수창 --%>
 <script src="${pageContext.request.contextPath}/resources/js/gitbuilder/validation.js"></script>
 <script src="${ctx}/resources/js/gitbuilder/changebase.js"></script>
@@ -72,6 +75,9 @@
 
 <%-- wms편집이력 --%>
 <script src="${pageContext.request.contextPath}/resources/js/gitbuilder/edithistory.js"></script>
+
+<%-- 편집이력 전송 --%>
+<script src="${pageContext.request.contextPath}/resources/js/gitbuilder/recordtransfer.js"></script>
 
 <%-- 커스텀 인터랙션 --%>
 <script src="${pageContext.request.contextPath}/resources/js/gitbuilder/interaction.js"></script>

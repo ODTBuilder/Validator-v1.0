@@ -69,16 +69,76 @@ gb.edit.FeatureRecord.prototype.update = function(layer, feature) {
 	if (!this.modified) {
 		this.modified = {};
 	}
-	if (!this.modified[layer.get("id")]) {
-		this.modified[layer.get("id")] = {};
+	if (feature.getId().search(".new") !== -1) {
+		this.created[layer.get("id")][feature.getId()] = feature;
+	} else {
+		if (!this.modified[layer.get("id")]) {
+			this.modified[layer.get("id")] = {};
+		}
+		this.modified[layer.get("id")][this.id ? feature.get(this.id) : feature.getId()] = feature;
 	}
-	this.modified[layer.get("id")][this.id ? feature.get(this.id) : feature.getId()] = feature;
 	// this.modified[layer.get("id")][this.id ? feature.get(this.id) :
 	// feature.getId()] = new ol.format.GeoJSON().writeFeature(feature);
 	console.log(this.modified);
 }
 gb.edit.FeatureRecord.prototype.getStructure = function() {
+	var format = new ol.format.GeoJSON();
 	var obj = {};
+	var cLayers = Object.keys(this.created);
+	for (var i = 0; i < cLayers.length; i++) {
+		if (Object.keys(this.created[cLayers[i]]).length < 1) {
+			continue;
+		}
+		obj[cLayers[i]] = {};
+	}
+
+	for (var j = 0; j < cLayers.length; j++) {
+		var names = Object.keys(this.created[cLayers[j]]);
+		for (var k = 0; k < names.length; k++) {
+			if (!obj[cLayers[j]].hasOwnProperty("created")) {
+				obj[cLayers[j]]["created"] = {};
+			}
+			obj[cLayers[j]]["created"][names[k]] = format.writeFeature(this.created[cLayers[j]][names[k]]);
+		}
+	}
+
+	var mLayers = Object.keys(this.modified);
+	for (var i = 0; i < mLayers.length; i++) {
+		if (Object.keys(this.modified[mLayers[i]]).length < 1 || obj.hasOwnProperty(mLayers[i])) {
+			continue;
+		}
+		obj[mLayers[i]] = {};
+	}
+
+	for (var j = 0; j < mLayers.length; j++) {
+		var names = Object.keys(this.modified[mLayers[j]]);
+		for (var k = 0; k < names.length; k++) {
+			if (!obj[mLayers[j]].hasOwnProperty("modified")) {
+				obj[mLayers[j]]["modified"] = {};
+			}
+			obj[mLayers[j]]["modified"][names[k]] = format.writeFeature(this.modified[mLayers[j]][names[k]]);
+		}
+	}
+
+	var rLayers = Object.keys(this.removed);
+	for (var i = 0; i < rLayers.length; i++) {
+		if (Object.keys(this.removed[rLayers[i]]).length < 1 || obj.hasOwnProperty(rLayers[i])) {
+			continue;
+		}
+		obj[rLayers[i]] = {};
+	}
+
+	for (var j = 0; j < rLayers.length; j++) {
+		var names = Object.keys(this.removed[rLayers[j]]);
+		for (var k = 0; k < names.length; k++) {
+			if (!obj[rLayers[j]].hasOwnProperty("removed")) {
+				obj[rLayers[j]]["removed"] = [];
+			}
+			obj[rLayers[j]]["removed"].push(names[k]);
+			// [names[k]] =
+			// format.writeFeature(this.modified[mLayers[j]][names[k]]);
+		}
+	}
 
 	return obj;
 }

@@ -17,7 +17,8 @@ gitbuilder.ui.LayerWeight = $.widget("gitbuilder.layerweight", {
 	message : undefined,
 	file : undefined,
 	options : {
-		definition : undefined,
+		optionDefinition : undefined,
+		updateOptionDef : undefined,
 		appendTo : "body"
 	},
 	_create : function() {
@@ -42,7 +43,7 @@ gitbuilder.ui.LayerWeight = $.widget("gitbuilder.layerweight", {
 		this._addClass(xButton, "close");
 
 		var htag = $("<h4>");
-		htag.text("Layer Definition");
+		htag.text("Layer Weight Definition");
 		this._addClass(htag, "modal-title");
 
 		var header = $("<div>").append(xButton).append(htag);
@@ -58,11 +59,8 @@ gitbuilder.ui.LayerWeight = $.widget("gitbuilder.layerweight", {
 		var tdhead2 = $("<td>").text("Layer Name");
 		var tdhead3 = $("<td>").text("Layer Code");
 		var tdhead4 = $("<td>").text("Geometry Type");
-		var tdhead5 = $("<td>").text("Delete");
-		var tdhead6 = $("<td>").text("QA Area");
 		var tdhead7 = $("<td>").text("Weight");
-		var trhead = $("<tr>").append(tdhead1).append(tdhead2).append(tdhead3).append(tdhead4).append(tdhead5).append(
-				tdhead6).append(tdhead7);
+		var trhead = $("<tr>").append(tdhead1).append(tdhead2).append(tdhead3).append(tdhead4).append(tdhead7);
 		var thead = $("<thead>").append(trhead);
 		that.tbody = $("<tbody>");
 		var tb = $("<table>").append(thead).append(that.tbody);
@@ -70,74 +68,7 @@ gitbuilder.ui.LayerWeight = $.widget("gitbuilder.layerweight", {
 		this._addClass(tb, "table-striped");
 		this._addClass(tb, "text-center");
 		this.update();
-		$(document).on("click", ".layerdefinition-del", function(event) {
-			var laName;
-			if (event.target === this) {
-				laName = $(event.target).parent().parent().find("td:eq(1) > input").val();
-				$(event.target).parent().parent().remove();
-			} else if ($(event.target).parent()[0] === this) {
-				laName = $(event.target).parent().parent().parent().find("td:eq(1) > input").val();
-				$(event.target).parent().parent().parent().remove();
-			}
-		});
-		var addBtn = $("<button>").attr({
-			"type" : "button"
-		});
-		this._addClass(addBtn, "btn");
-		this._addClass(addBtn, "btn-default");
-		$(addBtn).text("Add Row");
-		this._on(false, addBtn, {
-			click : function(event) {
-				if (event.target === addBtn[0]) {
-					var no = $("<span>").css({
-						"vertical-align" : "-webkit-baseline-middle"
-					}).text($(that.tbody).find("tr:last").index() + 2)
-					var td1 = $("<td>").append(no);
-					var lname = $("<input>").val("");
-					this._addClass(lname, "form-control");
-					var td2 = $("<td>").append(lname);
-					$(td2).attr({
-						"type" : "text"
-					});
-					var lcode = $("<input>").val("");
-					this._addClass(lcode, "form-control");
-					var td3 = $("<td>").append(lcode);
-					$(td3).attr({
-						"type" : "text"
-					});
-					var ty1 = $("<option>").text("Point").val("point");
-					var ty2 = $("<option>").text("LineString").val("linestring");
-					var ty3 = $("<option>").text("Polygon").val("polygon");
-					var gtype = $("<select>").append(ty1).append(ty2).append(ty3);
-					this._addClass(gtype, "form-control");
-					var td4 = $("<td>").append(gtype);
-					var icon = $("<i>").attr("aria-hidden", true);
-					this._addClass(icon, "fa");
-					this._addClass(icon, "fa-times");
-					var delBtn = $("<button>").append(icon);
-					this._addClass(delBtn, "btn");
-					this._addClass(delBtn, "btn-default");
-					this._addClass(delBtn, "layerdefinition-del");
-					var td5 = $("<td>").append(delBtn);
-					var radio = $("<input>").attr({
-						"type" : "radio",
-						"name" : "layerdefinition-area"
-					}).css({
-						"vertical-align" : "-webkit-baseline-middle"
-					});
-					var td6 = $("<td>").append(radio);
-					var weight = $("<input>").attr({
-						"type" : "number",
-						"min" : 1,
-						"max" : 100
-					});
-					that._addClass(weight, "form-control");
-					var td7 = $("<td>").append(weight);
-					var tr = $("<tr>").append(td1).append(td2).append(td3).append(td4).append(td5).append(td6).append(td7);
-					$(that.tbody).append(tr);
-				}
-			}
-		});
+	
 		var upper = $("<div>").css({
 			"overflow-y" : "auto",
 			"height" : "400px"
@@ -146,7 +77,7 @@ gitbuilder.ui.LayerWeight = $.widget("gitbuilder.layerweight", {
 			"display" : "none"
 		});
 		this._addClass(this.message, "text-danger");
-		var mid = $("<div>").append(this.message).append(addBtn);
+		var mid = $("<div>").append(this.message);
 		this.file = $("<input>").attr({
 			"type" : "file"
 		}).css({
@@ -282,7 +213,8 @@ gitbuilder.ui.LayerWeight = $.widget("gitbuilder.layerweight", {
 		});
 	},
 	_init : function() {
-		this.layerDef = $.extend({}, this.options.definition);
+		
+		console.log(this.options.updateOptionDef());
 	},
 	downloadSetting : function() {
 		var def = this.getDefinitionForm();
@@ -290,7 +222,7 @@ gitbuilder.ui.LayerWeight = $.widget("gitbuilder.layerweight", {
 			var setting = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(def));
 			var anchor = $("<a>").attr({
 				"href" : setting,
-				"download" : "layer_setting.json"
+				"download" : "weight_setting.json"
 			});
 			$(anchor)[0].click();
 		}
@@ -314,28 +246,6 @@ gitbuilder.ui.LayerWeight = $.widget("gitbuilder.layerweight", {
 				}).text("Each weight must be over than 0%");
 			}
 			$(children[i]).removeClass("danger");
-			for (var j = 0; j < children.length; j++) {
-				if (i !== j) {
-					if ($(children[i]).find("td:eq(1)>input").val() !== "" && $(children[i]).find("td:eq(1)>input").val() === $(children[j]).find("td:eq(1)>input").val()) {
-						 error.push(children[i]);
-						 error.push(children[j]);
-						flag = false;
-						$(that.message).css({
-							"display" : "block"
-						}).text("Same layer names are not allowed.");
-					} 
-				}
-			}
-			if ($(children[i]).find("td:eq(1)>input").val() === ""
-					|| $(children[i]).find("td:eq(2)>input").val() === "") {
-				$(children[i]).addClass("warning");
-				flag = false;
-				$(that.message).css({
-					"display" : "block"
-				}).text("Blank spaces are not allowed.");
-			} else {
-				$(children[i]).removeClass("warning");
-			}
 
 			var code = $(children[i]).find("td:eq(2)>input").val();
 			code.replace(/s/gi, '');

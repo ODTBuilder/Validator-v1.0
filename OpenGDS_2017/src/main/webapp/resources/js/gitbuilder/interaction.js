@@ -202,7 +202,7 @@ gb.interaction.SelectWMS.prototype.setExtent = function(extent) {
 
 	$.ajax({
 		url : addr,
-		data : param,
+		data : params,
 		dataType : 'jsonp',
 		jsonpCallback : 'getJson',
 		beforeSend : function(){
@@ -226,11 +226,12 @@ gb.interaction.SelectWMS.prototype.setExtent = function(extent) {
 			for (var k = 0; k < selFeatures.getLength(); k++) {
 				if (selFeatures.item(k).getId().search(that.layer.get("id")+".new") !== -1) {
 					cFeatures.push(selFeatures.item(k));
-				} else {
-					if (!that.record.isRemoved(that.layer, selFeatures.item(k))) {
-						cFeatures.push(selFeatures.item(k));
-					}
 				}
+//				else {
+//					if (!that.record.isRemoved(that.layer, selFeatures.item(k))) {
+//						cFeatures.push(selFeatures.item(k));
+//					}
+//				}
 			}
 			that.select_.getFeatures().clear();
 			that.select_.getFeatures().extend(cFeatures);

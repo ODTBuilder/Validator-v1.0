@@ -7195,7 +7195,8 @@
 									var git = {
 										"validation" : false,
 										"geometry" : data[i].geomType,
-										"editable" : true
+										"editable" : true,
+										"attribute" : data[i].attInfo
 									}
 									wms.set("name", obj.refer.get_node(data[i].lName).text);
 									wms.set("id", data[i].lName);
