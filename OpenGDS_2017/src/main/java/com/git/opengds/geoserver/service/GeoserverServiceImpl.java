@@ -106,7 +106,7 @@ public class GeoserverServiceImpl implements GeoserverService {
 			fte.setTitle(layerFullName); // 제목
 			fte.setName(layerFullName); // 이름
 			fte.setSRS(originSrc); // 좌표
-			//fte.setNativeCRS(originSrc);
+			fte.setNativeCRS(originSrc);
 			fte.setNativeName(layerFullName); // nativeName
 			//fte.setLatLonBoundingBox(minx, miny, maxx, maxy, originSrc);
 			
