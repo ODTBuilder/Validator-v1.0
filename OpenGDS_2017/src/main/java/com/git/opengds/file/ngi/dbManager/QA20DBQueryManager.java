@@ -19,7 +19,6 @@ package com.git.opengds.file.ngi.dbManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 
@@ -169,7 +168,7 @@ public class QA20DBQueryManager {
 				while (keys.hasNext()) {
 					String key = (String) keys.next();
 					Object value = properties.get(key);
-					insertDefaultQuery += key + ", ";
+					insertDefaultQuery += "\"" + key + "\"" + ", ";
 					insertDefaultValues += "'" + value + "', ";
 				}
 			}

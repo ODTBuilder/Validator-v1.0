@@ -19,6 +19,6 @@ package com.git.opengds.editor.service;
 
 public interface EditService {
 
-	public void editTest() throws Exception;
+	public void editLayerCollection(String editJSON) throws Exception;
 
 }
