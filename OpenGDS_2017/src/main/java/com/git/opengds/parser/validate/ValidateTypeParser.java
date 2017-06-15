@@ -31,6 +31,7 @@ import com.git.gdsbuilder.type.validate.option.BuildingOpen;
 import com.git.gdsbuilder.type.validate.option.ConBreak;
 import com.git.gdsbuilder.type.validate.option.ConIntersected;
 import com.git.gdsbuilder.type.validate.option.ConOverDegree;
+import com.git.gdsbuilder.type.validate.option.CrossRoad;
 import com.git.gdsbuilder.type.validate.option.EntityDuplicated;
 import com.git.gdsbuilder.type.validate.option.LayerMiss;
 import com.git.gdsbuilder.type.validate.option.OutBoundary;
@@ -352,6 +353,25 @@ public class ValidateTypeParser {
 					optionList.add(pointDuplicated);
 				}
 			}
+			
+			if(optionName.equalsIgnoreCase(CrossRoad.Type.CROSSROAD.errName())){
+				Object crossRoadObj = qaOptions.get("CrossRoad");
+				if(crossRoadObj == null){
+					continue;
+				}else{
+					List<String> relations = new ArrayList<String>();
+					JSONObject crossRoadValue = (JSONObject) crossRoadObj;
+					JSONArray relationValues = (JSONArray) crossRoadValue.get("relation");
+					int valueSize = relationValues.size();
+					for (int i = 0; i < valueSize; i++) {
+						String relationID = (String) relationValues.get(i);
+						relations.add(relationID);
+					}
+					ValidatorOption crossRoad = new CrossRoad(relations);
+					optionList.add(crossRoad);
+				}
+			}
+			
 		}
 		return optionList;
 	}

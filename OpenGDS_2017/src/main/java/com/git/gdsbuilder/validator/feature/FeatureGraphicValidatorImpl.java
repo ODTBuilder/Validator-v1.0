@@ -42,6 +42,7 @@ import javax.management.relation.RelationServiceMBean;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureIterator;
 import org.geotools.feature.SchemaException;
+import org.geotools.geojson.geom.GeometryJSON;
 import org.geotools.geometry.jts.JTS;
 import org.geotools.geometry.jts.JTSFactoryFinder;
 import org.geotools.referencing.CRS;
@@ -59,6 +60,7 @@ import com.git.gdsbuilder.type.validate.option.BuildingOpen;
 import com.git.gdsbuilder.type.validate.option.ConBreak;
 import com.git.gdsbuilder.type.validate.option.ConIntersected;
 import com.git.gdsbuilder.type.validate.option.ConOverDegree;
+import com.git.gdsbuilder.type.validate.option.CrossRoad;
 import com.git.gdsbuilder.type.validate.option.EntityDuplicated;
 import com.git.gdsbuilder.type.validate.option.LayerMiss;
 import com.git.gdsbuilder.type.validate.option.OutBoundary;
@@ -627,7 +629,7 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 		}
 	}
 
-	public ErrorFeature validateB_SymbolOutSided(List<SimpleFeature> simpleFeatures, SimpleFeature relationSimpleFeature){
+	public ErrorFeature validateB_SymbolOutSided(List<SimpleFeature> simpleFeatures, SimpleFeature relationSimpleFeature) throws SchemaException{
 
 		Geometry relationGeometry = (Geometry) relationSimpleFeature.getDefaultGeometry();
 		Boolean flag = false;
@@ -688,6 +690,40 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 		if(flag == false){
 			ErrorFeature errorFeature = new ErrorFeature(relationSimpleFeature.getID(), B_SymbolOutSided.Type.B_SYMBOLOUTSIDED.errType(),
 					B_SymbolOutSided.Type.B_SYMBOLOUTSIDED.errName(), relationGeometry.getInteriorPoint());
+			return errorFeature;
+		}else{
+			return null;
+		}
+	}
+	
+	public ErrorFeature validateCrossRoad(SimpleFeature simpleFeature, SimpleFeature relationSimpleFeature) throws SchemaException{
+		
+		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
+		Geometry relGeometry = (Geometry) relationSimpleFeature.getDefaultGeometry();
+		Boolean flag = true;
+		if(geometry.overlaps(relGeometry)){
+			Coordinate[] coordinates = geometry.getCoordinates();
+			Coordinate[] relCoordinates = relGeometry.getCoordinates();
+			
+			for (int i = 0; i < relCoordinates.length; i++) {
+				Coordinate relCoordinate = coordinates[i];
+				for (int j = 0; j < coordinates.length; j++) {
+					Coordinate coordinate = coordinates[j];
+					if(coordinate.equals(relCoordinate)){
+						flag = true;
+						break;
+					}else{
+						flag=false;
+					}
+				}
+				if(flag == false){
+					break;
+				}
+			}
+		}
+		if(flag == false){
+			ErrorFeature errorFeature = new ErrorFeature(relationSimpleFeature.getID(), CrossRoad.Type.CROSSROAD.errType(),
+					CrossRoad.Type.CROSSROAD.errName(), relGeometry.getInteriorPoint());
 			return errorFeature;
 		}else{
 			return null;

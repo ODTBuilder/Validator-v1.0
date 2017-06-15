@@ -573,8 +573,8 @@ public class LayerValidatorImpl implements LayerValidator {
 		
 		for (int i = 0; i < relationLayers.size(); i++) {
 			GeoLayer relationLayer = relationLayers.get(i);
-			SimpleFeatureCollection realtationSfc = relationLayer.getSimpleFeatureCollection();
-			SimpleFeatureIterator relationSimpleFeatureIterator = realtationSfc.features();
+			SimpleFeatureCollection relationSfc = relationLayer.getSimpleFeatureCollection();
+			SimpleFeatureIterator relationSimpleFeatureIterator = relationSfc.features();
 			while (relationSimpleFeatureIterator.hasNext()) {
 				SimpleFeature relationSimpleFeature = relationSimpleFeatureIterator.next();
 				ErrorFeature errorFeature = graphicValidator.validateB_SymbolOutSided(simpleFeatures, relationSimpleFeature);
@@ -588,4 +588,38 @@ public class LayerValidatorImpl implements LayerValidator {
 		}
 		return errorLayer;
 	}
+	
+	public ErrorLayer validateCrossRoad(List<GeoLayer> relationLayers) throws SchemaException{
+		ErrorLayer errorLayer = new ErrorLayer();
+		
+		SimpleFeatureCollection sfc = validatorLayer.getSimpleFeatureCollection();
+		List<SimpleFeature> simpleFeatures = new ArrayList<SimpleFeature>();
+		SimpleFeatureIterator simpleFeatureIterator = sfc.features();
+		while (simpleFeatureIterator.hasNext()) {
+			SimpleFeature simpleFeature = simpleFeatureIterator.next();
+			simpleFeatures.add(simpleFeature);
+		}
+		
+		for (int i = 0; i < relationLayers.size(); i++) {
+			GeoLayer relationLayer = relationLayers.get(i);
+			SimpleFeatureCollection relationSfc = relationLayer.getSimpleFeatureCollection();
+			SimpleFeatureIterator relationSimpleFeatureIterator = relationSfc.features();
+			while (relationSimpleFeatureIterator.hasNext()) {
+				SimpleFeature relationSimpleFeature = relationSimpleFeatureIterator.next();
+				for (int j = 0; j < simpleFeatures.size(); j++) {
+					SimpleFeature simpleFeature = simpleFeatures.get(j);
+					ErrorFeature errorFeature = graphicValidator.validateCrossRoad(simpleFeature, relationSimpleFeature);
+					if(errorFeature != null){
+						errorFeature.setLayerName(validatorLayer.getLayerName());
+						errorLayer.addErrorFeature(errorFeature);
+					}else{
+						continue;
+					}
+				}
+			}
+		}
+		return errorLayer;
+	}
+	
+	
 }

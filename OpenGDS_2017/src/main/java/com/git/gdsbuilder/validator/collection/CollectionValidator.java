@@ -55,6 +55,7 @@ import com.git.gdsbuilder.type.validate.option.BuildingOpen;
 import com.git.gdsbuilder.type.validate.option.ConBreak;
 import com.git.gdsbuilder.type.validate.option.ConIntersected;
 import com.git.gdsbuilder.type.validate.option.ConOverDegree;
+import com.git.gdsbuilder.type.validate.option.CrossRoad;
 import com.git.gdsbuilder.type.validate.option.EntityDuplicated;
 import com.git.gdsbuilder.type.validate.option.LayerMiss;
 import com.git.gdsbuilder.type.validate.option.OutBoundary;
@@ -264,6 +265,13 @@ public class CollectionValidator {
 								List<String> relationNames = ((B_SymbolOutSided) option).getRelationType();
 								for (int l = 0; l < relationNames.size(); l++) {
 									typeErrorLayer = layerValidator.vallidateB_SymbolOutSided(validateLayerCollectionList
+											.getTypeLayers(relationNames.get(l), collection));
+								}
+							}
+							if(option instanceof CrossRoad){
+								List<String> relationNames = ((CrossRoad)option).getRelationType();
+								for (int l = 0; l < relationNames.size(); l++) {
+									typeErrorLayer = layerValidator.validateCrossRoad(validateLayerCollectionList
 											.getTypeLayers(relationNames.get(l), collection));
 								}
 							}

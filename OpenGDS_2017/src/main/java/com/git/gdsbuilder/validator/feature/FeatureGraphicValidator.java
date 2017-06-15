@@ -253,5 +253,6 @@ public interface FeatureGraphicValidator {
 	 * */
 	public ErrorFeature validateLayerMiss(SimpleFeature simpleFeature, List<String> typeNames)throws SchemaException;
 	//public ErrorFeature vallidateB_SymbolOutSided(SimpleFeature simpleFeatureI, SimpleFeature simpleFeatureJ) throws SchemaException;
-	public ErrorFeature validateB_SymbolOutSided(List<SimpleFeature> simpleFeatures, SimpleFeature relationSimpleFeature);
+	public ErrorFeature validateB_SymbolOutSided(List<SimpleFeature> simpleFeatures, SimpleFeature relationSimpleFeature) throws SchemaException;
+	public ErrorFeature validateCrossRoad(SimpleFeature simpleFeature, SimpleFeature relationSimpleFeature) throws SchemaException;
 }
