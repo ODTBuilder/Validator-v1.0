@@ -27,6 +27,7 @@ import org.json.simple.JSONObject;
 import com.git.gdsbuilder.type.validate.layer.ValidateLayerType;
 import com.git.gdsbuilder.type.validate.layer.ValidateLayerTypeList;
 import com.git.gdsbuilder.type.validate.option.B_SymbolOutSided;
+import com.git.gdsbuilder.type.validate.option.BridgeName;
 import com.git.gdsbuilder.type.validate.option.BuildingOpen;
 import com.git.gdsbuilder.type.validate.option.ConBreak;
 import com.git.gdsbuilder.type.validate.option.ConIntersected;
@@ -369,6 +370,23 @@ public class ValidateTypeParser {
 					}
 					ValidatorOption crossRoad = new CrossRoad(relations);
 					optionList.add(crossRoad);
+				}
+			}
+			if(optionName.equalsIgnoreCase(BridgeName.Type.BRIDGENAME.errName())){
+				Object bridgeNameObj = qaOptions.get("BridgeName");
+				if(bridgeNameObj == null){
+					continue;
+				}else{
+					List<String> relations = new ArrayList<String>();
+					JSONObject bridgeNameValue = (JSONObject) bridgeNameObj;
+					JSONArray relationValues = (JSONArray) bridgeNameValue.get("relation");
+					int valueSize = relationValues.size();
+					for (int i = 0; i < valueSize; i++) {
+						String relationID = (String) relationValues.get(i);
+						relations.add(relationID);
+					}
+					ValidatorOption bridgeName = new BridgeName(relations);
+					optionList.add(bridgeName);
 				}
 			}
 			

@@ -17,9 +17,14 @@
 
 package com.git.opengds.validator.controller;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -40,7 +45,21 @@ public class ValidatorController extends AbstractController {
 	@RequestMapping(value = "/validate.ajax")
 	@ResponseBody
 	public JSONObject geoserverAddLoadAjax(HttpServletRequest request, @RequestBody String geo) throws Exception {
-		
-		return validatorService.validate(geo);
+
+		JSONParser parser = new JSONParser();
+			try {
+
+				Object obj = parser.parse(new FileReader("C:\\Users\\GIT\\Desktop\\옵션txt\\NGI_BRIDGENAME.txt"));
+				JSONObject jsonObject = (JSONObject) obj;
+				String jsonStr = jsonObject.toString();
+				//operatorService.autoOperation(jsonObject);
+				return validatorService.validate(jsonStr);
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			return null;
+		//return validatorService.validate(geo);
 	}
 }

@@ -34,6 +34,8 @@
 
 package com.git.gdsbuilder.validator.collection;
 
+import static org.hamcrest.CoreMatchers.instanceOf;
+
 import java.util.List;
 
 import org.geotools.feature.SchemaException;
@@ -51,6 +53,7 @@ import com.git.gdsbuilder.type.validate.error.ErrorLayerList;
 import com.git.gdsbuilder.type.validate.layer.ValidateLayerType;
 import com.git.gdsbuilder.type.validate.layer.ValidateLayerTypeList;
 import com.git.gdsbuilder.type.validate.option.B_SymbolOutSided;
+import com.git.gdsbuilder.type.validate.option.BridgeName;
 import com.git.gdsbuilder.type.validate.option.BuildingOpen;
 import com.git.gdsbuilder.type.validate.option.ConBreak;
 import com.git.gdsbuilder.type.validate.option.ConIntersected;
@@ -164,9 +167,44 @@ public class CollectionValidator {
 
 	}
 
-	private void attributeValidate(ValidateLayerTypeList types, GeoLayerCollectionList layerCollections) {
-		// TODO Auto-generated method stub
-
+	private void attributeValidate(ValidateLayerTypeList types, GeoLayerCollectionList layerCollections) throws SchemaException {
+		ErrorLayerList geoErrorList = new ErrorLayerList();
+		for (int i = 0; i < layerCollections.size(); i++) {
+			GeoLayerCollection collection = layerCollections.get(i);
+			GeoLayer neatLayer = collection.getNeatLine();
+			ErrorLayer errLayer = new ErrorLayer();
+			for (int j = 0; j < types.size(); j++) {
+				ValidateLayerType type = types.get(j);
+				GeoLayerList typeLayers = validateLayerCollectionList.getTypeLayers(type.getTypeName(), collection);
+				List<ValidatorOption> options = type.getOptionList();
+				if(options != null){
+					ErrorLayer typeErrorLayer = null;
+					for (int k = 0; k < options.size(); k++) {
+						ValidatorOption option = options.get(k);
+						for (int a = 0; a < typeLayers.size(); a++) {
+							GeoLayer typeLayer = typeLayers.get(a);
+							if (typeLayer == null) {
+								continue;
+							}
+							LayerValidatorImpl layerValidator = new LayerValidatorImpl(typeLayer);
+							if(option instanceof BridgeName){
+								List<String> relationNames = ((BridgeName)option).getRelationType();
+								for (int l = 0; l < relationNames.size(); l++) {
+									typeErrorLayer = layerValidator.validateBridgeName(validateLayerCollectionList
+											.getTypeLayers(relationNames.get(l), collection));
+								}
+							}
+							if (typeErrorLayer != null) {
+								errLayer.mergeErrorLayer(typeErrorLayer);
+							}
+						}
+					}
+				}
+			}
+			errLayer.setCollectionName(collection.getCollectionName());
+			geoErrorList.add(errLayer);
+			this.errLayerMerge(geoErrorList);
+		}
 	}
 
 	private void geometricValidate(ValidateLayerTypeList types, GeoLayerCollectionList layerCollections)
@@ -176,7 +214,7 @@ public class CollectionValidator {
 			GeoLayerCollection collection = layerCollections.get(j);
 			GeoLayer neatLayer = collection.getNeatLine();
 			ErrorLayer errLayer = new ErrorLayer();
-			
+
 			for (int i = 0; i < types.size(); i++) {
 				// getType
 				ValidateLayerType type = types.get(i);
@@ -275,6 +313,7 @@ public class CollectionValidator {
 											.getTypeLayers(relationNames.get(l), collection));
 								}
 							}
+
 							if (typeErrorLayer != null) {
 								errLayer.mergeErrorLayer(typeErrorLayer);
 							}
@@ -332,7 +371,7 @@ public class CollectionValidator {
 			}
 		}
 	}
-	
+
 	private void errLayerMerge(ErrorLayerList geoErrorList){
 		for (int i = 0; i < errLayerList.size(); i++) {
 			ErrorLayer errorLayer = errLayerList.get(i);

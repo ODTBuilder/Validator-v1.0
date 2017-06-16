@@ -695,40 +695,32 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 			return null;
 		}
 	}
-	
+
 	public ErrorFeature validateCrossRoad(SimpleFeature simpleFeature, SimpleFeature relationSimpleFeature) throws SchemaException{
-		
 		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
 		Geometry relGeometry = (Geometry) relationSimpleFeature.getDefaultGeometry();
-		Boolean flag = true;
-		if(geometry.overlaps(relGeometry)){
-			Coordinate[] coordinates = geometry.getCoordinates();
+		
+		if(geometry.contains(relGeometry) || geometry.overlaps(relGeometry)){
+			GeometryFactory geometryFactory = new GeometryFactory();
 			Coordinate[] relCoordinates = relGeometry.getCoordinates();
-			
 			for (int i = 0; i < relCoordinates.length; i++) {
-				Coordinate relCoordinate = coordinates[i];
-				for (int j = 0; j < coordinates.length; j++) {
-					Coordinate coordinate = coordinates[j];
-					if(coordinate.equals(relCoordinate)){
-						flag = true;
-						break;
-					}else{
-						flag=false;
-					}
-				}
-				if(flag == false){
-					break;
+				Coordinate coordinate = relCoordinates[i];
+				Geometry coorPoint = geometryFactory.createPoint(coordinate);
+				if(!(geometry.touches(coorPoint))){
+					ErrorFeature errorFeature = new ErrorFeature(relationSimpleFeature.getID(), CrossRoad.Type.CROSSROAD.errType(),
+							CrossRoad.Type.CROSSROAD.errName(), relGeometry.getInteriorPoint());
+					return errorFeature;
 				}
 			}
 		}
-		if(flag == false){
-			ErrorFeature errorFeature = new ErrorFeature(relationSimpleFeature.getID(), CrossRoad.Type.CROSSROAD.errType(),
-					CrossRoad.Type.CROSSROAD.errName(), relGeometry.getInteriorPoint());
-			return errorFeature;
-		}else{
-			return null;
-		}
+		return null;
 	}
-
-
+	
+	public ErrorFeature validateNodeMiss(SimpleFeature simpleFeature) throws SchemaException{
+		
+		return null;
+	}
+	
+	
+	
 }

@@ -193,5 +193,6 @@ public interface LayerValidator {
 	public ErrorLayer validateLayerMiss(List<String> typeNames) throws SchemaException;
 	public ErrorLayer vallidateB_SymbolOutSided(List<GeoLayer> relationLayers) throws SchemaException;
 	public ErrorLayer validateCrossRoad(List<GeoLayer> relationLayers) throws SchemaException;
+	public ErrorLayer validateBridgeName(List<GeoLayer> relationLayers) throws SchemaException;
 
 }

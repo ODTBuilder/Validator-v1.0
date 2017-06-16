@@ -90,6 +90,7 @@ public class BuilderJSONParser {
 		// 도엽들 파싱
 		JSONObject layerCollections = (JSONObject) jsonObj.get("layerCollections");
 		GeoLayerCollectionParser collectionParser = new GeoLayerCollectionParser(layerCollections);
+
 		GeoLayerCollectionList collectionList = collectionParser.getLayerCollections();
 		if (collectionList.size() == 0 && validateLayerTypeList.size() == 0) {
 			return null;
