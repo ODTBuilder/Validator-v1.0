@@ -73,7 +73,7 @@ import com.git.opengds.parser.validate.ValidateTypeParser;
 public class BuilderJSONParser {
 	private static final String URL;
 	private static final String ID;
-	
+
 	static {
 		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 		Properties properties = new Properties();
@@ -86,8 +86,6 @@ public class BuilderJSONParser {
 		URL = properties.getProperty("url");
 		ID = properties.getProperty("id");
 	}
-	
-	
 
 	/**
 	 * JSONObject를 ValidateLayerTypeList, LayerCollectionList로 파싱 @author
@@ -110,22 +108,22 @@ public class BuilderJSONParser {
 
 		// 도엽들 파싱
 		JSONObject layerCollections = (JSONObject) jsonObj.get("layerCollections");
-		String fileType = (String)jsonObj.get("fileType");
+		String fileType = (String) layerCollections.get("fileType");
 		EnFileFormat enFileFormat;
-		
-		
-		if(fileType.equals("ngi")){
+
+		if (fileType.equals("ngi")) {
 			enFileFormat = EnFileFormat.NGI;
-		}else if(fileType.equals("dxf")){
+		} else if (fileType.equals("dxf")) {
 			enFileFormat = EnFileFormat.DXF;
-		}else if(fileType.equals("shp")){
+		} else if (fileType.equals("shp")) {
 			enFileFormat = EnFileFormat.SHP;
-		}else
+		} else
 			throw new IllegalArgumentException("올바르지 않은 파일 타입");
-		
-		String getCapabilities = URL+"/wfs?REQUEST=GetCapabilities&version=1.0.0";
-		
-		GeoLayerCollectionParser collectionParser = new GeoLayerCollectionParser(layerCollections, ID, getCapabilities, enFileFormat);
+
+		String getCapabilities = URL + "/wfs?REQUEST=GetCapabilities&version=1.0.0";
+
+		GeoLayerCollectionParser collectionParser = new GeoLayerCollectionParser(layerCollections, ID, getCapabilities,
+				enFileFormat);
 		GeoLayerCollectionList collectionList = collectionParser.getLayerCollections();
 		if (collectionList.size() == 0 && validateLayerTypeList.size() == 0) {
 			return null;

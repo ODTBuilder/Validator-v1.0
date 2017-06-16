@@ -156,6 +156,7 @@ public class GeoLayerCollectionParser {
 			GeoLayerList layerList = layersParser.getLayerList();
 			if(layerList != null) {
 				layerCollection.setLayers(layerList);
+				layerCollection.setFileFormat(fileFormat);
 				layerCollections.add(layerCollection);
 			}
 		}

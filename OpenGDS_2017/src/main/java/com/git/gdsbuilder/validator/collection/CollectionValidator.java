@@ -255,6 +255,7 @@ public class CollectionValidator {
 				}
 			}
 			errLayer.setCollectionName(collection.getCollectionName());
+			errLayer.setCollectionType(collection.getLayerCollectionType());
 			errLayerList.add(errLayer);
 		}
 

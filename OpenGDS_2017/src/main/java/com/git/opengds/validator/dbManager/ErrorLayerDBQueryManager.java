@@ -60,7 +60,8 @@ public class ErrorLayerDBQueryManager {
 	public HashMap<String, Object> createErrorLayerTbQuery() {
 
 		String collectionName = this.errLayer.getCollectionName();
-		String tableName = "\"" + "err_" + collectionName + "\"";
+		String collectionType = this.errLayer.getCollectionType();
+		String tableName = "\"" + "err_" + collectionType + "_" + collectionName + "\"";
 		String dafaultCreateQuery = "create table " + tableName + "(" + "err_idx serial primary key" + ","
 				+ "collection_name varchar(100)" + "," + "layer_name varchar(100)" + "," + "feature_id varchar(100)"
 				+ "," + "err_type varchar(100)" + "," + "err_name varchar(100)" + "," + "geom geometry(point, 5186)"
