@@ -29,7 +29,6 @@ import com.git.gdsbuilder.type.validate.collection.ValidateLayerCollectionList;
 import com.git.gdsbuilder.type.validate.error.ErrorLayerList;
 import com.git.gdsbuilder.type.validate.layer.ValidateLayerTypeList;
 import com.git.gdsbuilder.validator.collection.CollectionValidator;
-import com.git.opengds.editor.service.EditService;
 import com.git.opengds.parser.json.BuilderJSONParser;
 
 @Service
@@ -39,16 +38,15 @@ public class ValidatorServiceImpl implements ValidatorService {
 	private ErrorLayerService errorLayerService;
 	
 	@Autowired
-	private EditService editService;
+	private ErrorLayerExportService errorLayerExportService; 
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public JSONObject validate(String jsonObject) throws Exception {
 		
-		
-		//editService.editTest();
-		
-		
+
+		//errorLayerExportService.test();
+
 		try {
 			// 파라미터 파싱
 			BuilderJSONParser parserManager = new BuilderJSONParser();
@@ -81,7 +79,7 @@ public class ValidatorServiceImpl implements ValidatorService {
 			System.out.println("완료");
 			return returnJSON;
 		}
-		//return null;
+
 	}
 
 	public boolean publishErrorLayer(ErrorLayerList errorLayerList)

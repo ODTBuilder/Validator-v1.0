@@ -26,7 +26,7 @@ import java.util.regex.Pattern;
 
 import com.git.gdsbuilder.type.qa20.feature.QA20Feature;
 import com.git.gdsbuilder.type.qa20.header.NDAHeader;
-import com.git.gdsbuilder.type.qa20.header.NGIField;
+import com.git.gdsbuilder.type.qa20.header.NDAField;
 import com.git.gdsbuilder.type.qa20.header.NGIHeader;
 import com.git.gdsbuilder.type.qa20.layer.QA20Layer;
 import com.git.gdsbuilder.type.qa20.layer.QA20LayerList;
@@ -91,6 +91,8 @@ public class QA20FileLayerParser {
 		String layerID = getLayerID();
 		String layerName = getLayerName().replaceAll("\"", "");
 
+		System.out.println(layerName);
+		
 		NGIHeader ngiHeader = getNgiHeader();
 		NDAHeader ndaHeader = getNdaHeader();
 		String[] layerTypes = getLayerTypes(ngiHeader);
@@ -302,9 +304,9 @@ public class QA20FileLayerParser {
 	 * nda 파일에 저장된 객체의 속성정보를 List<NGIField> 객체로 파싱 @author DY.Oh @Date 2017. 3.
 	 * 11. 오전 11:31:07 @return List<NGIField> @throws IOException @throws
 	 */
-	private List<NGIField> getAttrib() throws IOException {
+	private List<NDAField> getAttrib() throws IOException {
 
-		List<NGIField> fields = new ArrayList<NGIField>();
+		List<NDAField> fields = new ArrayList<NDAField>();
 		boolean isEnd = false;
 		while (!isEnd) {
 			String line = ndaReader.readLine();
@@ -322,7 +324,7 @@ public class QA20FileLayerParser {
 				} else {
 					isUnique = false;
 				}
-				NGIField field = new NGIField(fieldName, type, size, decimal, isUnique);
+				NDAField field = new NDAField(fieldName, type, size, decimal, isUnique);
 				fields.add(field);
 			} else {
 				isEnd = true;

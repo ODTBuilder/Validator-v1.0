@@ -12,6 +12,8 @@ import org.kabeja.parser.ParserBuilder;
 import com.git.gdsbuilder.FileRead.dxf.parser.QA10FileLayerParser;
 import com.git.gdsbuilder.type.qa10.collection.QA10LayerCollection;
 import com.git.gdsbuilder.type.qa10.layer.QA10LayerList;
+import com.git.gdsbuilder.type.qa10.structure.QA10Header;
+import com.git.gdsbuilder.type.qa10.structure.QA10Tables;
 import com.git.opengds.upload.domain.FileMeta;
 
 public class QA10FileReader {
@@ -35,11 +37,43 @@ public class QA10FileReader {
 				QA10LayerList dtLayers = QA10FileLayerParser.parseDTLayer(dxfLayer);
 				dtCollection.addAllQA10Layers(dtLayers);
 			}
+
+			// 1. header
+			dtCollection.setHeader(getHeader(fileName));
+
+			// 2. blocks
+			// dtCollection.setBlocks(getBlocks(fileName, doc));
+
+			// 3. table
+			dtCollection.setTables(getTables(fileName, doc.getDXFLineTypeIterator(), doc.getDXFLayerIterator(),
+					doc.getDXFStyleIterator()));
+
 			// dtCollection.setId("도엽번호");
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 		return dtCollection;
 	}
+
+	private QA10Header getHeader(String fileName) {
+
+		QA10Header header = new QA10Header();
+		header.setDefaultHeaderValues();
+		return header;
+	}
+
+	private QA10Tables getTables(String fileName, Iterator lineTypeIterator, Iterator layerIterator,
+			Iterator styleIterator) {
+
+		QA10Tables tables = new QA10Tables();
+		tables.setCollectionName(fileName);
+		tables.setLineTypeValues(lineTypeIterator);
+		tables.setLayerValues(layerIterator);
+		tables.setStyleValues(styleIterator);
+		tables.setLineTypes(true);
+		tables.setLayers(true);
+		tables.setStyles(true);
+		return tables;
+	}
+
 }

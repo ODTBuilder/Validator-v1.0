@@ -81,7 +81,7 @@ html {
 					Save</a>
 				<ul class="dropdown-menu" role="menu">
 					<li><a href="#">as a SHP</a></li>
-					<li><a href="#">to Server</a></li>
+					<li><a href="#" id="save">to Server</a></li>
 				</ul></li>
 
 			<li><a href="#" title="Edit" id="edit"><i
@@ -280,7 +280,18 @@ html {
 			}
 		});
 
-		var record = new gb.edit.FeatureRecord();
+		var record = new gb.edit.FeatureRecord({
+			id : "feature_id"
+		});
+		
+		var transfer = new gb.edit.RecordTransfer({
+			url : "editLayerCollection/editLayerCollection.ajax",
+			feature : record
+		});
+		
+		$("#save").click(function(){
+			transfer.sendStructure();
+		});
 
 		$("#edit").editingtool({
 			geoserverURL : "http://175.116.181.42:9990/geoserver/",
@@ -291,7 +302,7 @@ html {
 				return $('#builderClientLayer').jstreeol3("get_selected_layer");
 			}
 		});
-
+		
 		$("#changeBase").changebase({
 			map : map2
 		});
@@ -301,50 +312,43 @@ html {
 				"RoadBoundary" : {
 					"code" : [ "A0010000" ],
 					"geom" : "polygon",
-					"area" : false,
-					"weight" : 20
+					"area" : false
 				},
 				"NeatLine" : {
 					"code" : [ "H0010000" ],
 					"geom" : "linestring",
-					"area" : true,
-					"weight" : 10
+					"area" : true
 				},
 				"Building" : {
 					"code" : [ "B0010000" ],
 					"geom" : "polygon",
-					"area" : false,
-					"weight" : 20
+					"area" : false
 				},
 				"Wall" : {
 					"code" : [ "B0020000" ],
 					"geom" : "linestring",
-					"area" : false,
-					"weight" : 10
+					"area" : false
 				},
 				"RiverBoundary" : {
 					"code" : [ "E0010001" ],
 					"geom" : "polygon",
-					"area" : false,
-					"weight" : 10
+					"area" : false
 				},
 				"farmLand" : {
 					"code" : [ "D0010000" ],
 					"geom" : "polygon",
-					"area" : false,
-					"weight" : 20
+					"area" : false
 				},
 				"ContourLine" : {
 					"code" : [ "F0010000" ],
 					"geom" : "linestring",
-					"area" : false,
-					"weight" : 10
+					"area" : false
 				}
 			}
 		});
 
 		$("#validDefinition").optiondefinition({
-			updateLayerDef : function() {
+			layerDefinition : function() {
 				return $("#layerDefinition").layerdefinition("getDefinition");
 			},
 			definition : {
@@ -427,6 +431,15 @@ html {
 			}
 		});
 
+		$("#weight").weightdefinition({
+			layerDefinition : function() {
+				return $("#layerDefinition").layerdefinition("getDefinition");
+			},
+			optionDefinition : function(){
+				return $("#validDefinition").optiondefinition("getDefinition");
+			}
+		});
+		
 		$("#validation").validation({
 			validatorURL : "validator/validate.ajax",
 			layerDefinition : function() {
@@ -434,6 +447,9 @@ html {
 			},
 			optionDefinition : function() {
 				return $("#validDefinition").optiondefinition("getDefinition");
+			},
+			weightDefinition : function(){
+				return $("#weight").weightdefinition("getDefinition");
 			}
 		});
 
