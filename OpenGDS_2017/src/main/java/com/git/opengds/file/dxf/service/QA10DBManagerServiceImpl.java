@@ -110,7 +110,6 @@ public class QA10DBManagerServiceImpl implements QA10DBManagerService {
 				Map<String, Object> lineTypes = tables.getLineTypes();
 				List<HashMap<String, Object>> lineTypesQuery = dbManager.getInsertTablesLineTypes(tbIdx, lineTypes);
 				for (int i = 0; i < lineTypesQuery.size(); i++) {
-					// System.out.println(lineTypesQuery.get(i));
 					dao.insertQA10LayerCollectionLineTypes(lineTypesQuery.get(i));
 				}
 			}
@@ -119,7 +118,6 @@ public class QA10DBManagerServiceImpl implements QA10DBManagerService {
 				List<HashMap<String, Object>> layersQuery = dbManager.getInsertTablesLayers(tbIdx, layers);
 				for (int i = 0; i < layersQuery.size(); i++) {
 					dao.insertQA10LayerCollectionLayers(layersQuery.get(i));
-					// System.out.println(layersQuery.get(i));
 				}
 			}
 			if (tables.isStyles()) {

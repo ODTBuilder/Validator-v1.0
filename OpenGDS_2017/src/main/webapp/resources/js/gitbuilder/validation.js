@@ -453,16 +453,6 @@ gitbuilder.ui.Validation = $.widget("gitbuilder.validation", {
 			}
 		}
 
-//		for (i = 0, j = arr.length; i < j; i++) {
-//		if ($(this.tree).jstree("get_node", arr[i]).type === "n_ngi_group" ||
-//		$(this.tree).jstree("get_node", arr[i]).type === "n_dxf_group") {
-//		r.push($(this.tree).jstree("get_node", arr[i]));
-//		} else {
-//		$(this.tree).jstree("deselect_node", $(this.tree).jstree("get_node",
-//		arr[i]));
-//		this.updateLayerList(r);
-//		}
-//		}
 		if (r.length > 0) {
 			this.updateValidationDef(r);
 			this.updateLayerList(r);

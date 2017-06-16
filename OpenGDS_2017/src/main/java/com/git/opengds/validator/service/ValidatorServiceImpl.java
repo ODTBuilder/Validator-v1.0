@@ -37,11 +37,17 @@ public class ValidatorServiceImpl implements ValidatorService {
 
 	@Autowired
 	private ErrorLayerService errorLayerService;
+	
+	@Autowired
+	private ErrorLayerExportService errorLayerExportService; 
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public JSONObject validate(String jsonObject) throws Exception {
-		//editService.editTest();
+		
+
+		//errorLayerExportService.test();
+
 		try {
 			// 파라미터 파싱
 			BuilderJSONParser parserManager = new BuilderJSONParser();
@@ -74,7 +80,7 @@ public class ValidatorServiceImpl implements ValidatorService {
 			System.out.println("완료");
 			return returnJSON;
 		}
-		//return null;
+
 	}
 
 	public boolean publishErrorLayer(ErrorLayerList errorLayerList)

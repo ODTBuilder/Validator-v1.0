@@ -22,8 +22,8 @@ import java.util.Iterator;
 
 import org.json.simple.JSONObject;
 
+import com.git.gdsbuilder.type.qa10.feature.QA10Feature;
 import com.git.gdsbuilder.type.qa20.feature.QA20Feature;
-import com.git.gdsbuilder.type.simple.feature.Feature;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.io.ParseException;
@@ -38,20 +38,16 @@ import com.vividsolutions.jts.io.geojson.GeoJsonReader;
 public class EditFeatureParser {
 
 	JSONObject featureObj;
-	Feature feature;
 	QA20Feature qa20Feature;
+	QA10Feature qa10Feature;
 
-	public EditFeatureParser(JSONObject featureObj, String state) throws ParseException {
+	public EditFeatureParser(String type, JSONObject featureObj, String state) throws ParseException {
 		this.featureObj = featureObj;
-		featureParse();
-	}
-
-	public Feature getFeature() {
-		return feature;
-	}
-
-	public void setFeature(Feature feature) {
-		this.feature = feature;
+		if (type.equals("dxf")) {
+			dxfFeatureParse();
+		} else if (type.equals("ngi")) {
+			ngiFeatureParse();
+		}
 	}
 
 	public QA20Feature getQa20Feature() {
@@ -62,7 +58,26 @@ public class EditFeatureParser {
 		this.qa20Feature = qa20Feature;
 	}
 
-	public void featureParse() throws ParseException {
+	public QA10Feature getQa10Feature() {
+		return qa10Feature;
+	}
+
+	public void setQa10Feature(QA10Feature qa10Feature) {
+		this.qa10Feature = qa10Feature;
+	}
+
+	public void dxfFeatureParse() throws ParseException {
+
+		String featureID = (String) featureObj.get("id");
+		GeoJsonReader re = new GeoJsonReader();
+		JSONObject geomObj = (JSONObject) featureObj.get("geometry");
+		String geomStr = geomObj.toJSONString();
+		Geometry geom = re.read(geomStr);
+
+		qa10Feature = new QA10Feature(featureID, "", geom);
+	}
+
+	public void ngiFeatureParse() throws ParseException {
 
 		String featureID = (String) featureObj.get("id");
 
@@ -82,12 +97,19 @@ public class EditFeatureParser {
 
 		JSONObject propertiesObj = (JSONObject) featureObj.get("properties");
 		HashMap<String, Object> properties = new HashMap<String, Object>();
-		Iterator iterator = propertiesObj.keySet().iterator();
-		while (iterator.hasNext()) {
-			String key = (String) iterator.next();
-			Object value = propertiesObj.get(key);
-			properties.put(key, value);
+		if (propertiesObj != null) {
+			Iterator iterator = propertiesObj.keySet().iterator();
+			while (iterator.hasNext()) {
+				String key = (String) iterator.next();
+				if (!key.equals("feature_id") && !key.equals("feature_type") && !key.equals("num_rings")
+						&& !key.equals("num_vertexes")) {
+					Object value = propertiesObj.get(key);
+					properties.put(key, value);
+				}
+			}
+			qa20Feature = new QA20Feature(featureID, featureType, numparts, coorSize, geom, null, properties);
+		} else {
+			qa20Feature = new QA20Feature(featureID, featureType, numparts, coorSize, geom, null, null);
 		}
-		qa20Feature = new QA20Feature(featureID, featureType, numparts, coorSize, geom, null, properties);
 	}
 }

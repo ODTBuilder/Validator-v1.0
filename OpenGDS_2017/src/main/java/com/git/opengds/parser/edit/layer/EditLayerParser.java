@@ -26,7 +26,7 @@ import org.json.simple.JSONObject;
 
 import com.git.gdsbuilder.edit.qa20.EditQA20Layer;
 import com.git.gdsbuilder.type.qa20.header.NDAHeader;
-import com.git.gdsbuilder.type.qa20.header.NGIField;
+import com.git.gdsbuilder.type.qa20.header.NDAField;
 import com.git.gdsbuilder.type.qa20.header.NGIHeader;
 import com.git.gdsbuilder.type.qa20.layer.QA20Layer;
 import com.git.gdsbuilder.type.simple.layer.Layer;
@@ -99,7 +99,7 @@ public class EditLayerParser {
 				String mask = "MASK(" + layerType + ")";
 				ngiHeader.setGeometric_metadata(mask);
 			} else if (key.equals("attr")) {
-				List<NGIField> fieldList = new ArrayList<NGIField>();
+				List<NDAField> fieldList = new ArrayList<NDAField>();
 				JSONArray attrArray = (JSONArray) layerObj.get(key);
 				for (int i = 0; i < attrArray.size(); i++) {
 					JSONObject attrObj = (JSONObject) attrArray.get(i);
@@ -112,7 +112,7 @@ public class EditLayerParser {
 					if (isUniqueStr.equals("false")) {
 						isUnique = false;
 					}
-					NGIField fied = new NGIField(fieldName, type, size, decimal, isUnique);
+					NDAField fied = new NDAField(fieldName, type, size, decimal, isUnique);
 					fieldList.add(fied);
 				}
 				ndaHeader.setAspatial_field_def(fieldList);

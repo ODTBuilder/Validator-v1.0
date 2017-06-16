@@ -9,5 +9,4 @@ public interface QA10DBManagerService {
 
 	public GeoLayerInfo insertQA10LayerCollectiontest(QA10LayerCollection collection, GeoLayerInfo layerInfo);
 
-
 }

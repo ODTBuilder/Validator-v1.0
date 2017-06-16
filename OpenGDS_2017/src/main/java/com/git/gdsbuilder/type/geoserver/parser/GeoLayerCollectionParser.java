@@ -42,6 +42,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 
+import com.git.gdsbuilder.FileRead.en.EnFileFormat;
 import com.git.gdsbuilder.type.geoserver.collection.GeoLayerCollection;
 import com.git.gdsbuilder.type.geoserver.collection.GeoLayerCollectionList;
 import com.git.gdsbuilder.type.geoserver.layer.GeoLayer;
@@ -54,9 +55,12 @@ import com.git.gdsbuilder.type.geoserver.layer.GeoLayerList;
  * */
 public class GeoLayerCollectionParser {
 
-	JSONObject collectionObj;
-	GeoLayerCollectionList layerCollections;
-	
+	private JSONObject collectionObj;
+	private GeoLayerCollectionList layerCollections;
+	private String workspaceName;
+	private String getCapabilities;
+	private EnFileFormat fileFormat;
+
 	/**
 	 * LayerCollectionParser 생성자
 	 * @param collectionObject
@@ -65,9 +69,11 @@ public class GeoLayerCollectionParser {
 	 * @throws ParseException
 	 * @throws SchemaException
 	 */
-	public GeoLayerCollectionParser(JSONObject collectionObject)
+	public GeoLayerCollectionParser(JSONObject collectionObject, String workspaceName, String getCapabilities, EnFileFormat fileFormat)
 			throws FileNotFoundException, IOException, ParseException, SchemaException {
 		this.collectionObj = collectionObject;
+		this.getCapabilities = getCapabilities;
+		this.fileFormat = fileFormat;
 		collectionParser();
 	}
 
@@ -93,6 +99,31 @@ public class GeoLayerCollectionParser {
 		this.layerCollections = layerCollections;
 	}
 
+	
+	public String getWorkspaceName() {
+		return workspaceName;
+	}
+
+	public void setWorkspaceName(String workspaceName) {
+		this.workspaceName = workspaceName;
+	}
+	public String getGetCapabilities() {
+		return getCapabilities;
+	}
+
+	public void setGetCapabilities(String getCapabilities) {
+		this.getCapabilities = getCapabilities;
+	}
+
+	public EnFileFormat getFileFormat() {
+		return fileFormat;
+	}
+
+	public void setFileFormat(EnFileFormat fileFormat) {
+		this.fileFormat = fileFormat;
+	}
+	
+	
 	/**
 	 * 레이어 정의정보가 저장되어있는 JSONObject를 LayerCollection 객체로 파싱하는 클래스
 	 * @author DY.Oh
@@ -108,6 +139,8 @@ public class GeoLayerCollectionParser {
 		JSONArray collectionNames = (JSONArray) collectionObj.get("collectionName");
 		String neatLineLayerName = (String) collectionObj.get("neatLineLayer");
 		JSONArray layerNames = (JSONArray) collectionObj.get("layers");
+		
+		
 
 		this.layerCollections = new GeoLayerCollectionList();
 		for (int i = 0; i < collectionNames.size(); i++) {
@@ -115,11 +148,11 @@ public class GeoLayerCollectionParser {
 			String collectionName = (String) collectionNames.get(i);
 			GeoLayerCollection layerCollection = new GeoLayerCollection(collectionName);
 			// 도곽선
-			GeoLayerParser neatLineParser = new GeoLayerParser(collectionName, neatLineLayerName);
+			GeoLayerParser neatLineParser = new GeoLayerParser(workspaceName, getCapabilities, fileFormat, collectionName, neatLineLayerName);
 			GeoLayer neatLineLayer = neatLineParser.getLayer();
 			layerCollection.setNeatLine(neatLineLayer);
 			// 레이어
-			GeoLayerParser layersParser = new GeoLayerParser(collectionName, layerNames);
+			GeoLayerParser layersParser = new GeoLayerParser(workspaceName, getCapabilities, fileFormat, collectionName, layerNames);
 			GeoLayerList layerList = layersParser.getLayerList();
 			if(layerList != null) {
 				layerCollection.setLayers(layerList);
