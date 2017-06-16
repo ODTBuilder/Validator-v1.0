@@ -62,11 +62,6 @@ public class QA20LayerCollectionDAOImpl implements QA20LayerCollectionDAO {
 		return sqlSession.update(namespace + ".dropQA20Layer", dropQuery);
 	}
 
-	@Override
-	public void insertQA20Feature(HashMap<String, Object> insertQuertMap) {
-		sqlSession.insert(namespace + ".insertFeature", insertQuertMap);
-	}
-
 	// qa20_layer_metadata
 	@Override
 	public int insertQA20LayerMetadata(HashMap<String, Object> metadata) throws PSQLException {
@@ -105,28 +100,23 @@ public class QA20LayerCollectionDAOImpl implements QA20LayerCollectionDAO {
 	}
 
 	@Override
-	public HashMap<String, Object> selectCountAllFeatures(HashMap<String, Object> countquery) {
+	public HashMap<String, Object> selectCountAllQA20Features(HashMap<String, Object> countquery) {
 		return sqlSession.selectOne(namespace + ".selectCountAllFeatures", countquery);
 	}
 
 	@Override
-	public HashMap<String, Object> selectFeatureIdx(HashMap<String, Object> selectQuery) {
+	public HashMap<String, Object> selectQA20FeatureIdx(HashMap<String, Object> selectQuery) {
 		return sqlSession.selectOne(namespace + ".selectFeatureIdx", selectQuery);
 	}
 
 	@Override
-	public int deleteFeature(HashMap<String, Object> deleteQuery) {
+	public int deleteQA20Feature(HashMap<String, Object> deleteQuery) {
 		return sqlSession.delete(namespace + ".deleteFeature", deleteQuery);
-	}
+	} 
 
 	@Override
-	public void insertFeature(HashMap<String, Object> insertQuery) {
-		sqlSession.insert(namespace + ".insertFeatureEdit", insertQuery);
+	public void insertQA20Feature(HashMap<String, Object> insertQuery) {
+		sqlSession.insert(namespace + ".insertFeature", insertQuery);
 	}
-
-//	@Override
-//	public HashMap<String, Object> selectQA20LayerBD(HashMap<String, Object> selectBDQuery) {
-//		return sqlSession.selectOne(namespace + ".selectLayerBD", selectBDQuery);
-//	}
 
 }

@@ -32,15 +32,19 @@ import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
+import com.git.gdsbuilder.edit.qa10.EditQA10Collection;
 import com.git.gdsbuilder.edit.qa20.EditQA20Collection;
 import com.git.gdsbuilder.type.geoserver.layer.GeoLayerInfo;
+import com.git.gdsbuilder.type.qa10.feature.QA10Feature;
 import com.git.gdsbuilder.type.qa20.collection.QA20LayerCollection;
 import com.git.gdsbuilder.type.qa20.feature.QA20Feature;
 import com.git.gdsbuilder.type.qa20.header.NDAHeader;
 import com.git.gdsbuilder.type.qa20.header.NGIHeader;
 import com.git.gdsbuilder.type.qa20.layer.QA20Layer;
 import com.git.gdsbuilder.type.qa20.layer.QA20LayerList;
-import com.git.opengds.editor.dbManager.EditLayerDBQueryManager;
+import com.git.opengds.file.dxf.dbManager.QA10DBQueryManager;
+import com.git.opengds.file.dxf.persistence.QA10LayerCollectionDAO;
+import com.git.opengds.file.dxf.service.QA10DBManagerService;
 import com.git.opengds.file.ngi.dbManager.QA20DBQueryManager;
 import com.git.opengds.file.ngi.persistence.QA20LayerCollectionDAO;
 import com.git.opengds.file.ngi.service.QA20DBManagerService;
@@ -55,19 +59,25 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 	private DataSourceTransactionManager txManager;
 
 	@Inject
-	private QA20LayerCollectionDAO dao;
+	private QA20LayerCollectionDAO qa20DAO;
+
+	@Inject
+	private QA10LayerCollectionDAO qa10DAO;
 
 	@Inject
 	private QA20DBManagerService qa20DBManager;
 
 	@Inject
+	private QA10DBManagerService qa10DBManager;
+
+	@Inject
 	private GeoserverService geoserverService;
 
-	public Integer checkCollectionName(String collectionName) {
+	public Integer checkQA20LayerCollectionName(String collectionName) {
 
-		EditLayerDBQueryManager queryManager = new EditLayerDBQueryManager();
+		QA20DBQueryManager queryManager = new QA20DBQueryManager();
 		HashMap<String, Object> queryMap = queryManager.getSelectLayerCollectionIdx(collectionName);
-		HashMap<String, Object> returnMap = dao.selectQA20LayerCollectionIdx(queryMap);
+		HashMap<String, Object> returnMap = qa20DAO.selectQA20LayerCollectionIdx(queryMap);
 		if (returnMap == null) {
 			return null;
 		} else {
@@ -76,7 +86,7 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 	}
 
 	@Override
-	public GeoLayerInfo createQa20LayerCollection(String type, EditQA20Collection editCollection) throws Exception {
+	public GeoLayerInfo createQA20LayerCollection(String type, EditQA20Collection editCollection) throws Exception {
 
 		String collectionName = editCollection.getCollectionName();
 
@@ -99,7 +109,7 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 	}
 
 	@Override
-	public GeoLayerInfo createQa20Layers(String type, Integer idx, EditQA20Collection editCollection)
+	public GeoLayerInfo createQA20Layers(String type, Integer idx, EditQA20Collection editCollection)
 			throws PSQLException, IllegalArgumentException, MalformedURLException {
 
 		String collectionName = editCollection.getCollectionName();
@@ -124,19 +134,19 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 				// createQA20Layer
 				HashMap<String, Object> createQuery = queryManager.qa20LayerTbCreateQuery(type, collectionName,
 						qa20Layer);
-				dao.createQA20LayerTb(createQuery);
+				qa20DAO.createQA20LayerTb(createQuery);
 
 				// insertLayerMedata
 				HashMap<String, Object> insertQueryMap = queryManager.getInsertLayerMeataData(type, collectionName, idx,
 						qa20Layer);
-				int lmIdx = dao.insertQA20LayerMetadata(insertQueryMap);
+				int lmIdx = qa20DAO.insertQA20LayerMetadata(insertQueryMap);
 
 				NDAHeader ndaHeader = qa20Layer.getNdaHeader();
 				// aspatial_field_def
 				List<HashMap<String, Object>> fieldDefs = queryManager.getAspatialFieldDefs(lmIdx, ndaHeader);
 				if (fieldDefs != null) {
 					for (int j = 0; j < fieldDefs.size(); j++) {
-						dao.insertNdaAspatialFieldDefs(fieldDefs.get(j));
+						qa20DAO.insertNdaAspatialFieldDefs(fieldDefs.get(j));
 					}
 				}
 				NGIHeader ngiHeader = qa20Layer.getNgiHeader();
@@ -145,7 +155,7 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 						ngiHeader.getPoint_represent());
 				if (ptReps != null) {
 					for (int j = 0; j < ptReps.size(); j++) {
-						dao.insertPointRepresent(ptReps.get(j));
+						qa20DAO.insertPointRepresent(ptReps.get(j));
 					}
 				}
 				// lineString_represent
@@ -153,7 +163,7 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 						ngiHeader.getLine_represent());
 				if (lnReps != null) {
 					for (int j = 0; j < lnReps.size(); j++) {
-						dao.insertLineStringRepresent(lnReps.get(j));
+						qa20DAO.insertLineStringRepresent(lnReps.get(j));
 					}
 				}
 				// region_represent
@@ -161,7 +171,7 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 						ngiHeader.getRegion_represent());
 				if (rgReps != null) {
 					for (int j = 0; j < rgReps.size(); j++) {
-						dao.insertRegionRepresent(rgReps.get(j));
+						qa20DAO.insertRegionRepresent(rgReps.get(j));
 					}
 				}
 				// text_represent
@@ -169,7 +179,7 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 						ngiHeader.getText_represent());
 				if (txtReps != null) {
 					for (int j = 0; j < txtReps.size(); j++) {
-						dao.insertTextRepresent(txtReps.get(j));
+						qa20DAO.insertTextRepresent(txtReps.get(j));
 					}
 				}
 			}
@@ -186,17 +196,17 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 	}
 
 	@Override
-	public void insertCreateFeature(String layerName, QA20Feature createFeature) {
+	public void insertQA20CreateFeature(String tableName, QA20Feature createFeature) {
 
-		EditLayerDBQueryManager queryManager = new EditLayerDBQueryManager();
-		HashMap<String, Object> insertQuertMap = queryManager.getInertFeatureQuery(layerName, createFeature);
-		dao.insertQA20Feature(insertQuertMap);
+		QA20DBQueryManager queryManager = new QA20DBQueryManager();
+		HashMap<String, Object> insertQuertMap = queryManager.getInertFeatureQuery(tableName, createFeature);
+		qa20DAO.insertQA20Feature(insertQuertMap);
 	}
 
 	@Override
-	public void updateModifyFeature(String layerName, QA20Feature modifyFeature) {
+	public void updateQA20ModifyFeature(String tableName, QA20Feature modifyFeature) {
 
-		EditLayerDBQueryManager queryManager = new EditLayerDBQueryManager();
+		QA20DBQueryManager queryManager = new QA20DBQueryManager();
 
 		DefaultTransactionDefinition def = new DefaultTransactionDefinition();
 		def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
@@ -205,17 +215,17 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 		try {
 			// 1. featureID 조회
 			String featureID = modifyFeature.getFeatureID();
-			HashMap<String, Object> selectIdxqueryMap = queryManager.getSelectFeatureIdx(layerName, featureID);
-			HashMap<String, Object> idxMap = dao.selectFeatureIdx(selectIdxqueryMap);
+			HashMap<String, Object> selectIdxqueryMap = queryManager.getSelectFeatureIdx(tableName, featureID);
+			HashMap<String, Object> idxMap = qa20DAO.selectQA20FeatureIdx(selectIdxqueryMap);
 			int idx = (Integer) idxMap.get("f_idx");
 
 			// 2. 해당 feature 삭제
-			HashMap<String, Object> deleteFeatureMap = queryManager.getDeleteFeature(layerName, idx);
-			dao.deleteFeature(deleteFeatureMap);
+			HashMap<String, Object> deleteFeatureMap = queryManager.getDeleteFeature(tableName, idx);
+			qa20DAO.deleteQA20Feature(deleteFeatureMap);
 
 			// 3. 다시 insert
-			HashMap<String, Object> insertFeatureMap = queryManager.getInertFeatureQuery(layerName, modifyFeature);
-			dao.insertFeature(insertFeatureMap);
+			HashMap<String, Object> insertFeatureMap = queryManager.getInertFeatureQuery(tableName, modifyFeature);
+			qa20DAO.insertQA20Feature(insertFeatureMap);
 		} catch (Exception e) {
 			txManager.rollback(status);
 		}
@@ -223,20 +233,20 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 	}
 
 	@Override
-	public void deleteRemovedFeature(String layerName, String featureId) {
+	public void deleteQA20RemovedFeature(String tableName, String featureId) {
 
-		EditLayerDBQueryManager queryManager = new EditLayerDBQueryManager();
+		QA20DBQueryManager queryManager = new QA20DBQueryManager();
 
 		DefaultTransactionDefinition def = new DefaultTransactionDefinition();
 		def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
 		TransactionStatus status = txManager.getTransaction(def);
 		try {
-			HashMap<String, Object> selectIdxqueryMap = queryManager.getSelectFeatureIdx(layerName, featureId);
-			HashMap<String, Object> idxMap = dao.selectFeatureIdx(selectIdxqueryMap);
+			HashMap<String, Object> selectIdxqueryMap = queryManager.getSelectFeatureIdx(tableName, featureId);
+			HashMap<String, Object> idxMap = qa20DAO.selectQA20FeatureIdx(selectIdxqueryMap);
 			int idx = (Integer) idxMap.get("f_idx");
 
-			HashMap<String, Object> deleteFeatureMap = queryManager.getDeleteFeature(layerName, idx);
-			dao.deleteFeature(deleteFeatureMap);
+			HashMap<String, Object> deleteFeatureMap = queryManager.getDeleteFeature(tableName, idx);
+			qa20DAO.deleteQA20Feature(deleteFeatureMap);
 		} catch (Exception e) {
 			txManager.rollback(status);
 		}
@@ -244,7 +254,7 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 	}
 
 	@Override
-	public List<String> dropQa20LayerCollection(String type, EditQA20Collection editCollection) {
+	public List<String> dropQA20LayerCollection(String type, EditQA20Collection editCollection) {
 
 		List<String> layerNames = new ArrayList<String>();
 		String collectionName = editCollection.getCollectionName();
@@ -252,13 +262,104 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 		for (int i = 0; i < layerList.size(); i++) {
 			QA20Layer layer = layerList.get(i);
 			String layerName = layer.getLayerName();
-			EditLayerDBQueryManager queryManager = new EditLayerDBQueryManager();
+			QA20DBQueryManager queryManager = new QA20DBQueryManager();
 			HashMap<String, Object> dropQuery = queryManager.getDropLayer(type, collectionName, layerName);
-			int isSuccessed = dao.dropLayer(dropQuery);
+			int isSuccessed = qa20DAO.dropLayer(dropQuery);
 			if (isSuccessed == 0) {
 				layerNames.add("\"geo" + "_" + type + "_" + collectionName + "_" + layerName + "\"");
 			}
 		}
 		return layerNames;
+	}
+
+	@Override
+	public void insertQA10CreateFeature(String tableName, QA10Feature createFeature) {
+
+		QA10DBQueryManager queryManager = new QA10DBQueryManager();
+		HashMap<String, Object> insertQuertMap = queryManager.getInertFeatureQuery(tableName, createFeature);
+		qa10DAO.insertQA10Feature(insertQuertMap);
+	}
+
+	@Override
+	public void updateQA10ModifyFeature(String tableName, QA10Feature modifyFeature) {
+
+		QA10DBQueryManager queryManager = new QA10DBQueryManager();
+
+		DefaultTransactionDefinition def = new DefaultTransactionDefinition();
+		def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+		TransactionStatus status = txManager.getTransaction(def);
+
+		try {
+			// 1. featureID 조회
+			String featureID = modifyFeature.getFeatureID();
+			HashMap<String, Object> selectIdxqueryMap = queryManager.getSelectFeatureIdx(tableName, featureID);
+			HashMap<String, Object> idxMap = qa10DAO.selectQA10FeatureIdx(selectIdxqueryMap);
+			int idx = (Integer) idxMap.get("f_idx");
+
+			// 2. 해당 feature 삭제
+			HashMap<String, Object> deleteFeatureMap = queryManager.getDeleteFeature(tableName, idx);
+			qa10DAO.deleteQA10Feature(deleteFeatureMap);
+
+			// 3. 다시 insert
+			HashMap<String, Object> insertFeatureMap = queryManager.getInertFeatureQuery(tableName, modifyFeature);
+			qa10DAO.insertQA10Feature(insertFeatureMap);
+		} catch (Exception e) {
+			txManager.rollback(status);
+		}
+		txManager.commit(status);
+	}
+
+	@Override
+	public void deleteQA10RemovedFeature(String tableName, String featureId) {
+
+		QA10DBQueryManager queryManager = new QA10DBQueryManager();
+
+		DefaultTransactionDefinition def = new DefaultTransactionDefinition();
+		def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+		TransactionStatus status = txManager.getTransaction(def);
+		try {
+			HashMap<String, Object> selectIdxqueryMap = queryManager.getSelectFeatureIdx(tableName, featureId);
+			HashMap<String, Object> idxMap = qa10DAO.selectQA10FeatureIdx(selectIdxqueryMap);
+			int idx = (Integer) idxMap.get("f_idx");
+
+			HashMap<String, Object> deleteFeatureMap = queryManager.getDeleteFeature(tableName, idx);
+			qa10DAO.deleteQA10Feature(deleteFeatureMap);
+		} catch (Exception e) {
+			txManager.rollback(status);
+		}
+		txManager.commit(status);
+
+	}
+
+	@Override
+	public Integer checkQA10LayerCollectionName(String collectionName) {
+
+		QA10DBQueryManager queryManager = new QA10DBQueryManager();
+		HashMap<String, Object> queryMap = queryManager.getSelectLayerCollectionIdx(collectionName);
+		HashMap<String, Object> returnMap = qa20DAO.selectQA20LayerCollectionIdx(queryMap);
+		if (returnMap == null) {
+			return null;
+		} else {
+			return (Integer) returnMap.get("c_idx");
+		}
+	}
+
+	@Override
+	public GeoLayerInfo createQA10LayerCollection(String type, EditQA10Collection editCollection) throws Exception {
+
+		return null;
+	}
+
+	@Override
+	public GeoLayerInfo createQA10Layers(String type, Integer collectionIdx, EditQA10Collection editCollection)
+			throws PSQLException, IllegalArgumentException, MalformedURLException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<String> dropQA10LayerCollection(String type, EditQA10Collection editCollection) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

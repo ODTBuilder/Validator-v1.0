@@ -43,7 +43,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 
-import org.geotools.data.DataStore;
 import org.geotools.data.DataUtilities;
 import org.geotools.data.ngi.NGIDataStoreFactory;
 import org.geotools.referencing.CRS;

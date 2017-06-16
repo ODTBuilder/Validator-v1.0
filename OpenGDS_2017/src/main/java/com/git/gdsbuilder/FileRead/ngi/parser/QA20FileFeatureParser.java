@@ -26,7 +26,7 @@ import java.util.regex.Pattern;
 
 import com.git.gdsbuilder.type.qa20.feature.QA20Feature;
 import com.git.gdsbuilder.type.qa20.header.NDAHeader;
-import com.git.gdsbuilder.type.qa20.header.NGIField;
+import com.git.gdsbuilder.type.qa20.header.NDAField;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
@@ -374,9 +374,9 @@ public class QA20FileFeatureParser {
 			String tmpLine = line.replaceAll(" ", "");
 
 			HashMap<String, Object> properties = new HashMap<String, Object>();
-			List<NGIField> fields = ndaHeader.getAspatial_field_def();
+			List<NDAField> fields = ndaHeader.getAspatial_field_def();
 
-			for (NGIField field : fields) {
+			for (NDAField field : fields) {
 				String field_name = field.getFieldName();
 				String valueType = field.getType();
 				String decimal = field.getDecimal();
@@ -413,8 +413,8 @@ public class QA20FileFeatureParser {
 			return properties;
 		} else {
 			HashMap<String, Object> properties = new HashMap<String, Object>();
-			List<NGIField> fields = ndaHeader.getAspatial_field_def();
-			for (NGIField field : fields) {
+			List<NDAField> fields = ndaHeader.getAspatial_field_def();
+			for (NDAField field : fields) {
 				String field_name = field.getFieldName();
 				properties.put(field_name, null);
 			}

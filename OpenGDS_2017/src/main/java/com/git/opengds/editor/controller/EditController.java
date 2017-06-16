@@ -40,5 +40,8 @@ public class EditController {
 	public void editLayerCollection(HttpServletRequest request, @RequestBody String geo) throws Exception {
 
 		editService.editLayerCollection(geo);
+		
+		System.out.println("");
 	}
 }
+

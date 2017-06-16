@@ -57,4 +57,18 @@
 		${insertQuery}
 	</insert>
 
+	<!-- qa10_layer_feature -->
+	<insert id="insertQA10Feature" parameterType="hashmap">
+		${insertQuery}
+	</insert>
+
+	<select id="selectFeatureIdx" parameterType="hashMap"
+		resultType="hashMap">
+		${selectQuery}
+	</select>
+
+	<delete id="deleteFeature" parameterType="hashMap">
+		${deleteQuery}
+	</delete>
+
 </mapper>

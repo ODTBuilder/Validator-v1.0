@@ -17,7 +17,7 @@ gb.interaction.DeleteVertex = function() {
 	});
 };
 /**
- * 드로우 인터렉션에 그리는중에 타입을 바꾸는 함수 추가
+ * 드로우 인터렉션에 그리는중에 타입을 바꾸는 함수 추가5
  */
 ol.interaction.Draw.prototype.switchType_ = function(){
 	this.type_ = this.selectedType();
