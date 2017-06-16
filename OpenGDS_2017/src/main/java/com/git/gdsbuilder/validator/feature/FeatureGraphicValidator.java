@@ -207,5 +207,52 @@ public interface FeatureGraphicValidator {
 	 * */
 	public List<ErrorFeature> validateUnderShoot(SimpleFeature simpleFeature, SimpleFeatureCollection aop,
 			double tolerence) throws SchemaException;
-
+	
+	/**
+	 * 검수 항목 중 "불확실한 사용요소 오류(UselessEntity)" 검수
+	 * @author JY.Kim
+	 * @Date 2017. 6. 12. 오전 11:38:26
+	 * @param simpleFeature
+	 * @return ErrorFeature
+	 * @throws SchemaException ErrorFeature
+	 * @throws
+	 * */
+	public ErrorFeature validateUselessEntity(SimpleFeature simpleFeature) throws SchemaException ;
+	
+	/**
+	 * 검수 항목 중 "건물 폐합 오류(BuildingOpen)" 검수
+	 * @author JY.Kim
+	 * @Date 2017. 6. 12. 오전 11:39:51
+	 * @param simpleFeature
+	 * @return ErrorFeature
+	 * @throws SchemaException ErrorFeature
+	 * @throws
+	 * */
+	public ErrorFeature validateBuildingOpen(SimpleFeature simpleFeature) throws SchemaException ;
+	
+	/**
+	 * 검수 항목 중 "수부코드 폐합 오류(WaterOpen)" 검수
+	 * @author JY.Kim
+	 * @Date 2017. 6. 12. 오전 11:40:18
+	 * @param simpleFeature
+	 * @return ErrorFeature
+	 * @throws SchemaException ErrorFeature
+	 * @throws
+	 * */
+	public ErrorFeature validateWaterOpen(SimpleFeature simpleFeature) throws SchemaException ;
+	
+	/**
+	 * 검수 항목 중 "계층 오류(LayerMiss)" 검수
+	 * @author JY.Kim
+	 * @Date 2017. 6. 12. 오전 11:42:43
+	 * @param simpleFeature
+	 * @param typeNames
+	 * @return ErrorFeature
+	 * @throws SchemaException ErrorFeature
+	 * @throws
+	 * */
+	public ErrorFeature validateLayerMiss(SimpleFeature simpleFeature, List<String> typeNames)throws SchemaException;
+	//public ErrorFeature vallidateB_SymbolOutSided(SimpleFeature simpleFeatureI, SimpleFeature simpleFeatureJ) throws SchemaException;
+	public ErrorFeature validateB_SymbolOutSided(List<SimpleFeature> simpleFeatures, SimpleFeature relationSimpleFeature) throws SchemaException;
+	public ErrorFeature validateCrossRoad(SimpleFeature simpleFeature, SimpleFeature relationSimpleFeature) throws SchemaException;
 }

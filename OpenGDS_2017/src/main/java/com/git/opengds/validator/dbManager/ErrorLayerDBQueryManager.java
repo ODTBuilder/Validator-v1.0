@@ -79,7 +79,8 @@ public class ErrorLayerDBQueryManager {
 	public List<HashMap<String, Object>> insertErrorLayerQuery() {
 
 		String collectionName = this.errLayer.getCollectionName();
-		String tableName = "\"" + "err_" + collectionName + "\"";
+		String collectionType = this.errLayer.getCollectionType();
+		String tableName = "\"" + "err_" + collectionType + "_" + collectionName + "\"";
 
 		List<HashMap<String, Object>> inertQueryMaps = new ArrayList<HashMap<String, Object>>();
 
@@ -128,8 +129,8 @@ public class ErrorLayerDBQueryManager {
 	 * HashMap<String,Object> @throws
 	 */
 	public HashMap<String, Object> selecctErrorFeaturesQuery(String collectionName, List<String> layerNames) {
-
-		String tableName = "\"" + "err_" + collectionName + "\"";
+		String collectionType = this.errLayer.getCollectionType();
+		String tableName = "\"" + "err_" + collectionType + "_" + collectionName + "\"";
 		// String selectQuery = " select " + "collection_name, layer_name,
 		// feature_id, err_type, err_name, ST_AsText(geom) as geom " + "from " +
 		// tableName + " where ";

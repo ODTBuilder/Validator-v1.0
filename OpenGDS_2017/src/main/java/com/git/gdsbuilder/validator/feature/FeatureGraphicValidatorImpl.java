@@ -37,10 +37,14 @@ package com.git.gdsbuilder.validator.feature;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.management.relation.RelationServiceMBean;
+
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureIterator;
 import org.geotools.feature.SchemaException;
+import org.geotools.geojson.geom.GeometryJSON;
 import org.geotools.geometry.jts.JTS;
+import org.geotools.geometry.jts.JTSFactoryFinder;
 import org.geotools.referencing.CRS;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.referencing.FactoryException;
@@ -51,23 +55,32 @@ import org.opengis.referencing.operation.TransformException;
 
 import com.git.gdsbuilder.type.validate.error.ErrorFeature;
 import com.git.gdsbuilder.type.validate.error.ErrorLayer;
+import com.git.gdsbuilder.type.validate.option.B_SymbolOutSided;
+import com.git.gdsbuilder.type.validate.option.BuildingOpen;
 import com.git.gdsbuilder.type.validate.option.ConBreak;
 import com.git.gdsbuilder.type.validate.option.ConIntersected;
 import com.git.gdsbuilder.type.validate.option.ConOverDegree;
+import com.git.gdsbuilder.type.validate.option.CrossRoad;
 import com.git.gdsbuilder.type.validate.option.EntityDuplicated;
+import com.git.gdsbuilder.type.validate.option.LayerMiss;
 import com.git.gdsbuilder.type.validate.option.OutBoundary;
 import com.git.gdsbuilder.type.validate.option.OverShoot;
 import com.git.gdsbuilder.type.validate.option.SelfEntity;
 import com.git.gdsbuilder.type.validate.option.SmallArea;
 import com.git.gdsbuilder.type.validate.option.SmallLength;
 import com.git.gdsbuilder.type.validate.option.UnderShoot;
+import com.git.gdsbuilder.type.validate.option.UselessEntity;
 import com.git.gdsbuilder.type.validate.option.UselessPoint;
+import com.git.gdsbuilder.type.validate.option.WaterOpen;
 import com.vividsolutions.jts.algorithm.Angle;
 import com.vividsolutions.jts.algorithm.CentroidPoint;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.Point;
+import com.vividsolutions.jts.geom.Polygon;
+import com.vividsolutions.jtsexample.geom.ExtendedCoordinate;
 
 public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 
@@ -371,9 +384,9 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 				}
 			}
 			if (typeJ.equals("LineString") || typeJ.equals("MultiLineString")) {
-//				if (geometryI.crosses(geometryJ) || geometryI.contains(geometryJ) || geometryI.intersects(geometryJ)) {
-//					returnGeom = geometryI.intersection(geometryJ);
-//				}
+				//				if (geometryI.crosses(geometryJ) || geometryI.contains(geometryJ) || geometryI.intersects(geometryJ)) {
+				//					returnGeom = geometryI.intersection(geometryJ);
+				//				}
 				boolean isTrue = false;
 				GeometryFactory factory = new GeometryFactory();
 				Coordinate[] coors = geometryJ.getCoordinates();
@@ -465,7 +478,7 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 			SimpleFeature simpleFeatureJ = iterator.next();
 			Geometry relationGeometry = (Geometry) simpleFeatureJ.getDefaultGeometry(); // aop
 			Geometry aopBuffer = relationGeometry.buffer(tolerence); // tolerence
-																		// : 사용자
+			// : 사용자
 			// 입력 파라미터
 			Geometry envelope = relationGeometry.getEnvelope();
 			GeometryFactory factory = new GeometryFactory();
@@ -500,7 +513,7 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 			SimpleFeature relationSimpleFeature = iterator.next();
 			Geometry geometryRelation = (Geometry) relationSimpleFeature.getDefaultGeometry(); // aop
 			Geometry aopBuffer = geometryRelation.buffer(tolerence); // tolerence
-																		// : 사용자
+			// : 사용자
 			// 입력 파라미터
 			Geometry envelope = geometryRelation.getEnvelope();
 			GeometryFactory factory = new GeometryFactory();
@@ -529,4 +542,195 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 			return null;
 		}
 	}
+
+	/*********************************************** 추가 ***************/
+	public ErrorFeature validateUselessEntity(SimpleFeature simpleFeature) throws SchemaException {
+		String upperType = simpleFeature.getAttribute("feature_type").toString().toUpperCase();
+		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
+
+		if(!(upperType.equals("POINT") || upperType.equals("LINESTRING") || upperType.equals("POLYGON") 
+				|| upperType.equals("MULTIPOINT") || upperType.equals("MULTILINESTRING") || upperType.equals("MULTIPOLYGON")
+				|| upperType.equals("TEXT") || upperType.equals("LINE") || upperType.equals("INSERT") 
+				|| upperType.equals("LWPOLYLINE") || upperType.equals("POLYLINE"))){
+
+			ErrorFeature errorFeature = new ErrorFeature(simpleFeature.getID(), UselessEntity.Type.USELESSENTITY.errType(),
+					UselessEntity.Type.USELESSENTITY.errName(), geometry.getInteriorPoint());
+			return errorFeature;
+		}else{
+			return null;
+		}
+	}
+
+	public ErrorFeature validateBuildingOpen(SimpleFeature simpleFeature) throws SchemaException {
+
+		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
+		Coordinate[] coordinates = geometry.getCoordinates();
+		int coorSize = coordinates.length;
+		Coordinate start = coordinates[0];
+		Coordinate end = coordinates[coorSize - 1];
+
+		if(coorSize > 3){
+			if(!(start.equals2D(end))){
+				ErrorFeature errorFeature = new ErrorFeature(simpleFeature.getID(), BuildingOpen.Type.BUILDINGOPEN.errType(),
+						BuildingOpen.Type.BUILDINGOPEN.errName(), geometry.getInteriorPoint());
+				return errorFeature;
+			}else{
+				return null;	
+			}
+		}else{
+			ErrorFeature errorFeature = new ErrorFeature(simpleFeature.getID(), BuildingOpen.Type.BUILDINGOPEN.errType(),
+					BuildingOpen.Type.BUILDINGOPEN.errName(), geometry.getInteriorPoint());
+			return errorFeature;
+		}
+	}
+
+	public ErrorFeature validateWaterOpen(SimpleFeature simpleFeature) throws SchemaException{
+		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
+		Coordinate[] coordinates = geometry.getCoordinates();
+		int coorSize = coordinates.length;
+		Coordinate start = coordinates[0];
+		Coordinate end = coordinates[coorSize - 1];
+
+		if(coorSize > 3){
+			if(!(start.equals2D(end))){
+				ErrorFeature errorFeature = new ErrorFeature(simpleFeature.getID(), WaterOpen.Type.WATEROPEN.errType(),
+						WaterOpen.Type.WATEROPEN.errName(), geometry.getInteriorPoint());
+				return errorFeature;
+			}else{
+				return null;
+			}
+		}else{
+			ErrorFeature errorFeature = new ErrorFeature(simpleFeature.getID(), WaterOpen.Type.WATEROPEN.errType(),
+					WaterOpen.Type.WATEROPEN.errName(), geometry.getInteriorPoint());
+			return errorFeature;
+		}		
+	}
+
+	public ErrorFeature validateLayerMiss(SimpleFeature simpleFeature, List<String> typeNames)throws SchemaException{
+		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
+		String upperType = simpleFeature.getAttribute("feature_type").toString().toUpperCase();
+		Boolean flag = false;
+
+		for (int i = 0; i < typeNames.size(); i++) {
+			String typeName = typeNames.get(i);
+			if(typeName.equals(upperType)){
+				flag = true;
+				break;
+			}else{
+				flag = false;
+			}
+		}
+		if(flag == false){
+			ErrorFeature errorFeature = new ErrorFeature(simpleFeature.getID(), LayerMiss.Type.LAYERMISS.errType(),
+					LayerMiss.Type.LAYERMISS.errName(), geometry.getInteriorPoint());
+			return errorFeature;
+		}else{
+			return null;
+		}
+	}
+
+	public ErrorFeature validateB_SymbolOutSided(List<SimpleFeature> simpleFeatures, SimpleFeature relationSimpleFeature) throws SchemaException{
+
+		Geometry relationGeometry = (Geometry) relationSimpleFeature.getDefaultGeometry();
+		Boolean flag = false;
+
+		for (int i = 0; i < simpleFeatures.size(); i++) {
+			SimpleFeature simpleFeature = simpleFeatures.get(i);
+			Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
+			//String upperType = geometry.getGeometryType().toUpperCase();
+			String upperType = simpleFeature.getAttribute("feature_type").toString().toUpperCase();
+
+			if(upperType.equals("POINT") || upperType.equals("TEXT")){
+				if((geometry.equals(relationGeometry))){
+					flag = true;
+					break;
+				}
+			}
+			if(upperType.equals("LINESTRING") || upperType.equals("LINE")){
+				GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory();
+				Coordinate[] coordinates = geometry.getCoordinates();
+				Coordinate start = coordinates[0];
+				Coordinate end = coordinates[coordinates.length-1];
+				if(start.equals2D(end)){
+					LinearRing ring = geometryFactory.createLinearRing(coordinates);
+					LinearRing holes[] = null;
+					Polygon polygon = geometryFactory.createPolygon(ring, holes);
+					if(polygon.contains(relationGeometry)){
+						flag = true;
+						break;
+					}
+				}
+
+			}
+			if(upperType.equals("LWPOLYLINE") || upperType.equals("POLYLINE")){
+
+				// create Polygon
+				GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory();
+				List<Coordinate> list = new ArrayList<Coordinate>();
+				Coordinate[] coordinates = geometry.getCoordinates();
+				Coordinate start = coordinates[0];
+				Coordinate end = coordinates[coordinates.length-1];
+				if(start.equals2D(end)){
+					LinearRing ring = geometryFactory.createLinearRing(coordinates);
+					LinearRing holes[] = null;
+					Polygon polygon = geometryFactory.createPolygon(ring, holes);
+					if(polygon.contains(relationGeometry)){
+						flag = true;
+						break;
+					}
+				}else{
+					for (int j = 0; j < coordinates.length; j++) {
+						Coordinate coordinate = coordinates[j];
+						list.add(coordinate);
+					}
+					list.add(start);
+					Coordinate[] coordinates2 = new Coordinate[list.size()];
+					list.toArray(coordinates2);
+					LinearRing ring = geometryFactory.createLinearRing(coordinates2);
+					LinearRing holes[] = null;
+					Polygon polygon = geometryFactory.createPolygon(ring, holes);
+					if(polygon.contains(relationGeometry)){
+						flag = true;
+						break;
+					}
+				}
+			}
+		}
+
+		if(flag == false){
+			ErrorFeature errorFeature = new ErrorFeature(relationSimpleFeature.getID(), B_SymbolOutSided.Type.B_SYMBOLOUTSIDED.errType(),
+					B_SymbolOutSided.Type.B_SYMBOLOUTSIDED.errName(), relationGeometry.getInteriorPoint());
+			return errorFeature;
+		}else{
+			return null;
+		}
+	}
+
+	public ErrorFeature validateCrossRoad(SimpleFeature simpleFeature, SimpleFeature relationSimpleFeature) throws SchemaException{
+		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
+		Geometry relGeometry = (Geometry) relationSimpleFeature.getDefaultGeometry();
+
+		if(geometry.contains(relGeometry) || geometry.overlaps(relGeometry)){
+			GeometryFactory geometryFactory = new GeometryFactory();
+			Coordinate[] relCoordinates = relGeometry.getCoordinates();
+			for (int i = 0; i < relCoordinates.length; i++) {
+				Coordinate coordinate = relCoordinates[i];
+				Geometry coorPoint = geometryFactory.createPoint(coordinate);
+				if(!(geometry.touches(coorPoint))){
+					ErrorFeature errorFeature = new ErrorFeature(relationSimpleFeature.getID(), CrossRoad.Type.CROSSROAD.errType(),
+							CrossRoad.Type.CROSSROAD.errName(), relGeometry.getInteriorPoint());
+					return errorFeature;
+				}
+			}
+		}
+		return null;
+	}
+
+	public ErrorFeature validateNodeMiss(SimpleFeature simpleFeature) throws SchemaException{
+
+		return null;
+	}
+
+
+
 }
