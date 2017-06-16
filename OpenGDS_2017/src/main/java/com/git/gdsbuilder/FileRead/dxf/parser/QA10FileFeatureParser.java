@@ -44,7 +44,6 @@ public class QA10FileFeatureParser {
 			String entityID = dxfLine.getID();
 			QA10Feature dxfFeature = new QA10Feature(entityID);
 			dxfFeature.setFeatureType(entityType);
-			dxfFeature.setLayerID(dxfLine.getLayerName());
 			dxfFeature.setGeom(geom);
 			// dxfFeature.setProperties(EnDXFCommon.getProperties(style));
 			return dxfFeature;
@@ -69,7 +68,6 @@ public class QA10FileFeatureParser {
 			String entityID = dxfPolyline.getID();
 			QA10Feature dxfFeature = new QA10Feature(entityID);
 			dxfFeature.setFeatureType(entityType);
-			dxfFeature.setLayerID(dxfPolyline.getLayerName());
 			dxfFeature.setGeom(geom);
 			// dxfFeature.setProperties(EnDXFPolyline.getProperties(style));
 			return dxfFeature;
@@ -94,7 +92,6 @@ public class QA10FileFeatureParser {
 			String entityID = dxfLwPolyline.getID();
 			QA10Feature dxfFeature = new QA10Feature(entityID);
 			dxfFeature.setFeatureType(entityType);
-			dxfFeature.setLayerID(dxfLwPolyline.getLayerName());
 			dxfFeature.setGeom(geom);
 			// dxfFeature.setProperties(EnDXFPolyline.getProperties(style));
 			return dxfFeature;
@@ -118,7 +115,6 @@ public class QA10FileFeatureParser {
 			String entityID = dxfInsert.getID();
 			QA10Feature dxfFeature = new QA10Feature(entityID);
 			dxfFeature.setFeatureType(entityType);
-			dxfFeature.setLayerID(dxfInsert.getLayerName());
 			dxfFeature.setGeom(geom);
 			// dxfFeature.setProperties(EnDXFInsert.getProperties(style));
 			return dxfFeature;
@@ -141,7 +137,6 @@ public class QA10FileFeatureParser {
 			String entityID = dxfCircle.getID();
 			QA10Feature dxfFeature = new QA10Feature(entityID);
 			dxfFeature.setFeatureType(entityType);
-			dxfFeature.setLayerID(dxfCircle.getLayerName());
 			dxfFeature.setGeom(geom);
 			// dxfFeature.setProperties(EnDXFCircle.getProperties(style));
 			return dxfFeature;
@@ -167,7 +162,6 @@ public class QA10FileFeatureParser {
 			String entityID = dxfSolid.getID();
 			QA10Feature dxfFeature = new QA10Feature(entityID);
 			dxfFeature.setFeatureType(entityType);
-			dxfFeature.setLayerID(dxfSolid.getLayerName());
 			dxfFeature.setGeom(geom);
 			// dxfFeature.setProperties(EnDXFCommon.getProperties(style));
 			return dxfFeature;
@@ -192,7 +186,6 @@ public class QA10FileFeatureParser {
 			String entityID = dxfText.getID();
 			QA10Feature dxfFeature = new QA10Feature(entityID);
 			dxfFeature.setFeatureType(entityType);
-			dxfFeature.setLayerID(dxfText.getLayerName());
 			dxfFeature.setGeom(geom);
 			// dxfFeature.setProperties(EnDXFText.getProperties(style));
 			return dxfFeature;
@@ -217,7 +210,6 @@ public class QA10FileFeatureParser {
 			String entityID = dxfArc.getID();
 			QA10Feature dxfFeature = new QA10Feature(entityID);
 			dxfFeature.setFeatureType(entityType);
-			dxfFeature.setLayerID(dxfArc.getLayerName());
 			dxfFeature.setGeom(geom);
 			// dxfFeature.setProperties(EnDXFArc.getProperties(style));
 			return dxfFeature;

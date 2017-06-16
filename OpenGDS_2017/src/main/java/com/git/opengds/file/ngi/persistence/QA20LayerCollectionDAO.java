@@ -34,8 +34,6 @@ public interface QA20LayerCollectionDAO {
 
 	public int dropLayer(HashMap<String, Object> dropQuery);
 
-	public void insertQA20Feature(HashMap<String, Object> insertQuertMap);
-
 	public int insertQA20LayerMetadata(HashMap<String, Object> metadata) throws PSQLException;
 
 	public void insertNdaAspatialFieldDefs(HashMap<String, Object> fieldDef) throws PSQLException;
@@ -48,12 +46,12 @@ public interface QA20LayerCollectionDAO {
 
 	public void insertTextRepresent(HashMap<String, Object> hashMap) throws PSQLException;
 
-	public HashMap<String, Object> selectCountAllFeatures(HashMap<String, Object> countquery);
+	public HashMap<String, Object> selectCountAllQA20Features(HashMap<String, Object> countquery);
 
-	public HashMap<String, Object> selectFeatureIdx(HashMap<String, Object> selectQuery);
+	public HashMap<String, Object> selectQA20FeatureIdx(HashMap<String, Object> selectQuery);
 
-	public int deleteFeature(HashMap<String, Object> deleteQuery);
+	public int deleteQA20Feature(HashMap<String, Object> deleteQuery);
 
-	public void insertFeature(HashMap<String, Object> insertQuery);
+	public void insertQA20Feature(HashMap<String, Object> insertQuery);
 
 }

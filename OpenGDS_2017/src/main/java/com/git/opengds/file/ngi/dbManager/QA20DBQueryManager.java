@@ -25,7 +25,7 @@ import java.util.List;
 import com.git.gdsbuilder.type.qa20.feature.QA20Feature;
 import com.git.gdsbuilder.type.qa20.feature.QA20FeatureList;
 import com.git.gdsbuilder.type.qa20.header.NDAHeader;
-import com.git.gdsbuilder.type.qa20.header.NGIField;
+import com.git.gdsbuilder.type.qa20.header.NDAField;
 import com.git.gdsbuilder.type.qa20.header.NGIHeader;
 import com.git.gdsbuilder.type.qa20.layer.QA20Layer;
 
@@ -37,7 +37,7 @@ import com.git.gdsbuilder.type.qa20.layer.QA20Layer;
  */
 public class QA20DBQueryManager {
 
-	public HashMap<String, Object> getSelectLayerCollectionIdx(String collectionName) {
+	public HashMap<String, Object> getSelectLayerCollectionIdx(String collectionName) { 
 
 		String tableName = "\"" + "qa20_layercollection" + "\"";
 		String selectQuery = "select c_idx from " + tableName + " where file_name = '" + collectionName + "'";
@@ -111,8 +111,8 @@ public class QA20DBQueryManager {
 
 		NDAHeader ndaHeader = qa20Layer.getNdaHeader();
 		if (ndaHeader != null) {
-			List<NGIField> fields = ndaHeader.getAspatial_field_def();
-			for (NGIField field : fields) {
+			List<NDAField> fields = ndaHeader.getAspatial_field_def();
+			for (NDAField field : fields) {
 				String key = "\"" + field.getFieldName() + "\"";
 				String typeStr = field.getType();
 				String valueType = "";
@@ -193,9 +193,9 @@ public class QA20DBQueryManager {
 		if (ndaHeader == null) {
 			return null;
 		} else {
-			List<NGIField> fields = ndaHeader.getAspatial_field_def();
+			List<NDAField> fields = ndaHeader.getAspatial_field_def();
 			for (int i = 0; i < fields.size(); i++) {
-				NGIField dtField = fields.get(i);
+				NDAField dtField = fields.get(i);
 
 				String insertQueryColumns = "insert into nda_aspatial_field_def(f_name, f_type, f_size, f_decimal, f_isunique, lm_idx)";
 				String insertQueryValues = "values ('" + dtField.getFieldName() + "', '" + dtField.getType() + "', "
@@ -356,29 +356,29 @@ public class QA20DBQueryManager {
 
 	}
 
-	public HashMap<String, Object> getSelectFeatureIdx(String layerName, String featureID) {
+	public HashMap<String, Object> getSelectFeatureIdx(String tableName, String featureID) {
 
 		HashMap<String, Object> selectQuery = new HashMap<String, Object>();
-		String querytStr = "select f_idx from \"" + layerName + "\" where feature_id = '" + featureID + "'";
+		String querytStr = "select f_idx from \"" + tableName + "\" where feature_id = '" + featureID + "'";
 		selectQuery.put("selectQuery", querytStr);
 
 		return selectQuery;
 
 	}
 
-	public HashMap<String, Object> getDeleteFeature(String layerName, int fIdx) {
+	public HashMap<String, Object> getDeleteFeature(String tableName, int fIdx) {
 
 		HashMap<String, Object> deleteQuery = new HashMap<String, Object>();
-		String queryStr = "delete from \"" + layerName + "\" where f_idx = '" + fIdx + "'";
+		String queryStr = "delete from \"" + tableName + "\" where f_idx = '" + fIdx + "'";
 		deleteQuery.put("deleteQuery", queryStr);
 
 		return deleteQuery;
 	}
 
-	public HashMap<String, Object> getDropLayer(String type, String collectionName, String layerName) {
+	public HashMap<String, Object> getDropLayer(String type, String collectionName, String tableName) {
 
 		HashMap<String, Object> dropQueryMap = new HashMap<String, Object>();
-		String layerTableName = "\"geo" + "_" + type + "_" + collectionName + "_" + layerName + "\"";
+		String layerTableName = "\"geo" + "_" + type + "_" + collectionName + "_" + tableName + "\"";
 		String queryStr = "drop table " + layerTableName;
 		dropQueryMap.put("dropQuery", queryStr);
 		return dropQueryMap;
@@ -403,11 +403,7 @@ public class QA20DBQueryManager {
 		}
 		return type;
 	}
-
-	/**
-	 * qa20_layer tb의 컬럼 명 리스트 반환 @author DY.Oh @Date 2017. 4. 18. 오후
-	 * 4:04:49 @param layerID @return List<String> @throws
-	 */
+	
 	public List<String> getLayerCoulmns(QA20Layer layer) {
 
 		List<String> columns = new ArrayList<String>();
@@ -415,19 +411,14 @@ public class QA20DBQueryManager {
 		if (header == null) {
 			return null;
 		}
-		List<NGIField> fields = header.getAspatial_field_def();
+		List<NDAField> fields = header.getAspatial_field_def();
 		for (int i = 0; i < fields.size(); i++) {
-			NGIField dtField = fields.get(i);
+			NDAField dtField = fields.get(i);
 			columns.add(dtField.getFieldName());
 		}
 		return columns;
 	}
 
-	/**
-	 * qa20_layer tb의 모든 Feature 수 반환 @author DY.Oh @Date 2017. 4. 18. 오후
-	 * 4:04:05 @param layerCollectionName @param layerIDList @returns
-	 * HashMap<String,Object> @throws
-	 */
 	public HashMap<String, Object> selectCountAllFeaturesQuery(String collectionType, String layerCollectionName,
 			List<String> layerIDList) {
 
@@ -445,4 +436,5 @@ public class QA20DBQueryManager {
 		countQueryMap.put("countQuery", countQueryStr);
 		return countQueryMap;
 	}
+
 }

@@ -338,7 +338,13 @@ gitbuilder.ui.WeightDefinition = $.widget("gitbuilder.weightdefinition", {
 				"type" : "number",
 				"min" : 1,
 				"max" : 100
-			}).val(this.weightDef.hasOwnProperty(wkeys[i]) ? this.weightDef[wkeys[i]] : "0");
+			});
+			if (!obj) {
+				$(weight).val(this.weightDef.hasOwnProperty(wkeys[i]) ? this.weightDef[wkeys[i]] : "0");	
+			} else {
+				$(weight).val(obj.hasOwnProperty(wkeys[i]) ? obj[wkeys[i]] : "0");
+			}
+			
 			that._addClass(weight, "form-control");
 			var td7 = $("<td>").append(weight);
 			var tr = $("<tr>").append(td1).append(td2).append(td3).append(td4).append(td7);

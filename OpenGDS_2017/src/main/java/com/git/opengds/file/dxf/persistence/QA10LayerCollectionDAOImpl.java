@@ -62,4 +62,19 @@ public class QA10LayerCollectionDAOImpl implements QA10LayerCollectionDAO {
 	public void insertQA10LayerMetadata(HashMap<String, Object> insertQueryMap) {
 		sqlSession.insert(namespace + ".insertQA10LayerMetadata", insertQueryMap);
 	}
+
+	@Override
+	public void insertQA10Feature(HashMap<String, Object> insertQuertMap) {
+		sqlSession.insert(namespace + ".insertQA10Feature", insertQuertMap);
+	}
+
+	@Override
+	public HashMap<String, Object> selectQA10FeatureIdx(HashMap<String, Object> selectIdxqueryMap) {
+		return sqlSession.selectOne(namespace + ".selectFeatureIdx", selectIdxqueryMap);
+	}
+
+	@Override
+	public int deleteQA10Feature(HashMap<String, Object> deleteQuery) {
+		return sqlSession.delete(namespace + ".deleteFeature", deleteQuery);
+	}
 }

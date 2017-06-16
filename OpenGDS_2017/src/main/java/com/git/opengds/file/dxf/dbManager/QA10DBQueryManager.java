@@ -13,8 +13,6 @@ import com.git.gdsbuilder.type.qa10.feature.QA10FeatureList;
 import com.git.gdsbuilder.type.qa10.layer.QA10Layer;
 import com.git.gdsbuilder.type.qa10.structure.QA10Header;
 import com.git.gdsbuilder.type.qa10.structure.QA10Tables;
-import com.git.gdsbuilder.type.qa20.header.NDAHeader;
-import com.git.gdsbuilder.type.qa20.header.NGIField;
 
 public class QA10DBQueryManager {
 
@@ -33,7 +31,7 @@ public class QA10DBQueryManager {
 		String layerId = qa10Layer.getLayerID();
 		String tableName = "\"geo" + "_" + type + "_" + collectionName + "_" + layerId + "\"";
 		String defaultCreateQuery = "create table " + tableName + "("
-				+ "f_idx serial primary key, layer_id varchar(100), feature_id varchar(100), geom geometry(" + layerType
+				+ "f_idx serial primary key, feature_id varchar(100), geom geometry(" + layerType
 				+ ", 5186), feature_type varchar(50))";
 
 		HashMap<String, Object> query = new HashMap<String, Object>();
@@ -51,10 +49,9 @@ public class QA10DBQueryManager {
 		QA10FeatureList features = qa10Layer.getQa10FeatureList();
 		for (int i = 0; i < features.size(); i++) {
 			QA10Feature feature = features.get(i);
-			String defaultInsertColumns = "insert into " + tableName + "(layer_id, feature_id, geom, feature_type) ";
-			String values = "values ('" + feature.getLayerID() + "', '" + feature.getFeatureID() + "', "
-					+ "ST_GeomFromText('" + feature.getGeom().toString() + "', 5186), '" + feature.getFeatureType()
-					+ "')";
+			String defaultInsertColumns = "insert into " + tableName + "(feature_id, geom, feature_type) ";
+			String values = "values ('" + feature.getFeatureID() + "', " + "ST_GeomFromText('"
+					+ feature.getGeom().toString() + "', 5186), '" + feature.getFeatureType() + "')";
 
 			HashMap<String, Object> query = new HashMap<String, Object>();
 			query.put("insertQuery", defaultInsertColumns + values);
@@ -210,4 +207,42 @@ public class QA10DBQueryManager {
 		return columns;
 	}
 
+	public HashMap<String, Object> getInertFeatureQuery(String tableName, QA10Feature createFeature) {
+
+		String insertDefaultQuery = "insert into \"" + tableName + "\"" + "(feature_id, geom, feature_type)";
+		String insertDefaultValues = " values('" + createFeature.getFeatureID() + "'," + "ST_GeomFromText('"
+				+ createFeature.getGeom().toString() + "', 5186)" + ",'" + createFeature.getFeatureType() + "')";
+
+		HashMap<String, Object> insertQuery = new HashMap<String, Object>();
+		insertQuery.put("insertQuery", insertDefaultQuery + insertDefaultValues);
+		return insertQuery;
+	}
+
+	public HashMap<String, Object> getSelectFeatureIdx(String tableName, String featureID) {
+
+		HashMap<String, Object> selectQuery = new HashMap<String, Object>();
+		String querytStr = "select f_idx from \"" + tableName + "\" where feature_id = '" + featureID + "'";
+		selectQuery.put("selectQuery", querytStr);
+
+		return selectQuery;
+	}
+
+	public HashMap<String, Object> getDeleteFeature(String tableName, int fIdx) {
+
+		HashMap<String, Object> deleteQuery = new HashMap<String, Object>();
+		String queryStr = "delete from \"" + tableName + "\" where f_idx = '" + fIdx + "'";
+		deleteQuery.put("deleteQuery", queryStr);
+
+		return deleteQuery;
+	}
+
+	public HashMap<String, Object> getSelectLayerCollectionIdx(String collectionName) {
+		
+		String tableName = "\"" + "qa10_layercollection" + "\"";
+		String selectQuery = "select c_idx from " + tableName + " where file_name = '" + collectionName + "'";
+		HashMap<String, Object> selectQueryMap = new HashMap<String, Object>();
+		selectQueryMap.put("selectQuery", selectQuery);
+
+		return selectQueryMap;
+	}
 }

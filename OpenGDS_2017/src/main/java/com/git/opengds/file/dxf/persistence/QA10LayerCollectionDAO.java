@@ -24,4 +24,10 @@ public interface QA10LayerCollectionDAO {
 
 	public void insertQA10LayerMetadata(HashMap<String, Object> insertQueryMap);
 
+	public void insertQA10Feature(HashMap<String, Object> insertQuertMap);
+
+	public HashMap<String, Object> selectQA10FeatureIdx(HashMap<String, Object> selectIdxqueryMap);
+
+	public int deleteQA10Feature(HashMap<String, Object> deleteFeatureMap);
+
 }

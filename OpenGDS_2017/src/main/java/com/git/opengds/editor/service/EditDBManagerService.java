@@ -22,8 +22,10 @@ import java.util.List;
 
 import org.postgresql.util.PSQLException;
 
+import com.git.gdsbuilder.edit.qa10.EditQA10Collection;
 import com.git.gdsbuilder.edit.qa20.EditQA20Collection;
 import com.git.gdsbuilder.type.geoserver.layer.GeoLayerInfo;
+import com.git.gdsbuilder.type.qa10.feature.QA10Feature;
 import com.git.gdsbuilder.type.qa20.feature.QA20Feature;
 
 public interface EditDBManagerService {
@@ -33,19 +35,34 @@ public interface EditDBManagerService {
 
 	// public void editQA20Layer(EditQA20LayerCollectionList edtCollectionList);
 
-	public Integer checkCollectionName(String collectionName);
+	public Integer checkQA20LayerCollectionName(String collectionName);
 
-	public GeoLayerInfo createQa20LayerCollection(String type, EditQA20Collection editCollection) throws Exception;
+	public GeoLayerInfo createQA20LayerCollection(String type, EditQA20Collection editCollection) throws Exception;
 
-	public GeoLayerInfo createQa20Layers(String type, Integer collectionIdx, EditQA20Collection editCollection)
+	public GeoLayerInfo createQA20Layers(String type, Integer collectionIdx, EditQA20Collection editCollection)
 			throws PSQLException, IllegalArgumentException, MalformedURLException;
 
-	public void insertCreateFeature(String layerName, QA20Feature createFeature);
+	public void insertQA20CreateFeature(String layerName, QA20Feature createFeature);
 
-	public void updateModifyFeature(String layerName, QA20Feature modifyFeature);
+	public void updateQA20ModifyFeature(String layerName, QA20Feature modifyFeature);
 
-	public void deleteRemovedFeature(String layerName, String featureId);
+	public void deleteQA20RemovedFeature(String layerName, String featureId);
 
-	public List<String> dropQa20LayerCollection(String type, EditQA20Collection editCollection);
+	public List<String> dropQA20LayerCollection(String type, EditQA20Collection editCollection);
+
+	public Integer checkQA10LayerCollectionName(String collectionName);
+
+	public GeoLayerInfo createQA10LayerCollection(String type, EditQA10Collection editCollection) throws Exception;
+
+	public GeoLayerInfo createQA10Layers(String type, Integer collectionIdx, EditQA10Collection editCollection)
+			throws PSQLException, IllegalArgumentException, MalformedURLException;
+
+	public void insertQA10CreateFeature(String layerName, QA10Feature createFeature);
+
+	public void updateQA10ModifyFeature(String layerName, QA10Feature modifyFeature);
+
+	public void deleteQA10RemovedFeature(String layerName, String featureId);
+
+	public List<String> dropQA10LayerCollection(String type, EditQA10Collection editCollection);
 
 }
