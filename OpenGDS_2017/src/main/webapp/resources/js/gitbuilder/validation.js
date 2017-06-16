@@ -307,7 +307,7 @@ gitbuilder.ui.Validation = $.widget("gitbuilder.validation", {
 				async : true,
 				data : JSON.stringify(this.valiDef),
 				beforeSend : function() { // 호출전실행
-//					loadImageShow();
+// loadImageShow();
 				},
 				traditional : true,
 				success : function(data, textStatus, jqXHR) {
@@ -410,7 +410,28 @@ gitbuilder.ui.Validation = $.widget("gitbuilder.validation", {
 		}
 		var keys = Object.keys(map);
 		for (var i = 0; i < keys.length; i++) {
-			layers.push($(this.tree).jstree("get_node", keys[i]).text);
+			var type;
+			if ($(this.tree).jstree("get_node", keys[i]).type === "n_ngi_layer_pt") {
+				type = "POINT";
+			} else if ($(this.tree).jstree("get_node", keys[i]).type === "n_ngi_layer_ln") {
+				type = "LINESTRING";
+			} else if ($(this.tree).jstree("get_node", keys[i]).type === "n_ngi_layer_pg") {
+				type = "POLYGON";
+			} else if ($(this.tree).jstree("get_node", keys[i]).type === "n_dxf_layer_arc") {
+				type = "ARC";
+			} else if ($(this.tree).jstree("get_node", keys[i]).type === "n_dxf_layer_cir") {
+				type = "CIRCLE";
+			}  else if ($(this.tree).jstree("get_node", keys[i]).type === "n_dxf_layer_ins") {
+				type = "INSERT";
+			}  else if ($(this.tree).jstree("get_node", keys[i]).type === "n_dxf_layer_lpl") {
+				type = "LWPOLYLINE";
+			}  else if ($(this.tree).jstree("get_node", keys[i]).type === "n_dxf_layer_pl") {
+				type = "POLYLINE";
+			}  else if ($(this.tree).jstree("get_node", keys[i]).type === "n_dxf_layer_txt") {
+				type = "TEXT";
+			} 
+			layers.push($(this.tree).jstree("get_node", keys[i]).text+"_"+type);
+			console.log($(this.tree).jstree("get_node", keys[i]));
 		}
 
 		layerColl["layers"] = layers;
