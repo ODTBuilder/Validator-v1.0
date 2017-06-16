@@ -6,17 +6,17 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.git.gdsbuilder.geoserver.service.GeoserverServiceManager;
+import com.git.gdsbuilder.geoserver.service.DTGeoserverServiceManager;
 import com.git.gdsbuilder.geoserver.service.wfs.WFSGetFeature;
 import com.git.gdsbuilder.geoserver.service.wms.WMSGetFeatureInfo;
 import com.git.gdsbuilder.geoserver.service.wms.WMSGetMap;
 import com.git.gdsbuilder.net.impl.ProxyServerImpl;
 
-public class GeoserverServiceManagerImpl implements GeoserverServiceManager {
+public class DTGeoserverServiceManagerImpl implements DTGeoserverServiceManager {
 	private HttpServletRequest request=null;
 	private HttpServletResponse response=null;
 	
-	public GeoserverServiceManagerImpl(HttpServletRequest request, HttpServletResponse response){
+	public DTGeoserverServiceManagerImpl(HttpServletRequest request, HttpServletResponse response){
 		this.request=request;
 		this.response=response;
 	}
@@ -26,7 +26,7 @@ public class GeoserverServiceManagerImpl implements GeoserverServiceManager {
 		String url = feature.getWFSGetFeatureURL();
 		this.requestProxyService(url);
 	};
-
+	
 	@Override
 	public void requestWMSFeatureInfo(WMSGetFeatureInfo featureInfo) {
 		String url = featureInfo.getWMSGetFeatureInfoURL();
@@ -38,6 +38,7 @@ public class GeoserverServiceManagerImpl implements GeoserverServiceManager {
 		String url = map.getWMSGetMapURL();
 		this.requestProxyService(url);
 	};
+	
 	
 	private void requestProxyService(String url) {
 		try {

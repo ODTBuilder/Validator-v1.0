@@ -10,18 +10,32 @@ if (!gitbuilder)
 	gitbuilder = {};
 if (!gitbuilder.ui)
 	gitbuilder.ui = {};
-gitbuilder.ui.LayerWeight = $.widget("gitbuilder.layerweight", {
+gitbuilder.ui.WeightDefinition = $.widget("gitbuilder.weightdefinition", {
 	widnow : undefined,
+	weightDef : undefined,
 	layerDef : undefined,
+	optDef : undefined,
 	tbody : undefined,
 	message : undefined,
 	file : undefined,
 	options : {
 		definition : undefined,
+		layerDefinition : undefined,
+		optionDefinition : undefined,
 		appendTo : "body"
 	},
 	_create : function() {
-		this.layerDef = $.extend({}, this.options.definition);
+		this.weightDef = $.extend({}, this.options.definition);
+		if (typeof this.options.layerDefinition === "function") {
+			this.layerDef = $.extend({}, this.options.layerDefinition());
+		} else {
+			this.layerDef = $.extend({}, this.options.layerDefinition);
+		}
+		if (typeof this.options.optionDefinition === "function") {
+			this.optDef = $.extend({}, this.options.optionDefinition());
+		} else {
+			this.optDef = $.extend({}, this.options.optionDefinition);
+		}
 
 		var that = this;
 		this._on(false, this.element, {
@@ -42,7 +56,7 @@ gitbuilder.ui.LayerWeight = $.widget("gitbuilder.layerweight", {
 		this._addClass(xButton, "close");
 
 		var htag = $("<h4>");
-		htag.text("Layer Definition");
+		htag.text("Layer Weight Definition");
 		this._addClass(htag, "modal-title");
 
 		var header = $("<div>").append(xButton).append(htag);
@@ -58,11 +72,8 @@ gitbuilder.ui.LayerWeight = $.widget("gitbuilder.layerweight", {
 		var tdhead2 = $("<td>").text("Layer Name");
 		var tdhead3 = $("<td>").text("Layer Code");
 		var tdhead4 = $("<td>").text("Geometry Type");
-		var tdhead5 = $("<td>").text("Delete");
-		var tdhead6 = $("<td>").text("QA Area");
 		var tdhead7 = $("<td>").text("Weight");
-		var trhead = $("<tr>").append(tdhead1).append(tdhead2).append(tdhead3).append(tdhead4).append(tdhead5).append(
-				tdhead6).append(tdhead7);
+		var trhead = $("<tr>").append(tdhead1).append(tdhead2).append(tdhead3).append(tdhead4).append(tdhead7);
 		var thead = $("<thead>").append(trhead);
 		that.tbody = $("<tbody>");
 		var tb = $("<table>").append(thead).append(that.tbody);
@@ -70,74 +81,7 @@ gitbuilder.ui.LayerWeight = $.widget("gitbuilder.layerweight", {
 		this._addClass(tb, "table-striped");
 		this._addClass(tb, "text-center");
 		this.update();
-		$(document).on("click", ".layerdefinition-del", function(event) {
-			var laName;
-			if (event.target === this) {
-				laName = $(event.target).parent().parent().find("td:eq(1) > input").val();
-				$(event.target).parent().parent().remove();
-			} else if ($(event.target).parent()[0] === this) {
-				laName = $(event.target).parent().parent().parent().find("td:eq(1) > input").val();
-				$(event.target).parent().parent().parent().remove();
-			}
-		});
-		var addBtn = $("<button>").attr({
-			"type" : "button"
-		});
-		this._addClass(addBtn, "btn");
-		this._addClass(addBtn, "btn-default");
-		$(addBtn).text("Add Row");
-		this._on(false, addBtn, {
-			click : function(event) {
-				if (event.target === addBtn[0]) {
-					var no = $("<span>").css({
-						"vertical-align" : "-webkit-baseline-middle"
-					}).text($(that.tbody).find("tr:last").index() + 2)
-					var td1 = $("<td>").append(no);
-					var lname = $("<input>").val("");
-					this._addClass(lname, "form-control");
-					var td2 = $("<td>").append(lname);
-					$(td2).attr({
-						"type" : "text"
-					});
-					var lcode = $("<input>").val("");
-					this._addClass(lcode, "form-control");
-					var td3 = $("<td>").append(lcode);
-					$(td3).attr({
-						"type" : "text"
-					});
-					var ty1 = $("<option>").text("Point").val("point");
-					var ty2 = $("<option>").text("LineString").val("linestring");
-					var ty3 = $("<option>").text("Polygon").val("polygon");
-					var gtype = $("<select>").append(ty1).append(ty2).append(ty3);
-					this._addClass(gtype, "form-control");
-					var td4 = $("<td>").append(gtype);
-					var icon = $("<i>").attr("aria-hidden", true);
-					this._addClass(icon, "fa");
-					this._addClass(icon, "fa-times");
-					var delBtn = $("<button>").append(icon);
-					this._addClass(delBtn, "btn");
-					this._addClass(delBtn, "btn-default");
-					this._addClass(delBtn, "layerdefinition-del");
-					var td5 = $("<td>").append(delBtn);
-					var radio = $("<input>").attr({
-						"type" : "radio",
-						"name" : "layerdefinition-area"
-					}).css({
-						"vertical-align" : "-webkit-baseline-middle"
-					});
-					var td6 = $("<td>").append(radio);
-					var weight = $("<input>").attr({
-						"type" : "number",
-						"min" : 1,
-						"max" : 100
-					});
-					that._addClass(weight, "form-control");
-					var td7 = $("<td>").append(weight);
-					var tr = $("<tr>").append(td1).append(td2).append(td3).append(td4).append(td5).append(td6).append(td7);
-					$(that.tbody).append(tr);
-				}
-			}
-		});
+
 		var upper = $("<div>").css({
 			"overflow-y" : "auto",
 			"height" : "400px"
@@ -146,7 +90,7 @@ gitbuilder.ui.LayerWeight = $.widget("gitbuilder.layerweight", {
 			"display" : "none"
 		});
 		this._addClass(this.message, "text-danger");
-		var mid = $("<div>").append(this.message).append(addBtn);
+		var mid = $("<div>").append(this.message);
 		this.file = $("<input>").attr({
 			"type" : "file"
 		}).css({
@@ -282,7 +226,17 @@ gitbuilder.ui.LayerWeight = $.widget("gitbuilder.layerweight", {
 		});
 	},
 	_init : function() {
-		this.layerDef = $.extend({}, this.options.definition);
+		this.weightDef = $.extend({}, this.options.definition);
+		if (typeof this.options.layerDefinition === "function") {
+			this.layerDef = $.extend({}, this.options.layerDefinition());
+		} else {
+			this.layerDef = $.extend({}, this.options.layerDefinition);
+		}
+		if (typeof this.options.optionDefinition === "function") {
+			this.optDef = $.extend({}, this.options.optionDefinition());
+		} else {
+			this.optDef = $.extend({}, this.options.optionDefinition);
+		}
 	},
 	downloadSetting : function() {
 		var def = this.getDefinitionForm();
@@ -290,7 +244,7 @@ gitbuilder.ui.LayerWeight = $.widget("gitbuilder.layerweight", {
 			var setting = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(def));
 			var anchor = $("<a>").attr({
 				"href" : setting,
-				"download" : "layer_setting.json"
+				"download" : "weight_setting.json"
 			});
 			$(anchor)[0].click();
 		}
@@ -305,7 +259,7 @@ gitbuilder.ui.LayerWeight = $.widget("gitbuilder.layerweight", {
 		var error = [];
 		var tWeight = 0;
 		for (var i = 0; i < children.length; i++) {
-			var wei = parseInt($(children[i]).find("td:eq(6)>input[type=number]").val());
+			var wei = parseInt($(children[i]).find("td:eq(4)>input[type=number]").val());
 			tWeight = tWeight + wei;
 			if (wei < 1) {
 				flag = false;
@@ -314,46 +268,9 @@ gitbuilder.ui.LayerWeight = $.widget("gitbuilder.layerweight", {
 				}).text("Each weight must be over than 0%");
 			}
 			$(children[i]).removeClass("danger");
-			for (var j = 0; j < children.length; j++) {
-				if (i !== j) {
-					if ($(children[i]).find("td:eq(1)>input").val() !== "" && $(children[i]).find("td:eq(1)>input").val() === $(children[j]).find("td:eq(1)>input").val()) {
-						 error.push(children[i]);
-						 error.push(children[j]);
-						flag = false;
-						$(that.message).css({
-							"display" : "block"
-						}).text("Same layer names are not allowed.");
-					} 
-				}
-			}
-			if ($(children[i]).find("td:eq(1)>input").val() === ""
-					|| $(children[i]).find("td:eq(2)>input").val() === "") {
-				$(children[i]).addClass("warning");
-				flag = false;
-				$(that.message).css({
-					"display" : "block"
-				}).text("Blank spaces are not allowed.");
-			} else {
-				$(children[i]).removeClass("warning");
-			}
 
-			var code = $(children[i]).find("td:eq(2)>input").val();
-			code.replace(/s/gi, '');
-			var spCode = code.split(",");
-			var geom = $(children[i]).find("td:eq(3)>select").val();
-			var area;
-			if ($(children[i]).find("td:eq(5)>input").prop("checked")) {
-				area = true;
-			} else {
-				area = false;
-			}
-			var wVal = parseInt($(children[i]).find("td:eq(6)>input[type=number]").val());
-			def[$(children[i]).find("td:eq(1)>input").val()] = {
-				"code" : spCode,
-				"geom" : geom,
-				"area" : area,
-				"weight" : wVal
-			};
+			var wVal = parseInt($(children[i]).find("td:eq(4)>input[type=number]").val());
+			def[$(children[i]).find("td:eq(1)").text()] = wVal;
 		}
 		if (tWeight !== 100) {
 			flag = false;
@@ -373,73 +290,58 @@ gitbuilder.ui.LayerWeight = $.widget("gitbuilder.layerweight", {
 		return result;
 	},
 	setDefinition : function(obj) {
-		this.layerDef = obj;
+		this.weightDef = obj;
 	},
 	getDefinition : function() {
-		return this.layerDef;
+		return this.weightDef;
 	},
 	update : function(obj) {
 		var that = this;
+
 		$(this.tbody).empty();
 		$(that.message).css({
 			"display" : "none"
 		});
-		if (!obj) {
-			obj = this.layerDef;
+		if (typeof this.options.layerDefinition === "function") {
+			this.layerDef = $.extend({}, this.options.layerDefinition());
+		} else {
+			this.layerDef = $.extend({}, this.options.layerDefinition);
 		}
-		var keys = Object.keys(obj);
-		for (var i = 0; i < keys.length; i++) {
+		if (typeof this.options.optionDefinition === "function") {
+			this.optDef = $.extend({}, this.options.optionDefinition());
+		} else {
+			this.optDef = $.extend({}, this.options.optionDefinition);
+		}
+
+		var okeys = Object.keys(this.optDef);
+		var wkeys = [];
+		for (var i = 0; i < okeys.length; i++) {
+			var keys = Object.keys(this.optDef[okeys[i]]);
+			if (keys.length > 0) {
+				wkeys.push(okeys[i]);
+			}
+		}
+
+		for (var i = 0; i < wkeys.length; i++) {
 			var no = $("<span>").css({
 				"vertical-align" : "-webkit-baseline-middle"
 			}).text((i + 1));
 			var td1 = $("<td>").append(no);
-			var lname = $("<input>").attr({
-				"type" : "text"
-			}).val(keys[i]);
-			this._addClass(lname, "form-control");
-			var td2 = $("<td>").append(lname);
 
-			var lcode = $("<input>").attr({
-				"type" : "text"
-			}).val(obj[keys[i]].code.toString());
-			this._addClass(lcode, "form-control");
-			var td3 = $("<td>").append(lcode);
+			var td2 = $("<td>").text(wkeys[i]);
 
-			var ty1 = $("<option>").text("Point").val("point");
-			var ty2 = $("<option>").text("LineString").val("linestring");
-			var ty3 = $("<option>").text("Polygon").val("polygon");
-			var gtype = $("<select>").append(ty1).append(ty2).append(ty3).val(obj[keys[i]].geom);
-			this._addClass(gtype, "form-control");
-			var td4 = $("<td>").append(gtype);
+			var td3 = $("<td>").text(this.layerDef[wkeys[i]].code.toString());
 
-			var icon = $("<i>").attr("aria-hidden", true);
-			this._addClass(icon, "fa");
-			this._addClass(icon, "fa-times");
-			var delBtn = $("<button>").append(icon);
-			this._addClass(delBtn, "btn");
-			this._addClass(delBtn, "btn-default");
-			this._addClass(delBtn, "layerdefinition-del");
-			var td5 = $("<td>").append(delBtn);
-			var radio = $("<input>").attr({
-				"type" : "radio",
-				"name" : "layerdefinition-area"
-			}).css({
-				"vertical-align" : "-webkit-baseline-middle"
-			});
-			if (obj[keys[i]].area) {
-				$(radio).prop("checked", true);
-			} else {
-				$(radio).prop("checked", false);
-			}
-			var td6 = $("<td>").append(radio);
+			var td4 = $("<td>").text(this.layerDef[wkeys[i]].geom);
+
 			var weight = $("<input>").attr({
 				"type" : "number",
 				"min" : 1,
 				"max" : 100
-			}).val(obj[keys[i]].weight);
+			}).val(this.weightDef.hasOwnProperty(wkeys[i]) ? this.weightDef[wkeys[i]] : "0");
 			that._addClass(weight, "form-control");
 			var td7 = $("<td>").append(weight);
-			var tr = $("<tr>").append(td1).append(td2).append(td3).append(td4).append(td5).append(td6).append(td7);
+			var tr = $("<tr>").append(td1).append(td2).append(td3).append(td4).append(td7);
 			$(that.tbody).append(tr);
 		}
 	},
@@ -475,9 +377,9 @@ gitbuilder.ui.LayerWeight = $.widget("gitbuilder.layerweight", {
 		add = (typeof add === "boolean") ? add : extra;
 		var shift = (typeof element === "string" || element === null), options = {
 			extra : shift ? keys : extra,
-			keys : shift ? element : keys,
-			element : shift ? this.element : element,
-			add : add
+					keys : shift ? element : keys,
+							element : shift ? this.element : element,
+									add : add
 		};
 		options.element.toggleClass(this._classes(options), add);
 		return this;
@@ -512,8 +414,7 @@ gitbuilder.ui.LayerWeight = $.widget("gitbuilder.layerweight", {
 				// - disabled as an array instead of boolean
 				// - disabled class as method for disabling
 				// individual parts
-				if (!suppressDisabledCheck
-						&& (instance.options.disabled === true || $(this).hasClass("ui-state-disabled"))) {
+				if (!suppressDisabledCheck && (instance.options.disabled === true || $(this).hasClass("ui-state-disabled"))) {
 					return;
 				}
 				return (typeof handler === "string" ? instance[handler] : handler).apply(instance, arguments);

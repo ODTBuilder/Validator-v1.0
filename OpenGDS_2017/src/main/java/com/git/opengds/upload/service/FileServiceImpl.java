@@ -64,9 +64,9 @@ public class FileServiceImpl implements FileService {
 		if (!dir.exists()) {
 			dir.mkdirs();
 		}
-
-		// 사용자별 디렉토리 생성
-		if (!targetDir.exists()) {
+		
+		//사용자별 디렉토리 생성
+		if(!targetDir.exists()){
 			File ngiDir = new File(fullDirPath + "\\ngi");
 			File shpDir = new File(fullDirPath + "\\shp");
 			File dxfDir = new File(fullDirPath + "\\dxf");

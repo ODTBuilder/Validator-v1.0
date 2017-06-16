@@ -77,6 +77,20 @@ function fixUrlPath(url) {
 	return url;
 }
 
+function loadImageShow(){
+	/**
+	 * 웹페이지를 로딩할 때 초기화를 한다.
+	 * 1. loadimage 초기화
+	 * */
+	$("#loadimage").css("left", $(window).width()/2-80).css("bottom", $(window).height()/2).css("display","block").css("z-index",999);
+	$("#loadimage").show();
+	$("#mask").show();
+}
+
+function loadImageHide(){
+	$("#loadimage").hide();
+	$("#mask").hide();
+}
 
 /**
  * 해당 path로 POST 요청한다.
@@ -315,21 +329,58 @@ $.fn.noDupClick = function(func){
  * 알림 팝업창을 띄운다.
  * @author seulgi.lee
  * @date 2016. 02.
- * @param main - 알림주제
+ * @param type - 알림타입(success or warning)
+ * @param title - 알림주제
  * @param sub - 알림내용
  * @returns 
  */
-function alertPopup(title,sub) {
+function alertPopup(type,title,sub){
+	var btnType;
+	if(type==='success'){
+		btnType='btn btn-success';
+	}
+	else if(type == 'warning'){
+		btnType='btn btn-danger'
+	} 
+	
     swal({
 	  title: title,
 	  text: sub,
-	  type: "warning",
-	  confirmButtonClass: "btn-danger",
+	  type: type,
+	  confirmButtonClass: btnType,
 	  confirmButtonText: "OK",
 	  closeOnConfirm: true
 	});
 }
 
+
+/**
+ * 확인버튼이 포함된 알림
+ * @param 	content  
+ *         {
+		    title : '로그아웃 하시겠습니까?',
+		    text : 'This work will disappear when you move the page.',
+		    type : 'warning',
+		    showCancelButton : true,
+		    confirmButtonColor : '#3085d6',
+		    confirmButtonText : 'Yes',
+		    confirmButtonClass : 'btn btn-success',
+		    buttonsStyling : false
+		  };
+ * @param confirmFunc - OK버튼 눌렀을시 실행
+		 *  function(isConfirm){
+				    if (isConfirm) {
+					 var path = CONTEXT+"/user/logout.do";
+					    var params = {};
+					    var target = "_self";
+					    getToUrl(path, params, target);
+				  }
+			}
+ * @returns
+ */
+function alertConfirmPopup(content,confirmFunc) {
+    swal(content,confirmFunc);
+}
 
 
 function showModal(target){

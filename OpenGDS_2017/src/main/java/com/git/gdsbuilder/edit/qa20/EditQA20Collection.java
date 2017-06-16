@@ -14,6 +14,8 @@ public class EditQA20Collection {
 	boolean isModified = false;
 	boolean isDeleted = false;
 
+	boolean isDeleteAll = false;
+
 	public EditQA20Collection() {
 		this.collectionName = "";
 		this.createLayerList = new QA20LayerList();
@@ -27,6 +29,14 @@ public class EditQA20Collection {
 
 	public void setCollectionName(String collectionName) {
 		this.collectionName = collectionName;
+	}
+
+	public boolean isDeleteAll() {
+		return isDeleteAll;
+	}
+
+	public void setDeleteAll(boolean isDeleteAll) {
+		this.isDeleteAll = isDeleteAll;
 	}
 
 	public QA20LayerList getCreateLayerList() {

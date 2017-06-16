@@ -27,28 +27,25 @@
 package com.git.opengds.geoserver.service;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
 
 import javax.servlet.ServletException;
-import javax.servlet.ServletInputStream;
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import com.git.gdsbuilder.geoserver.service.GeoserverServiceManager;
-import com.git.gdsbuilder.geoserver.service.impl.GeoserverServiceManagerImpl;
+import com.git.gdsbuilder.geoserver.service.DTGeoserverServiceManager;
+import com.git.gdsbuilder.geoserver.service.en.EnGeoserverService;
+import com.git.gdsbuilder.geoserver.service.en.EnWMSOutputFormat;
+import com.git.gdsbuilder.geoserver.service.impl.DTGeoserverServiceFactoryImpl;
+import com.git.gdsbuilder.geoserver.service.impl.DTGeoserverServiceManagerImpl;
 import com.git.gdsbuilder.geoserver.service.wfs.WFSGetFeature;
 import com.git.gdsbuilder.geoserver.service.wms.WMSGetMap;
+import com.git.gdsbuilder.geosolutions.geoserver.rest.GeoServerRESTPublisher;
 
 /**
  * 프록시서버 요청에 대한 요청을 처리하는 클래스
@@ -60,10 +57,13 @@ public class GeoserverLayerProxyServiceImpl implements GeoserverLayerProxyServic
 	private static final String serverURL;
 	private static final String user;
 //	private static GeoServerRESTReader reader;
-
+	private static final Logger LOGGER = LoggerFactory.getLogger(GeoserverLayerProxyServiceImpl.class);
+	
 	static {
 		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 		Properties properties = new Properties();
+	    
+
 		try {
 			properties.load(classLoader.getResourceAsStream("geoserver.properties"));
 //			reader = new GeoServerRESTReader(properties.getProperty("url"), properties.getProperty("id"), properties.getProperty("pw"));
@@ -75,61 +75,76 @@ public class GeoserverLayerProxyServiceImpl implements GeoserverLayerProxyServic
 		user = properties.getProperty("user");
 	}
 
-	
-	
-	/**
-	 * WMS레이어 로드 요청을 처리한다.
-	 * @author SG.Lee
-	 * @Date 2017. 4
-	 * @param request +
-	 * @param response
-	 * @throws ServletException
-	 * @throws IOException void
-	 * @throws
-	 * */
-	/*public void requestWMSLayer(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-		String urlParam = this.createWMSURL(request);
-		this.requestProxyService(request, response, urlParam);
-	}*/
-	
-
-	/*private String createWMSURL(HttpServletRequest request) {
-	StringBuffer wmsURL = new StringBuffer();
-
-	wmsURL.append(serverURL + "/" + user + "/wms?");
-
-	Enumeration paramNames = request.getParameterNames();
-	while (paramNames.hasMoreElements()) {
-		String key = paramNames.nextElement().toString();
-		String value = request.getParameter(key);
-
-		if (key.equals("LAYERS")) {
-			wmsURL.append("&"+key+"="+user+":"+value);
-		} 
-		else if(key.equals("BBOX")){
-			wmsURL.append("&"+key+"="+value);
-		} 
-		else if(key.equals("SRS")||key.equals("FORMAT_OPTIONS")){}
-		else {
-			wmsURL.append("&"+key+"="+value);
+	@Override
+	public void requestGeoserverDataOutput(HttpServletRequest request, HttpServletResponse response){
+		String serviceType = "";
+		
+		serviceType = request.getParameter("serviceType");
+		
+		if(serviceType.toLowerCase().equals(EnGeoserverService.WFS.getStateName())){
+			this.requestGetFeature(request,response);
 		}
-	}*/
+		else if(serviceType.toLowerCase().equals(EnGeoserverService.WMS.getStateName())){
+			try {
+				this.requestWMSLayer(request,response);
+			} catch (ServletException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		else
+			LOGGER.error("다운로드 요청 실패");
+		
+		/*try {
+			this.requestTestWMSLayer(request,response);
+		} catch (ServletException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}*/
+	}
 	
+	
+	@Override
 	public void requestWMSLayer(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		WMSGetMap wmsGetMap = this.createWMSGetMap(request);
+		DTGeoserverServiceManager geoserverService = new DTGeoserverServiceManagerImpl(request,response);
+		geoserverService.requestWMSGetMap(wmsGetMap);
+	}
+	/*
+	private void requestTestWMSLayer(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		 String serverURL = this.serverURL + "/" + user + "/wms";
+		 String version="1.1.0";
+		 String format=EnWMSOutputFormat.JPEG.getStateName();
+		 String layers="geo_ngi_00000738000124_B0010000_POLYGON";
+		 String crs="EPSG:5186";
+		 String bbox="152642.29,75858.31,154868.946,78203.08";
+		 int width=729;
+		 int height=768;
+		 String styles="";
+		
+		
+		
+		WMSGetMap wmsGetMap = new DTGeoserverServiceFactoryImpl().createWMSGetMap(serverURL, version, format, layers, "", "", "", crs, bbox, width, height, styles, "","", "", "");
 		GeoserverServiceManager geoserverService = new GeoserverServiceManagerImpl(request,response);
 		geoserverService.requestWMSGetMap(wmsGetMap);
 	}
+	*/
 	
 	private WMSGetMap createWMSGetMap(HttpServletRequest request){
 		 String serverURL = this.serverURL + "/" + user + "/wms";
 		 String version="";
 		 String format="";
 		 String layers="";
-		 boolean tiled=false;
-		 boolean transparent=false;
+		 String tiled="";
+		 String transparent="";
 		 String bgcolor="";
 		 String crs="";
 		 String bbox="";
@@ -165,10 +180,10 @@ public class GeoserverLayerProxyServiceImpl implements GeoserverLayerProxyServic
 				layers=value;				
 			}
 			else if(key.toLowerCase().equals("tiled")){
-				tiled=Boolean.valueOf(value);
+				tiled=value;
 			}
 			else if(key.toLowerCase().equals("transparent")){
-				transparent=Boolean.valueOf(value);
+				transparent=value;
 			}
 			else if(key.toLowerCase().equals("bgcolor")){
 				bgcolor=value;
@@ -204,34 +219,11 @@ public class GeoserverLayerProxyServiceImpl implements GeoserverLayerProxyServic
 		return new WMSGetMap(serverURL, version, format, layers, tiled, transparent, bgcolor, crs, bbox, width, height, styles, exceptions, time, sld, sld_body);
 	}
 	
-	public void requestWFSLayer(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-		String urlParam = this.createWFSURL(request);
-//		this.requestProxyService(request, response, urlParam);
-	}
-	
-	private String createWFSURL(HttpServletRequest request){
-		StringBuffer wfsURL = new StringBuffer();
-
-		wfsURL.append(serverURL + "/" + user + "/wms?");
-
-		Enumeration paramNames = request.getParameterNames();
-		while (paramNames.hasMoreElements()) {
-			String key = paramNames.nextElement().toString();
-			String value = request.getParameter(key);
-
-			wfsURL.append("&"+key+"="+value);
-		}
-		return wfsURL.toString();
-	}
-	
-	
-	
-	
+	@Override
 	public void requestGetFeature(HttpServletRequest request, HttpServletResponse response){
 //		String urlParam = this.createGetFeatureInfoURL(request);
 		WFSGetFeature wfsGetFeature = this.createWFSGetFeature(request);
-		GeoserverServiceManager geoserverService = new GeoserverServiceManagerImpl(request,response);
+		DTGeoserverServiceManager geoserverService = new DTGeoserverServiceManagerImpl(request,response);
 		geoserverService.requestWFSGetFeature(wfsGetFeature);
 	};
 	
@@ -240,6 +232,7 @@ public class GeoserverLayerProxyServiceImpl implements GeoserverLayerProxyServic
 		String serverURL = this.serverURL + "/" + user + "/wfs"; 
 		String version = "";
 		String typeName = "";
+		int maxFeatures = 0;
 		String bbox = "";
 		String outputformat = "";
 		String format_options= "";
@@ -257,73 +250,13 @@ public class GeoserverLayerProxyServiceImpl implements GeoserverLayerProxyServic
 				bbox=value;
 			} else if (key.equals("outputformat")) {
 				outputformat=value;
-			} else if (key.equals("format_options")) {
+			} else if (key.equals("maxFeatures")){
+				maxFeatures = Integer.parseInt(value);
+			}
+			else if (key.equals("format_options")) {
 				format_options=value;
 			}
 		}
-		return new WFSGetFeature(serverURL, version, typeName, outputformat, bbox, format_options);
+		return new WFSGetFeature(serverURL, version, typeName, outputformat, maxFeatures, bbox, format_options);
 	}
-	
-	
-	
-	
-	
-	
-	/*
-	private void requestProxyService(HttpServletRequest request, HttpServletResponse response, String urlParam) throws ServletException, IOException {
-		request.setCharacterEncoding("utf-8");
-		response.setCharacterEncoding("utf-8");
-		if (urlParam == null || urlParam.trim().length() == 0) {
-			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
-			return;
-		}
-		boolean doPost = request.getMethod().equalsIgnoreCase("POST");
-		URL url = new URL(urlParam);
-		HttpURLConnection http = (HttpURLConnection) url.openConnection();
-		Enumeration headerNames = request.getHeaderNames();
-		while (headerNames.hasMoreElements()) {
-			String key = (String) headerNames.nextElement();
-			if (!key.equalsIgnoreCase("Host")) {
-				http.setRequestProperty(key, request.getHeader(key));
-			}
-		}
-
-		http.setDoInput(true);
-		http.setDoOutput(doPost);
-
-		byte[] buffer = new byte[8192];
-		int read = -1;
-
-		if (doPost) {
-			OutputStream os = http.getOutputStream();
-			ServletInputStream sis = request.getInputStream();
-			while ((read = sis.read(buffer)) != -1) {
-				os.write(buffer, 0, read);
-			}
-			os.close();
-		}
-
-		InputStream is = http.getInputStream();
-		response.setStatus(http.getResponseCode());
-
-		Map headerKeys = http.getHeaderFields();
-		Set keySet = headerKeys.keySet();
-		Iterator iter = keySet.iterator();
-		while (iter.hasNext()) {
-			String key = (String) iter.next();
-			String value = http.getHeaderField(key);
-			if (key != null && value != null) {
-				response.setHeader(key, value);
-			}
-		}
-
-		ServletOutputStream sos = response.getOutputStream();
-		response.resetBuffer();
-		while ((read = is.read(buffer)) != -1) {
-			sos.write(buffer, 0, read);
-		}
-		response.flushBuffer();
-		sos.close();
-	}*/
-
 }

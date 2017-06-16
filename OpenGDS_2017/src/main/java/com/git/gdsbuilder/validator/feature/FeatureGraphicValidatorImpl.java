@@ -641,16 +641,27 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 			String upperType = simpleFeature.getAttribute("feature_type").toString().toUpperCase();
 
 			if(upperType.equals("POINT") || upperType.equals("TEXT")){
+
 				if((geometry.equals(relationGeometry))){
 					flag = true;
 					break;
 				}
 			}
 			if(upperType.equals("LINESTRING") || upperType.equals("LINE")){
-				if((geometry.contains(relationGeometry))){
+				GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory();
+				Coordinate[] coordinates = geometry.getCoordinates();
+				Coordinate start = coordinates[0];
+				Coordinate end = coordinates[coordinates.length-1];
+				if(start.equals2D(end)){
+				LinearRing ring = geometryFactory.createLinearRing(coordinates);
+				LinearRing holes[] = null;
+				Polygon polygon = geometryFactory.createPolygon(ring, holes);
+				if(polygon.contains(relationGeometry)){
 					flag = true;
 					break;
 				}
+				}
+
 			}
 			if(upperType.equals("LWPOLYLINE") || upperType.equals("POLYLINE")){
 

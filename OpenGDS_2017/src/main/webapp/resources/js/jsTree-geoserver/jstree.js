@@ -7182,7 +7182,7 @@
 											params : {
 												'LAYERS' : data[i].lName,
 												'TILED' : true,
-												// 'FORMAT' : 'image/png8',
+												'FORMAT' : 'image/png',
 												'VERSION' : '1.1.0',
 												'CRS' : 'EPSG:5186',
 												'SRS' : 'EPSG:5186',
@@ -7195,7 +7195,8 @@
 									var git = {
 										"validation" : false,
 										"geometry" : data[i].geomType,
-										"editable" : true
+										"editable" : true,
+										"attribute" : data[i].attInfo
 									}
 									wms.set("name", obj.refer.get_node(data[i].lName).text);
 									wms.set("id", data[i].lName);

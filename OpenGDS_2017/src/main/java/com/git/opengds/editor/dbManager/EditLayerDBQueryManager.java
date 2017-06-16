@@ -19,6 +19,7 @@ package com.git.opengds.editor.dbManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 import com.git.gdsbuilder.type.qa20.feature.QA20Feature;
@@ -26,7 +27,6 @@ import com.git.gdsbuilder.type.qa20.header.NDAHeader;
 import com.git.gdsbuilder.type.qa20.header.NGIField;
 import com.git.gdsbuilder.type.qa20.header.NGIHeader;
 import com.git.gdsbuilder.type.qa20.layer.QA20Layer;
-import com.git.gdsbuilder.type.qa20.layer.QA20LayerList;
 
 public class EditLayerDBQueryManager {
 
@@ -252,122 +252,84 @@ public class EditLayerDBQueryManager {
 		}
 	}
 
-//	public void getInertFeatureQuery(String layerName, QA20Feature createFeature) {
-//
-//		HashMap<String, Object> insertQuery = new HashMap<String, Object>();
-//		// default
-//		String featureType = createFeature.getFeatureType();
-//		Integer numparts = null;
-//		Integer numVertexts = null;
-//
-//		if (featureType.equals("POLYGON")) {
-//			numparts = Integer.parseInt(createFeature.getNumparts());
-//		}
-//		if (featureType.equals("LINESTRING") || featureType.equals("POLYGON")) {
-//			numVertexts = Integer.parseInt(createFeature.getCoordinateSize());
-//		}
-//
-//		String insertDefaultQuery = "insert into \"" + tableName + "\""
-//				+ "(f_idx, feature_id, feature_type, geom, num_rings, num_vertexes, ";
-//		String insertDefaultValues = " values(" + fId + "," + "'" + createFeature.getFeatureID() + "'," + "'"
-//				+ featureType + "'," + "ST_GeomFromText('" + createFeature.getGeom().toString() + "', 5186)" + ","
-//				+ numparts + "," + numVertexts + ",";
-//
-//		// properties
-//		HashMap<String, Object> properties = createFeature.getProperties();
-//		int propertiesSize = properties.size();
-//		if (propertiesSize != 0) {
-//			Iterator keys = properties.keySet().iterator();
-//			while (keys.hasNext()) {
-//				String key = (String) keys.next();
-//				Object value = properties.get(key);
-//				insertDefaultQuery += key + ", ";
-//				insertDefaultValues += "'" + value + "', ";
-//			}
-//		}
-//		int lastIndextC = insertDefaultQuery.lastIndexOf(",");
-//		String returnQueryC = insertDefaultQuery.substring(0, lastIndextC) + ")";
-//		int lastIndextV = insertDefaultValues.lastIndexOf(",");
-//		String returnQueryV = insertDefaultValues.substring(0, lastIndextV) + ")";
-//
-//		String returnQuery = returnQueryC + returnQueryV;
-//		insertQuery.put("insertQuery", returnQuery);
-//		return insertQuery;
-//
-//	}
+	public HashMap<String, Object> getInertFeatureQuery(String tableName, QA20Feature createFeature) {
 
-	// public HashMap<String, Object> selectFeatureQuery(String tableName,
-	// String featureID) {
-	//
-	// HashMap<String, Object> selectQuery = new HashMap<String, Object>();
-	// String querytStr = "select f_idx from \"" + tableName + "\" where
-	// feature_id = '" + featureID + "'";
-	// selectQuery.put("selectQuery", querytStr);
-	//
-	// return selectQuery;
-	// }
+		HashMap<String, Object> insertQuery = new HashMap<String, Object>();
+		// default
+		String featureType = createFeature.getFeatureType();
+		Integer numparts = null;
+		Integer numVertexts = null;
 
-	// public HashMap<String, Object> deleteFeatureQuery(String tableName, int
-	// fIdx) {
-	//
-	// HashMap<String, Object> deleteQuery = new HashMap<String, Object>();
-	// String queryStr = "delete from \"" + tableName + "\" where f_idx = '" +
-	// fIdx + "'";
-	// deleteQuery.put("deleteQuery", queryStr);
-	//
-	// return deleteQuery;
-	// }
-	//
-	// public HashMap<String, Object> insertFeatureQuery(String tableName, int
-	// fId, QA20Feature feature) {
-	//
-	// HashMap<String, Object> insertQuery = new HashMap<String, Object>();
-	// // default
-	// String featureType = feature.getFeatureType();
-	// Integer numparts = null;
-	// Integer numVertexts = null;
-	//
-	// if (featureType.equals("POLYGON")) {
-	// numparts = Integer.parseInt(feature.getNumparts());
-	// }
-	// if (featureType.equals("LINESTRING") || featureType.equals("POLYGON")) {
-	// numVertexts = Integer.parseInt(feature.getCoordinateSize());
-	// }
-	//
-	// String insertDefaultQuery = "insert into \"" + tableName + "\""
-	// + "(f_idx, feature_id, feature_type, geom, num_rings, num_vertexes, ";
-	// String insertDefaultValues = " values(" + fId + "," + "'" +
-	// feature.getFeatureID() + "'," + "'" + featureType
-	// + "'," + "ST_GeomFromText('" + feature.getGeom().toString() + "', 5186)"
-	// + "," + numparts + ","
-	// + numVertexts + ",";
-	//
-	// // properties
-	// HashMap<String, Object> properties = feature.getProperties();
-	// int propertiesSize = properties.size();
-	// if (propertiesSize != 0) {
-	// Iterator keys = properties.keySet().iterator();
-	// while (keys.hasNext()) {
-	// String key = (String) keys.next();
-	// Object value = properties.get(key);
-	// insertDefaultQuery += key + ", ";
-	// insertDefaultValues += "'" + value + "', ";
-	// }
-	// }
-	// int lastIndextC = insertDefaultQuery.lastIndexOf(",");
-	// String returnQueryC = insertDefaultQuery.substring(0, lastIndextC) + ")";
-	// int lastIndextV = insertDefaultValues.lastIndexOf(",");
-	// String returnQueryV = insertDefaultValues.substring(0, lastIndextV) +
-	// ")";
-	//
-	// String returnQuery = returnQueryC + returnQueryV;
-	// insertQuery.put("insertQuery", returnQuery);
-	// return insertQuery;
-	// }
-	//
-	// public HashMap<String, Object> createLayerQuery(QA20Layer layer) {
-	//
-	// return null;
-	// }
+		if (featureType.equals("POLYGON")) {
+			numparts = Integer.parseInt(createFeature.getNumparts());
+		}
+		if (featureType.equals("LINESTRING") || featureType.equals("POLYGON")) {
+			numVertexts = Integer.parseInt(createFeature.getCoordinateSize());
+		}
+
+		String insertDefaultQuery = "insert into \"" + tableName + "\""
+				+ "(feature_id, feature_type, geom, num_rings, num_vertexes, ";
+		String insertDefaultValues = " values('" + createFeature.getFeatureID() + "'," + "'" + featureType + "',"
+				+ "ST_GeomFromText('" + createFeature.getGeom().toString() + "', 5186)" + "," + numparts + ","
+				+ numVertexts + ",";
+
+		// properties
+		HashMap<String, Object> properties = createFeature.getProperties();
+		int propertiesSize = properties.size();
+		if (propertiesSize != 0) {
+			Iterator keys = properties.keySet().iterator();
+			while (keys.hasNext()) {
+				String key = (String) keys.next();
+				Object value = properties.get(key);
+				insertDefaultQuery += "\"" + key + "\"" + ", ";
+				insertDefaultValues += "'" + value + "', ";
+			}
+		}
+		int lastIndextC = insertDefaultQuery.lastIndexOf(",");
+		String returnQueryC = insertDefaultQuery.substring(0, lastIndextC) + ")";
+		int lastIndextV = insertDefaultValues.lastIndexOf(",");
+		String returnQueryV = insertDefaultValues.substring(0, lastIndextV) + ")";
+
+		String returnQuery = returnQueryC + returnQueryV;
+		insertQuery.put("insertQuery", returnQuery);
+		return insertQuery;
+
+	}
+
+	public HashMap<String, Object> getSelectFeatureIdx(String layerName, String featureID) {
+
+		HashMap<String, Object> selectQuery = new HashMap<String, Object>();
+		String querytStr = "select f_idx from \"" + layerName + "\" where feature_id = '" + featureID + "'";
+		selectQuery.put("selectQuery", querytStr);
+
+		return selectQuery;
+
+	}
+
+	public HashMap<String, Object> getDeleteFeature(String layerName, int fIdx) {
+
+		HashMap<String, Object> deleteQuery = new HashMap<String, Object>();
+		String queryStr = "delete from \"" + layerName + "\" where f_idx = '" + fIdx + "'";
+		deleteQuery.put("deleteQuery", queryStr);
+
+		return deleteQuery;
+	}
+
+	public HashMap<String, Object> getDropLayer(String type, String collectionName, String layerName) {
+
+		HashMap<String, Object> dropQueryMap = new HashMap<String, Object>();
+		String layerTableName = "\"geo" + "_" + type + "_" + collectionName + "_" + layerName + "\"";
+		String queryStr = "drop table " + layerTableName;
+		dropQueryMap.put("dropQuery", queryStr);
+		return dropQueryMap;
+	}
+
+	public HashMap<String, Object> getInsertLayerCollection(String collectionName) {
+		
+		String insertQuery = "insert into qa20_layercollection(file_name) values(" + collectionName + ")"; 
+		HashMap<String, Object> insertQueryMap = new HashMap<String, Object>();
+		insertQueryMap.put("insertQuery", insertQuery);
+		return insertQueryMap;
+	}
 
 }

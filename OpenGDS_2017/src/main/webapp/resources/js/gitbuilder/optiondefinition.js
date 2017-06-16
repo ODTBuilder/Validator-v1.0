@@ -127,11 +127,14 @@ gitbuilder.ui.OptionDefinition = $.widget("gitbuilder.optiondefinition", {
 	options : {
 		definition : undefined,
 		layerDefinition : undefined,
-		updateLayerDef : undefined,
 		appendTo : "body"
 	},
 	_create : function() {
-		this.layerDef = $.extend({}, this.options.layerDefinition);
+		if (typeof this.options.layerDefinition === "function") {
+			this.layerDef = $.extend({}, this.options.layerDefinition());
+		} else {
+			this.layerDef = $.extend({}, this.options.layerDefinition);
+		}
 		this.optDef = $.extend({}, this.options.definition);
 		this.optDefCopy = JSON.parse(JSON.stringify(this.optDef));
 
@@ -562,13 +565,14 @@ gitbuilder.ui.OptionDefinition = $.widget("gitbuilder.optiondefinition", {
 		if (!obj) {
 			obj = this.layerDef;
 		}
-		if (typeof this.options.updateLayerDef === "function") {
-			var result = this.options.updateLayerDef();
-			if (typeof result === "object") {
-				this.layerDef = result;
-				obj = result;
-			}
+		if (typeof this.options.layerDefinition === "function") {
+			this.layerDef = this.options.layerDefinition();
+			obj = this.layerDef;
+		} else {
+			this.layerDef = this.options.layerDefinition;
+			obj = this.layerDef;
 		}
+
 		$(this.lAlias).empty();
 		var keys = Object.keys(obj);
 		for (var i = 0; i < keys.length; i++) {
