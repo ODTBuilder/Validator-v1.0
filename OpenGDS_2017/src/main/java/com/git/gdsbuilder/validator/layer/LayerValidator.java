@@ -185,5 +185,14 @@ public interface LayerValidator {
 	 * @throws
 	 * */
 	public ErrorLayer validateEntityDuplicated() throws SchemaException;
+	
+	
+	public ErrorLayer validateUselessEntity() throws SchemaException;
+	public ErrorLayer validateBuildingOpen() throws SchemaException;
+	public ErrorLayer validateWaterOpen() throws SchemaException;
+	public ErrorLayer validateLayerMiss(List<String> typeNames) throws SchemaException;
+	public ErrorLayer vallidateB_SymbolOutSided(List<GeoLayer> relationLayers) throws SchemaException;
+	public ErrorLayer validateCrossRoad(List<GeoLayer> relationLayers) throws SchemaException;
+	public ErrorLayer validateBridgeName(List<GeoLayer> relationLayers) throws SchemaException;
 
 }

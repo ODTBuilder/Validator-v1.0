@@ -41,63 +41,66 @@ import org.opengis.feature.simple.SimpleFeature;
 
 import com.git.gdsbuilder.type.validate.error.ErrorFeature;
 import com.git.gdsbuilder.type.validate.error.ErrorLayer;
+import com.git.gdsbuilder.type.validate.option.BridgeName;
+import com.git.gdsbuilder.type.validate.option.CrossRoad;
+import com.vividsolutions.jts.geom.Geometry;
 
 public class FeatureAttributeValidatorImpl implements FeatureAttributeValidator {
 
 	@Override
 	public ErrorLayer validateCharacterAccuracy(SimpleFeatureCollection validatorLayer, String labelI,
 			SimpleFeatureCollection relationLayer, String labelJ) throws SchemaException {
-				return null;
+		return null;
 
-//		ErrorLayer errLayer = new ErrorLayer();
-//		DefaultFeatureCollection errSFC = new DefaultFeatureCollection();
-//		List<DetailsValidatorResult> dtReports = new ArrayList<DetailsValidatorResult>();
-//
-//		List<SimpleFeature> tmpSimpleFeaturesI = new ArrayList<SimpleFeature>();
-//		SimpleFeatureIterator simpleFeatureIteratorI = validatorLayer.features();
-//		while (simpleFeatureIteratorI.hasNext()) {
-//			SimpleFeature simpleFeature = simpleFeatureIteratorI.next();
-//			tmpSimpleFeaturesI.add(simpleFeature);
-//		}
-//
-//		List<SimpleFeature> tmpSimpleFeaturesJ = new ArrayList<SimpleFeature>();
-//		SimpleFeatureIterator simpleFeatureIteratorJ = relationLayer.features();
-//		while (simpleFeatureIteratorJ.hasNext()) {
-//			SimpleFeature simpleFeature = simpleFeatureIteratorJ.next();
-//			tmpSimpleFeaturesJ.add(simpleFeature);
-//		}
-//
-//		AttributeValidator attributeValidator = new AttributeValidatorImpl();
-//		int tmpSizeI = tmpSimpleFeaturesI.size();
-//		int tmpSizeJ = tmpSimpleFeaturesJ.size();
-//		for (int i = 0; i < tmpSizeI; i++) {
-//			SimpleFeature simpleFeatureI = tmpSimpleFeaturesI.get(i);
-//			boolean isTrue = false;
-//			int trueCount = 0;
-//			for (int j = 0; j < tmpSizeJ; j++) {
-//				SimpleFeature simpleFeatureJ = tmpSimpleFeaturesJ.get(j);
-//				isTrue = attributeValidator.isEqualsCharacter(simpleFeatureI, labelI, simpleFeatureJ, labelJ);
-//				if (isTrue) {
-//					trueCount++;
-//				}
-//			}
-//			if (trueCount == 0) {
-//				ErrorFeature errFeature = attributeValidator.characterAccuracy(simpleFeatureI);
-//				if (errFeature != null) {
-//					errSFC.add(errFeature.getErrFeature());
-//					dtReports.add(errFeature.getDtReport());
-//				} else {
-//					continue;
-//				}
-//			}
-//		}
-//		if (errSFC.size() > 0 && dtReports.size() > 0) {
-//			errLayer.setErrFeatureCollection(errSFC);
-//			errLayer.setDetailsValidatorReport(dtReports);
-//			return errLayer;
-//		} else {
-//			return null;
-//		}
+		//		ErrorLayer errLayer = new ErrorLayer();
+		//		DefaultFeatureCollection errSFC = new DefaultFeatureCollection();
+		//		List<DetailsValidatorResult> dtReports = new ArrayList<DetailsValidatorResult>();
+		//
+		//		List<SimpleFeature> tmpSimpleFeaturesI = new ArrayList<SimpleFeature>();
+		//		SimpleFeatureIterator simpleFeatureIteratorI = validatorLayer.features();
+		//		while (simpleFeatureIteratorI.hasNext()) {
+		//			SimpleFeature simpleFeature = simpleFeatureIteratorI.next();
+		//			tmpSimpleFeaturesI.add(simpleFeature);
+		//		}
+		//
+		//		List<SimpleFeature> tmpSimpleFeaturesJ = new ArrayList<SimpleFeature>();
+		//		SimpleFeatureIterator simpleFeatureIteratorJ = relationLayer.features();
+		//		while (simpleFeatureIteratorJ.hasNext()) {
+		//			SimpleFeature simpleFeature = simpleFeatureIteratorJ.next();
+		//			tmpSimpleFeaturesJ.add(simpleFeature);
+		//		}
+		//
+		//		AttributeValidator attributeValidator = new AttributeValidatorImpl();
+		//		int tmpSizeI = tmpSimpleFeaturesI.size();
+		//		int tmpSizeJ = tmpSimpleFeaturesJ.size();
+		//		for (int i = 0; i < tmpSizeI; i++) {
+		//			SimpleFeature simpleFeatureI = tmpSimpleFeaturesI.get(i);
+		//			boolean isTrue = false;
+		//			int trueCount = 0;
+		//			for (int j = 0; j < tmpSizeJ; j++) {
+		//				SimpleFeature simpleFeatureJ = tmpSimpleFeaturesJ.get(j);
+		//				isTrue = attributeValidator.isEqualsCharacter(simpleFeatureI, labelI, simpleFeatureJ, labelJ);
+		//				if (isTrue) {
+		//					trueCount++;
+		//				}
+		//			}
+		//			if (trueCount == 0) {
+		//				ErrorFeature errFeature = attributeValidator.characterAccuracy(simpleFeatureI);
+		//				if (errFeature != null) {
+		//					errSFC.add(errFeature.getErrFeature());
+		//					dtReports.add(errFeature.getDtReport());
+		//				} else {
+		//					continue;
+		//				}
+		//			}
+		//		}
+		//		if (errSFC.size() > 0 && dtReports.size() > 0) {
+		//			errLayer.setErrFeatureCollection(errSFC);
+		//			errLayer.setDetailsValidatorReport(dtReports);
+		//			return errLayer;
+		//		} else {
+		//			return null;
+		//		}
 	}
 
 	@Override
@@ -162,31 +165,59 @@ public class FeatureAttributeValidatorImpl implements FeatureAttributeValidator 
 	@Override
 	public ErrorLayer validateAttributeFix(SimpleFeatureCollection validatorLayer, JSONArray notNullAtt)
 			throws SchemaException {
-				return null;
+		return null;
 
-//		ErrorLayer errLayer = new ErrorLayer();
-//		DefaultFeatureCollection errSFC = new DefaultFeatureCollection();
-//		List<DetailsValidatorResult> dtReports = new ArrayList<DetailsValidatorResult>();
-//
-//		AttributeValidator attributeValidator = new AttributeValidatorImpl();
-//		SimpleFeatureIterator simpleFeatureIterator = validatorLayer.features();
-//		while (simpleFeatureIterator.hasNext()) {
-//			SimpleFeature simpleFeature = simpleFeatureIterator.next();
-//			ErrorFeature errFeature = attributeValidator.attributeFix(simpleFeature, notNullAtt);
-//			if (errFeature != null) {
-//				errSFC.add(errFeature.getErrFeature());
-//				dtReports.add(errFeature.getDtReport());
-//			} else {
-//				continue;
-//			}
-//		}
-//		if (errSFC.size() > 0) {
-//			errLayer.setErrFeatureCollection(errSFC);
-//			errLayer.setDetailsValidatorReport(dtReports);
-//			return errLayer;
-//		} else {
-//			return null;
-//		}
+		//		ErrorLayer errLayer = new ErrorLayer();
+		//		DefaultFeatureCollection errSFC = new DefaultFeatureCollection();
+		//		List<DetailsValidatorResult> dtReports = new ArrayList<DetailsValidatorResult>();
+		//
+		//		AttributeValidator attributeValidator = new AttributeValidatorImpl();
+		//		SimpleFeatureIterator simpleFeatureIterator = validatorLayer.features();
+		//		while (simpleFeatureIterator.hasNext()) {
+		//			SimpleFeature simpleFeature = simpleFeatureIterator.next();
+		//			ErrorFeature errFeature = attributeValidator.attributeFix(simpleFeature, notNullAtt);
+		//			if (errFeature != null) {
+		//				errSFC.add(errFeature.getErrFeature());
+		//				dtReports.add(errFeature.getDtReport());
+		//			} else {
+		//				continue;
+		//			}
+		//		}
+		//		if (errSFC.size() > 0) {
+		//			errLayer.setErrFeatureCollection(errSFC);
+		//			errLayer.setDetailsValidatorReport(dtReports);
+		//			return errLayer;
+		//		} else {
+		//			return null;
+		//		}
+	}
+
+	public ErrorFeature validateBridgeName(SimpleFeature simpleFeature, SimpleFeature relationSimpleFeature) throws SchemaException{
+		Geometry relGeometry = (Geometry) relationSimpleFeature.getDefaultGeometry();
+		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
+		Geometry returnGeom = null; 
+		if(geometry.intersects(relGeometry) || geometry.crosses(relGeometry) || geometry.overlaps(relGeometry)){
+			Object simValue = simpleFeature.getAttribute("명칭");
+			Object relValue = relationSimpleFeature.getAttribute("하천명");
+			if(simValue == null || relValue == null){
+				returnGeom = geometry.intersection(relGeometry);
+				ErrorFeature errorFeature = new ErrorFeature(simpleFeature.getID(), BridgeName.Type.BRIDGENAME.errType(),
+						BridgeName.Type.BRIDGENAME.errName(), returnGeom.getInteriorPoint());
+				return errorFeature;
+			}else{
+				if(!(simValue.equals(relValue))){
+					returnGeom = geometry.intersection(relGeometry);
+					ErrorFeature errorFeature = new ErrorFeature(simpleFeature.getID(), BridgeName.Type.BRIDGENAME.errType(),
+							BridgeName.Type.BRIDGENAME.errName(), returnGeom.getInteriorPoint());
+					return errorFeature;
+				}else{
+					return null;
+				}
+			}
+		}else{
+			return null;
+		}
+
 	}
 
 }
