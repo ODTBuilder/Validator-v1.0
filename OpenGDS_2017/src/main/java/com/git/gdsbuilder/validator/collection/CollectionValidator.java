@@ -34,8 +34,6 @@
 
 package com.git.gdsbuilder.validator.collection;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-
 import java.util.List;
 
 import org.geotools.feature.SchemaException;
@@ -367,6 +365,7 @@ public class CollectionValidator {
 			}
 			if (errLayer != null) {
 				errLayer.setCollectionName(collection.getCollectionName());
+				errLayer.setCollectionType(collection.getLayerCollectionType());
 				errLayerList.add(errLayer);
 			}
 		}

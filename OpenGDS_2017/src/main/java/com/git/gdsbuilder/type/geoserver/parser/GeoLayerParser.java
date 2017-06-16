@@ -78,9 +78,11 @@ public class GeoLayerParser {
 	 */
 	public GeoLayerParser(String workspaceName, String getCapabilities, EnFileFormat fileFormat, String collectionName, String layerName)
 			throws FileNotFoundException, IOException, ParseException, SchemaException {
+		this.workspaceName = workspaceName;
 		this.getCapabilities = getCapabilities;
 		this.collectionName = collectionName;
 		this.layerName = layerName;
+		this.fileFormat = fileFormat;
 		this.layer = layerParse();
 	}
 
@@ -95,9 +97,11 @@ public class GeoLayerParser {
 	 */
 	public GeoLayerParser(String workspaceName, String getCapabilities, EnFileFormat fileFormat, String collectionName, JSONArray layers)
 			throws FileNotFoundException, IOException, ParseException, SchemaException {
+		this.workspaceName = workspaceName;
 		this.getCapabilities = getCapabilities;
 		this.collectionName = collectionName;
 		this.layers = layers;
+		this.fileFormat = fileFormat;
 		this.layerList = layersParse();
 	}
 
@@ -181,7 +185,8 @@ public class GeoLayerParser {
 		SimpleFeatureCollection sfc = null;
 		DataStore dataStore = DataStoreFinder.getDataStore(connectionParameters);
 		String fullLayerName = "geo_"+ fileFormat.getStateName() + "_" + collectionName + "_" + layerName;
-	    SimpleFeatureSource source = dataStore.getFeatureSource(workspaceName + ":"+ fullLayerName);
+	    System.out.println(fullLayerName);
+		SimpleFeatureSource source = dataStore.getFeatureSource(workspaceName + ":"+ fullLayerName);
 	    sfc= source.getFeatures();
 		
 		if(sfc != null) {

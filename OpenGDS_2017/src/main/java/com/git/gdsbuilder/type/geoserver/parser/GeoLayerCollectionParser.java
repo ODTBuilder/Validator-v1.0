@@ -71,6 +71,7 @@ public class GeoLayerCollectionParser {
 	 */
 	public GeoLayerCollectionParser(JSONObject collectionObject, String workspaceName, String getCapabilities, EnFileFormat fileFormat)
 			throws FileNotFoundException, IOException, ParseException, SchemaException {
+		this.workspaceName = workspaceName;
 		this.collectionObj = collectionObject;
 		this.getCapabilities = getCapabilities;
 		this.fileFormat = fileFormat;

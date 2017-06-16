@@ -46,7 +46,7 @@ public class ValidatorController extends AbstractController {
 	@ResponseBody
 	public JSONObject geoserverAddLoadAjax(HttpServletRequest request, @RequestBody String geo) throws Exception {
 
-		JSONParser parser = new JSONParser();
+	/*	JSONParser parser = new JSONParser();
 			try {
 
 				Object obj = parser.parse(new FileReader("C:\\Users\\GIT\\Desktop\\옵션txt\\NGI_BRIDGENAME.txt"));
@@ -59,7 +59,7 @@ public class ValidatorController extends AbstractController {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			return null;
-		//return validatorService.validate(geo);
+			return null*/;
+		return validatorService.validate(geo);
 	}
 }

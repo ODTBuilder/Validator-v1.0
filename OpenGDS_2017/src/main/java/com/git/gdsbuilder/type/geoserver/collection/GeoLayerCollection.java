@@ -20,31 +20,36 @@ package com.git.gdsbuilder.type.geoserver.collection;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.git.gdsbuilder.FileRead.en.EnFileFormat;
 import com.git.gdsbuilder.type.geoserver.layer.GeoLayer;
 
 /**
  * LayerCollection 정보를 저장하는 클래스
+ * 
  * @author DY.Oh
  * @Date 2017. 3. 11. 오전 11:45:40
- * */
+ */
 public class GeoLayerCollection {
 
 	String collectionName; // 도엽번호
 	GeoLayer neatLine; // 도곽
 	List<GeoLayer> layers; // 레이어
+	EnFileFormat fileFormat;
 
 	/**
-	 *LayerCollection 생성자
+	 * LayerCollection 생성자
 	 */
 	public GeoLayerCollection() {
 		super();
 		this.collectionName = "";
 		this.neatLine = new GeoLayer();
 		this.layers = new ArrayList<GeoLayer>();
+		this.fileFormat = fileFormat;
 	}
-	
+
 	/**
 	 * LayerCollection 생성자
+	 * 
 	 * @param collectionName
 	 */
 	public GeoLayerCollection(String collectionName) {
@@ -55,6 +60,7 @@ public class GeoLayerCollection {
 
 	/**
 	 * LayerCollection 생성자
+	 * 
 	 * @param collectionName
 	 * @param neatLine
 	 * @param layers
@@ -67,91 +73,74 @@ public class GeoLayerCollection {
 	}
 
 	/**
-	 * collectionName getter
-	 * @author DY.Oh
-	 * @Date 2017. 3. 11. 오전 11:46:31
-	 * @return String
-	 * @throws
-	 * */
+	 * collectionName getter @author DY.Oh @Date 2017. 3. 11. 오전
+	 * 11:46:31 @return String @throws
+	 */
 	public String getCollectionName() {
 		return collectionName;
 	}
 
 	/**
-	 * collectionName setter
-	 * @author DY.Oh
-	 * @Date 2017. 3. 11. 오전 11:46:33
-	 * @param collectionName void
-	 * @throws
-	 * */
+	 * collectionName setter @author DY.Oh @Date 2017. 3. 11. 오전 11:46:33 @param
+	 * collectionName void @throws
+	 */
 	public void setCollectionName(String collectionName) {
 		this.collectionName = collectionName;
 	}
 
+	public EnFileFormat getFileFormat() {
+		return fileFormat;
+	}
+
+	public void setFileFormat(EnFileFormat fileFormat) {
+		this.fileFormat = fileFormat;
+	}
+
 	/**
 	 *
-	 * @author DY.Oh
-	 * @Date 2017. 3. 11. 오전 11:46:35
-	 * @return Layer
-	 * @throws
-	 * */
+	 * @author DY.Oh @Date 2017. 3. 11. 오전 11:46:35 @return Layer @throws
+	 */
 	public GeoLayer getNeatLine() {
 		return neatLine;
 	}
 
 	/**
-	 * neatLine getter
-	 * @author DY.Oh
-	 * @Date 2017. 3. 11. 오전 11:46:38
-	 * @param neatLine void
-	 * @throws
-	 * */
+	 * neatLine getter @author DY.Oh @Date 2017. 3. 11. 오전 11:46:38 @param
+	 * neatLine void @throws
+	 */
 	public void setNeatLine(GeoLayer neatLine) {
 		this.neatLine = neatLine;
 	}
 
 	/**
-	 * layers getter
-	 * @author DY.Oh
-	 * @Date 2017. 3. 11. 오전 11:46:40
-	 * @return List<Layer>
-	 * @throws
-	 * */
+	 * layers getter @author DY.Oh @Date 2017. 3. 11. 오전 11:46:40 @return
+	 * List<Layer> @throws
+	 */
 	public List<GeoLayer> getLayers() {
 		return layers;
 	}
 
 	/**
-	 * layers setter
-	 * @author DY.Oh
-	 * @Date 2017. 3. 11. 오전 11:46:42
-	 * @param layers void
-	 * @throws
-	 * */
+	 * layers setter @author DY.Oh @Date 2017. 3. 11. 오전 11:46:42 @param layers
+	 * void @throws
+	 */
 	public void setLayers(List<GeoLayer> layers) {
 		this.layers = layers;
 	}
 
 	/**
-	 * layers에 layer를 추가함
-	 * @author DY.Oh
-	 * @Date 2017. 3. 11. 오전 11:46:45
-	 * @param layer void
-	 * @throws
-	 * */
+	 * layers에 layer를 추가함 @author DY.Oh @Date 2017. 3. 11. 오전 11:46:45 @param
+	 * layer void @throws
+	 */
 	public void addValidateLayer(GeoLayer layer) {
 		layers.add(layer);
 	}
 
 	/**
-	 * layerCollection에서 layerName에 해당하는 Layer 객체를 반환
-	 * @author DY.Oh
-	 * @Date 2017. 3. 11. 오전 11:48:22
-	 * @param layerName
-	 * @param layerCollection
-	 * @return Layer
-	 * @throws
-	 * */
+	 * layerCollection에서 layerName에 해당하는 Layer 객체를 반환 @author DY.Oh @Date 2017.
+	 * 3. 11. 오전 11:48:22 @param layerName @param layerCollection @return
+	 * Layer @throws
+	 */
 	public static GeoLayer getLayer(String layerName, GeoLayerCollection layerCollection) {
 
 		GeoLayer layer = null;
@@ -164,5 +153,9 @@ public class GeoLayerCollection {
 			}
 		}
 		return layer;
+	}
+
+	public String getLayerCollectionType() {
+		return this.fileFormat.getStateName();
 	}
 }
