@@ -36,13 +36,18 @@ package com.git.gdsbuilder.type.geoserver.parser;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
+import org.geotools.data.DataStore;
+import org.geotools.data.DataStoreFinder;
 import org.geotools.data.simple.SimpleFeatureCollection;
+import org.geotools.data.simple.SimpleFeatureSource;
 import org.geotools.feature.SchemaException;
 import org.json.simple.JSONArray;
 import org.json.simple.parser.ParseException;
 
-import com.git.gdsbuilder.convertor.impl.JsonFromUrl;
+import com.git.gdsbuilder.FileRead.en.EnFileFormat;
 import com.git.gdsbuilder.type.geoserver.layer.GeoLayer;
 import com.git.gdsbuilder.type.geoserver.layer.GeoLayerList;
 
@@ -53,11 +58,14 @@ import com.git.gdsbuilder.type.geoserver.layer.GeoLayerList;
  * */
 public class GeoLayerParser {
 
-	String collectionName;
-	String layerName;
-	JSONArray layers;
-	GeoLayer layer;
-	GeoLayerList layerList;
+	private String workspaceName;
+	private String getCapabilities; // http://서버주소/geoserver/wfs?REQUEST=GetCapabilities&version=1.0.0
+	private EnFileFormat fileFormat;
+	private String collectionName;
+	private String layerName;
+	private JSONArray layers;
+	private GeoLayer layer;
+	private GeoLayerList layerList;
 	
 	/**
 	 * LayerParser 생성자
@@ -68,8 +76,9 @@ public class GeoLayerParser {
 	 * @throws ParseException
 	 * @throws SchemaException
 	 */
-	public GeoLayerParser(String collectionName, String layerName)
+	public GeoLayerParser(String workspaceName, String getCapabilities, EnFileFormat fileFormat, String collectionName, String layerName)
 			throws FileNotFoundException, IOException, ParseException, SchemaException {
+		this.getCapabilities = getCapabilities;
 		this.collectionName = collectionName;
 		this.layerName = layerName;
 		this.layer = layerParse();
@@ -84,13 +93,22 @@ public class GeoLayerParser {
 	 * @throws ParseException
 	 * @throws SchemaException
 	 */
-	public GeoLayerParser(String collectionName, JSONArray layers)
+	public GeoLayerParser(String workspaceName, String getCapabilities, EnFileFormat fileFormat, String collectionName, JSONArray layers)
 			throws FileNotFoundException, IOException, ParseException, SchemaException {
+		this.getCapabilities = getCapabilities;
 		this.collectionName = collectionName;
 		this.layers = layers;
 		this.layerList = layersParse();
 	}
 
+	public String getWorkspaceName() {
+		return workspaceName;
+	}
+
+	public void setWorkspaceName(String workspaceName) {
+		this.workspaceName = workspaceName;
+	}
+	
 	/**
 	 * layer getter
 	 * @author DY.Oh
@@ -134,6 +152,14 @@ public class GeoLayerParser {
 	public void setLayerList(GeoLayerList layerList) {
 		this.layerList = layerList;
 	}
+	
+	public String getGetCapabilities() {
+		return getCapabilities;
+	}
+
+	public void setGetCapabilities(String getCapabilities) {
+		this.getCapabilities = getCapabilities;
+	}
 
 	/**
 	 * 해당하는 Layer 객체를 GeoServer로부터 받아 반환
@@ -146,11 +172,16 @@ public class GeoLayerParser {
 	 * @throws SchemaException Layer
 	 * @throws
 	 * */
+	@SuppressWarnings("unchecked")
 	public GeoLayer layerParse() throws FileNotFoundException, IOException, ParseException, SchemaException {
-
-		JsonFromUrl jsonFromUrl = new JsonFromUrl();
-		SimpleFeatureCollection sfc = jsonFromUrl.readJsonFromUrl(collectionName, layerName, 10000, true, "ngi");
-
+		Map connectionParameters = new HashMap();
+		connectionParameters.put("WFSDataStoreFactory:GET_CAPABILITIES_URL", getCapabilities);
+		SimpleFeatureCollection sfc = null;
+		DataStore dataStore = DataStoreFinder.getDataStore(connectionParameters);
+		String fullLayerName = "geo_"+ fileFormat.getStateName() + "_" + collectionName + "_" + layerName;
+	    SimpleFeatureSource source = dataStore.getFeatureSource(workspaceName + ":"+ fullLayerName);
+	    sfc= source.getFeatures();
+		
 		if(sfc != null) {
 			GeoLayer layer = new GeoLayer();
 			layer.setLayerName(this.layerName);

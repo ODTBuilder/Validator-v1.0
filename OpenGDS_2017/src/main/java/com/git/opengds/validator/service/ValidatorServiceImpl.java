@@ -46,42 +46,42 @@ public class ValidatorServiceImpl implements ValidatorService {
 	public JSONObject validate(String jsonObject) throws Exception {
 		
 		
-		editService.editTest();
+		//editService.editTest();
 		
 		
-//		try {
-//			// 파라미터 파싱
-//			BuilderJSONParser parserManager = new BuilderJSONParser();
-//			HashMap<String, Object> valdateObj = parserManager.parseValidateObj(jsonObject);
-//			ValidateLayerTypeList validateLayerTypeList = (ValidateLayerTypeList) valdateObj.get("typeValidate");
-//			GeoLayerCollectionList collectionList = (GeoLayerCollectionList) valdateObj.get("collectionList");
-//
-//			// 검수수행
-//			ValidateLayerCollectionList validateLayerCollection = new ValidateLayerCollectionList(collectionList,
-//					validateLayerTypeList);
-//			CollectionValidator validator = new CollectionValidator(validateLayerCollection);
-//			ErrorLayerList errorLayerList = validator.getErrLayerList();
-//
-//			// 오류레이어 발행
-//			boolean isSuccessPublish = publishErrorLayer(errorLayerList);
-//			boolean isErrorLayer = false;
-//			if (errorLayerList.size() > 0) {
-//				isErrorLayer = true;
-//			}
-//			JSONObject returnJSON = new JSONObject();
-//			returnJSON.put("ErrorLayer", isErrorLayer);
-//			returnJSON.put("Publising ErrorLayer", isSuccessPublish);
-//			System.out.println("완료");
-//			return returnJSON;
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//			JSONObject returnJSON = new JSONObject();
-//			returnJSON.put("ErrorLayer", false);
-//			returnJSON.put("Publising ErrorLayer", false);
-//			System.out.println("완료");
-//			return returnJSON;
-//		}
-		return null;
+		try {
+			// 파라미터 파싱
+			BuilderJSONParser parserManager = new BuilderJSONParser();
+			HashMap<String, Object> valdateObj = parserManager.parseValidateObj(jsonObject);
+			ValidateLayerTypeList validateLayerTypeList = (ValidateLayerTypeList) valdateObj.get("typeValidate");
+			GeoLayerCollectionList collectionList = (GeoLayerCollectionList) valdateObj.get("collectionList");
+
+			// 검수수행
+			ValidateLayerCollectionList validateLayerCollection = new ValidateLayerCollectionList(collectionList,
+					validateLayerTypeList);
+			CollectionValidator validator = new CollectionValidator(validateLayerCollection);
+			ErrorLayerList errorLayerList = validator.getErrLayerList();
+
+			// 오류레이어 발행
+			boolean isSuccessPublish = publishErrorLayer(errorLayerList);
+			boolean isErrorLayer = false;
+			if (errorLayerList.size() > 0) {
+				isErrorLayer = true;
+			}
+			JSONObject returnJSON = new JSONObject();
+			returnJSON.put("ErrorLayer", isErrorLayer);
+			returnJSON.put("Publising ErrorLayer", isSuccessPublish);
+			System.out.println("완료");
+			return returnJSON;
+		} catch (Exception e) {
+			e.printStackTrace();
+			JSONObject returnJSON = new JSONObject();
+			returnJSON.put("ErrorLayer", false);
+			returnJSON.put("Publising ErrorLayer", false);
+			System.out.println("완료");
+			return returnJSON;
+		}
+		//return null;
 	}
 
 	public boolean publishErrorLayer(ErrorLayerList errorLayerList)
