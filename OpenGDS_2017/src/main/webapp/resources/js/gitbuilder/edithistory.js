@@ -39,8 +39,6 @@ gb.edit.FeatureRecord.prototype.create = function(layer, feature) {
 		this.created[layer.get("id")] = {};
 	}
 	this.created[layer.get("id")][feature.getId()] = feature;
-	// this.created[layer.get("id")][feature.getId()] = new
-	// ol.format.GeoJSON().writeFeature(feature);
 	console.log(this.created);
 }
 gb.edit.FeatureRecord.prototype.remove = function(layer, feature) {
@@ -77,8 +75,6 @@ gb.edit.FeatureRecord.prototype.update = function(layer, feature) {
 		}
 		this.modified[layer.get("id")][this.id ? feature.get(this.id) : feature.getId()] = feature;
 	}
-	// this.modified[layer.get("id")][this.id ? feature.get(this.id) :
-	// feature.getId()] = new ol.format.GeoJSON().writeFeature(feature);
 	console.log(this.modified);
 }
 gb.edit.FeatureRecord.prototype.getStructure = function() {
@@ -102,8 +98,6 @@ gb.edit.FeatureRecord.prototype.getStructure = function() {
 				obj[cLayers[j]]["created"]["features"] = [];
 			}
 			obj[cLayers[j]]["created"]["features"].push(format.writeFeature(this.created[cLayers[j]][names[k]]));
-			// obj[cLayers[j]]["created"][features][names[k]] =
-			// format.writeFeature(this.created[cLayers[j]][names[k]]);
 		}
 	}
 
@@ -129,8 +123,6 @@ gb.edit.FeatureRecord.prototype.getStructure = function() {
 				clone.setId(clone.get(this.id));
 			}
 			obj[mLayers[j]]["modified"]["features"].push(format.writeFeature(clone));
-			// obj[mLayers[j]]["modified"][names[k]] =
-			// format.writeFeature(this.modified[mLayers[j]][names[k]]);
 		}
 	}
 
@@ -149,8 +141,6 @@ gb.edit.FeatureRecord.prototype.getStructure = function() {
 				obj[rLayers[j]]["removed"] = [];
 			}
 			obj[rLayers[j]]["removed"].push(names[k]);
-			// [names[k]] =
-			// format.writeFeature(this.modified[mLayers[j]][names[k]]);
 		}
 	}
 

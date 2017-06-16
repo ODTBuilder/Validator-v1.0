@@ -312,50 +312,43 @@ html {
 				"RoadBoundary" : {
 					"code" : [ "A0010000" ],
 					"geom" : "polygon",
-					"area" : false,
-					"weight" : 20
+					"area" : false
 				},
 				"NeatLine" : {
 					"code" : [ "H0010000" ],
 					"geom" : "linestring",
-					"area" : true,
-					"weight" : 10
+					"area" : true
 				},
 				"Building" : {
 					"code" : [ "B0010000" ],
 					"geom" : "polygon",
-					"area" : false,
-					"weight" : 20
+					"area" : false
 				},
 				"Wall" : {
 					"code" : [ "B0020000" ],
 					"geom" : "linestring",
-					"area" : false,
-					"weight" : 10
+					"area" : false
 				},
 				"RiverBoundary" : {
 					"code" : [ "E0010001" ],
 					"geom" : "polygon",
-					"area" : false,
-					"weight" : 10
+					"area" : false
 				},
 				"farmLand" : {
 					"code" : [ "D0010000" ],
 					"geom" : "polygon",
-					"area" : false,
-					"weight" : 20
+					"area" : false
 				},
 				"ContourLine" : {
 					"code" : [ "F0010000" ],
 					"geom" : "linestring",
-					"area" : false,
-					"weight" : 10
+					"area" : false
 				}
 			}
 		});
 
 		$("#validDefinition").optiondefinition({
-			updateLayerDef : function() {
+			layerDefinition : function() {
 				return $("#layerDefinition").layerdefinition("getDefinition");
 			},
 			definition : {
@@ -438,8 +431,11 @@ html {
 			}
 		});
 
-		$("#weight").layerweight({
-			updateOptionDef : function(){
+		$("#weight").weightdefinition({
+			layerDefinition : function() {
+				return $("#layerDefinition").layerdefinition("getDefinition");
+			},
+			optionDefinition : function(){
 				return $("#validDefinition").optiondefinition("getDefinition");
 			}
 		});
@@ -451,6 +447,9 @@ html {
 			},
 			optionDefinition : function() {
 				return $("#validDefinition").optiondefinition("getDefinition");
+			},
+			weightDefinition : function(){
+				return $("#weight").weightdefinition("getDefinition");
 			}
 		});
 
