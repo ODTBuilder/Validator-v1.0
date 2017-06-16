@@ -22,7 +22,7 @@ package com.git.gdsbuilder.type.qa20.header;
  * @author DY.Oh
  * @Date 2017. 3. 11. 오후 2:39:49
  * */
-public class NGIField {
+public class NDAField {
 
 	String fieldName;
 	String type;
@@ -38,7 +38,7 @@ public class NGIField {
 	 * @param decimal
 	 * @param fields
 	 */
-	public NGIField(String fieldName, String type, String size, String decimal, boolean fields) {
+	public NDAField(String fieldName, String type, String size, String decimal, boolean fields) {
 		super();
 		this.fieldName = fieldName;
 		this.type = type;

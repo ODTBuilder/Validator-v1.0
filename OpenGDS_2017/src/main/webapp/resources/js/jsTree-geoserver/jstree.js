@@ -7195,7 +7195,8 @@
 									var git = {
 										"validation" : false,
 										"geometry" : data[i].geomType,
-										"editable" : true
+										"editable" : true,
+										"attribute" : data[i].attInfo
 									}
 									wms.set("name", obj.refer.get_node(data[i].lName).text);
 									wms.set("id", data[i].lName);
@@ -7416,7 +7417,7 @@
 									"label" : "Image",
 									"action" : function(data) {
 										var inst = $.jstree.reference(data.reference), obj = inst.get_node(data.reference);
-										if (obj.type === "n_ngi_layer") {
+										if (obj.type === "n_ngi_layer_pt" || obj.type === "n_ngi_layer_ln" || obj.type === "n_ngi_layer_pg") {
 											var arr = inst.get_selected();
 											if (inst.get_node(inst.get_parent(obj)).type === "n_ngi_group") {
 												var wmsInfo = {
@@ -7426,7 +7427,7 @@
 												}
 												inst.import_image(wmsInfo);
 											}
-										} else if (obj.type === "n_dxf_layer") {
+										} else if (obj.type === "n_dxf_layer_arc" || obj.type === "n_dxf_layer_cir" || obj.type === "n_dxf_layer_ins" || obj.type === "n_dxf_layer_lpl" || obj.type === "n_dxf_layer_pl" || obj.type === "n_dxf_layer_txt") {
 											var arr = inst.get_selected();
 											if (inst.get_node(inst.get_parent(obj)).type === "n_dxf_group") {
 												var wmsInfo = {
@@ -9778,60 +9779,144 @@
 				},
 				"normal" : {
 					"icon" : "fa fa-folder-o",
-					"valid_children" : [ "ngi", "dxf", "shp" ]
+					"valid_children" : [ "n_ngi", "n_dxf", "n_shp" ]
 				},
-				"ngi" : {
+				"n_ngi" : {
 					"icon" : "fa fa-folder-o",
 					"valid_children" : [ "n_ngi_group" ]
 				},
-				"dxf" : {
+				"n_dxf" : {
 					"icon" : "fa fa-folder-o",
 					"valid_children" : [ "n_dxf_group" ]
 				},
-				"shp" : {
+				"n_shp" : {
 					"icon" : "fa fa-folder-o",
 					"valid_children" : [ "n_shp_layer" ]
 				},
+				// "ngi" : {
+				// "icon" : "fa fa-folder-o",
+				// "valid_children" : [ "n_ngi_group" ]
+				// },
+				// "dxf" : {
+				// "icon" : "fa fa-folder-o",
+				// "valid_children" : [ "n_dxf_group" ]
+				// },
+				// "shp" : {
+				// "icon" : "fa fa-folder-o",
+				// "valid_children" : [ "n_shp_layer" ]
+				// },
 				"n_ngi_group" : {
 					"icon" : "fa fa-map-o",
-					"valid_children" : [ "n_ngi_layer" ]
+					"valid_children" : [ "n_ngi_layer_pt", "n_ngi_layer_ln", "n_ngi_layer_pg" ]
 				},
 				"n_dxf_group" : {
 					"icon" : "fa fa-map-o",
-					"valid_children" : [ "n_dxf_layer" ]
+					"valid_children" : [ "n_dxf_layer_arc",  "n_dxf_layer_cir", "n_dxf_layer_ins", "n_dxf_layer_lpl", "n_dxf_layer_pl", "n_dxf_layer_txt" ]
 				},
-				"n_ngi_layer" : {
-					"icon" : "fa fa-file-image-o",
+//				"n_ngi_layer" : {
+//					"icon" : "fa fa-file-image-o",
+//					"valid_children" : []
+//				},
+				"n_ngi_layer_pt" : {
+					"icon" : "fa fa-circle",
 					"valid_children" : []
 				},
-				"n_dxf_layer" : {
-					"icon" : "fa fa-file-image-o",
+				"n_ngi_layer_ln" : {
+					"icon" : "fa fa-minus",
 					"valid_children" : []
 				},
-				"n_shp_layer" : {
-					"icon" : "fa fa-file-image-o",
+				"n_ngi_layer_pg" : {
+					"icon" : "fa fa-square",
+					"valid_children" : []
+				},
+//				"n_dxf_layer" : {
+//					"icon" : "fa fa-file-image-o",
+//					"valid_children" : []
+//				},
+				"n_dxf_layer_arc" : {
+					"icon" : "fa fa-circle-o-notch",
+					"valid_children" : []
+				},
+				"n_dxf_layer_cir" : {
+					"icon" : "fa fa-circle-o",
+					"valid_children" : []
+				},
+				"n_dxf_layer_ins" : {
+					"icon" : "fa fa-map-pin",
+					"valid_children" : []
+				},
+				"n_dxf_layer_lpl" : {
+					"icon" : "fa fa-minus",
+					"valid_children" : []
+				},
+				"n_dxf_layer_pl" : {
+					"icon" : "fa-window-minimize",
+					"valid_children" : []
+				},
+				"n_dxf_layer_txt" : {
+					"icon" : "fa fa-font",
+					"valid_children" : []
+				},
+//				"n_shp_layer" : {
+//					"icon" : "fa fa-file-image-o",
+//					"valid_children" : []
+//				},
+				"n_shp_layer_pt" : {
+					"icon" : "fa fa-circle",
+					"valid_children" : []
+				},
+				"n_shp_layer_ln" : {
+					"icon" : "fa fa-minus",
+					"valid_children" : []
+				},
+				"n_shp_layer_pg" : {
+					"icon" : "fa fa-square",
 					"valid_children" : []
 				},
 				"error" : {
 					"icon" : "fa fa-folder-o",
-					"valid_children" : [ "e_group", "e_piece" ]
+					"valid_children" : [ "e_ngi", "e_dxf", "e_shp" ]
 				},
-				"e_group" : {
+				// "error" : {
+				// "icon" : "fa fa-folder-o",
+				// "valid_children" : [ "e_group", "e_piece" ]
+				// },
+				"e_ngi" : {
 					"icon" : "fa fa-folder-o",
-					"valid_children" : [ "e_layer" ]
+					"valid_children" : [ "e_ngi_layer" ]
 				},
-				"e_piece" : {
+				"e_dxf" : {
 					"icon" : "fa fa-folder-o",
-					"valid_children" : [ "e_layer_p" ]
+					"valid_children" : [ "e_dxf_layer" ]
 				},
-				"e_layer" : {
+				"e_shp" : {
+					"icon" : "fa fa-folder-o",
+					"valid_children" : [ "e_shp_layer" ]
+				},
+				// "e_group" : {
+				// "icon" : "fa fa-folder-o",
+				// "valid_children" : [ "e_layer" ]
+				// },
+				// "e_piece" : {
+				// "icon" : "fa fa-folder-o",
+				// "valid_children" : [ "e_layer_p" ]
+				// },
+				"e_ngi_layer" : {
 					"icon" : "fa fa-file-image-o",
 					"valid_children" : []
 				},
-				"e_layer_p" : {
+				"e_dxf_layer" : {
 					"icon" : "fa fa-file-image-o",
 					"valid_children" : []
 				},
+				"e_shp_layer" : {
+					"icon" : "fa fa-file-image-o",
+					"valid_children" : []
+				},
+				// "e_layer_p" : {
+				// "icon" : "fa fa-file-image-o",
+				// "valid_children" : []
+				// },
 				"generalization" : {
 					"icon" : "fa fa-folder-o",
 					"valid_children" : [ "g_layer" ]

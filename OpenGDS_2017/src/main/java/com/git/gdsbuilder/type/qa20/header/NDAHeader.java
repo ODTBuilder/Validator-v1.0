@@ -28,7 +28,7 @@ import java.util.List;
 public class NDAHeader {
 
 	private String version;
-	private List<NGIField> aspatial_field_def;
+	private List<NDAField> aspatial_field_def;
 
 	
 	/**
@@ -44,7 +44,7 @@ public class NDAHeader {
 	 * @param version
 	 * @param aspatial_field_def
 	 */
-	public NDAHeader(String version, List<NGIField> aspatial_field_def) {
+	public NDAHeader(String version, List<NDAField> aspatial_field_def) {
 		super();
 		this.version = version;
 		this.aspatial_field_def = aspatial_field_def;
@@ -79,7 +79,7 @@ public class NDAHeader {
 	 * @return List<NGIField>
 	 * @throws
 	 * */
-	public List<NGIField> getAspatial_field_def() {
+	public List<NDAField> getAspatial_field_def() {
 		return aspatial_field_def;
 	}
 
@@ -90,7 +90,7 @@ public class NDAHeader {
 	 * @param aspatial_field_def void
 	 * @throws
 	 * */
-	public void setAspatial_field_def(List<NGIField> aspatial_field_def) {
+	public void setAspatial_field_def(List<NDAField> aspatial_field_def) {
 		this.aspatial_field_def = aspatial_field_def;
 	}
 
@@ -101,7 +101,7 @@ public class NDAHeader {
 	 * @param field void
 	 * @throws
 	 * */
-	public void addField(NGIField field) {
+	public void addField(NDAField field) {
 		aspatial_field_def.add(field);
 	}
 
@@ -114,7 +114,7 @@ public class NDAHeader {
 	 * */
 	public List<String> getFieldNames() {
 		List<String> fieldNames = new ArrayList<String>();
-		for (NGIField field : this.aspatial_field_def) {
+		for (NDAField field : this.aspatial_field_def) {
 			fieldNames.add(field.getFieldName());
 		}
 		return fieldNames;

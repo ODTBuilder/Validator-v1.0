@@ -60,9 +60,9 @@ gitbuilder.ui.LayerDefinition = $.widget("gitbuilder.layerdefinition", {
 		var tdhead4 = $("<td>").text("Geometry Type");
 		var tdhead5 = $("<td>").text("Delete");
 		var tdhead6 = $("<td>").text("QA Area");
-		var tdhead7 = $("<td>").text("Weight");
+//		var tdhead7 = $("<td>").text("Weight");
 		var trhead = $("<tr>").append(tdhead1).append(tdhead2).append(tdhead3).append(tdhead4).append(tdhead5).append(
-				tdhead6).append(tdhead7);
+				tdhead6);
 		var thead = $("<thead>").append(trhead);
 		that.tbody = $("<tbody>");
 		var tb = $("<table>").append(thead).append(that.tbody);
@@ -126,14 +126,14 @@ gitbuilder.ui.LayerDefinition = $.widget("gitbuilder.layerdefinition", {
 						"vertical-align" : "-webkit-baseline-middle"
 					});
 					var td6 = $("<td>").append(radio);
-					var weight = $("<input>").attr({
-						"type" : "number",
-						"min" : 1,
-						"max" : 100
-					});
-					that._addClass(weight, "form-control");
-					var td7 = $("<td>").append(weight);
-					var tr = $("<tr>").append(td1).append(td2).append(td3).append(td4).append(td5).append(td6).append(td7);
+//					var weight = $("<input>").attr({
+//						"type" : "number",
+//						"min" : 1,
+//						"max" : 100
+//					});
+//					that._addClass(weight, "form-control");
+//					var td7 = $("<td>").append(weight);
+					var tr = $("<tr>").append(td1).append(td2).append(td3).append(td4).append(td5).append(td6);
 					$(that.tbody).append(tr);
 				}
 			}
@@ -303,16 +303,16 @@ gitbuilder.ui.LayerDefinition = $.widget("gitbuilder.layerdefinition", {
 		var result;
 		var children = $(tbody).children();
 		var error = [];
-		var tWeight = 0;
+//		var tWeight = 0;
 		for (var i = 0; i < children.length; i++) {
-			var wei = parseInt($(children[i]).find("td:eq(6)>input[type=number]").val());
-			tWeight = tWeight + wei;
-			if (wei < 1) {
-				flag = false;
-				$(that.message).css({
-					"display" : "block"
-				}).text("Each weight must be over than 0%");
-			}
+//			var wei = parseInt($(children[i]).find("td:eq(6)>input[type=number]").val());
+//			tWeight = tWeight + wei;
+//			if (wei < 1) {
+//				flag = false;
+//				$(that.message).css({
+//					"display" : "block"
+//				}).text("Each weight must be over than 0%");
+//			}
 			$(children[i]).removeClass("danger");
 			for (var j = 0; j < children.length; j++) {
 				if (i !== j) {
@@ -347,20 +347,21 @@ gitbuilder.ui.LayerDefinition = $.widget("gitbuilder.layerdefinition", {
 			} else {
 				area = false;
 			}
-			var wVal = parseInt($(children[i]).find("td:eq(6)>input[type=number]").val());
+//			var wVal = parseInt($(children[i]).find("td:eq(6)>input[type=number]").val());
 			def[$(children[i]).find("td:eq(1)>input").val()] = {
 				"code" : spCode,
 				"geom" : geom,
-				"area" : area,
-				"weight" : wVal
+				"area" : area
+//				,
+//				"weight" : wVal
 			};
 		}
-		if (tWeight !== 100) {
-			flag = false;
-			$(that.message).css({
-				"display" : "block"
-			}).text("Total weight must be 100%");
-		}
+//		if (tWeight !== 100) {
+//			flag = false;
+//			$(that.message).css({
+//				"display" : "block"
+//			}).text("Total weight must be 100%");
+//		}
 		for (var k = 0; k < error.length; k++) {
 			$(error[k]).addClass("danger");
 		}
@@ -432,14 +433,14 @@ gitbuilder.ui.LayerDefinition = $.widget("gitbuilder.layerdefinition", {
 				$(radio).prop("checked", false);
 			}
 			var td6 = $("<td>").append(radio);
-			var weight = $("<input>").attr({
-				"type" : "number",
-				"min" : 1,
-				"max" : 100
-			}).val(obj[keys[i]].weight);
-			that._addClass(weight, "form-control");
-			var td7 = $("<td>").append(weight);
-			var tr = $("<tr>").append(td1).append(td2).append(td3).append(td4).append(td5).append(td6).append(td7);
+//			var weight = $("<input>").attr({
+//				"type" : "number",
+//				"min" : 1,
+//				"max" : 100
+//			}).val(obj[keys[i]].weight);
+//			that._addClass(weight, "form-control");
+//			var td7 = $("<td>").append(weight);
+			var tr = $("<tr>").append(td1).append(td2).append(td3).append(td4).append(td5).append(td6);
 			$(that.tbody).append(tr);
 		}
 	},
