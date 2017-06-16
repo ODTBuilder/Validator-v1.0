@@ -8,7 +8,7 @@ import java.util.List;
 
 /** 
 * @ClassName: BridgeName 
-* @Description: 
+* @Description: BridgeName 정보를 담고 있는 클래스
 * @author JY.Kim 
 * @date 2017. 6. 15. 오후 4:45:13 
 *  

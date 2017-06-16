@@ -5,7 +5,7 @@ package com.git.gdsbuilder.type.validate.option;
 
 /** 
 * @ClassName: Admin 
-* @Description: 
+* @Description: Admin 정보를 담고 있는 클래스
 * @author JY.Kim 
 * @date 2017. 6. 16. 오후 4:16:32 
 *  
@@ -13,7 +13,7 @@ package com.git.gdsbuilder.type.validate.option;
 public class Admin extends ValidatorOption{
 	public enum Type{
 
-		ADMIN("Admin", "GeometricError");
+		ADMIN("Admin", "AttributeError");
 
 		String errName;
 		String errType;

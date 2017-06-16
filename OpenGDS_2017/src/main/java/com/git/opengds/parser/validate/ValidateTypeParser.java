@@ -26,6 +26,7 @@ import org.json.simple.JSONObject;
 
 import com.git.gdsbuilder.type.validate.layer.ValidateLayerType;
 import com.git.gdsbuilder.type.validate.layer.ValidateLayerTypeList;
+import com.git.gdsbuilder.type.validate.option.Admin;
 import com.git.gdsbuilder.type.validate.option.B_SymbolOutSided;
 import com.git.gdsbuilder.type.validate.option.BridgeName;
 import com.git.gdsbuilder.type.validate.option.BuildingOpen;
@@ -387,6 +388,13 @@ public class ValidateTypeParser {
 					}
 					ValidatorOption bridgeName = new BridgeName(relations);
 					optionList.add(bridgeName);
+				}
+			}
+			if (optionName.equalsIgnoreCase(Admin.Type.ADMIN.errName())) {
+				Boolean isTrue = (Boolean) qaOptions.get("Admin");
+				if (isTrue) {
+					Admin admin = new Admin();
+					optionList.add(admin);
 				}
 			}
 			
