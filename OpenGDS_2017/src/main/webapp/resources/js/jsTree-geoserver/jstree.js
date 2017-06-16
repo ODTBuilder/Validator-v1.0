@@ -9807,7 +9807,7 @@
 				// },
 				"n_ngi_group" : {
 					"icon" : "fa fa-map-o",
-					"valid_children" : [ "n_ngi_layer_pt", "n_ngi_layer_ln", "n_ngi_layer_pg" ]
+					"valid_children" : [ "n_ngi_layer_pt", "n_ngi_layer_ln", "n_ngi_layer_pg", "n_ngi_layer_mpt", "n_ngi_layer_mln", "n_ngi_layer_mpg", "n_ngi_layer_txt" ]
 				},
 				"n_dxf_group" : {
 					"icon" : "fa fa-map-o",
@@ -9827,6 +9827,22 @@
 				},
 				"n_ngi_layer_pg" : {
 					"icon" : "fa fa-square",
+					"valid_children" : []
+				},
+				"n_ngi_layer_mpt" : {
+					"icon" : "fa fa-circle",
+					"valid_children" : []
+				},
+				"n_ngi_layer_mln" : {
+					"icon" : "fa fa-minus",
+					"valid_children" : []
+				},
+				"n_ngi_layer_mpg" : {
+					"icon" : "fa fa-square",
+					"valid_children" : []
+				},
+				"n_ngi_layer_txt" : {
+					"icon" : "fa fa-font",
 					"valid_children" : []
 				},
 //				"n_dxf_layer" : {
