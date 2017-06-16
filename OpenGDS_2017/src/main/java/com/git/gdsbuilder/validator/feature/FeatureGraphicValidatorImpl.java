@@ -641,7 +641,6 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 			String upperType = simpleFeature.getAttribute("feature_type").toString().toUpperCase();
 
 			if(upperType.equals("POINT") || upperType.equals("TEXT")){
-
 				if((geometry.equals(relationGeometry))){
 					flag = true;
 					break;
@@ -653,13 +652,13 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 				Coordinate start = coordinates[0];
 				Coordinate end = coordinates[coordinates.length-1];
 				if(start.equals2D(end)){
-				LinearRing ring = geometryFactory.createLinearRing(coordinates);
-				LinearRing holes[] = null;
-				Polygon polygon = geometryFactory.createPolygon(ring, holes);
-				if(polygon.contains(relationGeometry)){
-					flag = true;
-					break;
-				}
+					LinearRing ring = geometryFactory.createLinearRing(coordinates);
+					LinearRing holes[] = null;
+					Polygon polygon = geometryFactory.createPolygon(ring, holes);
+					if(polygon.contains(relationGeometry)){
+						flag = true;
+						break;
+					}
 				}
 
 			}
@@ -710,7 +709,7 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 	public ErrorFeature validateCrossRoad(SimpleFeature simpleFeature, SimpleFeature relationSimpleFeature) throws SchemaException{
 		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
 		Geometry relGeometry = (Geometry) relationSimpleFeature.getDefaultGeometry();
-		
+
 		if(geometry.contains(relGeometry) || geometry.overlaps(relGeometry)){
 			GeometryFactory geometryFactory = new GeometryFactory();
 			Coordinate[] relCoordinates = relGeometry.getCoordinates();
@@ -726,12 +725,12 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 		}
 		return null;
 	}
-	
+
 	public ErrorFeature validateNodeMiss(SimpleFeature simpleFeature) throws SchemaException{
-		
+
 		return null;
 	}
-	
-	
-	
+
+
+
 }
