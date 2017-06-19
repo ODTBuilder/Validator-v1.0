@@ -83,8 +83,8 @@ public class GeoLayerParser {
 		this.collectionName = collectionName;
 		this.layerName = layerName;
 		this.fileFormat = fileFormat;
-		this.layer = layerParse();
 		this.dataStore = dataStore;
+		this.layer = layerParse();
 	}
 	
 	public GeoLayerParser(String workspaceName, String getCapabilities, EnFileFormat fileFormat, String collectionName, String layerName)
@@ -94,10 +94,10 @@ public class GeoLayerParser {
 		this.collectionName = collectionName;
 		this.layerName = layerName;
 		this.fileFormat = fileFormat;
-		this.layer = layerParse();
 		Map connectionParameters = new HashMap();
 		connectionParameters.put("WFSDataStoreFactory:GET_CAPABILITIES_URL", getCapabilities);
 		this.dataStore = DataStoreFinder.getDataStore(connectionParameters);
+		this.layer = layerParse();
 	}
 
 	/**
