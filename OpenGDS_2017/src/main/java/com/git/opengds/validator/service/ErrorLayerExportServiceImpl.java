@@ -30,7 +30,7 @@ public class ErrorLayerExportServiceImpl implements ErrorLayerExportService {
 	@Override
 	public void test() throws IOException {
 
-		String tableName = "35811045Test5";
+		String tableName = "\"" + "err_" + "ngi_33611044" + "\"";
 		String exportType = "ngi";
 
 		ErrorLayerDBQueryManager dbManager = new ErrorLayerDBQueryManager();

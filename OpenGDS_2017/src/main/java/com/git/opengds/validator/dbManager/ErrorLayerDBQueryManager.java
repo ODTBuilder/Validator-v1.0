@@ -111,11 +111,10 @@ public class ErrorLayerDBQueryManager {
 	 * err_layer Tb selectAll Query 생성 @author DY.Oh @Date 2017. 4. 18. 오후
 	 * 4:09:42 @param collectionName @return HashMap<String,Object> @throws
 	 */
-	public HashMap<String, Object> selectAllErrorFeaturesQuery(String collectionName) {
+	public HashMap<String, Object> selectAllErrorFeaturesQuery(String tableName) {
 
-		String tableName = "\"" + "err_" + collectionName + "\"";
 		String selectQuery = " select "
-				+ "collection_name, layer_name, feature_id, err_type, err_name, ST_X(geom) as x_Coordinate, ST_Y(geom) as y_Coordinate "
+				+ "err_idx, collection_name, layer_name, feature_id, err_type, err_name, ST_X(geom) as x_Coordinate, ST_Y(geom) as y_Coordinate "
 				+ "from " + tableName;
 
 		HashMap<String, Object> selectQueryMap = new HashMap<String, Object>();

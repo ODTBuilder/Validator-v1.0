@@ -46,7 +46,7 @@ public class ValidatorServiceImpl implements ValidatorService {
 	public JSONObject validate(String jsonObject) throws Exception {
 		
 
-		//errorLayerExportService.test();
+		errorLayerExportService.test();
 
 		try {
 			// 파라미터 파싱
