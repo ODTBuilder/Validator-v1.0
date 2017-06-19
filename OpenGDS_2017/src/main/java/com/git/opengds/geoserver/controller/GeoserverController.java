@@ -237,7 +237,7 @@ public class GeoserverController{
 			}
 		}
 		
-		geoserverService.updateFeatureType(originalName, name, title, description,abstractContent, srs, style);
+//		geoserverService.updateFeatureType(originalName, name, title, abstractContent, style);
 		
 		return false;
 	}
