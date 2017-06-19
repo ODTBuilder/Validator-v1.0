@@ -60,6 +60,7 @@ public class GeoLayerParser {
 
 	private String workspaceName;
 	private String getCapabilities; // http://서버주소/geoserver/wfs?REQUEST=GetCapabilities&version=1.0.0
+	private DataStore dataStore;
 	private EnFileFormat fileFormat;
 	private String collectionName;
 	private String layerName;
@@ -76,6 +77,16 @@ public class GeoLayerParser {
 	 * @throws ParseException
 	 * @throws SchemaException
 	 */
+	public GeoLayerParser(String workspaceName, DataStore dataStore, EnFileFormat fileFormat, String collectionName, String layerName)
+			throws FileNotFoundException, IOException, ParseException, SchemaException {
+		this.workspaceName = workspaceName;
+		this.collectionName = collectionName;
+		this.layerName = layerName;
+		this.fileFormat = fileFormat;
+		this.layer = layerParse();
+		this.dataStore = dataStore;
+	}
+	
 	public GeoLayerParser(String workspaceName, String getCapabilities, EnFileFormat fileFormat, String collectionName, String layerName)
 			throws FileNotFoundException, IOException, ParseException, SchemaException {
 		this.workspaceName = workspaceName;
@@ -84,6 +95,9 @@ public class GeoLayerParser {
 		this.layerName = layerName;
 		this.fileFormat = fileFormat;
 		this.layer = layerParse();
+		Map connectionParameters = new HashMap();
+		connectionParameters.put("WFSDataStoreFactory:GET_CAPABILITIES_URL", getCapabilities);
+		this.dataStore = DataStoreFinder.getDataStore(connectionParameters);
 	}
 
 	/**
@@ -95,13 +109,13 @@ public class GeoLayerParser {
 	 * @throws ParseException
 	 * @throws SchemaException
 	 */
-	public GeoLayerParser(String workspaceName, String getCapabilities, EnFileFormat fileFormat, String collectionName, JSONArray layers)
+	public GeoLayerParser(String workspaceName, DataStore dataStore, EnFileFormat fileFormat, String collectionName, JSONArray layers)
 			throws FileNotFoundException, IOException, ParseException, SchemaException {
 		this.workspaceName = workspaceName;
-		this.getCapabilities = getCapabilities;
 		this.collectionName = collectionName;
 		this.layers = layers;
 		this.fileFormat = fileFormat;
+		this.dataStore = dataStore;
 		this.layerList = layersParse();
 	}
 
@@ -178,26 +192,24 @@ public class GeoLayerParser {
 	 * */
 	@SuppressWarnings("unchecked")
 	public GeoLayer layerParse() throws FileNotFoundException, IOException, ParseException, SchemaException {
-
-
-		Map connectionParameters = new HashMap();
-		connectionParameters.put("WFSDataStoreFactory:GET_CAPABILITIES_URL", getCapabilities);
 		SimpleFeatureCollection sfc = null;
-		DataStore dataStore = DataStoreFinder.getDataStore(connectionParameters);
-		String fullLayerName = "geo_"+ fileFormat.getStateName() + "_" + collectionName + "_" + layerName;
-	    System.out.println(fullLayerName);
-		SimpleFeatureSource source = dataStore.getFeatureSource(workspaceName + ":"+ fullLayerName);
-	    sfc= source.getFeatures();
-		
-		if(sfc != null) {
-			GeoLayer layer = new GeoLayer();
-			layer.setLayerName(this.layerName);
-			layer.setLayerType("layerType");
-			layer.setSimpleFeatureCollection(sfc);
-			return layer;
-		} else {
+		if (this.dataStore != null) {
+			String fullLayerName = "geo_" + fileFormat.getStateName() + "_" + collectionName + "_" + layerName;
+			System.out.println(fullLayerName);
+			SimpleFeatureSource source = this.dataStore.getFeatureSource(workspaceName + ":" + fullLayerName);
+			sfc = source.getFeatures();
+
+			if (sfc != null) {
+				GeoLayer layer = new GeoLayer();
+				layer.setLayerName(this.layerName);
+				layer.setLayerType("layerType");
+				layer.setSimpleFeatureCollection(sfc);
+				return layer;
+			} else {
+				return null;
+			}
+		} else
 			return null;
-		}
 	}
 
 	/**
