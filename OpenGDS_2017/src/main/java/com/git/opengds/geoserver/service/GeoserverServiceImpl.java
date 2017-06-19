@@ -225,6 +225,17 @@ public class GeoserverServiceImpl implements GeoserverService {
 	public boolean removeGeoserverGroupLayer(String groupLayerName) {
 		return dtPublisher.removeLayerGroup(ID, groupLayerName);
 	}
+	
+	/**
+	 *
+	 * @author SG.Lee
+	 * @Date 2017. 6. 19. 오후 9:15:07
+	 * @return boolean
+	 * */
+	@Override
+	public List<String> getGeoserverStyleList(){
+		return dtReader.getStyles().getNames();
+	}
 
 	/**
 	 * 

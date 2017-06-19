@@ -175,6 +175,15 @@ public class GeoserverController{
 	}
 	
 	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(value = "/getGeoserverStyleList.ajax")
+	@ResponseBody
+	public List<String> getGeoserverStyleList(HttpServletRequest request){
+		return geoserverService.getGeoserverLayerCollectionTree();;
+	}
+ 
+	
+	
 	@RequestMapping(value="publishGeoserverStyle.do")
 	@ResponseBody
 	public void publishGeoserverStyle(HttpServletRequest request , @RequestBody JSONObject jsonObject){
