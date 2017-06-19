@@ -88,10 +88,23 @@ html {
 					class="fa fa-pencil-square-o fa-lg" aria-hidden="true"></i> Edit</a></li>
 			<li><a href="#" title="Base map" id="changeBase"><i
 					class="fa fa-map-o fa-lg" aria-hidden="true"></i> Base Map</a></li>
+						<li class="dropdown"><a href="#" class="dropdown-toggle"
+				data-toggle="dropdown" role="button" aria-expanded="false"
+				title="Validation"><i class="fa fa-search fa-lg fa-lg"
+					aria-hidden="true"></i> QA 1.0</a>
+				<ul class="dropdown-menu" role="menu">
+					<li><a href="#" title="Layer Definition" id="layerDefinition1">Lasyer
+							Definition</a></li>
+					<li><a href="#" title="Validating Option" id="validDefinition1">Validating
+							Option</a></li>
+					<li><a href="#" title="Layer Weight" id="weight1">Layer
+							Weight</a></li>
+					<li><a href="#" title="Validation" id="validation1">Validation</a></li>
+				</ul></li>
 			<li class="dropdown"><a href="#" class="dropdown-toggle"
 				data-toggle="dropdown" role="button" aria-expanded="false"
 				title="Validation"><i class="fa fa-search fa-lg fa-lg"
-					aria-hidden="true"></i> QA</a>
+					aria-hidden="true"></i> QA 2.0</a>
 				<ul class="dropdown-menu" role="menu">
 					<li><a href="#" title="Layer Definition" id="layerDefinition">Layer
 							Definition</a></li>

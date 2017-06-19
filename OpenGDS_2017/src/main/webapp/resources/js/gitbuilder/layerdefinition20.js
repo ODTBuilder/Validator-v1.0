@@ -10,7 +10,7 @@ if (!gitbuilder)
 	gitbuilder = {};
 if (!gitbuilder.ui)
 	gitbuilder.ui = {};
-gitbuilder.ui.LayerDefinition = $.widget("gitbuilder.layerdefinition", {
+gitbuilder.ui.LayerDefinition20 = $.widget("gitbuilder.layerdefinition20", {
 	widnow : undefined,
 	layerDef : undefined,
 	tbody : undefined,
@@ -70,7 +70,7 @@ gitbuilder.ui.LayerDefinition = $.widget("gitbuilder.layerdefinition", {
 		this._addClass(tb, "table-striped");
 		this._addClass(tb, "text-center");
 		this.update();
-		$(document).on("click", ".layerdefinition-del", function(event) {
+		$(document).on("click", ".layerdefinition20-del", function(event) {
 			var laName;
 			if (event.target === this) {
 				laName = $(event.target).parent().parent().find("td:eq(1) > input").val();
@@ -117,11 +117,11 @@ gitbuilder.ui.LayerDefinition = $.widget("gitbuilder.layerdefinition", {
 					var delBtn = $("<button>").append(icon);
 					this._addClass(delBtn, "btn");
 					this._addClass(delBtn, "btn-default");
-					this._addClass(delBtn, "layerdefinition-del");
+					this._addClass(delBtn, "layerdefinition20-del");
 					var td5 = $("<td>").append(delBtn);
 					var radio = $("<input>").attr({
 						"type" : "radio",
-						"name" : "layerdefinition-area"
+						"name" : "layerdefinition20-area"
 					}).css({
 						"vertical-align" : "-webkit-baseline-middle"
 					});
@@ -419,11 +419,11 @@ gitbuilder.ui.LayerDefinition = $.widget("gitbuilder.layerdefinition", {
 			var delBtn = $("<button>").append(icon);
 			this._addClass(delBtn, "btn");
 			this._addClass(delBtn, "btn-default");
-			this._addClass(delBtn, "layerdefinition-del");
+			this._addClass(delBtn, "layerdefinition20-del");
 			var td5 = $("<td>").append(delBtn);
 			var radio = $("<input>").attr({
 				"type" : "radio",
-				"name" : "layerdefinition-area"
+				"name" : "layerdefinition20-area"
 			}).css({
 				"vertical-align" : "-webkit-baseline-middle"
 			});
