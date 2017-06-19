@@ -215,7 +215,7 @@ gitbuilder.ui.QAEdit = $.widget("gitbuilder.qaedit", {
 							 */
 							"action" : function(data) {
 								var inst = $.jstree.reference(data.reference), obj = inst.get_node(data.reference);
-								if (obj.type === "e_layer") {
+								if (obj.type === "e_ngi_layer" || obj.type === "e_dxf_layer") {
 									that.assign_error(obj.id);
 								}
 							}

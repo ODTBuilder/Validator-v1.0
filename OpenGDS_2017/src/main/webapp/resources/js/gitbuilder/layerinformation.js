@@ -10,12 +10,16 @@ if (!gb)
 	gb = {};
 if (!gb.edit)
 	gb.edit = {};
-gb.edit.FeatureRecord = function(obj) {
-	this.created = {};
-	this.modified = {};
-	this.removed = {};
-	this.id = obj.id ? obj.id : false;
+gb.edit.LayerInformation = function(obj) {
+	this.layer = obj.layer ? obj.layer : null;
+	
 }
-gb.edit.FeatureRecord.prototype.getCreated = function() {
-	return this.created;
+gb.edit.LayerInformation.prototype.setName = function(name) {
+	return;
+};
+gb.edit.LayerInformation.prototype.setTitle = function(title) {
+	return;
+};
+gb.edit.LayerInformation.prototype.setAttributeType = function() {
+	return;
 };

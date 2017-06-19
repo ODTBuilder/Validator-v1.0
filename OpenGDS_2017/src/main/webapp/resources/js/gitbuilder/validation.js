@@ -431,7 +431,6 @@ gitbuilder.ui.Validation = $.widget("gitbuilder.validation", {
 				type = "TEXT";
 			} 
 			layers.push($(this.tree).jstree("get_node", keys[i]).text+"_"+type);
-			console.log($(this.tree).jstree("get_node", keys[i]));
 		}
 
 		layerColl["layers"] = layers;
