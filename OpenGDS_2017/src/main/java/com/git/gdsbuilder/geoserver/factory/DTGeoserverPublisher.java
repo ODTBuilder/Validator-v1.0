@@ -80,7 +80,7 @@ public class DTGeoserverPublisher extends GeoServerRESTPublisher
     return flag;
   }
 
-  public boolean updateFeatureType(String workspace, String storename, String layername, GSFeatureTypeEncoder fte, GSLayerEncoder layerEncoder)
+  public boolean updateFeatureType(String workspace, String storename, String layername, GSFeatureTypeEncoder fte, GSLayerEncoder layerEncoder, boolean attChangeFlag)
   {
     String ftypeXml = fte.toString();
 
@@ -116,6 +116,9 @@ public class DTGeoserverPublisher extends GeoServerRESTPublisher
         LOGGER.warn("Error in configuring (" + configuredResult + ") " + workspace + ":" + 
           storename + "/" + layername);
       else {
+    	  if(attChangeFlag){// attribute 수정시 서버 리로드
+    		  reload();
+    	  }
         LOGGER.info("layer successfully configured (layer:" + layername + ")");
       }
     }

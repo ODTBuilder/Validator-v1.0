@@ -251,6 +251,7 @@ public class GeoserverServiceImpl implements GeoserverService {
 	 * @see com.git.opengds.geoserver.service.GeoserverService#updateStyle(java.lang.String,
 	 *      java.lang.String)
 	 */
+	@Override
 	public boolean updateStyle(final String sldBody, final String name) {
 		return dtPublisher.updateStyle(sldBody, name);
 	};
@@ -263,40 +264,45 @@ public class GeoserverServiceImpl implements GeoserverService {
 	 * @return
 	 * @see com.git.opengds.geoserver.service.GeoserverService#removeStyle(java.lang.String)
 	 */
+	@Override
 	public boolean removeStyle(String styleName) {
 		return dtPublisher.removeStyle(styleName);
 	};
 
 	@Override
-	public boolean updateDBLayer(final String workspace, final String storename, final String layerName,
-			final GSFeatureTypeEncoder fte, final GSLayerEncoder layerEncoder) {
+	public boolean updateFeatureType(String orginalName, String name, String title, String abstractContent, String style,  boolean attChangeFlag) {
+		boolean updateFlag = false;
+		GSFeatureTypeEncoder fte = new GSFeatureTypeEncoder();
+		GSLayerEncoder layerEncoder = null;
 		
-		RESTLayer layer = dtReader.getLayer(ID, layerName);
-		RESTFeatureType featureType = dtReader.getFeatureType(layer);
-		
-//		featureType.
-		
-		List<GSAttributeEncoder> attEncoders = featureType.getEncodedAttributeList();
-		
-		String originSrc = "EPSG:5186";
-		GSFeatureTypeEncoder testFte = new GSFeatureTypeEncoder();
-		GSLayerEncoder testLayerEncoder = new GSLayerEncoder();
-		String layerFullName = "geo_ngi_00000738000124_E0052114_TEST";
 
-		testFte.setProjectionPolicy(ProjectionPolicy.REPROJECT_TO_DECLARED);
-		testFte.setTitle("Layer Name Change Test"); // 제목
-		testFte.setName(layerFullName); // 이름
-		testFte.setSRS(originSrc); // 좌표
-		testFte.setNativeCRS(originSrc);
-		testFte.setNativeName(layerFullName); // nativeName
-//		testFte.setLatLonBoundingBox(featureType.getMinX(), featureType.getMinY(), featureType.getMaxX(), featureType.getMaxY(), originSrc);
-//		testFte.setNativeBoundingBox(featureType.getMinX(), featureType.getMinY(), featureType.getMaxX(), featureType.getMaxY(), originSrc);
-
-		testLayerEncoder.setDefaultStyle("defaultStyle");
+		if (orginalName == null){
+//            throw new IllegalArgumentException("OriginalName may not be null!");
+            return false;
+		}
+        if (orginalName.isEmpty()){
+//            throw new IllegalArgumentException("OriginalName may not be empty!");
+            return false;
+        }
+        if(name != null && !name.isEmpty()){
+        	fte.setName(name);
+        }
+        if(title != null && !title.isEmpty()){
+        	fte.setTitle(title);
+        }
+        if(abstractContent != null && !abstractContent.isEmpty()){
+        	fte.setAbstract(abstractContent);
+        }
+        if(style != null && !style.isEmpty()){
+        	layerEncoder = new GSLayerEncoder();
+        	layerEncoder.setDefaultStyle(style);
+        }
+		
+		layerEncoder.setDefaultStyle("defaultStyle");
 
 //		boolean flag = dtPublisher.recalculate(workspace, storename, layerFullName, testFte, testLayerEncoder);
-		boolean flag = dtPublisher.updateFeatureType(workspace, storename,layerName,testFte, testLayerEncoder);
+		updateFlag = dtPublisher.updateFeatureType(ID, ID, orginalName,fte, layerEncoder, attChangeFlag);
 
-		return flag;
+		return updateFlag;
 	}
 }

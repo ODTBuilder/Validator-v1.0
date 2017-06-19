@@ -96,7 +96,7 @@ public interface GeoserverService {
 	 * @return boolean - 삭제여부
 	 * @throws
 	 * */
-	public boolean removeGeoserverLayer(String layerName);
+	public boolean removeGeoserverLayer(final String layerName);
 	
 	/**
 	 * 다중 레이어를 삭제한다.
@@ -116,7 +116,7 @@ public interface GeoserverService {
 	 * @return boolean - 삭제여부
 	 * @throws
 	 * */
-	public boolean removeGeoserverGroupLayer(String groupLayerName);
+	public boolean removeGeoserverGroupLayer(final String groupLayerName);
 	
 	
 	
@@ -150,12 +150,11 @@ public interface GeoserverService {
 	 * @return boolean
 	 * @throws
 	 * */
-	public boolean removeStyle(String styleName);
+	public boolean removeStyle(final String styleName);
 	
 	
 	
-	
-	public boolean updateDBLayer(String workspace, String storename, String layername,GSFeatureTypeEncoder fte, GSLayerEncoder layerEncoder);
+	public boolean updateFeatureType(final String orginalName,final String name,final String title,final String abstractContent,final String style, boolean attChangeFlag);
 }
 
 
