@@ -25,8 +25,6 @@ import org.json.simple.JSONArray;
 
 import com.git.gdsbuilder.geolayer.data.DTGeoGroupLayerList;
 import com.git.gdsbuilder.geolayer.data.DTGeoLayerList;
-import com.git.gdsbuilder.geosolutions.geoserver.rest.encoder.GSLayerEncoder;
-import com.git.gdsbuilder.geosolutions.geoserver.rest.encoder.feature.GSFeatureTypeEncoder;
 import com.git.gdsbuilder.type.geoserver.layer.GeoLayerInfo;
 import com.git.gdsbuilder.type.geoserver.layer.GeoLayerInfoList;
 import com.git.opengds.upload.domain.FileMeta;
@@ -74,7 +72,6 @@ public interface GeoserverService {
 	 * @Date 2017. 4
 	 * @param layerList
 	 * @return DTGeoLayerList - 레이어명 리스트
-	 * @throws
 	 * */
 	public DTGeoLayerList getGeoLayerList(ArrayList<String> layerList);
 	
@@ -84,7 +81,6 @@ public interface GeoserverService {
 	 * @Date 2017. 4
 	 * @param groupList
 	 * @return DTGeoGroupLayerList - 그룹레이어명 리스트
-	 * @throws
 	 * */
 	public DTGeoGroupLayerList getGeoGroupLayerList(ArrayList<String> groupList);
 	
@@ -94,7 +90,6 @@ public interface GeoserverService {
 	 * @Date 2017. 6. 5. 오전 10:40:14
 	 * @param layerName 삭제할 레이어 이름
 	 * @return boolean - 삭제여부
-	 * @throws
 	 * */
 	public boolean removeGeoserverLayer(final String layerName);
 	
@@ -104,7 +99,6 @@ public interface GeoserverService {
 	 * @Date 2017. 6. 5. 오전 10:40:17
 	 * @param layerNameList 삭제할 레이어 이름 리스트
 	 * @return boolean - 삭제여부
-	 * @throws
 	 * */
 	public boolean removeGeoserverLayers(List<String> layerNameList);
 	
@@ -114,10 +108,18 @@ public interface GeoserverService {
 	 * @Date 2017. 6. 5. 오전 11:08:03
 	 * @param groupLayerName 삭제할 그룹레이어
 	 * @return boolean - 삭제여부
-	 * @throws
 	 * */
 	public boolean removeGeoserverGroupLayer(final String groupLayerName);
 	
+	
+	
+	/**
+	 *
+	 * @author SG.Lee
+	 * @Date 2017. 6. 19. 오후 9:15:07
+	 * @return boolean
+	 * */
+	public List<String> getGeoserverStyleList();
 	
 	
 	/**
@@ -127,7 +129,6 @@ public interface GeoserverService {
 	 * @param sldBody
 	 * @param name
 	 * @return boolean
-	 * @throws
 	 * */
 	public boolean publishStyle(final String sldBody, final String name);
 	
@@ -138,7 +139,6 @@ public interface GeoserverService {
 	 * @param sldBody
 	 * @param name
 	 * @return boolean
-	 * @throws
 	 * */
 	public boolean updateStyle(final String sldBody, final String name);
 	
@@ -148,12 +148,23 @@ public interface GeoserverService {
 	 * @Date 2017. 6. 7. 오후 6:16:01
 	 * @param styleName
 	 * @return boolean
-	 * @throws
 	 * */
 	public boolean removeStyle(final String styleName);
 	
 	
 	
+	/**
+	 * Geoserver 레이어를 업데이트한다.
+	 * @author SG.Lee
+	 * @Date 2017. 6. 19. 오후 7:45:22
+	 * @param orginalName
+	 * @param name
+	 * @param title
+	 * @param abstractContent
+	 * @param style
+	 * @param attChangeFlag
+	 * @return boolean
+	 * */
 	public boolean updateFeatureType(final String orginalName,final String name,final String title,final String abstractContent,final String style, boolean attChangeFlag);
 }
 
