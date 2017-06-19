@@ -197,19 +197,19 @@ public class GeoserverLayerCollectionTree extends JSONArray {
 							layerJson.put("id", layerName);
 							layerJson.put("parent", "e_ngi");
 							layerJson.put("text", lastName);
-							layerJson.put("type", "e_layer_ngi");
+							layerJson.put("type", "e_ngi_layer");
 						}
 						else if(fileType.toLowerCase().equals("dxf")){
 							layerJson.put("id", layerName);
 							layerJson.put("parent", "e_dxf");
 							layerJson.put("text", lastName);
-							layerJson.put("type", "e_layer_dxf");
+							layerJson.put("type", "e_dxf_layer");
 						}
 						else if(fileType.toLowerCase().equals("shp")){
 							layerJson.put("id", layerName);
 							layerJson.put("parent", "e_shp");
 							layerJson.put("text", lastName);
-							layerJson.put("type", "e_layer_shp");
+							layerJson.put("type", "e_shp_layer");
 						}
 						super.add(layerJson);
 					} else if (preName.equals("gen")) { // 파일명이 gen인 경우
