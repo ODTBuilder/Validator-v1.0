@@ -158,7 +158,7 @@ public class GeoLayerCollectionParser {
 			String collectionName = (String) collectionNames.get(i);
 			GeoLayerCollection layerCollection = new GeoLayerCollection(collectionName);
 			// 도곽선
-			GeoLayerParser neatLineParser = new GeoLayerParser(workspaceName, getCapabilities, fileFormat, collectionName, neatLineLayerName);
+			GeoLayerParser neatLineParser = new GeoLayerParser(workspaceName, dataStore, fileFormat, collectionName, neatLineLayerName);
 			GeoLayer neatLineLayer = neatLineParser.getLayer();
 			layerCollection.setNeatLine(neatLineLayer);
 			// 레이어
