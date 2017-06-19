@@ -179,7 +179,7 @@ public class GeoserverController{
 	@RequestMapping(value = "/getGeoserverStyleList.ajax")
 	@ResponseBody
 	public List<String> getGeoserverStyleList(HttpServletRequest request){
-		return geoserverService.getGeoserverLayerCollectionTree();;
+		return geoserverService.getGeoserverLayerCollectionTree();
 	}
  
 	
