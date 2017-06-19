@@ -295,7 +295,7 @@ public class GeoserverServiceImpl implements GeoserverService {
 		testLayerEncoder.setDefaultStyle("defaultStyle");
 
 //		boolean flag = dtPublisher.recalculate(workspace, storename, layerFullName, testFte, testLayerEncoder);
-		boolean flag = dtPublisher.updateDBLayer(workspace, storename,layerName,testFte, testLayerEncoder);
+		boolean flag = dtPublisher.updateFeatureType(workspace, storename,layerName,testFte, testLayerEncoder);
 
 		return flag;
 	}

@@ -89,4 +89,7 @@ public interface FeatureAttributeValidator {
 	 * */
 	public ErrorLayer validateCharacterAccuracy(SimpleFeatureCollection validatorLayer, String string,
 			SimpleFeatureCollection relationLayer, String string2) throws SchemaException;
+	
+	public ErrorFeature validateBridgeName(SimpleFeature simpleFeature, SimpleFeature relationSimpleFeature) throws SchemaException;
+	
 }

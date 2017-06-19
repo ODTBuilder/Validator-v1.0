@@ -36,7 +36,11 @@ package com.git.gdsbuilder.type.geoserver.parser;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
+import org.geotools.data.DataStore;
+import org.geotools.data.DataStoreFinder;
 import org.geotools.feature.SchemaException;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -60,6 +64,7 @@ public class GeoLayerCollectionParser {
 	private String workspaceName;
 	private String getCapabilities;
 	private EnFileFormat fileFormat;
+	private DataStore dataStore;
 
 	/**
 	 * LayerCollectionParser 생성자
@@ -71,9 +76,14 @@ public class GeoLayerCollectionParser {
 	 */
 	public GeoLayerCollectionParser(JSONObject collectionObject, String workspaceName, String getCapabilities, EnFileFormat fileFormat)
 			throws FileNotFoundException, IOException, ParseException, SchemaException {
+		this.workspaceName = workspaceName;
 		this.collectionObj = collectionObject;
 		this.getCapabilities = getCapabilities;
 		this.fileFormat = fileFormat;
+		
+		Map connectionParameters = new HashMap();
+		connectionParameters.put("WFSDataStoreFactory:GET_CAPABILITIES_URL", getCapabilities);
+		this.dataStore = DataStoreFinder.getDataStore(connectionParameters);
 		collectionParser();
 	}
 
@@ -148,14 +158,15 @@ public class GeoLayerCollectionParser {
 			String collectionName = (String) collectionNames.get(i);
 			GeoLayerCollection layerCollection = new GeoLayerCollection(collectionName);
 			// 도곽선
-			GeoLayerParser neatLineParser = new GeoLayerParser(workspaceName, getCapabilities, fileFormat, collectionName, neatLineLayerName);
+			GeoLayerParser neatLineParser = new GeoLayerParser(workspaceName, dataStore, fileFormat, collectionName, neatLineLayerName);
 			GeoLayer neatLineLayer = neatLineParser.getLayer();
 			layerCollection.setNeatLine(neatLineLayer);
 			// 레이어
-			GeoLayerParser layersParser = new GeoLayerParser(workspaceName, getCapabilities, fileFormat, collectionName, layerNames);
+			GeoLayerParser layersParser = new GeoLayerParser(workspaceName, dataStore, fileFormat, collectionName, layerNames);
 			GeoLayerList layerList = layersParser.getLayerList();
 			if(layerList != null) {
 				layerCollection.setLayers(layerList);
+				layerCollection.setFileFormat(fileFormat);
 				layerCollections.add(layerCollection);
 			}
 		}

@@ -35,12 +35,14 @@
 package com.git.gdsbuilder.validator.layer;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureIterator;
 import org.geotools.feature.SchemaException;
 import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.type.FeatureType;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.operation.TransformException;
@@ -240,7 +242,7 @@ public class LayerValidatorImpl implements LayerValidator {
 				for (ErrorFeature errFeature : errFeatures) {
 					errFeature.setLayerName(validatorLayer.getLayerName());
 					errLayer.addErrorFeature(errFeature);
-				}
+				} 
 			} else {
 				continue;
 			}
@@ -469,6 +471,190 @@ public class LayerValidatorImpl implements LayerValidator {
 		} else {
 			return null;
 		}
-
 	}
+	
+	/****************************************** 추가 **********************/
+	public ErrorLayer validateUselessEntity() throws SchemaException{
+		ErrorLayer errLayer = new ErrorLayer();
+		SimpleFeatureCollection sfc = validatorLayer.getSimpleFeatureCollection();
+		
+			SimpleFeatureIterator simpleFeatureIterator = sfc.features();
+			while (simpleFeatureIterator.hasNext()) {
+				SimpleFeature simpleFeature = simpleFeatureIterator.next();
+				ErrorFeature errFeature = graphicValidator.validateUselessEntity(simpleFeature);
+				if (errFeature != null) {
+					errFeature.setLayerName(validatorLayer.getLayerName());
+					errLayer.addErrorFeature(errFeature);
+				} else {
+					continue;
+				}
+			}
+			if (errLayer.getErrFeatureList().size() > 0) {
+			return errLayer;
+		} else {
+			return null;
+		}
+	}
+	
+	public ErrorLayer validateBuildingOpen() throws SchemaException{
+		ErrorLayer errorLayer = new ErrorLayer();
+		SimpleFeatureCollection sfc = validatorLayer.getSimpleFeatureCollection();
+		SimpleFeatureIterator simpleFeatureIterator = sfc.features();
+		while (simpleFeatureIterator.hasNext()) {
+			SimpleFeature simpleFeature = simpleFeatureIterator.next();
+			ErrorFeature errFeature = graphicValidator.validateBuildingOpen(simpleFeature);
+			if(errFeature != null){
+				errFeature.setLayerName(validatorLayer.getLayerName());
+				errorLayer.addErrorFeature(errFeature);
+			}else {
+				continue;
+			}
+		}
+		if(errorLayer.getErrFeatureList().size() > 0){
+			return errorLayer;
+		}else{
+			return null;
+		}
+	}
+	
+	public ErrorLayer validateWaterOpen() throws SchemaException{
+		ErrorLayer errorLayer = new ErrorLayer();
+		SimpleFeatureCollection sfc = validatorLayer.getSimpleFeatureCollection();
+		SimpleFeatureIterator simpleFeatureIterator = sfc.features();
+		while (simpleFeatureIterator.hasNext()) {
+			SimpleFeature simpleFeature = simpleFeatureIterator.next();
+			ErrorFeature errFeature = graphicValidator.validateWaterOpen(simpleFeature);
+			if(errFeature != null){
+				errFeature.setLayerName(validatorLayer.getLayerName());
+				errorLayer.addErrorFeature(errFeature);
+			}else{
+				continue;
+			}
+		}
+		if(errorLayer.getErrFeatureList().size() > 0){
+			return errorLayer;
+		}else{
+			return null;
+		}
+	}
+	
+	public ErrorLayer validateLayerMiss(List<String> typeNames) throws SchemaException{
+		ErrorLayer errorLayer = new ErrorLayer();
+		SimpleFeatureCollection sfc = validatorLayer.getSimpleFeatureCollection();
+		SimpleFeatureIterator simpleFeatureIterator = sfc.features(); 
+		while (simpleFeatureIterator.hasNext()) {
+			SimpleFeature simpleFeature = simpleFeatureIterator.next();
+			ErrorFeature errorFeature = graphicValidator.validateLayerMiss(simpleFeature, typeNames);
+			if(errorFeature != null){
+				errorFeature.setLayerName(validatorLayer.getLayerName());
+				errorLayer.addErrorFeature(errorFeature);
+			}else{
+				continue;
+			}
+		}
+		if(errorLayer.getErrFeatureList().size() > 0){
+			return errorLayer;
+		}else{
+			return null;
+		}
+	}
+	
+	public ErrorLayer vallidateB_SymbolOutSided(List<GeoLayer> relationLayers) throws SchemaException{
+		ErrorLayer errorLayer = new ErrorLayer();
+		
+		SimpleFeatureCollection sfc = validatorLayer.getSimpleFeatureCollection();
+		List<SimpleFeature> simpleFeatures = new ArrayList<SimpleFeature>();
+		SimpleFeatureIterator simpleFeatureIterator = sfc.features();
+		
+		while (simpleFeatureIterator.hasNext()) {
+			SimpleFeature simpleFeature = simpleFeatureIterator.next();
+			simpleFeatures.add(simpleFeature);
+		}
+		
+		for (int i = 0; i < relationLayers.size(); i++) {
+			GeoLayer relationLayer = relationLayers.get(i);
+			SimpleFeatureCollection relationSfc = relationLayer.getSimpleFeatureCollection();
+			SimpleFeatureIterator relationSimpleFeatureIterator = relationSfc.features();
+			while (relationSimpleFeatureIterator.hasNext()) {
+				SimpleFeature relationSimpleFeature = relationSimpleFeatureIterator.next();
+				ErrorFeature errorFeature = graphicValidator.validateB_SymbolOutSided(simpleFeatures, relationSimpleFeature);
+				if(errorFeature != null){
+					errorFeature.setLayerName(validatorLayer.getLayerName());
+					errorLayer.addErrorFeature(errorFeature);
+				}else{
+					continue;
+				}
+			}
+		}
+		return errorLayer;
+	}
+	
+	public ErrorLayer validateCrossRoad(List<GeoLayer> relationLayers) throws SchemaException{
+		ErrorLayer errorLayer = new ErrorLayer();
+		
+		SimpleFeatureCollection sfc = validatorLayer.getSimpleFeatureCollection();
+		List<SimpleFeature> simpleFeatures = new ArrayList<SimpleFeature>();
+		SimpleFeatureIterator simpleFeatureIterator = sfc.features();
+		while (simpleFeatureIterator.hasNext()) {
+			SimpleFeature simpleFeature = simpleFeatureIterator.next();
+			simpleFeatures.add(simpleFeature);
+		}
+		
+		for (int i = 0; i < relationLayers.size(); i++) {
+			GeoLayer relationLayer = relationLayers.get(i);
+			SimpleFeatureCollection relationSfc = relationLayer.getSimpleFeatureCollection();
+			SimpleFeatureIterator relationSimpleFeatureIterator = relationSfc.features();
+			while (relationSimpleFeatureIterator.hasNext()) {
+				SimpleFeature relationSimpleFeature = relationSimpleFeatureIterator.next();
+				for (int j = 0; j < simpleFeatures.size(); j++) {
+					SimpleFeature simpleFeature = simpleFeatures.get(j);
+					ErrorFeature errorFeature = graphicValidator.validateCrossRoad(simpleFeature, relationSimpleFeature);
+					if(errorFeature != null){
+						errorFeature.setLayerName(validatorLayer.getLayerName());
+						errorLayer.addErrorFeature(errorFeature);
+					}else{
+						continue;
+					}
+				}
+			}
+		}
+		return errorLayer;
+	}
+	
+	public ErrorLayer validateNodeMiss() throws SchemaException{
+		return null;
+	}
+	
+	public ErrorLayer validateBridgeName(List<GeoLayer> relationLayers) throws SchemaException{
+		ErrorLayer errorLayer = new ErrorLayer();
+		SimpleFeatureCollection sfc = validatorLayer.getSimpleFeatureCollection();
+		
+		List<SimpleFeature> simpleFeatures = new ArrayList<SimpleFeature>();
+		SimpleFeatureIterator simpleFeatureIterator = sfc.features();
+		while (simpleFeatureIterator.hasNext()) {
+			SimpleFeature simpleFeature = simpleFeatureIterator.next();
+			simpleFeatures.add(simpleFeature);
+		}
+		for (int i = 0; i < relationLayers.size(); i++) {
+			GeoLayer relationLayer = relationLayers.get(i);
+			SimpleFeatureCollection relationSfc = relationLayer.getSimpleFeatureCollection();
+			SimpleFeatureIterator relationSimpleFeatureIterator = relationSfc.features();
+			while (relationSimpleFeatureIterator.hasNext()) {
+				SimpleFeature relationSimpleFeature = relationSimpleFeatureIterator.next();
+				for (int j = 0; j < simpleFeatures.size(); j++) {
+					SimpleFeature simpleFeature = simpleFeatures.get(j);
+					ErrorFeature errorFeature = attributeValidator.validateBridgeName(simpleFeature, relationSimpleFeature);
+					if(errorFeature != null){
+						errorFeature.setLayerName(validatorLayer.getLayerName());
+						errorLayer.addErrorFeature(errorFeature);
+					}else{
+						continue;
+					}
+				}
+			}
+		}
+		
+		return null;
+	}
+	
 }

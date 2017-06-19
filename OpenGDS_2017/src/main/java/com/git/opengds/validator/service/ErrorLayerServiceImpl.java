@@ -58,6 +58,7 @@ public class ErrorLayerServiceImpl implements ErrorLayerService {
 
 		for (int i = 0; i < errLayers.size(); i++) {
 			ErrorLayer errLayer = errLayers.get(i);
+			String fileType = errLayer.getCollectionType();
 			ErrorLayerDBQueryManager converter = new ErrorLayerDBQueryManager(errLayer);
 			// create
 			HashMap<String, Object> createQuery = converter.createErrorLayerTbQuery();
@@ -72,6 +73,7 @@ public class ErrorLayerServiceImpl implements ErrorLayerService {
 			layerInfo.setFileName(errLayer.getCollectionName());
 			layerInfo.setOriginSrc("EPSG:5186");
 			layerInfo.setTransSrc("EPSG:3857");
+			layerInfo.setFileType(fileType);
 			geoLayerInfoList.add(layerInfo);
 		}
 		geoserverService.errLayerPublishGeoserver(geoLayerInfoList);
