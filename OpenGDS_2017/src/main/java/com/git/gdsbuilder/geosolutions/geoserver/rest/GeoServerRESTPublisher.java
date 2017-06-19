@@ -2642,7 +2642,6 @@ public class GeoServerRESTPublisher {
             if (LOGGER.isWarnEnabled())
                 LOGGER.warn("Error configuring layer " + fqLayerName + " (" + sendResult + ")");
         }
-
         return sendResult != null;
     }
 

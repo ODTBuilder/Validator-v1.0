@@ -189,7 +189,9 @@ public class GeoserverLayerCollectionTree extends JSONArray {
 
 					JSONObject layerJson = new JSONObject();
 					if (preName.equals("err")) { // 파일명이 eg 또는 el인 경우 -
+
 						int dash = cutLayerName.indexOf("_");
+
 						String fileType = cutLayerName.substring(0, dash);
 						String lastName = cutLayerName.substring(dash+1); // 파일명_레이어명
 						
@@ -211,7 +213,7 @@ public class GeoserverLayerCollectionTree extends JSONArray {
 							layerJson.put("text", lastName);
 							layerJson.put("type", "e_shp_layer");
 						}
-						super.add(layerJson);
+				super.add(layerJson);
 					} else if (preName.equals("gen")) { // 파일명이 gen인 경우
 						int dash = cutLayerName.indexOf("_");
 						String fileType = cutLayerName.substring(0, dash);
@@ -235,6 +237,7 @@ public class GeoserverLayerCollectionTree extends JSONArray {
 							layerJson.put("text", lastName);
 							layerJson.put("type", "g_layer_shp");
 						}
+
 						super.add(layerJson);
 					} else {
 						int dash = cutLayerName.indexOf("_");

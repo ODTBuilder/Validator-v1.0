@@ -150,7 +150,6 @@ public class GeoLayerCollectionParser {
 		String neatLineLayerName = (String) collectionObj.get("neatLineLayer");
 		JSONArray layerNames = (JSONArray) collectionObj.get("layers");
 		
-		
 
 		this.layerCollections = new GeoLayerCollectionList();
 		for (int i = 0; i < collectionNames.size(); i++) {
