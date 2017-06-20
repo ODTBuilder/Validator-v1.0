@@ -15,6 +15,8 @@ gb.edit.LayerInformation = function(obj) {
 	this.url = options.url ? options.url : null;
 	this.layer;
 	this.window;
+	this.originData;
+	this.currentData;
 
 	var xSpan = $("<span>").attr({
 		"aria-hidden" : true
@@ -396,5 +398,9 @@ gb.edit.LayerInformation.prototype.setTitle = function(title) {
 	return;
 };
 gb.edit.LayerInformation.prototype.setAttributeType = function() {
+	return;
+};
+gb.edit.LayerInformation.prototype.getInformationForm = function() {
+	this.body
 	return;
 };

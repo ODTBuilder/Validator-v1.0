@@ -16,7 +16,7 @@ gb.inform.LayerInformation = function(opt) {
 	this.id = options.id ? options.id : null;
 	this.type = options.type ? options.type : null;
 	this.format = options.format ? options.format : null;
-	this.epsg = options.epsg ? options.epsg : null; 
+	this.epsg = options.epsg ? options.epsg : null;
 	this.ngi = {
 		"version" : options.version ? options.version : 2,
 		"dim" : options.dim ? options.dim : 2
@@ -101,4 +101,27 @@ gb.inform.LayerInformation.prototype.setAttributes = function(attrs) {
 };
 gb.inform.LayerInformation.prototype.getAttributes = function() {
 	return this.attributes;
+};
+
+gb.inform.LayerInformation.prototype.clone = function() {
+	var that = this;
+	var arr = [];
+	for (var i = 0; i < this.getAttributes().length; i++) {
+		arr.push(this.getAttributes()[i].clone());
+	}
+	var obj = new gb.inform.LayerInformation({
+		name : this.getName().toString(),
+		id : this.getId().toString(),
+		type : this.getType().toString(),
+		format : this.getFormat().toString(),
+		epsg : this.getEPSG().toString(),
+		version : this.getNGIVersion().toString(),
+		dim : this.getNGIDim().toString(),
+		mbound : this.getMbound().slice(),
+		lbound : this.getLbound().slice(),
+		represent : this.getRepresent().toString(),
+		// 나중에 애트리뷰트 각각 객체도 클론해야함
+		attributes : arr
+	});
+	return obj;
 };
