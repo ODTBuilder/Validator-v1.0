@@ -603,7 +603,7 @@ html {
 									 */
 									"action" : function(data) {
 										var inst = $.jstree.reference(data.reference), obj = inst.get_node(data.reference);
-										layerInfo.load(obj.id);
+										layerInfo.load(obj.id, obj.text);
 										// 										console.log("Not yet(layer info)");
 									}
 								}
