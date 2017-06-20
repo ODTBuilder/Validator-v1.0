@@ -10,7 +10,7 @@ if (!gitbuilder)
 	gitbuilder = {};
 if (!gitbuilder.ui)
 	gitbuilder.ui = {};
-gitbuilder.ui.OptionDefinition = $.widget("gitbuilder.optiondefinition", {
+gitbuilder.ui.OptionDefinition10 = $.widget("gitbuilder.optiondefinition10", {
 	widnow : undefined,
 	optDef : undefined,
 	optDefCopy : undefined,
@@ -118,9 +118,9 @@ gitbuilder.ui.OptionDefinition = $.widget("gitbuilder.optiondefinition", {
 	dOption : $("<ul>").addClass("list-group").css({
 		"margin-bottom" : 0
 	}),
-	codeSelect : $("<select>").addClass("form-control").addClass("optiondefinition-attr-select"),
+	codeSelect : $("<select>").addClass("form-control").addClass("optiondefinition10-attr-select"),
 	attrForm : $("<tbody>"),
-	addBtn : $("<button>").text("Add Attribute").addClass("optiondefinition-attr-addrow").addClass("btn").addClass("btn-default"),
+	addBtn : $("<button>").text("Add Attribute").addClass("optiondefinition10-attr-addrow").addClass("btn").addClass("btn-default"),
 	file : $("<input>").attr({
 		"type" : "file"
 	}),
@@ -175,14 +175,14 @@ gitbuilder.ui.OptionDefinition = $.widget("gitbuilder.optiondefinition", {
 			"max-height" : "500px",
 			"overflow-y" : "auto"
 		}).append(this.lAlias);
-		$(document).on("click", ".optiondefinition-alias", function() {
+		$(document).on("click", ".optiondefinition10-alias", function() {
 			$(that.dOption).empty();
 			var chldr = $(this).parent().children();
 			for (var i = 0; i < chldr.length; i++) {
 				$(chldr).removeClass("active");
 			}
 			$(this).addClass("active");
-			var text = $(this).find(".optiondefinition-alias-span").text();
+			var text = $(this).find(".optiondefinition10-alias-span").text();
 			that.selectedLayerNow = text;
 			var opt = that.optDefCopy[text];
 			var mix = {
@@ -202,7 +202,7 @@ gitbuilder.ui.OptionDefinition = $.widget("gitbuilder.optiondefinition", {
 			"max-height" : "500px",
 			"overflow-y" : "auto"
 		}).append(this.vItem);
-		$(document).on("click", ".optiondefinition-item", function() {
+		$(document).on("click", ".optiondefinition10-item", function() {
 			var chldr = $(this).parent().children();
 			for (var i = 0; i < chldr.length; i++) {
 				$(chldr).removeClass("active");
@@ -220,7 +220,7 @@ gitbuilder.ui.OptionDefinition = $.widget("gitbuilder.optiondefinition", {
 			};
 			that._printDetailedOption(mix);
 		});
-		$(document).on("change", ".optiondefinition-item-check", function() {
+		$(document).on("change", ".optiondefinition10-item-check", function() {
 			if ($(this).prop("checked")) {
 				if (that.optItem[$(this).val()].type === "none") {
 					if (!that.optDefCopy.hasOwnProperty(that.selectedLayerNow)) {
@@ -233,7 +233,7 @@ gitbuilder.ui.OptionDefinition = $.widget("gitbuilder.optiondefinition", {
 			}
 		});
 
-		$(document).on("input", ".optiondefinition-figure-text", function() {
+		$(document).on("input", ".optiondefinition10-figure-text", function() {
 			if ($(this).val() === "") {
 				delete that.optDefCopy[that.selectedLayerNow][that.selectedValidationNow];
 				that._toggleCheckbox(that.selectedValidationNow, false);
@@ -257,7 +257,7 @@ gitbuilder.ui.OptionDefinition = $.widget("gitbuilder.optiondefinition", {
 
 		$(document).on(
 				"change",
-				".optiondefinition-rel-check",
+				".optiondefinition10-rel-check",
 				function() {
 					if ($(this).prop("checked")) {
 						if (!that.optDefCopy.hasOwnProperty(that.selectedLayerNow)) {
@@ -285,10 +285,10 @@ gitbuilder.ui.OptionDefinition = $.widget("gitbuilder.optiondefinition", {
 					}
 				});
 
-		$(document).on("change", ".optiondefinition-attr-select", function() {
+		$(document).on("change", ".optiondefinition10-attr-select", function() {
 			that._updateAttribute($(this).val());
 		});
-		$(document).on("click", ".optiondefinition-attr-del", function() {
+		$(document).on("click", ".optiondefinition10-attr-del", function() {
 			var row1 = $(this).parent().parent();
 			var row2 = $(this).parent().parent().next();
 			var keyname = $(row1).find("input[type=text]").val();
@@ -307,14 +307,14 @@ gitbuilder.ui.OptionDefinition = $.widget("gitbuilder.optiondefinition", {
 			$(row2).remove();
 			$(row1).remove();
 		});
-		$(document).on("click", ".optiondefinition-attr-addrow", function() {
+		$(document).on("click", ".optiondefinition10-attr-addrow", function() {
 			var text = $("<input>").attr({
 				"type" : "text"
 			}).css({
 				"display" : "inline-block"
 			});
 			that._addClass(text, "form-control");
-			that._addClass(text, "optiondefinition-attr-text");
+			that._addClass(text, "optiondefinition10-attr-text");
 			var td1 = $("<td>").append(text);
 
 			var icon = $("<i>").attr("aria-hidden", true);
@@ -325,14 +325,14 @@ gitbuilder.ui.OptionDefinition = $.widget("gitbuilder.optiondefinition", {
 			}).append(icon);
 			that._addClass(btn, "btn");
 			that._addClass(btn, "btn-default");
-			that._addClass(btn, "optiondefinition-attr-del");
+			that._addClass(btn, "optiondefinition10-attr-del");
 			var td2 = $("<td>").append(btn);
 
 			var text2 = $("<input>").attr({
 				"type" : "text"
 			});
 			that._addClass(text2, "form-control");
-			that._addClass(text2, "optiondefinition-attr-text2");
+			that._addClass(text2, "optiondefinition10-attr-text2");
 			var td3 = $("<td>").attr({
 				"colspan" : "2"
 			}).css({
@@ -344,12 +344,12 @@ gitbuilder.ui.OptionDefinition = $.widget("gitbuilder.optiondefinition", {
 
 			$(that.attrForm).append(btr1).append(btr2);
 		});
-		$(document).on("input", ".optiondefinition-attr-text, .optiondefinition-attr-text2", function() {
-			var attrs = $(that.attrForm).find("input.optiondefinition-attr-text");
+		$(document).on("input", ".optiondefinition10-attr-text, .optiondefinition10-attr-text2", function() {
+			var attrs = $(that.attrForm).find("input.optiondefinition10-attr-text");
 			var obj = {};
 			for (var i = 0; i < attrs.length; i++) {
 				var key = $(attrs[i]).val();
-				var values = $(attrs[i]).parent().parent().next().find("input[type=text].optiondefinition-attr-text2").val().split(",");
+				var values = $(attrs[i]).parent().parent().next().find("input[type=text].optiondefinition10-attr-text2").val().split(",");
 				obj[key] = values;
 			}
 			var selected = $(that.codeSelect).val();
@@ -577,7 +577,7 @@ gitbuilder.ui.OptionDefinition = $.widget("gitbuilder.optiondefinition", {
 		var keys = Object.keys(obj);
 		for (var i = 0; i < keys.length; i++) {
 			var alias = $("<span>").text(keys[i]);
-			that._addClass(alias, "optiondefinition-alias-span");
+			that._addClass(alias, "optiondefinition10-alias-span");
 			var span = $("<span>").text(obj[keys[i]].geom).css({
 				"font-weight" : "100"
 			});
@@ -586,7 +586,7 @@ gitbuilder.ui.OptionDefinition = $.widget("gitbuilder.optiondefinition", {
 				"title" : obj[keys[i]].code
 			}).append(alias).append(span);
 			that._addClass(anchor, "list-group-item");
-			that._addClass(anchor, "optiondefinition-alias");
+			that._addClass(anchor, "optiondefinition10-alias");
 			if (obj[keys[i]].area) {
 				that._addClass(anchor, "list-group-item-info");
 			}
@@ -621,7 +621,7 @@ gitbuilder.ui.OptionDefinition = $.widget("gitbuilder.optiondefinition", {
 				"type" : "checkbox",
 				"value" : that.optItem[list[i]].alias
 			});
-			that._addClass(checkbox, "optiondefinition-item-check");
+			that._addClass(checkbox, "optiondefinition10-item-check");
 			if (!!obj) {
 				var keys = Object.keys(obj);
 				if (keys.indexOf(list[i]) !== -1) {
@@ -635,7 +635,7 @@ gitbuilder.ui.OptionDefinition = $.widget("gitbuilder.optiondefinition", {
 			var li = $("<li>").append(checkbox).append(title);
 
 			that._addClass(li, "list-group-item");
-			that._addClass(li, "optiondefinition-item");
+			that._addClass(li, "optiondefinition10-item");
 			$(that.vItem).append(li);
 		}
 
@@ -657,7 +657,7 @@ gitbuilder.ui.OptionDefinition = $.widget("gitbuilder.optiondefinition", {
 			var input = $("<input>").attr({
 				"type" : "text"
 			});
-			that._addClass(input, "optiondefinition-figure-text");
+			that._addClass(input, "optiondefinition10-figure-text");
 			that._addClass(input, "form-control");
 			if (!!optObj) {
 				var keys = Object.keys(optObj);
@@ -697,7 +697,7 @@ gitbuilder.ui.OptionDefinition = $.widget("gitbuilder.optiondefinition", {
 					"vertical-align" : "top",
 					"margin-right" : "3px"
 				});
-				that._addClass(checkbox, "optiondefinition-rel-check");
+				that._addClass(checkbox, "optiondefinition10-rel-check");
 				if (that.optDefCopy.hasOwnProperty(that.selectedLayerNow)) {
 					if (that.optDefCopy[that.selectedLayerNow].hasOwnProperty(vtem)) {
 						if (that.optDefCopy[that.selectedLayerNow][vtem].relation.indexOf(keys[i]) !== -1) {
@@ -761,7 +761,7 @@ gitbuilder.ui.OptionDefinition = $.widget("gitbuilder.optiondefinition", {
 				"display" : "inline-block"
 			});
 			that._addClass(text, "form-control");
-			that._addClass(text, "optiondefinition-attr-text");
+			that._addClass(text, "optiondefinition10-attr-text");
 			var td1 = $("<td>").append(text);
 
 			var icon = $("<i>").attr("aria-hidden", true);
@@ -772,7 +772,7 @@ gitbuilder.ui.OptionDefinition = $.widget("gitbuilder.optiondefinition", {
 			}).append(icon);
 			that._addClass(btn, "btn");
 			that._addClass(btn, "btn-default");
-			that._addClass(btn, "optiondefinition-attr-del");
+			that._addClass(btn, "optiondefinition10-attr-del");
 			var td2 = $("<td>").append(btn);
 
 			var text2 = $("<input>").attr({
@@ -780,7 +780,7 @@ gitbuilder.ui.OptionDefinition = $.widget("gitbuilder.optiondefinition", {
 				"value" : attrs[keys[j]].toString()
 			});
 			that._addClass(text2, "form-control");
-			that._addClass(text2, "optiondefinition-attr-text2");
+			that._addClass(text2, "optiondefinition10-attr-text2");
 			var td3 = $("<td>").attr({
 				"colspan" : "2"
 			}).css({

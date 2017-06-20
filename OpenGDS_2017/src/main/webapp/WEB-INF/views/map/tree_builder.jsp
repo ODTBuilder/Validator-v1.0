@@ -91,7 +91,20 @@ html {
 			<li class="dropdown"><a href="#" class="dropdown-toggle"
 				data-toggle="dropdown" role="button" aria-expanded="false"
 				title="Validation"><i class="fa fa-search fa-lg fa-lg"
-					aria-hidden="true"></i> QA</a>
+					aria-hidden="true"></i> QA 1.0</a>
+				<ul class="dropdown-menu" role="menu">
+					<li><a href="#" title="Layer Definition" id="layerDefinition1">Layer
+							Definition</a></li>
+					<li><a href="#" title="Validating Option"
+						id="validDefinition1">Validating Option</a></li>
+					<li><a href="#" title="Layer Weight" id="weight1">Layer
+							Weight</a></li>
+					<li><a href="#" title="Validation" id="validation1">Validation</a></li>
+				</ul></li>
+			<li class="dropdown"><a href="#" class="dropdown-toggle"
+				data-toggle="dropdown" role="button" aria-expanded="false"
+				title="Validation"><i class="fa fa-search fa-lg fa-lg"
+					aria-hidden="true"></i> QA 2.0</a>
 				<ul class="dropdown-menu" role="menu">
 					<li><a href="#" title="Layer Definition" id="layerDefinition">Layer
 							Definition</a></li>
@@ -283,13 +296,13 @@ html {
 		var record = new gb.edit.FeatureRecord({
 			id : "feature_id"
 		});
-		
+
 		var transfer = new gb.edit.RecordTransfer({
 			url : "editLayerCollection/editLayerCollection.ajax",
 			feature : record
 		});
-		
-		$("#save").click(function(){
+
+		$("#save").click(function() {
 			transfer.sendStructure();
 		});
 
@@ -302,12 +315,42 @@ html {
 				return $('#builderClientLayer').jstreeol3("get_selected_layer");
 			}
 		});
-		
+
 		$("#changeBase").changebase({
 			map : map2
 		});
 
-		$("#layerDefinition").layerdefinition({
+		$("#layerDefinition1").layerdefinition10({});
+
+		$("#validDefinition1").optiondefinition10({
+			layerDefinition : function() {
+				return $("#layerDefinition1").layerdefinition10("getDefinition");
+			}
+		});
+
+		$("#weight1").weightdefinition({
+			layerDefinition : function() {
+				return $("#layerDefinition1").layerdefinition10("getDefinition");
+			},
+			optionDefinition : function() {
+				return $("#validDefinition1").optiondefinition10("getDefinition");
+			}
+		});
+
+		$("#validation1").validation({
+			validatorURL : "validator/validate.ajax",
+			layerDefinition : function() {
+				return $("#layerDefinition1").layerdefinition10("getDefinition");
+			},
+			optionDefinition : function() {
+				return $("#validDefinition1").optiondefinition10("getDefinition");
+			},
+			weightDefinition : function() {
+				return $("#weight1").weightdefinition("getDefinition");
+			}
+		});
+
+		$("#layerDefinition").layerdefinition20({
 			definition : {
 				"RoadBoundary" : {
 					"code" : [ "A0010000" ],
@@ -347,9 +390,9 @@ html {
 			}
 		});
 
-		$("#validDefinition").optiondefinition({
+		$("#validDefinition").optiondefinition20({
 			layerDefinition : function() {
-				return $("#layerDefinition").layerdefinition("getDefinition");
+				return $("#layerDefinition").layerdefinition20("getDefinition");
 			},
 			definition : {
 				"RoadBoundary" : {
@@ -433,22 +476,22 @@ html {
 
 		$("#weight").weightdefinition({
 			layerDefinition : function() {
-				return $("#layerDefinition").layerdefinition("getDefinition");
+				return $("#layerDefinition").layerdefinition20("getDefinition");
 			},
-			optionDefinition : function(){
-				return $("#validDefinition").optiondefinition("getDefinition");
+			optionDefinition : function() {
+				return $("#validDefinition").optiondefinition20("getDefinition");
 			}
 		});
-		
+
 		$("#validation").validation({
 			validatorURL : "validator/validate.ajax",
 			layerDefinition : function() {
-				return $("#layerDefinition").layerdefinition("getDefinition");
+				return $("#layerDefinition").layerdefinition20("getDefinition");
 			},
 			optionDefinition : function() {
-				return $("#validDefinition").optiondefinition("getDefinition");
+				return $("#validDefinition").optiondefinition20("getDefinition");
 			},
-			weightDefinition : function(){
+			weightDefinition : function() {
 				return $("#weight").weightdefinition("getDefinition");
 			}
 		});
@@ -458,25 +501,114 @@ html {
 			user : "admin"
 		});
 
-		$("#builderServerLayer").jstree({
-			"core" : {
-				"animation" : 0,
-				"check_callback" : true,
-				"themes" : {
-					"stripes" : true
-				},
-				'data' : {
-					'url' : function() {
-						return 'geoserver2/getGeolayerCollectionTree.ajax';
-					}
-				}
-			},
-			"geoserver" : {
-				"map" : map,
-				"user" : "admin"
-			},
-			"plugins" : [ "contextmenu", "search", "state", "types", "geoserver" ]
-		});
+		var layerInfo = new gb.edit.LayerInformation();
+		$("#builderServerLayer").jstree(
+				{
+					"core" : {
+						"animation" : 0,
+						"check_callback" : true,
+						"themes" : {
+							"stripes" : true
+						},
+						'data' : {
+							'url' : function() {
+								return 'geoserver2/getGeolayerCollectionTree.ajax';
+							}
+						}
+					},
+					"geoserver" : {
+						"map" : map,
+						"user" : "admin"
+					},
+					"contextmenu" : {
+
+						select_node : true,
+
+						show_at_node : true,
+
+						items : function(o, cb) { // Could be an object directly
+							return {
+								"import" : {
+									"separator_before" : true,
+									"icon" : "fa fa-download",
+									"separator_after" : true,
+									"label" : "Import",
+									"action" : false,
+									"submenu" : {
+										"image" : {
+											"separator_before" : false,
+											"icon" : "fa fa-file-image-o",
+											"separator_after" : false,
+											"label" : "Image",
+											"action" : function(data) {
+												var inst = $.jstree.reference(data.reference), obj = inst.get_node(data.reference);
+												if (obj.type === "n_ngi_layer_pt" || obj.type === "n_ngi_layer_ln" || obj.type === "n_ngi_layer_pg") {
+													var arr = inst.get_selected();
+													if (inst.get_node(inst.get_parent(obj)).type === "n_ngi_group") {
+														var wmsInfo = {
+															"refer" : inst,
+															"arr" : arr,
+															"parent" : inst.get_parent(obj)
+														}
+														inst.import_image(wmsInfo);
+													}
+												} else if (obj.type === "n_dxf_layer_arc" || obj.type === "n_dxf_layer_cir" || obj.type === "n_dxf_layer_ins"
+														|| obj.type === "n_dxf_layer_lpl" || obj.type === "n_dxf_layer_pl" || obj.type === "n_dxf_layer_txt") {
+													var arr = inst.get_selected();
+													if (inst.get_node(inst.get_parent(obj)).type === "n_dxf_group") {
+														var wmsInfo = {
+															"refer" : inst,
+															"arr" : arr,
+															"parent" : inst.get_parent(obj)
+														}
+														inst.import_image(wmsInfo);
+													}
+												} else if (obj.type === "n_ngi_group" || obj.type === "n_dxf_group") {
+													var arr = inst.get_selected();
+													var arr2 = [];
+													for (var i = 0; i < arr.length; i++) {
+														arr2.push(inst.get_node(arr[i]).text);
+													}
+													inst.import_group(arr2);
+												}
+											}
+										},
+										"vector" : {
+											"separator_before" : false,
+											"icon" : "fa fa-file-excel-o",
+											"separator_after" : false,
+											"label" : "Vector",
+											"action" : function(data) {
+												var inst = $.jstree.reference(data.reference), obj = inst.get_node(data.reference);
+												inst.import_vector();
+											}
+										}
+									}
+								},
+								"info" : {
+									"separator_before" : false,
+									"icon" : "fa fa-info-circle",
+									"separator_after" : false,
+									"_disabled" : false, // (this.check("rename_node",
+									// data.reference,
+									// this.get_parent(data.reference),
+									// "")),
+									"label" : "Information",
+									/*
+									 * ! "shortcut" : 113, "shortcut_label" : 'F2',
+									 * "icon" : "glyphicon glyphicon-leaf",
+									 */
+									"action" : function(data) {
+										var inst = $.jstree.reference(data.reference), obj = inst.get_node(data.reference);
+										layerInfo.open();
+// 										console.log("Not yet(layer info)");
+									}
+								}
+							};
+						}
+					},
+					"plugins" : [ "contextmenu", "search", "state", "types", "geoserver" ]
+				});
 	</script>
 
 </body>
