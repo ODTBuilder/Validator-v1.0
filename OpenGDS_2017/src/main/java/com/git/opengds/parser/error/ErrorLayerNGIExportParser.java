@@ -15,6 +15,9 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 
 public class ErrorLayerNGIExportParser {
+	
+	
+	protected static String layerID = "1";
 
 	// ngi
 	protected static String errIdx = "err_idx";
@@ -66,9 +69,10 @@ public class ErrorLayerNGIExportParser {
 		return ndaHeader;
 	}
 
-	public static QA20LayerCollection parseQA20Feature(String tableName, List<HashMap<String, Object>> errFeatureList) {
+	public static QA20LayerCollection parseQA20LayerCollection(String tableName, List<HashMap<String, Object>> errFeatureList) {
 
 		QA20Layer qa20Layer = new QA20Layer();
+		qa20Layer.setLayerID(layerID);
 		qa20Layer.setLayerName(tableName);
 		qa20Layer.setLayerType(defaultLayerType);
 		qa20Layer.setNgiHeader(getDefaultErrorLayerNGIHeader());
@@ -99,7 +103,4 @@ public class ErrorLayerNGIExportParser {
 		return qa20LayerCollection;
 	}
 
-	public static void parseQA10Feature() {
-
-	}
 }

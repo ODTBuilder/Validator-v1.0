@@ -88,7 +88,7 @@ public class QA10DBManagerServiceImpl implements QA10DBManagerService {
 		try {
 			QA10DBQueryManager dbManager = new QA10DBQueryManager();
 
-			String collectionName = layerCollection.getFileName();
+			String collectionName = layerCollection.getCollectionName();
 			String type = layerInfo.getFileType();
 
 			// collection

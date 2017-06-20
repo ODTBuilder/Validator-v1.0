@@ -28,13 +28,13 @@ public class QA20FileWriter {
 	BufferedWriter ngiWriter;
 	BufferedWriter ndaWriter;
 
-	public void test(QA20LayerCollection qa20LayerCollection) throws IOException {
+	public void writeNGIFile(QA20LayerCollection qa20LayerCollection) throws IOException {
 
 		String collectionId = qa20LayerCollection.getId();
-		String ngiFileName = "D:\\err_" + collectionId + ".ngi";
-		String ndaFileName = "D:\\err_" + collectionId + ".nda";
-		this.ngiWriter = new BufferedWriter(new FileWriter(ngiFileName, true));
-		this.ndaWriter = new BufferedWriter(new FileWriter(ndaFileName, true));
+		String ngiFileRoot = "D:\\err_" + collectionId + ".ngi";
+		String ndaFileRoot = "D:\\err_" + collectionId + ".nda";
+		this.ngiWriter = new BufferedWriter(new FileWriter(ngiFileRoot, true));
+		this.ndaWriter = new BufferedWriter(new FileWriter(ndaFileRoot, true));
 
 		QA20LayerList layerList = qa20LayerCollection.getQa20LayerList();
 		for (int i = 0; i < layerList.size(); i++) {
