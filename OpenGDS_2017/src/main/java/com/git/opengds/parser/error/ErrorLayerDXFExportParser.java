@@ -16,16 +16,13 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 
 public class ErrorLayerDXFExportParser {
 	
-	
 	protected static String errIdx = "err_idx";
 	protected static String featureId = "feature_id";
 	protected static String coorX = "x_coordinate";
 	protected static String coorY = "y_coordinate";
 	
-	
 	protected static String defaultLayerType = "POINT";
 	protected static String defaultFeatureType = "POINT";
-
 
 	public static QA10LayerCollection parseQA10LayerCollection(String tableName, List<HashMap<String, Object>> errFeatureList) {
 
@@ -50,7 +47,6 @@ public class ErrorLayerDXFExportParser {
 		qa10LayerCollection = setDXFFileSection(qa10LayerCollection);
 		return qa10LayerCollection;
 	}
-
 
 	private static QA10LayerCollection setDXFFileSection(QA10LayerCollection qa10LayerCollection) {
 		

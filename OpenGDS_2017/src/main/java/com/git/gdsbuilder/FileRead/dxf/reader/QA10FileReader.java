@@ -12,6 +12,7 @@ import org.kabeja.parser.ParserBuilder;
 import com.git.gdsbuilder.FileRead.dxf.parser.QA10FileLayerParser;
 import com.git.gdsbuilder.type.qa10.collection.QA10LayerCollection;
 import com.git.gdsbuilder.type.qa10.layer.QA10LayerList;
+import com.git.gdsbuilder.type.qa10.structure.QA10Blocks;
 import com.git.gdsbuilder.type.qa10.structure.QA10Header;
 import com.git.gdsbuilder.type.qa10.structure.QA10Tables;
 import com.git.opengds.upload.domain.FileMeta;
@@ -42,7 +43,7 @@ public class QA10FileReader {
 			dtCollection.setHeader(getHeader(fileName));
 
 			// 2. blocks
-			// dtCollection.setBlocks(getBlocks(fileName, doc));
+			dtCollection.setBlocks(getBlocks(fileName, doc.getDXFBlockIterator()));
 
 			// 3. table
 			dtCollection.setTables(getTables(fileName, doc.getDXFLineTypeIterator(), doc.getDXFLayerIterator(),
@@ -53,6 +54,15 @@ public class QA10FileReader {
 			// TODO Auto-generated catch block
 		}
 		return dtCollection;
+	}
+
+	private QA10Blocks getBlocks(String fileName, Iterator blockIterator) {
+	
+		QA10Blocks blocks = new QA10Blocks();
+		blocks.setCollectionName(fileName);
+		blocks.setBlocksValues(blockIterator);
+		return blocks;
+		
 	}
 
 	private QA10Header getHeader(String fileName) {

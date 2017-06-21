@@ -54,16 +54,13 @@ public class QA10FileWriter {
 		// entities
 		writeEntitesSection(qa10LayerCollection.getEntities());
 
-		
 		dxfWriter.write("0");
 		dxfWriter.newLine();
 		dxfWriter.write("EOF");
 		dxfWriter.newLine();
-		
+
 		dxfWriter.flush();
 		dxfWriter.close();
-
-		System.out.println("");
 	}
 
 	private void writeDefaultBlockSection() throws IOException {
@@ -132,7 +129,7 @@ public class QA10FileWriter {
 		writeDefaultLTYPE(qa10Tables.getLineTypes());
 		writeDefaultLAYER(qa10Tables.getLayers());
 		writeDefaultSTYLE(qa10Tables.getStyles());
-		
+
 		dxfWriter.write(endSectionCode);
 		dxfWriter.newLine();
 		dxfWriter.write(endSection);

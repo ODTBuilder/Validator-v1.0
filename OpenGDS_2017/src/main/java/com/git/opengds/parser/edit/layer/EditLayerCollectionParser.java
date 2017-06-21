@@ -108,7 +108,7 @@ public class EditLayerCollectionParser {
 				JSONArray layerArr = (JSONArray) collectionObj.get(state);
 				for (int i = 0; i < layerArr.size(); i++) {
 					JSONObject layerObj = (JSONObject) layerArr.get(i);
-					EditLayerParser layerParser = new EditLayerParser(type, layerObj);
+					EditLayerParser layerParser = new EditLayerParser(type, layerObj, state);
 					qa20LayerList.add(layerParser.getQa20Layer());
 				}
 				editCollection.addAllCreateLayer(qa20LayerList);
@@ -130,7 +130,15 @@ public class EditLayerCollectionParser {
 				editCollection.addAllDeleteLayer(deletedLayerList);
 				editCollection.setDeleted(true);
 			} else if (state.equals("modify")) {
-
+				QA20LayerList modifiedLayerList = new QA20LayerList();
+				JSONArray layerArr = (JSONArray) collectionObj.get(state);
+				for (int i = 0; i < layerArr.size(); i++) {
+					JSONObject layerObj = (JSONObject) layerArr.get(i);
+					EditLayerParser layerParser = new EditLayerParser(type, layerObj, state);
+					modifiedLayerList.add(layerParser.getQa20Layer());
+				}
+				editCollection.addAllmodifiedLayer(modifiedLayerList);
+				editCollection.setModified(true);
 			}
 		}
 	}

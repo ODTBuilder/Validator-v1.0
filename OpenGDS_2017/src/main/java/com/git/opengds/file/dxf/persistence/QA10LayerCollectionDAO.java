@@ -30,4 +30,8 @@ public interface QA10LayerCollectionDAO {
 
 	public int deleteQA10Feature(HashMap<String, Object> deleteFeatureMap);
 
+	public int insertQA10LayerCollectionBlocks(HashMap<String, Object> blocksQuery);
+
+	public void insertQA10LayercollectionBlockEntity(HashMap<String, Object> entitiesQuery);
+
 }

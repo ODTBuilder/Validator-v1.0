@@ -37,7 +37,6 @@ public class NDAHeader {
 	public NDAHeader() {
 
 	}
-
 	
 	/**
 	 * NDAHeader 생성자

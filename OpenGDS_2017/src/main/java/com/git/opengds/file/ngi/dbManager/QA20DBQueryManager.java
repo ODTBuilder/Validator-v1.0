@@ -17,6 +17,8 @@
 
 package com.git.opengds.file.ngi.dbManager;
 
+import static org.hamcrest.CoreMatchers.instanceOf;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -37,7 +39,7 @@ import com.git.gdsbuilder.type.qa20.layer.QA20Layer;
  */
 public class QA20DBQueryManager {
 
-	public HashMap<String, Object> getSelectLayerCollectionIdx(String collectionName) { 
+	public HashMap<String, Object> getSelectLayerCollectionIdx(String collectionName) {
 
 		String tableName = "\"" + "qa20_layercollection" + "\"";
 		String selectQuery = "select c_idx from " + tableName + " where file_name = '" + collectionName + "'";
@@ -134,7 +136,7 @@ public class QA20DBQueryManager {
 	}
 
 	public List<HashMap<String, Object>> qa20LayerInsertQuery(String type, String collectionName, QA20Layer qa20Layer) {
-		
+
 		String tableName = "\"geo" + "_" + type + "_" + collectionName + "_" + qa20Layer.getLayerName() + "\"";
 
 		List<HashMap<String, Object>> dbLayers = new ArrayList<HashMap<String, Object>>();
@@ -168,8 +170,14 @@ public class QA20DBQueryManager {
 				while (keys.hasNext()) {
 					String key = (String) keys.next();
 					Object value = properties.get(key);
-					insertDefaultQuery += "\"" + key + "\"" + ", ";
-					insertDefaultValues += "'" + value + "', ";
+
+					if (value instanceof String) {
+						insertDefaultQuery += "\"" + key + "\"" + ", ";
+						insertDefaultValues += "'" + value + "', ";
+					} else {
+						insertDefaultQuery += "\"" + key + "\"" + ", ";
+						insertDefaultValues +=  value + ", ";
+					}
 				}
 			}
 			int lastIndextC = insertDefaultQuery.lastIndexOf(",");
@@ -403,7 +411,7 @@ public class QA20DBQueryManager {
 		}
 		return type;
 	}
-	
+
 	public List<String> getLayerCoulmns(QA20Layer layer) {
 
 		List<String> columns = new ArrayList<String>();

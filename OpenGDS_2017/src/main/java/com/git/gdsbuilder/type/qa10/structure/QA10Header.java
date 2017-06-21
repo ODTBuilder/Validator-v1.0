@@ -81,7 +81,6 @@ public class QA10Header {
 		// linmax.setValue("20", "10000000.0");
 		// variables.add(linmax);
 
-		headerMap.put("defualtHeader", variables);
 		this.defaultValues = headerMap;
 	}
 }

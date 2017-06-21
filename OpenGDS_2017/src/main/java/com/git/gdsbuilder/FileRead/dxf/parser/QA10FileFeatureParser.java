@@ -187,6 +187,7 @@ public class QA10FileFeatureParser {
 			QA10Feature dxfFeature = new QA10Feature(entityID);
 			dxfFeature.setFeatureType(entityType);
 			dxfFeature.setGeom(geom);
+			dxfFeature.setTextValue(dxfText.getText());
 			// dxfFeature.setProperties(EnDXFText.getProperties(style));
 			return dxfFeature;
 		} else {

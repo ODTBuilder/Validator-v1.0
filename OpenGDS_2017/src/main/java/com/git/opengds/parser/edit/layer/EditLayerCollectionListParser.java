@@ -74,7 +74,6 @@ public class EditLayerCollectionListParser {
 		if (type.equals("ngi")) {
 			ngiCollectionListParse();
 		}
-
 	}
 
 	public String getType() {
