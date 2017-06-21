@@ -80,18 +80,19 @@ public class QA10DBManagerServiceImpl implements QA10DBManagerService {
 			}
 			
 			// qa10Layer
+			String src = layerInfo.getOriginSrc();
 			QA10LayerList createLayerList = layerCollection.getQa10Layers();
 			for (int i = 0; i < createLayerList.size(); i++) {
 				QA10Layer qa10Layer = createLayerList.get(i);
 				String layerId = qa10Layer.getLayerID();
 
 				// create QA10Layer
-				HashMap<String, Object> createQuery = dbManager.qa10LayerTbCreateQuery(type, collectionName, qa10Layer);
+				HashMap<String, Object> createQuery = dbManager.qa10LayerTbCreateQuery(type, collectionName, qa10Layer, src);
 				dao.createQA10LayerTb(createQuery);
 
 				// insertQA20Layer
 				List<HashMap<String, Object>> inertLayerQuerys = dbManager.qa10LayerTbInsertQuery(type, collectionName,
-						qa10Layer);
+						qa10Layer, src);
 				for (int j = 0; j < inertLayerQuerys.size(); j++) {
 					HashMap<String, Object> insertLayerQuery = inertLayerQuerys.get(j);
 					dao.insertQA10Layer(insertLayerQuery);

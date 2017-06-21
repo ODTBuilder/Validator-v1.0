@@ -22,14 +22,14 @@ public class QA10DBQueryManager {
 		return insertQueryMap;
 	}
 
-	public HashMap<String, Object> qa10LayerTbCreateQuery(String type, String collectionName, QA10Layer qa10Layer) {
+	public HashMap<String, Object> qa10LayerTbCreateQuery(String type, String collectionName, QA10Layer qa10Layer, String src) {
 
 		String layerType = qa10Layer.getLayerType();
 		String layerId = qa10Layer.getLayerID();
 		String tableName = "\"geo" + "_" + type + "_" + collectionName + "_" + layerId + "\"";
 		String defaultCreateQuery = "create table " + tableName + "("
 				+ "f_idx serial primary key, feature_id varchar(100), geom geometry(" + layerType
-				+ ", 5186), feature_type varchar(50)";
+				+ "," + src + "), feature_type varchar(50)";
 
 		if (layerType.equals("TEXT")) {
 			defaultCreateQuery += ", text_value varchar(100)";
@@ -41,7 +41,7 @@ public class QA10DBQueryManager {
 	}
 
 	public List<HashMap<String, Object>> qa10LayerTbInsertQuery(String type, String collectionName,
-			QA10Layer qa10Layer) {
+			QA10Layer qa10Layer, String src) {
 
 		String layerType = qa10Layer.getLayerType();
 		String layerId = qa10Layer.getLayerID();
@@ -53,7 +53,7 @@ public class QA10DBQueryManager {
 			QA10Feature feature = features.get(i);
 			String defaultInsertColumns = "insert into " + tableName + "(feature_id, geom, feature_type ";
 			String values = "values ('" + feature.getFeatureID() + "', " + "ST_GeomFromText('"
-					+ feature.getGeom().toString() + "', 5186), '" + feature.getFeatureType() + "'";
+					+ feature.getGeom().toString() + "'," + src + "), '" + feature.getFeatureType() + "'";
 
 			if (layerType.equals("TEXT")) {
 				defaultInsertColumns += ", text_value";
