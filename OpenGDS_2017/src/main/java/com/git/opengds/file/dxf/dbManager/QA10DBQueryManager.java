@@ -22,14 +22,15 @@ public class QA10DBQueryManager {
 		return insertQueryMap;
 	}
 
-	public HashMap<String, Object> qa10LayerTbCreateQuery(String type, String collectionName, QA10Layer qa10Layer, String src) {
+	public HashMap<String, Object> qa10LayerTbCreateQuery(String type, String collectionName, QA10Layer qa10Layer,
+			String src) {
 
 		String layerType = qa10Layer.getLayerType();
 		String layerId = qa10Layer.getLayerID();
 		String tableName = "\"geo" + "_" + type + "_" + collectionName + "_" + layerId + "\"";
 		String defaultCreateQuery = "create table " + tableName + "("
-				+ "f_idx serial primary key, feature_id varchar(100), geom geometry(" + layerType
-				+ "," + src + "), feature_type varchar(50)";
+				+ "f_idx serial primary key, feature_id varchar(100), geom geometry(" + layerType + "," + src
+				+ "), feature_type varchar(50)";
 
 		if (layerType.equals("TEXT")) {
 			defaultCreateQuery += ", text_value varchar(100)";
@@ -40,8 +41,8 @@ public class QA10DBQueryManager {
 		return query;
 	}
 
-	public List<HashMap<String, Object>> qa10LayerTbInsertQuery(String type, String collectionName,
-			QA10Layer qa10Layer, String src) {
+	public List<HashMap<String, Object>> qa10LayerTbInsertQuery(String type, String collectionName, QA10Layer qa10Layer,
+			String src) {
 
 		String layerType = qa10Layer.getLayerType();
 		String layerId = qa10Layer.getLayerID();
@@ -124,8 +125,8 @@ public class QA10DBQueryManager {
 
 	public HashMap<String, Object> getSelectLayerCollectionIdx(String collectionName) {
 
-		String tableName = "\"" + "qa10_layercollection" + "\"";
-		String selectQuery = "select c_idx from " + tableName + " where file_name = '" + collectionName + "'";
+		String tableName = "qa10_layercollection";
+		String selectQuery = "select c_idx from " + tableName + " where collection_name = '" + collectionName + "'";
 		HashMap<String, Object> selectQueryMap = new HashMap<String, Object>();
 		selectQueryMap.put("selectQuery", selectQuery);
 
@@ -325,5 +326,124 @@ public class QA10DBQueryManager {
 			insertQueryList.add(query);
 		}
 		return insertQueryList;
+	}
+
+	public HashMap<String, Object> getSelectLayerMetaDataIdx(Integer cIdx) {
+		HashMap<String, Object> selectQuery = new HashMap<String, Object>();
+		String tableName = "\"" + "qa10_layer_metadata" + "\"";
+		String selectQueryStr = "select lm_idx from " + tableName + " where c_idx = " + cIdx;
+		selectQuery.put("selectAllQuery", selectQueryStr);
+		return selectQuery;
+	}
+
+	public HashMap<String, Object> getSelectLayerTableNameQuery(Integer mIdx) {
+		HashMap<String, Object> selectQuery = new HashMap<String, Object>();
+		String tableName = "\"" + "qa10_layer_metadata" + "\"";
+		String selectQueryStr = "select layer_t_name from " + tableName + " where lm_idx = " + mIdx;
+		selectQuery.put("selectQuery", selectQueryStr);
+		return selectQuery;
+	}
+
+	public HashMap<String, Object> getDropLayer(String layerTbName) {
+		HashMap<String, Object> dropQueryMap = new HashMap<String, Object>();
+		String queryStr = "drop table " + "\"" + layerTbName + "\"";
+		dropQueryMap.put("dropQuery", queryStr);
+		return dropQueryMap;
+	}
+
+	public HashMap<String, Object> getDeleteLayerMeta(Integer cIdx) {
+		HashMap<String, Object> deleteQuery = new HashMap<String, Object>();
+		String tableName = "\"" + "qa10_layer_metadata" + "\"";
+		String deleteQueryStr = "delete from " + tableName + " where c_idx = " + cIdx;
+		deleteQuery.put("deleteQuery", deleteQueryStr);
+		return deleteQuery;
+	}
+
+	public HashMap<String, Object> getDeleteLayerCollection(Integer cIdx) {
+		HashMap<String, Object> deleteQuery = new HashMap<String, Object>();
+		String tableName = "\"" + "qa10_layercollection" + "\"";
+		String deleteQueryStr = "delete from " + tableName + " where c_idx = " + cIdx;
+		deleteQuery.put("deleteQuery", deleteQueryStr);
+		return deleteQuery;
+	}
+
+	public HashMap<String, Object> getSelectTableCommonIdx(Integer cIdx) {
+		HashMap<String, Object> selectIdxQuery = new HashMap<String, Object>();
+		String tableName = "qa10_layercollection_table_common";
+		String selectQueryStr = "select tc_idx from " + tableName + " where c_idx = " + cIdx;
+		selectIdxQuery.put("selectQuery", selectQueryStr);
+		return selectIdxQuery;
+	}
+
+	public HashMap<String, Object> getDeleteTableLayers(Integer tcIdx) {
+		HashMap<String, Object> deleteQuery = new HashMap<String, Object>();
+		String tableName = "qa10_layercollection_table_layer";
+		String deleteQueryStr = "delete from " + tableName + " where tc_idx = " + tcIdx;
+		deleteQuery.put("deleteQuery", deleteQueryStr);
+		return deleteQuery;
+	}
+
+	public HashMap<String, Object> getDeleteTables(Integer cIdx) {
+		HashMap<String, Object> deleteQuery = new HashMap<String, Object>();
+		String tableName = "qa10_layercollection_table_common";
+		String deleteQueryStr = "delete from " + tableName + " where c_idx = " + cIdx;
+		deleteQuery.put("deleteQuery", deleteQueryStr);
+		return deleteQuery;
+	}
+
+	public HashMap<String, Object> getSelectBlockCommonIdx(Integer cIdx) {
+		HashMap<String, Object> selectIdxQuery = new HashMap<String, Object>();
+		String tableName = "qa10_layercollection_block_common";
+		String selectQueryStr = "select bc_idx from " + tableName + " where c_idx = " + cIdx;
+		selectIdxQuery.put("selectQuery", selectQueryStr);
+		return selectIdxQuery;
+	}
+
+	public HashMap<String, Object> getDeleteBlockArc(Integer bcIdx) {
+		HashMap<String, Object> deleteQuery = new HashMap<String, Object>();
+		String tableName = "qa10_layercollection_block_arc";
+		String deleteQueryStr = "delete from " + tableName + " where bc_idx = " + bcIdx;
+		deleteQuery.put("deleteQuery", deleteQueryStr);
+		return deleteQuery;
+	}
+
+	public HashMap<String, Object> getDeleteBlockCircle(Integer bcIdx) {
+		HashMap<String, Object> deleteQuery = new HashMap<String, Object>();
+		String tableName = "qa10_layercollection_block_circle";
+		String deleteQueryStr = "delete from " + tableName + " where bc_idx = " + bcIdx;
+		deleteQuery.put("deleteQuery", deleteQueryStr);
+		return deleteQuery;
+	}
+
+	public HashMap<String, Object> getDeleteBlockPolyline(Integer bcIdx) {
+		HashMap<String, Object> deleteQuery = new HashMap<String, Object>();
+		String tableName = "qa10_layercollection_block_polyline";
+		String deleteQueryStr = "delete from " + tableName + " where bc_idx = " + bcIdx;
+		deleteQuery.put("deleteQuery", deleteQueryStr);
+		return deleteQuery;
+	}
+
+	public HashMap<String, Object> getDeleteBlockText(Integer bcIdx) {
+		HashMap<String, Object> deleteQuery = new HashMap<String, Object>();
+		String tableName = "qa10_layercollection_block_text";
+		String deleteQueryStr = "delete from " + tableName + " where bc_idx = " + bcIdx;
+		deleteQuery.put("deleteQuery", deleteQueryStr);
+		return deleteQuery;
+	}
+
+	public HashMap<String, Object> getDeleteBlockVertex(Integer bcIdx) {
+		HashMap<String, Object> deleteQuery = new HashMap<String, Object>();
+		String tableName = "qa10_layercollection_block_vertex";
+		String deleteQueryStr = "delete from " + tableName + " where bc_idx = " + bcIdx;
+		deleteQuery.put("deleteQuery", deleteQueryStr);
+		return deleteQuery;
+	}
+
+	public HashMap<String, Object> getDeleteBlocks(Integer cIdx) {
+		HashMap<String, Object> deleteQuery = new HashMap<String, Object>();
+		String tableName = "qa10_layercollection_block_common";
+		String deleteQueryStr = "delete from " + tableName + " where c_idx = " + cIdx;
+		deleteQuery.put("deleteQuery", deleteQueryStr);
+		return deleteQuery;
 	}
 }

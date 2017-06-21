@@ -27,8 +27,6 @@ import org.apache.ibatis.session.SqlSession;
 import org.postgresql.util.PSQLException;
 import org.springframework.stereotype.Repository;
 
-import com.sun.tools.javah.resources.l10n;
-
 @Repository
 public class QA20LayerCollectionDAOImpl implements QA20LayerCollectionDAO {
 

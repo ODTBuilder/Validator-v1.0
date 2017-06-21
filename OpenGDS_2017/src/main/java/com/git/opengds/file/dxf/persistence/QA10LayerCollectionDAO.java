@@ -1,6 +1,7 @@
 package com.git.opengds.file.dxf.persistence;
 
 import java.util.HashMap;
+import java.util.List;
 
 import org.postgresql.util.PSQLException;
 
@@ -27,5 +28,19 @@ public interface QA10LayerCollectionDAO {
 	public int insertQA10LayerCollectionTableCommon(HashMap<String, Object> tablesQuery);
 
 	public void insertQA10LayerCollectionTableLayers(HashMap<String, Object> hashMap);
+
+	public Integer selectQA10LayerCollectionIdx(HashMap<String, Object> selectLayerCollectionIdxQuery);
+
+	public List<HashMap<String, Object>> selectQA10LayerMetadataIdx(HashMap<String, Object> metadataIdxQuery);
+
+	public HashMap<String, Object> selectQA10LayerTableName(HashMap<String, Object> layerTbNameQuery);
+
+	public int dropLayer(HashMap<String, Object> dropLayerTbQuery);
+
+	public void deleteField(HashMap<String, Object> deleteLayerMetaQuery);
+
+	public Integer selectTableCommonIdx(HashMap<String, Object> tableIdxQuery);
+
+	public List<HashMap<String, Object>>  selectBlockCommonIdx(HashMap<String, Object> tableIdxQuery);
 
 }

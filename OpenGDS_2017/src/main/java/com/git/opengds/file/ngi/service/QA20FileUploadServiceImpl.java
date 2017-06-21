@@ -69,14 +69,14 @@ public class QA20FileUploadServiceImpl implements QA20FileUploadService {
 
 		// publish Layer
 		if (returnInfo != null) {
-			fileMeta.setUploadFlag(true);
-			FileMeta geoserverFileMeta = geoserverService.dbLayerPublishGeoserver(returnInfo);
-			boolean isPublished = geoserverFileMeta.isServerPublishFlag();
-			fileMeta.setServerPublishFlag(isPublished);
-			if (!isPublished) {
-				// 다시 다 삭제
+//			fileMeta.setUploadFlag(true);
+//			FileMeta geoserverFileMeta = geoserverService.dbLayerPublishGeoserver(returnInfo);
+//			boolean isPublished = geoserverFileMeta.isServerPublishFlag();
+//			fileMeta.setServerPublishFlag(isPublished);
+//			if (!isPublished) {
+//				// 다시 다 삭제
 				qa20dbManagerService.dropQA20LayerCollection(dtCollection, layerInfo);
-			}
+//			}
 		}
 		return fileMeta;
 	}

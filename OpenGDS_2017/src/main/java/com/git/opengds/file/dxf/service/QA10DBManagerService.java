@@ -9,4 +9,6 @@ public interface QA10DBManagerService {
 
 	public GeoLayerInfo insertQA10LayerCollection(QA10LayerCollection layerCollection, GeoLayerInfo layerInfo) throws PSQLException;
 
+	public void dropQA10LayerCollection(QA10LayerCollection collection, GeoLayerInfo layerInfo);
+
 }
