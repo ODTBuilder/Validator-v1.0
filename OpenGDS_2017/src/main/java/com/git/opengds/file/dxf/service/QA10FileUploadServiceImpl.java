@@ -41,15 +41,13 @@ public class QA10FileUploadServiceImpl implements QA10FileUploadService {
 		fileMeta.setDbInsertFlag(returnInfo.isDbInsertFlag());
 		// publish Layer
 		if (returnInfo != null) {
-			// fileMeta.setUploadFlag(true); 
-			// FileMeta geoserverFileMeta =
-			// geoserverService.dbLayerPublishGeoserver(returnInfo);
-			// boolean isPublished = geoserverFileMeta.isServerPublishFlag();
-			// fileMeta.setServerPublishFlag(isPublished);
-			// if(!isPublished) {
+			fileMeta.setUploadFlag(true);
+			FileMeta geoserverFileMeta = geoserverService.dbLayerPublishGeoserver(returnInfo);
+			boolean isPublished = geoserverFileMeta.isServerPublishFlag();
+			fileMeta.setServerPublishFlag(isPublished);
+			if (!isPublished) {
 				dbmanagerService.dropQA10LayerCollection(collection, layerInfo);
-//			}
-//			System.out.println("서버성공");
+			}
 		}
 		return fileMeta;
 	}
