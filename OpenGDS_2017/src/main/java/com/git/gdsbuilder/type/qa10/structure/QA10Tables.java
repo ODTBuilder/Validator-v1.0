@@ -10,7 +10,6 @@ import java.util.Map;
 import org.kabeja.dxf.DXFLayer;
 import org.kabeja.dxf.DXFLineType;
 import org.kabeja.dxf.DXFStyle;
-import org.kabeja.dxf.DXFVariable;
 
 import com.git.gdsbuilder.type.qa10.layer.QA10Layer;
 import com.git.gdsbuilder.type.qa10.layer.QA10LayerList;

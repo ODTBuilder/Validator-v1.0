@@ -75,6 +75,12 @@ public class QA20DBManagerServiceImpl implements QA20DBManagerService {
 			for (int i = 0; i < createLayerList.size(); i++) {
 				QA20Layer qa20Layer = createLayerList.get(i);
 				String layerName = qa20Layer.getLayerName();
+				
+				if(layerName.equals("H0040000_TEXT")) {
+					System.out.println("");
+				}
+				
+				
 
 				// createQA20Layer
 				HashMap<String, Object> createQuery = dbManager.qa20LayerTbCreateQuery(type, collectionName, qa20Layer);

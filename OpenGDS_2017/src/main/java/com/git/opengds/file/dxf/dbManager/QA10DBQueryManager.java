@@ -133,17 +133,62 @@ public class QA10DBQueryManager {
 		return selectQueryMap;
 	}
 
-	public HashMap<String, Object> getInsertTables(int cIdx, QA10Tables tables) {
-		// TODO Auto-generated method stub
-		return null;
+	public HashMap<String, Object> getInsertTables(int cIdx, Map<String, Object> tables) {
+
+		LinkedHashMap<String, Object> commons = (LinkedHashMap<String, Object>) tables.get("common");
+
+		String tableName = "\"" + "qa10_layerCollection_table_common" + "\"";
+		String tableColumnQuery = "insert into " + tableName + "(";
+		String tableValuesQuery = "values(";
+
+		Iterator tableIt = commons.keySet().iterator();
+		while (tableIt.hasNext()) {
+			String code = (String) tableIt.next();
+			Object value = commons.get(code);
+			tableColumnQuery += "\"" + code + "\"" + ",";
+			tableValuesQuery += "'" + value + "', ";
+		}
+		tableColumnQuery += "c_idx" + ")";
+		tableValuesQuery += cIdx + ")";
+
+		String returnQuery = tableColumnQuery + tableValuesQuery;
+		HashMap<String, Object> query = new HashMap<String, Object>();
+		query.put("insertQuery", returnQuery);
+		query.put("tc_idx", null);
+
+		return query;
 	}
 
-	public List<HashMap<String, Object>> getInsertTablesLayers(int tbIdx, Map<String, Object> layers) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<HashMap<String, Object>> getInsertTablesLayers(int tbIdx, Map<String, Object> tables) {
+
+		List<HashMap<String, Object>> layerQuerys = new ArrayList<HashMap<String, Object>>();
+		List<LinkedHashMap<String, Object>> layers = (List<LinkedHashMap<String, Object>>) tables.get("layers");
+		
+		String tableName = "\"" + "qa10_layerCollection_table_layer" + "\"";
+		for(int i = 0; i < layers.size(); i++) {
+			LinkedHashMap<String, Object> layer = layers.get(i);
+			String layerColumnQuery = "insert into " + tableName + "(";
+			String layerValuesQuery = "values(";
+			Iterator layerIt = layer.keySet().iterator();
+			while (layerIt.hasNext()) {
+				String code = (String) layerIt.next();
+				Object value = layer.get(code);
+				layerColumnQuery += "\"" + code + "\"" + ",";
+				layerValuesQuery += "'" + value + "', ";
+			}
+			layerColumnQuery += "tc_idx" + ")";
+			layerValuesQuery += tbIdx + ")";
+			
+			String returnQuery = layerColumnQuery + layerValuesQuery;
+			HashMap<String, Object> query = new HashMap<String, Object>();
+			query.put("insertQuery", returnQuery);
+
+			layerQuerys.add(query);
+		}
+		return layerQuerys;
 	}
 
-	public List<HashMap<String, Object>> getInsertBlocksLayers(int tbIdx, List<LinkedHashMap<String, Object>> blocks) {
+	public List<HashMap<String, Object>> getInsertBlocks(int cIdx, List<LinkedHashMap<String, Object>> blocks) {
 
 		List<HashMap<String, Object>> blockQuerys = new ArrayList<HashMap<String, Object>>();
 
@@ -158,17 +203,16 @@ public class QA10DBQueryManager {
 			while (blockIt.hasNext()) {
 				String code = (String) blockIt.next();
 				Object value = block.get(code);
-				blockColumnQuery += code + ",";
-				blockValuesQuery += value + ", ";
+				blockColumnQuery += "\"" + code + "\"" + ",";
+				blockValuesQuery += "'" + value + "', ";
 			}
-			int lastIndextC = blockColumnQuery.lastIndexOf(",");
-			String returnQueryC = blockColumnQuery.substring(0, lastIndextC) + ")";
-			int lastIndextV = blockValuesQuery.lastIndexOf(",");
-			String returnQueryV = blockValuesQuery.substring(0, lastIndextV) + ")";
+			blockColumnQuery += "c_idx" + ")";
+			blockValuesQuery += cIdx + ")";
 
-			String returnQuery = returnQueryC + returnQueryV;
+			String returnQuery = blockColumnQuery + blockValuesQuery;
 			HashMap<String, Object> query = new HashMap<String, Object>();
 			query.put("insertQuery", returnQuery);
+			query.put("bc_idx", null);
 
 			blockQuerys.add(query);
 		}
@@ -212,8 +256,8 @@ public class QA10DBQueryManager {
 				insertColumnQuery += "\"" + code + "\", ";
 				insertValueQuery += "'" + value + "', ";
 			}
-			insertColumnQuery += "\"" + "bc_idx" + "\")" ;
-			insertValueQuery += "\"" + bIdx + "\")" ;
+			insertColumnQuery += "bc_idx" + ")";
+			insertValueQuery += bIdx + ")";
 
 			String returnQuery = insertColumnQuery + insertValueQuery;
 			HashMap<String, Object> query = new HashMap<String, Object>();

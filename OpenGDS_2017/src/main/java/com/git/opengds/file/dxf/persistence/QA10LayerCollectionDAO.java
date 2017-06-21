@@ -12,16 +12,6 @@ public interface QA10LayerCollectionDAO {
 
 	public int insertQA10LayerCollection(HashMap<String, Object> insertCollectionQuery);
 
-	public void insertQA10LayerCollectionHeader(HashMap<String, Object> insertHeaderQuery);
-
-	public int insertQA10LayerCollectionTables(HashMap<String, Object> tablesQuery);
-
-	public void insertQA10LayerCollectionLineTypes(HashMap<String, Object> lineTypesQuery);
-
-	public void insertQA10LayerCollectionLayers(HashMap<String, Object> layersQuery);
-
-	public void insertQA10LayerCollecionStyles(HashMap<String, Object> stylesQuery);
-
 	public void insertQA10LayerMetadata(HashMap<String, Object> insertQueryMap);
 
 	public void insertQA10Feature(HashMap<String, Object> insertQuertMap);
@@ -33,5 +23,9 @@ public interface QA10LayerCollectionDAO {
 	public int insertQA10LayerCollectionBlocks(HashMap<String, Object> blocksQuery);
 
 	public void insertQA10LayercollectionBlockEntity(HashMap<String, Object> entitiesQuery);
+
+	public int insertQA10LayerCollectionTableCommon(HashMap<String, Object> tablesQuery);
+
+	public void insertQA10LayerCollectionTableLayers(HashMap<String, Object> hashMap);
 
 }
