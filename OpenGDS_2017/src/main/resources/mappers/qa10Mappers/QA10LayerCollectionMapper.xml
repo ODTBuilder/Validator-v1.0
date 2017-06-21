@@ -7,39 +7,29 @@
 	<!-- qa10_LayerCollection -->
 	<insert id="insertQA10LayerCollection" parameterType="hashmap">
 		${insertQuery}
-
 		<selectKey keyProperty="c_idx" resultType="int" order="AFTER">
 			select currval('qa10_layercollection_c_idx_seq')
 		</selectKey>
 	</insert>
 
-	<!-- qa10_LayerCollection_header -->
-	<insert id="insertQA10LayerCollectionHeader" parameterType="hashmap">
-		${insertQuery}
-	</insert>
-
 	<!-- qa10_layercollection_tables -->
-	<insert id="insertQA10LayerCollectionTables" parameterType="hashmap">
+	<insert id="insertQA10LayerCollectionTableCommon" parameterType="hashmap">
 		${insertQuery}
-
-		<selectKey keyProperty="tb_idx" resultType="int" order="AFTER">
-			select currval('qa10_layercollection_tables_tb_idx_seq')
+		<selectKey keyProperty="tc_idx" resultType="int" order="AFTER">
+			select currval('qa10_layerCollection_table_common_tc_idx_seq')
 		</selectKey>
 	</insert>
 
-	<!-- qa10_layer -->
-	<insert id="insertQA10LayerCollectionLineTypes" parameterType="hashmap">
+	<insert id="insertQA10LayerCollectionTableLayer" parameterType="hashmap">
 		${insertQuery}
 	</insert>
 
-	<!-- qa10_layer -->
-	<insert id="insertQA10LayerCollectionLayers" parameterType="hashmap">
+	<!-- qa10_layercollection_blocks -->
+	<insert id="insertQA10LayerCollectionBlockCommon" parameterType="hashmap">
 		${insertQuery}
-	</insert>
-
-	<!-- qa10_layer -->
-	<insert id="insertQA10LayerCollectionStyles" parameterType="hashmap">
-		${insertQuery}
+		<selectKey keyProperty="bc_idx" resultType="int" order="AFTER">
+			select currval('qa10_layerCollection_block_common_bc_idx_seq')
+		</selectKey>
 	</insert>
 
 	<!-- qa10_layer_tb -->

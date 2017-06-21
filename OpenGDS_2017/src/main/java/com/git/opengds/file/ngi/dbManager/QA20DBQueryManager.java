@@ -108,7 +108,7 @@ public class QA20DBQueryManager {
 				+ ", 5186)" + "," + "num_rings numeric" + "," + "num_vertexes numeric" + ",";
 
 		if (isTextLayer) {
-			defalutCreateQuery += "TEXT varchar(100),";
+			defalutCreateQuery += "\"" + "TEXT" + "\"" + "varchar(100),";
 		}
 
 		NDAHeader ndaHeader = qa20Layer.getNdaHeader();

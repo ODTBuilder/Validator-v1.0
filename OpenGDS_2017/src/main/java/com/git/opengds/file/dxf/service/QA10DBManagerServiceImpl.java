@@ -99,20 +99,20 @@ public class QA10DBManagerServiceImpl implements QA10DBManagerService {
 
 			// insertTables
 			QA10Tables tables = layerCollection.getTables();
-			HashMap<String, Object> tablesQuery = dbManager.getInsertTables(cIdx, tables);
-			int tbIdx = dao.insertQA10LayerCollectionTables(tablesQuery);
+			Map<String, Object> tbLayers = tables.getLayers();
+			HashMap<String, Object> tablesQuery = dbManager.getInsertTables(cIdx, tbLayers);
+			int tbIdx = dao.insertQA10LayerCollectionTableCommon(tablesQuery);
 			if (tables.isLayers()) {
-				Map<String, Object> layers = tables.getLayers();
-				List<HashMap<String, Object>> layersQuery = dbManager.getInsertTablesLayers(tbIdx, layers);
+				List<HashMap<String, Object>> layersQuery = dbManager.getInsertTablesLayers(tbIdx, tbLayers);
 				for (int i = 0; i < layersQuery.size(); i++) {
-					dao.insertQA10LayerCollectionLayers(layersQuery.get(i));
+					dao.insertQA10LayerCollectionTableLayers(layersQuery.get(i));
 				}
 			}
 
 			// insertBlocks
 			QA10Blocks qa10Blocks = layerCollection.getBlocks();
 			List<LinkedHashMap<String, Object>> blocks = qa10Blocks.getBlocks();
-			List<HashMap<String, Object>> blocksQuerys = dbManager.getInsertBlocksLayers(tbIdx, blocks);
+			List<HashMap<String, Object>> blocksQuerys = dbManager.getInsertBlocks(cIdx, blocks);
 			for(int i = 0; i < blocks.size(); i++) {
 				HashMap<String, Object> blocksQuery = blocksQuerys.get(i);
 				int bIdx = dao.insertQA10LayerCollectionBlocks(blocksQuery);
