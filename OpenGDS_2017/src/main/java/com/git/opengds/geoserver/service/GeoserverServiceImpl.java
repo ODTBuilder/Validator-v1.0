@@ -308,8 +308,8 @@ public class GeoserverServiceImpl implements GeoserverService {
         	layerEncoder = new GSLayerEncoder();
         	layerEncoder.setDefaultStyle(style);
         }
+        
 		
-		layerEncoder.setDefaultStyle("defaultStyle");
 
 //		boolean flag = dtPublisher.recalculate(workspace, storename, layerFullName, testFte, testLayerEncoder);
 		updateFlag = dtPublisher.updateFeatureType(ID, ID, orginalName,fte, layerEncoder, attChangeFlag);

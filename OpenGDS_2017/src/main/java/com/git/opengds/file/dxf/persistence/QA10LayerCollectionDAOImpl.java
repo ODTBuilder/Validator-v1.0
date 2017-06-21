@@ -77,4 +77,16 @@ public class QA10LayerCollectionDAOImpl implements QA10LayerCollectionDAO {
 	public int deleteQA10Feature(HashMap<String, Object> deleteQuery) {
 		return sqlSession.delete(namespace + ".deleteFeature", deleteQuery);
 	}
+
+	@Override
+	public int insertQA10LayerCollectionBlocks(HashMap<String, Object> blocksQuery) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void insertQA10LayercollectionBlockEntity(HashMap<String, Object> entitiesQuery) {
+		// TODO Auto-generated method stub
+		
+	}
 }

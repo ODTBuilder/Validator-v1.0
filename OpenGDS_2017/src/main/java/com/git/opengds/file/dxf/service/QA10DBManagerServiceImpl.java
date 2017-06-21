@@ -1,6 +1,7 @@
 package com.git.opengds.file.dxf.service;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -17,6 +18,7 @@ import com.git.gdsbuilder.type.geoserver.layer.GeoLayerInfo;
 import com.git.gdsbuilder.type.qa10.collection.QA10LayerCollection;
 import com.git.gdsbuilder.type.qa10.layer.QA10Layer;
 import com.git.gdsbuilder.type.qa10.layer.QA10LayerList;
+import com.git.gdsbuilder.type.qa10.structure.QA10Blocks;
 import com.git.gdsbuilder.type.qa10.structure.QA10Header;
 import com.git.gdsbuilder.type.qa10.structure.QA10Tables;
 import com.git.opengds.file.dxf.dbManager.QA10DBQueryManager;
@@ -88,31 +90,17 @@ public class QA10DBManagerServiceImpl implements QA10DBManagerService {
 		try {
 			QA10DBQueryManager dbManager = new QA10DBQueryManager();
 
-			String collectionName = layerCollection.getFileName();
+			String collectionName = layerCollection.getCollectionName();
 			String type = layerInfo.getFileType();
 
 			// collection
 			HashMap<String, Object> insertCollectionQuery = dbManager.getInsertLayerCollection(collectionName);
 			int cIdx = dao.insertQA10LayerCollection(insertCollectionQuery);
 
-			// insertHeader
-			QA10Header header = layerCollection.getHeader();
-			HashMap<String, Object> insertHeaderQuery = dbManager.getInsertHeader(cIdx, header);
-			dao.insertQA10LayerCollectionHeader(insertHeaderQuery);
-
 			// insertTables
 			QA10Tables tables = layerCollection.getTables();
 			HashMap<String, Object> tablesQuery = dbManager.getInsertTables(cIdx, tables);
 			int tbIdx = dao.insertQA10LayerCollectionTables(tablesQuery);
-
-			// insertTablesEntities
-			if (tables.isLineTypes()) {
-				Map<String, Object> lineTypes = tables.getLineTypes();
-				List<HashMap<String, Object>> lineTypesQuery = dbManager.getInsertTablesLineTypes(tbIdx, lineTypes);
-				for (int i = 0; i < lineTypesQuery.size(); i++) {
-					dao.insertQA10LayerCollectionLineTypes(lineTypesQuery.get(i));
-				}
-			}
 			if (tables.isLayers()) {
 				Map<String, Object> layers = tables.getLayers();
 				List<HashMap<String, Object>> layersQuery = dbManager.getInsertTablesLayers(tbIdx, layers);
@@ -120,14 +108,24 @@ public class QA10DBManagerServiceImpl implements QA10DBManagerService {
 					dao.insertQA10LayerCollectionLayers(layersQuery.get(i));
 				}
 			}
-			if (tables.isStyles()) {
-				Map<String, Object> styles = tables.getStyles();
-				List<HashMap<String, Object>> stylesQuery = dbManager.getInsertTablesStyes(tbIdx, styles);
-				for (int i = 0; i < stylesQuery.size(); i++) {
-					dao.insertQA10LayerCollecionStyles(stylesQuery.get(i));
+
+			// insertBlocks
+			QA10Blocks qa10Blocks = layerCollection.getBlocks();
+			List<LinkedHashMap<String, Object>> blocks = qa10Blocks.getBlocks();
+			List<HashMap<String, Object>> blocksQuerys = dbManager.getInsertBlocksLayers(tbIdx, blocks);
+			for(int i = 0; i < blocks.size(); i++) {
+				HashMap<String, Object> blocksQuery = blocksQuerys.get(i);
+				int bIdx = dao.insertQA10LayerCollectionBlocks(blocksQuery);
+				
+				// insertBlockEntities
+				LinkedHashMap<String, Object> block = blocks.get(i);
+				List<HashMap<String, Object>> entitiesQuerys = dbManager.getInsertBlockEntityQuery(bIdx, block);
+				for(int j = 0; j < entitiesQuerys.size(); j++) {
+					HashMap<String, Object> entitiesQuery = entitiesQuerys.get(j);
+					dao.insertQA10LayercollectionBlockEntity(entitiesQuery);
 				}
 			}
-
+			
 			// qa10Layer
 			QA10LayerList createLayerList = layerCollection.getQa10Layers();
 			for (int i = 0; i < createLayerList.size(); i++) {

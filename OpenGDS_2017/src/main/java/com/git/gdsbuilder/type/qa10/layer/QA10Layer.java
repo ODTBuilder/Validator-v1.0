@@ -12,6 +12,13 @@ public class QA10Layer {
 	Hashtable<String, Object> layerColumns;
 	QA10FeatureList qa10FeatureList;
 
+	public QA10Layer() {
+		this.layerID = "";
+		this.layerType = "";
+		this.layerColumns = new Hashtable<String, Object>();
+		this.qa10FeatureList = new QA10FeatureList();
+	}
+	
 	public QA10Layer(String layerID) {
 		this.layerID = layerID;
 		this.layerType = "";

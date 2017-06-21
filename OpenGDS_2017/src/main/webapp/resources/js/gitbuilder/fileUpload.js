@@ -20,6 +20,49 @@ gitbuilder.method ={};
 	 */
 	gitbuilder.variable.uploadFlag = false;
 	
+	gitbuilder.variable.epsgFlag = false;
+	
+	gitbuilder.method.search=function(){
+		var epsgCode = $('#epsgtext').val();
+		
+		if(gitbuilder.variable.epsgFlag){
+			$("input[id=epsgtext]").attr("readonly",false);
+			$('#searchbtn').text('search');
+			gitbuilder.variable.epsgFlag = false;
+			return;
+		}
+		if(epsgCode){
+			gitbuilder.method.epsgSearch(epsgCode);
+		}
+		else{
+			alertPopup('warning','WARING','Please enter the code')
+		}
+	}
+	gitbuilder.method.epsgSearch = function(query){
+		fetch('https://epsg.io/?format=json&q=' + query).then(function(response) {
+			return response.json();
+		}).then(function(json) {
+			var results = json['results'];
+			if (results && results.length > 0) {
+				for (var i = 0, ii = results.length; i < ii; i++) {
+					var result = results[i];
+					if (result) {
+						var code = result['code'], name = result['name'], proj4def = result['proj4'], bbox = result['bbox'];
+						if (code && code.length > 0 && proj4def && proj4def.length > 0 && bbox && bbox.length == 4) {
+							gitbuilder.variable.epsgFlag = true;
+							$('#searchbtn').text('edit');
+							$("input[id=epsgtext]").attr("readonly",true);
+							alertPopup('success','Success.','Supports corresponding coordinate codes.')
+//							gitrnd.setProjection(code, name, proj4def, bbox);
+							return;
+						}
+					}
+				}
+			}
+			alertPopup('warning','Please try again.','This code is not supported.')
+		});
+	}
+	
 	
 	gitbuilder.ui.NewGeneralizationV2Window = function NewGeneralizationV2Window(flag){
 	    if (!gitbuilder.variable.elementid.generalizationV2Window) {
@@ -108,7 +151,9 @@ gitbuilder.method ={};
 			fileWindow += '<input type="checkbox" data-toggle="tooltip" data-placement="bottom" title="Upon duplicate approval, The existing file is overwritten." id="dupchk"><label>Duplicate approvals</label><br>';
 			fileWindow += '</div>';*/
         	fileWindow += '<!-- The fileinput-button span is used to style the file input field as button -->';
-			fileWindow += '<div class="col-lg-9 text-right" style="padding-left: 0px;">';
+			fileWindow += '<div class="col-lg-3 text-right input-group" style="float: left;"><input type="text" id="epsgtext" name="epsg" class="form-control" placeholder="Search for..."><span class="input-group-btn"><button class="btn btn-default" type="button" id="searchbtn" onclick="gitbuilder.variable.myDropzone.search()">Search</button></span>';
+			fileWindow += '</div>';
+			fileWindow += '<div class="col-lg-6 text-right" style="padding-left: 0px;">';
         	fileWindow += '<span id="addfileBtn" class="btn btn-success fileinput-button">';
         	fileWindow += '<i class="glyphicon glyphicon-plus"></i>';
         	fileWindow += '<span>Add files...</span>';
@@ -194,16 +239,16 @@ gitbuilder.method ={};
 			var myDropzone = new Dropzone(document.body, { // Make the whole body a dropzone
 				url: "http://localhost:8080/opengds/file/fileUpload.do", // Set the url
 				thumbnailWidth: 80,
-			        thumbnailHeight: 80,
-			        parallelUploads: 20,
-			        maxFiles: 100,
-			        maxFilesize: 100,
-			        previewTemplate: previewTemplate,
-			        acceptedFiles:".dxf",
-			        autoQueue: false, // Make sure the files aren't queued until manually added
-			        previewsContainer: "#previews", // Define the container to display the previews
-			        clickable: ".fileinput-button" // Define the element that should be used as click trigger to select files.
-			      });
+		        thumbnailHeight: 80,
+		        parallelUploads: 20,
+		        maxFiles: 100,
+		        maxFilesize: 100,
+		        previewTemplate: previewTemplate,
+		        acceptedFiles:".dxf",
+		        autoQueue: false, // Make sure the files aren't queued until manually added
+		        previewsContainer: "#previews", // Define the container to display the previews
+		        clickable: ".fileinput-button" // Define the element that should be used as click trigger to select files.
+		      });
 			      
 			      gitbuilder.variable.myDropzone = myDropzone;
 

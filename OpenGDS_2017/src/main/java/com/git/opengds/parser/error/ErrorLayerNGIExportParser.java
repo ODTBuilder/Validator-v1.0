@@ -15,6 +15,9 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 
 public class ErrorLayerNGIExportParser {
+	
+	
+	protected static String layerID = "1";
 
 	// ngi
 	protected static String errIdx = "err_idx";
@@ -26,7 +29,8 @@ public class ErrorLayerNGIExportParser {
 	protected static String defaultVersion = "1";
 	protected static String defaultGeometryic = "MASK(POINT,POINT)";
 	protected static String defaultDim = "DIM(2)";
-	protected static String defaultStyle = "1 SYMBOL(GM_0, 0.000000, 255)";
+	protected static String defaultStyleValue = "1 SYMBOL(GM_0, 0.000000, 255)";
+	protected static String defaultStyleID = "SYMBOLGATTR(1)";
 	protected static String bound = "";
 
 	protected static String defaultLayerType = "POINT";
@@ -41,7 +45,7 @@ public class ErrorLayerNGIExportParser {
 	private static NGIHeader getDefaultErrorLayerNGIHeader() {
 
 		List<String> defaultStyles = new ArrayList<String>();
-		defaultStyles.add(defaultStyle);
+		defaultStyles.add(defaultStyleValue);
 
 		NGIHeader ngiHeader = new NGIHeader(defaultVersion, defaultGeometryic, defaultDim, bound, defaultStyles, null,
 				null, null);
@@ -53,9 +57,9 @@ public class ErrorLayerNGIExportParser {
 
 		List<NDAField> fields = new ArrayList<NDAField>();
 		NDAField fieldC = new NDAField(collectionName, "STRING", "256", "0", false);
-		NDAField fieldL = new NDAField(collectionName, "STRING", "256", "0", false);
-		NDAField fieldEt = new NDAField(collectionName, "STRING", "256", "0", false);
-		NDAField fieldEn = new NDAField(collectionName, "STRING", "256", "0", false);
+		NDAField fieldL = new NDAField(layerName, "STRING", "256", "0", false);
+		NDAField fieldEt = new NDAField(errType, "STRING", "256", "0", false);
+		NDAField fieldEn = new NDAField(errName, "STRING", "256", "0", false);
 		fields.add(fieldC);
 		fields.add(fieldL);
 		fields.add(fieldEt);
@@ -65,9 +69,10 @@ public class ErrorLayerNGIExportParser {
 		return ndaHeader;
 	}
 
-	public static QA20LayerCollection parseQA20Feature(String tableName, List<HashMap<String, Object>> errFeatureList) {
+	public static QA20LayerCollection parseQA20LayerCollection(String tableName, List<HashMap<String, Object>> errFeatureList) {
 
 		QA20Layer qa20Layer = new QA20Layer();
+		qa20Layer.setLayerID(layerID);
 		qa20Layer.setLayerName(tableName);
 		qa20Layer.setLayerType(defaultLayerType);
 		qa20Layer.setNgiHeader(getDefaultErrorLayerNGIHeader());
@@ -75,7 +80,7 @@ public class ErrorLayerNGIExportParser {
 		GeometryFactory gf = new GeometryFactory();
 		for (int i = 0; i < errFeatureList.size(); i++) {
 			HashMap<String, Object> errFeature = errFeatureList.get(i);
-			String idx = (String) errFeature.get(errIdx);
+			String idx = String.valueOf(errFeature.get(errIdx));
 			double x = (Double) errFeature.get(coorX);
 			double y = (Double) errFeature.get(coorY);
 			Geometry errGeom = gf.createPoint(new Coordinate(x, y));
@@ -83,11 +88,11 @@ public class ErrorLayerNGIExportParser {
 			HashMap<String, Object> properties = new HashMap<String, Object>();
 			properties.put(collectionName, errFeature.get(collectionName));
 			properties.put(layerName, errFeature.get(layerName));
-			properties.put(layerName, errFeature.get(featureId));
+			properties.put(featureId, errFeature.get(featureId));
 			properties.put(errType, errFeature.get(errType));
 			properties.put(errName, errFeature.get(errName));
 
-			QA20Feature qa20Feature = new QA20Feature(idx, defaultFeatureType, null, null, errGeom, defaultStyle,
+			QA20Feature qa20Feature = new QA20Feature(idx, defaultFeatureType, null, null, errGeom, defaultStyleID,
 					properties);
 			qa20Layer.add(qa20Feature);
 		}
@@ -98,7 +103,4 @@ public class ErrorLayerNGIExportParser {
 		return qa20LayerCollection;
 	}
 
-	public static void parseQA10Feature() {
-
-	}
 }

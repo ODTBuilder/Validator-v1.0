@@ -501,7 +501,10 @@ html {
 			user : "admin"
 		});
 
-		var layerInfo = new gb.edit.LayerInformation();
+		var layerInfo = new gb.edit.LayerInformation({
+			url : "geoserver2/getGeoLayerInfoList.ajax"
+		});
+
 		$("#builderServerLayer").jstree(
 				{
 					"core" : {
@@ -600,8 +603,8 @@ html {
 									 */
 									"action" : function(data) {
 										var inst = $.jstree.reference(data.reference), obj = inst.get_node(data.reference);
-										layerInfo.open();
-// 										console.log("Not yet(layer info)");
+										layerInfo.load(obj.id);
+										// 										console.log("Not yet(layer info)");
 									}
 								}
 							};

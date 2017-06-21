@@ -403,7 +403,20 @@ public class QA20FileFeatureParser {
 					} else {
 						properties.put(field_name, valueStr);
 					}
-					tmpLine = tmpLine.replaceAll(valueStr, "");
+					String replacedStr = "";
+					for (int idx = 0; idx < valueStr.length(); ++idx) {
+						String strOne = new String(new char[] { valueStr.charAt(idx) }, 0, 1);
+						if (strOne.equals("(") || strOne.equals(")") || strOne.equals("{") || strOne.equals("}")
+								|| strOne.equals("^") || strOne.equals("[") || strOne.equals("'" + "]")) {
+							replacedStr += "\\" + strOne;
+						} else if (strOne.equals("*") || strOne.equals("+") || strOne.equals("$") || strOne.equals("|")
+								|| strOne.equals("?")) {
+							replacedStr += "[" + strOne + "]";
+						} else {
+							replacedStr += strOne;
+						}
+					}
+					tmpLine = tmpLine.replaceAll(replacedStr, "");
 				} else {
 					properties.put(field_name, null);
 				}

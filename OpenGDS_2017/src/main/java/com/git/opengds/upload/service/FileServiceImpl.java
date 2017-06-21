@@ -99,11 +99,13 @@ public class FileServiceImpl implements FileService {
 			try {
 				int pos = mpf.getOriginalFilename().lastIndexOf(".");
 				String ext = mpf.getOriginalFilename().substring(pos + 1).toLowerCase();
+				String epsg = request.getParameter("epsg");
 				// 2.3 create new fileMeta
 				FileMeta fileMeta = new FileMeta();
 				fileMeta.setFileName(mpf.getOriginalFilename().substring(0, pos));
 				fileMeta.setFileSize(mpf.getSize() / 1024 + " Kb");
 				fileMeta.setFileType(ext);
+				fileMeta.setOriginSrc("EPSG:"+epsg);
 				fileMeta.setBytes(mpf.getBytes());
 
 				String saveFilePath = "";

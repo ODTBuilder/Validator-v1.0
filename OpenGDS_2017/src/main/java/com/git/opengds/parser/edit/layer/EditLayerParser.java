@@ -18,18 +18,18 @@
 package com.git.opengds.parser.edit.layer;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
-import com.git.gdsbuilder.edit.qa20.EditQA20Layer;
-import com.git.gdsbuilder.type.qa20.header.NDAHeader;
 import com.git.gdsbuilder.type.qa20.header.NDAField;
+import com.git.gdsbuilder.type.qa20.header.NDAHeader;
 import com.git.gdsbuilder.type.qa20.header.NGIHeader;
 import com.git.gdsbuilder.type.qa20.layer.QA20Layer;
-import com.git.gdsbuilder.type.simple.layer.Layer;
 import com.vividsolutions.jts.io.ParseException;
 
 /**
@@ -40,9 +40,15 @@ import com.vividsolutions.jts.io.ParseException;
  */
 public class EditLayerParser {
 
+	protected static String create = "create";
+	protected static String modify = "modify";
+
 	JSONObject layerObj;
 	String type;
 	QA20Layer qa20Layer;
+	Map<String, Object> geoLayer;
+
+	boolean isUpdatedAttr = false;
 
 	/**
 	 * EditLayerParser 생성자
@@ -50,13 +56,19 @@ public class EditLayerParser {
 	 * @param layerName
 	 * 
 	 * @param layerObj
+	 * @param state
 	 * @throws ParseException
 	 */
-	public EditLayerParser(String type, JSONObject layerObj) throws ParseException {
+	public EditLayerParser(String type, JSONObject layerObj, String state) throws ParseException {
 		this.type = type;
 		this.layerObj = layerObj;
 		if (type.equals("ngi")) {
-			ngiLayerParse();
+			if (state.equals(create)) {
+				ngiCreatedLayerParse();
+			} else if (state.equals(modify)) {
+				ngiModifiedLayerParse();
+				geoModifiedLayerParse();
+			}
 		}
 	}
 
@@ -81,7 +93,146 @@ public class EditLayerParser {
 		this.qa20Layer = qa20Layer;
 	}
 
-	public void ngiLayerParse() throws ParseException {
+	public void geoModifiedLayerParse() {
+
+		JSONObject geoLayerObj = (JSONObject) layerObj.get("geoserver");
+		// geoLayerObj.get("lbound");
+		// geoLayerObj.get("style");
+		String orignalName = (String) layerObj.get("originLayerName");
+		String name = (String) layerObj.get("currentLayerName");
+		String title = (String) geoLayerObj.get("title");
+		String abstractContent = (String) geoLayerObj.get("stysummaryle");
+
+		geoLayer = new HashMap<String, Object>();
+		geoLayer.put("orignalName", orignalName);
+		geoLayer.put("name", name);
+		geoLayer.put("title", title);
+		geoLayer.put("abstractContent", abstractContent);
+		geoLayer.put("attChangeFlag", isUpdatedAttr);
+
+	}
+
+	public void ngiModifiedLayerParse() {
+		
+		QA20Layer modifiedQA20Layer = new QA20Layer();
+		
+		// name
+		String orignName = (String) layerObj.get("originLayerName");
+		String currentName = (String) layerObj.get("currentLayerName");
+		modifiedQA20Layer.setOriginLayerName(orignName);
+		modifiedQA20Layer.setLayerName(currentName);
+
+		// attr
+		List<NDAField> orignAttr = parseAttrQA20Layer(orignName, (JSONArray) layerObj.get("attr"));
+		List<NDAField> updateAttr = parseAttrQA20Layer(currentName, (JSONArray) layerObj.get("updateAttr"));
+		List<NDAField> returnAttr = mergeUpdatedQA20Layers(orignAttr, updateAttr);
+		NDAHeader ndaHeader = new NDAHeader("1", returnAttr);
+		modifiedQA20Layer.setNdaHeader(ndaHeader);
+
+		// bound
+		JSONArray boundArry = (JSONArray) layerObj.get("bound");
+		JSONArray minArry = (JSONArray) boundArry.get(0);
+		double minX = (Double) minArry.get(0);
+		double minY = (Double) minArry.get(1);
+
+		JSONArray maxArry = (JSONArray) boundArry.get(1);
+		double maxX = (Double) maxArry.get(0);
+		double maxY = (Double) maxArry.get(1);
+		String boundStr = "BOUND(" + minX + ", " + minY + ", " + maxX + ", " + maxY + ")";
+
+		NGIHeader ngiHeader = new NGIHeader();
+		ngiHeader.setBound(boundStr);
+
+		// represent
+		String represent = (String) layerObj.get("represent");
+		modifiedQA20Layer.setNgiHeader(ngiHeader);
+
+		this.qa20Layer = modifiedQA20Layer;
+	}
+
+	private List<NDAField> mergeUpdatedQA20Layers(List<NDAField> orignAttr, List<NDAField> updateAttr) {
+
+		List<NDAField> returnAttrFields = new ArrayList<NDAField>();
+		for (int i = 0; i < orignAttr.size(); i++) {
+			boolean isUpdated = false;
+			NDAField orignField = orignAttr.get(i);
+			NDAField updateField = updateAttr.get(i);
+
+			NDAField returnField = new NDAField();
+			if (updateField != null) {
+				// fieldName
+				String originFieldName = orignField.getFieldName();
+				String updateFieldName = updateField.getFieldName();
+				if (!originFieldName.equals(updateFieldName)) {
+					returnField.setFieldName(updateFieldName);
+					isUpdated = true;
+				}
+				// type
+				String originType = orignField.getType();
+				String updateType = updateField.getType();
+
+				if (!originType.equals(updateType)) {
+					returnField.setType(updateType);
+					isUpdated = true;
+				}
+				// decimal
+				String originDecimal = orignField.getDecimal();
+				String updateDecimal = updateField.getDecimal();
+
+				if (!originDecimal.equals(updateDecimal)) {
+					returnField.setDecimal(updateDecimal);
+					isUpdated = true;
+				}
+				// size
+				String originSize = orignField.getSize();
+				String updateSize = updateField.getSize();
+
+				if (!originSize.equals(updateSize)) {
+					returnField.setSize(updateSize);
+					isUpdated = true;
+				}
+				// isUnique
+				boolean originIsUnique = orignField.isUnique();
+				boolean updateIsUnique = updateField.isUnique();
+
+				if (!originIsUnique == updateIsUnique) {
+					returnField.setUnique(updateIsUnique);
+					isUpdated = true;
+				}
+				// nullable
+
+				if (isUpdated) {
+					returnAttrFields.add(returnField);
+				}
+			} else {
+				isUpdated = true;
+				continue;
+			}
+		}
+		return returnAttrFields;
+	}
+
+	private List<NDAField> parseAttrQA20Layer(String layerName, JSONArray attrArry) {
+
+		List<NDAField> fieldList = new ArrayList<NDAField>();
+		for (int i = 0; i < attrArry.size(); i++) {
+			JSONObject attr = (JSONObject) attrArry.get(i);
+			String fieldName = (String) attr.get("fieldName");
+			String type = (String) attr.get("type");
+			String decimal = (String) attr.get("decimal");
+			String size = (String) attr.get("size");
+			String isUniqueStr = (String) attr.get("isUnique");
+			boolean isUnique = false;
+			if (isUniqueStr.equals("true")) {
+				isUnique = true;
+			}
+			NDAField field = new NDAField(fieldName, type, size, decimal, isUnique);
+			fieldList.add(field);
+		}
+		return fieldList;
+	}
+
+	public void ngiCreatedLayerParse() throws ParseException {
 
 		QA20Layer qa20Layer = new QA20Layer();
 		NGIHeader ngiHeader = new NGIHeader();

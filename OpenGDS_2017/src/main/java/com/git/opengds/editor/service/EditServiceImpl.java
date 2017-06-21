@@ -17,6 +17,7 @@
 
 package com.git.opengds.editor.service;
 
+import java.io.FileReader;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -28,11 +29,12 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.springframework.stereotype.Service;
 
+import com.git.gdsbuilder.edit.qa20.EditQA20Collection;
+import com.git.gdsbuilder.edit.qa20.EditQA20LayerCollectionList;
 import com.git.gdsbuilder.type.qa10.feature.QA10Feature;
 import com.git.gdsbuilder.type.qa10.feature.QA10FeatureList;
 import com.git.gdsbuilder.type.qa20.feature.QA20Feature;
 import com.git.gdsbuilder.type.qa20.feature.QA20FeatureList;
-import com.git.opengds.file.ngi.service.QA20DBManagerService;
 import com.git.opengds.geoserver.service.GeoserverService;
 import com.git.opengds.parser.json.BuilderJSONParser;
 
@@ -51,8 +53,6 @@ public class EditServiceImpl implements EditService {
 	@Inject
 	EditDBManagerService editDBManager;
 
-	@Inject
-	QA20DBManagerService qa20DBManager;
 
 	@Inject
 	GeoserverService geoserver;
@@ -61,58 +61,55 @@ public class EditServiceImpl implements EditService {
 	public void editLayerCollection(String editJSONStr) throws Exception {
 
 		// 옵션 넘겨 받음
-		// Object obj = parser.parse(new FileReader("D:\\editFinal.txt"));
-		// JSONObject editJSONObject = (JSONObject) obj;
-
 		JSONParser jsonParser = new JSONParser();
-		JSONObject editJSONObject = (JSONObject) jsonParser.parse(editJSONStr);
+		Object obj = jsonParser.parse(new FileReader("D:\\editFinal2.txt"));
+		JSONObject editJSONObject = (JSONObject) obj;
+
+//		JSONParser jsonParser = new JSONParser();
+//		JSONObject editJSONObject = (JSONObject) jsonParser.parse(editJSONStr);
 
 		// layerEdit
-		// JSONObject layerEditObj = (JSONObject) editJSONObject.get("layer");
-		// Map<String, Object> edtCollectionListObj =
-		// BuilderJSONParser.parseEditLayerObj(layerEditObj);
-		// Iterator edtLayerIterator = edtCollectionListObj.keySet().iterator();
-		// while (edtLayerIterator.hasNext()) {
-		// String type = (String) edtLayerIterator.next();
-		// EditQA20LayerCollectionList edtCollectionList =
-		// (EditQA20LayerCollectionList) edtCollectionListObj
-		// .get(type);
-		// if (type.equals(this.isNgi)) {
-		// for (int i = 0; i < edtCollectionList.size(); i++) {
-		// EditQA20Collection editCollection = edtCollectionList.get(i);
-		// String collectionName = editCollection.getCollectionName();
-		// if (editCollection.isCreated()) {
-		// // collection 중복 여부 확인
-		// Integer collectionIdx =
-		// editDBManager.checkCollectionName(collectionName);
-		// if (collectionIdx != null) {
-		// // 1. 중복되었을 시(이미 존재하는 collection에 레이어 테이블만 create)
-		// editDBManager.createQa20Layers(type, collectionIdx, editCollection);
-		// } else {
-		// // 2. 중복되지 않았을 시 collection insert 후 레이어 테이블 create
-		// editDBManager.createQa20LayerCollection(type, editCollection);
-		// }
-		// }
-		// if (editCollection.isModified()) {
-		//
-		// }
-		// if (editCollection.isDeleted()) {
-		// List<String> deletedLayerNames =
-		// editDBManager.dropQa20LayerCollection(type, editCollection);
-		// geoserver.removeGeoserverLayers(deletedLayerNames);
-		// if (editCollection.isDeleteAll()) {
-		// geoserver.removeGeoserverGroupLayer(editCollection.getCollectionName());
-		// }
-		// }
-		// }
-		// } else if (type.equals(this.isDxf)) {
-		//
-		// } else if (type.equals(this.isShp)) {
-		//
-		// }
-		// }
+		JSONObject layerEditObj = (JSONObject) editJSONObject.get("layer");
+		Map<String, Object> edtCollectionListObj = BuilderJSONParser.parseEditLayerObj(layerEditObj);
+		Iterator edtLayerIterator = edtCollectionListObj.keySet().iterator();
+		while (edtLayerIterator.hasNext()) {
+			String type = (String) edtLayerIterator.next();
+			EditQA20LayerCollectionList edtCollectionList = (EditQA20LayerCollectionList) edtCollectionListObj
+					.get(type);
+			if (type.equals(this.isNgi)) {
+				for (int i = 0; i < edtCollectionList.size(); i++) {
+					EditQA20Collection editCollection = edtCollectionList.get(i);
+					String collectionName = editCollection.getCollectionName();
+					if (editCollection.isCreated()) {
+						// collection 중복 여부 확인
+						Integer collectionIdx = editDBManager.checkQA20LayerCollectionName(collectionName);
+						if (collectionIdx != null) {
+							// 1. 중복되었을 시(이미 존재하는 collection에 레이어 테이블만 create)
+							editDBManager.createQA20Layers(type, collectionIdx, editCollection);
+						} else {
+							// 2. 중복되지 않았을 시 collection insert 후 레이어 테이블 create
+							editDBManager.createQA20LayerCollection(type, editCollection);
+						}
+					}
+					if (editCollection.isModified()) {
+						// 1. 수정할 레이어 
+						System.out.println("");
+						
+					}
+					if (editCollection.isDeleted()) {
+						List<String> deletedLayerNames = editDBManager.dropQA20LayerCollection(type, editCollection);
+						geoserver.removeGeoserverLayers(deletedLayerNames);
+						if (editCollection.isDeleteAll()) {
+							geoserver.removeGeoserverGroupLayer(editCollection.getCollectionName());
+						}
+					}
+				}
+			} else if (type.equals(this.isDxf)) {
 
-		System.out.println("");
+			} else if (type.equals(this.isShp)) {
+
+			}
+		}
 
 		// featureEdit
 		JSONObject featureEditObj = (JSONObject) editJSONObject.get("feature");
@@ -131,7 +128,6 @@ public class EditServiceImpl implements EditService {
 				editNgiFeature(tableName, editMap);
 			}
 		}
-		System.out.println("");
 	}
 
 	private void editNgiFeature(String tableName, HashMap<String, Object> editMap) {
