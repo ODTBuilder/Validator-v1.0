@@ -322,7 +322,7 @@ html {
 
 		$("#layerDefinition1").layerdefinition10({});
 
-		$("#validDefinition1").optiondefinition10({
+		$("#validDefinition1").optiondefinition({
 			layerDefinition : function() {
 				return $("#layerDefinition1").layerdefinition10("getDefinition");
 			}
@@ -333,7 +333,7 @@ html {
 				return $("#layerDefinition1").layerdefinition10("getDefinition");
 			},
 			optionDefinition : function() {
-				return $("#validDefinition1").optiondefinition10("getDefinition");
+				return $("#validDefinition1").optiondefinition("getDefinition");
 			}
 		});
 
@@ -343,7 +343,7 @@ html {
 				return $("#layerDefinition1").layerdefinition10("getDefinition");
 			},
 			optionDefinition : function() {
-				return $("#validDefinition1").optiondefinition10("getDefinition");
+				return $("#validDefinition1").optiondefinition("getDefinition");
 			},
 			weightDefinition : function() {
 				return $("#weight1").weightdefinition("getDefinition");

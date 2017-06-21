@@ -15,6 +15,8 @@ gb.inform.LayerInformation = function(opt) {
 	this.name = options.name ? options.name : null;
 	this.id = options.id ? options.id : null;
 	this.type = options.type ? options.type : null;
+	this.attributes = options.attributes ? options.attributes : [];
+	this.updateAttributes = [];
 	this.format = options.format ? options.format : null;
 	this.epsg = options.epsg ? options.epsg : null;
 	this.ngi = {
@@ -26,6 +28,20 @@ gb.inform.LayerInformation = function(opt) {
 	this.represent = options.represent ? options.represent : null;
 	this.attributes = options.attributes ? options.attributes : null;
 }
+gb.inform.LayerInformation.prototype.setAttributes = function(attrs) {
+	this.attributes = attrs;
+};
+gb.inform.LayerInformation.prototype.getAttributes = function() {
+	return this.attributes;
+};
+gb.inform.LayerInformation.prototype.updateAttribute = function(attr) {
+	
+};
+
+gb.inform.LayerInformation.prototype.getName = function() {
+	return this.name;
+};
+
 gb.inform.LayerInformation.prototype.setName = function(name) {
 	this.name = name;
 };
@@ -125,3 +141,6 @@ gb.inform.LayerInformation.prototype.clone = function() {
 	});
 	return obj;
 };
+gb.inform.LayerInformation.prototype.toString = function() {
+
+}

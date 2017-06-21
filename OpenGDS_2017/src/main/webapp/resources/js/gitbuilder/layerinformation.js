@@ -15,8 +15,8 @@ gb.edit.LayerInformation = function(obj) {
 	this.url = options.url ? options.url : null;
 	this.layer;
 	this.window;
-	this.originData;
-	this.currentData;
+	this.originInfo;
+	this.currentInfo;
 
 	var xSpan = $("<span>").attr({
 		"aria-hidden" : true
