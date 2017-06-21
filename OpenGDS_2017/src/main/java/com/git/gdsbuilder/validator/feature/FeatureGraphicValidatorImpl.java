@@ -68,6 +68,7 @@ import com.git.gdsbuilder.type.validate.option.OverShoot;
 import com.git.gdsbuilder.type.validate.option.SelfEntity;
 import com.git.gdsbuilder.type.validate.option.SmallArea;
 import com.git.gdsbuilder.type.validate.option.SmallLength;
+import com.git.gdsbuilder.type.validate.option.TwistedPolygon;
 import com.git.gdsbuilder.type.validate.option.UnderShoot;
 import com.git.gdsbuilder.type.validate.option.UselessEntity;
 import com.git.gdsbuilder.type.validate.option.UselessPoint;
@@ -731,6 +732,20 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 		return null;
 	}
 
+	// 객체 꼬임 여부 검사
+	public ErrorFeature validateTwistedPolygon (SimpleFeature simpleFeature) throws SchemaException{
+		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
 
+		if(!(geometry.isValid())){
+			GeometryFactory f = new GeometryFactory();
+			Coordinate[] coordinates = geometry.getCoordinates();
+			Geometry errGeometry = f.createPoint(coordinates[0]);
+			ErrorFeature errorFeature = new ErrorFeature(simpleFeature.getID(), TwistedPolygon.Type.TWISTEDPOLYGON.errType(),
+					TwistedPolygon.Type.TWISTEDPOLYGON.errName(), errGeometry);
+			return errorFeature;
+		}else{
+			return null;
+		}
 
+	}
 }

@@ -37,6 +37,7 @@ package com.git.gdsbuilder.validator.layer;
 import java.util.List;
 
 import org.geotools.feature.SchemaException;
+import org.json.simple.JSONObject;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.operation.TransformException;
@@ -194,5 +195,8 @@ public interface LayerValidator {
 	public ErrorLayer vallidateB_SymbolOutSided(List<GeoLayer> relationLayers) throws SchemaException;
 	public ErrorLayer validateCrossRoad(List<GeoLayer> relationLayers) throws SchemaException;
 	public ErrorLayer validateBridgeName(List<GeoLayer> relationLayers) throws SchemaException;
+	public ErrorLayer validateAdmin() throws SchemaException;
+	public ErrorLayer validateTwistedPolygon() throws SchemaException;
+	public ErrorLayer validateAttributeFix(JSONObject notNullAtt) throws SchemaException;
 
 }

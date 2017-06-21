@@ -36,7 +36,7 @@ package com.git.gdsbuilder.validator.feature;
 
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.feature.SchemaException;
-import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 import org.opengis.feature.simple.SimpleFeature;
 
 import com.git.gdsbuilder.type.validate.error.ErrorFeature;
@@ -59,7 +59,7 @@ public interface FeatureAttributeValidator {
 	 * @throws SchemaException ErrorLayer
 	 * @throws
 	 * */
-	public ErrorLayer validateAttributeFix(SimpleFeatureCollection validatorLayer, JSONArray notNullAtt)
+	public ErrorFeature validateAttributeFix(SimpleFeature simpleFeature, JSONObject notNullAtt)
 			throws SchemaException;
 
 	/**
@@ -91,5 +91,6 @@ public interface FeatureAttributeValidator {
 			SimpleFeatureCollection relationLayer, String string2) throws SchemaException;
 	
 	public ErrorFeature validateBridgeName(SimpleFeature simpleFeature, SimpleFeature relationSimpleFeature) throws SchemaException;
+	public ErrorFeature validateAdmin(SimpleFeature simpleFeature) throws SchemaException;
 	
 }

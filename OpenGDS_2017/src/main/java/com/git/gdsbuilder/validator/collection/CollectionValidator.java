@@ -34,9 +34,11 @@
 
 package com.git.gdsbuilder.validator.collection;
 
+import java.util.HashMap;
 import java.util.List;
 
 import org.geotools.feature.SchemaException;
+import org.json.simple.JSONObject;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.operation.TransformException;
@@ -50,6 +52,8 @@ import com.git.gdsbuilder.type.validate.error.ErrorLayer;
 import com.git.gdsbuilder.type.validate.error.ErrorLayerList;
 import com.git.gdsbuilder.type.validate.layer.ValidateLayerType;
 import com.git.gdsbuilder.type.validate.layer.ValidateLayerTypeList;
+import com.git.gdsbuilder.type.validate.option.Admin;
+import com.git.gdsbuilder.type.validate.option.AttributeFix;
 import com.git.gdsbuilder.type.validate.option.B_SymbolOutSided;
 import com.git.gdsbuilder.type.validate.option.BridgeName;
 import com.git.gdsbuilder.type.validate.option.BuildingOpen;
@@ -147,7 +151,7 @@ public class CollectionValidator {
 
 		// layerMiss 검수
 		layerMissValidate(types, layerCollections);
-
+		
 		// geometric 검수
 		geometricValidate(types, layerCollections);
 
@@ -192,6 +196,17 @@ public class CollectionValidator {
 											.getTypeLayers(relationNames.get(l), collection));
 								}
 							}
+							if(option instanceof Admin){
+								typeErrorLayer = layerValidator.validateAdmin();
+							}
+							if(option instanceof AttributeFix){
+								HashMap<String, Object> attributeNames = ((AttributeFix) option).getRelationType();
+								String typeLayerName = typeLayer.getLayerName();
+								int index = typeLayerName.indexOf("_");
+								String layerCode = typeLayerName.substring(0, index);
+								JSONObject attrJson = (JSONObject) attributeNames.get(layerCode);
+								typeErrorLayer = layerValidator.validateAttributeFix(attrJson);
+							}
 							if (typeErrorLayer != null) {
 								errLayer.mergeErrorLayer(typeErrorLayer);
 							}
@@ -232,6 +247,13 @@ public class CollectionValidator {
 								continue;
 							}
 							LayerValidatorImpl layerValidator = new LayerValidatorImpl(typeLayer);
+							
+							typeErrorLayer = layerValidator.validateTwistedPolygon();
+							
+							if (typeErrorLayer != null) {
+								errLayer.mergeErrorLayer(typeErrorLayer);
+							}
+							
 							if (option instanceof ConBreak) {
 								typeErrorLayer = layerValidator.validateConBreakLayers(neatLayer);
 							}

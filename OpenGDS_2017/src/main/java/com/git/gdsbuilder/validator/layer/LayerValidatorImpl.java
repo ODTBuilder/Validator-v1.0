@@ -35,14 +35,14 @@
 package com.git.gdsbuilder.validator.layer;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureIterator;
+import org.geotools.feature.DefaultFeatureCollection;
 import org.geotools.feature.SchemaException;
+import org.json.simple.JSONObject;
 import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.feature.type.FeatureType;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.operation.TransformException;
@@ -621,10 +621,6 @@ public class LayerValidatorImpl implements LayerValidator {
 		return errorLayer;
 	}
 	
-	public ErrorLayer validateNodeMiss() throws SchemaException{
-		return null;
-	}
-	
 	public ErrorLayer validateBridgeName(List<GeoLayer> relationLayers) throws SchemaException{
 		ErrorLayer errorLayer = new ErrorLayer();
 		SimpleFeatureCollection sfc = validatorLayer.getSimpleFeatureCollection();
@@ -653,7 +649,80 @@ public class LayerValidatorImpl implements LayerValidator {
 				}
 			}
 		}
+		return errorLayer;
+	}
+	
+	public ErrorLayer validateAdmin() throws SchemaException{
+		ErrorLayer errorLayer = new ErrorLayer();
+		SimpleFeatureCollection sfc = validatorLayer.getSimpleFeatureCollection();
+		SimpleFeatureIterator simpleFeatureIterator = sfc.features();
+		while (simpleFeatureIterator.hasNext()) {
+			SimpleFeature simpleFeature = simpleFeatureIterator.next();
+			ErrorFeature errorFeature = attributeValidator.validateAdmin(simpleFeature);
+			if(errorFeature != null){
+				errorFeature.setLayerName(validatorLayer.getLayerName());
+				errorLayer.addErrorFeature(errorFeature);
+			}else{
+				continue;
+			}
+		}
+		if(errorLayer.getErrFeatureList().size() > 0){
+			return errorLayer;
+		}else{
+			return null;
+		}
+	}
+	
+	public ErrorLayer validateTwistedPolygon() throws SchemaException{
+		ErrorLayer errorLayer = new ErrorLayer();
+		SimpleFeatureCollection sfc = validatorLayer.getSimpleFeatureCollection();
+		DefaultFeatureCollection featureCollection = new DefaultFeatureCollection();
+		SimpleFeatureIterator simpleFeatureIterator = sfc.features();
 		
+		while (simpleFeatureIterator.hasNext()) {
+			SimpleFeature simpleFeature = simpleFeatureIterator.next();
+			ErrorFeature errorFeature = graphicValidator.validateTwistedPolygon(simpleFeature);
+			if(errorFeature != null){
+				errorFeature.setLayerName(validatorLayer.getLayerName());
+				errorLayer.addErrorFeature(errorFeature);
+			}else{
+				featureCollection.add(simpleFeature);
+				continue;
+			}
+		}
+		validatorLayer.setSimpleFeatureCollection(featureCollection);
+		if(errorLayer.getErrFeatureList().size() > 0){
+			return errorLayer;
+		}else{
+			return null;
+		}
+	}
+	
+	public ErrorLayer validateAttributeFix(JSONObject notNullAtt) throws SchemaException{
+		ErrorLayer errorLayer = new ErrorLayer();
+		SimpleFeatureCollection sfc = validatorLayer.getSimpleFeatureCollection();
+		DefaultFeatureCollection featureCollection = new DefaultFeatureCollection();
+		SimpleFeatureIterator simpleFeatureIterator = sfc.features();
+		while (simpleFeatureIterator.hasNext()) {
+			SimpleFeature simpleFeature = simpleFeatureIterator.next();
+			ErrorFeature errorFeature = attributeValidator.validateAttributeFix(simpleFeature, notNullAtt);
+			if(errorFeature != null){
+				errorFeature.setLayerName(validatorLayer.getLayerName());
+				errorLayer.addErrorFeature(errorFeature);
+			}else{
+				featureCollection.add(simpleFeature);
+				continue;
+			}
+		}
+		validatorLayer.setSimpleFeatureCollection(featureCollection);
+		if(errorLayer.getErrFeatureList().size() > 0){
+			return errorLayer;
+		}else{
+			return null;
+		}
+	}
+	
+	public ErrorLayer validateNodeMiss() throws SchemaException{
 		return null;
 	}
 	

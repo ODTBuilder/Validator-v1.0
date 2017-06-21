@@ -18,6 +18,7 @@
 package com.git.opengds.parser.validate;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -27,6 +28,7 @@ import org.json.simple.JSONObject;
 import com.git.gdsbuilder.type.validate.layer.ValidateLayerType;
 import com.git.gdsbuilder.type.validate.layer.ValidateLayerTypeList;
 import com.git.gdsbuilder.type.validate.option.Admin;
+import com.git.gdsbuilder.type.validate.option.AttributeFix;
 import com.git.gdsbuilder.type.validate.option.B_SymbolOutSided;
 import com.git.gdsbuilder.type.validate.option.BridgeName;
 import com.git.gdsbuilder.type.validate.option.BuildingOpen;
@@ -42,6 +44,7 @@ import com.git.gdsbuilder.type.validate.option.PointDuplicated;
 import com.git.gdsbuilder.type.validate.option.SelfEntity;
 import com.git.gdsbuilder.type.validate.option.SmallArea;
 import com.git.gdsbuilder.type.validate.option.SmallLength;
+import com.git.gdsbuilder.type.validate.option.TwistedPolygon;
 import com.git.gdsbuilder.type.validate.option.UnderShoot;
 import com.git.gdsbuilder.type.validate.option.UselessEntity;
 import com.git.gdsbuilder.type.validate.option.UselessPoint;
@@ -152,6 +155,9 @@ public class ValidateTypeParser {
 		List<ValidatorOption> optionList = new ArrayList<ValidatorOption>();
 
 		Iterator optionNames = qaOptions.keySet().iterator();
+		
+		//TwistedPolygon twistedPolygon = new TwistedPolygon();
+		
 		while (optionNames.hasNext()) {
 			String optionName = (String) optionNames.next();
 			if (optionName.equalsIgnoreCase(ConBreak.Type.CONBREAK.errName())) {
@@ -397,7 +403,23 @@ public class ValidateTypeParser {
 					optionList.add(admin);
 				}
 			}
-			
+			if (optionName.equalsIgnoreCase(AttributeFix.Type.ATTRIBUTEFIX.errName())){
+				Object attributeFixObj = qaOptions.get("AttributeFix");
+				if(attributeFixObj == null){
+					continue;
+				}else{
+					HashMap<String, Object> hashMap = new HashMap<String, Object>();
+					JSONObject attributeFixValue = (JSONObject) attributeFixObj;
+					Iterator iterator = attributeFixValue.keySet().iterator();
+					while (iterator.hasNext()) {
+						String layerName = (String) iterator.next();
+						JSONObject attributeObj = (JSONObject) attributeFixValue.get(layerName);
+						hashMap.put(layerName, attributeObj);
+					}
+					ValidatorOption attributeFix = new AttributeFix(hashMap);
+					optionList.add(attributeFix);
+				}
+			}
 		}
 		return optionList;
 	}
