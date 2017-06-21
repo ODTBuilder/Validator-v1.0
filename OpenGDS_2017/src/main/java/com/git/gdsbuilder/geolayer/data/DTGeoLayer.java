@@ -69,7 +69,10 @@ public class DTGeoLayer {
 	 * type; } return UNKNOWN; } };
 	 */
 
+	private String nativeName; // 원본이름
 	private String lName; // 레이어이름
+	private String title; // 간략한 레이어 설명
+	private String abstractContent;
 	private String srs; // 좌표체계
 	private JSONObject llbBox = new JSONObject(); // LatLonBoundingBox
 	private JSONObject nbBox = new JSONObject(); // NativeBoundingBox
@@ -98,7 +101,10 @@ public class DTGeoLayer {
 	@SuppressWarnings("unchecked")
 	public DTGeoLayer(Element layerElem) {
 		RESTFeatureType featureType = new RESTFeatureType(layerElem);
+		this.nativeName = featureType.getNativeName();
 		this.lName = featureType.getName();
+		this.title = featureType.getTitle();
+		this.abstractContent = featureType.getAbstract();
 		this.geomType = this.buildGeomType(layerElem);
 		this.attInfo = this.buildAttType(layerElem);
 		this.dsType = this.buildStoreType(layerElem);
@@ -165,14 +171,18 @@ public class DTGeoLayer {
 			for (int i = 0; i < list.size(); i++) {
 				Element attElement = list.get(i);
 				String nameAtt = attElement.getChildText("name");
+				String nillable = attElement.getChildText("nillable");
 				int flag = nameAtt.indexOf("geom");
 				if (flag == -1) {
 					String bingding = attElement.getChildText("binding");
+					JSONObject attContent = new JSONObject();
 					String type = bingding.substring(10);
 					if (type.equals("BigDecimal")) {
 						type = "Double";
 					}
-					object.put(nameAtt, type);
+					attContent.put("type",type);
+					attContent.put("nillable", nillable);
+					object.put(nameAtt, attContent);
 				}
 			}
 		}
@@ -211,6 +221,30 @@ public class DTGeoLayer {
 	 * @author SG.Lee
 	 * @Date 2017.2
 	 */
+	public String getNativeName() {
+		return nativeName;
+	}
+
+	public void setNativeName(String nativeName) {
+		this.nativeName = nativeName;
+	}
+
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	public String getAbstractContent() {
+		return abstractContent;
+	}
+
+	public void setAbstractContent(String abstractContent) {
+		this.abstractContent = abstractContent;
+	}
+
 	public String getlName() {
 		return lName;
 	}

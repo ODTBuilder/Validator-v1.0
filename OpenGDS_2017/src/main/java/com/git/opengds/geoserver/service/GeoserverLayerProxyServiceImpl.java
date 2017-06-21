@@ -40,12 +40,9 @@ import org.springframework.stereotype.Service;
 
 import com.git.gdsbuilder.geoserver.service.DTGeoserverServiceManager;
 import com.git.gdsbuilder.geoserver.service.en.EnGeoserverService;
-import com.git.gdsbuilder.geoserver.service.en.EnWMSOutputFormat;
-import com.git.gdsbuilder.geoserver.service.impl.DTGeoserverServiceFactoryImpl;
 import com.git.gdsbuilder.geoserver.service.impl.DTGeoserverServiceManagerImpl;
 import com.git.gdsbuilder.geoserver.service.wfs.WFSGetFeature;
 import com.git.gdsbuilder.geoserver.service.wms.WMSGetMap;
-import com.git.gdsbuilder.geosolutions.geoserver.rest.GeoServerRESTPublisher;
 
 /**
  * 프록시서버 요청에 대한 요청을 처리하는 클래스
