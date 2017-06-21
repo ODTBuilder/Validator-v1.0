@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.kabeja.dxf.DXFArc;
 import org.kabeja.dxf.DXFBlock;
@@ -128,8 +127,6 @@ public class QA10Blocks {
 
 	private LinkedHashMap<String, Object> getPolylineValues(DXFPolyline entityObj, String layerName) {
 
-		LinkedHashMap<String, Object> polylineMap = new LinkedHashMap<String, Object>();
-
 		// polyline
 		LinkedHashMap<String, Object> polyline = new LinkedHashMap<String, Object>();
 		polyline.put("0", "POLYLINE");
@@ -148,9 +145,8 @@ public class QA10Blocks {
 			LinkedHashMap<String, Object> vertexMap = getVertexValues(vertex, layerName);
 			vertexMapList.add(vertexMap);
 		}
-		polylineMap.put("polyline", polyline);
-		polylineMap.put("vertexs", vertexMapList);
-		return polylineMap;
+		polyline.put("vertexs", vertexMapList);
+		return polyline;
 	}
 
 	private LinkedHashMap<String, Object> getCircleValues(DXFCircle entityObj, String layerName) {

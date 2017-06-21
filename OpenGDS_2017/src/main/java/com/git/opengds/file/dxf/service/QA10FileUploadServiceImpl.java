@@ -24,30 +24,21 @@ public class QA10FileUploadServiceImpl implements QA10FileUploadService {
 	@Override
 	public FileMeta dxfUpload(FileMeta fileMeta) throws Exception {
 
-		FileMeta file = fileMeta;
-		file.setOriginSrc("EPSG:5186");
-		String filePath = file.getFilePath();
-
 		// dxf file read
 		QA10FileReader fileReader = new QA10FileReader();
-		QA10LayerCollection collection = fileReader.read(file);
-
-		// TestJTS test = new TestJTS();
-		// QA10LayerCollection newCollection = test.testJTS(collection);
+		QA10LayerCollection collection = fileReader.read(fileMeta);
 
 		// create GeoLayerInfo
 		GeoLayerInfo layerInfo = new GeoLayerInfo();
-		layerInfo.setFilePath(filePath);
+		layerInfo.setFilePath(fileMeta.getFilePath());
 		layerInfo.setFileType(fileMeta.getFileType());
 		layerInfo.setFileName(fileMeta.getFileName());
-		layerInfo.setOriginSrc(file.getOriginSrc());
+		layerInfo.setOriginSrc(fileMeta.getOriginSrc());
 		layerInfo.setTransSrc("EPSG:3857");
 
 		// input DB layer
-		GeoLayerInfo returnInfo = dbmanagerService.insertQA10LayerCollectiontest(collection, layerInfo);
-		// GeoLayerInfo returnInfo1 =
-		// dbmanagerService.insertQA10LayerCollection(collection, layerInfo);
-
+		GeoLayerInfo returnInfo = dbmanagerService.insertQA10LayerCollection(collection, layerInfo);
+		fileMeta.setDbInsertFlag(returnInfo.isDbInsertFlag());
 		// publish Layer
 		if (returnInfo != null) {
 			fileMeta.setUploadFlag(true);

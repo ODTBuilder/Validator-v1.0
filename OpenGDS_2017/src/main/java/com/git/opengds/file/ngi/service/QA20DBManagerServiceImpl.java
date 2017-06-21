@@ -50,9 +50,6 @@ public class QA20DBManagerServiceImpl implements QA20DBManagerService {
 	@Inject
 	private QA20LayerCollectionDAO dao;
 
-	@Inject
-	private GeoserverService geoserverService;
-
 	public GeoLayerInfo insertQA20LayerCollection(QA20LayerCollection dtCollection, GeoLayerInfo layerInfo)
 			throws Exception {
 
@@ -76,12 +73,6 @@ public class QA20DBManagerServiceImpl implements QA20DBManagerService {
 				QA20Layer qa20Layer = createLayerList.get(i);
 				String layerName = qa20Layer.getLayerName();
 				
-				if(layerName.equals("H0040000_TEXT")) {
-					System.out.println("");
-				}
-				
-				
-
 				// createQA20Layer
 				HashMap<String, Object> createQuery = dbManager.qa20LayerTbCreateQuery(type, collectionName, qa20Layer);
 				dao.createQA20LayerTb(createQuery);
@@ -150,8 +141,6 @@ public class QA20DBManagerServiceImpl implements QA20DBManagerService {
 		}
 		if (layerInfo != null) {
 			txManager.commit(status);
-			FileMeta geoserverFileMeta = geoserverService.dbLayerPublishGeoserver(layerInfo);
-			System.out.println("서버성공");
 		}
 		return layerInfo;
 	}
