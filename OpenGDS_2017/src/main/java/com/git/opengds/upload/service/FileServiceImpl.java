@@ -105,7 +105,7 @@ public class FileServiceImpl implements FileService {
 				fileMeta.setFileName(mpf.getOriginalFilename().substring(0, pos));
 				fileMeta.setFileSize(mpf.getSize() / 1024 + " Kb");
 				fileMeta.setFileType(ext);
-				fileMeta.setOriginSrc("EPSG:"+epsg);
+				fileMeta.setOriginSrc(epsg);
 				fileMeta.setBytes(mpf.getBytes());
 
 				String saveFilePath = "";
