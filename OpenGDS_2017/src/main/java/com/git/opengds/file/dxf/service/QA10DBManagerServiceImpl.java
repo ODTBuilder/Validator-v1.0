@@ -113,9 +113,11 @@ public class QA10DBManagerServiceImpl implements QA10DBManagerService {
 
 		} catch (Exception e) {
 			txManager.rollback(status);
-			return null;
+			layerInfo.setDbInsertFlag(false);
+			return layerInfo;
 		}
 		txManager.commit(status);
+		layerInfo.setDbInsertFlag(true);
 		return layerInfo;
 	}
 

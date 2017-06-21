@@ -34,7 +34,6 @@ import com.git.gdsbuilder.type.geoserver.layer.GeoLayerInfo;
 import com.git.gdsbuilder.type.qa20.collection.QA20LayerCollection;
 import com.git.opengds.geoserver.service.GeoserverService;
 import com.git.opengds.upload.domain.FileMeta;
-import com.git.opengds.validator.service.ValidatorService;
 
 @Service
 @ContextConfiguration(locations = { "file:src/main/webapp/WEB-INF/spring/**/*.xml" })
@@ -42,7 +41,7 @@ public class QA20FileUploadServiceImpl implements QA20FileUploadService {
 
 	@Inject
 	private QA20DBManagerService qa20dbManagerService;
-	
+
 	@Inject
 	private GeoserverService geoserverService;
 
@@ -72,8 +71,12 @@ public class QA20FileUploadServiceImpl implements QA20FileUploadService {
 		if (returnInfo != null) {
 			fileMeta.setUploadFlag(true);
 			FileMeta geoserverFileMeta = geoserverService.dbLayerPublishGeoserver(returnInfo);
-			fileMeta.setServerPublishFlag(geoserverFileMeta.isServerPublishFlag());
-			System.out.println("서버성공");
+			boolean isPublished = geoserverFileMeta.isServerPublishFlag();
+			fileMeta.setServerPublishFlag(isPublished);
+			if (!isPublished) {
+				// 다시 다 삭제
+				qa20dbManagerService.dropQA20LayerCollection(dtCollection, layerInfo);
+			}
 		}
 		return fileMeta;
 	}

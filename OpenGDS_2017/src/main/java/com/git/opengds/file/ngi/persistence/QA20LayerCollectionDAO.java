@@ -18,6 +18,7 @@
 package com.git.opengds.file.ngi.persistence;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.postgresql.util.PSQLException;
@@ -26,7 +27,7 @@ public interface QA20LayerCollectionDAO {
 
 	public int insertQA20LayerCollection(Map<String, Object> collection);
 
-	public HashMap<String, Object> selectQA20LayerCollectionIdx(HashMap<String, Object> selectLayerCollectionIdxQuery);
+	public int selectQA20LayerCollectionIdx(HashMap<String, Object> selectLayerCollectionIdxQuery);
 
 	public void createQA20LayerTb(HashMap<String, Object> hashMap) throws PSQLException;
 
@@ -53,5 +54,11 @@ public interface QA20LayerCollectionDAO {
 	public int deleteQA20Feature(HashMap<String, Object> deleteQuery);
 
 	public void insertQA20Feature(HashMap<String, Object> insertQuery);
+
+	public List<HashMap<String, Object>> selectQA20LayerMetadataIdx(HashMap<String, Object> metadataIdxQuery);
+
+	public HashMap<String, Object>  selectQA20LayerTableName(HashMap<String, Object> layerTbNameQuery);
+
+	public void deleteField(HashMap<String, Object> deleteTextRepQuery);
 
 }

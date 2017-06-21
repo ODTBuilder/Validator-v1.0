@@ -18,6 +18,7 @@
 package com.git.opengds.file.ngi.persistence;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -25,6 +26,8 @@ import javax.inject.Inject;
 import org.apache.ibatis.session.SqlSession;
 import org.postgresql.util.PSQLException;
 import org.springframework.stereotype.Repository;
+
+import com.sun.tools.javah.resources.l10n;
 
 @Repository
 public class QA20LayerCollectionDAOImpl implements QA20LayerCollectionDAO {
@@ -42,8 +45,10 @@ public class QA20LayerCollectionDAOImpl implements QA20LayerCollectionDAO {
 	}
 
 	@Override
-	public HashMap<String, Object> selectQA20LayerCollectionIdx(HashMap<String, Object> selectLayerCollectionIdxQuery) {
-		return sqlSession.selectOne(namespace + ".selectLayerCollectionIdx", selectLayerCollectionIdxQuery);
+	public int selectQA20LayerCollectionIdx(HashMap<String, Object> selectLayerCollectionIdxQuery) {
+		HashMap<String, Object> idxMap = sqlSession.selectOne(namespace + ".selectLayerCollectionIdx",
+				selectLayerCollectionIdxQuery);
+		return (Integer) idxMap.get("c_idx");
 	}
 
 	// qa20_Layer
@@ -112,11 +117,25 @@ public class QA20LayerCollectionDAOImpl implements QA20LayerCollectionDAO {
 	@Override
 	public int deleteQA20Feature(HashMap<String, Object> deleteQuery) {
 		return sqlSession.delete(namespace + ".deleteFeature", deleteQuery);
-	} 
+	}
 
 	@Override
 	public void insertQA20Feature(HashMap<String, Object> insertQuery) {
 		sqlSession.insert(namespace + ".insertFeature", insertQuery);
 	}
 
+	@Override
+	public List<HashMap<String, Object>> selectQA20LayerMetadataIdx(HashMap<String, Object> metadataIdxQuery) {
+		return sqlSession.selectList(namespace + ".selectLayerMetadataIdx", metadataIdxQuery);
+	}
+
+	@Override
+	public HashMap<String, Object> selectQA20LayerTableName(HashMap<String, Object> layerTbNameQuery) {
+		return sqlSession.selectOne(namespace + ".selectQA20LayerTableName", layerTbNameQuery);
+	}
+
+	@Override
+	public void deleteField(HashMap<String, Object> deleteHeaderQuery) {
+		sqlSession.delete(namespace + ".deleteHeader", deleteHeaderQuery);
+	}
 }

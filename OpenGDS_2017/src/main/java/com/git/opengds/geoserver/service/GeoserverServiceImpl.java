@@ -90,7 +90,6 @@ public class GeoserverServiceImpl implements GeoserverService {
 			throws IllegalArgumentException, MalformedURLException {
 		String wsName = ID;
 		String dsName = ID;
-		FileMeta fileMeta = new FileMeta();
 
 		String fileName = layerInfo.getFileName();
 		List<String> layerNameList = layerInfo.getLayerNames();
@@ -125,16 +124,16 @@ public class GeoserverServiceImpl implements GeoserverService {
 
 			if (flag == false) {
 				dtPublisher.removeLayer(wsName, layerName);
-				fileMeta.setServerPublishFlag(flag);
-				return fileMeta;
+				layerInfo.setServerPublishFlag(flag);
+				return layerInfo;
 			}
 			successLayerList.add(layerFullName);
 		}
 
 		dtPublisher.createLayersGroup(wsName, fileName, successLayerList);
-		fileMeta.setServerPublishFlag(flag);
+		layerInfo.setServerPublishFlag(flag);
 
-		return fileMeta;
+		return layerInfo;
 	}
 
 	// 에러레이어 발행하기

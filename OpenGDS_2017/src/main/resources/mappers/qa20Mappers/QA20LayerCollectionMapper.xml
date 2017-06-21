@@ -58,6 +58,16 @@
 		</selectKey>
 	</insert>
 
+	<select id="selectLayerMetadataIdx" parameterType="hashMap"
+		resultType="hashMap">
+		${selectAllQuery}
+	</select>
+
+	<select id="selectQA20LayerTableName" parameterType="hashMap"
+		resultType="hashMap">
+		${selectQuery}
+	</select>
+
 	<!-- nda_aspatial_field_def -->
 	<insert id="insertNdaAspatialFieldDefs" parameterType="hashmap">
 		${insertQuery}
@@ -83,5 +93,8 @@
 		${insertQuery}
 	</insert>
 
+	<select id="deleteHeader" parameterType="hashMap">
+		${deleteQuery}
+	</select>
 
 </mapper>

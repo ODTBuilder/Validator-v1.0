@@ -43,7 +43,11 @@ public class QA10FileUploadServiceImpl implements QA10FileUploadService {
 		if (returnInfo != null) {
 			fileMeta.setUploadFlag(true);
 			FileMeta geoserverFileMeta = geoserverService.dbLayerPublishGeoserver(returnInfo);
-			fileMeta.setServerPublishFlag(geoserverFileMeta.isServerPublishFlag());
+			boolean isPublished = geoserverFileMeta.isServerPublishFlag();
+			fileMeta.setServerPublishFlag(isPublished);
+			if(!isPublished) {
+				// 다시 다 삭제
+			}
 			System.out.println("서버성공");
 		}
 		return fileMeta;
