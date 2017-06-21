@@ -122,6 +122,7 @@
       uploadMultiple: false,
 //      duplicate : false, //중복허용여부
       uploading : false, //업로드 진행여부
+      epsg : false, //EPSG 입력여부
       maxFilesize: 256,
       paramName: "file",
       createImageThumbnails: true,
@@ -149,6 +150,7 @@
       dictSuccessMessage: "The layer has been successfully published.", // 파일발행 성공 메세지
       dictFallbackText: "Please use the fallback form below to upload your files like in the olden days.",
       dictFileTooBig: "File is too big ({{filesize}}MiB). Max filesize: {{maxFilesize}}MiB.",
+      dictEpsgErr:"The coordinate system is not defined.",
       dictInvalidFileType: "You can't upload files of this type.",
       dictInvalidFileNameSC: "It is not possible to include special characters in file name.", //파일이름 특수문자 에러메세지 추가
       dictInvalidFileNameByte: "File name must be 30 bytes or less in length", //파일이름 길이 에러메세지 추가
@@ -1024,9 +1026,12 @@
     };
 
     Dropzone.prototype.accept = function(file, done) {
-      if (file.size > this.options.maxFilesize * 1024 * 1024) {
+      if(!this.options.epsg){
+    	  return done(this.options.dictEpsgErr);
+      }
+      else if (file.size > this.options.maxFilesize * 1024 * 1024) {
         return done(this.options.dictFileTooBig.replace("{{filesize}}", Math.round(file.size / 1024 / 10.24) / 100).replace("{{maxFilesize}}", this.options.maxFilesize));
-      } 
+      }
       else if (!Dropzone.isValidFile(file, this.options.acceptedFiles)) {
         return done(this.options.dictInvalidFileType);
       }
@@ -1036,7 +1041,7 @@
   	 */
       else if (!Dropzone.invalidFileNameByte(file, this.options.acceptedFileNameByte)){
     	return done(this.options.dictInvalidFileNameByte);
-      } 
+      }
 	      /**
 	  	 * ACCEPT - 파일이름 특수문자 체크
 	  	 * @author SG.Lee
@@ -1089,6 +1094,56 @@
     		});
 		}
     }
+    
+    Dropzone.prototype.search = function(){ //EPSG 코드 검색 Onclick
+		var epsgCode = $('#epsgtext').val();
+		if(this.options.epsg){
+			$("input[id=epsgtext]").attr("readonly",false);
+			$('#searchbtn').text('search');
+			this.options.epsg = false;
+			this.initFileTypeChange();
+			return;
+		}
+		if(epsgCode){
+			Dropzone.prototype.epsgSearch(this,epsgCode);
+		}
+		else{
+			alertPopup('warning','WARNING','Please enter the code')
+		}
+	}
+   
+    Dropzone.prototype.epsgSearch = function(dropzone,query){ //EPSG 코드 정보 요청
+    	var $btn = $('#searchbtn');
+    	$btn.button('loading');
+		fetch('https://epsg.io/?format=json&q=' + query).then(function(response) {
+			return response.json();
+		}).then(function(json) {
+//			$btn.button('reset');
+			var results = json['results'];
+			if (results && results.length > 0) {
+				for (var i = 0, ii = results.length; i < ii; i++) {
+					var result = results[i];
+					if (result) {
+						var code = result['code'], name = result['name'], proj4def = result['proj4'], bbox = result['bbox'];
+						if (code && code.length > 0 && proj4def && proj4def.length > 0 && bbox && bbox.length == 4) {
+							dropzone.options.epsg = true;
+//							$('#searchbtn').button('reset');
+							$('#searchbtn').text('edit');
+							$('#searchbtn').removeClass('disabled');
+							$('#searchbtn').prop('disabled',false);
+							$("input[id=epsgtext]").attr("readonly",true);
+							dropzone.options.params = {"epsg":$('#epsgtext').val()};
+							dropzone.initFileTypeChange();
+							alertPopup('success','Success.','Supports corresponding coordinate codes.')
+//							gitrnd.setProjection(code, name, proj4def, bbox);
+							return;
+						}
+					}
+				}
+			}
+			alertPopup('warning','Please try again.','This code is not supported.')
+		});
+	}
     
     
 
@@ -1392,6 +1447,12 @@
             file = files[_j];
             _results.push(_this._errorProcessing(files, response || _this.options.dictResponseError.replace("{{statusCode}}", xhr.status), xhr));
           }
+          //서버 응답없을시 progressbar
+        $('#total-progress-in').text('There is a problem with the server.');
+      	$('#total-progress-in').addClass("progress-bar-danger");
+      	$('#total-progress').removeClass("active");
+          
+          
           return _results;
         };
       })(this);
@@ -1530,7 +1591,6 @@
       for (_i = 0, _len = files.length; _i < _len; _i++) {
         file = files[_i];
         file.status = Dropzone.SUCCESS;
-        
         this.emit("success", file, responseText, this.options.dictSuccessMessage, e); // success 메세지 추가 
         this.emit("complete", file);
       }

@@ -340,7 +340,16 @@ function alertPopup(type,title,sub){
 		btnType='btn btn-success';
 	}
 	else if(type == 'warning'){
-		btnType='btn btn-danger'
+		btnType='btn btn-warning'
+	}
+	else if(type == 'error'){
+		btnType='btn btn-error'
+	} 
+	else if(type == 'info'){
+		btnType='btn btn-info'
+	} 
+	else if(type == 'question'){
+		btnType='btn btn-question'
 	} 
 	
     swal({
