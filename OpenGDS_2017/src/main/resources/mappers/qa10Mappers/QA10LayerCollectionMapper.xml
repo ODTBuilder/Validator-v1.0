@@ -16,7 +16,7 @@
 	<insert id="insertQA10LayerCollectionTableCommon" parameterType="hashmap">
 		${insertQuery}
 		<selectKey keyProperty="tc_idx" resultType="int" order="AFTER">
-			select currval('qa10_layerCollection_table_common_tc_idx_seq')
+			select currval('qa10_layercollection_table_common_tc_idx_seq')
 		</selectKey>
 	</insert>
 
@@ -28,8 +28,12 @@
 	<insert id="insertQA10LayerCollectionBlockCommon" parameterType="hashmap">
 		${insertQuery}
 		<selectKey keyProperty="bc_idx" resultType="int" order="AFTER">
-			select currval('qa10_layerCollection_block_common_bc_idx_seq')
+			select currval('qa10_layercollection_block_common_bc_idx_seq')
 		</selectKey>
+	</insert>
+
+	<insert id="insertQA10LayerCollectionBlockEntity" parameterType="hashmap">
+		${insertQuery}
 	</insert>
 
 	<!-- qa10_layer_tb -->

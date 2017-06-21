@@ -10,7 +10,6 @@ import java.util.Map;
 import com.git.gdsbuilder.type.qa10.feature.QA10Feature;
 import com.git.gdsbuilder.type.qa10.feature.QA10FeatureList;
 import com.git.gdsbuilder.type.qa10.layer.QA10Layer;
-import com.git.gdsbuilder.type.qa10.structure.QA10Tables;
 
 public class QA10DBQueryManager {
 
@@ -137,7 +136,7 @@ public class QA10DBQueryManager {
 
 		LinkedHashMap<String, Object> commons = (LinkedHashMap<String, Object>) tables.get("common");
 
-		String tableName = "\"" + "qa10_layerCollection_table_common" + "\"";
+		String tableName = "\"" + "qa10_layercollection_table_common" + "\"";
 		String tableColumnQuery = "insert into " + tableName + "(";
 		String tableValuesQuery = "values(";
 
@@ -163,9 +162,9 @@ public class QA10DBQueryManager {
 
 		List<HashMap<String, Object>> layerQuerys = new ArrayList<HashMap<String, Object>>();
 		List<LinkedHashMap<String, Object>> layers = (List<LinkedHashMap<String, Object>>) tables.get("layers");
-		
-		String tableName = "\"" + "qa10_layerCollection_table_layer" + "\"";
-		for(int i = 0; i < layers.size(); i++) {
+
+		String tableName = "\"" + "qa10_layercollection_table_layer" + "\"";
+		for (int i = 0; i < layers.size(); i++) {
 			LinkedHashMap<String, Object> layer = layers.get(i);
 			String layerColumnQuery = "insert into " + tableName + "(";
 			String layerValuesQuery = "values(";
@@ -178,7 +177,7 @@ public class QA10DBQueryManager {
 			}
 			layerColumnQuery += "tc_idx" + ")";
 			layerValuesQuery += tbIdx + ")";
-			
+
 			String returnQuery = layerColumnQuery + layerValuesQuery;
 			HashMap<String, Object> query = new HashMap<String, Object>();
 			query.put("insertQuery", returnQuery);
@@ -192,7 +191,7 @@ public class QA10DBQueryManager {
 
 		List<HashMap<String, Object>> blockQuerys = new ArrayList<HashMap<String, Object>>();
 
-		String tableName = "\"" + "qa10_layerCollection_block_common" + "\"";
+		String tableName = "\"" + "qa10_layercollection_block_common" + "\"";
 		for (int i = 0; i < blocks.size(); i++) {
 			String blockColumnQuery = "insert into " + tableName + "(";
 			String blockValuesQuery = "values(";
@@ -234,15 +233,17 @@ public class QA10DBQueryManager {
 			String typeValue = (String) entity.get(typeCode);
 
 			if (typeValue.equals("TEXT")) {
-				tableName = "\"" + "qa10_layerCollection_block_text" + "\"";
+				tableName = "\"" + "qa10_layercollection_block_text" + "\"";
 			} else if (typeValue.equals("ARC")) {
-				tableName = "\"" + "qa10_layerCollection_block_arc" + "\"";
+				tableName = "\"" + "qa10_layercollection_block_arc" + "\"";
 			} else if (typeValue.equals("VERTEX")) {
-				tableName = "\"" + "qa10_layerCollection_block_vertex" + "\"";
+				tableName = "\"" + "qa10_layercollection_block_vertex" + "\"";
 			} else if (typeValue.equals("POLYLINE")) {
-				tableName = "\"" + "qa10_layerCollection_block_polyline" + "\"";
+				tableName = "\"" + "qa10_layercollection_block_polyline" + "\"";
+				getInsertBlockPolylineQuery(tableName, bIdx, entity);
+				continue;
 			} else if (typeValue.equals("CIRCLE")) {
-				tableName = "\"" + "qa10_layerCollection_block_circle" + "\"";
+				tableName = "\"" + "qa10_layercollection_block_circle" + "\"";
 			}
 
 			String insertColumnQuery = "insert into " + tableName + "(";
@@ -268,9 +269,10 @@ public class QA10DBQueryManager {
 		return insertQueryList;
 	}
 
-	private void getInsertTextEntityQuery(LinkedHashMap<String, Object> entity) {
+	private void getInsertBlockPolylineQuery(String tableName, int bIdx, LinkedHashMap<String, Object> entity) {
 
-		String tableName = "\"" + "qa10_layerCollection_block_text" + "\"";
+		List<HashMap<String, Object>> insertQueryList = new ArrayList<HashMap<String, Object>>();
+
 		String insertColumnQuery = "insert into " + tableName + "(";
 		String insertValueQuery = "values(";
 
@@ -278,39 +280,50 @@ public class QA10DBQueryManager {
 		while (entityIt.hasNext()) {
 			String code = (String) entityIt.next();
 			Object value = entity.get(code);
-
+			if (code.equals("vertexs")) {
+				tableName = "\"" + "qa10_layercollection_block_vertex" + "\"";
+				insertQueryList.addAll(getInsertBlockVertexQuery(tableName, bIdx, value));
+				continue;
+			}
 			insertColumnQuery += "\"" + code + "\", ";
 			insertValueQuery += "'" + value + "', ";
 		}
+		insertColumnQuery += "bc_idx" + ")";
+		insertValueQuery += bIdx + ")";
 
-		int lastIndextC = insertColumnQuery.lastIndexOf(",");
-		String returnQueryC = insertColumnQuery.substring(0, lastIndextC) + ")";
-		int lastIndextV = insertValueQuery.lastIndexOf(",");
-		String returnQueryV = insertValueQuery.substring(0, lastIndextV) + ")";
-
-		String returnQuery = returnQueryC + returnQueryV;
+		String returnQuery = insertColumnQuery + insertValueQuery;
 		HashMap<String, Object> query = new HashMap<String, Object>();
 		query.put("insertQuery", returnQuery);
-	}
 
-	private void getInsertArcEntityQuery(LinkedHashMap<String, Object> entity) {
-		// TODO Auto-generated method stub
+		insertQueryList.add(query);
 
 	}
 
-	private void getInsertVertexEntityQuery(LinkedHashMap<String, Object> entity) {
-		// TODO Auto-generated method stub
+	private List<HashMap<String, Object>> getInsertBlockVertexQuery(String tableName, int bIdx, Object vertexObj) {
 
+		List<HashMap<String, Object>> insertQueryList = new ArrayList<HashMap<String, Object>>();
+
+		List<LinkedHashMap<String, Object>> vertexMapList = (List<LinkedHashMap<String, Object>>) vertexObj;
+		String insertColumnQuery = "insert into " + tableName + "(";
+		String insertValueQuery = "values(";
+		for (int i = 0; i < vertexMapList.size(); i++) {
+			LinkedHashMap<String, Object> vertex = vertexMapList.get(i);
+			Iterator entityIt = vertex.keySet().iterator();
+			while (entityIt.hasNext()) {
+				String code = (String) entityIt.next();
+				Object value = vertex.get(code);
+				insertColumnQuery += "\"" + code + "\", ";
+				insertValueQuery += "'" + value + "', ";
+			}
+			insertColumnQuery += "bc_idx" + ")";
+			insertValueQuery += bIdx + ")";
+
+			String returnQuery = insertColumnQuery + insertValueQuery;
+			HashMap<String, Object> query = new HashMap<String, Object>();
+			query.put("insertQuery", returnQuery);
+
+			insertQueryList.add(query);
+		}
+		return insertQueryList;
 	}
-
-	private void getInsertPolylineEntityQuery(LinkedHashMap<String, Object> entity) {
-		// TODO Auto-generated method stub
-
-	}
-
-	private void getInsertCircleEntityQuery(LinkedHashMap<String, Object> entity) {
-		// TODO Auto-generated method stub
-
-	}
-
 }
