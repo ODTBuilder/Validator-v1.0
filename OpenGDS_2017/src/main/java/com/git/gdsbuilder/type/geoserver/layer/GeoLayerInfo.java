@@ -41,6 +41,7 @@ public class GeoLayerInfo extends FileMeta {
 	private Map<String, String> layerTypes;
 	private Map<String, List<String>> layerColumns;
 	private Map<String, HashMap<String, Object>> boundarys;
+	private Map<String, Boolean> isFeatureMap;
 
 	/**
 	 * LayerInfo 생성자
@@ -53,6 +54,15 @@ public class GeoLayerInfo extends FileMeta {
 		layerTypes = new HashMap<String, String>();
 		layerColumns = new HashMap<String, List<String>>();
 		boundarys = new HashMap<String, HashMap<String, Object>>();
+		isFeatureMap = new HashMap<String, Boolean>();
+	}
+
+	public Map<String, Boolean> getIsFeatureMap() {
+		return isFeatureMap;
+	}
+
+	public void setIsFeatureMap(Map<String, Boolean> isFeatureMap) {
+		this.isFeatureMap = isFeatureMap;
 	}
 
 	public String getFileType() {
