@@ -38,6 +38,7 @@ import com.git.gdsbuilder.type.validate.option.ConOverDegree;
 import com.git.gdsbuilder.type.validate.option.CrossRoad;
 import com.git.gdsbuilder.type.validate.option.EntityDuplicated;
 import com.git.gdsbuilder.type.validate.option.LayerMiss;
+import com.git.gdsbuilder.type.validate.option.NodeMiss;
 import com.git.gdsbuilder.type.validate.option.OutBoundary;
 import com.git.gdsbuilder.type.validate.option.OverShoot;
 import com.git.gdsbuilder.type.validate.option.PointDuplicated;
@@ -155,9 +156,9 @@ public class ValidateTypeParser {
 		List<ValidatorOption> optionList = new ArrayList<ValidatorOption>();
 
 		Iterator optionNames = qaOptions.keySet().iterator();
-		
+
 		//TwistedPolygon twistedPolygon = new TwistedPolygon();
-		
+
 		while (optionNames.hasNext()) {
 			String optionName = (String) optionNames.next();
 			if (optionName.equalsIgnoreCase(ConBreak.Type.CONBREAK.errName())) {
@@ -310,7 +311,7 @@ public class ValidateTypeParser {
 					}
 					ValidatorOption layerMiss = new LayerMiss(layerType);
 					optionList.add(layerMiss);
-					
+
 				}
 			}
 			if(optionName.equalsIgnoreCase(UselessEntity.Type.USELESSENTITY.errName())){
@@ -325,7 +326,7 @@ public class ValidateTypeParser {
 				if(isTrue){
 					BuildingOpen buildingOpen = new BuildingOpen();
 					optionList.add(buildingOpen);				
-					}
+				}
 			}
 			if(optionName.equalsIgnoreCase(WaterOpen.Type.WATEROPEN.errName())){
 				Boolean isTrue = (Boolean) qaOptions.get("WaterOpen");
@@ -334,7 +335,7 @@ public class ValidateTypeParser {
 					optionList.add(waterOpen);
 				}
 			}
-			
+
 			if(optionName.equalsIgnoreCase(B_SymbolOutSided.Type.B_SYMBOLOUTSIDED.errName())){
 				Object b_SymbolOutSidedObj = qaOptions.get("B_SymbolOutSided");
 				if(b_SymbolOutSidedObj == null){
@@ -351,9 +352,9 @@ public class ValidateTypeParser {
 					ValidatorOption b_SymbolOutSided = new B_SymbolOutSided(relations);
 					optionList.add(b_SymbolOutSided);
 				}
-				
+
 			}
-			
+
 			if (optionName.equalsIgnoreCase(PointDuplicated.Type.POINTDUPLICATED.errName())) {
 				Boolean isTrue = (Boolean) qaOptions.get("PointDuplicated");
 				if (isTrue) {
@@ -361,7 +362,7 @@ public class ValidateTypeParser {
 					optionList.add(pointDuplicated);
 				}
 			}
-			
+
 			if(optionName.equalsIgnoreCase(CrossRoad.Type.CROSSROAD.errName())){
 				Object crossRoadObj = qaOptions.get("CrossRoad");
 				if(crossRoadObj == null){
@@ -418,6 +419,24 @@ public class ValidateTypeParser {
 					}
 					ValidatorOption attributeFix = new AttributeFix(hashMap);
 					optionList.add(attributeFix);
+				}
+			}
+
+			if(optionName.equalsIgnoreCase(NodeMiss.Type.NODEMISS.errName())){
+				Object nodeMissObj = qaOptions.get("NodeMiss");
+				if(nodeMissObj == null){
+					continue;
+				}else{
+					List<String> relations = new ArrayList<String>();
+					JSONObject nodeMissValue = (JSONObject) nodeMissObj;
+					JSONArray relationValues = (JSONArray) nodeMissValue.get("relation");
+					int valueSize = relationValues.size();
+					for (int i = 0; i < valueSize; i++) {
+						String relationID = (String) relationValues.get(i);
+						relations.add(relationID);
+					}
+					ValidatorOption nodeMiss = new NodeMiss(relations);
+					optionList.add(nodeMiss);
 				}
 			}
 		}

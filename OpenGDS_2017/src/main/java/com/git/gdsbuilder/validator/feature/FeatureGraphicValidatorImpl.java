@@ -63,6 +63,7 @@ import com.git.gdsbuilder.type.validate.option.ConOverDegree;
 import com.git.gdsbuilder.type.validate.option.CrossRoad;
 import com.git.gdsbuilder.type.validate.option.EntityDuplicated;
 import com.git.gdsbuilder.type.validate.option.LayerMiss;
+import com.git.gdsbuilder.type.validate.option.NodeMiss;
 import com.git.gdsbuilder.type.validate.option.OutBoundary;
 import com.git.gdsbuilder.type.validate.option.OverShoot;
 import com.git.gdsbuilder.type.validate.option.SelfEntity;
@@ -727,11 +728,39 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 		return null;
 	}
 
-	public ErrorFeature validateNodeMiss(SimpleFeature simpleFeature) throws SchemaException{
-
-		return null;
+	public List<ErrorFeature> validateNodeMiss(SimpleFeature simpleFeature, SimpleFeature relationSimpleFeature) throws SchemaException{
+		List<ErrorFeature> errFeatures = new ArrayList<ErrorFeature>();
+		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
+		Geometry relGeometry = (Geometry) relationSimpleFeature.getDefaultGeometry();
+		
+		if(geometry.contains(relGeometry) || geometry.overlaps(relGeometry)){
+			GeometryFactory geometryFactory = new GeometryFactory();
+			Coordinate[] relCoordinates = relGeometry.getCoordinates();
+			Coordinate start = relCoordinates[0];
+			Coordinate end = relCoordinates[relCoordinates.length-1];
+			Geometry startPoint = geometryFactory.createPoint(start);
+			Geometry endPoint = geometryFactory.createPoint(end);
+			
+			if(!(geometry.touches(startPoint))){
+				ErrorFeature errorFeature = new ErrorFeature(relationSimpleFeature.getID(), NodeMiss.Type.NODEMISS.errType(),
+						NodeMiss.Type.NODEMISS.errName(), startPoint);
+				errFeatures.add(errorFeature);
+			}else{
+				return null;
+			}
+			
+			if(!(geometry.touches(endPoint))){
+				ErrorFeature errorFeature = new ErrorFeature(relationSimpleFeature.getID(), NodeMiss.Type.NODEMISS.errType(),
+						NodeMiss.Type.NODEMISS.errName(), endPoint);
+				errFeatures.add(errorFeature);
+			}else{
+				return null;
+			}
+		}
+		return errFeatures;
 	}
 
+	
 	// 객체 꼬임 여부 검사
 	public ErrorFeature validateTwistedPolygon (SimpleFeature simpleFeature) throws SchemaException{
 		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
@@ -746,6 +775,6 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 		}else{
 			return null;
 		}
-
 	}
+	
 }

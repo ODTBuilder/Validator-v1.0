@@ -63,6 +63,7 @@ import com.git.gdsbuilder.type.validate.option.ConOverDegree;
 import com.git.gdsbuilder.type.validate.option.CrossRoad;
 import com.git.gdsbuilder.type.validate.option.EntityDuplicated;
 import com.git.gdsbuilder.type.validate.option.LayerMiss;
+import com.git.gdsbuilder.type.validate.option.NodeMiss;
 import com.git.gdsbuilder.type.validate.option.OutBoundary;
 import com.git.gdsbuilder.type.validate.option.OverShoot;
 import com.git.gdsbuilder.type.validate.option.SelfEntity;
@@ -325,6 +326,9 @@ public class CollectionValidator {
 									typeErrorLayer = layerValidator.vallidateB_SymbolOutSided(validateLayerCollectionList
 											.getTypeLayers(relationNames.get(l), collection));
 								}
+								if (typeErrorLayer != null) {
+									errLayer.mergeErrorLayer(typeErrorLayer);
+								}
 							}
 							if(option instanceof CrossRoad){
 								List<String> relationNames = ((CrossRoad)option).getRelationType();
@@ -332,8 +336,21 @@ public class CollectionValidator {
 									typeErrorLayer = layerValidator.validateCrossRoad(validateLayerCollectionList
 											.getTypeLayers(relationNames.get(l), collection));
 								}
+								if (typeErrorLayer != null) {
+									errLayer.mergeErrorLayer(typeErrorLayer);
+								}
 							}
-
+							if(option instanceof NodeMiss){
+								List<String> relationNames = ((NodeMiss) option).getRelationType();
+								for (int l = 0; l < relationNames.size(); l++) {
+									typeErrorLayer = layerValidator.validateNodeMiss(validateLayerCollectionList
+											.getTypeLayers(relationNames.get(l), collection));
+								}
+								if (typeErrorLayer != null) {
+									errLayer.mergeErrorLayer(typeErrorLayer);
+								}
+							}
+							
 							if (typeErrorLayer != null) {
 								errLayer.mergeErrorLayer(typeErrorLayer);
 							}

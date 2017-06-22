@@ -198,5 +198,6 @@ public interface LayerValidator {
 	public ErrorLayer validateAdmin() throws SchemaException;
 	public ErrorLayer validateTwistedPolygon() throws SchemaException;
 	public ErrorLayer validateAttributeFix(JSONObject notNullAtt) throws SchemaException;
+	public ErrorLayer validateNodeMiss(List<GeoLayer> relationLayers) throws SchemaException;
 
 }
