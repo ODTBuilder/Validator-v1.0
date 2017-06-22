@@ -122,7 +122,7 @@ public class QA10DBManagerServiceImpl implements QA10DBManagerService {
 	}
 
 	@Override
-	public void dropQA10LayerCollection(QA10LayerCollection collection, GeoLayerInfo layerInfo) {
+	public GeoLayerInfo dropQA10LayerCollection(QA10LayerCollection collection, GeoLayerInfo layerInfo) {
 
 		DefaultTransactionDefinition def = new DefaultTransactionDefinition();
 		def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
@@ -208,8 +208,11 @@ public class QA10DBManagerServiceImpl implements QA10DBManagerService {
 		} catch (Exception e) {
 			txManager.rollback(status);
 			layerInfo.setDbInsertFlag(false);
+			return layerInfo;
 		}
 		txManager.commit(status);
+		layerInfo.setDbInsertFlag(true);
+		return layerInfo;
 	}
 
 }

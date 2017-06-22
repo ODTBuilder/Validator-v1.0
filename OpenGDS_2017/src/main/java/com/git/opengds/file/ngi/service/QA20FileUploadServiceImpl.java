@@ -75,7 +75,8 @@ public class QA20FileUploadServiceImpl implements QA20FileUploadService {
 			fileMeta.setServerPublishFlag(isPublished);
 			if (!isPublished) {
 				// 다시 다 삭제
-				qa20dbManagerService.dropQA20LayerCollection(dtCollection, layerInfo);
+				GeoLayerInfo returnDropInfo = qa20dbManagerService.dropQA20LayerCollection(dtCollection, layerInfo);
+				fileMeta.setUploadFlag(returnDropInfo.isUploadFlag());
 			}
 		}
 		return fileMeta;
