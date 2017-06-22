@@ -93,7 +93,7 @@ public class GeoserverServiceImpl implements GeoserverService {
 
 		String fileName = layerInfo.getFileName();
 		List<String> layerNameList = layerInfo.getLayerNames();
-		String originSrc = "EGSG:" + layerInfo.getOriginSrc();
+		String originSrc = "EPSG:" + layerInfo.getOriginSrc();
 		List<String> successLayerList = new ArrayList<String>();
 		boolean flag = false;
 
@@ -104,7 +104,7 @@ public class GeoserverServiceImpl implements GeoserverService {
 			String layerName = layerNameList.get(i);
 			String upperLayerName = layerName.toUpperCase();
 			String fileType = layerInfo.getFileType();
-			String layerFullName = "\"geo_" + fileType + "_" + fileName + "_" + layerName + "\"";
+			String layerFullName = "geo_" + fileType + "_" + fileName + "_" + layerName;
 
 			fte.setProjectionPolicy(ProjectionPolicy.REPROJECT_TO_DECLARED);
 			fte.setTitle(layerFullName); // 제목
