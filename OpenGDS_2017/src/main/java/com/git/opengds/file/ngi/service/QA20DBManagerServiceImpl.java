@@ -17,8 +17,10 @@
 
 package com.git.opengds.file.ngi.service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -30,6 +32,8 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.git.gdsbuilder.type.geoserver.layer.GeoLayerInfo;
+import com.git.gdsbuilder.type.qa10.layer.QA10Layer;
+import com.git.gdsbuilder.type.qa10.layer.QA10LayerList;
 import com.git.gdsbuilder.type.qa20.collection.QA20LayerCollection;
 import com.git.gdsbuilder.type.qa20.header.NDAHeader;
 import com.git.gdsbuilder.type.qa20.header.NGIHeader;
@@ -66,10 +70,18 @@ public class QA20DBManagerServiceImpl implements QA20DBManagerService {
 			HashMap<String, Object> insertCollectionQuery = dbManager.getInsertLayerCollection(collectionName);
 			int cIdx = dao.insertQA20LayerCollection(insertCollectionQuery);
 
+			Map<String, Boolean> isFeaturesMap = new HashMap<String, Boolean>();
 			QA20LayerList createLayerList = dtCollection.getQa20LayerList();
 			for (int i = 0; i < createLayerList.size(); i++) {
 				QA20Layer qa20Layer = createLayerList.get(i);
 				String layerName = qa20Layer.getLayerName();
+				
+				// isFeature
+				if (qa20Layer.getFeatures().size() == 0) {
+					isFeaturesMap.put(layerName, false);
+				} else {
+					isFeaturesMap.put(layerName, true);
+				}
 
 				// createQA20Layer
 				HashMap<String, Object> createQuery = dbManager.qa20LayerTbCreateQuery(type, collectionName, qa20Layer);
@@ -134,6 +146,7 @@ public class QA20DBManagerServiceImpl implements QA20DBManagerService {
 				layerInfo.putLayerColumns(layerName, columns);
 				// layerInfo.putLayerBoundary(layerName, boundryMap);
 			}
+			layerInfo.setIsFeatureMap(isFeaturesMap);
 		} catch (Exception e) {
 			txManager.rollback(status);
 			layerInfo.setDbInsertFlag(false);
