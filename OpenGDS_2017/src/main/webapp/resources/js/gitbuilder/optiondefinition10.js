@@ -349,18 +349,16 @@ gitbuilder.ui.OptionDefinition = $.widget("gitbuilder.optiondefinition", {
 							that.optDefCopy[that.selectedLayerNow] = {};
 						}
 						if (!that.optDefCopy[that.selectedLayerNow].hasOwnProperty(that.selectedValidationNow)) {
-							that.optDefCopy[that.selectedLayerNow][that.selectedValidationNow] = {
-								"geometry" : []
-							};
+							that.optDefCopy[that.selectedLayerNow][that.selectedValidationNow] = [];
 						}
-						if (that.optDefCopy[that.selectedLayerNow][that.selectedValidationNow]["geometry"].indexOf($(this).val()) === -1) {
-							that.optDefCopy[that.selectedLayerNow][that.selectedValidationNow]["geometry"].push($(this).val());
+						if (that.optDefCopy[that.selectedLayerNow][that.selectedValidationNow].indexOf($(this).val()) === -1) {
+							that.optDefCopy[that.selectedLayerNow][that.selectedValidationNow].push($(this).val());
 						}
 						that._toggleCheckbox(that.selectedValidationNow, true);
 					} else {
-						if (that.optDefCopy[that.selectedLayerNow][that.selectedValidationNow]["geometry"].indexOf($(this).val()) !== -1) {
-							that.optDefCopy[that.selectedLayerNow][that.selectedValidationNow]["geometry"].splice(
-									that.optDefCopy[that.selectedLayerNow][that.selectedValidationNow]["geometry"].indexOf($(this).val()), 0);
+						if (that.optDefCopy[that.selectedLayerNow][that.selectedValidationNow].indexOf($(this).val()) !== -1) {
+							that.optDefCopy[that.selectedLayerNow][that.selectedValidationNow].splice(
+									that.optDefCopy[that.selectedLayerNow][that.selectedValidationNow].indexOf($(this).val()), 0);
 						}
 					}
 					var checks = $(this).parent().parent().parent().find("input:checked");
@@ -1021,7 +1019,7 @@ gitbuilder.ui.OptionDefinition = $.widget("gitbuilder.optiondefinition", {
 				that._addClass(checkbox, "optiondefinition-geom-check");
 				if (that.optDefCopy.hasOwnProperty(that.selectedLayerNow)) {
 					if (that.optDefCopy[that.selectedLayerNow].hasOwnProperty(vtem)) {
-						if (that.optDefCopy[that.selectedLayerNow][vtem].geometry.indexOf(enType) !== -1) {
+						if (that.optDefCopy[that.selectedLayerNow][vtem].indexOf(enType) !== -1) {
 							$(checkbox).prop("checked", true);
 						}
 					}
