@@ -716,6 +716,7 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 			GeometryFactory geometryFactory = new GeometryFactory();
 			Coordinate[] relCoordinates = relGeometry.getCoordinates();
 			for (int i = 0; i < relCoordinates.length; i++) {
+				
 				Coordinate coordinate = relCoordinates[i];
 				Geometry coorPoint = geometryFactory.createPoint(coordinate);
 				if(!(geometry.touches(coorPoint))){

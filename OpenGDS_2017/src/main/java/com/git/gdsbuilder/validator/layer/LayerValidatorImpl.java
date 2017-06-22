@@ -742,16 +742,12 @@ public class LayerValidatorImpl implements LayerValidator {
 					SimpleFeature simpleFeature = simpleFeatures.get(j);
 					List<ErrorFeature> errorFeatures = graphicValidator.validateNodeMiss(simpleFeature, relationSimpleFeature);
 					if(!(errorFeatures.isEmpty())){
-						
-						for (int k = 0; k < errorFeatures.size(); k++) {
-							ErrorFeature errorFeature = errorFeatures.get(k);
-							if(errorFeature != null){
-								errorFeature.setLayerName(validatorLayer.getLayerName());
-								errorLayer.addErrorFeature(errorFeature);
-							}else{
-								continue;
-							}
+						for(ErrorFeature errorFeature : errorFeatures){
+							errorFeature.setLayerName(validatorLayer.getLayerName());
+							errorLayer.addErrorFeature(errorFeature);
 						}
+					}else{
+						continue;
 					}
 				}
 			}
