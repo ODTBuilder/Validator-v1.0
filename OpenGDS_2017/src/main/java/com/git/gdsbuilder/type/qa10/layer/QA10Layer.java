@@ -9,19 +9,22 @@ public class QA10Layer {
 
 	String layerID;
 	String layerType;
+	String originLayerType;
 	Hashtable<String, Object> layerColumns;
 	QA10FeatureList qa10FeatureList;
 
 	public QA10Layer() {
 		this.layerID = "";
 		this.layerType = "";
+		this.originLayerType = "";
 		this.layerColumns = new Hashtable<String, Object>();
 		this.qa10FeatureList = new QA10FeatureList();
 	}
-	
+
 	public QA10Layer(String layerID) {
 		this.layerID = layerID;
 		this.layerType = "";
+		this.originLayerType = "";
 		this.layerColumns = new Hashtable<String, Object>();
 		this.qa10FeatureList = new QA10FeatureList();
 	}
@@ -56,6 +59,14 @@ public class QA10Layer {
 
 	public void setQa10FeatureList(QA10FeatureList qa10FeatureList) {
 		this.qa10FeatureList = qa10FeatureList;
+	}
+
+	public String getOriginLayerType() {
+		return originLayerType;
+	}
+
+	public void setOriginLayerType(String originLayerType) {
+		this.originLayerType = originLayerType;
 	}
 
 	public void addQA10Feature(QA10Feature feature) {

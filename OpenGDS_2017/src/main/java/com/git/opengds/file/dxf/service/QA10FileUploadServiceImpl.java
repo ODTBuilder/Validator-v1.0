@@ -51,5 +51,4 @@ public class QA10FileUploadServiceImpl implements QA10FileUploadService {
 		}
 		return fileMeta;
 	}
-
 }

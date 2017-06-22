@@ -98,6 +98,7 @@ public class GeoserverServiceImpl implements GeoserverService {
 		boolean flag = false;
 
 		for (int i = 0; i < layerNameList.size(); i++) {
+			
 			GSFeatureTypeEncoder fte = new GSFeatureTypeEncoder();
 			GSLayerEncoder layerEncoder = new GSLayerEncoder();
 			String layerName = layerNameList.get(i);
@@ -123,6 +124,7 @@ public class GeoserverServiceImpl implements GeoserverService {
 			flag = dtPublisher.publishDBLayer(wsName, dsName, fte, layerEncoder);
 
 			if (flag == false) {
+				System.out.println(layerName);
 				dtPublisher.removeLayer(wsName, layerName);
 				layerInfo.setServerPublishFlag(flag);
 				return layerInfo;

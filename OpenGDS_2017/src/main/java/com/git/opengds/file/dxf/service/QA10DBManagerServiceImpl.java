@@ -196,15 +196,13 @@ public class QA10DBManagerServiceImpl implements QA10DBManagerService {
 					// blocks - vertex
 					HashMap<String, Object> deleteBlockVertexQuery = dbManager.getDeleteBlockVertex(bcIdx);
 					dao.deleteField(deleteBlockVertexQuery);
-
-				
 				}
 			}
 			// blocks - common
 			HashMap<String, Object> deleteBlockQuery = dbManager.getDeleteBlocks(cIdx);
 			dao.deleteField(deleteBlockQuery);
-			
-			// collection 
+
+			// collection
 			HashMap<String, Object> deleteLayerCollectionQuery = dbManager.getDeleteLayerCollection(cIdx);
 			dao.deleteField(deleteLayerCollectionQuery);
 		} catch (Exception e) {
