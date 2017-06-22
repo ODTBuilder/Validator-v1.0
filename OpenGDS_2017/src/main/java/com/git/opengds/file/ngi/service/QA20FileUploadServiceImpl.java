@@ -32,9 +32,8 @@ import org.springframework.test.context.ContextConfiguration;
 import com.git.gdsbuilder.FileRead.ngi.reader.QA20FileReader;
 import com.git.gdsbuilder.type.geoserver.layer.GeoLayerInfo;
 import com.git.gdsbuilder.type.qa20.collection.QA20LayerCollection;
-import com.git.opengds.editor.service.EditService;
+import com.git.opengds.geoserver.service.GeoserverService;
 import com.git.opengds.upload.domain.FileMeta;
-import com.git.opengds.validator.service.ValidatorService;
 
 @Service
 @ContextConfiguration(locations = { "file:src/main/webapp/WEB-INF/spring/**/*.xml" })
@@ -44,23 +43,16 @@ public class QA20FileUploadServiceImpl implements QA20FileUploadService {
 	private QA20DBManagerService qa20dbManagerService;
 
 	@Inject
-	ValidatorService validatorService;
-
-	@Inject
-	private EditService editService;
+	private GeoserverService geoserverService;
 
 	public FileMeta ngiUpload(FileMeta fileMeta) throws Exception {
 
-		// editService.editTest();
-
-		// validatorService.validate();
-		FileMeta file = fileMeta;
-		file.setOriginSrc("EPSG:5186");
-		String filePath = file.getFilePath();
+		String filePath = fileMeta.getFilePath();
+		String src = fileMeta.getOriginSrc();
 
 		// ngi & nda file read
 		QA20FileReader fileReader = new QA20FileReader();
-		QA20LayerCollection dtCollection = fileReader.read(filePath, "EPSG:5186", "EUC-KR");
+		QA20LayerCollection dtCollection = fileReader.read(filePath, "EPSG:" + src, "EUC-KR");
 		dtCollection.setFileName(fileMeta.getFileName());
 
 		// create GeoLayerInfo
@@ -68,14 +60,26 @@ public class QA20FileUploadServiceImpl implements QA20FileUploadService {
 		layerInfo.setFilePath(filePath);
 		layerInfo.setFileType(fileMeta.getFileType());
 		layerInfo.setFileName(fileMeta.getFileName());
-		layerInfo.setOriginSrc(file.getOriginSrc());
+		layerInfo.setOriginSrc(src);
 		layerInfo.setTransSrc("EPSG:3857");
 
 		// input DB layer
 		GeoLayerInfo returnInfo = qa20dbManagerService.insertQA20LayerCollection(dtCollection, layerInfo);
-		System.out.println("DB성공");
+		fileMeta.setDbInsertFlag(returnInfo.isDbInsertFlag());
 
-		return file;
+		// publish Layer
+		if (returnInfo != null) {
+			fileMeta.setUploadFlag(true);
+			FileMeta geoserverFileMeta = geoserverService.dbLayerPublishGeoserver(returnInfo);
+			boolean isPublished = geoserverFileMeta.isServerPublishFlag();
+			fileMeta.setServerPublishFlag(isPublished);
+			if (!isPublished) {
+				// 다시 다 삭제
+				GeoLayerInfo returnDropInfo = qa20dbManagerService.dropQA20LayerCollection(dtCollection, layerInfo);
+				fileMeta.setUploadFlag(returnDropInfo.isUploadFlag());
+			}
+		}
+		return fileMeta;
 	}
 
 	public void testReport() throws FileNotFoundException, IOException, ParseException {

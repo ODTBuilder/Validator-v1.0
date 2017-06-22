@@ -28,7 +28,7 @@ public class QA10FileLayerParser {
 			String type = (String) typeIterator.next();
 			String layerId = dxfLayer.getName() + "_" + type;
 			QA10Layer dtlayer = new QA10Layer(layerId);
-			dtlayer.setLayerType(type);
+			dtlayer.setOriginLayerType(type);
 		//	dtlayer.setLayerColumns(getLayerColumns(type));
 			List<DXFEntity> dxfEntities = (List<DXFEntity>) dxfLayer.getDXFEntities(type);
 			boolean typeValid = true;

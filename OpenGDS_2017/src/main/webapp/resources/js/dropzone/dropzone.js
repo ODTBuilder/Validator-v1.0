@@ -1195,6 +1195,7 @@
       
       //파일프로그레스바 초기화
       $('#total-progress-in').removeClass("progress-bar-success");
+      $('#total-progress-in').removeClass("progress-bar-danger");
   	  $('#total-progress').addClass("active");
       for (_i = 0, _len = files.length; _i < _len; _i++) {
         file = files[_i];

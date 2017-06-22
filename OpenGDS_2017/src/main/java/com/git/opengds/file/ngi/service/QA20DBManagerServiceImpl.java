@@ -37,8 +37,6 @@ import com.git.gdsbuilder.type.qa20.layer.QA20Layer;
 import com.git.gdsbuilder.type.qa20.layer.QA20LayerList;
 import com.git.opengds.file.ngi.dbManager.QA20DBQueryManager;
 import com.git.opengds.file.ngi.persistence.QA20LayerCollectionDAO;
-import com.git.opengds.geoserver.service.GeoserverService;
-import com.git.opengds.upload.domain.FileMeta;
 
 @Service
 @ContextConfiguration(locations = { "file:src/main/webapp/WEB-INF/spring/**/*.xml" })
@@ -49,9 +47,6 @@ public class QA20DBManagerServiceImpl implements QA20DBManagerService {
 
 	@Inject
 	private QA20LayerCollectionDAO dao;
-
-	@Inject
-	private GeoserverService geoserverService;
 
 	public GeoLayerInfo insertQA20LayerCollection(QA20LayerCollection dtCollection, GeoLayerInfo layerInfo)
 			throws Exception {
@@ -79,14 +74,15 @@ public class QA20DBManagerServiceImpl implements QA20DBManagerService {
 				// createQA20Layer
 				HashMap<String, Object> createQuery = dbManager.qa20LayerTbCreateQuery(type, collectionName, qa20Layer);
 				dao.createQA20LayerTb(createQuery);
-				
+
 				// insertQA20Layer
-				List<HashMap<String, Object>> inertLayerQuerys = dbManager.qa20LayerInsertQuery(type, collectionName, qa20Layer);
-				for(int j = 0; j < inertLayerQuerys.size(); j++) {
+				List<HashMap<String, Object>> inertLayerQuerys = dbManager.qa20LayerInsertQuery(type, collectionName,
+						qa20Layer);
+				for (int j = 0; j < inertLayerQuerys.size(); j++) {
 					HashMap<String, Object> insertLayerQuery = inertLayerQuerys.get(j);
 					dao.insertQA20Layer(insertLayerQuery);
 				}
-				
+
 				// insertLayerMedata
 				HashMap<String, Object> insertQueryMap = dbManager.getInsertLayerMeataData(type, collectionName, cIdx,
 						qa20Layer);
@@ -140,13 +136,72 @@ public class QA20DBManagerServiceImpl implements QA20DBManagerService {
 			}
 		} catch (Exception e) {
 			txManager.rollback(status);
-			return null;
+			layerInfo.setDbInsertFlag(false);
+			return layerInfo;
 		}
 		if (layerInfo != null) {
 			txManager.commit(status);
-			FileMeta geoserverFileMeta = geoserverService.dbLayerPublishGeoserver(layerInfo);
-			System.out.println("서버성공");
+			layerInfo.setDbInsertFlag(true);
 		}
+		return layerInfo;
+	}
+
+	public GeoLayerInfo dropQA20LayerCollection(QA20LayerCollection dtCollection, GeoLayerInfo layerInfo) {
+
+		QA20DBQueryManager dbManager = new QA20DBQueryManager();
+		DefaultTransactionDefinition def = new DefaultTransactionDefinition();
+		def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+		TransactionStatus status = txManager.getTransaction(def);
+		try {
+			String collectionName = dtCollection.getFileName();
+			HashMap<String, Object> selectLayerCollectionIdxQuery = dbManager
+					.getSelectLayerCollectionIdx(collectionName);
+			Integer cIdx = dao.selectQA20LayerCollectionIdx(selectLayerCollectionIdxQuery);
+			if (cIdx != null) {
+				HashMap<String, Object> metadataIdxQuery = dbManager.getSelectLayerMetaDataIdx(cIdx);
+				List<HashMap<String, Object>> metadataIdxMapList = dao.selectQA20LayerMetadataIdx(metadataIdxQuery);
+				for (int i = 0; i < metadataIdxMapList.size(); i++) {
+					HashMap<String, Object> metadataIdxMap = metadataIdxMapList.get(i);
+					Integer mIdx = (Integer) metadataIdxMap.get("lm_idx");
+
+					// get layerTb name
+					HashMap<String, Object> layerTbNameQuery = dbManager.getSelectLayerTableNameQuery(mIdx);
+					HashMap<String, Object> layerTbNameMap = dao.selectQA20LayerTableName(layerTbNameQuery);
+
+					// layerTb drop
+					String layerTbName = (String) layerTbNameMap.get("layer_t_name");
+					HashMap<String, Object> dropLayerTbQuery = dbManager.getDropLayer(layerTbName);
+					dao.dropLayer(dropLayerTbQuery);
+
+					// ngi_text_represent 삭제
+					HashMap<String, Object> deleteTextRepQuery = dbManager.getDeleteTextRepresent(mIdx);
+					dao.deleteField(deleteTextRepQuery);
+					// ngi_point_represent 삭제
+					HashMap<String, Object> deletePointRepQuery = dbManager.getDeletePointRepresent(mIdx);
+					dao.deleteField(deletePointRepQuery);
+					// ngi_lineString_represent 삭제
+					HashMap<String, Object> deleteLineStringRepQuery = dbManager.getDeleteLineStringRepresent(mIdx);
+					dao.deleteField(deleteLineStringRepQuery);
+					// ngi_polygon_represent 삭제
+					HashMap<String, Object> deleteRegionRepQuery = dbManager.getDeleteRegionRepresent(mIdx);
+					dao.deleteField(deleteRegionRepQuery);
+					// nda_aspatial_field_def 삭제
+					HashMap<String, Object> deleteAspatialFieldQuery = dbManager.getDeleteAsptialField(mIdx);
+					dao.deleteField(deleteAspatialFieldQuery);
+				}
+			}
+			// layerMetadata 삭제
+			HashMap<String, Object> deleteLayerMetaQuery = dbManager.getDeleteLayerMeta(cIdx);
+			dao.deleteField(deleteLayerMetaQuery);
+			HashMap<String, Object> deleteLayerCollectionQuery = dbManager.getDeleteLayerCollection(cIdx);
+			dao.deleteField(deleteLayerCollectionQuery);
+		} catch (Exception e) {
+			txManager.rollback(status);
+			layerInfo.setDbInsertFlag(false);
+			return layerInfo;
+		}
+		txManager.commit(status);
+		layerInfo.setDbInsertFlag(true);
 		return layerInfo;
 	}
 }

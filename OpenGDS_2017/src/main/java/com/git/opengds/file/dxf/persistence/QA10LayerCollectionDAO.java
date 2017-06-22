@@ -1,6 +1,7 @@
 package com.git.opengds.file.dxf.persistence;
 
 import java.util.HashMap;
+import java.util.List;
 
 import org.postgresql.util.PSQLException;
 
@@ -11,16 +12,6 @@ public interface QA10LayerCollectionDAO {
 	public void insertQA10Layer(HashMap<String, Object> qa10Layer);
 
 	public int insertQA10LayerCollection(HashMap<String, Object> insertCollectionQuery);
-
-	public void insertQA10LayerCollectionHeader(HashMap<String, Object> insertHeaderQuery);
-
-	public int insertQA10LayerCollectionTables(HashMap<String, Object> tablesQuery);
-
-	public void insertQA10LayerCollectionLineTypes(HashMap<String, Object> lineTypesQuery);
-
-	public void insertQA10LayerCollectionLayers(HashMap<String, Object> layersQuery);
-
-	public void insertQA10LayerCollecionStyles(HashMap<String, Object> stylesQuery);
 
 	public void insertQA10LayerMetadata(HashMap<String, Object> insertQueryMap);
 
@@ -33,5 +24,23 @@ public interface QA10LayerCollectionDAO {
 	public int insertQA10LayerCollectionBlocks(HashMap<String, Object> blocksQuery);
 
 	public void insertQA10LayercollectionBlockEntity(HashMap<String, Object> entitiesQuery);
+
+	public int insertQA10LayerCollectionTableCommon(HashMap<String, Object> tablesQuery);
+
+	public void insertQA10LayerCollectionTableLayers(HashMap<String, Object> hashMap);
+
+	public Integer selectQA10LayerCollectionIdx(HashMap<String, Object> selectLayerCollectionIdxQuery);
+
+	public List<HashMap<String, Object>> selectQA10LayerMetadataIdx(HashMap<String, Object> metadataIdxQuery);
+
+	public HashMap<String, Object> selectQA10LayerTableName(HashMap<String, Object> layerTbNameQuery);
+
+	public int dropLayer(HashMap<String, Object> dropLayerTbQuery);
+
+	public void deleteField(HashMap<String, Object> deleteLayerMetaQuery);
+
+	public Integer selectTableCommonIdx(HashMap<String, Object> tableIdxQuery);
+
+	public List<HashMap<String, Object>>  selectBlockCommonIdx(HashMap<String, Object> tableIdxQuery);
 
 }

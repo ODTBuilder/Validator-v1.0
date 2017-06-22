@@ -1,6 +1,7 @@
 package com.git.opengds.file.dxf.persistence;
 
 import java.util.HashMap;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -33,32 +34,6 @@ public class QA10LayerCollectionDAOImpl implements QA10LayerCollectionDAO {
 	}
 
 	@Override
-	public void insertQA10LayerCollectionHeader(HashMap<String, Object> insertHeaderQuery) {
-		sqlSession.insert(namespace + ".insertQA10LayerCollectionHeader", insertHeaderQuery);
-	}
-
-	@Override
-	public int insertQA10LayerCollectionTables(HashMap<String, Object> tablesQuery) {
-		sqlSession.insert(namespace + ".insertQA10LayerCollectionTables", tablesQuery);
-		return (Integer) tablesQuery.get("tb_idx");
-	}
-
-	@Override
-	public void insertQA10LayerCollectionLineTypes(HashMap<String, Object> lineTypesQuery) {
-		sqlSession.insert(namespace + ".insertQA10LayerCollectionLineTypes", lineTypesQuery);
-	}
-
-	@Override
-	public void insertQA10LayerCollectionLayers(HashMap<String, Object> layersQuery) {
-		sqlSession.insert(namespace + ".insertQA10LayerCollectionLayers", layersQuery);
-	}
-
-	@Override
-	public void insertQA10LayerCollecionStyles(HashMap<String, Object> stylesQuery) {
-		sqlSession.insert(namespace + ".insertQA10LayerCollectionStyles", stylesQuery);
-	}
-
-	@Override
 	public void insertQA10LayerMetadata(HashMap<String, Object> insertQueryMap) {
 		sqlSession.insert(namespace + ".insertQA10LayerMetadata", insertQueryMap);
 	}
@@ -80,13 +55,61 @@ public class QA10LayerCollectionDAOImpl implements QA10LayerCollectionDAO {
 
 	@Override
 	public int insertQA10LayerCollectionBlocks(HashMap<String, Object> blocksQuery) {
-		// TODO Auto-generated method stub
-		return 0;
+		sqlSession.insert(namespace + ".insertQA10LayerCollectionBlockCommon", blocksQuery);
+		return (Integer) blocksQuery.get("bc_idx");
 	}
 
 	@Override
 	public void insertQA10LayercollectionBlockEntity(HashMap<String, Object> entitiesQuery) {
-		// TODO Auto-generated method stub
-		
+		sqlSession.insert(namespace + ".insertQA10LayerCollectionBlockEntity", entitiesQuery);
+	}
+
+	@Override
+	public int insertQA10LayerCollectionTableCommon(HashMap<String, Object> tablesQuery) {
+		sqlSession.insert(namespace + ".insertQA10LayerCollectionTableCommon", tablesQuery);
+		return (Integer) tablesQuery.get("tc_idx");
+	}
+
+	@Override
+	public void insertQA10LayerCollectionTableLayers(HashMap<String, Object> layersQuery) {
+		sqlSession.insert(namespace + ".insertQA10LayerCollectionTableLayer", layersQuery);
+	}
+
+	@Override
+	public Integer selectQA10LayerCollectionIdx(HashMap<String, Object> selectLayerCollectionIdxQuery) {
+		HashMap<String, Object> idxMap = sqlSession.selectOne(namespace + ".selectLayerCollectionIdx",
+				selectLayerCollectionIdxQuery);
+		return (Integer) idxMap.get("c_idx");
+	}
+
+	@Override
+	public List<HashMap<String, Object>> selectQA10LayerMetadataIdx(HashMap<String, Object> metadataIdxQuery) {
+		return sqlSession.selectList(namespace + ".selectLayerMetadataIdx", metadataIdxQuery);
+	}
+
+	@Override
+	public HashMap<String, Object> selectQA10LayerTableName(HashMap<String, Object> layerTbNameQuery) {
+		return sqlSession.selectOne(namespace + ".selectQA10LayerTableName", layerTbNameQuery);
+	}
+
+	@Override
+	public int dropLayer(HashMap<String, Object> dropLayerTbQuery) {
+		return sqlSession.update(namespace + ".dropQA10Layer", dropLayerTbQuery);
+	}
+
+	@Override
+	public void deleteField(HashMap<String, Object> deleteFieldQuery) {
+		sqlSession.delete(namespace + ".deleteField", deleteFieldQuery);
+	}
+
+	@Override
+	public Integer selectTableCommonIdx(HashMap<String, Object> tableIdxQuery) {
+		HashMap<String, Object> idxMap = sqlSession.selectOne(namespace + ".selectTableCommonIdx", tableIdxQuery);
+		return (Integer) idxMap.get("tc_idx");
+	}
+
+	@Override
+	public List<HashMap<String, Object>>  selectBlockCommonIdx(HashMap<String, Object> blockIdxQuery) {
+		return sqlSession.selectList(namespace + ".selectBlockCommonIdx", blockIdxQuery);
 	}
 }

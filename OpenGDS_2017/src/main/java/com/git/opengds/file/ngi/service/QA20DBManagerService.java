@@ -21,5 +21,8 @@ import com.git.gdsbuilder.type.geoserver.layer.GeoLayerInfo;
 import com.git.gdsbuilder.type.qa20.collection.QA20LayerCollection;
 
 public interface QA20DBManagerService {
+	
 	public GeoLayerInfo insertQA20LayerCollection(QA20LayerCollection dtCollection, GeoLayerInfo layerInfo) throws Exception;
+
+	public GeoLayerInfo dropQA20LayerCollection(QA20LayerCollection dtCollection, GeoLayerInfo layerInfo);
 }

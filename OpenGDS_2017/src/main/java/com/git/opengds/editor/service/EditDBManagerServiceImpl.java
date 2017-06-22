@@ -77,11 +77,11 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 
 		QA20DBQueryManager queryManager = new QA20DBQueryManager();
 		HashMap<String, Object> queryMap = queryManager.getSelectLayerCollectionIdx(collectionName);
-		HashMap<String, Object> returnMap = qa20DAO.selectQA20LayerCollectionIdx(queryMap);
-		if (returnMap == null) {
+		Integer cIdx = qa20DAO.selectQA20LayerCollectionIdx(queryMap);
+		if (cIdx == null) {
 			return null;
 		} else {
-			return (Integer) returnMap.get("c_idx");
+			return cIdx;
 		}
 	}
 
@@ -336,11 +336,11 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 
 		QA10DBQueryManager queryManager = new QA10DBQueryManager();
 		HashMap<String, Object> queryMap = queryManager.getSelectLayerCollectionIdx(collectionName);
-		HashMap<String, Object> returnMap = qa20DAO.selectQA20LayerCollectionIdx(queryMap);
-		if (returnMap == null) {
+		Integer cIdx = qa20DAO.selectQA20LayerCollectionIdx(queryMap);
+		if (cIdx == null) {
 			return null;
 		} else {
-			return (Integer) returnMap.get("c_idx");
+			return cIdx;
 		}
 	}
 

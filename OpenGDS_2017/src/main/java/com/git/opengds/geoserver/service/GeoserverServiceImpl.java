@@ -90,21 +90,21 @@ public class GeoserverServiceImpl implements GeoserverService {
 			throws IllegalArgumentException, MalformedURLException {
 		String wsName = ID;
 		String dsName = ID;
-		FileMeta fileMeta = new FileMeta();
 
 		String fileName = layerInfo.getFileName();
 		List<String> layerNameList = layerInfo.getLayerNames();
-		String originSrc = layerInfo.getOriginSrc();
+		String originSrc = "EGSG:" + layerInfo.getOriginSrc();
 		List<String> successLayerList = new ArrayList<String>();
 		boolean flag = false;
 
 		for (int i = 0; i < layerNameList.size(); i++) {
+
 			GSFeatureTypeEncoder fte = new GSFeatureTypeEncoder();
 			GSLayerEncoder layerEncoder = new GSLayerEncoder();
 			String layerName = layerNameList.get(i);
 			String upperLayerName = layerName.toUpperCase();
 			String fileType = layerInfo.getFileType();
-			String layerFullName = "geo_" + fileType + "_" + fileName + "_" + layerName;
+			String layerFullName = "\"geo_" + fileType + "_" + fileName + "_" + layerName + "\"";
 
 			fte.setProjectionPolicy(ProjectionPolicy.REPROJECT_TO_DECLARED);
 			fte.setTitle(layerFullName); // 제목
@@ -124,17 +124,18 @@ public class GeoserverServiceImpl implements GeoserverService {
 			flag = dtPublisher.publishDBLayer(wsName, dsName, fte, layerEncoder);
 
 			if (flag == false) {
+				System.out.println(layerName);
 				dtPublisher.removeLayer(wsName, layerName);
-				fileMeta.setServerPublishFlag(flag);
-				return fileMeta;
+				layerInfo.setServerPublishFlag(flag);
+				return layerInfo;
 			}
 			successLayerList.add(layerFullName);
 		}
 
 		dtPublisher.createLayersGroup(wsName, fileName, successLayerList);
-		fileMeta.setServerPublishFlag(flag);
+		layerInfo.setServerPublishFlag(flag);
 
-		return fileMeta;
+		return layerInfo;
 	}
 
 	// 에러레이어 발행하기
@@ -225,15 +226,15 @@ public class GeoserverServiceImpl implements GeoserverService {
 	public boolean removeGeoserverGroupLayer(String groupLayerName) {
 		return dtPublisher.removeLayerGroup(ID, groupLayerName);
 	}
-	
+
 	/**
 	 *
 	 * @author SG.Lee
 	 * @Date 2017. 6. 19. 오후 9:15:07
 	 * @return boolean
-	 * */
+	 */
 	@Override
-	public List<String> getGeoserverStyleList(){
+	public List<String> getGeoserverStyleList() {
 		return dtReader.getStyles().getNames();
 	}
 
@@ -281,38 +282,39 @@ public class GeoserverServiceImpl implements GeoserverService {
 	};
 
 	@Override
-	public boolean updateFeatureType(String orginalName, String name, String title, String abstractContent, String style,  boolean attChangeFlag) {
+	public boolean updateFeatureType(String orginalName, String name, String title, String abstractContent,
+			String style, boolean attChangeFlag) {
 		boolean updateFlag = false;
 		GSFeatureTypeEncoder fte = new GSFeatureTypeEncoder();
 		GSLayerEncoder layerEncoder = null;
-		
 
-		if (orginalName == null){
-//            throw new IllegalArgumentException("OriginalName may not be null!");
-            return false;
+		if (orginalName == null) {
+			// throw new IllegalArgumentException("OriginalName may not be
+			// null!");
+			return false;
 		}
-        if (orginalName.isEmpty()){
-//            throw new IllegalArgumentException("OriginalName may not be empty!");
-            return false;
-        }
-        if(name != null && !name.isEmpty()){
-        	fte.setName(name);
-        }
-        if(title != null && !title.isEmpty()){
-        	fte.setTitle(title);
-        }
-        if(abstractContent != null && !abstractContent.isEmpty()){
-        	fte.setAbstract(abstractContent);
-        }
-        if(style != null && !style.isEmpty()){
-        	layerEncoder = new GSLayerEncoder();
-        	layerEncoder.setDefaultStyle(style);
-        }
-        
-		
+		if (orginalName.isEmpty()) {
+			// throw new IllegalArgumentException("OriginalName may not be
+			// empty!");
+			return false;
+		}
+		if (name != null && !name.isEmpty()) {
+			fte.setName(name);
+		}
+		if (title != null && !title.isEmpty()) {
+			fte.setTitle(title);
+		}
+		if (abstractContent != null && !abstractContent.isEmpty()) {
+			fte.setAbstract(abstractContent);
+		}
+		if (style != null && !style.isEmpty()) {
+			layerEncoder = new GSLayerEncoder();
+			layerEncoder.setDefaultStyle(style);
+		}
 
-//		boolean flag = dtPublisher.recalculate(workspace, storename, layerFullName, testFte, testLayerEncoder);
-		updateFlag = dtPublisher.updateFeatureType(ID, ID, orginalName,fte, layerEncoder, attChangeFlag);
+		// boolean flag = dtPublisher.recalculate(workspace, storename,
+		// layerFullName, testFte, testLayerEncoder);
+		updateFlag = dtPublisher.updateFeatureType(ID, ID, orginalName, fte, layerEncoder, attChangeFlag);
 
 		return updateFlag;
 	}

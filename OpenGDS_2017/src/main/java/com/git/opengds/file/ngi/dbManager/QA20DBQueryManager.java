@@ -17,8 +17,6 @@
 
 package com.git.opengds.file.ngi.dbManager;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -26,8 +24,8 @@ import java.util.List;
 
 import com.git.gdsbuilder.type.qa20.feature.QA20Feature;
 import com.git.gdsbuilder.type.qa20.feature.QA20FeatureList;
-import com.git.gdsbuilder.type.qa20.header.NDAHeader;
 import com.git.gdsbuilder.type.qa20.header.NDAField;
+import com.git.gdsbuilder.type.qa20.header.NDAHeader;
 import com.git.gdsbuilder.type.qa20.header.NGIHeader;
 import com.git.gdsbuilder.type.qa20.layer.QA20Layer;
 
@@ -108,7 +106,7 @@ public class QA20DBQueryManager {
 				+ ", 5186)" + "," + "num_rings numeric" + "," + "num_vertexes numeric" + ",";
 
 		if (isTextLayer) {
-			defalutCreateQuery += "TEXT varchar(100),";
+			defalutCreateQuery += "\"" + "TEXT" + "\"" + "varchar(100),";
 		}
 
 		NDAHeader ndaHeader = qa20Layer.getNdaHeader();
@@ -176,7 +174,7 @@ public class QA20DBQueryManager {
 						insertDefaultValues += "'" + value + "', ";
 					} else {
 						insertDefaultQuery += "\"" + key + "\"" + ", ";
-						insertDefaultValues +=  value + ", ";
+						insertDefaultValues += value + ", ";
 					}
 				}
 			}
@@ -392,6 +390,14 @@ public class QA20DBQueryManager {
 		return dropQueryMap;
 	}
 
+	public HashMap<String, Object> getDropLayer(String tableName) {
+
+		HashMap<String, Object> dropQueryMap = new HashMap<String, Object>();
+		String queryStr = "drop table " + tableName;
+		dropQueryMap.put("dropQuery", queryStr);
+		return dropQueryMap;
+	}
+
 	public HashMap<String, Object> getInsertLayerCollection(String collectionName) {
 
 		String insertQuery = "insert into qa20_layercollection(file_name) values('" + collectionName + "')";
@@ -445,4 +451,75 @@ public class QA20DBQueryManager {
 		return countQueryMap;
 	}
 
+	public HashMap<String, Object> getSelectLayerMetaDataIdx(Integer cIdx) {
+		HashMap<String, Object> selectQuery = new HashMap<String, Object>();
+		String tableName = "\"" + "qa20_layer_metadata" + "\"";
+		String selectQueryStr = "select lm_idx from " + tableName + " where c_idx = " + cIdx;
+		selectQuery.put("selectAllQuery", selectQueryStr);
+		return selectQuery;
+	}
+
+	public HashMap<String, Object> getSelectLayerTableNameQuery(Integer mIdx) {
+		HashMap<String, Object> selectQuery = new HashMap<String, Object>();
+		String tableName = "\"" + "qa20_layer_metadata" + "\"";
+		String selectQueryStr = "select layer_t_name from " + tableName + " where lm_idx = " + mIdx;
+		selectQuery.put("selectQuery", selectQueryStr);
+		return selectQuery;
+	}
+
+	public HashMap<String, Object> getDeleteTextRepresent(Integer mIdx) {
+		HashMap<String, Object> deleteQuery = new HashMap<String, Object>();
+		String tableName = "\"" + "ngi_text_represent" + "\"";
+		String deleteQueryStr = "delete from " + tableName + " where lm_idx = " + mIdx;
+		deleteQuery.put("deleteQuery", deleteQueryStr);
+		return deleteQuery;
+	}
+	
+	public HashMap<String, Object> getDeletePointRepresent(Integer mIdx) {
+		HashMap<String, Object> deleteQuery = new HashMap<String, Object>();
+		String tableName = "ngi_point_represent";
+		String deleteQueryStr = "delete from " + tableName + " where lm_idx = " + mIdx;
+		deleteQuery.put("deleteQuery", deleteQueryStr);
+		return deleteQuery;
+	}
+	
+	public HashMap<String, Object> getDeleteLineStringRepresent(Integer mIdx) {
+		HashMap<String, Object> deleteQuery = new HashMap<String, Object>();
+		String tableName ="ngi_linestring_represent";
+		String deleteQueryStr = "delete from " + tableName + " where lm_idx = " + mIdx;
+		deleteQuery.put("deleteQuery", deleteQueryStr);
+		return deleteQuery;
+	}
+	
+	public HashMap<String, Object> getDeleteRegionRepresent(Integer mIdx) {
+		HashMap<String, Object> deleteQuery = new HashMap<String, Object>();
+		String tableName = "ngi_region_represent";
+		String deleteQueryStr = "delete from " + tableName + " where lm_idx = " + mIdx;
+		deleteQuery.put("deleteQuery", deleteQueryStr);
+		return deleteQuery;
+	}
+
+	public HashMap<String, Object> getDeleteAsptialField(Integer mIdx) {
+		HashMap<String, Object> deleteQuery = new HashMap<String, Object>();
+		String tableName = "nda_aspatial_field_def";
+		String deleteQueryStr = "delete from " + tableName + " where lm_idx = " + mIdx;
+		deleteQuery.put("deleteQuery", deleteQueryStr);
+		return deleteQuery;
+	}
+
+	public HashMap<String, Object> getDeleteLayerMeta(Integer cIdx) {
+		HashMap<String, Object> deleteQuery = new HashMap<String, Object>();
+		String tableName = "\"" + "qa20_layer_metadata" + "\"";
+		String deleteQueryStr = "delete from " + tableName + " where c_idx = " + cIdx;
+		deleteQuery.put("deleteQuery", deleteQueryStr);
+		return deleteQuery;
+	}
+
+	public HashMap<String, Object> getDeleteLayerCollection(Integer cIdx) {
+		HashMap<String, Object> deleteQuery = new HashMap<String, Object>();
+		String tableName = "\"" + "qa20_layercollection" + "\"";
+		String deleteQueryStr = "delete from " + tableName + " where c_idx = " + cIdx;
+		deleteQuery.put("deleteQuery", deleteQueryStr);
+		return deleteQuery;
+	}
 }
