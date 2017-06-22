@@ -24,5 +24,5 @@ public interface QA20DBManagerService {
 	
 	public GeoLayerInfo insertQA20LayerCollection(QA20LayerCollection dtCollection, GeoLayerInfo layerInfo) throws Exception;
 
-	public void dropQA20LayerCollection(QA20LayerCollection dtCollection, GeoLayerInfo layerInfo);
+	public GeoLayerInfo dropQA20LayerCollection(QA20LayerCollection dtCollection, GeoLayerInfo layerInfo);
 }

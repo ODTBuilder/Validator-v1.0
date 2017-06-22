@@ -146,7 +146,7 @@ public class QA20DBManagerServiceImpl implements QA20DBManagerService {
 		return layerInfo;
 	}
 
-	public void dropQA20LayerCollection(QA20LayerCollection dtCollection, GeoLayerInfo layerInfo) {
+	public GeoLayerInfo dropQA20LayerCollection(QA20LayerCollection dtCollection, GeoLayerInfo layerInfo) {
 
 		QA20DBQueryManager dbManager = new QA20DBQueryManager();
 		DefaultTransactionDefinition def = new DefaultTransactionDefinition();
@@ -197,8 +197,11 @@ public class QA20DBManagerServiceImpl implements QA20DBManagerService {
 			dao.deleteField(deleteLayerCollectionQuery);
 		} catch (Exception e) {
 			txManager.rollback(status);
+			layerInfo.setDbInsertFlag(false);
+			return layerInfo;
 		}
 		txManager.commit(status);
+		layerInfo.setDbInsertFlag(true);
+		return layerInfo;
 	}
-
 }
