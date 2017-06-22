@@ -1,5 +1,6 @@
 package com.git.opengds.file.dxf.service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -80,10 +81,18 @@ public class QA10DBManagerServiceImpl implements QA10DBManagerService {
 
 			// qa10Layer
 			String src = layerInfo.getOriginSrc();
+			Map<String, Boolean> isFeaturesMap = new HashMap<String, Boolean>();
 			QA10LayerList createLayerList = layerCollection.getQa10Layers();
 			for (int i = 0; i < createLayerList.size(); i++) {
 				QA10Layer qa10Layer = createLayerList.get(i);
 				String layerId = qa10Layer.getLayerID();
+
+				// isFeature
+				if (qa10Layer.getQa10FeatureList().size() == 0) {
+					isFeaturesMap.put(layerId, false);
+				} else {
+					isFeaturesMap.put(layerId, true);
+				}
 
 				// create QA10Layer
 				HashMap<String, Object> createQuery = dbManager.qa10LayerTbCreateQuery(type, collectionName, qa10Layer,
@@ -110,7 +119,7 @@ public class QA10DBManagerServiceImpl implements QA10DBManagerService {
 				List<String> columns = dbManager.getLayerColumns();
 				layerInfo.putLayerColumns(layerId, columns);
 			}
-
+			layerInfo.setIsFeatureMap(isFeaturesMap);
 		} catch (Exception e) {
 			txManager.rollback(status);
 			layerInfo.setDbInsertFlag(false);
