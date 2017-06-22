@@ -15,6 +15,8 @@ gb.edit.LayerInformation = function(obj) {
 	this.url = options.url ? options.url : null;
 	this.layer;
 	this.window;
+	this.originInfo;
+	this.currentInfo;
 
 	var xSpan = $("<span>").attr({
 		"aria-hidden" : true
@@ -209,7 +211,7 @@ gb.edit.LayerInformation.prototype.close = function() {
 gb.edit.LayerInformation.prototype.save = function(obj) {
 
 };
-gb.edit.LayerInformation.prototype.load = function(name) {
+gb.edit.LayerInformation.prototype.load = function(name,  code) {
 	var that = this;
 	var arr = {
 		"geoLayerList" : [ name ]
@@ -237,7 +239,7 @@ gb.edit.LayerInformation.prototype.load = function(name) {
 			var name = $("<p>").text("Name");
 			var nameInput = $("<input>").addClass("form-control").attr({
 				"type" : "text"
-			}).val(data[0].lName);
+			}).val(code);
 
 			var title = $("<p>").text("Title");
 			var titleInput = $("<input>").addClass("form-control").attr({
@@ -266,22 +268,26 @@ gb.edit.LayerInformation.prototype.load = function(name) {
 			var tr1 = $("<tr>").append(td1).append(td2).append(td3).append(td4);
 
 			var bminx2 = $("<input>").addClass("form-control").attr({
-				"type" : "text"
+				"type" : "text",
+				"disabled" : true
 			}).val(data[0].nbBox.minx);
 			var td11 = $("<td>").append(bminx2);
 
 			var bminy2 = $("<input>").addClass("form-control").attr({
-				"type" : "text"
+				"type" : "text",
+				"disabled" : true
 			}).val(data[0].nbBox.miny);
 			var td22 = $("<td>").append(bminy2);
 
 			var bmaxx2 = $("<input>").addClass("form-control").attr({
-				"type" : "text"
+				"type" : "text",
+				"disabled" : true
 			}).val(data[0].nbBox.maxx);
 			var td33 = $("<td>").append(bmaxx2);
 
 			var bmaxy2 = $("<input>").addClass("form-control").attr({
-				"type" : "text"
+				"type" : "text",
+				"disabled" : true
 			}).val(data[0].nbBox.maxy);
 			var td44 = $("<td>").append(bmaxy2);
 
@@ -306,22 +312,26 @@ gb.edit.LayerInformation.prototype.load = function(name) {
 			var tr111 = $("<tr>").append(td111).append(td222).append(td333).append(td444);
 
 			var bminx3 = $("<input>").addClass("form-control").attr({
-				"type" : "text"
+				"type" : "text",
+				"disabled" : true
 			}).val(data[0].llbBox.minx);
 			var td1111 = $("<td>").append(bminx3);
 
 			var bminy3 = $("<input>").addClass("form-control").attr({
-				"type" : "text"
+				"type" : "text",
+				"disabled" : true
 			}).val(data[0].llbBox.miny);
 			var td2222 = $("<td>").append(bminy3);
 
 			var bmaxx3 = $("<input>").addClass("form-control").attr({
-				"type" : "text"
+				"type" : "text",
+				"disabled" : true
 			}).val(data[0].llbBox.maxx);
 			var td3333 = $("<td>").append(bmaxx3);
 
 			var bmaxy3 = $("<input>").addClass("form-control").attr({
-				"type" : "text"
+				"type" : "text",
+				"disabled" : true
 			}).val(data[0].llbBox.maxy);
 			var td4444 = $("<td>").append(bmaxy3);
 
@@ -333,22 +343,34 @@ gb.edit.LayerInformation.prototype.load = function(name) {
 
 			var thtd1 = $("<td>").text("Attribute");
 			var thtd2 = $("<td>").text("Type");
-			var thtd3 = $("<td>").text("Null");
-			var thtd4 = $("<td>").text("Decimal");
-			var thtd5 = $("<td>").text("Size");
-			var thtd6 = $("<td>").text("isUnique");
-			var thead = $("<thead>").append(thtd1).append(thtd2).append(thtd3).append(thtd4).append(thtd5).append(thtd6);
+			var thtd3 = $("<td>").text("Nullable");
+			var thead = $("<thead>").append(thtd1).append(thtd2).append(thtd3);
 			var tbody = $("<tbody>");
 			var fttb = $("<table>").addClass("table").append(thead).append(tbody);
 			var keys = Object.keys(data[0].attInfo);
 			for (var i = 0; i < keys.length; i++) {
-				var td1 = $("<td>").text(keys[i]);
-				var td2 = $("<td>").text(data[0].attInfo[keys[i]]);
-				var td3 = $("<td>").text(data[0].attInfo[keys[i]]);
-				var td4 = $("<td>").text(data[0].attInfo[keys[i]]);
-				var td5 = $("<td>").text(data[0].attInfo[keys[i]]);
-				var td6 = $("<td>").text(data[0].attInfo[keys[i]]);
-				var tr = $("<tr>").append(td1).append(td2).append(td3).append(td4).append(td5).append(td6);
+				var input = $("<input>").addClass("form-control").attr({
+					"type" : "text"
+				}).val(keys[i]);
+				var td1 = $("<td>").append(input);
+				
+				var stritem = $("<option>").text("String");
+				var dblitem = $("<option>").text("Double");
+				var intitem = $("<option>").text("Integer");
+				var select = $("<select>").attr({
+					"disabled" : true
+				}).addClass("form-control").append(stritem).append(dblitem).append(intitem).val(data[0].attInfo[keys[i]]["type"]);
+				var td2 = $("<td>").append(select);
+				
+				var check = $("<input>").attr({
+					"type" : "checkbox",
+					"disabled" : true
+				});
+				if (data[0].attInfo[keys[i]]["nillable"] === "true") {
+					$(check).prop("checked", true);
+				}
+				var td3 = $("<td>").append(check);
+				var tr = $("<tr>").append(td1).append(td2).append(td3);
 				$(tbody).append(tr);
 			}
 
@@ -376,5 +398,9 @@ gb.edit.LayerInformation.prototype.setTitle = function(title) {
 	return;
 };
 gb.edit.LayerInformation.prototype.setAttributeType = function() {
+	return;
+};
+gb.edit.LayerInformation.prototype.getInformationForm = function() {
+	this.body
 	return;
 };
