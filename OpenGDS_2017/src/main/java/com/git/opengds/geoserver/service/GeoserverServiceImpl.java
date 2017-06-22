@@ -93,7 +93,7 @@ public class GeoserverServiceImpl implements GeoserverService {
 
 		String fileName = layerInfo.getFileName();
 		List<String> layerNameList = layerInfo.getLayerNames();
-		String originSrc = layerInfo.getOriginSrc();
+		String originSrc = "EPSG:"+layerInfo.getOriginSrc();
 		List<String> successLayerList = new ArrayList<String>();
 		boolean flag = false;
 
