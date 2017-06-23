@@ -29,15 +29,6 @@ public class DTGeoserverPublisher extends GeoServerRESTPublisher
     this.gspass = password;
   }
 
-  public void createLayersGroup(String wsName, String fileName, List<String> successLayerList)
-  {
-    GSLayerGroupEncoder group = new GSLayerGroupEncoder();
-    for (int i = 0; i < successLayerList.size(); i++) {
-      String Layer = (String)successLayerList.get(i);
-      group.addLayer(Layer);
-    }
-    super.createLayerGroup(wsName, fileName, group);
-  }
 
   public boolean publishErrLayer(String wsName, String dsName, GeoLayerInfo geoLayerInfo)
   {

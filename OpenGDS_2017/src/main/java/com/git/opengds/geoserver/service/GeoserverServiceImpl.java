@@ -20,12 +20,15 @@ package com.git.opengds.geoserver.service;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
 
+import org.geotools.geometry.jts.JTSFactoryFinder;
 import org.json.simple.JSONArray;
 import org.springframework.stereotype.Service;
 
+import com.git.gdsbuilder.geolayer.data.DTGeoGroupLayer;
 import com.git.gdsbuilder.geolayer.data.DTGeoGroupLayerList;
 import com.git.gdsbuilder.geolayer.data.DTGeoLayerList;
 import com.git.gdsbuilder.geoserver.data.GeoserverLayerCollectionTree;
@@ -34,12 +37,18 @@ import com.git.gdsbuilder.geoserver.factory.DTGeoserverReader;
 import com.git.gdsbuilder.geosolutions.geoserver.rest.decoder.RESTFeatureType;
 import com.git.gdsbuilder.geosolutions.geoserver.rest.decoder.RESTLayer;
 import com.git.gdsbuilder.geosolutions.geoserver.rest.encoder.GSLayerEncoder;
+import com.git.gdsbuilder.geosolutions.geoserver.rest.encoder.GSLayerGroupEncoder;
 import com.git.gdsbuilder.geosolutions.geoserver.rest.encoder.GSResourceEncoder.ProjectionPolicy;
-import com.git.gdsbuilder.geosolutions.geoserver.rest.encoder.feature.GSAttributeEncoder;
 import com.git.gdsbuilder.geosolutions.geoserver.rest.encoder.feature.GSFeatureTypeEncoder;
 import com.git.gdsbuilder.type.geoserver.layer.GeoLayerInfo;
 import com.git.gdsbuilder.type.geoserver.layer.GeoLayerInfoList;
 import com.git.opengds.upload.domain.FileMeta;
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryCollection;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.LinearRing;
+import com.vividsolutions.jts.geom.Polygon;
 
 /**
  * Geoserver와 관련된 요청을 처리하는 클래스
@@ -96,6 +105,9 @@ public class GeoserverServiceImpl implements GeoserverService {
 		String originSrc = "EPSG:"+layerInfo.getOriginSrc();
 		List<String> successLayerList = new ArrayList<String>();
 		boolean flag = false;
+		
+		Collection<Geometry> geometryCollection = new ArrayList<Geometry>();
+		GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory();
 
 		for (int i = 0; i < layerNameList.size(); i++) {
 			
@@ -104,6 +116,12 @@ public class GeoserverServiceImpl implements GeoserverService {
 			String layerName = layerNameList.get(i);
 			String upperLayerName = layerName.toUpperCase();
 			String fileType = layerInfo.getFileType();
+			
+			int dash = layerName.indexOf("_");
+			String cutLayerName = layerName.substring(0, dash);
+			String layerType = layerName.substring(dash+1); // 파일명_레이어명
+			
+			
 			String layerFullName = "geo_" + fileType + "_" + fileName + "_" + layerName;
 
 			fte.setProjectionPolicy(ProjectionPolicy.REPROJECT_TO_DECLARED);
@@ -114,6 +132,20 @@ public class GeoserverServiceImpl implements GeoserverService {
 			fte.setNativeName(layerFullName); // nativeName
 			// fte.setLatLonBoundingBox(minx, miny, maxx, maxy, originSrc);
 
+			
+			if(cutLayerName.toUpperCase().equals("H0059153_TEXT")){
+				if(fileType.equals("dxf")){
+					upperLayerName = "DXF_" + cutLayerName; 
+				}
+				if(fileType.equals("ngi")){
+					upperLayerName = "NGI_" + cutLayerName;
+				}
+			}
+			
+			if(layerType.equals("LWPOLYLINE")||layerType.equals("POLYLINE")||layerType.equals("LINE")){
+				upperLayerName = cutLayerName.toUpperCase()+"_LWPOLYLINE";
+			}
+			
 			boolean styleFlag = dtReader.existsStyle(upperLayerName);
 			if (styleFlag) {
 				layerEncoder.setDefaultStyle(upperLayerName);
@@ -123,16 +155,63 @@ public class GeoserverServiceImpl implements GeoserverService {
 
 			flag = dtPublisher.publishDBLayer(wsName, dsName, fte, layerEncoder);
 
-			if (flag == false) {
+			
+			if(flag==true){
+				RESTLayer layer = dtReader.getLayer(ID, layerFullName);
+				RESTFeatureType featureType = dtReader.getFeatureType(layer);
+				
+			    double minx = featureType.getMinX();
+			    double miny = featureType.getMinY();
+			    double maxx = featureType.getMaxX();
+			    double maxy = featureType.getMaxY();
+			    
+			    if(minx!=0&&minx!=-1&&miny!=0&&miny!=-1&&maxx!=0&&maxx!=-1&&maxy!=0&&maxy!=-1){
+					Coordinate[] coords  =
+							   new Coordinate[] {new Coordinate(featureType.getMinX(), featureType.getMinY()), new Coordinate(featureType.getMaxX(), featureType.getMinY()),
+							                     new Coordinate(featureType.getMinX(), featureType.getMaxY()), new Coordinate(featureType.getMaxX(), featureType.getMaxY()), new Coordinate(featureType.getMinX(), featureType.getMinY()) };
+
+							LinearRing ring = geometryFactory.createLinearRing( coords );
+							LinearRing holes[] = null; // use LinearRing[] to represent holes
+							Polygon polygon = geometryFactory.createPolygon(ring, holes );
+							Geometry geometry = polygon;
+							geometryCollection.add(geometry);			    	
+			    }
+			}
+			else if (flag == false) {
 				System.out.println(layerName);
-				dtPublisher.removeLayer(wsName, layerName);
+				for(String sucLayerName : successLayerList){
+					dtPublisher.removeLayer(ID, sucLayerName);
+				}
+				dtPublisher.removeLayer(ID, layerName);
 				layerInfo.setServerPublishFlag(flag);
 				return layerInfo;
 			}
 			successLayerList.add(layerFullName);
 		}
+		
+		GeometryCollection collection = (GeometryCollection) geometryFactory.buildGeometry(geometryCollection);
+		Geometry geometry = collection.union();
+		GSLayerGroupEncoder group = new GSLayerGroupEncoder();
+	    for (int i = 0; i < successLayerList.size(); i++) {
+	      String Layer = (String)successLayerList.get(i);
+	      group.addLayer(Layer);
+	    }
+	    
+	    Coordinate[] coordinateArray = geometry.getEnvelope().getCoordinates();
+	    Coordinate minCoordinate = new Coordinate();
+	    Coordinate maxCoordinate = new Coordinate();
+	    
+	    minCoordinate = coordinateArray[0];
+	    maxCoordinate = coordinateArray[2];
+	    
+	    double minx = minCoordinate.x;
+	    double miny = minCoordinate.y;
+	    double maxx = maxCoordinate.x;
+	    double maxy = maxCoordinate.y;
+	    
+	    group.setBounds(originSrc, minx, maxx, miny, maxy);
 
-		dtPublisher.createLayersGroup(wsName, fileName, successLayerList);
+		dtPublisher.createLayerGroup(wsName, fileName, group);
 		layerInfo.setServerPublishFlag(flag);
 
 		return layerInfo;
@@ -310,11 +389,32 @@ public class GeoserverServiceImpl implements GeoserverService {
         	layerEncoder.setDefaultStyle(style);
         }
         
-		
-
 //		boolean flag = dtPublisher.recalculate(workspace, storename, layerFullName, testFte, testLayerEncoder);
 		updateFlag = dtPublisher.updateFeatureType(ID, ID, orginalName,fte, layerEncoder, attChangeFlag);
 
 		return updateFlag;
+	}
+	
+	public boolean groupPublish(){
+		DTGeoGroupLayer groupLayer = dtReader.getDTGeoGroupLayer(ID, "33611044");
+		
+		List<String> groupLayerList = new ArrayList<String>(); 
+		groupLayerList=groupLayer.getPublishedList().getNames();
+		
+		
+//		
+		
+		GSLayerGroupEncoder encoder = new GSLayerGroupEncoder();
+		
+		
+		for(int i=0; i<20 ; i++){
+			encoder.addLayer(groupLayerList.get(i));
+		}
+		
+		System.out.println(encoder.toString());
+		
+		boolean flag = dtPublisher.configureLayerGroup(ID, "33611044", encoder);
+		
+		return flag;
 	}
 }

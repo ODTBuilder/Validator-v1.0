@@ -42,8 +42,6 @@
 
 package com.git.gdsbuilder.geolayer.data;
 
-import java.util.List;
-
 import org.jdom.Element;
 import org.json.simple.JSONObject;
 
@@ -55,77 +53,24 @@ import com.git.gdsbuilder.geosolutions.geoserver.rest.decoder.utils.JDOMBuilder;
  * @author SG.Lee
  * @Date 2017. 2
  * */
-public class DTGeoGroupLayer {
-	private String name;
-	private JSONObject BBox = new JSONObject();
-	private String crs;
-//	private List<String> layerNames;
-	
-	/**
-	 * DTGeoGroupLayer Build
-	 * @author SG.Lee
-	 * @Date 2017.2
-	 * @param response - 요청 URL
-	 * @return DTGeoGroupLayer 
-	 * @throws
-	 * */
+public class DTGeoGroupLayer extends RESTLayerGroup{
+
 	public static DTGeoGroupLayer build(String response) {
-		Element elem = JDOMBuilder.buildElement(response);
-		return elem == null ? null : new DTGeoGroupLayer(elem);
+        Element elem = JDOMBuilder.buildElement(response);
+        return elem == null? null : new DTGeoGroupLayer(elem);
 	}
 
-	
-	/**
-	 * DTGeoGroupLayer 생성자
-	 * @param groupLayerElem
-	 */
+	public DTGeoGroupLayer(Element layerElem) {
+		super(layerElem);
+	}
+
 	@SuppressWarnings("unchecked")
-	public DTGeoGroupLayer(Element groupLayerElem) {
-		RESTLayerGroup groupLayer = new RESTLayerGroup(groupLayerElem);
-		this.name = groupLayer.getName();
-		this.BBox.put("minx", groupLayer.getMinX());
-		this.BBox.put("miny", groupLayer.getMinY());
-		this.BBox.put("maxx", groupLayer.getMaxX());
-		this.BBox.put("maxy", groupLayer.getMaxY());
-		this.crs = groupLayer.getCRS();
-//		this.layerNames = groupLayer.getLayerList().getNames();
+	public JSONObject getBBox() {
+		JSONObject bbox = new JSONObject();
+		bbox.put("minx", super.getMinX());
+		bbox.put("miny", super.getMinY());
+		bbox.put("maxx", super.getMaxX());
+		bbox.put("maxy", super.getMaxY());
+		return bbox;
 	}
-	
-	/**
-	 * DTGeoGroupLayer GET, SET
-	 * 
-	 * @author SG.Lee
-	 * @Date 2017.3
-	 */
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public JSONObject getbBox() {
-		return BBox;
-	}
-
-	public void setbBox(JSONObject BBox) {
-		this.BBox = BBox;
-	}
-
-	public String getCrs() {
-		return crs;
-	}
-
-	public void setCrs(String crs) {
-		this.crs = crs;
-	}
-
-	/*public List<String> getLayerNames() {
-		return layerNames;
-	}
-
-	public void setLayerNames(List<String> layerNames) {
-		this.layerNames = layerNames;
-	}*/
 }
