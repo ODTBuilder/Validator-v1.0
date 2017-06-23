@@ -51,8 +51,6 @@ import org.json.simple.parser.ParseException;
 
 import com.git.gdsbuilder.FileRead.en.EnFileFormat;
 import com.git.gdsbuilder.edit.qa20.EditQA20LayerCollectionList;
-import com.git.gdsbuilder.geoserver.factory.DTGeoserverPublisher;
-import com.git.gdsbuilder.geoserver.factory.DTGeoserverReader;
 import com.git.gdsbuilder.type.geoserver.collection.GeoLayerCollectionList;
 import com.git.gdsbuilder.type.geoserver.parser.GeoLayerCollectionParser;
 import com.git.gdsbuilder.type.qa10.feature.QA10Feature;

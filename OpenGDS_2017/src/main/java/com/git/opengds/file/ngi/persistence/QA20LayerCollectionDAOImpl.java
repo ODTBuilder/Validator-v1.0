@@ -44,7 +44,7 @@ public class QA20LayerCollectionDAOImpl implements QA20LayerCollectionDAO {
 
 	@Override
 	public int selectQA20LayerCollectionIdx(HashMap<String, Object> selectLayerCollectionIdxQuery) {
-		HashMap<String, Object> idxMap = sqlSession.selectOne(namespace + ".selectLayerCollectionIdx",
+                                                                                                                           		HashMap<String, Object> idxMap = sqlSession.selectOne(namespace + ".selectLayerCollectionIdx",
 				selectLayerCollectionIdxQuery);
 		return (Integer) idxMap.get("c_idx");
 	}
@@ -123,8 +123,8 @@ public class QA20LayerCollectionDAOImpl implements QA20LayerCollectionDAO {
 	}
 
 	@Override
-	public List<HashMap<String, Object>> selectQA20LayerMetadataIdx(HashMap<String, Object> metadataIdxQuery) {
-		return sqlSession.selectList(namespace + ".selectLayerMetadataIdx", metadataIdxQuery);
+	public List<HashMap<String, Object>> selectQA20LayerMetadataIdxs(HashMap<String, Object> metadataIdxQuery) {
+		return sqlSession.selectList(namespace + ".selectLayerMetadataIdxs", metadataIdxQuery);
 	}
 
 	@Override
@@ -135,5 +135,31 @@ public class QA20LayerCollectionDAOImpl implements QA20LayerCollectionDAO {
 	@Override
 	public void deleteField(HashMap<String, Object> deleteHeaderQuery) {
 		sqlSession.delete(namespace + ".deleteHeader", deleteHeaderQuery);
+	}
+
+	@Override
+	public int selectQA20LayerMetadataIdx(HashMap<String, Object> metadataIdxQuery) {
+		HashMap<String, Object> idxMap = sqlSession.selectOne(namespace + ".selectLayerMetadataIdx", metadataIdxQuery);
+		return (Integer) idxMap.get("lm_idx");
+	}
+
+	@Override
+	public void updateQA20LayerMetadataLayerName(HashMap<String, Object> updateLayerNameQuery) {
+		sqlSession.update(namespace + ".updateQA20LayerMetadataLayerName", updateLayerNameQuery);
+	}
+
+	@Override
+	public void updateQA20LayerMetadataBoundary(HashMap<String, Object> updateBoundaryQuery) {
+		sqlSession.update(namespace + ".updateQA20LayerMetadataBoundary", updateBoundaryQuery);
+	}
+
+	@Override
+	public HashMap<String, Object> selectNdaAspatialFieldFidxs(HashMap<String, Object> selectNadFieldsQuery) {
+		return sqlSession.selectOne(namespace + ".selectNadField", selectNadFieldsQuery);
+	}
+
+	@Override
+	public void updateNdaAspatialField(HashMap<String, Object> updateFieldQuery) {
+		sqlSession.update(namespace + ".updateNdaAspatialField", updateFieldQuery);
 	}
 }

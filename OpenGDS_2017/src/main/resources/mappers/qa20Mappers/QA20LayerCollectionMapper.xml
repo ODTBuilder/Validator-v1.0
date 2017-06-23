@@ -58,9 +58,24 @@
 		</selectKey>
 	</insert>
 
-	<select id="selectLayerMetadataIdx" parameterType="hashMap"
+	<select id="selectLayerMetadataIdxs" parameterType="hashMap"
 		resultType="hashMap">
 		${selectAllQuery}
+	</select>
+
+	<select id="selectLayerMetadataIdx" parameterType="hashMap"
+		resultType="hashMap">
+		${selectQuery}
+	</select>
+
+	<select id="updateQA20LayerMetadataLayerName" parameterType="hashMap"
+		resultType="hashMap">
+		${updateQuery}
+	</select>
+
+	<select id="updateQA20LayerMetadataBoundary" parameterType="hashMap"
+		resultType="hashMap">
+		${updateQuery}
 	</select>
 
 	<select id="selectQA20LayerTableName" parameterType="hashMap"
@@ -72,6 +87,14 @@
 	<insert id="insertNdaAspatialFieldDefs" parameterType="hashmap">
 		${insertQuery}
 	</insert>
+
+	<select id="selectNadField" parameterType="hashMap" resultType="hashMap">
+		${selectQuery}
+	</select>
+
+	<select id="updateNdaAspatialField" parameterType="hashMap">
+		${updateQuery}
+	</select>
 
 	<!-- ngi_point_represent -->
 	<insert id="insertPointRepresent" parameterType="hashmap">

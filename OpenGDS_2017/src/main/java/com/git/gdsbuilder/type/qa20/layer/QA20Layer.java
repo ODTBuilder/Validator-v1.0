@@ -17,6 +17,9 @@
 
 package com.git.gdsbuilder.type.qa20.layer;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.git.gdsbuilder.type.qa20.feature.QA20Feature;
 import com.git.gdsbuilder.type.qa20.feature.QA20FeatureList;
 import com.git.gdsbuilder.type.qa20.header.NDAHeader;
@@ -37,6 +40,7 @@ public class QA20Layer {
 	NDAHeader ndaHeader;
 	String layerType;
 	QA20FeatureList features;
+	List<String> originFieldNams; 
 
 	/**
 	 * QA20Layer 생성자
@@ -50,6 +54,7 @@ public class QA20Layer {
 		this.ngiHeader = new NGIHeader();
 		this.ndaHeader = new NDAHeader();
 		this.features = new QA20FeatureList();
+		this.originFieldNams = new ArrayList<String>();
 	}
 
 	/**

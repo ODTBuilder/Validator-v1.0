@@ -1,24 +1,46 @@
 package com.git.gdsbuilder.edit.qa20;
 
-import com.git.gdsbuilder.type.qa20.feature.QA20Feature;
+import java.util.Map;
+
 import com.git.gdsbuilder.type.qa20.feature.QA20FeatureList;
+import com.git.gdsbuilder.type.qa20.header.NDAHeader;
+import com.git.gdsbuilder.type.qa20.header.NGIHeader;
 
 public class EditQA20Layer {
 
 	String layerName;
+	String orignName;
+	String layerType;
+	NGIHeader ngiHeader;
+	NDAHeader ndaHeader;
 	QA20FeatureList createFeatureList;
 	QA20FeatureList modifiedFeatureList;
 	QA20FeatureList deletedFeatureList;
+
+	Map<String, Object> geoServerLayer;
 
 	boolean isCreated = false;
 	boolean isModified = false;
 	boolean isDeleted = false;
 
-	public EditQA20Layer(String layerName) {
-		this.layerName = layerName;
-		createFeatureList = new QA20FeatureList();
-		modifiedFeatureList = new QA20FeatureList();
-		deletedFeatureList = new QA20FeatureList();
+	public EditQA20Layer() {
+
+	}
+
+	public Map<String, Object> getGeoServerLayer() {
+		return geoServerLayer;
+	}
+
+	public void setGeoServerLayer(Map<String, Object> geoServerLayer) {
+		this.geoServerLayer = geoServerLayer;
+	}
+
+	public String getLayerType() {
+		return layerType;
+	}
+
+	public void setLayerType(String layerType) {
+		this.layerType = layerType;
 	}
 
 	public String getLayerName() {
@@ -27,6 +49,30 @@ public class EditQA20Layer {
 
 	public void setLayerName(String layerName) {
 		this.layerName = layerName;
+	}
+
+	public String getOrignName() {
+		return orignName;
+	}
+
+	public void setOrignName(String orignName) {
+		this.orignName = orignName;
+	}
+
+	public NGIHeader getNgiHeader() {
+		return ngiHeader;
+	}
+
+	public void setNgiHeader(NGIHeader ngiHeader) {
+		this.ngiHeader = ngiHeader;
+	}
+
+	public NDAHeader getNdaHeader() {
+		return ndaHeader;
+	}
+
+	public void setNdaHeader(NDAHeader ndaHeader) {
+		this.ndaHeader = ndaHeader;
 	}
 
 	public QA20FeatureList getCreateFeatureList() {
@@ -51,30 +97,6 @@ public class EditQA20Layer {
 
 	public void setDeletedFeatureList(QA20FeatureList deletedFeatureList) {
 		this.deletedFeatureList = deletedFeatureList;
-	}
-
-	public void addCreateFeature(QA20Feature qa20Feature) {
-		this.createFeatureList.add(qa20Feature);
-	}
-
-	public void addAllCreateFeature(QA20FeatureList createFeatureList) {
-		this.createFeatureList.addAll(createFeatureList);
-	}
-
-	public void addmodifiedFeature(QA20Feature qa20Feature) {
-		this.modifiedFeatureList.add(qa20Feature);
-	}
-
-	public void addAllmodifiedFeature(QA20FeatureList modifiedFeatureList) {
-		this.modifiedFeatureList.addAll(modifiedFeatureList);
-	}
-
-	public void addDeleteFeature(QA20Feature qa20Feature) {
-		this.deletedFeatureList.add(qa20Feature);
-	}
-
-	public void addAllDeleteFeature(QA20FeatureList deletedFeatureList) {
-		this.deletedFeatureList.addAll(deletedFeatureList);
 	}
 
 	public boolean isCreated() {

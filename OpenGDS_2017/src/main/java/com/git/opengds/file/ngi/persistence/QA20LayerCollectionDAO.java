@@ -55,10 +55,20 @@ public interface QA20LayerCollectionDAO {
 
 	public void insertQA20Feature(HashMap<String, Object> insertQuery);
 
-	public List<HashMap<String, Object>> selectQA20LayerMetadataIdx(HashMap<String, Object> metadataIdxQuery);
+	public List<HashMap<String, Object>> selectQA20LayerMetadataIdxs(HashMap<String, Object> metadataIdxQuery);
 
-	public HashMap<String, Object>  selectQA20LayerTableName(HashMap<String, Object> layerTbNameQuery);
+	public int selectQA20LayerMetadataIdx(HashMap<String, Object> metadataIdxQuery);
+
+	public HashMap<String, Object> selectQA20LayerTableName(HashMap<String, Object> layerTbNameQuery);
 
 	public void deleteField(HashMap<String, Object> deleteTextRepQuery);
+
+	public void updateQA20LayerMetadataLayerName(HashMap<String, Object> updateLayerNameQuery);
+
+	public void updateQA20LayerMetadataBoundary(HashMap<String, Object> updateBoundaryQuery);
+
+	public HashMap<String, Object> selectNdaAspatialFieldFidxs(HashMap<String, Object> selectNadFieldsQuery);
+
+	public void updateNdaAspatialField(HashMap<String, Object> updateFieldQuery);
 
 }
