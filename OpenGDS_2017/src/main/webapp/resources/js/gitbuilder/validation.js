@@ -25,16 +25,8 @@ gitbuilder.ui.Validation = $.widget("gitbuilder.validation", {
 	ws : false,
 	wsfirst : true,
 	fileType : undefined,
-	info : $("<div>").addClass("well").text("Ready"),
-	bar : $("<div>").addClass("progress-bar").attr({
-		"role" : "progressbar",
-		"aria-valuemin" : 0,
-		"aria-valuemax" : 100,
-		"aria-valuenow" : 0
-	}).css({
-		"width" : "0",
-		"min-width" : "2em"
-	}).text("0%"),
+	info : undefined,
+	bar : undefined,
 	options : {
 		layerDefinition : undefined,
 		optionDefinition : undefined,
@@ -186,8 +178,18 @@ gitbuilder.ui.Validation = $.widget("gitbuilder.validation", {
 
 		var infohead = $("<div>").text("Information");
 		this._addClass(infohead, "panel-heading");
+		this.bar = $("<div>").addClass("progress-bar").attr({
+			"role" : "progressbar",
+			"aria-valuemin" : 0,
+			"aria-valuemax" : 100,
+			"aria-valuenow" : 0
+		}).css({
+			"width" : "0",
+			"min-width" : "2em"
+		}).text("0%");
 		var prog = $("<div>").append(this.bar);
 		this._addClass(prog, "progress");
+		this.info = $("<div>").addClass("well");
 		var infobody = $("<div>").append(this.info).append(prog);
 		this._addClass(infobody, "panel-body");
 		var layerInfo = $("<div>").append(infohead).append(infobody);
