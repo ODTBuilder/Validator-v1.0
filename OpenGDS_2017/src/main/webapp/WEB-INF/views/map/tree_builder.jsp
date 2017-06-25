@@ -307,7 +307,7 @@ html {
 		});
 
 		$("#edit").editingtool({
-			geoserverURL : "http://175.116.181.42:9990/geoserver/",
+			url : "geoserver2/geoserverWFSGetFeature.ajax",
 			map : map,
 			user : "admin",
 			record : record,
@@ -500,11 +500,13 @@ html {
 
 		$("#qaedit").qaedit({
 			map : map,
+			editingTool : $("#edit").editingtool("instance"),
+			linkKey : "feature_id",
 			user : "admin",
 			layersURL : 'geoserver2/getGeolayerCollectionTree.ajax',
 			featureWMSURL : "geoserver2/geoserverWMSLayerLoad.do",
 			featureWFSURL : "geoserver2/geoserverWFSGetFeature.ajax",
-			groupInfoURL : "geoserver2/getGeoGroupLayerInfoList.ajax"		
+			groupInfoURL : "geoserver2/getGeoGroupLayerInfoList.ajax"
 		});
 
 		var layerInfo = new gb.edit.LayerInformation({
@@ -559,10 +561,11 @@ html {
 															"arr" : arr,
 															"parent" : inst.get_parent(obj)
 														}
-														inst.import_image(wmsInfo);
+														inst.import_fake_image(wmsInfo);
 													}
-												} else if (obj.type === "n_dxf_layer_arc" || obj.type === "n_dxf_layer_cir" || obj.type === "n_dxf_layer_ins"
-														|| obj.type === "n_dxf_layer_lpl" || obj.type === "n_dxf_layer_pl" || obj.type === "n_dxf_layer_txt") {
+												} else if (obj.type === "n_dxf_layer_arc" || obj.type === "n_dxf_layer_cir"
+														|| obj.type === "n_dxf_layer_ins" || obj.type === "n_dxf_layer_lpl"
+														|| obj.type === "n_dxf_layer_pl" || obj.type === "n_dxf_layer_txt") {
 													var arr = inst.get_selected();
 													if (inst.get_node(inst.get_parent(obj)).type === "n_dxf_group") {
 														var wmsInfo = {

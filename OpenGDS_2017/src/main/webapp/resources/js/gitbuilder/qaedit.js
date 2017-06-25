@@ -24,7 +24,8 @@ gitbuilder.ui.QAEdit = $
 						featureWMSURL : undefined,
 						featureWFSURL : undefined,
 						groupURL : undefined,
-						
+						editingTool : undefined,
+						linkKey : undefined
 					},
 					map : undefined,
 					mapsheet : undefined,
@@ -44,6 +45,7 @@ gitbuilder.ui.QAEdit = $
 					lid : undefined,
 					_create : function() {
 						var that = this;
+						console.log(this.options.editingTool);
 						this._on(false, this.element, {
 							click : function(event) {
 								if (event.target === that.element[0]) {
@@ -328,6 +330,17 @@ gitbuilder.ui.QAEdit = $
 							backdrop : "static",
 							keyboard : true,
 							show : false,
+						});
+
+						$(document).on("click", ".gitbuilder-qaedit-navigator-link", function() {
+							console.log($(this).text());
+							var fid = $(this).text();
+							var lid = fid.substring(0, fid.indexOf("."));
+							if (lid.indexOf(".") !== -1) {
+								console.error("layer name error");
+								return;
+							}
+							that.selectOriginalFeature(lid, fid);
 						});
 
 						this._create_navigator();
@@ -615,7 +628,14 @@ gitbuilder.ui.QAEdit = $
 						$(this.tbody).empty();
 						for (var i = 0; i < keys.length; i++) {
 							var td1 = $("<td>").text(keys[i]);
-							var td2 = $("<td>").attr("colspan", 2).text(prop[keys[i]]);
+							if (keys[i] === this.options.linkKey) {
+								var anc = $("<a>").addClass("gitbuilder-qaedit-navigator-link").attr({
+									"href" : "#"
+								}).text(prop[keys[i]]);
+								var td2 = $("<td>").attr("colspan", 2).append(anc);
+							} else {
+								var td2 = $("<td>").attr("colspan", 2).text(prop[keys[i]]);
+							}
 							var tr1 = $("<tr>").append(td1).append(td2);
 							$(this.tbody).append(tr1);
 						}
@@ -623,60 +643,35 @@ gitbuilder.ui.QAEdit = $
 						this.map.getView().fit(geom.getExtent(), this.map.getSize());
 						this.map.getView().setZoom(16);
 					},
-					selectOriginalFeature : function(){
+					selectOriginalFeature : function(layer, fid) {
+						var that = this;
 						var params = {
-								"service" : "WFS",
-								"version" : "1.0.0",
-								"request" : "GetFeature",
-								"typeName" : "admin:" + that.layer.getSource().getParams().LAYERS,
-								"outputformat" : "text/javascript",
-								"bbox" : extent.toString(),
-								"format_options" : "callback:getJson"
+							"service" : "WFS",
+							"version" : "1.0.0",
+							"request" : "GetFeature",
+							"typeName" : layer,
+							"outputformat" : "text/javascript",
+							"featureID" : fid,
+							"format_options" : "callback:getJson"
 						};
-						var addr = this.url_;
+						var addr = this.options.featureWFSURL;
 
 						$.ajax({
 							url : addr,
 							data : params,
 							dataType : 'jsonp',
 							jsonpCallback : 'getJson',
-							beforeSend : function(){
-								$("#"+ that.map_.getTarget()).css("cursor", "wait");
+							beforeSend : function() {
+								$("body").css("cursor", "wait");
 							},
-							complete : function(){
-								$("#"+ that.map_.getTarget()).css("cursor", "default");
+							complete : function() {
+								$("body").css("cursor", "default");
 							},
-							success : function(data){
-								that.features_.clear();
+							success : function(data) {
+								console.log(data);
 								var features = new ol.format.GeoJSON().readFeatures(JSON.stringify(data));
-								var ids = [];
-								for (var i = 0; i < features.length; i++) {
-									ids.push(features[i].getId());
-								}
-								that.destination_.getSource().addFeatures(features);
-								that.destination_.setMap(that.map_);
-
-								var selFeatures = that.select_.getFeatures();
-								var cFeatures = [];
-								for (var k = 0; k < selFeatures.getLength(); k++) {
-									if (selFeatures.item(k).getId().search(that.layer.get("id")+".new") !== -1) {
-										cFeatures.push(selFeatures.item(k));
-									}
-//									else {
-//										if (!that.record.isRemoved(that.layer, selFeatures.item(k))) {
-//											cFeatures.push(selFeatures.item(k));
-//										}
-//									}
-								}
-								that.select_.getFeatures().clear();
-								that.select_.getFeatures().extend(cFeatures);
-								var newFeatures = [];
-								for (var j = 0; j < ids.length; j++) {
-									if (!that.record.isRemoved(that.layer, that.destination_.getSource().getFeatureById(ids[j]))) {
-										newFeatures.push(that.destination_.getSource().getFeatureById(ids[j]));	
-									}
-								}
-								that.select_.getFeatures().extend(newFeatures);
+//								that.options.editingTool.open();
+								that.options.editingTool.setFeatures(features);
 							}
 						});
 					},
