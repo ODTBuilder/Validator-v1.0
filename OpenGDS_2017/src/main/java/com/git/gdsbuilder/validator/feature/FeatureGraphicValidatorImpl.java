@@ -736,6 +736,7 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 		for (int i = 0; i < relationSimpleFeatures.size(); i++) {
 			SimpleFeature relSimpleFeature = relationSimpleFeatures.get(i);
 			Geometry relGeometry = (Geometry) relSimpleFeature.getDefaultGeometry();
+			System.out.println(simpleFeature.getAttribute("ID") +" : " + relSimpleFeature.getAttribute("ID"));
 			/*if(geometry.contains(relGeometry) || geometry.overlaps(relGeometry) || geometry.within(relGeometry) ){
 				Coordinate[] relCoordinates = relGeometry.getCoordinates();
 				Coordinate start = relCoordinates[0];
