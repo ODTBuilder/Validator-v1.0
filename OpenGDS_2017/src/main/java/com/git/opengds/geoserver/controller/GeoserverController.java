@@ -151,6 +151,28 @@ public class GeoserverController{
 			return geoserverService.getGeoLayerList((ArrayList<String>) geoLayerList);
 	}
 	
+	/**
+	 * 레이어 중복체크
+	 * @author SG.Lee
+	 * @Date 2017. 5
+	 * @param request
+	 * @param jsonObject
+	 * @return DTGeoLayerList
+	 * @throws
+	 * */
+	@SuppressWarnings("unchecked")
+	@RequestMapping(value="layerDuplicateCheck.ajax")
+	@ResponseBody
+	public JSONObject duplicateCheck(HttpServletRequest request , @RequestBody JSONObject jsonObject){
+		List<String> layerList = new ArrayList<String>();
+		layerList = (ArrayList<String>) jsonObject.get("layerList");
+		if(layerList.size()==0){
+			return null; 
+		}
+		else
+			return geoserverService.duplicateCheck((ArrayList<String>) layerList);
+	}
+	
 	
 	/**
 	 * Geoserver Group레이어 조회
