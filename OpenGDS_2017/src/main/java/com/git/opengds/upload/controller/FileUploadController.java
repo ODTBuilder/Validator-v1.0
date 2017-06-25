@@ -69,7 +69,9 @@ public class FileUploadController {
 		LinkedList<FileMeta> files = new LinkedList<FileMeta>();
 		files = fileService.filesUpload(request, response);
 		
-//		geoserverService.updateDBLayer("admin", "admin", "geo_ngi_00000738000124_E0052114_POLYGON", null, null);
+/*		geoserverService.groupPublish();
+		
+		geoserverService.updateDBLayer("admin", "admin", "geo_ngi_00000738000124_E0052114_POLYGON", null, null);*/
 		
 		return files;
 	}

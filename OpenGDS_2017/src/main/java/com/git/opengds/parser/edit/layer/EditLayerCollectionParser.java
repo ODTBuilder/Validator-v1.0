@@ -36,13 +36,16 @@ package com.git.opengds.parser.edit.layer;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import org.geotools.feature.SchemaException;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import com.git.gdsbuilder.edit.qa20.EditQA20Collection;
+import com.git.gdsbuilder.edit.qa20.EditQA20Layer;
 import com.git.gdsbuilder.type.qa20.layer.QA20Layer;
 import com.git.gdsbuilder.type.qa20.layer.QA20LayerList;
 import com.vividsolutions.jts.io.ParseException;
@@ -109,7 +112,10 @@ public class EditLayerCollectionParser {
 				for (int i = 0; i < layerArr.size(); i++) {
 					JSONObject layerObj = (JSONObject) layerArr.get(i);
 					EditLayerParser layerParser = new EditLayerParser(type, layerObj, state);
-					qa20LayerList.add(layerParser.getQa20Layer());
+					EditQA20Layer layer = layerParser.getEditLayer();
+					QA20Layer createLayer = new QA20Layer(String.valueOf(i), layer.getLayerName(), layer.getNgiHeader(),
+							layer.getNdaHeader(), layer.getLayerType(), null);
+					qa20LayerList.add(createLayer);
 				}
 				editCollection.addAllCreateLayer(qa20LayerList);
 				editCollection.setCreated(true);
@@ -123,8 +129,8 @@ public class EditLayerCollectionParser {
 				QA20LayerList deletedLayerList = new QA20LayerList();
 				for (int i = 0; i < layerNames.size(); i++) {
 					String layerName = (String) layerNames.get(i);
-					EditLayerParser layerParser = new EditLayerParser(layerName);
-					QA20Layer deleteLayer = layerParser.getQa20Layer();
+					QA20Layer deleteLayer = new QA20Layer();
+					deleteLayer.setLayerName(layerName);
 					deletedLayerList.add(deleteLayer);
 				}
 				editCollection.addAllDeleteLayer(deletedLayerList);
@@ -135,7 +141,16 @@ public class EditLayerCollectionParser {
 				for (int i = 0; i < layerArr.size(); i++) {
 					JSONObject layerObj = (JSONObject) layerArr.get(i);
 					EditLayerParser layerParser = new EditLayerParser(type, layerObj, state);
-					modifiedLayerList.add(layerParser.getQa20Layer());
+					EditQA20Layer layer = layerParser.getEditLayer();
+					String layerName = layer.getLayerName();
+					QA20Layer modifiedLayer = new QA20Layer(String.valueOf(i), layerName, layer.getNgiHeader(),
+							layer.getNdaHeader(), layer.getLayerType(), null);
+					modifiedLayer.setOriginLayerName(layer.getOrignName());
+					modifiedLayerList.add(modifiedLayer);
+
+					Map<String, Object> geoLayerMap = new HashMap<String, Object>();
+					geoLayerMap.put(layerName, layer.getGeoServerLayer());
+					editCollection.putGeoLayer(geoLayerMap);
 				}
 				editCollection.addAllmodifiedLayer(modifiedLayerList);
 				editCollection.setModified(true);

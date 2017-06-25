@@ -25,6 +25,7 @@ package com.git.gdsbuilder.type.qa20.header;
  */
 public class NDAField {
 
+	String originFieldName;
 	String fieldName;
 	String type;
 	String size;
@@ -33,6 +34,7 @@ public class NDAField {
 
 	public NDAField() {
 		super();
+		this.originFieldName = "";
 		this.fieldName = "";
 		this.type = "";
 		this.size = "";
@@ -49,6 +51,17 @@ public class NDAField {
 	 * @param decimal
 	 * @param fields
 	 */
+	public NDAField(String originFieldName, String fieldName, String type, String size, String decimal,
+			boolean fields) {
+		super();
+		this.originFieldName = originFieldName;
+		this.fieldName = fieldName;
+		this.type = type;
+		this.size = size;
+		this.decimal = decimal;
+		this.isUnique = fields;
+	}
+
 	public NDAField(String fieldName, String type, String size, String decimal, boolean fields) {
 		super();
 		this.fieldName = fieldName;
@@ -56,6 +69,14 @@ public class NDAField {
 		this.size = size;
 		this.decimal = decimal;
 		this.isUnique = fields;
+	}
+
+	public String getOriginFieldName() {
+		return originFieldName;
+	}
+
+	public void setOriginFieldName(String originFieldName) {
+		this.originFieldName = originFieldName;
 	}
 
 	/**

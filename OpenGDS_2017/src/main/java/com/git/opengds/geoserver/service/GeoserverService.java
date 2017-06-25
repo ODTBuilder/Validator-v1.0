@@ -166,6 +166,9 @@ public interface GeoserverService {
 	 * @return boolean
 	 * */
 	public boolean updateFeatureType(final String orginalName,final String name,final String title,final String abstractContent,final String style, boolean attChangeFlag);
+	
+	
+	public boolean groupPublish();
 }
 
 

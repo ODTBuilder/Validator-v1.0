@@ -76,8 +76,10 @@ public class QA10DBQueryManager {
 
 		String layerId = qa10Layer.getLayerID();
 		String layerTableName = "geo" + "_" + type + "_" + collectionName + "_" + layerId;
-		String insertQueryColumn = "insert into " + "\"qa10_layer_metadata" + "\"" + "(layer_id, layer_t_name, c_idx)";
-		String insertQueryValue = " values('" + layerId + "', '" + layerTableName + "', " + cIdx + ")";
+		String insertQueryColumn = "insert into " + "\"qa10_layer_metadata" + "\""
+				+ "(layer_id, layer_t_name, c_idx, current_layer_name)";
+		String insertQueryValue = " values('" + layerId + "', '" + layerTableName + "', " + cIdx + "," + "'"
+				+ layerId + "')";
 
 		HashMap<String, Object> insertQueryMap = new HashMap<String, Object>();
 		insertQueryMap.put("insertQuery", insertQueryColumn + insertQueryValue);

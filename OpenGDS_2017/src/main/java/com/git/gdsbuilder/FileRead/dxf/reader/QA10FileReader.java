@@ -28,7 +28,7 @@ public class QA10FileReader {
 
 		QA10LayerCollection dtCollection = new QA10LayerCollection("", fileName);
 		Parser parser = ParserBuilder.createDefaultParser();
-		try {
+	//	try {
 			parser.parse(filePath, DXFParser.DEFAULT_ENCODING);
 			DXFDocument doc = parser.getDocument();
 			// readDXF
@@ -50,9 +50,9 @@ public class QA10FileReader {
 					doc.getDXFStyleIterator()));
 
 			// dtCollection.setId("도엽번호");
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-		}
+//		} catch (ParseException e) {
+//			// TODO Auto-generated catch block
+//		}
 		return dtCollection;
 	}
 

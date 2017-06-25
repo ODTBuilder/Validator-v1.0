@@ -25,21 +25,14 @@ gitbuilder.ui.Validation = $.widget("gitbuilder.validation", {
 	ws : false,
 	wsfirst : true,
 	fileType : undefined,
-	info : $("<div>").addClass("well").text("Ready"),
-	bar : $("<div>").addClass("progress-bar").attr({
-		"role" : "progressbar",
-		"aria-valuemin" : 0,
-		"aria-valuemax" : 100,
-		"aria-valuenow" : 0
-	}).css({
-		"width" : "0",
-		"min-width" : "2em"
-	}).text("0%"),
+	info : undefined,
+	bar : undefined,
 	options : {
 		layerDefinition : undefined,
 		optionDefinition : undefined,
 		weightDefinition : undefined,
 		validatorURL : undefined,
+		layersURL : undefined,
 		appendTo : "body"
 	},
 	_create : function() {
@@ -100,28 +93,32 @@ gitbuilder.ui.Validation = $.widget("gitbuilder.validation", {
 				},
 				'data' : {
 					'url' : function() {
-						return 'geoserver2/getGeolayerCollectionTree.ajax';
+						return that.options.layersURL;
 					}
 				}
 			},
-			"plugins" : [ "search", "state", "types" ]
+			"plugins" : [ "search", "types" ]
 		});
-		$(this.tree).on('select_node.jstree', function(e, data) {
-			var i, j, r = [];
-			for (i = 0, j = data.selected.length; i < j; i++) {
+		$(this.tree).on('deselect_node.jstree', function(e, data) {
+			var r = [];
+			for (var i = 0; i < data.selected.length; i++) {
 				if (data.instance.get_node(data.selected[i]).type === "n_ngi_group" || data.instance.get_node(data.selected[i]).type === "n_dxf_group") {
 					if (r.length === 0 && data.instance.get_node(data.selected[i]).type === "n_ngi_group") {
 						r.push(data.instance.get_node(data.selected[i]));
 						that.fileType = "ngi";
+						continue;
 					} else if (r.length === 0 && data.instance.get_node(data.selected[i]).type === "n_dxf_group") {
 						r.push(data.instance.get_node(data.selected[i]));
 						that.fileType = "dxf";
+						continue;
 					}
 
-					if (r.length > 1 && that.fileType === "ngi" && data.instance.get_node(data.selected[i]).type === "n_ngi_group") {
+					if (r.length > 0 && that.fileType === "ngi" && data.instance.get_node(data.selected[i]).type === "n_ngi_group") {
 						r.push(data.instance.get_node(data.selected[i]));
-					} else if (r.length > 1 && that.fileType === "dxf" && data.instance.get_node(data.selected[i]).type === "n_dxf_group") {
+						continue;
+					} else if (r.length > 0 && that.fileType === "dxf" && data.instance.get_node(data.selected[i]).type === "n_dxf_group") {
 						r.push(data.instance.get_node(data.selected[i]));
+						continue;
 					}
 					if(that.fileType === "ngi" && data.instance.get_node(data.selected[i]).type === "n_dxf_group") {
 						data.instance.deselect_node(data.instance.get_node(data.selected[i]));
@@ -133,10 +130,46 @@ gitbuilder.ui.Validation = $.widget("gitbuilder.validation", {
 					that.updateLayerList(r);
 				}
 			}
-			if (r.length > 0) {
+//			if (r.length > 0) {
 				that.updateValidationDef(r);
 				that.updateLayerList(r);
+//			}
+		});
+		$(this.tree).on('select_node.jstree', function(e, data) {
+			var r = [];
+			for (var i = 0; i < data.selected.length; i++) {
+				if (data.instance.get_node(data.selected[i]).type === "n_ngi_group" || data.instance.get_node(data.selected[i]).type === "n_dxf_group") {
+					if (r.length === 0 && data.instance.get_node(data.selected[i]).type === "n_ngi_group") {
+						r.push(data.instance.get_node(data.selected[i]));
+						that.fileType = "ngi";
+						continue;
+					} else if (r.length === 0 && data.instance.get_node(data.selected[i]).type === "n_dxf_group") {
+						r.push(data.instance.get_node(data.selected[i]));
+						that.fileType = "dxf";
+						continue;
+					}
+
+					if (r.length > 0 && that.fileType === "ngi" && data.instance.get_node(data.selected[i]).type === "n_ngi_group") {
+						r.push(data.instance.get_node(data.selected[i]));
+						continue;
+					} else if (r.length > 0 && that.fileType === "dxf" && data.instance.get_node(data.selected[i]).type === "n_dxf_group") {
+						r.push(data.instance.get_node(data.selected[i]));
+						continue;
+					}
+					if(that.fileType === "ngi" && data.instance.get_node(data.selected[i]).type === "n_dxf_group") {
+						data.instance.deselect_node(data.instance.get_node(data.selected[i]));
+					} else if(that.fileType === "dxf" && data.instance.get_node(data.selected[i]).type === "n_ngi_group") {
+						data.instance.deselect_node(data.instance.get_node(data.selected[i]));
+					}
+				} else {
+					data.instance.deselect_node(data.instance.get_node(data.selected[i]));
+					that.updateLayerList(r);
+				}
 			}
+//			if (r.length > 0) {
+				that.updateValidationDef(r);
+				that.updateLayerList(r);
+//			}
 		});
 		var layerlist = $("<div>").append(listhead).append(listbody);
 		this._addClass(layerlist, "panel");
@@ -144,10 +177,20 @@ gitbuilder.ui.Validation = $.widget("gitbuilder.validation", {
 		var uleft = $("<div>").append(layerlist);
 		this._addClass(uleft, "col-md-5");
 
-		var infohead = $("<div>").text("Layer Information");
+		var infohead = $("<div>").text("Information");
 		this._addClass(infohead, "panel-heading");
+		this.bar = $("<div>").addClass("progress-bar").attr({
+			"role" : "progressbar",
+			"aria-valuemin" : 0,
+			"aria-valuemax" : 100,
+			"aria-valuenow" : 0
+		}).css({
+			"width" : "0",
+			"min-width" : "2em"
+		}).text("0%");
 		var prog = $("<div>").append(this.bar);
 		this._addClass(prog, "progress");
+		this.info = $("<div>").addClass("well");
 		var infobody = $("<div>").append(this.info).append(prog);
 		this._addClass(infobody, "panel-body");
 		var layerInfo = $("<div>").append(infohead).append(infobody);
@@ -156,15 +199,20 @@ gitbuilder.ui.Validation = $.widget("gitbuilder.validation", {
 
 		var tdhead1 = $("<td>").text("#");
 		var tdhead2 = $("<td>").text("Name");
-		var tdhead3 = $("<td>").text("Accuracy");
-		var trhead = $("<tr>").append(tdhead1).append(tdhead2).append(tdhead3);
+		var trhead = $("<tr>").append(tdhead1).append(tdhead2);
 		var thead = $("<thead>").append(trhead);
 		that.tbody = $("<tbody>");
-		var tb = $("<table>").append(thead).append(that.tbody);
+		var tb = $("<table>").css({
+			"margin-bottom" : 0
+		}).append(thead).append(that.tbody);
 		this._addClass(tb, "table");
 		this._addClass(tb, "table-striped");
 		this._addClass(tb, "text-center");
-		var infobody2 = $("<div>").append(tb);
+		var infobody2 = $("<div>").css({
+			"max-height" : "330px",
+			"overflow-y" : "auto",
+			"padding" : 0
+		}).append(tb);
 		this._addClass(infobody2, "panel-body");
 		var layerInfo2 = $("<div>").append(infobody2);
 		this._addClass(layerInfo2, "panel");
@@ -195,6 +243,7 @@ gitbuilder.ui.Validation = $.widget("gitbuilder.validation", {
 		});
 		this._addClass(okBtn, "btn");
 		this._addClass(okBtn, "btn-primary");
+		this._addClass(okBtn, "validation-btn-start");
 		$(okBtn).text("Start");
 
 		this._on(false, okBtn, {
@@ -237,7 +286,7 @@ gitbuilder.ui.Validation = $.widget("gitbuilder.validation", {
 	},
 	_init : function() {
 		var that = this;
-		this.setMessage("Ready");
+		this.setMessage('Select map sheets for QA');
 		this.setProgress(0);
 		$(this.tree).jstree("refesh");
 	},
@@ -324,6 +373,8 @@ gitbuilder.ui.Validation = $.widget("gitbuilder.validation", {
 					}
 				}
 			});
+		} else {
+			that.setMessage('No option');
 		}
 	},
 	setProgress : function(figure) {
@@ -342,9 +393,13 @@ gitbuilder.ui.Validation = $.widget("gitbuilder.validation", {
 		for (var i = 0; i < names.length; i++) {
 			var td1 = $("<td>").text((i + 1));
 			var td2 = $("<td>").text(names[i].text);
-			var td3 = $("<td>");
-			var tr = $("<tr>").append(td1).append(td2).append(td3);
+			var tr = $("<tr>").append(td1).append(td2);
 			$(this.tbody).append(tr);
+		}
+		if (names.length > 0) {
+			this.setMessage('Press the "Start" to start the QA');	
+		} else {
+			this.setMessage('Select map sheets for QA');
 		}
 	},
 	updateValidationDef : function(names) {
@@ -371,6 +426,10 @@ gitbuilder.ui.Validation = $.widget("gitbuilder.validation", {
 		var wdef = this.getWeightDefinition();
 		if (Object.keys(ldef).length === 0 || Object.keys(odef).length === 0 || Object.keys(wdef).length === 0) {
 			console.error("required option missing");
+			this.setMessage('Error : Check the options (Layer definition, Option definition, Weight definition)');
+			$(this.windiw).find(".validation-btn-start").prop("disabled", true);
+		} else {
+			$(this.windiw).find(".validation-btn-start").prop("disabled", false);
 		}
 		var lkeys = Object.keys(odef);
 		var layers = [];
@@ -378,6 +437,11 @@ gitbuilder.ui.Validation = $.widget("gitbuilder.validation", {
 		var typeValidate = [];
 		for (var i = 0; i < lkeys.length; i++) {
 			if (ldef[lkeys[i]].area) {
+				if (ldef[lkeys[i]].code.length !== 1) {
+					console.error("Validating area must be single");
+					this.valiDef = undefined;
+					return;
+				}
 				layerColl["neatLineLayer"] = ldef[lkeys[i]].code + "_" + (ldef[lkeys[i]].geom.toUpperCase());
 			}
 			// 타입 벨리데이트 내부의 레이어스
@@ -445,25 +509,29 @@ gitbuilder.ui.Validation = $.widget("gitbuilder.validation", {
 		this.window.modal('show');
 		this._init();
 		var arr = $(this.tree).jstree("get_selected");
-		var i, j, r = [];
+		var r = [];
 
-		for (i = 0, j = arr.length; i < j; i++) {
+		for (var i = 0; i < arr.length; i++) {
 			if ($(this.tree).jstree("get_node", arr[i]).type === "n_ngi_group" || $(this.tree).jstree("get_node", arr[i]).type === "n_dxf_group") {
 				if (r.length === 0 && $(this.tree).jstree("get_node", arr[i]).type === "n_ngi_group") {
 					r.push($(this.tree).jstree("get_node", arr[i]));
 					this.fileType = "ngi";
+					continue;
 				} else if (r.length === 0 && $(this.tree).jstree("get_node", arr[i]).type === "n_dxf_group") {
 					r.push($(this.tree).jstree("get_node", arr[i]));
 					this.fileType = "dxf";
+					continue;
 				}
 
 				if (r.length > 0 && this.fileType === "ngi" && $(this.tree).jstree("get_node", arr[i]).type === "n_ngi_group") {
 					r.push($(this.tree).jstree("get_node", arr[i]));
+					continue;
 				} else {
 					$(this.tree).jstree("deselect_node", $(this.tree).jstree("get_node", arr[i]));
 				}
 				if (r.length > 0 && this.fileType === "dxf" && $(this.tree).jstree("get_node", arr[i]).type === "n_dxf_group") {
 					r.push($(this.tree).jstree("get_node", arr[i]));
+					continue;
 				} else {
 					$(this.tree).jstree("deselect_node", $(this.tree).jstree("get_node", arr[i]));
 				}
@@ -473,10 +541,10 @@ gitbuilder.ui.Validation = $.widget("gitbuilder.validation", {
 			}
 		}
 
-		if (r.length > 0) {
+//		if (r.length > 0) {
 			this.updateValidationDef(r);
 			this.updateLayerList(r);
-		}
+//		}
 	},
 	close : function() {
 		this.window.modal('hide');
