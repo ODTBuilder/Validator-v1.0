@@ -339,6 +339,7 @@ html {
 
 		$("#validation1").validation({
 			validatorURL : "validator/validate.ajax",
+			layersURL : "geoserver2/getGeolayerCollectionTree.ajax",
 			layerDefinition : function() {
 				return $("#layerDefinition1").layerdefinition10("getDefinition");
 			},
@@ -390,7 +391,7 @@ html {
 			}
 		});
 
-		$("#validDefinition").optiondefinition20({
+		$("#validDefinition").optiondefinition({
 			layerDefinition : function() {
 				return $("#layerDefinition").layerdefinition20("getDefinition");
 			},
@@ -479,17 +480,18 @@ html {
 				return $("#layerDefinition").layerdefinition20("getDefinition");
 			},
 			optionDefinition : function() {
-				return $("#validDefinition").optiondefinition20("getDefinition");
+				return $("#validDefinition").optiondefinition("getDefinition");
 			}
 		});
 
 		$("#validation").validation({
 			validatorURL : "validator/validate.ajax",
+			layersURL : "geoserver2/getGeolayerCollectionTree.ajax",
 			layerDefinition : function() {
 				return $("#layerDefinition").layerdefinition20("getDefinition");
 			},
 			optionDefinition : function() {
-				return $("#validDefinition").optiondefinition20("getDefinition");
+				return $("#validDefinition").optiondefinition("getDefinition");
 			},
 			weightDefinition : function() {
 				return $("#weight").weightdefinition("getDefinition");

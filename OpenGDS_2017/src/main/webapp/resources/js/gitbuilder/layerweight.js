@@ -25,16 +25,16 @@ gitbuilder.ui.WeightDefinition = $.widget("gitbuilder.weightdefinition", {
 		appendTo : "body"
 	},
 	_create : function() {
-		this.weightDef = $.extend({}, this.options.definition);
+		this.setDefinition(this.options.definition);
 		if (typeof this.options.layerDefinition === "function") {
-			this.layerDef = $.extend({}, this.options.layerDefinition());
+			this.setLayerDef(this.options.layerDefinition());
 		} else {
-			this.layerDef = $.extend({}, this.options.layerDefinition);
+			this.setLayerDef(this.options.layerDefinition);
 		}
 		if (typeof this.options.optionDefinition === "function") {
-			this.optDef = $.extend({}, this.options.optionDefinition());
+			this.setOptDef(this.options.optionDefinition());
 		} else {
-			this.optDef = $.extend({}, this.options.optionDefinition);
+			this.setOptDef(this.options.optionDefinition);
 		}
 
 		var that = this;
@@ -226,16 +226,16 @@ gitbuilder.ui.WeightDefinition = $.widget("gitbuilder.weightdefinition", {
 		});
 	},
 	_init : function() {
-		this.weightDef = $.extend({}, this.options.definition);
+		this.setDefinition(this.options.definition);
 		if (typeof this.options.layerDefinition === "function") {
-			this.layerDef = $.extend({}, this.options.layerDefinition());
+			this.setLayerDef(this.options.layerDefinition());
 		} else {
-			this.layerDef = $.extend({}, this.options.layerDefinition);
+			this.setLayerDef(this.options.layerDefinition);
 		}
 		if (typeof this.options.optionDefinition === "function") {
-			this.optDef = $.extend({}, this.options.optionDefinition());
+			this.setOptDef(this.options.optionDefinition());
 		} else {
-			this.optDef = $.extend({}, this.options.optionDefinition);
+			this.setOptDef(this.options.optionDefinition);
 		}
 	},
 	downloadSetting : function() {
@@ -290,10 +290,22 @@ gitbuilder.ui.WeightDefinition = $.widget("gitbuilder.weightdefinition", {
 		return result;
 	},
 	setDefinition : function(obj) {
-		this.weightDef = obj;
+		this.weightDef = $.extend({}, obj);
 	},
 	getDefinition : function() {
 		return this.weightDef;
+	},
+	getOptDef : function() {
+		return this.optDef;
+	},
+	setOptDef : function(def) {
+		this.optDef = $.extend({}, def);
+	},
+	getLayerDef : function() {
+		return this.layerDef;
+	},
+	setLayerDef : function(def) {
+		this.layerDef = $.extend({}, def);
 	},
 	update : function(obj) {
 		var that = this;
@@ -303,20 +315,20 @@ gitbuilder.ui.WeightDefinition = $.widget("gitbuilder.weightdefinition", {
 			"display" : "none"
 		});
 		if (typeof this.options.layerDefinition === "function") {
-			this.layerDef = $.extend({}, this.options.layerDefinition());
+			this.setLayerDef(this.options.layerDefinition());
 		} else {
-			this.layerDef = $.extend({}, this.options.layerDefinition);
+			this.setLayerDef(this.options.layerDefinition);
 		}
 		if (typeof this.options.optionDefinition === "function") {
-			this.optDef = $.extend({}, this.options.optionDefinition());
+			this.setOptDef(this.options.optionDefinition());
 		} else {
-			this.optDef = $.extend({}, this.options.optionDefinition);
+			this.setOptDef(this.options.optionDefinition);
 		}
 
-		var okeys = Object.keys(this.optDef);
+		var okeys = Object.keys(this.getOptDef());
 		var wkeys = [];
 		for (var i = 0; i < okeys.length; i++) {
-			var keys = Object.keys(this.optDef[okeys[i]]);
+			var keys = Object.keys(this.getOptDef()[okeys[i]]);
 			if (keys.length > 0) {
 				wkeys.push(okeys[i]);
 			}
@@ -330,9 +342,9 @@ gitbuilder.ui.WeightDefinition = $.widget("gitbuilder.weightdefinition", {
 
 			var td2 = $("<td>").text(wkeys[i]);
 
-			var td3 = $("<td>").text(this.layerDef[wkeys[i]].code.toString());
+			var td3 = $("<td>").text(this.getLayerDef()[wkeys[i]].code.toString());
 
-			var td4 = $("<td>").text(this.layerDef[wkeys[i]].geom);
+			var td4 = $("<td>").text(this.getLayerDef()[wkeys[i]].geom);
 
 			var weight = $("<input>").attr({
 				"type" : "number",
@@ -340,11 +352,11 @@ gitbuilder.ui.WeightDefinition = $.widget("gitbuilder.weightdefinition", {
 				"max" : 100
 			});
 			if (!obj) {
-				$(weight).val(this.weightDef.hasOwnProperty(wkeys[i]) ? this.weightDef[wkeys[i]] : "0");	
+				$(weight).val(this.weightDef.hasOwnProperty(wkeys[i]) ? this.weightDef[wkeys[i]] : "0");
 			} else {
 				$(weight).val(obj.hasOwnProperty(wkeys[i]) ? obj[wkeys[i]] : "0");
 			}
-			
+
 			that._addClass(weight, "form-control");
 			var td7 = $("<td>").append(weight);
 			var tr = $("<tr>").append(td1).append(td2).append(td3).append(td4).append(td7);
@@ -383,9 +395,9 @@ gitbuilder.ui.WeightDefinition = $.widget("gitbuilder.weightdefinition", {
 		add = (typeof add === "boolean") ? add : extra;
 		var shift = (typeof element === "string" || element === null), options = {
 			extra : shift ? keys : extra,
-					keys : shift ? element : keys,
-							element : shift ? this.element : element,
-									add : add
+			keys : shift ? element : keys,
+			element : shift ? this.element : element,
+			add : add
 		};
 		options.element.toggleClass(this._classes(options), add);
 		return this;

@@ -79,7 +79,7 @@
 
 <%-- 1.0 검수 옵션 정의 --%>
 <script
-	src="${pageContext.request.contextPath}/resources/js/gitbuilder/optiondefinition10.js"></script>
+	src="${pageContext.request.contextPath}/resources/js/gitbuilder/optiondefinition.js"></script>
 
 <%-- 가중치 정의 --%>
 <script
