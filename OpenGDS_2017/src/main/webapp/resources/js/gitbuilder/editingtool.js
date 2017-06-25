@@ -432,6 +432,7 @@ gitbuilder.ui.EditingTool = $.widget("gitbuilder.editingtool",
 						that.interaction.selectWMS.setExtent(this.getGeometry().getExtent());
 					});
 					this.interaction.selectWMS = new gb.interaction.SelectWMS({
+						url : "geoserver2/geoserverWFSGetFeature.ajax",
 						select : that.interaction.select,
 						destination : that.tempVector,
 						record : that.options.record,

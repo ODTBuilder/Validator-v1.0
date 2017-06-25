@@ -157,6 +157,7 @@ gb.interaction.SelectWMS = function(opt_options) {
 	ol.interaction.Interaction.call(this, {
 		handleEvent : gb.interaction.SelectWMS.prototype.handleEvent
 	});
+	this.url_ = options.url ? options.url : null;
 }
 ol.inherits(gb.interaction.SelectWMS, ol.interaction.Interaction);
 
@@ -198,7 +199,7 @@ gb.interaction.SelectWMS.prototype.setExtent = function(extent) {
 			"bbox" : extent.toString(),
 			"format_options" : "callback:getJson"
 	};
-	var addr = "geoserver2/geoserverWFSGetFeature.ajax";
+	var addr = this.url_;
 
 	$.ajax({
 		url : addr,
