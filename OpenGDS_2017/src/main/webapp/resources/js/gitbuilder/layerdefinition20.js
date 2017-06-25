@@ -326,6 +326,13 @@ gitbuilder.ui.LayerDefinition20 = $.widget("gitbuilder.layerdefinition20", {
 					} 
 				}
 			}
+			var area = $("input[name=layerdefinition20-area]:checked");
+			if (area.length === 0) {
+				flag = false;
+				$(that.message).css({
+					"display" : "block"
+				}).text("QA area must be set.");
+			}
 			if ($(children[i]).find("td:eq(1)>input").val() === ""
 					|| $(children[i]).find("td:eq(2)>input").val() === "") {
 				$(children[i]).addClass("warning");
