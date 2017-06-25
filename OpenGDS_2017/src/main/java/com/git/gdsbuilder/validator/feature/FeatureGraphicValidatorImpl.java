@@ -795,7 +795,7 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 //				System.out.println(geometry.intersects(startPoint));
 //				System.out.println(geometry.intersects(endPoint));
 //				System.out.println(geo); 
-				if(geometry.isWithinDistance(startPoint, 1000000000)){
+				if(geometry.isWithinDistance(startPoint, 0)){
 					Boolean flag = false;
 					for (int j = 0; j < relationSimpleFeatures.size(); j++) {
 						SimpleFeature sideSimpleFeature = relationSimpleFeatures.get(j);
@@ -813,7 +813,7 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 						errorFeatures.add(errorFeature);
 					}
 				}
-				if(geometry.isWithinDistance(endPoint, 1000000000)){
+				if(geometry.isWithinDistance(endPoint, 0)){
 					Boolean flag = false;
 					for (int j = 0; j < relationSimpleFeatures.size(); j++) {
 						SimpleFeature sideSimpleFeature = relationSimpleFeatures.get(j);

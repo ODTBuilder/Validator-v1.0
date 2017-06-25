@@ -122,7 +122,7 @@ public class FeatureAttributeValidatorImpl implements FeatureAttributeValidator 
 					Z_ValueAmbiguous.Type.Z_VALUEAMBIGUOUS.errName(), geometry.getInteriorPoint());
 			return errorFeature;
 		}else{
-		return null;
+			return null;
 		}
 		// if (notNullAtt != null) {
 		// int attributeCount = simpleFeature.getAttributeCount();
