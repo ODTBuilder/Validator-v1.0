@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
 import com.git.gdsbuilder.geolayer.data.DTGeoGroupLayerList;
 import com.git.gdsbuilder.geolayer.data.DTGeoLayerList;
@@ -65,6 +66,15 @@ public interface GeoserverService {
 	 * @return JSONObject - Tree 형태의 GeoaerverLayerCollection JSONObject 객체 반환
 	 * */
 	public JSONArray getGeoserverLayerCollectionTree();
+	
+	/**
+	 * 레이어를 중복체크한다.
+	 * @author SG.Lee
+	 * @Date 2017. 7
+	 * @param layerList
+	 * @return JSONObject - {레이어명 : 중복여부}
+	 * */
+	public JSONObject duplicateCheck(ArrayList<String> layerList);
 	
 	/**
 	 * DTGeoLayerList를 조회한다.
@@ -166,9 +176,6 @@ public interface GeoserverService {
 	 * @return boolean
 	 * */
 	public boolean updateFeatureType(final String orginalName,final String name,final String title,final String abstractContent,final String style, boolean attChangeFlag);
-	
-	
-	public boolean groupPublish();
 }
 
 

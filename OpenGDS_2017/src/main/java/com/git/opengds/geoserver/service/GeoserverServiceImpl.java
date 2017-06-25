@@ -26,9 +26,9 @@ import java.util.Properties;
 
 import org.geotools.geometry.jts.JTSFactoryFinder;
 import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 import org.springframework.stereotype.Service;
 
-import com.git.gdsbuilder.geolayer.data.DTGeoGroupLayer;
 import com.git.gdsbuilder.geolayer.data.DTGeoGroupLayerList;
 import com.git.gdsbuilder.geolayer.data.DTGeoLayerList;
 import com.git.gdsbuilder.geoserver.data.GeoserverLayerCollectionTree;
@@ -160,15 +160,16 @@ public class GeoserverServiceImpl implements GeoserverService {
 				RESTLayer layer = dtReader.getLayer(ID, layerFullName);
 				RESTFeatureType featureType = dtReader.getFeatureType(layer);
 				
-			    double minx = featureType.getMinX();
-			    double miny = featureType.getMinY();
-			    double maxx = featureType.getMaxX();
-			    double maxy = featureType.getMaxY();
+				
+			    double minx = featureType.getNativeBoundingBox().getMinX();
+			    double miny = featureType.getNativeBoundingBox().getMinY();
+			    double maxx = featureType.getNativeBoundingBox().getMaxX();
+			    double maxy = featureType.getNativeBoundingBox().getMaxY();
 			    
 			    if(minx!=0&&minx!=-1&&miny!=0&&miny!=-1&&maxx!=0&&maxx!=-1&&maxy!=0&&maxy!=-1){
 					Coordinate[] coords  =
-							   new Coordinate[] {new Coordinate(featureType.getMinX(), featureType.getMinY()), new Coordinate(featureType.getMaxX(), featureType.getMinY()),
-							                     new Coordinate(featureType.getMinX(), featureType.getMaxY()), new Coordinate(featureType.getMaxX(), featureType.getMaxY()), new Coordinate(featureType.getMinX(), featureType.getMinY()) };
+							   new Coordinate[] {new Coordinate(minx, miny), new Coordinate(maxx, miny),
+							                     new Coordinate(maxx, maxy), new Coordinate(minx, maxy), new Coordinate(minx, miny) };
 
 							LinearRing ring = geometryFactory.createLinearRing( coords );
 							LinearRing holes[] = null; // use LinearRing[] to represent holes
@@ -235,6 +236,23 @@ public class GeoserverServiceImpl implements GeoserverService {
 	public JSONArray getGeoserverLayerCollectionTree() {
 		GeoserverLayerCollectionTree collectionTree = dtReader.getGeoserverLayerCollectionTree(ID);
 		return collectionTree;
+	}
+	
+	/**
+	 * @since 2017. 6. 23.
+	 * @author SG.Lee
+	 * @param layerList
+	 * @return
+	 * @see com.git.opengds.geoserver.service.GeoserverService#duplicateCheck(java.util.ArrayList)
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public JSONObject duplicateCheck(ArrayList<String> layerList){
+		JSONObject object = new JSONObject();
+		for(String layerName : layerList){
+			object.put(layerName, dtReader.existsLayer(ID, layerName));
+		}
+		return object;
 	}
 
 	/**
@@ -393,28 +411,5 @@ public class GeoserverServiceImpl implements GeoserverService {
 		updateFlag = dtPublisher.updateFeatureType(ID, ID, orginalName,fte, layerEncoder, attChangeFlag);
 
 		return updateFlag;
-	}
-	
-	public boolean groupPublish(){
-		DTGeoGroupLayer groupLayer = dtReader.getDTGeoGroupLayer(ID, "33611044");
-		
-		List<String> groupLayerList = new ArrayList<String>(); 
-		groupLayerList=groupLayer.getPublishedList().getNames();
-		
-		
-//		
-		
-		GSLayerGroupEncoder encoder = new GSLayerGroupEncoder();
-		
-		
-		for(int i=0; i<20 ; i++){
-			encoder.addLayer(groupLayerList.get(i));
-		}
-		
-		System.out.println(encoder.toString());
-		
-		boolean flag = dtPublisher.configureLayerGroup(ID, "33611044", encoder);
-		
-		return flag;
 	}
 }

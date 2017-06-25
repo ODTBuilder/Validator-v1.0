@@ -8,6 +8,7 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.json.simple.JSONObject;
+import org.springframework.stereotype.Service;
 
 import com.git.gdsbuilder.type.qa10.feature.QA10Feature;
 import com.git.gdsbuilder.type.qa10.feature.QA10FeatureList;
@@ -17,6 +18,7 @@ import com.git.opengds.geoserver.service.GeoserverService;
 import com.git.opengds.parser.json.BuilderJSONParser;
 import com.vividsolutions.jts.io.ParseException;
 
+@Service
 public class EditFeatureServiceImpl implements EditFeatureService {
 
 	protected static final String none = "none";

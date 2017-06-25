@@ -18,27 +18,11 @@
 package com.git.opengds.editor.service;
 
 import java.io.FileReader;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import javax.inject.Inject;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import com.git.gdsbuilder.edit.qa20.EditQA20Collection;
-import com.git.gdsbuilder.edit.qa20.EditQA20LayerCollectionList;
-import com.git.gdsbuilder.type.qa10.feature.QA10Feature;
-import com.git.gdsbuilder.type.qa10.feature.QA10FeatureList;
-import com.git.gdsbuilder.type.qa20.feature.QA20Feature;
-import com.git.gdsbuilder.type.qa20.feature.QA20FeatureList;
-import com.git.gdsbuilder.type.qa20.layer.QA20Layer;
-import com.git.gdsbuilder.type.qa20.layer.QA20LayerList;
-import com.git.opengds.geoserver.service.GeoserverService;
-import com.git.opengds.parser.json.BuilderJSONParser;
 
 @Service
 public class EditServiceImpl implements EditService {
@@ -52,10 +36,10 @@ public class EditServiceImpl implements EditService {
 	protected static final String isDxf = "dxf";
 	protected static final String isShp = "shp";
 
-	@Inject
+	@Autowired
 	EditLayerService editLayerService;
 
-	@Inject
+	@Autowired
 	EditFeatureService editFeatureService;
 
 	@Override

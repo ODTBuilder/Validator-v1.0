@@ -51,7 +51,7 @@ public class FileDAOImpl implements FileDAO {
 		catch (Exception e) {
 			e.printStackTrace();
 		}
-		boolean dupFlag = false;
+		boolean dupFlag = true;
 		
 		if(duplicateNums>0){
 			dupFlag = true;
@@ -66,12 +66,12 @@ public class FileDAOImpl implements FileDAO {
 	public boolean selectDXFDuplicateCheck(String fileName){
 		int duplicateNums = 0;
 		try{
-			duplicateNums = sqlSession.selectOne(namespace + ".selectNGIDuplicateCheck", fileName);
+			duplicateNums = sqlSession.selectOne(namespace + ".selectDXFDuplicateCheck", fileName);
 		}
 		catch (Exception e) {
 			e.printStackTrace();
 		}
-		boolean dupFlag = false;
+		boolean dupFlag = true;
 		
 		if(duplicateNums>0){
 			dupFlag = true;
