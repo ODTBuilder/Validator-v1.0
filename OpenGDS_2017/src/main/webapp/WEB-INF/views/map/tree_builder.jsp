@@ -500,7 +500,11 @@ html {
 
 		$("#qaedit").qaedit({
 			map : map,
-			user : "admin"
+			user : "admin",
+			layersURL : 'geoserver2/getGeolayerCollectionTree.ajax',
+			featureWMSURL : "geoserver2/geoserverWMSLayerLoad.do",
+			featureWFSURL : "geoserver2/geoserverWFSGetFeature.ajax",
+			groupInfoURL : "geoserver2/getGeoGroupLayerInfoList.ajax"		
 		});
 
 		var layerInfo = new gb.edit.LayerInformation({
