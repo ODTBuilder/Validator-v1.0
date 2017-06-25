@@ -716,7 +716,7 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 			GeometryFactory geometryFactory = new GeometryFactory();
 			Coordinate[] relCoordinates = relGeometry.getCoordinates();
 			for (int i = 0; i < relCoordinates.length; i++) {
-				
+
 				Coordinate coordinate = relCoordinates[i];
 				Geometry coorPoint = geometryFactory.createPoint(coordinate);
 				if(!(geometry.touches(coorPoint))){
@@ -729,39 +729,114 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 		return null;
 	}
 
-	public List<ErrorFeature> validateNodeMiss(SimpleFeature simpleFeature, SimpleFeature relationSimpleFeature) throws SchemaException{
-		List<ErrorFeature> errFeatures = new ArrayList<ErrorFeature>();
+	public List<ErrorFeature> validateNodeMiss(SimpleFeature simpleFeature, List<SimpleFeature> relationSimpleFeatures) throws SchemaException{
 		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
-		Geometry relGeometry = (Geometry) relationSimpleFeature.getDefaultGeometry();
-		
-		if(geometry.contains(relGeometry) || geometry.overlaps(relGeometry)){
-			GeometryFactory geometryFactory = new GeometryFactory();
-			Coordinate[] relCoordinates = relGeometry.getCoordinates();
-			Coordinate start = relCoordinates[0];
-			Coordinate end = relCoordinates[relCoordinates.length-1];
-			Geometry startPoint = geometryFactory.createPoint(start);
-			Geometry endPoint = geometryFactory.createPoint(end);
-			
-			if(!(geometry.touches(startPoint))){
-				ErrorFeature errorFeature = new ErrorFeature(relationSimpleFeature.getID(), NodeMiss.Type.NODEMISS.errType(),
-						NodeMiss.Type.NODEMISS.errName(), startPoint);
-				errFeatures.add(errorFeature);
-			}else{
-				return null;
-			}
-			
-			if(!(geometry.touches(endPoint))){
-				ErrorFeature errorFeature = new ErrorFeature(relationSimpleFeature.getID(), NodeMiss.Type.NODEMISS.errType(),
-						NodeMiss.Type.NODEMISS.errName(), endPoint);
-				errFeatures.add(errorFeature);
-			}else{
-				return null;
+//		Geometry geometry = (Geometry) simpleFeature.getBounds().;
+		List<ErrorFeature> errorFeatures = new ArrayList<ErrorFeature>();
+		for (int i = 0; i < relationSimpleFeatures.size(); i++) {
+			SimpleFeature relSimpleFeature = relationSimpleFeatures.get(i);
+			Geometry relGeometry = (Geometry) relSimpleFeature.getDefaultGeometry();
+			/*if(geometry.contains(relGeometry) || geometry.overlaps(relGeometry) || geometry.within(relGeometry) ){
+				Coordinate[] relCoordinates = relGeometry.getCoordinates();
+				Coordinate start = relCoordinates[0];
+				Coordinate end = relCoordinates[relCoordinates.length-1];
+				GeometryFactory geometryFactory = new GeometryFactory();
+				Geometry startPoint = geometryFactory.createPoint(start);
+				Geometry endPoint = geometryFactory.createPoint(end);
+//				System.out.println(startPoint.touches(geometry));
+//				System.out.println(geometry.intersects(startPoint));
+//				System.out.println(geometry.intersects(endPoint));
+//				System.out.println(geo); 
+				if(geometry.touches(startPoint) == false|| (geometry.contains(startPoint) == false)){
+					Boolean flag = false;
+					for (int j = 0; j < relationSimpleFeatures.size(); j++) {
+						SimpleFeature sideSimpleFeature = relationSimpleFeatures.get(j);
+						Geometry sideGeometry = (Geometry) sideSimpleFeature.getDefaultGeometry();
+						if(!(relSimpleFeature.equals(sideSimpleFeature))){
+							if(startPoint.touches(sideGeometry)){
+								flag = true;
+								break;
+							}
+						}
+					}
+					if(flag == false){
+						ErrorFeature errorFeature = new ErrorFeature(relSimpleFeature.getID(), 
+								NodeMiss.Type.NODEMISS.errType(),NodeMiss.Type.NODEMISS.errName(), startPoint);
+						errorFeatures.add(errorFeature);
+					}
+				}
+				if(geometry.touches(endPoint) == false || geometry.contains(endPoint) == false){
+					Boolean flag = false;
+					for (int j = 0; j < relationSimpleFeatures.size(); j++) {
+						SimpleFeature sideSimpleFeature = relationSimpleFeatures.get(j);
+						Geometry sideGeometry = (Geometry) sideSimpleFeature.getDefaultGeometry();
+						if(!(relSimpleFeature.equals(sideSimpleFeature))){
+							if(endPoint.touches(sideGeometry)){
+								flag = true;
+								break;
+							}
+						}
+					}
+					if(flag == false){
+						ErrorFeature errorFeature = new ErrorFeature(relSimpleFeature.getID(), 
+								NodeMiss.Type.NODEMISS.errType(),NodeMiss.Type.NODEMISS.errName(), endPoint);
+						errorFeatures.add(errorFeature);
+					}
+				}	
+			}*/
+			if(geometry.contains(relGeometry) || geometry.overlaps(relGeometry) || geometry.within(relGeometry) ){
+				Coordinate[] relCoordinates = relGeometry.getCoordinates();
+				Coordinate start = relCoordinates[0];
+				Coordinate end = relCoordinates[relCoordinates.length-1];
+				GeometryFactory geometryFactory = new GeometryFactory();
+				Geometry startPoint = geometryFactory.createPoint(start);
+				Geometry endPoint = geometryFactory.createPoint(end);
+//				System.out.println(startPoint.touches(geometry));
+//				System.out.println(geometry.intersects(startPoint));
+//				System.out.println(geometry.intersects(endPoint));
+//				System.out.println(geo); 
+				if(geometry.isWithinDistance(startPoint, 1000000000)){
+					Boolean flag = false;
+					for (int j = 0; j < relationSimpleFeatures.size(); j++) {
+						SimpleFeature sideSimpleFeature = relationSimpleFeatures.get(j);
+						Geometry sideGeometry = (Geometry) sideSimpleFeature.getDefaultGeometry();
+						if(!(relSimpleFeature.equals(sideSimpleFeature))){
+							if(startPoint.touches(sideGeometry)){
+								flag = true;
+								break;
+							}
+						}
+					}
+					if(flag == false){
+						ErrorFeature errorFeature = new ErrorFeature(relSimpleFeature.getID(), 
+								NodeMiss.Type.NODEMISS.errType(),NodeMiss.Type.NODEMISS.errName(), startPoint);
+						errorFeatures.add(errorFeature);
+					}
+				}
+				if(geometry.isWithinDistance(endPoint, 1000000000)){
+					Boolean flag = false;
+					for (int j = 0; j < relationSimpleFeatures.size(); j++) {
+						SimpleFeature sideSimpleFeature = relationSimpleFeatures.get(j);
+						Geometry sideGeometry = (Geometry) sideSimpleFeature.getDefaultGeometry();
+						if(!(relSimpleFeature.equals(sideSimpleFeature))){
+							if(endPoint.touches(sideGeometry)){
+								flag = true;
+								break;
+							}
+						}
+					}
+					if(flag == false){
+						ErrorFeature errorFeature = new ErrorFeature(relSimpleFeature.getID(), 
+								NodeMiss.Type.NODEMISS.errType(),NodeMiss.Type.NODEMISS.errName(), endPoint);
+						errorFeatures.add(errorFeature);
+					}
+				}	
 			}
 		}
-		return errFeatures;
+		return errorFeatures;
 	}
 
-	
+
 	// 객체 꼬임 여부 검사
 	public ErrorFeature validateTwistedPolygon (SimpleFeature simpleFeature) throws SchemaException{
 		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
@@ -777,5 +852,5 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 			return null;
 		}
 	}
-	
+
 }

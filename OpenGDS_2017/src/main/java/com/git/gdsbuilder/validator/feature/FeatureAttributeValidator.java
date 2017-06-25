@@ -72,7 +72,7 @@ public interface FeatureAttributeValidator {
 	 * @throws SchemaException ErrorFeature
 	 * @throws
 	 * */
-	public ErrorFeature validateZvalueAmbiguous(SimpleFeature simpleFeature, String notNullAtt)
+	public ErrorFeature validateZvalueAmbiguous(SimpleFeature simpleFeature, String attributeKey)
 			throws SchemaException;
 
 	/**

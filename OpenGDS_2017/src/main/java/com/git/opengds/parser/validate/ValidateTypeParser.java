@@ -45,12 +45,12 @@ import com.git.gdsbuilder.type.validate.option.PointDuplicated;
 import com.git.gdsbuilder.type.validate.option.SelfEntity;
 import com.git.gdsbuilder.type.validate.option.SmallArea;
 import com.git.gdsbuilder.type.validate.option.SmallLength;
-import com.git.gdsbuilder.type.validate.option.TwistedPolygon;
 import com.git.gdsbuilder.type.validate.option.UnderShoot;
 import com.git.gdsbuilder.type.validate.option.UselessEntity;
 import com.git.gdsbuilder.type.validate.option.UselessPoint;
 import com.git.gdsbuilder.type.validate.option.ValidatorOption;
 import com.git.gdsbuilder.type.validate.option.WaterOpen;
+import com.git.gdsbuilder.type.validate.option.Z_ValueAmbiguous;
 
 /**
  * JSONArray를 ValidateLayerTypeList 객체로 파싱하는 클래스
@@ -187,19 +187,17 @@ public class ValidateTypeParser {
 					optionList.add(conOverDegree);
 				}
 			}
-			// if
-			// (optionName.equalsIgnoreCase(Z_ValueAmbiguous.Type.Z_VALUEAMBIGUOUS.errName()))
-			// {
-			// Object z_Value = qaOptions.get("zValueAmbiguous");
-			// if (z_Value == null) {
-			// continue;
-			// } else {
-			// String z_ValueKey = (String) z_Value;
-			// ValidatorOption Z_ValueAmbiguous = new
-			// Z_ValueAmbiguous(z_ValueKey);
-			// optionList.add(Z_ValueAmbiguous);
-			// }
-			// }
+			if
+			(optionName.equalsIgnoreCase(Z_ValueAmbiguous.Type.Z_VALUEAMBIGUOUS.errName())){
+				Object z_Value = qaOptions.get("Z_ValueAmbiguous");
+				if (z_Value == null) {
+					continue;
+				} else {
+					String z_ValueKey = (String) z_Value;
+					ValidatorOption Z_ValueAmbiguous = new Z_ValueAmbiguous(z_ValueKey);
+					optionList.add(Z_ValueAmbiguous);
+				}
+			}
 			if (optionName.equalsIgnoreCase(UselessPoint.Type.USELESSPOINT.errName())) {
 				Boolean isTrue = (Boolean) qaOptions.get("UselessPoint");
 				if (isTrue) {

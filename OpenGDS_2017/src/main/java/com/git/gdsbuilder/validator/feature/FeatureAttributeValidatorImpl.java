@@ -49,6 +49,7 @@ import com.git.gdsbuilder.type.validate.option.Admin;
 import com.git.gdsbuilder.type.validate.option.AttributeFix;
 import com.git.gdsbuilder.type.validate.option.BridgeName;
 import com.git.gdsbuilder.type.validate.option.CrossRoad;
+import com.git.gdsbuilder.type.validate.option.Z_ValueAmbiguous;
 import com.vividsolutions.jts.geom.Geometry;
 
 public class FeatureAttributeValidatorImpl implements FeatureAttributeValidator {
@@ -110,10 +111,19 @@ public class FeatureAttributeValidatorImpl implements FeatureAttributeValidator 
 	}
 
 	@Override
-	public ErrorFeature validateZvalueAmbiguous(SimpleFeature simpleFeature, String notNullAtt)
+	public ErrorFeature validateZvalueAmbiguous(SimpleFeature simpleFeature, String attributeKey)
 			throws SchemaException {
-
-		boolean isError = false;
+		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
+		
+		Object attributeValue = simpleFeature.getAttribute(attributeKey);
+		
+		if(attributeValue.equals("null") || attributeValue.equals("0.0")){
+			ErrorFeature errorFeature = new ErrorFeature(simpleFeature.getID(), Z_ValueAmbiguous.Type.Z_VALUEAMBIGUOUS.errType(),
+					Z_ValueAmbiguous.Type.Z_VALUEAMBIGUOUS.errName(), geometry.getInteriorPoint());
+			return errorFeature;
+		}else{
+		return null;
+		}
 		// if (notNullAtt != null) {
 		// int attributeCount = simpleFeature.getAttributeCount();
 		// Iterator iterator = notNullAtt.iterator();
@@ -123,6 +133,7 @@ public class FeatureAttributeValidatorImpl implements FeatureAttributeValidator 
 		// for (int i = 1; i < attributeCount; i++) {
 		// String key =
 		// simpleFeature.getFeatureType().getType(i).getName().toString();
+		
 		// if (key.equals(attribute)) {
 		// Object value = simpleFeature.getAttribute(i);
 		// if (value != null) {
@@ -165,7 +176,7 @@ public class FeatureAttributeValidatorImpl implements FeatureAttributeValidator 
 		// } else {
 		// return null;
 		// }
-		return null;
+	
 	}
 
 	@Override

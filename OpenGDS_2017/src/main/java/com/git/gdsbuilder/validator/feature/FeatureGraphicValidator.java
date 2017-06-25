@@ -255,5 +255,5 @@ public interface FeatureGraphicValidator {
 	public ErrorFeature validateB_SymbolOutSided(List<SimpleFeature> simpleFeatures, SimpleFeature relationSimpleFeature) throws SchemaException;
 	public ErrorFeature validateCrossRoad(SimpleFeature simpleFeature, SimpleFeature relationSimpleFeature) throws SchemaException;
 	public ErrorFeature validateTwistedPolygon (SimpleFeature simpleFeature) throws SchemaException;
-	public List<ErrorFeature> validateNodeMiss(SimpleFeature simpleFeature, SimpleFeature relationSimpleFeature) throws SchemaException;
+	public List<ErrorFeature> validateNodeMiss(SimpleFeature simpleFeature, List<SimpleFeature> relationSimpleFeature) throws SchemaException;
 }

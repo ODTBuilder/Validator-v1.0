@@ -158,7 +158,7 @@ public class LayerValidatorImpl implements LayerValidator {
 		}
 	}
 
-	public ErrorLayer validateZ_ValueAmbiguous(String key) throws SchemaException {
+	public ErrorLayer validateZ_ValueAmbiguous(String attributeKey) throws SchemaException {
 
 		ErrorLayer errLayer = new ErrorLayer();
 
@@ -166,7 +166,7 @@ public class LayerValidatorImpl implements LayerValidator {
 		SimpleFeatureIterator simpleFeatureIterator = sfc.features();
 		while (simpleFeatureIterator.hasNext()) {
 			SimpleFeature simpleFeature = simpleFeatureIterator.next();
-			ErrorFeature errFeature = attributeValidator.validateZvalueAmbiguous(simpleFeature, key);
+			ErrorFeature errFeature = attributeValidator.validateZvalueAmbiguous(simpleFeature, attributeKey);
 			if (errFeature != null) {
 				errFeature.setLayerName(validatorLayer.getLayerName());
 				errLayer.addErrorFeature(errFeature);
@@ -649,7 +649,11 @@ public class LayerValidatorImpl implements LayerValidator {
 				}
 			}
 		}
-		return errorLayer;
+		if(errorLayer.getErrFeatureList().size() > 0){
+			return errorLayer;
+		}else{
+			return null;
+		}
 	}
 	
 	public ErrorLayer validateAdmin() throws SchemaException{
@@ -736,23 +740,31 @@ public class LayerValidatorImpl implements LayerValidator {
 			GeoLayer relationLayer = relationLayers.get(i);
 			SimpleFeatureCollection relationSfc = relationLayer.getSimpleFeatureCollection();
 			SimpleFeatureIterator relationSimpleFeatureIterator = relationSfc.features();
+			List<SimpleFeature> relationSimplFeatures = new ArrayList<SimpleFeature>();
 			while (relationSimpleFeatureIterator.hasNext()) {
 				SimpleFeature relationSimpleFeature = relationSimpleFeatureIterator.next();
-				for (int j = 0; j < simpleFeatures.size(); j++) {
-					SimpleFeature simpleFeature = simpleFeatures.get(j);
-					List<ErrorFeature> errorFeatures = graphicValidator.validateNodeMiss(simpleFeature, relationSimpleFeature);
-					if(!(errorFeatures.isEmpty())){
-						for(ErrorFeature errorFeature : errorFeatures){
-							errorFeature.setLayerName(validatorLayer.getLayerName());
-							errorLayer.addErrorFeature(errorFeature);
-						}
-					}else{
-						continue;
+				relationSimplFeatures.add(relationSimpleFeature);
+			}
+
+			for (int j = 0; j < simpleFeatures.size(); j++) {
+				SimpleFeature simpleFeature = simpleFeatures.get(j);
+				List<ErrorFeature> errorFeatures = graphicValidator.validateNodeMiss(simpleFeature, relationSimplFeatures);
+				if(errorFeatures != null){
+					for(ErrorFeature errorFeature : errorFeatures){
+						errorFeature.setLayerName(validatorLayer.getLayerName());
+						errorLayer.addErrorFeature(errorFeature);
 					}
+				}else{ 
 				}
 			}
 		}
-		return errorLayer;
+		if(errorLayer.getErrFeatureList().size() > 0){
+			return errorLayer;
+		}else{
+			return null;
+		}
 	}
+	
+	
 	
 }

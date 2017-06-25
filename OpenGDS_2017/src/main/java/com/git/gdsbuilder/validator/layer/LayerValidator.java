@@ -93,7 +93,7 @@ public interface LayerValidator {
 	 * @throws SchemaException 
 	 * @throws
 	 * */
-	public ErrorLayer validateZ_ValueAmbiguous(String key) throws SchemaException;
+	public ErrorLayer validateZ_ValueAmbiguous(String attributeKey) throws SchemaException;
 
 	/**
 	 * 검수 항목 중 “허용 범위 이하 면적 (Small Area)” 검수

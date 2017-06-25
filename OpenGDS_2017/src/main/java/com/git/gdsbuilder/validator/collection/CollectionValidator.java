@@ -208,6 +208,10 @@ public class CollectionValidator {
 								JSONObject attrJson = (JSONObject) attributeNames.get(layerCode);
 								typeErrorLayer = layerValidator.validateAttributeFix(attrJson);
 							}
+							if(option instanceof Z_ValueAmbiguous){
+								String attributeKey = ((Z_ValueAmbiguous) option).getAttributeKey();
+								typeErrorLayer = layerValidator.validateZ_ValueAmbiguous(attributeKey);
+							}
 							if (typeErrorLayer != null) {
 								errLayer.mergeErrorLayer(typeErrorLayer);
 							}
