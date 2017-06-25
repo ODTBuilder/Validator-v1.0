@@ -16,20 +16,51 @@ gitbuilder.ui.OptionDefinition = $.widget("gitbuilder.optiondefinition", {
 	optDefCopy : undefined,
 	layerDef : undefined,
 	itemList : {
-		line : [ "LayerMiss", "UselessEntity", "OverShoot", "UnderShoot", "RefZValueMiss", "ConBreak", "ConIntersected", "ConOverDegree", "UselessPoint", "RefLayerMiss",
-				"EntityNone", "EdgeMatchMiss", "PointDuplicated", "zValueAmbiguous", "EntityDuplicated" ],
-		polyline : [ "BSymbolOutSided", "BuildingOpen", "WaterOpen", "EntityNone", "EdgeMatchMiss", "ConBreak", "ConIntersected", "ConOverDegree", "UselessEntity",
-				"EntityDuplicated", "PointDuplicated", "UselessPoint", "LayerMiss", "zValueAmbiguous", "OverShoot", "UnderShoot", "RefLayerMiss" ],
-		lwpolyline : [ "BSymbolOutSided", "BuildingOpen", "WaterOpen", "EntityNone", "EdgeMatchMiss", "ConBreak", "ConIntersected", "ConOverDegree", "UselessEntity",
-				"EntityDuplicated", "PointDuplicated", "UselessPoint", "LayerMiss", "zValueAmbiguous", "OverShoot", "UnderShoot", "RefLayerMiss" ],
+		line : [ "LayerMiss", "UselessEntity", "OverShoot", "UnderShoot", "RefZValueMiss", "ConBreak", "ConIntersected", "ConOverDegree",
+				"UselessPoint", "RefLayerMiss", "EntityNone", "EdgeMatchMiss", "PointDuplicated", "zValueAmbiguous", "EntityDuplicated" ],
+		polyline : [ "BSymbolOutSided", "BuildingOpen", "WaterOpen", "EntityNone", "EdgeMatchMiss", "ConBreak", "ConIntersected", "ConOverDegree",
+				"UselessEntity", "EntityDuplicated", "PointDuplicated", "UselessPoint", "LayerMiss", "zValueAmbiguous", "OverShoot", "UnderShoot",
+				"RefLayerMiss" ],
+		lwpolyline : [ "BSymbolOutSided", "BuildingOpen", "WaterOpen", "EntityNone", "EdgeMatchMiss", "ConBreak", "ConIntersected", "ConOverDegree",
+				"UselessEntity", "EntityDuplicated", "PointDuplicated", "UselessPoint", "LayerMiss", "zValueAmbiguous", "OverShoot", "UnderShoot",
+				"RefLayerMiss" ],
 		text : [ "LayerMiss", "UselessEntity", "PointDuplicated" ],
 		insert : [ "LayerMiss", "UselessEntity", "PointDuplicated" ],
-		point : [ "EntityDuplicated", "SelfEntity", "AttributeFix", "OutBoundary", "CharacterAccuracy", "OverShoot", "UnderShoot", "UselessEntity", "ConIntersected" ],
-		linestring : [ "SmallLength", "EntityDuplicated", "SelfEntity", "PointDuplicated", "ConIntersected", "ConOverDegree", "ConBreak", "AttributeFix", "OutBoundary",
-				"zValueAmbiguous", "UselessPoint", "OverShoot", "UnderShoot" ],
-		polygon : [ "SmallArea", "EntityDuplicated", "SelfEntity", "PointDuplicated", "AttributeFix", "OutBoundary", "OverShoot", "UnderShoot" ]
+		point : [ "LayerMiss", "UselessEntity", "EntityDuplicated", "SelfEntity", "AttributeFix", "OutBoundary", "CharacterAccuracy", "OverShoot",
+				"UnderShoot" ],
+		linestring : [ "RefAttributeMiss", "EdgeMatchMiss", "UselessEntity", "LayerMiss", "RefLayerMiss", "SmallLength", "EntityDuplicated",
+				"SelfEntity", "PointDuplicated", "ConIntersected", "ConOverDegree", "ConBreak", "AttributeFix", "OutBoundary", "zValueAmbiguous",
+				"UselessPoint", "OverShoot", "UnderShoot" ],
+		polygon : [ "Admin", "CrossRoad", "RefAttributeMiss", "BridgeName", "NodeMiss", "EdgeMatchMiss", "UselessEntity", "LayerMiss",
+				"RefLayerMiss", "SmallArea", "EntityDuplicated", "SelfEntity", "PointDuplicated", "AttributeFix", "OutBoundary", "OverShoot",
+				"UnderShoot" ]
 	},
 	optItem : {
+		"Admin" : {
+			"title" : "Administrative Boundary Error",
+			"alias" : "Admin",
+			"type" : "none"
+		},
+		"CrossRoad" : {
+			"title" : "Crossroad Boundary Error",
+			"alias" : "CrossRoad",
+			"type" : "relation"
+		},
+		"RefAttributeMiss" : {
+			"title" : "Attribute Error Between Map Sheets",
+			"alias" : "RefAttributeMiss",
+			"type" : "none"
+		},
+		"BridgeName" : {
+			"title" : "Bridge Name Error",
+			"alias" : "BridgeName",
+			"type" : "relation"
+		},
+		"NodeMiss" : {
+			"title" : "Node Missing Error",
+			"alias" : "NodeMiss",
+			"type" : "relation"
+		},
 		"BSymbolOutSided" : {
 			"title" : "Erroneous Position of Building Symbol",
 			"alias" : "BSymbolOutSided",
@@ -206,10 +237,12 @@ gitbuilder.ui.OptionDefinition = $.widget("gitbuilder.optiondefinition", {
 	},
 	_create : function() {
 		if (typeof this.options.layerDefinition === "function") {
-			// this.layerDef = $.extend({}, this.options.layerDefinition());
+			// this.layerDef = $.extend({},
+			// this.options.layerDefinition());
 			this.setLayerDefinition(this.options.layerDefinition());
 		} else {
-			// this.layerDef = $.extend({}, this.options.layerDefinition);
+			// this.layerDef = $.extend({},
+			// this.options.layerDefinition);
 			this.setLayerDefinition(this.options.layerDefinition);
 		}
 		this.setDefinition(this.options.definition);
@@ -217,7 +250,8 @@ gitbuilder.ui.OptionDefinition = $.widget("gitbuilder.optiondefinition", {
 		if (this.getDefinition()) {
 			this.setOptDefCopy(JSON.parse(JSON.stringify(this.getDefinition())));
 		}
-		// this.optDefCopy = JSON.parse(JSON.stringify(this.optDef));
+		// this.optDefCopy =
+		// JSON.parse(JSON.stringify(this.optDef));
 
 		var that = this;
 		this._on(false, this.element, {
@@ -257,7 +291,8 @@ gitbuilder.ui.OptionDefinition = $.widget("gitbuilder.optiondefinition", {
 			"overflow-y" : "auto"
 		}).append(this.lAlias);
 		$(document).on("click", this.eventNamespace + " .optiondefinition-alias", function() {
-			// that.optDefCopy = JSON.parse(JSON.stringify(that.optDef));
+			// that.optDefCopy =
+			// JSON.parse(JSON.stringify(that.optDef));
 			// that.setOptDefCopy(JSON.parse(JSON.stringify(that.getDefinition())));
 			$(that.dOption).empty();
 			var chldr = $(this).parent().children();
@@ -535,7 +570,8 @@ gitbuilder.ui.OptionDefinition = $.widget("gitbuilder.optiondefinition", {
 			// var keys =
 			// Object.keys(that.optDefCopy[that.selectedLayerNow][that.selectedValidationNow]);
 			// if (keys.length > 0) {
-			// for (var i = 0; i < keys.length; i++) {
+			// for (var i = 0; i < keys.length;
+			// i++) {
 			// var arr =
 			// that.optDefCopy[that.selectedLayerNow][that.selectedValidationNow][keys[i]];
 			// if (arr.length > 0) {
@@ -543,7 +579,8 @@ gitbuilder.ui.OptionDefinition = $.widget("gitbuilder.optiondefinition", {
 			// }
 			// }
 			// }
-			// that._toggleCheckbox(that.selectedValidationNow, flag);
+			// that._toggleCheckbox(that.selectedValidationNow,
+			// flag);
 		});
 		$(document).on("input", this.eventNamespace + " .optiondefinition-nnullattr-text", function() {
 			// that._updateNotNullForm();
@@ -1241,10 +1278,13 @@ gitbuilder.ui.OptionDefinition = $.widget("gitbuilder.optiondefinition", {
 		$.each(handlers, function(event, handler) {
 			function handlerProxy() {
 
-				// Allow widgets to customize the disabled
+				// Allow widgets to customize the
+				// disabled
 				// handling
-				// - disabled as an array instead of boolean
-				// - disabled class as method for disabling
+				// - disabled as an array instead of
+				// boolean
+				// - disabled class as method for
+				// disabling
 				// individual parts
 				if (!suppressDisabledCheck && (instance.options.disabled === true || $(this).hasClass("ui-state-disabled"))) {
 					return;

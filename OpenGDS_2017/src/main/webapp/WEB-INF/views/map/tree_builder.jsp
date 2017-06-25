@@ -339,6 +339,7 @@ html {
 
 		$("#validation1").validation({
 			validatorURL : "validator/validate.ajax",
+			layersURL : "geoserver2/getGeolayerCollectionTree.ajax",
 			layerDefinition : function() {
 				return $("#layerDefinition1").layerdefinition10("getDefinition");
 			},
@@ -485,6 +486,7 @@ html {
 
 		$("#validation").validation({
 			validatorURL : "validator/validate.ajax",
+			layersURL : "geoserver2/getGeolayerCollectionTree.ajax",
 			layerDefinition : function() {
 				return $("#layerDefinition").layerdefinition20("getDefinition");
 			},

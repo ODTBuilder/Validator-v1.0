@@ -32,6 +32,7 @@ gitbuilder.ui.Validation = $.widget("gitbuilder.validation", {
 		optionDefinition : undefined,
 		weightDefinition : undefined,
 		validatorURL : undefined,
+		layersURL : undefined,
 		appendTo : "body"
 	},
 	_create : function() {
@@ -92,7 +93,7 @@ gitbuilder.ui.Validation = $.widget("gitbuilder.validation", {
 				},
 				'data' : {
 					'url' : function() {
-						return 'geoserver2/getGeolayerCollectionTree.ajax';
+						return that.options.layersURL;
 					}
 				}
 			},
@@ -242,6 +243,7 @@ gitbuilder.ui.Validation = $.widget("gitbuilder.validation", {
 		});
 		this._addClass(okBtn, "btn");
 		this._addClass(okBtn, "btn-primary");
+		this._addClass(okBtn, "validation-btn-start");
 		$(okBtn).text("Start");
 
 		this._on(false, okBtn, {
@@ -371,6 +373,8 @@ gitbuilder.ui.Validation = $.widget("gitbuilder.validation", {
 					}
 				}
 			});
+		} else {
+			that.setMessage('No option');
 		}
 	},
 	setProgress : function(figure) {
@@ -394,6 +398,8 @@ gitbuilder.ui.Validation = $.widget("gitbuilder.validation", {
 		}
 		if (names.length > 0) {
 			this.setMessage('Press the "Start" to start the QA');	
+		} else {
+			this.setMessage('Select map sheets for QA');
 		}
 	},
 	updateValidationDef : function(names) {
@@ -420,6 +426,10 @@ gitbuilder.ui.Validation = $.widget("gitbuilder.validation", {
 		var wdef = this.getWeightDefinition();
 		if (Object.keys(ldef).length === 0 || Object.keys(odef).length === 0 || Object.keys(wdef).length === 0) {
 			console.error("required option missing");
+			this.setMessage('Error : Check the options (Layer definition, Option definition, Weight definition)');
+			$(this.windiw).find(".validation-btn-start").prop("disabled", true);
+		} else {
+			$(this.windiw).find(".validation-btn-start").prop("disabled", false);
 		}
 		var lkeys = Object.keys(odef);
 		var layers = [];
