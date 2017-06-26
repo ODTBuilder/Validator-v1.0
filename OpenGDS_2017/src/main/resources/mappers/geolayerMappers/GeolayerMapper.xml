@@ -4,13 +4,10 @@
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.git.mappers.geolayerMappers.GeolayerMapper">
 
-	<select id="selectNGIDuplicateCheck" resultType="int">
-		select count(file_name) from public.qa20_layercollection
-		where file_name = #{fileName};
-	</select>
-	
-	<select id="selectDXFDuplicateCheck" resultType="int">
-		select count(collection_name) from public.qa10_layercollection
-		where collection_name = #{fileName};
+	<select id="selectEditLayerDuplicateCheck" parameterType="hashmap" resultType="int">
+		select count(${nativeNameCol}) from ${metaTableName}
+		where c_idx = (select c_idx from ${colTableName} where ${fileCol} = #{fileName})
+		and (${nativeNameCol} =#{layerName}
+		or ${currentNameCol} =#{layerName})
 	</select>
 </mapper>

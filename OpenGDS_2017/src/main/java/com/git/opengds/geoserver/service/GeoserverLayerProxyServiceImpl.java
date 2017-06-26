@@ -233,6 +233,7 @@ public class GeoserverLayerProxyServiceImpl implements GeoserverLayerProxyServic
 		String bbox = "";
 		String outputformat = "";
 		String format_options= "";
+		String featureID = "";
 
 		Enumeration paramNames = request.getParameterNames();
 		while (paramNames.hasMoreElements()) {
@@ -253,7 +254,10 @@ public class GeoserverLayerProxyServiceImpl implements GeoserverLayerProxyServic
 			else if (key.equals("format_options")) {
 				format_options=value;
 			}
+			else if(key.equals("featureID")){
+				featureID = value;
+			}
 		}
-		return new WFSGetFeature(serverURL, version, typeName, outputformat, maxFeatures, bbox, format_options);
+		return new WFSGetFeature(serverURL, version, typeName, outputformat, maxFeatures, bbox, format_options,featureID);
 	}
 }

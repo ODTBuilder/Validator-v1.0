@@ -13,11 +13,12 @@ public class WFSGetFeature {
 	private int maxFeatures = 0; 
 	private String bbox="";
 	private String format_options="";
-	
+	private String featureID = "";
+
 	public WFSGetFeature(){};
 	
 	public WFSGetFeature(String serverURL, String version, String typeName, String outputformat, int maxFeatures, String bbox,
-			String format_options) {
+			String format_options, String featureID) {
 		super();
 		if(!serverURL.trim().equals("")){
 			this.serverURL = serverURL;
@@ -39,6 +40,9 @@ public class WFSGetFeature {
 		}
 		if (!format_options.trim().equals("")) {
 			this.format_options = format_options;
+		}
+		if (!featureID.trim().equals("")) {
+			this.featureID = featureID;
 		}
 	}
 	
@@ -106,6 +110,13 @@ public class WFSGetFeature {
 	public static String getRequest() {
 		return REQUEST;
 	}
+	public String getFeatureID() {
+		return featureID;
+	}
+
+	public void setFeatureID(String featureID) {
+		this.featureID = featureID;
+	}
 	
 	public String getWFSGetFeatureURL(){
 		StringBuffer urlBuffer = new StringBuffer();
@@ -138,6 +149,10 @@ public class WFSGetFeature {
 			if(!this.format_options.trim().equals("")){
 				urlBuffer.append("&");
 				urlBuffer.append("format_options="+format_options);
+			}
+			if(!this.featureID.trim().equals("")){
+				urlBuffer.append("&");
+				urlBuffer.append("featureID="+featureID);
 			}
 		}
 		else
