@@ -7177,7 +7177,7 @@
 				 */
 				this.import_fake_image = function(obj) {
 					var that = this;
-//					// =======================================
+					// // =======================================
 					var that = this;
 					var parentLayer;
 					var farr = {
@@ -7193,12 +7193,12 @@
 						// async : false,
 						data : JSON.stringify(farr),
 						beforeSend : function() { // 호출전실행
-							// loadImageShow();
+							$("body").css("cursor", "wait");
 						},
 						traditional : true,
 						success : function(data, textStatus, jqXHR) {
 							console.log(data);
-//							parentParam = data;
+							// parentParam = data;
 							if (Array.isArray(data)) {
 								for (var i = 0; i < data.length; i++) {
 									var wms = new ol.layer.Tile({
@@ -7286,7 +7286,7 @@
 											}
 											wms.set("name", obj.refer.get_node(data2[i].lName).text);
 											wms.set("id", data2[i].lName);
-											wms.setVisible(false);
+											// wms.setVisible(false);
 											console.log(wms.get("id"));
 											// wms.set("type", "ImageTile");
 											wms.set("git", git);
@@ -7299,6 +7299,10 @@
 										// 현재 맵에 같은 아이디의 타일레이어가 있는지
 										for (var j = 0; j < mapLayers.getLength(); j++) {
 											if (mapLayers.item(j).get("id") === obj.parent && mapLayers.item(j) instanceof ol.layer.Tile) {
+												var befParams = mapLayers.item(j).getSource().getParams();
+												var git = mapLayers.item(j).get("git");
+												var lid = mapLayers.item(j).get("id");
+												var lname = mapLayers.item(j).get("name");
 												// 있다면 구 그룹의 콜렉션과 신 그룹의 콜렉션을 비교
 												var befCollection = mapLayers.item(j).get("git").layers;
 												for (var l = 0; l < arra.length; l++) {
@@ -7313,15 +7317,30 @@
 													}
 												}
 												befCollection.extend(newCollection);
-												var group = new ol.layer.Group({
-													layers : befCollection
+												var names = [];
+												for (var i = 0; i < befCollection.getLength(); i++) {
+													names.push(befCollection.item(i).get("id"));
+												}
+												befParams["LAYERS"] = names.toString();
+												// var group = new
+												// ol.layer.Group({
+												// layers : befCollection
+												// });
+												var wms2 = new ol.layer.Tile({
+													source : new ol.source.TileWMS({
+														url : "geoserver2/geoserverWMSLayerLoad.do",
+														params : befParams,
+														serverType : 'geoserver'
+													})
 												});
-												group.set("name", obj.refer.get_node(obj.parent).text);
-												group.set("id", obj.parent);
-												// group.set("type", "Group");
+												wms2.set("name", lname);
+												wms2.set("id", lid);
+												wms2.set("git", git);
+												// wms.set("type", "Group");
 												that._data.geoserver.map.removeLayer(mapLayers.item(j));
-												that._data.geoserver.map.addLayer(group);
+												that._data.geoserver.map.addLayer(wms2);
 												flag = false;
+												break;
 											}
 										}
 										if (flag) {
@@ -7338,115 +7357,12 @@
 											// group.set("type", "Group");
 											// that._data.geoserver.map.addLayer(group);
 										}
+										$("body").css("cursor", "default");
 									}
 								}
 							});
-							// =======================================
-//							if (Array.isArray(data)) {
-//								for (var i = 0; i < data.length; i++) {
-//									var wms = new ol.layer.Tile({
-//										source : new ol.source.TileWMS({
-//											// url : CONTEXT +
-//											// "/geoserver2/geoserverWMSLayerLoad.do",
-//											// url :
-//											// "http://175.116.181.34:8080/opengds/geoserver2/geoserverWMSLayerLoad.do",
-//											url : "geoserver2/geoserverWMSLayerLoad.do",
-//											params : {
-//												'LAYERS' : data[i].name,
-//												// 'LAYERS' :
-//												// that._data.geoserver.user +
-//												// ":" + data[i].name,
-//												'TILED' : true,
-//												// 'FORMAT' : 'image/png8',
-//												'VERSION' : '1.1.0',
-//												'CRS' : 'EPSG:5186',
-//												'SRS' : 'EPSG:5186',
-//												'BBOX' : data[i].bbox.minx.toString() + "," + data[i].bbox.miny.toString() + ","
-//														+ data[i].bbox.maxx.toString() + "," + data[i].bbox.maxy.toString()
-//											},
-//											serverType : 'geoserver'
-//										})
-//									});
-//									wms.set("name", data[i].name);
-//									wms.set("id", data[i].name);
-//									var git = {
-//										"validation" : false,
-//										"geometry" : data[i].geomType,
-//										"editable" : true,
-//										"fake" : "parent"
-//									}
-//									wms.set("git", git);
-//									parentLayer = wms;
-//									console.log(wms);
-//									// wms.set("type", "ImageTile");
-//									// that._data.geoserver.map.addLayer(wms);
-//								}
-//							}
 						}
 					});
-					
-//					var that = this;
-//					var parentLayer;
-//					var farr = {
-//						"geoLayerList" : [ obj.parent ]
-//					}
-//					console.log(JSON.stringify(farr));
-//					$.ajax({
-//						url : "geoserver2/getGeoGroupLayerInfoList.ajax",
-//						method : "POST",
-//						contentType : "application/json; charset=UTF-8",
-//						cache : false,
-//						// async : false,
-//						data : JSON.stringify(farr),
-//						beforeSend : function() { // 호출전실행
-//							// loadImageShow();
-//						},
-//						traditional : true,
-//						success : function(data, textStatus, jqXHR) {
-//							console.log(data);
-//							if (Array.isArray(data)) {
-//								for (var i = 0; i < data.length; i++) {
-//									var wms = new ol.layer.Tile({
-//										source : new ol.source.TileWMS({
-//											// url : CONTEXT +
-//											// "/geoserver2/geoserverWMSLayerLoad.do",
-//											// url :
-//											// "http://175.116.181.34:8080/opengds/geoserver2/geoserverWMSLayerLoad.do",
-//											url : "geoserver2/geoserverWMSLayerLoad.do",
-//											params : {
-//												'LAYERS' : data[i].name,
-//												// 'LAYERS' :
-//												// that._data.geoserver.user +
-//												// ":" + data[i].name,
-//												'TILED' : true,
-//												// 'FORMAT' : 'image/png8',
-//												'VERSION' : '1.1.0',
-//												'CRS' : 'EPSG:5186',
-//												'SRS' : 'EPSG:5186',
-//												'BBOX' : data[i].bbox.minx.toString() + "," + data[i].bbox.miny.toString() + ","
-//														+ data[i].bbox.maxx.toString() + "," + data[i].bbox.maxy.toString()
-//											},
-//											serverType : 'geoserver'
-//										})
-//									});
-//									wms.set("name", data[i].name);
-//									wms.set("id", data[i].name);
-//									var git = {
-//										"validation" : false,
-//										"geometry" : data[i].geomType,
-//										"editable" : true,
-//										"fake" : "parent"
-//									}
-//									wms.set("git", git);
-//									parentLayer = wms;
-//									console.log(wms);
-//									// wms.set("type", "ImageTile");
-//									// that._data.geoserver.map.addLayer(wms);
-//								}
-//							}
-//						}
-//					});
-					// =======================================
 				};
 
 				/**
@@ -7560,26 +7476,31 @@
 				 * @author 소이준
 				 */
 				this.import_fake_group = function(obj) {
+					console.log(obj);
 					var that = this;
-					var arr = {
-						"geoLayerList" : obj
+					// // =======================================
+					var that = this;
+					var parentLayer;
+					var farr = {
+						"geoLayerList" : obj.parent
 					}
-					console.log(JSON.stringify(arr));
+					console.log(JSON.stringify(farr));
+					var parentParam;
 					$.ajax({
 						url : "geoserver2/getGeoGroupLayerInfoList.ajax",
 						method : "POST",
 						contentType : "application/json; charset=UTF-8",
 						cache : false,
 						// async : false,
-						data : JSON.stringify(arr),
+						data : JSON.stringify(farr),
 						beforeSend : function() { // 호출전실행
-							// loadImageShow();
+							$("body").css("cursor", "wait");
 						},
 						traditional : true,
 						success : function(data, textStatus, jqXHR) {
 							console.log(data);
+							// parentParam = data;
 							if (Array.isArray(data)) {
-								var arra = [];
 								for (var i = 0; i < data.length; i++) {
 									var wms = new ol.layer.Tile({
 										source : new ol.source.TileWMS({
@@ -7589,7 +7510,7 @@
 											// "http://175.116.181.34:8080/opengds/geoserver2/geoserverWMSLayerLoad.do",
 											url : "geoserver2/geoserverWMSLayerLoad.do",
 											params : {
-												'LAYERS' : data[i].name,
+												'LAYERS' : obj.refer.get_node(data[i].name).children.toString(),
 												// 'LAYERS' :
 												// that._data.geoserver.user +
 												// ":" + data[i].name,
@@ -7609,12 +7530,141 @@
 									var git = {
 										"validation" : false,
 										"geometry" : data[i].geomType,
-										"editable" : true
+										"editable" : true,
+										"fake" : "parent"
 									}
 									wms.set("git", git);
+									parentLayer = wms;
+									console.log(wms);
 									// wms.set("type", "ImageTile");
-									that._data.geoserver.map.addLayer(wms);
+									// that._data.geoserver.map.addLayer(wms);
 								}
+							}
+							// =======================================
+							for (var m = 0; m < data.length; m++) {
+								var arr = {
+									"geoLayerList" : obj.refer.get_node(data[m].name).children
+								}
+								var names = [];
+								console.log(JSON.stringify(arr));
+								$.ajax({
+									url : "geoserver2/getGeoLayerInfoList.ajax",
+									method : "POST",
+									contentType : "application/json; charset=UTF-8",
+									cache : false,
+									// async : false,
+									data : JSON.stringify(arr),
+									beforeSend : function() { // 호출전실행
+										// loadImageShow();
+									},
+									traditional : true,
+									success : function(data2, textStatus, jqXHR) {
+										console.log(data2);
+										if (Array.isArray(data2)) {
+											var arra = [];
+											for (var i = 0; i < data2.length; i++) {
+												var wms = new ol.layer.Tile({
+													source : new ol.source.TileWMS({
+														url : "geoserver2/geoserverWMSLayerLoad.do",
+														params : {
+															'LAYERS' : data2[i].lName,
+															'TILED' : true,
+															'FORMAT' : 'image/png8',
+															'VERSION' : '1.1.0',
+															'CRS' : 'EPSG:5186',
+															'SRS' : 'EPSG:5186',
+															'BBOX' : data2[i].nbBox.minx.toString() + "," + data2[i].nbBox.miny.toString() + ","
+																	+ data2[i].nbBox.maxx.toString() + "," + data2[i].nbBox.maxy.toString()
+														},
+														serverType : 'geoserver'
+													})
+												});
+												var git = {
+													"validation" : false,
+													"geometry" : data2[i].geomType,
+													"editable" : true,
+													"attribute" : data2[i].attInfo,
+													"fake" : "child"
+												}
+												wms.set("name", obj.refer.get_node(data2[i].lName).text);
+												wms.set("id", data2[i].lName);
+												// wms.setVisible(false);
+												console.log(wms.get("id"));
+												// wms.set("type", "ImageTile");
+												wms.set("git", git);
+												arra.push(wms);
+												console.log(wms);
+											}
+											var mapLayers = that._data.geoserver.map.getLayers();
+											var flag = true;
+											var newCollection = [];
+											// 현재 맵에 같은 아이디의 타일레이어가 있는지
+											for (var j = 0; j < mapLayers.getLength(); j++) {
+												if (mapLayers.item(j).get("id") === obj.parent && mapLayers.item(j) instanceof ol.layer.Tile) {
+													var befParams = mapLayers.item(j).getSource().getParams();
+													var git = mapLayers.item(j).get("git");
+													var lid = mapLayers.item(j).get("id");
+													var lname = mapLayers.item(j).get("name");
+													// 있다면 구 그룹의 콜렉션과 신 그룹의 콜렉션을
+													// 비교
+													var befCollection = mapLayers.item(j).get("git").layers;
+													for (var l = 0; l < arra.length; l++) {
+														var dupl = false;
+														for (var k = 0; k < befCollection.getLength(); k++) {
+															if (arra[l].get("id") === befCollection.item(k).get("id")) {
+																dupl = true;
+															}
+														}
+														if (!dupl) {
+															newCollection.push(arra[l]);
+														}
+													}
+													befCollection.extend(newCollection);
+													var names = [];
+													for (var i = 0; i < befCollection.getLength(); i++) {
+														names.push(befCollection.item(i).get("id"));
+													}
+													befParams["LAYERS"] = names.toString();
+													// var group = new
+													// ol.layer.Group({
+													// layers : befCollection
+													// });
+													var wms2 = new ol.layer.Tile({
+														source : new ol.source.TileWMS({
+															url : "geoserver2/geoserverWMSLayerLoad.do",
+															params : befParams,
+															serverType : 'geoserver'
+														})
+													});
+													wms2.set("name", lname);
+													wms2.set("id", lid);
+													wms2.set("git", git);
+													// wms.set("type", "Group");
+													that._data.geoserver.map.removeLayer(mapLayers.item(j));
+													that._data.geoserver.map.addLayer(wms2);
+													flag = false;
+													break;
+												}
+											}
+											if (flag) {
+												// var group = new
+												// ol.layer.Group({
+												// layers : arra
+												// });
+												var info = parentLayer.get("git");
+												info["layers"] = new ol.Collection().extend(arra);
+												console.log(parentLayer);
+												that._data.geoserver.map.addLayer(parentLayer);
+												// group.set("name",
+												// obj.refer.get_node(obj.parent).text);
+												// group.set("id", obj.parent);
+												// group.set("type", "Group");
+												// that._data.geoserver.map.addLayer(group);
+											}
+											$("body").css("cursor", "default");
+										}
+									}
+								});
 							}
 						}
 					});
@@ -7796,7 +7846,6 @@
 													"arr" : arr,
 													"parent" : inst.get_parent(obj)
 												}
-												// inst.import_image(wmsInfo);
 												inst.import_fake_image(wmsInfo);
 											}
 										} else if (obj.type === "n_dxf_layer_arc" || obj.type === "n_dxf_layer_cir" || obj.type === "n_dxf_layer_ins"
@@ -7808,16 +7857,19 @@
 													"arr" : arr,
 													"parent" : inst.get_parent(obj)
 												}
-												// inst.import_image(wmsInfo);
-												inst.import_fake_image(wmsInfo);
+												inst.import_image(wmsInfo);
 											}
 										} else if (obj.type === "n_ngi_group" || obj.type === "n_dxf_group") {
 											var arr = inst.get_selected();
 											var arr2 = [];
 											for (var i = 0; i < arr.length; i++) {
-												arr2.push(inst.get_node(arr[i]).text);
+												arr2.push(inst.get_node(arr[i]).id);
 											}
-											inst.import_group(arr2);
+											var obj = {
+												"refer" : inst,
+												"parent" : arr2
+											};
+											inst.import_fake_group(obj);
 										}
 									}
 								},
@@ -7848,7 +7900,8 @@
 							 */
 							"action" : function(data) {
 								var inst = $.jstree.reference(data.reference), obj = inst.get_node(data.reference);
-								console.log("Not yet(layer info)");
+								layerInfo.load(obj.id, obj.text);
+								// console.log("Not yet(layer info)");
 							}
 						}
 					};
