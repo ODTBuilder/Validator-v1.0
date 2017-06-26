@@ -25,6 +25,7 @@ import java.util.Map;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
+import com.git.gdsbuilder.edit.qa10.EditQA10Layer;
 import com.git.gdsbuilder.edit.qa20.EditQA20Layer;
 import com.git.gdsbuilder.type.qa20.header.NDAField;
 import com.git.gdsbuilder.type.qa20.header.NDAHeader;
@@ -44,29 +45,9 @@ public class EditLayerParser {
 	protected static String delete = "delete";
 
 	JSONObject layerObj;
-	String type;
-	EditQA20Layer editLayer;
-
-	/**
-	 * EditLayerParser 생성자
-	 * 
-	 * @param layerName
-	 * 
-	 * @param layerObj
-	 * @param state
-	 * @throws ParseException
-	 */
-	public EditLayerParser(String type, JSONObject layerObj, String state) throws ParseException {
-		this.type = type;
-		this.layerObj = layerObj;
-		if (type.equals("ngi")) {
-			if (state.equals(create)) {
-				ngiCreatedLayerParse();
-			} else if (state.equals(modify)) {
-				ngiModifiedLayerParse();
-			}
-		}
-	}
+	String originLayerType;
+	EditQA20Layer editQA20Layer;
+	EditQA10Layer editQA10Layer;
 
 	public static String getCreate() {
 		return create;
@@ -84,6 +65,14 @@ public class EditLayerParser {
 		EditLayerParser.modify = modify;
 	}
 
+	public static String getDelete() {
+		return delete;
+	}
+
+	public static void setDelete(String delete) {
+		EditLayerParser.delete = delete;
+	}
+
 	public JSONObject getLayerObj() {
 		return layerObj;
 	}
@@ -92,23 +81,58 @@ public class EditLayerParser {
 		this.layerObj = layerObj;
 	}
 
-	public EditQA20Layer getEditLayer() {
-		return editLayer;
-	}
-
-	public void setEditLayer(EditQA20Layer editLayer) {
-		this.editLayer = editLayer;
-	}
-
 	public String getType() {
-		return type;
+		return originLayerType;
 	}
 
 	public void setType(String type) {
-		this.type = type;
+		this.originLayerType = type;
 	}
 
-	public void ngiModifiedGeoserverLayerParse() {
+	public EditQA20Layer getEditQA20Layer() {
+		return editQA20Layer;
+	}
+
+	public void setEditQA20Layer(EditQA20Layer editQA20Layer) {
+		this.editQA20Layer = editQA20Layer;
+	}
+
+	public EditQA10Layer getEditQA10Layer() {
+		return editQA10Layer;
+	}
+
+	public void setEditQA10Layer(EditQA10Layer editQA10Layer) {
+		this.editQA10Layer = editQA10Layer;
+	}
+
+	/**
+	 * EditLayerParser 생성자
+	 * 
+	 * @param layerName
+	 * 
+	 * @param layerObj
+	 * @param state
+	 * @throws ParseException
+	 */
+	public EditLayerParser(String type, JSONObject layerObj, String state) throws ParseException {
+		this.originLayerType = type;
+		this.layerObj = layerObj;
+		if (type.equals("ngi")) {
+			if (state.equals(create)) {
+				ngiCreatedLayerParse();
+			} else if (state.equals(modify)) {
+				ngiModifiedLayerParse();
+			}
+		} else if (type.equals("dxf")) {
+			if (state.equals(create)) {
+				dxfCreatedLayerParse();
+			} else if (state.equals(modify)) {
+				dxfModifiedLayerParse();
+			}
+		}
+	}
+
+	public void modifiedGeoserverLayerParse(String type) {
 
 		JSONObject geoLayerObj = (JSONObject) layerObj.get("geoserver");
 		// geoLayerObj.get("lbound");
@@ -116,7 +140,7 @@ public class EditLayerParser {
 		String orignalName = (String) layerObj.get("originLayerName");
 		String name = (String) layerObj.get("currentLayerName");
 		String title = (String) geoLayerObj.get("title");
-		String abstractContent = (String) geoLayerObj.get("stysummaryle");
+		String abstractContent = (String) geoLayerObj.get("summary");
 
 		Map<String, Object> geoLayer = new HashMap<String, Object>();
 		geoLayer.put("orignalName", orignalName);
@@ -125,17 +149,21 @@ public class EditLayerParser {
 		geoLayer.put("summary", abstractContent);
 		geoLayer.put("attChangeFlag", true);
 
-		this.editLayer.setGeoServerLayer(geoLayer);
+		if (type.equals("ngi")) {
+			this.editQA20Layer.setGeoServerLayer(geoLayer);
+		} else if (type.equals("dxf")) {
+			this.editQA10Layer.setGeoServerLayer(geoLayer);
+		}
 	}
 
 	public void ngiModifiedLayerParse() {
 
-		editLayer = new EditQA20Layer();
+		editQA20Layer = new EditQA20Layer();
 		// name
 		String orignName = (String) layerObj.get("originLayerName");
 		String currentName = (String) layerObj.get("currentLayerName");
-		editLayer.setOrignName(orignName);
-		editLayer.setLayerName(currentName);
+		editQA20Layer.setOrignName(orignName);
+		editQA20Layer.setLayerName(currentName);
 
 		// attr
 		JSONArray updateAttrArray = (JSONArray) layerObj.get("updateAttr");
@@ -143,7 +171,7 @@ public class EditLayerParser {
 		// ndaHeader
 		List<NDAField> updateAttr = parseAttrQA20Layer(currentName, updateAttrArray);
 		NDAHeader ndaHeader = new NDAHeader("1", updateAttr);
-		editLayer.setNdaHeader(ndaHeader);
+		editQA20Layer.setNdaHeader(ndaHeader);
 
 		// bound
 		JSONArray boundArry = (JSONArray) layerObj.get("bound");
@@ -163,8 +191,8 @@ public class EditLayerParser {
 		String represent = (String) layerObj.get("represent");
 
 		// ngiHeader
-		editLayer.setNgiHeader(ngiHeader);
-		ngiModifiedGeoserverLayerParse();
+		editQA20Layer.setNgiHeader(ngiHeader);
+		modifiedGeoserverLayerParse("ngi");
 	}
 
 	private List<NDAField> parseAttrQA20Layer(String layerName, JSONArray attrArry) {
@@ -190,14 +218,14 @@ public class EditLayerParser {
 
 	public void ngiCreatedLayerParse() throws ParseException {
 
-		editLayer = new EditQA20Layer();
+		editQA20Layer = new EditQA20Layer();
 
 		String layerName = (String) layerObj.get("layerName");
-		editLayer.setLayerName(layerName);
-		editLayer.setOrignName(layerName);
+		editQA20Layer.setLayerName(layerName);
+		editQA20Layer.setOrignName(layerName);
 
 		String layerType = (String) layerObj.get("layerType");
-		editLayer.setLayerType(layerType);
+		editQA20Layer.setLayerType(layerType);
 
 		NGIHeader ngiHeader = new NGIHeader();
 		String mask = "MASK(" + layerType + ")";
@@ -237,8 +265,51 @@ public class EditLayerParser {
 		}
 		ndaHeader.setAspatial_field_def(fieldList);
 
-		editLayer.setNgiHeader(ngiHeader);
-		editLayer.setNdaHeader(ndaHeader);
+		editQA20Layer.setNgiHeader(ngiHeader);
+		editQA20Layer.setNdaHeader(ndaHeader);
+	}
 
+	public void dxfModifiedLayerParse() {
+
+		editQA10Layer = new EditQA10Layer();
+
+		String originLayerName = (String) layerObj.get("originLayerName");
+		String currentLayerName = (String) layerObj.get("currentLayerName");
+		editQA10Layer.setLayerName(currentLayerName);
+		editQA10Layer.setOrignName(originLayerName);
+
+		modifiedGeoserverLayerParse("dxf");
+	}
+
+	public void dxfCreatedLayerParse() {
+
+		editQA10Layer = new EditQA10Layer();
+
+		String layerName = (String) layerObj.get("layerName");
+		editQA10Layer.setLayerName(layerName);
+		editQA10Layer.setOrignName(layerName);
+
+		String originLayerType = (String) layerObj.get("originLayerType");
+		editQA10Layer.setOriginLayerType(originLayerType);
+
+		String layerType = "";
+		if (originLayerType.equals("LINE")) {
+			layerType = "LineString";
+		} else if (originLayerType.equals("POLYLINE")) {
+			layerType = "LineString";
+		} else if (originLayerType.equals("LWPOLYLINE")) {
+			layerType = "LineString";
+		} else if (originLayerType.equals("INSERT")) {
+			layerType = "Point";
+		} else if (originLayerType.equals("TEXT")) {
+			layerType = "Point";
+		} else if (originLayerType.equals("SOLID")) {
+			layerType = "Polygon";
+		} else if (originLayerType.equals("CIRCLE")) {
+			layerType = "Polygon";
+		} else if (originLayerType.equals("ARC")) {
+			layerType = "LineString";
+		}
+		editQA10Layer.setLayerType(layerType);
 	}
 }

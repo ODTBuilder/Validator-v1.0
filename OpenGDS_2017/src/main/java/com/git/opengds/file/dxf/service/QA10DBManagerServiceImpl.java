@@ -1,6 +1,5 @@
 package com.git.opengds.file.dxf.service;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -99,7 +98,7 @@ public class QA10DBManagerServiceImpl implements QA10DBManagerService {
 						src);
 				dao.createQA10LayerTb(createQuery);
 
-				// insertQA20Layer
+				// insertQA10Layer
 				List<HashMap<String, Object>> inertLayerQuerys = dbManager.qa10LayerTbInsertQuery(type, collectionName,
 						qa10Layer, src);
 				for (int j = 0; j < inertLayerQuerys.size(); j++) {
@@ -146,7 +145,7 @@ public class QA10DBManagerServiceImpl implements QA10DBManagerService {
 			Integer cIdx = dao.selectQA10LayerCollectionIdx(selectLayerCollectionIdxQuery);
 			if (cIdx != null) {
 				HashMap<String, Object> metadataIdxQuery = dbManager.getSelectLayerMetaDataIdx(cIdx);
-				List<HashMap<String, Object>> metadataIdxMapList = dao.selectQA10LayerMetadataIdx(metadataIdxQuery);
+				List<HashMap<String, Object>> metadataIdxMapList = dao.selectQA10LayerMetadataIdxs(metadataIdxQuery);
 				for (int i = 0; i < metadataIdxMapList.size(); i++) {
 					HashMap<String, Object> metadataIdxMap = metadataIdxMapList.get(i);
 					Integer mIdx = (Integer) metadataIdxMap.get("lm_idx");

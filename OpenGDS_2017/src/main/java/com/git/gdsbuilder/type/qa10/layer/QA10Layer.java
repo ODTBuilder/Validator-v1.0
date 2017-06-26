@@ -8,6 +8,7 @@ import com.git.gdsbuilder.type.qa10.feature.QA10FeatureList;
 public class QA10Layer {
 
 	String layerID;
+	String originLayerID;
 	String layerType;
 	String originLayerType;
 	Hashtable<String, Object> layerColumns;
@@ -27,6 +28,18 @@ public class QA10Layer {
 		this.originLayerType = "";
 		this.layerColumns = new Hashtable<String, Object>();
 		this.qa10FeatureList = new QA10FeatureList();
+	}
+
+	public QA10Layer(String layerID, String originLayerID, String layerType, String originLayerType) {
+		this.layerID = layerID;
+		this.originLayerID = originLayerID;
+		this.layerType = layerType;
+		this.originLayerType = originLayerType;
+	}
+
+	public QA10Layer(String layerID, String originLayerID) {
+		this.layerID = layerID;
+		this.originLayerID = originLayerID;
 	}
 
 	public String getLayerID() {
@@ -71,6 +84,14 @@ public class QA10Layer {
 
 	public void addQA10Feature(QA10Feature feature) {
 		this.qa10FeatureList.add(feature);
+	}
+
+	public String getOriginLayerID() {
+		return originLayerID;
+	}
+
+	public void setOriginLayerID(String originLayerID) {
+		this.originLayerID = originLayerID;
 	}
 
 }

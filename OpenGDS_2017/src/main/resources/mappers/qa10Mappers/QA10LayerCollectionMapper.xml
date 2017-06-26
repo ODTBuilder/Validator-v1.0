@@ -35,9 +35,19 @@
 		${selectQuery}
 	</select>
 
+	<select id="selectTableLayerIdx" parameterType="hashMap"
+		resultType="hashMap">
+		${selectQuery}
+	</select>
+
 	<insert id="insertQA10LayerCollectionTableLayer" parameterType="hashmap">
 		${insertQuery}
 	</insert>
+
+	<select id="updateTableLayerID" parameterType="hashMap"
+		resultType="hashMap">
+		${updateQuery}
+	</select>
 
 	<!-- qa10_layercollection_blocks -->
 	<insert id="insertQA10LayerCollectionBlockCommon" parameterType="hashmap">
@@ -80,6 +90,21 @@
 		${insertQuery}
 	</insert>
 
+	<select id="selectQA10LayerMetadataIdxs" parameterType="hashMap"
+		resultType="hashMap">
+		${selectAllQuery}
+	</select>
+
+	<select id="updateQA10LayerMetadataLayerID" parameterType="hashMap"
+		resultType="hashMap">
+		${updateQuery}
+	</select>
+
+	<select id="selectQA10LayerMetadataIdx" parameterType="hashMap"
+		resultType="hashMap">
+		${selectQuery}
+	</select>
+
 	<!-- qa10_layer_feature -->
 	<insert id="insertQA10Feature" parameterType="hashmap">
 		${insertQuery}
@@ -96,6 +121,11 @@
 
 	<select id="deleteField" parameterType="hashMap">
 		${deleteQuery}
+	</select>
+
+	<select id="updateQA10LayerMetadataLayerName" parameterType="hashMap"
+		resultType="hashMap">
+		${updateQuery}
 	</select>
 
 </mapper>

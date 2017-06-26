@@ -58,12 +58,12 @@
 		</selectKey>
 	</insert>
 
-	<select id="selectLayerMetadataIdxs" parameterType="hashMap"
+	<select id="selectQA20LayerMetadataIdxs" parameterType="hashMap"
 		resultType="hashMap">
 		${selectAllQuery}
 	</select>
 
-	<select id="selectLayerMetadataIdx" parameterType="hashMap"
+	<select id="selectQA20LayerMetadataIdx" parameterType="hashMap"
 		resultType="hashMap">
 		${selectQuery}
 	</select>

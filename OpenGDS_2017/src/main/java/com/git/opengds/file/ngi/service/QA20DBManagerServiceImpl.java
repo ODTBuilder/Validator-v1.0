@@ -68,6 +68,8 @@ public class QA20DBManagerServiceImpl implements QA20DBManagerService {
 			int cIdx = dao.insertQA20LayerCollection(insertCollectionQuery);
 
 			Map<String, Boolean> isFeaturesMap = new HashMap<String, Boolean>();
+			
+			String src = layerInfo.getOriginSrc();
 			QA20LayerList createLayerList = dtCollection.getQa20LayerList();
 			for (int i = 0; i < createLayerList.size(); i++) {
 				QA20Layer qa20Layer = createLayerList.get(i);
@@ -82,12 +84,12 @@ public class QA20DBManagerServiceImpl implements QA20DBManagerService {
 
 				// createQA20Layer
 				HashMap<String, Object> createQuery = dbManager.getQA20LayerTbCreateQuery(type, collectionName,
-						qa20Layer);
+						qa20Layer, src);
 				dao.createQA20LayerTb(createQuery);
 
 				// insertQA20Layer
 				List<HashMap<String, Object>> inertLayerQuerys = dbManager.getQA20LayerInsertQuery(type, collectionName,
-						qa20Layer);
+						qa20Layer, src);
 				for (int j = 0; j < inertLayerQuerys.size(); j++) {
 					HashMap<String, Object> insertLayerQuery = inertLayerQuerys.get(j);
 					dao.insertQA20Layer(insertLayerQuery);
