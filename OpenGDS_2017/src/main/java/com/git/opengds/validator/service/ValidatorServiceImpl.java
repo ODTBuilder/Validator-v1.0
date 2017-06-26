@@ -30,7 +30,7 @@ import com.git.gdsbuilder.type.validate.error.ErrorLayerList;
 import com.git.gdsbuilder.type.validate.layer.ValidateLayerTypeList;
 import com.git.gdsbuilder.validator.collection.CollectionValidator;
 import com.git.opengds.editor.service.EditService;
-import com.git.opengds.parser.json.BuilderJSONParser;
+import com.git.opengds.parser.json.BuilderJSONQA20Parser;
 
 @Service
 public class ValidatorServiceImpl implements ValidatorService {
@@ -50,7 +50,7 @@ public class ValidatorServiceImpl implements ValidatorService {
 
 		try {
 			// 파라미터 파싱
-			BuilderJSONParser parserManager = new BuilderJSONParser();
+			BuilderJSONQA20Parser parserManager = new BuilderJSONQA20Parser();
 			HashMap<String, Object> valdateObj = parserManager.parseValidateObj(jsonObject);
 			ValidateLayerTypeList validateLayerTypeList = (ValidateLayerTypeList) valdateObj.get("typeValidate");
 			GeoLayerCollectionList collectionList = (GeoLayerCollectionList) valdateObj.get("collectionList");

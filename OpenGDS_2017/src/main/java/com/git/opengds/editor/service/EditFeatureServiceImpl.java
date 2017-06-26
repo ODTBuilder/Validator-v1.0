@@ -8,15 +8,17 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.json.simple.JSONObject;
+import org.springframework.stereotype.Service;
 
 import com.git.gdsbuilder.type.qa10.feature.QA10Feature;
 import com.git.gdsbuilder.type.qa10.feature.QA10FeatureList;
 import com.git.gdsbuilder.type.qa20.feature.QA20Feature;
 import com.git.gdsbuilder.type.qa20.feature.QA20FeatureList;
 import com.git.opengds.geoserver.service.GeoserverService;
-import com.git.opengds.parser.json.BuilderJSONParser;
+import com.git.opengds.parser.json.BuilderJSONQA20Parser;
 import com.vividsolutions.jts.io.ParseException;
 
+@Service
 public class EditFeatureServiceImpl implements EditFeatureService {
 
 	protected static final String none = "none";
@@ -34,20 +36,21 @@ public class EditFeatureServiceImpl implements EditFeatureService {
 	@Inject
 	GeoserverService geoserver;
 
+	String src = "5186";
+
 	@Override
 	public void editFeature(JSONObject featureEditObj) throws ParseException, org.json.simple.parser.ParseException {
 
-		Map<String, Object> edtFeatureListObj = BuilderJSONParser.parseEditFeatureObj(featureEditObj);
+		Map<String, Object> edtFeatureListObj = BuilderJSONQA20Parser.parseEditFeatureObj(featureEditObj);
 		Iterator edtFeatureIterator = edtFeatureListObj.keySet().iterator();
 		while (edtFeatureIterator.hasNext()) {
 			String tableName = (String) edtFeatureIterator.next();
 			HashMap<String, Object> editMap = (HashMap<String, Object>) edtFeatureListObj.get(tableName);
-			String collectionType = BuilderJSONParser.getCollectionType(tableName);
+			String collectionType = BuilderJSONQA20Parser.getCollectionType(tableName);
 
 			if (collectionType.equals(isDxf)) {
 				editDxfFeature(tableName, editMap);
 			}
-
 			if (collectionType.equals(isNgi)) {
 				editNgiFeature(tableName, editMap);
 			}
@@ -63,13 +66,13 @@ public class EditFeatureServiceImpl implements EditFeatureService {
 				QA20FeatureList createFeatureList = (QA20FeatureList) editMap.get(state);
 				for (int i = 0; i < createFeatureList.size(); i++) {
 					QA20Feature createFeature = createFeatureList.get(i);
-					editDBManager.insertQA20CreateFeature(tableName, createFeature);
+					editDBManager.insertQA20CreateFeature(tableName, createFeature, src);
 				}
 			} else if (state.equals(isModified)) {
 				QA20FeatureList modifyFeatureList = (QA20FeatureList) editMap.get(state);
 				for (int i = 0; i < modifyFeatureList.size(); i++) {
 					QA20Feature modifyFeature = modifyFeatureList.get(i);
-					editDBManager.updateQA20ModifyFeature(tableName, modifyFeature);
+					editDBManager.updateQA20ModifyFeature(tableName, modifyFeature, src);
 				}
 			} else if (state.equals(isDeleted)) {
 				List<String> featureIdList = (List<String>) editMap.get(state);

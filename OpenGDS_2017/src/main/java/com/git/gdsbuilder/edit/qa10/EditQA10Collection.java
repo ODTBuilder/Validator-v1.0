@@ -1,5 +1,8 @@
 package com.git.gdsbuilder.edit.qa10;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.git.gdsbuilder.type.qa10.layer.QA10Layer;
 import com.git.gdsbuilder.type.qa10.layer.QA10LayerList;
 
@@ -9,6 +12,7 @@ public class EditQA10Collection {
 	QA10LayerList createLayerList;
 	QA10LayerList modifiedLayerList;
 	QA10LayerList deletedLayerList;
+	Map<String, Object> geoLayerList;
 
 	boolean isCreated = false;
 	boolean isModified = false;
@@ -21,6 +25,7 @@ public class EditQA10Collection {
 		this.createLayerList = new QA10LayerList();
 		this.modifiedLayerList = new QA10LayerList();
 		this.deletedLayerList = new QA10LayerList();
+		this.geoLayerList = new HashMap<String, Object>();
 	}
 
 	public String getCollectionName() {
@@ -109,6 +114,18 @@ public class EditQA10Collection {
 
 	public void setDeleted(boolean isDeleted) {
 		this.isDeleted = isDeleted;
+	}
+
+	public void putGeoLayer(Map<String, Object> geoLayerLayer) {
+		geoLayerList.putAll(geoLayerLayer);
+	}
+
+	public Map<String, Object> getGeoLayerList() {
+		return geoLayerList;
+	}
+
+	public void setGeoLayerList(Map<String, Object> geoLayerList) {
+		this.geoLayerList = geoLayerList;
 	}
 
 }

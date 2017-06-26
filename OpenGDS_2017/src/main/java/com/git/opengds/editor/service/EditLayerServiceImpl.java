@@ -6,14 +6,22 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.json.simple.JSONObject;
+import org.springframework.stereotype.Service;
 
+import com.git.gdsbuilder.edit.qa10.EditQA10Collection;
+import com.git.gdsbuilder.edit.qa10.EditQA10LayerCollectionList;
 import com.git.gdsbuilder.edit.qa20.EditQA20Collection;
 import com.git.gdsbuilder.edit.qa20.EditQA20LayerCollectionList;
+import com.git.gdsbuilder.type.qa10.layer.QA10Layer;
+import com.git.gdsbuilder.type.qa10.layer.QA10LayerList;
 import com.git.gdsbuilder.type.qa20.layer.QA20Layer;
 import com.git.gdsbuilder.type.qa20.layer.QA20LayerList;
+import com.git.opengds.editor.EditLayerCondition;
 import com.git.opengds.geoserver.service.GeoserverService;
-import com.git.opengds.parser.json.BuilderJSONParser;
+import com.git.opengds.parser.json.BuilderJSONQA10Parser;
+import com.git.opengds.parser.json.BuilderJSONQA20Parser;
 
+@Service
 public class EditLayerServiceImpl implements EditLayerService {
 
 	protected static final String none = "none";
@@ -32,14 +40,79 @@ public class EditLayerServiceImpl implements EditLayerService {
 	GeoserverService geoserver;
 
 	@Override
-	public void editLayer(JSONObject layerEditObj)
-			throws Exception {
+	public void editLayer(JSONObject layerEditObj) throws Exception {
 
-		Map<String, Object> edtCollectionListObj = BuilderJSONParser.parseEditLayerObj(layerEditObj);
-		Iterator edtLayerIterator = edtCollectionListObj.keySet().iterator();
-		while (edtLayerIterator.hasNext()) {
-			String type = (String) edtLayerIterator.next();
-			EditQA20LayerCollectionList edtCollectionList = (EditQA20LayerCollectionList) edtCollectionListObj
+		String src = "5186";
+
+		// dxf
+		Map<String, Object> edtQA10CollectionListObj = BuilderJSONQA10Parser.parseEditLayerObj(layerEditObj);
+		Iterator edtQA10LayerIterator = edtQA10CollectionListObj.keySet().iterator();
+		while (edtQA10LayerIterator.hasNext()) {
+			String type = (String) edtQA10LayerIterator.next();
+			EditQA10LayerCollectionList edtCollectionList = (EditQA10LayerCollectionList) edtQA10CollectionListObj
+					.get(type);
+			if (type.equals(this.isDxf)) {
+				for (int i = 0; i < edtCollectionList.size(); i++) {
+					EditQA10Collection editCollection = edtCollectionList.get(i);
+					String collectionName = editCollection.getCollectionName();
+					EditLayerCondition condition = new EditLayerCondition();
+					Integer collectionIdx = editDBManager.checkQA10LayerCollectionName(collectionName);
+					if (editCollection.isCreated()) {
+						if (collectionIdx != null) {
+							// 1. 중복되었을 시(이미 존재하는 collection에 레이어 테이블만 create)
+							QA10LayerList createLayerList = editCollection.getCreateLayerList();
+							for (int j = 0; j < createLayerList.size(); j++) {
+								QA10Layer createLayer = createLayerList.get(j);
+								String layerName = createLayer.getLayerID();
+								boolean isSuccessed = editDBManager.createQA10Layer(type, collectionIdx, collectionName,
+										createLayer, src);
+								if (isSuccessed) {
+									condition.putSuccessedLayers(collectionName, layerName);
+								} else {
+									condition.putFailedLayers(collectionName, layerName);
+								}
+							}
+						} else {
+							// 2. 중복되지 않았을 시 collection insert 후 레이어 테이블 create
+							Integer insertIdx = editDBManager.createQA10LayerCollection(type, editCollection);
+							QA10LayerList createLayerList = editCollection.getCreateLayerList();
+							for (int j = 0; j < createLayerList.size(); j++) {
+								QA10Layer createLayer = createLayerList.get(j);
+								String layerName = createLayer.getLayerID();
+								boolean isSuccessed = editDBManager.createQA10Layer(type, insertIdx, collectionName,
+										createLayer, src);
+								if (isSuccessed) {
+									condition.putSuccessedLayers(collectionName, layerName);
+								} else {
+									condition.putFailedLayers(collectionName, layerName);
+								}
+							}
+						}
+						if (editCollection.isModified()) {
+
+						}
+						if (editCollection.isDeleted()) {
+							QA10LayerList layerList = editCollection.getDeletedLayerList();
+							for (int j = 0; j < layerList.size(); j++) {
+								QA10Layer layer = layerList.get(j);
+								editDBManager.dropQA10Layer(type, collectionIdx, collectionName, layer);
+							}
+							if (editCollection.isDeleteAll()) {
+								geoserver.removeGeoserverGroupLayer(editCollection.getCollectionName());
+							}
+						}
+
+					}
+				}
+			}
+		}
+
+		// ngi
+		Map<String, Object> edtQA20CollectionListObj = BuilderJSONQA20Parser.parseEditLayerObj(layerEditObj);
+		Iterator edtQA20LayerIterator = edtQA20CollectionListObj.keySet().iterator();
+		while (edtQA20LayerIterator.hasNext()) {
+			String type = (String) edtQA20LayerIterator.next();
+			EditQA20LayerCollectionList edtCollectionList = (EditQA20LayerCollectionList) edtQA20CollectionListObj
 					.get(type);
 			if (type.equals(this.isNgi)) {
 				for (int i = 0; i < edtCollectionList.size(); i++) {
@@ -56,11 +129,11 @@ public class EditLayerServiceImpl implements EditLayerService {
 								QA20Layer createLayer = createLayerList.get(j);
 								String layerName = createLayer.getLayerName();
 								boolean isSuccessed = editDBManager.createQA20Layer(type, collectionIdx, collectionName,
-										createLayer);
+										createLayer, src);
 								if (isSuccessed) {
-									condition.putSuccessedLayer(collectionName, layerName);
+									condition.putSuccessedLayers(collectionName, layerName);
 								} else {
-									condition.putFailedLayer(collectionName, layerName);
+									condition.putFailedLayers(collectionName, layerName);
 								}
 							}
 						} else {
@@ -71,11 +144,11 @@ public class EditLayerServiceImpl implements EditLayerService {
 								QA20Layer createLayer = createLayerList.get(j);
 								String layerName = createLayer.getLayerName();
 								boolean isSuccessed = editDBManager.createQA20Layer(type, insertIdx, collectionName,
-										createLayer);
+										createLayer, src);
 								if (isSuccessed) {
-									condition.putSuccessedLayer(collectionName, layerName);
+									condition.putSuccessedLayers(collectionName, layerName);
 								} else {
-									condition.putFailedLayer(collectionName, layerName);
+									condition.putFailedLayers(collectionName, layerName);
 								}
 							}
 						}
@@ -91,9 +164,9 @@ public class EditLayerServiceImpl implements EditLayerService {
 							boolean isSuccessed = editDBManager.modifyQA20Layer(type, collectionIdx, modifiedLayer,
 									geoLayer);
 							if (isSuccessed) {
-								condition.putSuccessedLayer(collectionName, layerName);
+								condition.putSuccessedLayers(collectionName, layerName);
 							} else {
-								condition.putFailedLayer(collectionName, layerName);
+								condition.putFailedLayers(collectionName, layerName);
 							}
 						}
 					}
@@ -108,13 +181,7 @@ public class EditLayerServiceImpl implements EditLayerService {
 						}
 					}
 				}
-			} else if (type.equals(this.isDxf)) {
-
-			} else if (type.equals(this.isShp)) {
-
 			}
 		}
-
 	}
-
 }

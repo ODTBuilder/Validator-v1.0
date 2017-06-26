@@ -41,6 +41,8 @@ import java.util.Iterator;
 import org.geotools.feature.SchemaException;
 import org.json.simple.JSONObject;
 
+import com.git.gdsbuilder.edit.qa10.EditQA10Collection;
+import com.git.gdsbuilder.edit.qa10.EditQA10LayerCollectionList;
 import com.git.gdsbuilder.edit.qa20.EditQA20Collection;
 import com.git.gdsbuilder.edit.qa20.EditQA20LayerCollectionList;
 import com.vividsolutions.jts.io.ParseException;
@@ -55,7 +57,8 @@ public class EditLayerCollectionListParser {
 
 	JSONObject collectionListObj;
 	String type;
-	EditQA20LayerCollectionList edtCollectionList;
+	EditQA20LayerCollectionList edtQA20CollectionList;
+	EditQA10LayerCollectionList edtQA10CollectionList;
 
 	/**
 	 * EditayerCollectionListParser 생성자
@@ -73,6 +76,8 @@ public class EditLayerCollectionListParser {
 		this.collectionListObj = collectionListObj;
 		if (type.equals("ngi")) {
 			ngiCollectionListParse();
+		} else if (type.equals("dxf")) {
+			dxfCollectionListParse();
 		}
 	}
 
@@ -84,25 +89,55 @@ public class EditLayerCollectionListParser {
 		this.type = type;
 	}
 
-	public EditQA20LayerCollectionList getEdtCollectionList() {
-		return edtCollectionList;
+	public JSONObject getCollectionListObj() {
+		return collectionListObj;
 	}
 
-	public void setEdtCollectionList(EditQA20LayerCollectionList edtCollectionList) {
-		this.edtCollectionList = edtCollectionList;
+	public void setCollectionListObj(JSONObject collectionListObj) {
+		this.collectionListObj = collectionListObj;
+	}
+
+	public EditQA20LayerCollectionList getEdtQA20CollectionList() {
+		return edtQA20CollectionList;
+	}
+
+	public void setEdtQA20CollectionList(EditQA20LayerCollectionList edtQA20CollectionList) {
+		this.edtQA20CollectionList = edtQA20CollectionList;
+	}
+
+	public EditQA10LayerCollectionList getEdtQA10CollectionList() {
+		return edtQA10CollectionList;
+	}
+
+	public void setEdtQA10CollectionList(EditQA10LayerCollectionList edtQA10CollectionList) {
+		this.edtQA10CollectionList = edtQA10CollectionList;
 	}
 
 	public void ngiCollectionListParse() throws FileNotFoundException, IOException, ParseException, SchemaException {
 
-		edtCollectionList = new EditQA20LayerCollectionList();
+		edtQA20CollectionList = new EditQA20LayerCollectionList();
 		Iterator editCollections = collectionListObj.keySet().iterator();
 		while (editCollections.hasNext()) {
 			String collectionName = (String) editCollections.next();
 			JSONObject collectionObj = (JSONObject) collectionListObj.get(collectionName);
 			EditLayerCollectionParser collectionParser = new EditLayerCollectionParser(type, collectionObj);
-			EditQA20Collection dtCollection = collectionParser.getEditCollection();
+			EditQA20Collection dtCollection = collectionParser.getEditQA20Collection();
 			dtCollection.setCollectionName(collectionName);
-			edtCollectionList.add(dtCollection);
+			edtQA20CollectionList.add(dtCollection);
 		}
 	}
+
+	public void dxfCollectionListParse() throws FileNotFoundException, IOException, ParseException, SchemaException {
+		edtQA10CollectionList = new EditQA10LayerCollectionList();
+		Iterator editCollections = collectionListObj.keySet().iterator();
+		while (editCollections.hasNext()) {
+			String collectionName = (String) editCollections.next();
+			JSONObject collectionObj = (JSONObject) collectionListObj.get(collectionName);
+			EditLayerCollectionParser collectionParser = new EditLayerCollectionParser(type, collectionObj);
+			EditQA10Collection dtCollection = collectionParser.getEditQA10Collection();
+			dtCollection.setCollectionName(collectionName);
+			edtQA10CollectionList.add(dtCollection);
+		}
+	}
+
 }

@@ -92,7 +92,8 @@ public class QA20DBQueryManager {
 		return insertQueryMap;
 	}
 
-	public HashMap<String, Object> getQA20LayerTbCreateQuery(String type, String collectionName, QA20Layer qa20Layer) {
+	public HashMap<String, Object> getQA20LayerTbCreateQuery(String type, String collectionName, QA20Layer qa20Layer,
+			String src) {
 
 		String layerTypeStr = qa20Layer.getLayerType();
 		boolean isTextLayer = false;
@@ -103,7 +104,7 @@ public class QA20DBQueryManager {
 		String tableName = "\"geo" + "_" + type + "_" + collectionName + "_" + qa20Layer.getLayerName() + "\"";
 		String defalutCreateQuery = "create table " + tableName + " (" + "f_idx serial primary key" + ","
 				+ "feature_id varchar(100)" + "," + "feature_type varchar(100)" + "," + "geom geometry(" + layerTypeStr
-				+ ", 5186)" + "," + "num_rings numeric" + "," + "num_vertexes numeric" + ",";
+				+ ", " + src + ")" + "," + "num_rings numeric" + "," + "num_vertexes numeric" + ",";
 
 		if (isTextLayer) {
 			defalutCreateQuery += "\"" + "TEXT" + "\"" + "varchar(100),";
@@ -134,7 +135,7 @@ public class QA20DBQueryManager {
 	}
 
 	public List<HashMap<String, Object>> getQA20LayerInsertQuery(String type, String collectionName,
-			QA20Layer qa20Layer) {
+			QA20Layer qa20Layer, String src) {
 
 		String tableName = "\"geo" + "_" + type + "_" + collectionName + "_" + qa20Layer.getLayerName() + "\"";
 
@@ -158,7 +159,7 @@ public class QA20DBQueryManager {
 			String insertDefaultQuery = "insert into " + tableName
 					+ "(feature_id, feature_type, geom, num_rings, num_vertexes, ";
 			String insertDefaultValues = " values('" + feature.getFeatureID() + "'," + "'" + featureType + "',"
-					+ "ST_GeomFromText('" + feature.getGeom().toString() + "', 5186)" + "," + numparts + ","
+					+ "ST_GeomFromText('" + feature.getGeom().toString() + ", " + src + ")" + "," + numparts + ","
 					+ numVertexts + ",";
 
 			// properties
@@ -332,7 +333,7 @@ public class QA20DBQueryManager {
 		}
 	}
 
-	public HashMap<String, Object> getInertQA20FeatureQuery(String tableName, QA20Feature createFeature) {
+	public HashMap<String, Object> getInertQA20FeatureQuery(String tableName, QA20Feature createFeature, String src) {
 
 		HashMap<String, Object> insertQuery = new HashMap<String, Object>();
 		// default
@@ -350,7 +351,7 @@ public class QA20DBQueryManager {
 		String insertDefaultQuery = "insert into \"" + tableName + "\""
 				+ "(feature_id, feature_type, geom, num_rings, num_vertexes, ";
 		String insertDefaultValues = " values('" + createFeature.getFeatureID() + "'," + "'" + featureType + "',"
-				+ "ST_GeomFromText('" + createFeature.getGeom().toString() + "', 5186)" + "," + numparts + ","
+				+ "ST_GeomFromText('" + createFeature.getGeom().toString() + "'," + src + ")" + "," + numparts + ","
 				+ numVertexts + ",";
 
 		// properties
@@ -567,8 +568,8 @@ public class QA20DBQueryManager {
 	public HashMap<String, Object> getNdaAspatialFieldFidxQuery(Integer lmIdx, String originFieldName) {
 		HashMap<String, Object> selectQuery = new HashMap<String, Object>();
 		String tableName = "\"" + "nda_aspatial_field_def" + "\"";
-		String selectQueryStr = "select f_idx, f_name from " + tableName + " where lm_idx = " + lmIdx + " and f_name = '"
-				+ originFieldName + "'";
+		String selectQueryStr = "select f_idx, f_name from " + tableName + " where lm_idx = " + lmIdx
+				+ " and f_name = '" + originFieldName + "'";
 		selectQuery.put("selectQuery", selectQueryStr);
 		return selectQuery;
 	}
@@ -585,11 +586,11 @@ public class QA20DBQueryManager {
 		String decimal = modifiedfield.getDecimal();
 		String isUniqueStr = "";
 		boolean isUnique = modifiedfield.isUnique();
-//		if (isUnique) {
-//			isUniqueStr = "TRUE";
-//		} else {
-//			isUniqueStr = "FALSE";
-//		}
+		// if (isUnique) {
+		// isUniqueStr = "TRUE";
+		// } else {
+		// isUniqueStr = "FALSE";
+		// }
 		updateQueryStr += "f_name = '" + fieldName + "', f_type = '" + type + "', f_size = " + size + ", f_decimal = '"
 				+ decimal + "', f_isunique = " + isUnique;
 		updateQueryStr += " where f_idx = " + fIdx;

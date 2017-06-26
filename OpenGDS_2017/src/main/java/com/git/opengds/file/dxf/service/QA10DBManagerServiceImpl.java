@@ -1,6 +1,5 @@
 package com.git.opengds.file.dxf.service;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -99,7 +98,7 @@ public class QA10DBManagerServiceImpl implements QA10DBManagerService {
 						src);
 				dao.createQA10LayerTb(createQuery);
 
-				// insertQA20Layer
+				// insertQA10Layer
 				List<HashMap<String, Object>> inertLayerQuerys = dbManager.qa10LayerTbInsertQuery(type, collectionName,
 						qa10Layer, src);
 				for (int j = 0; j < inertLayerQuerys.size(); j++) {
