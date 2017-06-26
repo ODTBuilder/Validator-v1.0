@@ -159,7 +159,7 @@ public class QA20DBQueryManager {
 			String insertDefaultQuery = "insert into " + tableName
 					+ "(feature_id, feature_type, geom, num_rings, num_vertexes, ";
 			String insertDefaultValues = " values('" + feature.getFeatureID() + "'," + "'" + featureType + "',"
-					+ "ST_GeomFromText('" + feature.getGeom().toString() + ", " + src + ")" + "," + numparts + ","
+					+ "ST_GeomFromText('" + feature.getGeom().toString() + "', " + src + ")" + "," + numparts + ","
 					+ numVertexts + ",";
 
 			// properties
