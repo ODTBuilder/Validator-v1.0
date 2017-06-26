@@ -7,7 +7,7 @@
 	<select id="selectEditLayerDuplicateCheck" parameterType="hashmap" resultType="int">
 		select count(${nativeNameCol}) from ${metaTableName}
 		where c_idx = (select c_idx from ${colTableName} where ${fileCol} = #{fileName})
-		and (${nativeNameCol} =#{fileName}
-		or ${currentNameCol} =#{fileName})
+		and (${nativeNameCol} =#{layerName}
+		or ${currentNameCol} =#{layerName})
 	</select>
 </mapper>
