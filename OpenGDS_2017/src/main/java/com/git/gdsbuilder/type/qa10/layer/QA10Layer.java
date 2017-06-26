@@ -86,4 +86,12 @@ public class QA10Layer {
 		this.qa10FeatureList.add(feature);
 	}
 
+	public String getOriginLayerID() {
+		return originLayerID;
+	}
+
+	public void setOriginLayerID(String originLayerID) {
+		this.originLayerID = originLayerID;
+	}
+
 }

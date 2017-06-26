@@ -83,8 +83,8 @@ public class QA10LayerCollectionDAOImpl implements QA10LayerCollectionDAO {
 	}
 
 	@Override
-	public List<HashMap<String, Object>> selectQA10LayerMetadataIdx(HashMap<String, Object> metadataIdxQuery) {
-		return sqlSession.selectList(namespace + ".selectLayerMetadataIdx", metadataIdxQuery);
+	public List<HashMap<String, Object>> selectQA10LayerMetadataIdxs(HashMap<String, Object> metadataIdxQuery) {
+		return sqlSession.selectList(namespace + ".selectQA10LayerMetadataIdx", metadataIdxQuery);
 	}
 
 	@Override
@@ -109,7 +109,29 @@ public class QA10LayerCollectionDAOImpl implements QA10LayerCollectionDAO {
 	}
 
 	@Override
-	public List<HashMap<String, Object>>  selectBlockCommonIdx(HashMap<String, Object> blockIdxQuery) {
+	public List<HashMap<String, Object>> selectBlockCommonIdx(HashMap<String, Object> blockIdxQuery) {
 		return sqlSession.selectList(namespace + ".selectBlockCommonIdx", blockIdxQuery);
+	}
+
+	@Override
+	public int selectQA10LayerMetadataIdx(HashMap<String, Object> metadataIdxQuery) {
+		HashMap<String, Object> idxMap = sqlSession.selectOne(namespace + ".selectQA10LayerMetadataIdx", metadataIdxQuery);
+		return (Integer) idxMap.get("lm_idx");
+	}
+
+	@Override
+	public void updateQA10LayerMetadataLayerID(HashMap<String, Object> updateLayerNameQuery) {
+		sqlSession.update(namespace + ".updateQA10LayerMetadataLayerID", updateLayerNameQuery);
+	}
+
+	@Override
+	public int selectTableLayerIdx(HashMap<String, Object> selectTlIdxQuery) {
+		HashMap<String, Object> idxMap = sqlSession.selectOne(namespace + ".selectTableLayerIdx", selectTlIdxQuery);
+		return (Integer) idxMap.get("tl_idx");
+	}
+
+	@Override
+	public void updateTableLayerId(HashMap<String, Object> updateTlIdQuery) {
+		sqlSession.update(namespace + ".updateTableLayerID", updateTlIdQuery);
 	}
 }

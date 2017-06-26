@@ -25,7 +25,6 @@ import java.util.Map;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
-import com.git.gdsbuilder.FileRead.dxf.parser.QA10FileFeatureParser;
 import com.git.gdsbuilder.edit.qa10.EditQA10Layer;
 import com.git.gdsbuilder.edit.qa20.EditQA20Layer;
 import com.git.gdsbuilder.type.qa20.header.NDAField;
@@ -141,7 +140,7 @@ public class EditLayerParser {
 		String orignalName = (String) layerObj.get("originLayerName");
 		String name = (String) layerObj.get("currentLayerName");
 		String title = (String) geoLayerObj.get("title");
-		String abstractContent = (String) geoLayerObj.get("stysummaryle");
+		String abstractContent = (String) geoLayerObj.get("summary");
 
 		Map<String, Object> geoLayer = new HashMap<String, Object>();
 		geoLayer.put("orignalName", orignalName);

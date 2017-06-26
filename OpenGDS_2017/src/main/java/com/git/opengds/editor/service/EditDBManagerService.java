@@ -35,7 +35,7 @@ public interface EditDBManagerService {
 	public Integer checkQA20LayerCollectionName(String collectionName);
 
 	public Integer createQA20LayerCollection(String type, EditQA20Collection editCollection) throws Exception;
-	
+
 	public Integer createQA10LayerCollection(String type, EditQA10Collection editCollection) throws Exception;
 
 	public void insertQA20CreateFeature(String layerName, QA20Feature createFeature, String src);
@@ -52,8 +52,8 @@ public interface EditDBManagerService {
 
 	public void deleteQA10RemovedFeature(String layerName, String featureId);
 
-	public boolean modifyQA20Layer(String type, Integer collectionIdx, QA20Layer qa20Laye, Map<String, Object> geoLayer)
-			throws PSQLException;
+	public boolean modifyQA20Layer(String type, Integer collectionIdx, String collectionName, QA20Layer qa20Laye,
+			Map<String, Object> geoLayer) throws PSQLException;
 
 	public List<HashMap<String, Object>> getQA20LayerMetadataIdx(Integer collectionIdx);
 
@@ -66,5 +66,8 @@ public interface EditDBManagerService {
 			String src) throws PSQLException;
 
 	public boolean dropQA10Layer(String type, Integer collectionIdx, String collectionName, QA10Layer layer);
+
+	public boolean modifyQA10Layer(String type, Integer collectionIdx, String collectionName, QA10Layer modifiedLayer,
+			Map<String, Object> geoLayer);
 
 }

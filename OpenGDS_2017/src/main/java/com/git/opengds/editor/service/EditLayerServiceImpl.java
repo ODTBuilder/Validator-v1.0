@@ -63,13 +63,13 @@ public class EditLayerServiceImpl implements EditLayerService {
 							QA10LayerList createLayerList = editCollection.getCreateLayerList();
 							for (int j = 0; j < createLayerList.size(); j++) {
 								QA10Layer createLayer = createLayerList.get(j);
-								String layerName = createLayer.getLayerID();
+								String layerId = createLayer.getLayerID();
 								boolean isSuccessed = editDBManager.createQA10Layer(type, collectionIdx, collectionName,
 										createLayer, src);
 								if (isSuccessed) {
-									condition.putSuccessedLayers(collectionName, layerName);
+									condition.putSuccessedLayers(collectionName, layerId);
 								} else {
-									condition.putFailedLayers(collectionName, layerName);
+									condition.putFailedLayers(collectionName, layerId);
 								}
 							}
 						} else {
@@ -78,18 +78,33 @@ public class EditLayerServiceImpl implements EditLayerService {
 							QA10LayerList createLayerList = editCollection.getCreateLayerList();
 							for (int j = 0; j < createLayerList.size(); j++) {
 								QA10Layer createLayer = createLayerList.get(j);
-								String layerName = createLayer.getLayerID();
+								String layerId = createLayer.getLayerID();
 								boolean isSuccessed = editDBManager.createQA10Layer(type, insertIdx, collectionName,
 										createLayer, src);
 								if (isSuccessed) {
-									condition.putSuccessedLayers(collectionName, layerName);
+									condition.putSuccessedLayers(collectionName, layerId);
 								} else {
-									condition.putFailedLayers(collectionName, layerName);
+									condition.putFailedLayers(collectionName, layerId);
 								}
 							}
 						}
 						if (editCollection.isModified()) {
-
+							// 1. 수정할 레이어
+							QA10LayerList modifiedLayerList = editCollection.getModifiedLayerList();
+							for (int j = 0; j < modifiedLayerList.size(); j++) {
+								QA10Layer modifiedLayer = modifiedLayerList.get(j);
+								String layerId = modifiedLayer.getLayerID();
+								String originID = modifiedLayer.getOriginLayerID();
+								Map<String, Object> geoLayerList = editCollection.getGeoLayerList();
+								Map<String, Object> geoLayer = (Map<String, Object>) geoLayerList.get(originID);
+								boolean isSuccessed = editDBManager.modifyQA10Layer(type, collectionIdx, collectionName,
+										modifiedLayer, geoLayer);
+								if (isSuccessed) {
+									condition.putSuccessedLayers(collectionName, layerId);
+								} else {
+									condition.putFailedLayers(collectionName, layerId);
+								}
+							}
 						}
 						if (editCollection.isDeleted()) {
 							QA10LayerList layerList = editCollection.getDeletedLayerList();
@@ -101,7 +116,6 @@ public class EditLayerServiceImpl implements EditLayerService {
 								geoserver.removeGeoserverGroupLayer(editCollection.getCollectionName());
 							}
 						}
-
 					}
 				}
 			}
@@ -159,10 +173,11 @@ public class EditLayerServiceImpl implements EditLayerService {
 						for (int j = 0; j < modifiedLayerList.size(); j++) {
 							QA20Layer modifiedLayer = modifiedLayerList.get(j);
 							String layerName = modifiedLayer.getLayerName();
+							String originName = modifiedLayer.getOriginLayerName();
 							Map<String, Object> geoLayerList = editCollection.getGeoLayerList();
-							Map<String, Object> geoLayer = (Map<String, Object>) geoLayerList.get(layerName);
-							boolean isSuccessed = editDBManager.modifyQA20Layer(type, collectionIdx, modifiedLayer,
-									geoLayer);
+							Map<String, Object> geoLayer = (Map<String, Object>) geoLayerList.get(originName);
+							boolean isSuccessed = editDBManager.modifyQA20Layer(type, collectionIdx, collectionName,
+									modifiedLayer, geoLayer);
 							if (isSuccessed) {
 								condition.putSuccessedLayers(collectionName, layerName);
 							} else {

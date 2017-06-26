@@ -41,8 +41,6 @@ public class QA10DBQueryManager {
 		query.put("createQuery", defaultCreateQuery);
 		return query;
 	}
-	
-	
 
 	public List<HashMap<String, Object>> qa10LayerTbInsertQuery(String type, String collectionName, QA10Layer qa10Layer,
 			String src) {
@@ -80,8 +78,8 @@ public class QA10DBQueryManager {
 		String layerTableName = "geo" + "_" + type + "_" + collectionName + "_" + layerId;
 		String insertQueryColumn = "insert into " + "\"qa10_layer_metadata" + "\""
 				+ "(layer_id, layer_t_name, c_idx, current_layer_id)";
-		String insertQueryValue = " values('" + layerId + "', '" + layerTableName + "', " + cIdx + "," + "'"
-				+ layerId + "')";
+		String insertQueryValue = " values('" + layerId + "', '" + layerTableName + "', " + cIdx + "," + "'" + layerId
+				+ "')";
 
 		HashMap<String, Object> insertQueryMap = new HashMap<String, Object>();
 		insertQueryMap.put("insertQuery", insertQueryColumn + insertQueryValue);
@@ -450,5 +448,47 @@ public class QA10DBQueryManager {
 		String deleteQueryStr = "delete from " + tableName + " where c_idx = " + cIdx;
 		deleteQuery.put("deleteQuery", deleteQueryStr);
 		return deleteQuery;
+	}
+
+	public HashMap<String, Object> getSelectQA10LayerMetaDataIdxQuery(Integer cIdx, String layerID) {
+		HashMap<String, Object> selectQuery = new HashMap<String, Object>();
+		String tableName = "\"" + "qa10_layer_metadata" + "\"";
+		String selectQueryStr = "select lm_idx from " + tableName + " where c_idx = " + cIdx + " and "
+				+ "current_layer_id = '" + layerID + "'";
+		selectQuery.put("selectQuery", selectQueryStr);
+		return selectQuery;
+	}
+
+	public HashMap<String, Object> getUpdateQA10LayerMeataLayerIDQuery(Integer lmIdx, String currentID) {
+		HashMap<String, Object> updateQuery = new HashMap<String, Object>();
+		String tableName = "\"" + "qa10_layer_metadata" + "\"";
+		String updateQueryStr = "update " + tableName + " set current_layer_id = '" + currentID + "'"
+				+ "where lm_idx = " + lmIdx;
+		updateQuery.put("updateQuery", updateQueryStr);
+		return updateQuery;
+	}
+
+	public HashMap<String, Object> getSelectTableLayerIdx(int tcIdx, String orignId) {
+
+		String originIdNotType = orignId.substring(0, orignId.indexOf("_"));
+
+		HashMap<String, Object> selectQuery = new HashMap<String, Object>();
+		String tableName = "\"" + "qa10_layercollection_table_layer" + "\"";
+		String selectQueryStr = "select tl_idx from " + tableName + " where tc_idx = " + tcIdx + " and " + "\"" + 2
+				+ "\" = '" + originIdNotType + "'";
+		selectQuery.put("selectQuery", selectQueryStr);
+		return selectQuery;
+	}
+
+	public HashMap<String, Object> getUpdateTableLayerId(int tlIdx, String currentId) {
+
+		String currentIdNotType = currentId.substring(0, currentId.indexOf("_"));
+
+		HashMap<String, Object> updateQuery = new HashMap<String, Object>();
+		String tableName = "\"" + "qa10_layercollection_table_layer" + "\"";
+		String updateQueryStr = "update " + tableName + " set " + "\"" + 2 + "\" = '" + currentIdNotType + "'"
+				+ "where tl_idx = " + tlIdx;
+		updateQuery.put("updateQuery", updateQueryStr);
+		return updateQuery;
 	}
 }

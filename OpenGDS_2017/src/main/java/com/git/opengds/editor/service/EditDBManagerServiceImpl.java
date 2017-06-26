@@ -223,7 +223,7 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 	}
 
 	@Override
-	public boolean modifyQA20Layer(String type, Integer collectionIdx, QA20Layer qa20Layer,
+	public boolean modifyQA20Layer(String type, Integer collectionIdx, String collectionName, QA20Layer qa20Layer,
 			Map<String, Object> geoLayer) throws PSQLException {
 
 		DefaultTransactionDefinition def = new DefaultTransactionDefinition();
@@ -255,7 +255,7 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 			// ngi_point_rep Tb update
 
 			// ngi_linestring_rep Tb update
-			
+
 			// ngi_region_rep Tb update
 
 			// ngi_text_rep Tb update
@@ -295,7 +295,8 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 		String title = (String) geoLayer.get("title");
 		String summary = (String) geoLayer.get("summary");
 		boolean attChangeFlag = (Boolean) geoLayer.get("attChangeFlag");
-		boolean isSuccessed = geoserverService.updateFeatureType(originalName, name, title, summary, "", attChangeFlag);
+		String tableName = "geo_" + type + "_" + collectionName + "_" + originalName;
+		boolean isSuccessed = geoserverService.updateFeatureType(tableName, name, title, summary, "", attChangeFlag);
 		if (isSuccessed) {
 			txManager.commit(status);
 			return true;
@@ -525,7 +526,8 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 			Integer cIdx = qa10DAO.selectQA10LayerCollectionIdx(selectLayerCollectionIdxQuery);
 			if (cIdx != null) {
 				HashMap<String, Object> metadataIdxQuery = dbManager.getSelectLayerMetaDataIdx(cIdx);
-				List<HashMap<String, Object>> metadataIdxMapList = qa10DAO.selectQA10LayerMetadataIdx(metadataIdxQuery);
+				List<HashMap<String, Object>> metadataIdxMapList = qa10DAO
+						.selectQA10LayerMetadataIdxs(metadataIdxQuery);
 				for (int i = 0; i < metadataIdxMapList.size(); i++) {
 					HashMap<String, Object> metadataIdxMap = metadataIdxMapList.get(i);
 					Integer mIdx = (Integer) metadataIdxMap.get("lm_idx");
@@ -560,5 +562,60 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 		}
 		txManager.commit(status);
 		return true;
+	}
+
+	@Override
+	public boolean modifyQA10Layer(String type, Integer collectionIdx, String collectionName, QA10Layer qa10Layer,
+			Map<String, Object> geoLayer) {
+
+		DefaultTransactionDefinition def = new DefaultTransactionDefinition();
+		def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+		TransactionStatus status = txManager.getTransaction(def);
+
+		QA10DBQueryManager queryManager = new QA10DBQueryManager();
+		try {
+			String orignId = qa10Layer.getOriginLayerID();
+			HashMap<String, Object> queryMap = queryManager.getSelectQA10LayerMetaDataIdxQuery(collectionIdx, orignId);
+			Integer lmIdx = qa10DAO.selectQA10LayerMetadataIdx(queryMap);
+
+			// meta Tb - layerName update
+			String currentId = qa10Layer.getLayerID();
+			if (!currentId.equals(orignId)) {
+				HashMap<String, Object> updateLayerNameQuery = queryManager.getUpdateQA10LayerMeataLayerIDQuery(lmIdx,
+						currentId);
+				qa10DAO.updateQA10LayerMetadataLayerID(updateLayerNameQuery);
+			}
+
+			// layerCollection_table_common
+			HashMap<String, Object> selectTcIdxQuery = queryManager.getSelectTableCommonIdx(collectionIdx);
+			int tcIdx = qa10DAO.selectTableCommonIdx(selectTcIdxQuery);
+
+			// layerCollection_table_layer
+			HashMap<String, Object> selectTlIdxQuery = queryManager.getSelectTableLayerIdx(tcIdx, orignId);
+			int tlIdx = qa10DAO.selectTableLayerIdx(selectTlIdxQuery);
+
+			// layerCollection_table_layer - layerId update
+			HashMap<String, Object> updateTlIdQuery = queryManager.getUpdateTableLayerId(tlIdx, currentId);
+			qa10DAO.updateTableLayerId(updateTlIdQuery);
+		} catch (Exception e) {
+			txManager.rollback(status);
+			return false;
+		}
+		txManager.commit(status);
+		// update Geoserver
+		String originalName = (String) geoLayer.get("orignalName");
+		String name = (String) geoLayer.get("name");
+		String title = (String) geoLayer.get("title");
+		String summary = (String) geoLayer.get("summary");
+		boolean attChangeFlag = (Boolean) geoLayer.get("attChangeFlag");
+		String tableName = "geo_" + type + "_" + collectionName + "_" + originalName;
+		boolean isSuccessed = geoserverService.updateFeatureType(tableName, name, title, summary, "", attChangeFlag);
+		if (isSuccessed) {
+			txManager.commit(status);
+			return true;
+		} else {
+			return false;
+		}
+		// return true;
 	}
 }

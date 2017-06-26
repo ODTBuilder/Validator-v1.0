@@ -145,7 +145,7 @@ public class QA10DBManagerServiceImpl implements QA10DBManagerService {
 			Integer cIdx = dao.selectQA10LayerCollectionIdx(selectLayerCollectionIdxQuery);
 			if (cIdx != null) {
 				HashMap<String, Object> metadataIdxQuery = dbManager.getSelectLayerMetaDataIdx(cIdx);
-				List<HashMap<String, Object>> metadataIdxMapList = dao.selectQA10LayerMetadataIdx(metadataIdxQuery);
+				List<HashMap<String, Object>> metadataIdxMapList = dao.selectQA10LayerMetadataIdxs(metadataIdxQuery);
 				for (int i = 0; i < metadataIdxMapList.size(); i++) {
 					HashMap<String, Object> metadataIdxMap = metadataIdxMapList.get(i);
 					Integer mIdx = (Integer) metadataIdxMap.get("lm_idx");
