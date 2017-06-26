@@ -34,6 +34,7 @@
 
 package com.git.gdsbuilder.validator.collection;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 
@@ -96,9 +97,10 @@ public class CollectionValidator {
 	 * @throws SchemaException
 	 * @throws FactoryException
 	 * @throws TransformException
+	 * @throws IOException 
 	 */
 	public CollectionValidator(ValidateLayerCollectionList validateLayerCollectionList)
-			throws NoSuchAuthorityCodeException, SchemaException, FactoryException, TransformException {
+			throws NoSuchAuthorityCodeException, SchemaException, FactoryException, TransformException, IOException {
 		this.validateLayerCollectionList = validateLayerCollectionList;
 		collectionValidate();
 	}
@@ -142,9 +144,10 @@ public class CollectionValidator {
 	 * 3:30:31 @throws SchemaException @throws
 	 * NoSuchAuthorityCodeException @throws FactoryException @throws
 	 * TransformException void @throws
+	 * @throws IOException 
 	 */
 	public void collectionValidate()
-			throws SchemaException, NoSuchAuthorityCodeException, FactoryException, TransformException {
+			throws SchemaException, NoSuchAuthorityCodeException, FactoryException, TransformException, IOException {
 
 		this.errLayerList = new ErrorLayerList();
 		ValidateLayerTypeList types = validateLayerCollectionList.getValidateLayerTypeList();
@@ -226,7 +229,7 @@ public class CollectionValidator {
 	}
 
 	private void geometricValidate(ValidateLayerTypeList types, GeoLayerCollectionList layerCollections)
-			throws SchemaException, NoSuchAuthorityCodeException, FactoryException, TransformException {
+			throws SchemaException, NoSuchAuthorityCodeException, FactoryException, TransformException, IOException {
 		ErrorLayerList geoErrorList = new ErrorLayerList();
 		for (int j = 0; j < layerCollections.size(); j++) {
 			GeoLayerCollection collection = layerCollections.get(j);
@@ -348,7 +351,7 @@ public class CollectionValidator {
 								List<String> relationNames = ((NodeMiss) option).getRelationType();
 								for (int l = 0; l < relationNames.size(); l++) {
 									typeErrorLayer = layerValidator.validateNodeMiss(validateLayerCollectionList
-											.getTypeLayers(relationNames.get(l), collection));
+											.getTypeLayers(relationNames.get(l), collection),"",0.001);
 								}
 								if (typeErrorLayer != null) {
 									errLayer.mergeErrorLayer(typeErrorLayer);

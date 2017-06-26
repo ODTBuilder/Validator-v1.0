@@ -36,6 +36,7 @@ package com.git.gdsbuilder.validator.feature;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TooManyListenersException;
 
 import javax.management.relation.RelationServiceMBean;
 
@@ -79,10 +80,13 @@ import com.vividsolutions.jts.algorithm.CentroidPoint;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jtsexample.geom.ExtendedCoordinate;
+
+import jdk.nashorn.internal.ir.Flags;
 
 public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 
@@ -729,111 +733,48 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 		return null;
 	}
 
-	public List<ErrorFeature> validateNodeMiss(SimpleFeature simpleFeature, List<SimpleFeature> relationSimpleFeatures) throws SchemaException{
-		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
-//		Geometry geometry = (Geometry) simpleFeature.getBounds().;
+	public List<ErrorFeature> validateNodeMiss(SimpleFeature simpleFeature, List<SimpleFeature> relationSimpleFeatures, double tolerence) throws SchemaException{
 		List<ErrorFeature> errorFeatures = new ArrayList<ErrorFeature>();
+		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
+		Coordinate[] coordinates = geometry.getCoordinates();
+		GeometryFactory geometryFactory = new GeometryFactory();
+		LineString line = geometryFactory.createLineString(coordinates);
 		for (int i = 0; i < relationSimpleFeatures.size(); i++) {
-			SimpleFeature relSimpleFeature = relationSimpleFeatures.get(i);
-			Geometry relGeometry = (Geometry) relSimpleFeature.getDefaultGeometry();
-			System.out.println(simpleFeature.getAttribute("ID") +" : " + relSimpleFeature.getAttribute("ID"));
-			/*if(geometry.contains(relGeometry) || geometry.overlaps(relGeometry) || geometry.within(relGeometry) ){
-				Coordinate[] relCoordinates = relGeometry.getCoordinates();
-				Coordinate start = relCoordinates[0];
-				Coordinate end = relCoordinates[relCoordinates.length-1];
-				GeometryFactory geometryFactory = new GeometryFactory();
-				Geometry startPoint = geometryFactory.createPoint(start);
-				Geometry endPoint = geometryFactory.createPoint(end);
-//				System.out.println(startPoint.touches(geometry));
-//				System.out.println(geometry.intersects(startPoint));
-//				System.out.println(geometry.intersects(endPoint));
-//				System.out.println(geo); 
-				if(geometry.touches(startPoint) == false|| (geometry.contains(startPoint) == false)){
-					Boolean flag = false;
-					for (int j = 0; j < relationSimpleFeatures.size(); j++) {
-						SimpleFeature sideSimpleFeature = relationSimpleFeatures.get(j);
-						Geometry sideGeometry = (Geometry) sideSimpleFeature.getDefaultGeometry();
-						if(!(relSimpleFeature.equals(sideSimpleFeature))){
-							if(startPoint.touches(sideGeometry)){
-								flag = true;
-								break;
-							}
+			SimpleFeature lineSimpleFeature = relationSimpleFeatures.get(i);
+			Geometry lineGeometry = (Geometry) lineSimpleFeature.getDefaultGeometry();
+			if(line.intersects(lineGeometry)){
+				Boolean flag = false;
+				Geometry intersectGeom = line.intersection(lineGeometry);
+				Coordinate[] intersectCoor = intersectGeom.getCoordinates();
+				
+				if(intersectGeom.getNumPoints() < 2){
+					Coordinate[] lineCoordinates = lineGeometry.getCoordinates();
+					for (int j = 0; j < lineCoordinates.length; j++) {
+						Coordinate lineCoordinate = lineCoordinates[j];
+						Geometry linePoint = geometryFactory.createPoint(lineCoordinate);
+						if(Math.abs(linePoint.distance(intersectGeom)) < tolerence){
+							flag = true;
+							break;
 						}
 					}
+					
 					if(flag == false){
-						ErrorFeature errorFeature = new ErrorFeature(relSimpleFeature.getID(), 
-								NodeMiss.Type.NODEMISS.errType(),NodeMiss.Type.NODEMISS.errName(), startPoint);
-						errorFeatures.add(errorFeature);
+						ErrorFeature errorFeature = new ErrorFeature(lineSimpleFeature.getID(), NodeMiss.Type.NODEMISS.errType(),
+								NodeMiss.Type.NODEMISS.errName(), intersectGeom); 
 					}
+					
+				}else{
+					int numPoint = intersectGeom.getNumPoints();
 				}
-				if(geometry.touches(endPoint) == false || geometry.contains(endPoint) == false){
-					Boolean flag = false;
-					for (int j = 0; j < relationSimpleFeatures.size(); j++) {
-						SimpleFeature sideSimpleFeature = relationSimpleFeatures.get(j);
-						Geometry sideGeometry = (Geometry) sideSimpleFeature.getDefaultGeometry();
-						if(!(relSimpleFeature.equals(sideSimpleFeature))){
-							if(endPoint.touches(sideGeometry)){
-								flag = true;
-								break;
-							}
-						}
-					}
-					if(flag == false){
-						ErrorFeature errorFeature = new ErrorFeature(relSimpleFeature.getID(), 
-								NodeMiss.Type.NODEMISS.errType(),NodeMiss.Type.NODEMISS.errName(), endPoint);
-						errorFeatures.add(errorFeature);
-					}
-				}	
-			}*/
-			if(geometry.contains(relGeometry) || geometry.overlaps(relGeometry) || geometry.within(relGeometry) ){
-				Coordinate[] relCoordinates = relGeometry.getCoordinates();
-				Coordinate start = relCoordinates[0];
-				Coordinate end = relCoordinates[relCoordinates.length-1];
-				GeometryFactory geometryFactory = new GeometryFactory();
-				Geometry startPoint = geometryFactory.createPoint(start);
-				Geometry endPoint = geometryFactory.createPoint(end);
-//				System.out.println(startPoint.touches(geometry));
-//				System.out.println(geometry.intersects(startPoint));
-//				System.out.println(geometry.intersects(endPoint));
-//				System.out.println(geo); 
-				if(geometry.isWithinDistance(startPoint, 0)){
-					Boolean flag = false;
-					for (int j = 0; j < relationSimpleFeatures.size(); j++) {
-						SimpleFeature sideSimpleFeature = relationSimpleFeatures.get(j);
-						Geometry sideGeometry = (Geometry) sideSimpleFeature.getDefaultGeometry();
-						if(!(relSimpleFeature.equals(sideSimpleFeature))){
-							if(startPoint.touches(sideGeometry)){
-								flag = true;
-								break;
-							}
-						}
-					}
-					if(flag == false){
-						ErrorFeature errorFeature = new ErrorFeature(relSimpleFeature.getID(), 
-								NodeMiss.Type.NODEMISS.errType(),NodeMiss.Type.NODEMISS.errName(), startPoint);
-						errorFeatures.add(errorFeature);
-					}
-				}
-				if(geometry.isWithinDistance(endPoint, 0)){
-					Boolean flag = false;
-					for (int j = 0; j < relationSimpleFeatures.size(); j++) {
-						SimpleFeature sideSimpleFeature = relationSimpleFeatures.get(j);
-						Geometry sideGeometry = (Geometry) sideSimpleFeature.getDefaultGeometry();
-						if(!(relSimpleFeature.equals(sideSimpleFeature))){
-							if(endPoint.touches(sideGeometry)){
-								flag = true;
-								break;
-							}
-						}
-					}
-					if(flag == false){
-						ErrorFeature errorFeature = new ErrorFeature(relSimpleFeature.getID(), 
-								NodeMiss.Type.NODEMISS.errType(),NodeMiss.Type.NODEMISS.errName(), endPoint);
-						errorFeatures.add(errorFeature);
-					}
-				}	
+				//System.out.println(intersectGeom.getNumGeometries());
+				System.out.println(intersectGeom.getNumPoints());
+				
 			}
 		}
+		
+		
+		
+		
 		return errorFeatures;
 	}
 
