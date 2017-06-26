@@ -68,7 +68,7 @@ public class QA20FileUploadServiceImpl implements QA20FileUploadService {
 		fileMeta.setDbInsertFlag(returnInfo.isDbInsertFlag());
 
 		// publish Layer
-		if (returnInfo != null) {
+		if (fileMeta.isDbInsertFlag()) {
 			fileMeta.setUploadFlag(true);
 			FileMeta geoserverFileMeta = geoserverService.dbLayerPublishGeoserver(returnInfo);
 			boolean isPublished = geoserverFileMeta.isServerPublishFlag();

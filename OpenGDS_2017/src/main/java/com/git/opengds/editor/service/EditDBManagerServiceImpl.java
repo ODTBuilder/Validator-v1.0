@@ -573,13 +573,14 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 		TransactionStatus status = txManager.getTransaction(def);
 
 		QA10DBQueryManager queryManager = new QA10DBQueryManager();
+	
+		String orignId = qa10Layer.getOriginLayerID();
+		String currentId = qa10Layer.getLayerID();
 		try {
-			String orignId = qa10Layer.getOriginLayerID();
 			HashMap<String, Object> queryMap = queryManager.getSelectQA10LayerMetaDataIdxQuery(collectionIdx, orignId);
 			Integer lmIdx = qa10DAO.selectQA10LayerMetadataIdx(queryMap);
 
 			// meta Tb - layerName update
-			String currentId = qa10Layer.getLayerID();
 			if (!currentId.equals(orignId)) {
 				HashMap<String, Object> updateLayerNameQuery = queryManager.getUpdateQA10LayerMeataLayerIDQuery(lmIdx,
 						currentId);
@@ -609,7 +610,8 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 		String summary = (String) geoLayer.get("summary");
 		boolean attChangeFlag = (Boolean) geoLayer.get("attChangeFlag");
 		String tableName = "geo_" + type + "_" + collectionName + "_" + originalName;
-		boolean isSuccessed = geoserverService.updateFeatureType(tableName, name, title, summary, "", attChangeFlag);
+		String tableNameCurrent = "geo_" + type + "_" + collectionName + "_" + currentId;
+		boolean isSuccessed = geoserverService.updateFeatureType(tableName, tableNameCurrent, title, summary, "", attChangeFlag);
 		if (isSuccessed) {
 			txManager.commit(status);
 			return true;
