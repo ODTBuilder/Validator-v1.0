@@ -17,15 +17,18 @@
 
 package com.git.gdsbuilder.type.validate.option;
 
-import org.json.simple.JSONArray;
+import java.util.HashMap;
+
+import org.json.simple.JSONObject;
 
 public class AttributeFix extends ValidatorOption {
 
-	JSONArray attributeKey;
+	HashMap<String, Object> attributeKey;
 
-	public enum Type {
+	public enum Type{
 
 		ATTRIBUTEFIX("AttributeFix", "AttributeError");
+
 		String errName;
 		String errType;
 
@@ -34,26 +37,50 @@ public class AttributeFix extends ValidatorOption {
 			this.errType = errType;
 		}
 
+		/**
+		 * @return the errName
+		 */
 		public String errName() {
 			return errName;
 		}
 
+		/**
+		 * @return the errType
+		 */
 		public String errType() {
 			return errType;
 		}
-	};
+	}
 
-	public AttributeFix(JSONArray attributeKey) {
+	/**
+	 * @param relationType
+	 */
+	public AttributeFix(HashMap<String, Object> attributeKey) {
 		super();
 		this.attributeKey = attributeKey;
 	}
+	
+	public AttributeFix(){
+		super();
+		this.attributeKey = new HashMap<String, Object>();
+	}
 
-	public JSONArray getAttributeKey() {
+	/**
+	 * @return the relationType
+	 */
+	public HashMap<String, Object> getRelationType() {
 		return attributeKey;
 	}
 
-	public void setAttributeKey(JSONArray attributeKey) {
+	/**
+	 * @param relationType the relationType to set
+	 */
+	public void setAttributeType(HashMap<String, Object> attributeKey) {
 		this.attributeKey = attributeKey;
+	}
+	
+	public void addRelationLayerType(String notNullAtt, JSONObject attJsonObject){
+		attributeKey.put(notNullAtt, attJsonObject);
 	}
 
 }

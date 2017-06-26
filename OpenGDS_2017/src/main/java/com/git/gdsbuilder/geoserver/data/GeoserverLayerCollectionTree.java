@@ -48,6 +48,7 @@ import java.util.List;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
+import com.git.gdsbuilder.FileRead.en.EnFileFormat;
 import com.git.gdsbuilder.geosolutions.geoserver.rest.decoder.RESTFeatureTypeList;
 
 /**
@@ -242,6 +243,9 @@ public class GeoserverLayerCollectionTree extends JSONArray {
 					} else {
 						int dash = cutLayerName.indexOf("_");
 						String fileType = cutLayerName.substring(0, dash);
+						if(fileType.equals(EnFileFormat.DXF.getStateName())||fileType.equals(EnFileFormat.NGI.getStateName())||fileType.equals(EnFileFormat.SHP.getStateName())){
+							
+						
 						String lastName = cutLayerName.substring(dash+1); // 파일명_레이어명
 						int div = lastName.indexOf("_");
 						String fileName = lastName.substring(0, div);
@@ -426,6 +430,7 @@ public class GeoserverLayerCollectionTree extends JSONArray {
 								super.add(fileNameJson);
 								super.add(layerJson);
 							}
+						}
 						}
 					}
 				}

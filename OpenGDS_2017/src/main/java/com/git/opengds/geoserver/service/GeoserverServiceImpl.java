@@ -104,6 +104,7 @@ public class GeoserverServiceImpl implements GeoserverService {
 		List<String> layerNameList = layerInfo.getLayerNames();
 		String originSrc = "EPSG:"+layerInfo.getOriginSrc();
 		List<String> successLayerList = new ArrayList<String>();
+		String fileType = layerInfo.getFileType();
 		boolean flag = false;
 		
 		Collection<Geometry> geometryCollection = new ArrayList<Geometry>();
@@ -115,7 +116,7 @@ public class GeoserverServiceImpl implements GeoserverService {
 			GSLayerEncoder layerEncoder = new GSLayerEncoder();
 			String layerName = layerNameList.get(i);
 			String upperLayerName = layerName.toUpperCase();
-			String fileType = layerInfo.getFileType();
+			
 			
 			int dash = layerName.indexOf("_");
 			String cutLayerName = layerName.substring(0, dash);
@@ -212,7 +213,7 @@ public class GeoserverServiceImpl implements GeoserverService {
 	    
 	    group.setBounds(originSrc, minx, maxx, miny, maxy);
 
-		dtPublisher.createLayerGroup(wsName, fileName, group);
+		dtPublisher.createLayerGroup(wsName, "gro_"+ fileType + "_" + fileName, group);
 		layerInfo.setServerPublishFlag(flag);
 
 		return layerInfo;

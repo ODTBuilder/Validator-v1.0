@@ -31,8 +31,10 @@ public interface QA10LayerCollectionDAO {
 
 	public Integer selectQA10LayerCollectionIdx(HashMap<String, Object> selectLayerCollectionIdxQuery);
 
-	public List<HashMap<String, Object>> selectQA10LayerMetadataIdx(HashMap<String, Object> metadataIdxQuery);
+	public List<HashMap<String, Object>> selectQA10LayerMetadataIdxs(HashMap<String, Object> metadataIdxQuery);
 
+	public int selectQA10LayerMetadataIdx(HashMap<String, Object> metadataIdxQuery);
+	
 	public HashMap<String, Object> selectQA10LayerTableName(HashMap<String, Object> layerTbNameQuery);
 
 	public int dropLayer(HashMap<String, Object> dropLayerTbQuery);
@@ -42,5 +44,11 @@ public interface QA10LayerCollectionDAO {
 	public Integer selectTableCommonIdx(HashMap<String, Object> tableIdxQuery);
 
 	public List<HashMap<String, Object>>  selectBlockCommonIdx(HashMap<String, Object> tableIdxQuery);
+
+	public void updateQA10LayerMetadataLayerID(HashMap<String, Object> updateLayerNameQuery);
+
+	public int selectTableLayerIdx(HashMap<String, Object> selectTlIdxQuery);
+
+	public void updateTableLayerId(HashMap<String, Object> updateTlIdQuery);
 
 }

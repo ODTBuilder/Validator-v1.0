@@ -36,6 +36,7 @@ package com.git.gdsbuilder.validator.feature;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TooManyListenersException;
 
 import javax.management.relation.RelationServiceMBean;
 
@@ -63,11 +64,13 @@ import com.git.gdsbuilder.type.validate.option.ConOverDegree;
 import com.git.gdsbuilder.type.validate.option.CrossRoad;
 import com.git.gdsbuilder.type.validate.option.EntityDuplicated;
 import com.git.gdsbuilder.type.validate.option.LayerMiss;
+import com.git.gdsbuilder.type.validate.option.NodeMiss;
 import com.git.gdsbuilder.type.validate.option.OutBoundary;
 import com.git.gdsbuilder.type.validate.option.OverShoot;
 import com.git.gdsbuilder.type.validate.option.SelfEntity;
 import com.git.gdsbuilder.type.validate.option.SmallArea;
 import com.git.gdsbuilder.type.validate.option.SmallLength;
+import com.git.gdsbuilder.type.validate.option.TwistedPolygon;
 import com.git.gdsbuilder.type.validate.option.UnderShoot;
 import com.git.gdsbuilder.type.validate.option.UselessEntity;
 import com.git.gdsbuilder.type.validate.option.UselessPoint;
@@ -77,10 +80,13 @@ import com.vividsolutions.jts.algorithm.CentroidPoint;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jtsexample.geom.ExtendedCoordinate;
+
+import jdk.nashorn.internal.ir.Flags;
 
 public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 
@@ -714,6 +720,7 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 			GeometryFactory geometryFactory = new GeometryFactory();
 			Coordinate[] relCoordinates = relGeometry.getCoordinates();
 			for (int i = 0; i < relCoordinates.length; i++) {
+
 				Coordinate coordinate = relCoordinates[i];
 				Geometry coorPoint = geometryFactory.createPoint(coordinate);
 				if(!(geometry.touches(coorPoint))){
@@ -726,11 +733,66 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 		return null;
 	}
 
-	public ErrorFeature validateNodeMiss(SimpleFeature simpleFeature) throws SchemaException{
-
-		return null;
+	public List<ErrorFeature> validateNodeMiss(SimpleFeature simpleFeature, List<SimpleFeature> relationSimpleFeatures, double tolerence) throws SchemaException{
+		List<ErrorFeature> errorFeatures = new ArrayList<ErrorFeature>();
+		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
+		Coordinate[] coordinates = geometry.getCoordinates();
+		GeometryFactory geometryFactory = new GeometryFactory();
+		LineString line = geometryFactory.createLineString(coordinates);
+		for (int i = 0; i < relationSimpleFeatures.size(); i++) {
+			SimpleFeature lineSimpleFeature = relationSimpleFeatures.get(i);
+			Geometry lineGeometry = (Geometry) lineSimpleFeature.getDefaultGeometry();
+			if(line.intersects(lineGeometry)){
+				Boolean flag = false;
+				Geometry intersectGeom = line.intersection(lineGeometry);
+				Coordinate[] intersectCoor = intersectGeom.getCoordinates();
+				
+				if(intersectGeom.getNumPoints() < 2){
+					Coordinate[] lineCoordinates = lineGeometry.getCoordinates();
+					for (int j = 0; j < lineCoordinates.length; j++) {
+						Coordinate lineCoordinate = lineCoordinates[j];
+						Geometry linePoint = geometryFactory.createPoint(lineCoordinate);
+						if(Math.abs(linePoint.distance(intersectGeom)) < tolerence){
+							flag = true;
+							break;
+						}
+					}
+					
+					if(flag == false){
+						ErrorFeature errorFeature = new ErrorFeature(lineSimpleFeature.getID(), NodeMiss.Type.NODEMISS.errType(),
+								NodeMiss.Type.NODEMISS.errName(), intersectGeom); 
+					}
+					
+				}else{
+					int numPoint = intersectGeom.getNumPoints();
+				}
+				//System.out.println(intersectGeom.getNumGeometries());
+				System.out.println(intersectGeom.getNumPoints());
+				
+			}
+		}
+		
+		
+		
+		
+		return errorFeatures;
 	}
 
 
+	// 객체 꼬임 여부 검사
+	public ErrorFeature validateTwistedPolygon (SimpleFeature simpleFeature) throws SchemaException{
+		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
+
+		if(!(geometry.isValid())){
+			GeometryFactory f = new GeometryFactory();
+			Coordinate[] coordinates = geometry.getCoordinates();
+			Geometry errGeometry = f.createPoint(coordinates[0]);
+			ErrorFeature errorFeature = new ErrorFeature(simpleFeature.getID(), TwistedPolygon.Type.TWISTEDPOLYGON.errType(),
+					TwistedPolygon.Type.TWISTEDPOLYGON.errName(), errGeometry);
+			return errorFeature;
+		}else{
+			return null;
+		}
+	}
 
 }

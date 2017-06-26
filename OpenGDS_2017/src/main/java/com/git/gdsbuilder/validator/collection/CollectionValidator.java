@@ -34,9 +34,12 @@
 
 package com.git.gdsbuilder.validator.collection;
 
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 
 import org.geotools.feature.SchemaException;
+import org.json.simple.JSONObject;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.operation.TransformException;
@@ -50,6 +53,8 @@ import com.git.gdsbuilder.type.validate.error.ErrorLayer;
 import com.git.gdsbuilder.type.validate.error.ErrorLayerList;
 import com.git.gdsbuilder.type.validate.layer.ValidateLayerType;
 import com.git.gdsbuilder.type.validate.layer.ValidateLayerTypeList;
+import com.git.gdsbuilder.type.validate.option.Admin;
+import com.git.gdsbuilder.type.validate.option.AttributeFix;
 import com.git.gdsbuilder.type.validate.option.B_SymbolOutSided;
 import com.git.gdsbuilder.type.validate.option.BridgeName;
 import com.git.gdsbuilder.type.validate.option.BuildingOpen;
@@ -59,6 +64,7 @@ import com.git.gdsbuilder.type.validate.option.ConOverDegree;
 import com.git.gdsbuilder.type.validate.option.CrossRoad;
 import com.git.gdsbuilder.type.validate.option.EntityDuplicated;
 import com.git.gdsbuilder.type.validate.option.LayerMiss;
+import com.git.gdsbuilder.type.validate.option.NodeMiss;
 import com.git.gdsbuilder.type.validate.option.OutBoundary;
 import com.git.gdsbuilder.type.validate.option.OverShoot;
 import com.git.gdsbuilder.type.validate.option.SelfEntity;
@@ -91,9 +97,10 @@ public class CollectionValidator {
 	 * @throws SchemaException
 	 * @throws FactoryException
 	 * @throws TransformException
+	 * @throws IOException 
 	 */
 	public CollectionValidator(ValidateLayerCollectionList validateLayerCollectionList)
-			throws NoSuchAuthorityCodeException, SchemaException, FactoryException, TransformException {
+			throws NoSuchAuthorityCodeException, SchemaException, FactoryException, TransformException, IOException {
 		this.validateLayerCollectionList = validateLayerCollectionList;
 		collectionValidate();
 	}
@@ -137,9 +144,10 @@ public class CollectionValidator {
 	 * 3:30:31 @throws SchemaException @throws
 	 * NoSuchAuthorityCodeException @throws FactoryException @throws
 	 * TransformException void @throws
+	 * @throws IOException 
 	 */
 	public void collectionValidate()
-			throws SchemaException, NoSuchAuthorityCodeException, FactoryException, TransformException {
+			throws SchemaException, NoSuchAuthorityCodeException, FactoryException, TransformException, IOException {
 
 		this.errLayerList = new ErrorLayerList();
 		ValidateLayerTypeList types = validateLayerCollectionList.getValidateLayerTypeList();
@@ -147,7 +155,7 @@ public class CollectionValidator {
 
 		// layerMiss 검수
 		layerMissValidate(types, layerCollections);
-
+		
 		// geometric 검수
 		geometricValidate(types, layerCollections);
 
@@ -192,6 +200,21 @@ public class CollectionValidator {
 											.getTypeLayers(relationNames.get(l), collection));
 								}
 							}
+							if(option instanceof Admin){
+								typeErrorLayer = layerValidator.validateAdmin();
+							}
+							if(option instanceof AttributeFix){
+								HashMap<String, Object> attributeNames = ((AttributeFix) option).getRelationType();
+								String typeLayerName = typeLayer.getLayerName();
+								int index = typeLayerName.indexOf("_");
+								String layerCode = typeLayerName.substring(0, index);
+								JSONObject attrJson = (JSONObject) attributeNames.get(layerCode);
+								typeErrorLayer = layerValidator.validateAttributeFix(attrJson);
+							}
+							if(option instanceof Z_ValueAmbiguous){
+								String attributeKey = ((Z_ValueAmbiguous) option).getAttributeKey();
+								typeErrorLayer = layerValidator.validateZ_ValueAmbiguous(attributeKey);
+							}
 							if (typeErrorLayer != null) {
 								errLayer.mergeErrorLayer(typeErrorLayer);
 							}
@@ -206,7 +229,7 @@ public class CollectionValidator {
 	}
 
 	private void geometricValidate(ValidateLayerTypeList types, GeoLayerCollectionList layerCollections)
-			throws SchemaException, NoSuchAuthorityCodeException, FactoryException, TransformException {
+			throws SchemaException, NoSuchAuthorityCodeException, FactoryException, TransformException, IOException {
 		ErrorLayerList geoErrorList = new ErrorLayerList();
 		for (int j = 0; j < layerCollections.size(); j++) {
 			GeoLayerCollection collection = layerCollections.get(j);
@@ -232,6 +255,13 @@ public class CollectionValidator {
 								continue;
 							}
 							LayerValidatorImpl layerValidator = new LayerValidatorImpl(typeLayer);
+							
+							typeErrorLayer = layerValidator.validateTwistedPolygon();
+							
+							if (typeErrorLayer != null) {
+								errLayer.mergeErrorLayer(typeErrorLayer);
+							}
+							
 							if (option instanceof ConBreak) {
 								typeErrorLayer = layerValidator.validateConBreakLayers(neatLayer);
 							}
@@ -303,6 +333,9 @@ public class CollectionValidator {
 									typeErrorLayer = layerValidator.vallidateB_SymbolOutSided(validateLayerCollectionList
 											.getTypeLayers(relationNames.get(l), collection));
 								}
+								if (typeErrorLayer != null) {
+									errLayer.mergeErrorLayer(typeErrorLayer);
+								}
 							}
 							if(option instanceof CrossRoad){
 								List<String> relationNames = ((CrossRoad)option).getRelationType();
@@ -310,8 +343,21 @@ public class CollectionValidator {
 									typeErrorLayer = layerValidator.validateCrossRoad(validateLayerCollectionList
 											.getTypeLayers(relationNames.get(l), collection));
 								}
+								if (typeErrorLayer != null) {
+									errLayer.mergeErrorLayer(typeErrorLayer);
+								}
 							}
-
+							if(option instanceof NodeMiss){
+								List<String> relationNames = ((NodeMiss) option).getRelationType();
+								for (int l = 0; l < relationNames.size(); l++) {
+									typeErrorLayer = layerValidator.validateNodeMiss(validateLayerCollectionList
+											.getTypeLayers(relationNames.get(l), collection),"",0.001);
+								}
+								if (typeErrorLayer != null) {
+									errLayer.mergeErrorLayer(typeErrorLayer);
+								}
+							}
+							
 							if (typeErrorLayer != null) {
 								errLayer.mergeErrorLayer(typeErrorLayer);
 							}
