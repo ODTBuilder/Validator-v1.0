@@ -17,7 +17,7 @@
 
 package com.git.opengds.geoserver.persistence;
 
-import java.util.HashMap;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -44,7 +44,7 @@ public class GeoserverDAOImpl implements GeoserverDAO {
 	 * @see com.git.opengds.geoserver.persistence.GeoserverDAO#selectEditLayerDuplicateCheck(java.util.HashMap)
 	 */
 	@Override
-	public boolean selectEditLayerDuplicateCheck(HashMap<String,Object> infoMap){
+	public boolean selectEditLayerDuplicateCheck(Map<String,Object> infoMap){
 		int duplicateNums = 0;
 		try{
 			duplicateNums = sqlSession.selectOne(namespace + ".selectEditLayerDuplicateCheck", infoMap);

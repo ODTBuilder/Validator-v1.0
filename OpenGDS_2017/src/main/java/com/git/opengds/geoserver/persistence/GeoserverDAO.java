@@ -17,7 +17,7 @@
 
 package com.git.opengds.geoserver.persistence;
 
-import java.util.HashMap;
+import java.util.Map;
 
 public interface GeoserverDAO {
 
@@ -25,9 +25,9 @@ public interface GeoserverDAO {
 	 * GeoLayer 중복체크
 	 * @author SG.Lee
 	 * @Date 2017. 6. 25. 오후 11:16:16
-	 * @param infoMap
+	 * @param paramsMap
 	 * @return boolean
 	 * */
-	public boolean selectEditLayerDuplicateCheck(HashMap<String,Object> infoMap);
+	public boolean selectEditLayerDuplicateCheck(Map<String, Object> paramsMap);
 	
 }

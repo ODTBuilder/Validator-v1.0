@@ -44,10 +44,19 @@ public class ValidatorServiceImpl implements ValidatorService {
 	@Override
 	public JSONObject validate(String jsonObject) throws Exception {
 		
+<<<<<<< HEAD
 	//	errorLayerExportService.test();
 		try {
 			// 파라미터 파싱
 			BuilderJSONQA20Parser parserManager = new BuilderJSONQA20Parser();
+=======
+
+		//errorLayerExportService.test();
+
+		try {
+			// 파라미터 파싱
+ 			BuilderJSONParser parserManager = new BuilderJSONParser();
+>>>>>>> 9e0874a3fd8e0668e4af28bf6be871c1e42552e3
 			HashMap<String, Object> valdateObj = parserManager.parseValidateObj(jsonObject);
 			ValidateLayerTypeList validateLayerTypeList = (ValidateLayerTypeList) valdateObj.get("typeValidate");
 			GeoLayerCollectionList collectionList = (GeoLayerCollectionList) valdateObj.get("collectionList");

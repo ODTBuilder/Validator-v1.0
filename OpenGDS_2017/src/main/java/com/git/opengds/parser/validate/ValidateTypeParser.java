@@ -18,6 +18,7 @@
 package com.git.opengds.parser.validate;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -27,6 +28,7 @@ import org.json.simple.JSONObject;
 import com.git.gdsbuilder.type.validate.layer.ValidateLayerType;
 import com.git.gdsbuilder.type.validate.layer.ValidateLayerTypeList;
 import com.git.gdsbuilder.type.validate.option.Admin;
+import com.git.gdsbuilder.type.validate.option.AttributeFix;
 import com.git.gdsbuilder.type.validate.option.B_SymbolOutSided;
 import com.git.gdsbuilder.type.validate.option.BridgeName;
 import com.git.gdsbuilder.type.validate.option.BuildingOpen;
@@ -36,6 +38,7 @@ import com.git.gdsbuilder.type.validate.option.ConOverDegree;
 import com.git.gdsbuilder.type.validate.option.CrossRoad;
 import com.git.gdsbuilder.type.validate.option.EntityDuplicated;
 import com.git.gdsbuilder.type.validate.option.LayerMiss;
+import com.git.gdsbuilder.type.validate.option.NodeMiss;
 import com.git.gdsbuilder.type.validate.option.OutBoundary;
 import com.git.gdsbuilder.type.validate.option.OverShoot;
 import com.git.gdsbuilder.type.validate.option.PointDuplicated;
@@ -47,6 +50,7 @@ import com.git.gdsbuilder.type.validate.option.UselessEntity;
 import com.git.gdsbuilder.type.validate.option.UselessPoint;
 import com.git.gdsbuilder.type.validate.option.ValidatorOption;
 import com.git.gdsbuilder.type.validate.option.WaterOpen;
+import com.git.gdsbuilder.type.validate.option.Z_ValueAmbiguous;
 
 /**
  * JSONArray를 ValidateLayerTypeList 객체로 파싱하는 클래스
@@ -152,6 +156,9 @@ public class ValidateTypeParser {
 		List<ValidatorOption> optionList = new ArrayList<ValidatorOption>();
 
 		Iterator optionNames = qaOptions.keySet().iterator();
+
+		//TwistedPolygon twistedPolygon = new TwistedPolygon();
+
 		while (optionNames.hasNext()) {
 			String optionName = (String) optionNames.next();
 			if (optionName.equalsIgnoreCase(ConBreak.Type.CONBREAK.errName())) {
@@ -180,19 +187,17 @@ public class ValidateTypeParser {
 					optionList.add(conOverDegree);
 				}
 			}
-			// if
-			// (optionName.equalsIgnoreCase(Z_ValueAmbiguous.Type.Z_VALUEAMBIGUOUS.errName()))
-			// {
-			// Object z_Value = qaOptions.get("zValueAmbiguous");
-			// if (z_Value == null) {
-			// continue;
-			// } else {
-			// String z_ValueKey = (String) z_Value;
-			// ValidatorOption Z_ValueAmbiguous = new
-			// Z_ValueAmbiguous(z_ValueKey);
-			// optionList.add(Z_ValueAmbiguous);
-			// }
-			// }
+			if
+			(optionName.equalsIgnoreCase(Z_ValueAmbiguous.Type.Z_VALUEAMBIGUOUS.errName())){
+				Object z_Value = qaOptions.get("Z_ValueAmbiguous");
+				if (z_Value == null) {
+					continue;
+				} else {
+					String z_ValueKey = (String) z_Value;
+					ValidatorOption Z_ValueAmbiguous = new Z_ValueAmbiguous(z_ValueKey);
+					optionList.add(Z_ValueAmbiguous);
+				}
+			}
 			if (optionName.equalsIgnoreCase(UselessPoint.Type.USELESSPOINT.errName())) {
 				Boolean isTrue = (Boolean) qaOptions.get("UselessPoint");
 				if (isTrue) {
@@ -304,7 +309,7 @@ public class ValidateTypeParser {
 					}
 					ValidatorOption layerMiss = new LayerMiss(layerType);
 					optionList.add(layerMiss);
-					
+
 				}
 			}
 			if(optionName.equalsIgnoreCase(UselessEntity.Type.USELESSENTITY.errName())){
@@ -319,7 +324,7 @@ public class ValidateTypeParser {
 				if(isTrue){
 					BuildingOpen buildingOpen = new BuildingOpen();
 					optionList.add(buildingOpen);				
-					}
+				}
 			}
 			if(optionName.equalsIgnoreCase(WaterOpen.Type.WATEROPEN.errName())){
 				Boolean isTrue = (Boolean) qaOptions.get("WaterOpen");
@@ -328,7 +333,7 @@ public class ValidateTypeParser {
 					optionList.add(waterOpen);
 				}
 			}
-			
+
 			if(optionName.equalsIgnoreCase(B_SymbolOutSided.Type.B_SYMBOLOUTSIDED.errName())){
 				Object b_SymbolOutSidedObj = qaOptions.get("B_SymbolOutSided");
 				if(b_SymbolOutSidedObj == null){
@@ -345,9 +350,9 @@ public class ValidateTypeParser {
 					ValidatorOption b_SymbolOutSided = new B_SymbolOutSided(relations);
 					optionList.add(b_SymbolOutSided);
 				}
-				
+
 			}
-			
+
 			if (optionName.equalsIgnoreCase(PointDuplicated.Type.POINTDUPLICATED.errName())) {
 				Boolean isTrue = (Boolean) qaOptions.get("PointDuplicated");
 				if (isTrue) {
@@ -355,7 +360,7 @@ public class ValidateTypeParser {
 					optionList.add(pointDuplicated);
 				}
 			}
-			
+
 			if(optionName.equalsIgnoreCase(CrossRoad.Type.CROSSROAD.errName())){
 				Object crossRoadObj = qaOptions.get("CrossRoad");
 				if(crossRoadObj == null){
@@ -397,7 +402,41 @@ public class ValidateTypeParser {
 					optionList.add(admin);
 				}
 			}
-			
+			if (optionName.equalsIgnoreCase(AttributeFix.Type.ATTRIBUTEFIX.errName())){
+				Object attributeFixObj = qaOptions.get("AttributeFix");
+				if(attributeFixObj == null){
+					continue;
+				}else{
+					HashMap<String, Object> hashMap = new HashMap<String, Object>();
+					JSONObject attributeFixValue = (JSONObject) attributeFixObj;
+					Iterator iterator = attributeFixValue.keySet().iterator();
+					while (iterator.hasNext()) {
+						String layerName = (String) iterator.next();
+						JSONObject attributeObj = (JSONObject) attributeFixValue.get(layerName);
+						hashMap.put(layerName, attributeObj);
+					}
+					ValidatorOption attributeFix = new AttributeFix(hashMap);
+					optionList.add(attributeFix);
+				}
+			}
+
+			if(optionName.equalsIgnoreCase(NodeMiss.Type.NODEMISS.errName())){
+				Object nodeMissObj = qaOptions.get("NodeMiss");
+				if(nodeMissObj == null){
+					continue;
+				}else{
+					List<String> relations = new ArrayList<String>();
+					JSONObject nodeMissValue = (JSONObject) nodeMissObj;
+					JSONArray relationValues = (JSONArray) nodeMissValue.get("relation");
+					int valueSize = relationValues.size();
+					for (int i = 0; i < valueSize; i++) {
+						String relationID = (String) relationValues.get(i);
+						relations.add(relationID);
+					}
+					ValidatorOption nodeMiss = new NodeMiss(relations);
+					optionList.add(nodeMiss);
+				}
+			}
 		}
 		return optionList;
 	}

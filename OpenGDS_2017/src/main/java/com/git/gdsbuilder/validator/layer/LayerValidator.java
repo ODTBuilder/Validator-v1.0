@@ -34,9 +34,11 @@
 
 package com.git.gdsbuilder.validator.layer;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.geotools.feature.SchemaException;
+import org.json.simple.JSONObject;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.operation.TransformException;
@@ -92,7 +94,7 @@ public interface LayerValidator {
 	 * @throws SchemaException 
 	 * @throws
 	 * */
-	public ErrorLayer validateZ_ValueAmbiguous(String key) throws SchemaException;
+	public ErrorLayer validateZ_ValueAmbiguous(String attributeKey) throws SchemaException;
 
 	/**
 	 * 검수 항목 중 “허용 범위 이하 면적 (Small Area)” 검수
@@ -186,13 +188,82 @@ public interface LayerValidator {
 	 * */
 	public ErrorLayer validateEntityDuplicated() throws SchemaException;
 	
-	
+	/**
+	 * 검수 항목 중 "불확실한사용요소오류(UselessEntity)" 검수를 수행
+	 * @author JY.Kim
+	 * @Date 2017. 6. 26. 오후 4:19:17
+	 * @return
+	 * @throws SchemaException ErrorLayer
+	 * @throws
+	 * */
 	public ErrorLayer validateUselessEntity() throws SchemaException;
+	
+	/**
+	 * 검수 항목 중 "건물페합오류(BuildingOpen)" 검수를 수행
+	 * @author JY.Kim
+	 * @Date 2017. 6. 26. 오후 4:20:17
+	 * @return
+	 * @throws SchemaException ErrorLayer
+	 * @throws
+	 * */
 	public ErrorLayer validateBuildingOpen() throws SchemaException;
+	
+	/**
+	 * 검수항목 중 "수부코드폐합오류(WaterOpen)" 검수를 수행
+	 * @author JY.Kim
+	 * @Date 2017. 6. 26. 오후 4:20:42
+	 * @return
+	 * @throws SchemaException ErrorLayer
+	 * @throws
+	 * */
 	public ErrorLayer validateWaterOpen() throws SchemaException;
+	
+	/**
+	 * 검수항목 중 "계층오류(LayerMiss)" 검수를 수행
+	 * @author JY.Kim
+	 * @Date 2017. 6. 26. 오후 4:21:17
+	 * @param typeNames
+	 * @return
+	 * @throws SchemaException ErrorLayer
+	 * @throws
+	 * */
 	public ErrorLayer validateLayerMiss(List<String> typeNames) throws SchemaException;
+	
+	/**
+	 * 검수항목 중 "건물기호위치오류(B_SymbolOutSided)" 검수를 수행
+	 * @author JY.Kim
+	 * @Date 2017. 6. 26. 오후 4:21:53
+	 * @param relationLayers
+	 * @return
+	 * @throws SchemaException ErrorLayer
+	 * @throws
+	 * */
 	public ErrorLayer vallidateB_SymbolOutSided(List<GeoLayer> relationLayers) throws SchemaException;
+	
+	/**
+	 * 검수항목 중 "교차로오류(CrossRoad)" 검수를 수행
+	 * @author JY.Kim
+	 * @Date 2017. 6. 26. 오후 4:22:33
+	 * @param relationLayers
+	 * @return
+	 * @throws SchemaException ErrorLayer
+	 * @throws
+	 * */
 	public ErrorLayer validateCrossRoad(List<GeoLayer> relationLayers) throws SchemaException;
+	
+	/**
+	 * 검수항목 중 "교량명오류(BridgeName)" 검수를 수행
+	 * @author JY.Kim
+	 * @Date 2017. 6. 26. 오후 4:23:03
+	 * @param relationLayers
+	 * @return
+	 * @throws SchemaException ErrorLayer
+	 * @throws
+	 * */
 	public ErrorLayer validateBridgeName(List<GeoLayer> relationLayers) throws SchemaException;
+	public ErrorLayer validateAdmin() throws SchemaException;
+	public ErrorLayer validateTwistedPolygon() throws SchemaException;
+	public ErrorLayer validateAttributeFix(JSONObject notNullAtt) throws SchemaException;
+	public ErrorLayer validateNodeMiss(List<GeoLayer> relationLayers, String geomColumn, double tolerence) throws SchemaException, IOException;
 
 }
