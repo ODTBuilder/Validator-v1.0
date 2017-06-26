@@ -16,13 +16,11 @@ import com.git.gdsbuilder.type.qa10.layer.QA10Layer;
 import com.git.gdsbuilder.type.qa10.layer.QA10LayerList;
 import com.git.gdsbuilder.type.qa20.layer.QA20Layer;
 import com.git.gdsbuilder.type.qa20.layer.QA20LayerList;
+import com.git.opengds.editor.EditLayerCondition;
 import com.git.opengds.geoserver.service.GeoserverService;
-<<<<<<< HEAD
+
 import com.git.opengds.parser.json.BuilderJSONQA10Parser;
 import com.git.opengds.parser.json.BuilderJSONQA20Parser;
-=======
-import com.git.opengds.parser.json.BuilderJSONParser;
->>>>>>> 9e0874a3fd8e0668e4af28bf6be871c1e42552e3
 
 @Service
 public class EditLayerServiceImpl implements EditLayerService {
