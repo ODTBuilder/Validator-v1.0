@@ -5,7 +5,7 @@ import com.git.gdsbuilder.geoserver.service.wms.WMSGetMap;
 
 public interface DTGeoserverServiceFactory {
 	public WFSGetFeature createWFSGetFeature(String serverURL, String version, String typeName, String outputformat, int maxFeatures, String bbox,
-			String format_options);
+			String format_options, String featureID);
 	
 	public WFSGetFeature createWFSGetFeature(String serverURL, String version, String typeName, String bbox);
 	

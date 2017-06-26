@@ -8,8 +8,8 @@ public class DTGeoserverServiceFactoryImpl implements DTGeoserverServiceFactory 
 	
 	@Override
 	public WFSGetFeature createWFSGetFeature(String serverURL, String version, String typeName, String outputformat, int maxFeatures, String bbox,
-			String format_options){
-		return new WFSGetFeature(serverURL, version, typeName, outputformat, maxFeatures, bbox, format_options);
+			String format_options, String featureID){
+		return new WFSGetFeature(serverURL, version, typeName, outputformat, maxFeatures, bbox, format_options, featureID);
 	};
 	
 	@Override
