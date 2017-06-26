@@ -11,12 +11,6 @@ import org.kabeja.dxf.DXFPolyline;
 import org.kabeja.dxf.DXFSolid;
 import org.kabeja.dxf.DXFText;
 
-import com.git.gdsbuilder.type.qa10.en.EnDXFArc;
-import com.git.gdsbuilder.type.qa10.en.EnDXFCircle;
-import com.git.gdsbuilder.type.qa10.en.EnDXFCommon;
-import com.git.gdsbuilder.type.qa10.en.EnDXFInsert;
-import com.git.gdsbuilder.type.qa10.en.EnDXFPolyline;
-import com.git.gdsbuilder.type.qa10.en.EnDXFText;
 import com.git.gdsbuilder.type.qa10.feature.QA10Feature;
 import com.git.gdsbuilder.type.qa10.feature.style.DTDXFArcStyle;
 import com.git.gdsbuilder.type.qa10.feature.style.DTDXFCircleStyle;
