@@ -9,4 +9,10 @@ public class ValidatorProgressServiceImpl implements ValidatorProgressService {
 		
 		return true;
 	}
+	
+	
+	public boolean setStateToProgressing(String collectionName, String fileType) {
+		
+		return true;
+	}
 }

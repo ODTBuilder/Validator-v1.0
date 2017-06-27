@@ -8,12 +8,14 @@ public class QA10Feature {
 	String featureType;
 	Geometry geom;
 	String textValue;
+	double elevation;
 
 	public QA10Feature(String featureID) {
 		super();
 		this.featureID = featureID;
 		this.featureType = "";
 		this.textValue = "";
+		this.elevation = 0;
 	}
 
 	public QA10Feature(String featureID, String featureType, Geometry geom) {
@@ -22,6 +24,15 @@ public class QA10Feature {
 		this.featureType = featureType;
 		this.geom = geom;
 		this.textValue = "";
+		this.elevation = 0;
+	}
+
+	public double getElevation() {
+		return elevation;
+	}
+
+	public void setElevation(double elevation) {
+		this.elevation = elevation;
 	}
 
 	public String getFeatureID() {
