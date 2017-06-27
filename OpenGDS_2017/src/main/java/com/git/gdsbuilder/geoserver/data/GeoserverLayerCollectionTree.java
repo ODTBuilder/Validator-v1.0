@@ -290,7 +290,7 @@ public class GeoserverLayerCollectionTree extends JSONArray {
 								}
 								
 								layerJson.put("id", layerName);
-								layerJson.put("parent", codeFileName);
+								layerJson.put("parent", groupName);
 								layerJson.put("text", exTypelayerName);
 								if(!suLayerType.equals("defalut")){
 									layerJson.put("type", "n_"+fileType+"_layer_"+suLayerType);
@@ -321,7 +321,7 @@ public class GeoserverLayerCollectionTree extends JSONArray {
 								}							
 								
 								layerJson.put("id", layerName);
-								layerJson.put("parent", codeFileName);
+								layerJson.put("parent", groupName);
 								layerJson.put("text", exTypelayerName);
 								if(!suLayerType.equals("defalut")){
 									layerJson.put("type", "n_"+fileType+"_layer_"+suLayerType);
@@ -329,7 +329,7 @@ public class GeoserverLayerCollectionTree extends JSONArray {
 								super.add(layerJson);
 							}else if(fileType.equals("shp")){
 								layerJson.put("id", layerName);
-								layerJson.put("parent", codeFileName);
+								layerJson.put("parent", groupName);
 								layerJson.put("text", exTypelayerName);
 								if(!suLayerType.equals("defalut")){
 									layerJson.put("type", "n_"+fileType+"_layer_"+suLayerType);
@@ -374,7 +374,7 @@ public class GeoserverLayerCollectionTree extends JSONArray {
 								fileNameJson.put("text", fileName);
 								fileNameJson.put("type", "n_"+fileType+"_group");
 								layerJson.put("id", layerName);
-								layerJson.put("parent", codeFileName);
+								layerJson.put("parent", groupName);
 								layerJson.put("text", exTypelayerName);
 								if(!suLayerType.equals("defalut")){
 									layerJson.put("type", "n_"+fileType+"_layer_"+suLayerType);
@@ -406,12 +406,12 @@ public class GeoserverLayerCollectionTree extends JSONArray {
 								}				
 								
 								fileNames.add(fileName);
-								fileNameJson.put("id", codeFileName);
+								fileNameJson.put("id", groupName);
 								fileNameJson.put("parent", "n_dxf");
 								fileNameJson.put("text", fileName);
 								fileNameJson.put("type", "n_"+fileType+"_group");
 								layerJson.put("id", layerName);
-								layerJson.put("parent", codeFileName);
+								layerJson.put("parent", groupName);
 								layerJson.put("text", exTypelayerName);
 								if(!suLayerType.equals("defalut")){
 									layerJson.put("type", "n_"+fileType+"_layer_"+suLayerType);
@@ -420,12 +420,12 @@ public class GeoserverLayerCollectionTree extends JSONArray {
 								super.add(layerJson);
 							}else if(fileType.equals("shp")){
 								fileNames.add(fileName);
-								fileNameJson.put("id", codeFileName);
+								fileNameJson.put("id", groupName);
 								fileNameJson.put("parent", "n_shp");
 								fileNameJson.put("text", fileName);
 								fileNameJson.put("type", "n_"+fileType+"_group");
 								layerJson.put("id", layerName);
-								layerJson.put("parent", codeFileName);
+								layerJson.put("parent", groupName);
 								layerJson.put("text", exTypelayerName);
 								layerJson.put("type", "n_"+fileType+"_layer_"+suLayerType);
 								super.add(fileNameJson);
