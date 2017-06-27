@@ -33,9 +33,9 @@ public class Z_ValueAmbiguous extends ValidatorOption {
 	 * */
 	public enum Type {
 
-		Z_VALUEAMBIGUOUS("zValueAmbiguous", "AttributeError");
+		Z_VALUEAMBIGUOUS("Z_ValueAmbiguous", "AttributeError");
 		String errName;
-		String errType;
+		String errType; 
 
 		/**
 		 * Type 생성자
