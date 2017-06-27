@@ -740,7 +740,7 @@
 								that.git.isContextmenu = false;
 							} else {
 								var json = that._createJSONFromLayer(addLayer);
-								console.log(json);
+//								console.log(json);
 								for (var i = 0; i < json.length; i++) {
 									that.create_node(json[i].parent, json[i], "first", false, false);
 								}
@@ -6710,7 +6710,7 @@
 					var source = layer.getSource();
 					if (source instanceof ol.source.TileWMS) {
 						var param = source.getParams();
-						console.log(param);
+//						console.log(param);
 						var keys = Object.keys(param);
 						var bbx = "bbox";
 						for (var i = 0; i < keys.length; i++) {
