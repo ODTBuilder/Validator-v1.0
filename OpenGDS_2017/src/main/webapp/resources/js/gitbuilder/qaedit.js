@@ -128,7 +128,7 @@ gitbuilder.ui.QAEdit = $
 											"action" : function(data) {
 												var inst = $.jstree.reference(data.reference), obj = inst.get_node(data.reference);
 												if (obj.type === "n_ngi_group" || obj.type === "n_dxf_group") {
-													that.assign_center(obj.text);
+													that.assign_center(obj.id);
 												}
 											}
 										},
@@ -149,7 +149,7 @@ gitbuilder.ui.QAEdit = $
 											"action" : function(data) {
 												var inst = $.jstree.reference(data.reference), obj = inst.get_node(data.reference);
 												if (obj.type === "n_ngi_group" || obj.type === "n_dxf_group") {
-													that.assign_up(obj.text);
+													that.assign_up(obj.id);
 												}
 											}
 										},
@@ -170,7 +170,7 @@ gitbuilder.ui.QAEdit = $
 											"action" : function(data) {
 												var inst = $.jstree.reference(data.reference), obj = inst.get_node(data.reference);
 												if (obj.type === "n_ngi_group" || obj.type === "n_dxf_group") {
-													that.assign_down(obj.text);
+													that.assign_down(obj.id);
 												}
 											}
 										},
@@ -191,7 +191,7 @@ gitbuilder.ui.QAEdit = $
 											"action" : function(data) {
 												var inst = $.jstree.reference(data.reference), obj = inst.get_node(data.reference);
 												if (obj.type === "n_ngi_group" || obj.type === "n_dxf_group") {
-													that.assign_left(obj.text);
+													that.assign_left(obj.id);
 												}
 											}
 										},
@@ -212,7 +212,7 @@ gitbuilder.ui.QAEdit = $
 											"action" : function(data) {
 												var inst = $.jstree.reference(data.reference), obj = inst.get_node(data.reference);
 												if (obj.type === "n_ngi_group" || obj.type === "n_dxf_group") {
-													that.assign_right(obj.text);
+													that.assign_right(obj.id);
 												}
 											}
 										},

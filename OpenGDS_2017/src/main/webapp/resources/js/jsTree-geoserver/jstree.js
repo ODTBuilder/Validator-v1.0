@@ -7152,7 +7152,11 @@
 				/**
 				 * 유저정보
 				 */
-				user : undefined
+				user : undefined,
+				/**
+				 * 레이어 정보
+				 */
+				 layerInfo : undefined
 			};
 
 			$.jstree.plugins.geoserver = function(options, parent) {
@@ -7166,6 +7170,7 @@
 					parent.bind.call(this);
 					this._data.geoserver.map = this.settings.geoserver.map;
 					this._data.geoserver.user = this.settings.geoserver.user;
+					this._data.geoserver.layerInfo = this.settings.geoserver.layerInfo;
 				}
 
 				/**
@@ -7900,7 +7905,7 @@
 							 */
 							"action" : function(data) {
 								var inst = $.jstree.reference(data.reference), obj = inst.get_node(data.reference);
-								layerInfo.load(obj.id, obj.text);
+								inst._data.geoserver.layerInfo.load(obj.id, obj.text);
 								// console.log("Not yet(layer info)");
 							}
 						}
