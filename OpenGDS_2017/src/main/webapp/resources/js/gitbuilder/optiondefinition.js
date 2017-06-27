@@ -217,7 +217,7 @@ gitbuilder.ui.OptionDefinition = $.widget("gitbuilder.optiondefinition", {
 		appendTo : "body"
 	},
 	setDefinition : function(obj) {
-		console.log(obj);
+//		console.log(obj);
 		this.optDef = $.extend({}, obj);
 	},
 	getDefinition : function() {
@@ -428,7 +428,7 @@ gitbuilder.ui.OptionDefinition = $.widget("gitbuilder.optiondefinition", {
 						delete that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow];
 						that._toggleCheckbox(that.selectedValidationNow, false);
 					}
-					console.log(that.getOptDefCopy()[that.selectedLayerNow]);
+//					console.log(that.getOptDefCopy()[that.selectedLayerNow]);
 				});
 		$(document).on("change", this.eventNamespace + " .optiondefinition-attr-select", function() {
 			that._updateAttribute($(this).val());
@@ -617,7 +617,7 @@ gitbuilder.ui.OptionDefinition = $.widget("gitbuilder.optiondefinition", {
 				count = count + length;
 			}
 			that._toggleCheckbox(that.selectedValidationNow, !!count);
-			console.log(that.getOptDefCopy());
+//			console.log(that.getOptDefCopy());
 		});
 
 		this._addClass(this.pbody2, "panel-body");
@@ -823,7 +823,7 @@ gitbuilder.ui.OptionDefinition = $.widget("gitbuilder.optiondefinition", {
 			count = count + length;
 		}
 		that._toggleCheckbox(that.selectedValidationNow, !!count);
-		console.log(that.getOptDefCopy());
+//		console.log(that.getOptDefCopy());
 	},
 	downloadSetting : function() {
 		var setting = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(this.getOptDefCopy()));
