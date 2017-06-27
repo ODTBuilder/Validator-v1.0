@@ -108,201 +108,150 @@ public class FeatureAttributeValidatorImpl implements FeatureAttributeValidator 
 		//		}
 	}
 
+	@SuppressWarnings("unused")
 	@Override
-	public ErrorFeature validateZvalueAmbiguous(SimpleFeature simpleFeature, String attributeKey)
-			throws SchemaException {
+	public ErrorFeature validateZvalueAmbiguous(SimpleFeature simpleFeature, String attributeKey){
+		ErrorFeature errorFeature = null;
 		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
 		Object attributeValue = simpleFeature.getAttribute(attributeKey);
-		System.out.println(attributeValue.toString());
-		Boolean flag = true;
+//		int aa = Integer.parseInt(attributeValue.toString());
+//		System.out.println(attributeValue.toString());
+//		Boolean flag = true;
 		if(attributeValue != null){
-			if(attributeValue.equals("") || attributeValue.equals("0.0") ){
-				ErrorFeature errorFeature = new ErrorFeature(simpleFeature.getID(), Z_ValueAmbiguous.Type.Z_VALUEAMBIGUOUS.errType(),
+			if(attributeValue.toString().equals("") || attributeValue.toString().equals("0.0") ){
+				errorFeature = new ErrorFeature(simpleFeature.getID(), Z_ValueAmbiguous.Type.Z_VALUEAMBIGUOUS.errType(),
 						Z_ValueAmbiguous.Type.Z_VALUEAMBIGUOUS.errName(), geometry.getInteriorPoint());
-				return errorFeature;
 			}else{
 				String attributeStr = attributeValue.toString();
-				try {
-					Integer.parseInt(attributeStr);
-					flag = true;
-				} catch (NumberFormatException e) {
-					flag =  false;
-				}
-				
-				if(flag = false){
+					Double num = new Double(Double.parseDouble(attributeStr));
+					int a = num.intValue();
+					if(num>a){
+						errorFeature = new ErrorFeature(simpleFeature.getID(), Z_ValueAmbiguous.Type.Z_VALUEAMBIGUOUS.errType(),
+								Z_ValueAmbiguous.Type.Z_VALUEAMBIGUOUS.errName(), geometry.getInteriorPoint());
+					}
+/*
+				if(flag == false){
 					ErrorFeature errorFeature = new ErrorFeature(simpleFeature.getID(), Z_ValueAmbiguous.Type.Z_VALUEAMBIGUOUS.errType(),
 							Z_ValueAmbiguous.Type.Z_VALUEAMBIGUOUS.errName(), geometry.getInteriorPoint());
-					System.out.println();
 					return errorFeature;
-				}
+				}*/
 			}
+		}else{
+			errorFeature = new ErrorFeature(simpleFeature.getID(), Z_ValueAmbiguous.Type.Z_VALUEAMBIGUOUS.errType(),
+					Z_ValueAmbiguous.Type.Z_VALUEAMBIGUOUS.errName(), geometry.getInteriorPoint());
 		}
-		
-		return null;
+		return errorFeature;
 	}
 
 
-	// if (notNullAtt != null) {
-	// int attributeCount = simpleFeature.getAttributeCount();
-	// Iterator iterator = notNullAtt.iterator();
-	// if (attributeCount > 1) {
-	// while (iterator.hasNext()) {
-	// String attribute = (String) iterator.next();
-	// for (int i = 1; i < attributeCount; i++) {
-	// String key =
-	// simpleFeature.getFeatureType().getType(i).getName().toString();
+	@Override
+	public ErrorFeature validateAttributeFix(SimpleFeature simpleFeature, JSONObject notNullAtt)
+			throws SchemaException {
+		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
+		boolean flag = true;
+		if(notNullAtt != null){
+			Iterator iterator = notNullAtt.keySet().iterator();
+			while(iterator.hasNext()){
 
-	// if (key.equals(attribute)) {
-	// Object value = simpleFeature.getAttribute(i);
-	// if (value != null) {
-	// if (value.toString().equals("") || value.toString().equals("0.0")) {
-	// isError = true;
-	// }
-	// } else {
-	// isError = true;
-	// }
-	// }
-	// }
-	// }
-	// } else {
-	// isError = true;
-	// }
-	// }
-	// if (isError) {
-	// DataConvertor convertService = new DataConvertor();
-	// String errFeatureID = simpleFeature.getID();
-	// Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
-	// Geometry returnGeo = geometry.getInteriorPoint();
-	//
-	// // SimpleFeature
-	// SimpleFeature errSimpleFeature =
-	// convertService.createErrSimpleFeature(errFeatureID, returnGeo,
-	// Z_ValueAmbiguous.Type.Z_VALUEAMBIGUOUS.errName(),
-	// Z_ValueAmbiguous.Type.Z_VALUEAMBIGUOUS.errType());
-	//
-	// // DetailReport
-	// DetailsValidatorResult detailReport = new
-	// DetailsValidatorResult(errFeatureID,
-	// Z_ValueAmbiguous.Type.Z_VALUEAMBIGUOUS.errType(),
-	// Z_ValueAmbiguous.Type.Z_VALUEAMBIGUOUS.errName(),
-	// geometry.getCoordinate().x, geometry.getCoordinate().y);
-	//
-	// ErrorFeature errorFeature = new ErrorFeature(errSimpleFeature,
-	// detailReport);
-	//
-	// return errorFeature;
-	// } else {
-	// return null;
-	// }
+				String attributeKey = (String) iterator.next(); 
+				String attribute = (String) simpleFeature.getAttribute(attributeKey); 
+				JSONArray attributeArray = (JSONArray) notNullAtt.get(attributeKey); 
 
-@Override
-public ErrorFeature validateAttributeFix(SimpleFeature simpleFeature, JSONObject notNullAtt)
-		throws SchemaException {
-	Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
-	boolean flag = true;
-	if(notNullAtt != null){
-		Iterator iterator = notNullAtt.keySet().iterator();
-		while(iterator.hasNext()){
-
-			String attributeKey = (String) iterator.next(); 
-			String attribute = (String) simpleFeature.getAttribute(attributeKey); 
-			JSONArray attributeArray = (JSONArray) notNullAtt.get(attributeKey); 
-
-			if(!(attributeArray.isEmpty())){
-				if(attribute != null){
-					Iterator attrIterator = attributeArray.iterator();
-					while (attrIterator.hasNext()) {
-						String attributeValue = (String) attrIterator.next();
-						if(!(attributeValue.equals(attribute))){
-							flag = false;
-						}else{
-							flag = true;
-							break;
+				if(!(attributeArray.isEmpty())){
+					if(attribute != null){
+						Iterator attrIterator = attributeArray.iterator();
+						while (attrIterator.hasNext()) {
+							String attributeValue = (String) attrIterator.next();
+							if(!(attributeValue.equals(attribute))){
+								flag = false;
+							}else{
+								flag = true;
+								break;
+							}
 						}
+					}else{
+						flag = false;
+						break;
 					}
 				}else{
-					flag = false;
-					break;
-				}
-			}else{
-				if(attribute.equals("null")){
-					flag = false;
-					break;
+					if(attribute.equals("null")){
+						flag = false;
+						break;
+					}
 				}
 			}
 		}
-	}
 
-	if(flag == false){
-		ErrorFeature errorFeature = new ErrorFeature(simpleFeature.getID(), AttributeFix.Type.ATTRIBUTEFIX.errType(),
-				AttributeFix.Type.ATTRIBUTEFIX.errName(), geometry.getInteriorPoint());
-		return errorFeature;
-	}else{
-		return null;
-	}
-}
-
-public ErrorFeature validateBridgeName(SimpleFeature simpleFeature, SimpleFeature relationSimpleFeature) throws SchemaException{
-	Geometry relGeometry = (Geometry) relationSimpleFeature.getDefaultGeometry();
-	Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
-	Geometry returnGeom = null; 
-	if(geometry.intersects(relGeometry) || geometry.crosses(relGeometry) || geometry.overlaps(relGeometry)){
-		Object simValue = simpleFeature.getAttribute("명칭");
-		Object relValue = relationSimpleFeature.getAttribute("하천명");
-		if(simValue.equals("null") || relValue.equals("null")){
-			returnGeom = geometry.intersection(relGeometry);
-			ErrorFeature errorFeature = new ErrorFeature(simpleFeature.getID(), BridgeName.Type.BRIDGENAME.errType(),
-					BridgeName.Type.BRIDGENAME.errName(), returnGeom.getInteriorPoint());
+		if(flag == false){
+			ErrorFeature errorFeature = new ErrorFeature(simpleFeature.getID(), AttributeFix.Type.ATTRIBUTEFIX.errType(),
+					AttributeFix.Type.ATTRIBUTEFIX.errName(), geometry.getInteriorPoint());
 			return errorFeature;
 		}else{
-			if(!(simValue.equals(relValue))){
+			return null;
+		}
+	}
+
+	public ErrorFeature validateBridgeName(SimpleFeature simpleFeature, SimpleFeature relationSimpleFeature) throws SchemaException{
+		Geometry relGeometry = (Geometry) relationSimpleFeature.getDefaultGeometry();
+		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
+		Geometry returnGeom = null; 
+		if(geometry.intersects(relGeometry) || geometry.crosses(relGeometry) || geometry.overlaps(relGeometry)){
+			Object simValue = simpleFeature.getAttribute("명칭");
+			Object relValue = relationSimpleFeature.getAttribute("하천명");
+			if(simValue.equals("null") || relValue.equals("null")){
 				returnGeom = geometry.intersection(relGeometry);
 				ErrorFeature errorFeature = new ErrorFeature(simpleFeature.getID(), BridgeName.Type.BRIDGENAME.errType(),
 						BridgeName.Type.BRIDGENAME.errName(), returnGeom.getInteriorPoint());
 				return errorFeature;
 			}else{
-				return null;
-			}
-		}
-	}else{
-		return null;
-	}
-}
-
-public ErrorFeature validateAdmin(SimpleFeature simpleFeature) throws SchemaException{
-	Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
-	String title = simpleFeature.getAttribute("명칭").toString();
-	int titleLength = title.length();
-	String division = simpleFeature.getAttribute("구분").toString();
-	int divisionLength = division.length();
-
-	if(title == null || division == null){
-		ErrorFeature errorFeature = new ErrorFeature(simpleFeature.getID(), Admin.Type.ADMIN.errType(), 
-				Admin.Type.ADMIN.errName(), geometry.getInteriorPoint());
-		return errorFeature;
-	}else{
-		if(titleLength < 2){
-			ErrorFeature errorFeature = new ErrorFeature(simpleFeature.getID(), Admin.Type.ADMIN.errType(), 
-					Admin.Type.ADMIN.errName(), geometry.getInteriorPoint());
-			return errorFeature;
-		}else{
-			if(titleLength > divisionLength){
-				int length = titleLength - divisionLength;
-				String title_end = title.substring(length);
-				if(!(title_end.equals(division))){
-					ErrorFeature errorFeature = new ErrorFeature(simpleFeature.getID(), Admin.Type.ADMIN.errType(), 
-							Admin.Type.ADMIN.errName(), geometry.getInteriorPoint());
+				if(!(simValue.equals(relValue))){
+					returnGeom = geometry.intersection(relGeometry);
+					ErrorFeature errorFeature = new ErrorFeature(simpleFeature.getID(), BridgeName.Type.BRIDGENAME.errType(),
+							BridgeName.Type.BRIDGENAME.errName(), returnGeom.getInteriorPoint());
 					return errorFeature;
 				}else{
 					return null;
 				}
-			}else{
+			}
+		}else{
+			return null;
+		}
+	}
+
+	public ErrorFeature validateAdmin(SimpleFeature simpleFeature) throws SchemaException{
+		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
+		String title = simpleFeature.getAttribute("명칭").toString();
+		int titleLength = title.length();
+		String division = simpleFeature.getAttribute("구분").toString();
+		int divisionLength = division.length();
+
+		if(title == null || division == null){
+			ErrorFeature errorFeature = new ErrorFeature(simpleFeature.getID(), Admin.Type.ADMIN.errType(), 
+					Admin.Type.ADMIN.errName(), geometry.getInteriorPoint());
+			return errorFeature;
+		}else{
+			if(titleLength < 2){
 				ErrorFeature errorFeature = new ErrorFeature(simpleFeature.getID(), Admin.Type.ADMIN.errType(), 
 						Admin.Type.ADMIN.errName(), geometry.getInteriorPoint());
 				return errorFeature;
+			}else{
+				if(titleLength > divisionLength){
+					int length = titleLength - divisionLength;
+					String title_end = title.substring(length);
+					if(!(title_end.equals(division))){
+						ErrorFeature errorFeature = new ErrorFeature(simpleFeature.getID(), Admin.Type.ADMIN.errType(), 
+								Admin.Type.ADMIN.errName(), geometry.getInteriorPoint());
+						return errorFeature;
+					}else{
+						return null;
+					}
+				}else{
+					ErrorFeature errorFeature = new ErrorFeature(simpleFeature.getID(), Admin.Type.ADMIN.errType(), 
+							Admin.Type.ADMIN.errName(), geometry.getInteriorPoint());
+					return errorFeature;
+				}
 			}
 		}
 	}
-}
 
 }
