@@ -180,7 +180,6 @@ public class GeoserverServiceImpl implements GeoserverService {
 			    }
 			}
 			else if (flag == false) {
-				System.out.println(layerName);
 				for(String sucLayerName : successLayerList){
 					dtPublisher.removeLayer(ID, sucLayerName);
 				}

@@ -35,11 +35,15 @@
 package com.git.gdsbuilder.validator.collection;
 
 import java.io.IOException;
+import java.security.cert.PKIXRevocationChecker.Option;
 import java.util.HashMap;
 import java.util.List;
 
+import org.geotools.data.simple.SimpleFeatureCollection;
+import org.geotools.data.simple.SimpleFeatureIterator;
 import org.geotools.feature.SchemaException;
 import org.json.simple.JSONObject;
+import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.operation.TransformException;
@@ -62,11 +66,15 @@ import com.git.gdsbuilder.type.validate.option.ConBreak;
 import com.git.gdsbuilder.type.validate.option.ConIntersected;
 import com.git.gdsbuilder.type.validate.option.ConOverDegree;
 import com.git.gdsbuilder.type.validate.option.CrossRoad;
+import com.git.gdsbuilder.type.validate.option.EdgeMatchMiss;
 import com.git.gdsbuilder.type.validate.option.EntityDuplicated;
 import com.git.gdsbuilder.type.validate.option.LayerMiss;
 import com.git.gdsbuilder.type.validate.option.NodeMiss;
 import com.git.gdsbuilder.type.validate.option.OutBoundary;
 import com.git.gdsbuilder.type.validate.option.OverShoot;
+import com.git.gdsbuilder.type.validate.option.RefAttributeMiss;
+import com.git.gdsbuilder.type.validate.option.RefLayerMiss;
+import com.git.gdsbuilder.type.validate.option.RefZValueMiss;
 import com.git.gdsbuilder.type.validate.option.SelfEntity;
 import com.git.gdsbuilder.type.validate.option.SmallArea;
 import com.git.gdsbuilder.type.validate.option.SmallLength;
@@ -76,7 +84,12 @@ import com.git.gdsbuilder.type.validate.option.UselessPoint;
 import com.git.gdsbuilder.type.validate.option.ValidatorOption;
 import com.git.gdsbuilder.type.validate.option.WaterOpen;
 import com.git.gdsbuilder.type.validate.option.Z_ValueAmbiguous;
+import com.git.gdsbuilder.validator.collection.rule.MapSystemRule;
 import com.git.gdsbuilder.validator.layer.LayerValidatorImpl;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Iterators;
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * ValidateLayerCollectionList를 검수하는 클래스
@@ -153,6 +166,11 @@ public class CollectionValidator {
 		ValidateLayerTypeList types = validateLayerCollectionList.getValidateLayerTypeList();
 		GeoLayerCollectionList layerCollections = validateLayerCollectionList.getLayerCollectionList();
 
+		
+		//도엽규칙생성
+		MapSystemRule systemRule = new MapSystemRule(-10, 10, -1, 1);
+		
+		
 		// layerMiss 검수
 		layerMissValidate(types, layerCollections);
 		
@@ -163,13 +181,7 @@ public class CollectionValidator {
 		attributeValidate(types, layerCollections);
 
 		// 인접도엽 검수
-		closeCollectionValidate(types, layerCollections);
-
-	}
-	// closeValidate
-
-	private void closeCollectionValidate(ValidateLayerTypeList types, GeoLayerCollectionList layerCollections) {
-		// TODO Auto-generated method stub
+		closeCollectionValidate(types, systemRule, layerCollections);
 
 	}
 
@@ -379,6 +391,82 @@ public class CollectionValidator {
 	private void layerMissValidate(ValidateLayerTypeList types, GeoLayerCollectionList layerCollections) throws SchemaException {
 		// TODO Auto-generated method stub
 
+		for (int i = 0; i < layerCollections.size(); i++) {
+			GeoLayerCollection collection = layerCollections.get(i);
+			List<GeoLayer> collectionList = collection.getLayers();
+			ErrorLayer errLayer = new ErrorLayer();
+			for(int j=0; j < types.size(); j++){
+				ValidateLayerType type = types.get(j);
+				GeoLayerList typeLayers = validateLayerCollectionList.getTypeLayers(type.getTypeName(), collection);
+				List<ValidatorOption> options = type.getOptionList();
+				if(options != null){
+					ErrorLayer typeErrorLayer = null; 
+					for(int k = 0; k<options.size(); k++){
+						ValidatorOption option = options.get(k);
+						for (int l = 0; l < typeLayers.size(); l++) {
+							GeoLayer typeLayer = typeLayers.get(l);
+							if(typeLayer == null){
+								continue;
+							}
+							LayerValidatorImpl layerValidator = new LayerValidatorImpl(typeLayer);
+							if (option instanceof LayerMiss){
+								List<String> typeNames = ((LayerMiss) option).getLayerType();
+								typeErrorLayer = layerValidator.validateLayerMiss(typeNames);
+								if (typeErrorLayer != null) {
+									errLayer.mergeErrorLayer(typeErrorLayer);
+								}
+								collectionList.remove(typeLayer);
+							}
+						}
+					}
+				}
+			}
+			if (errLayer != null) {
+				errLayer.setCollectionName(collection.getCollectionName());
+				errLayer.setCollectionType(collection.getLayerCollectionType());
+				errLayerList.add(errLayer);
+			}
+		}
+	}
+	
+	@SuppressWarnings("unused")
+	private void closeCollectionValidate(ValidateLayerTypeList types, MapSystemRule mapSystemRule,GeoLayerCollectionList layerCollections) throws SchemaException {
+		// TODO Auto-generated method stub
+		
+		
+
+		
+		
+		for(GeoLayerCollection collection : layerCollections){
+			String neatLineName = collection.getNeatLine().getLayerName();
+			SimpleFeatureCollection neatLineCollection = collection.getNeatLine().getSimpleFeatureCollection();
+			SimpleFeatureIterator featureIterator = neatLineCollection.features();
+			int i=0;
+			while(featureIterator.hasNext()){
+				if(i>1){
+					SimpleFeature feature = featureIterator.next();
+					Geometry geometry = (Geometry)feature.getDefaultGeometry();
+					Coordinate[] coordinateArray = geometry.getEnvelope().getCoordinates();
+				    Coordinate minCoordinate = new Coordinate();
+				    Coordinate maxCoordinate = new Coordinate();
+				    
+				    minCoordinate = coordinateArray[0];
+				    maxCoordinate = coordinateArray[2];
+				    
+				    double minx = minCoordinate.x;
+				    double miny = minCoordinate.y;
+				    double maxx = maxCoordinate.x;
+				    double maxy = maxCoordinate.y;
+					i++;
+				}
+				else
+					break;
+			}
+			
+			
+			
+		}
+		
 		for (int i = 0; i < layerCollections.size(); i++) {
 			GeoLayerCollection collection = layerCollections.get(i);
 			List<GeoLayer> collectionList = collection.getLayers();

@@ -231,45 +231,4 @@ public class GeoserverController{
 		
 		geoserverService.removeStyle(name);
 	}
-	
-	
-	
-	@RequestMapping(value="updateFeatureType.do")
-	@ResponseBody
-	public boolean updateFeatureType(HttpServletRequest request , @RequestBody JSONObject jsonObject){
-		String originalName="";
-		String name="";
-		String title="";
-		String description="";
-		String srs="";
-		String style="";
-		String abstractContent="";
-		
-		Enumeration paramNames = request.getParameterNames();
-		while (paramNames.hasMoreElements()) {
-			String key = paramNames.nextElement().toString();
-			String value = request.getParameter(key);
-
-			if (key.equals("originalName")) {
-				originalName=value;
-			} else if (key.equals("name")) {
-				name=value;
-			} else if (key.equals("title")) {
-				title=value;
-			} else if (key.equals("description")) {
-				description=value;
-			}else if (key.equals("abstractContent")) {
-				abstractContent=value;
-			} else if (key.equals("srs")){
-				srs = value;
-			}
-			else if(key.equals("style")){
-				style=value;			
-			}
-		}
-		
-//		geoserverService.updateFeatureType(originalName, name, title, abstractContent, style);
-		
-		return false;
-	}
 }
