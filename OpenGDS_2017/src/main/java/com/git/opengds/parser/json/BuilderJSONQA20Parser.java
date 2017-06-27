@@ -68,7 +68,7 @@ import com.git.opengds.parser.validate.ValidateTypeParser;
  * @author DY.Oh
  * @Date 2017. 4. 18. 오후 4:08:24
  */
-public class BuilderJSONParser {
+public class BuilderJSONQA20Parser {
 	private static final String URL;
 	private static final String ID;
 
@@ -143,7 +143,7 @@ public class BuilderJSONParser {
 			JSONObject collectionListObj = (JSONObject) editLayerObj.get(type);
 			EditLayerCollectionListParser editLayerCollectionListParser = new EditLayerCollectionListParser(type,
 					collectionListObj);
-			EditQA20LayerCollectionList edtCollectionList = editLayerCollectionListParser.getEdtCollectionList();
+			EditQA20LayerCollectionList edtCollectionList = editLayerCollectionListParser.getEdtQA20CollectionList();
 			editLayerListMap.put(type, edtCollectionList);
 		}
 		return editLayerListMap;

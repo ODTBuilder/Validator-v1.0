@@ -18,7 +18,6 @@
 package com.git.opengds.editor.service;
 
 import java.io.FileReader;
-
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +46,7 @@ public class EditServiceImpl implements EditService {
 
 		// 옵션 넘겨 받음
 		JSONParser jsonParser = new JSONParser();
-		Object obj = jsonParser.parse(new FileReader("D:\\editFinal3.txt"));
+		Object obj = jsonParser.parse(new FileReader("D:\\editDXFTest.txt"));
 		JSONObject editJSONObject = (JSONObject) obj;
 
 		// JSONParser jsonParser = new JSONParser();

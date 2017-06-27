@@ -44,7 +44,7 @@ public class QA20LayerCollectionDAOImpl implements QA20LayerCollectionDAO {
 
 	@Override
 	public int selectQA20LayerCollectionIdx(HashMap<String, Object> selectLayerCollectionIdxQuery) {
-                                                                                                                           		HashMap<String, Object> idxMap = sqlSession.selectOne(namespace + ".selectLayerCollectionIdx",
+		HashMap<String, Object> idxMap = sqlSession.selectOne(namespace + ".selectLayerCollectionIdx",
 				selectLayerCollectionIdxQuery);
 		return (Integer) idxMap.get("c_idx");
 	}
@@ -124,7 +124,7 @@ public class QA20LayerCollectionDAOImpl implements QA20LayerCollectionDAO {
 
 	@Override
 	public List<HashMap<String, Object>> selectQA20LayerMetadataIdxs(HashMap<String, Object> metadataIdxQuery) {
-		return sqlSession.selectList(namespace + ".selectLayerMetadataIdxs", metadataIdxQuery);
+		return sqlSession.selectList(namespace + ".selectQA20LayerMetadataIdxs", metadataIdxQuery);
 	}
 
 	@Override
@@ -139,7 +139,7 @@ public class QA20LayerCollectionDAOImpl implements QA20LayerCollectionDAO {
 
 	@Override
 	public int selectQA20LayerMetadataIdx(HashMap<String, Object> metadataIdxQuery) {
-		HashMap<String, Object> idxMap = sqlSession.selectOne(namespace + ".selectLayerMetadataIdx", metadataIdxQuery);
+		HashMap<String, Object> idxMap = sqlSession.selectOne(namespace + ".selectQA20LayerMetadataIdx", metadataIdxQuery);
 		return (Integer) idxMap.get("lm_idx");
 	}
 
