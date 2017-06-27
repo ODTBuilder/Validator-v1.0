@@ -16,41 +16,51 @@ if (!gitbuilder.ui)
 	gitbuilder.ui = {};
 gitbuilder.ui.ChangeBase = $.widget("gitbuilder.changebase", {
 	widnow : undefined,
-
-	bases : {
-		osm : {
-			name : "OpenStreetMap",
-			thumb : "GitBuilder-OsmThumbnail",
-			layer : new ol.layer.Tile({
-				visible : false,
-				source : new ol.source.OSM()
-			})
-		},
-		bing : {
-			name : "Bing Map",
-			thumb : "GitBuilder-BingThumbnail",
-			layer : new ol.layer.Tile({
-				visible : false,
-				preload : Infinity,
-				source : new ol.source.BingMaps({
-					key : 'AtZS5HHiM9JIaF1cUX-x-zQT_97S8YkWkjxDowNNUGD1D8jWUtgVmdaxsiitNQbo',
-					imagerySet : "AerialWithLabels"
-				})
-			})
-		}
-	},
+	now : undefined,
+	bases : undefined,
 	options : {
 		map : undefined,
 		layers : undefined,
 		appendTo : "body"
 	},
 	_create : function() {
+		this.bases = {
+			osm : {
+				name : "OpenStreetMap",
+				thumb : "GitBuilder-OsmThumbnail",
+				layer : new ol.layer.Tile({
+					visible : false,
+					source : new ol.source.OSM()
+				})
+			},
+			bing : {
+				name : "Bing Map",
+				thumb : "GitBuilder-BingThumbnail",
+				layer : new ol.layer.Tile({
+					visible : false,
+					preload : Infinity,
+					source : new ol.source.BingMaps({
+						key : 'AtZS5HHiM9JIaF1cUX-x-zQT_97S8YkWkjxDowNNUGD1D8jWUtgVmdaxsiitNQbo',
+						imagerySet : "AerialWithLabels"
+					})
+				})
+			},
+			black : {
+				name : "Black",
+				thumb : "GitBuilder-NoThumbnail",
+				layer : undefined
+			},
+			white : {
+				name : "White",
+				thumb : "GitBuilder-NoThumbnail",
+				layer : undefined
+			}
+		};
 		if ($.isArray(this.options.layers)) {
 			for (var i = 0; i < this.options.layers.length; i++) {
 				if (this.options.layers[i].hasOwnProperty("value") && this.options.layers[i].hasOwnProperty("name")
 						&& this.options.layers[i].hasOwnProperty("layer")) {
-					if (typeof this.options.layers[i].value === "string"
-							&& typeof this.options.layers[i].name === "string"
+					if (typeof this.options.layers[i].value === "string" && typeof this.options.layers[i].name === "string"
 							&& this.options.layers[i].layer instanceof ol.layer.Base) {
 						if (this.options.layers[i].thumb === undefined) {
 							this.options.layers[i].thumb = "GitBuilder-NoThumbnail"
@@ -67,9 +77,11 @@ gitbuilder.ui.ChangeBase = $.widget("gitbuilder.changebase", {
 		}
 		var keys = Object.keys(this.bases);
 		for (var i = 0; i < keys.length; i++) {
-			this.options.map.addLayer(this.bases[keys[i]].layer);
+			if (!(keys[i] === "black" || keys[i] === "white")) {
+				this.options.map.addLayer(this.bases[keys[i]].layer);
+			}
 		}
-		this.changeLayer("bing")
+		this.changeLayer("black")
 	},
 	_init : function() {
 		var that = this;
@@ -205,8 +217,14 @@ gitbuilder.ui.ChangeBase = $.widget("gitbuilder.changebase", {
 	open : function() {
 		var keys = Object.keys(this.bases);
 		for (var i = 0; i < keys.length; i++) {
-			if (this.bases[keys[i]].layer.getVisible()) {
-				$("input:radio[name='basemap']:radio[value='" + keys[i] + "']").prop("checked", true);
+			if (!(keys[i] === "black" || keys[i] === "white")) {
+				if (this.bases[keys[i]].layer.getVisible()) {
+					$("input:radio[name='basemap']:radio[value='" + keys[i] + "']").prop("checked", true);
+				}
+			} else {
+				if (this.now === keys[i]) {
+					$("input:radio[name='basemap']:radio[value='" + keys[i] + "']").prop("checked", true);
+				}
 			}
 		}
 		this.window.modal('show');
@@ -218,9 +236,26 @@ gitbuilder.ui.ChangeBase = $.widget("gitbuilder.changebase", {
 		var keys = Object.keys(this.bases);
 		for (var i = 0; i < keys.length; i++) {
 			if (value === keys[i]) {
-				this.bases[keys[i]].layer.setVisible(true);
+				if (value === "black") {
+					var div = this.options.map.getTarget();
+					$("#" + div).css({
+						"background-color" : "#000"
+					});
+					this.now = value;
+				} else if (value === "white") {
+					var div = this.options.map.getTarget();
+					$("#" + div).css({
+						"background-color" : "#fff"
+					});
+					this.now = value;
+				} else {
+					this.bases[keys[i]].layer.setVisible(true);
+					this.now = value;
+				}
 			} else {
-				this.bases[keys[i]].layer.setVisible(false);
+				if (!(keys[i] === "black" || keys[i] === "white")) {
+					this.bases[keys[i]].layer.setVisible(false);
+				}
 			}
 		}
 	},
@@ -286,8 +321,7 @@ gitbuilder.ui.ChangeBase = $.widget("gitbuilder.changebase", {
 				// - disabled as an array instead of boolean
 				// - disabled class as method for disabling
 				// individual parts
-				if (!suppressDisabledCheck
-						&& (instance.options.disabled === true || $(this).hasClass("ui-state-disabled"))) {
+				if (!suppressDisabledCheck && (instance.options.disabled === true || $(this).hasClass("ui-state-disabled"))) {
 					return;
 				}
 				return (typeof handler === "string" ? instance[handler] : handler).apply(instance, arguments);
