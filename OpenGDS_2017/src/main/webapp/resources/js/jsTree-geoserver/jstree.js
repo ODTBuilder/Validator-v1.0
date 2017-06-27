@@ -7551,7 +7551,7 @@
 									"geoLayerList" : obj.refer.get_node(data[m].name).children
 								}
 								var names = [];
-								console.log(JSON.stringify(arr));
+//								console.log(JSON.stringify(arr));
 								$.ajax({
 									url : "geoserver2/getGeoLayerInfoList.ajax",
 									method : "POST",

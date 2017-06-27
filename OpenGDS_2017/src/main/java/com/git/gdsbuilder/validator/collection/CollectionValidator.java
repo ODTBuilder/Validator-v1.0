@@ -241,6 +241,7 @@ public class CollectionValidator {
 
 	private void geometricValidate(ValidateLayerTypeList types, GeoLayerCollection layerCollection)
 			throws SchemaException, NoSuchAuthorityCodeException, FactoryException, TransformException, IOException {
+
 		ErrorLayerList geoErrorList = new ErrorLayerList();
 		GeoLayer neatLayer = layerCollection.getNeatLine();
 		ErrorLayer errLayer = new ErrorLayer();
@@ -300,6 +301,7 @@ public class CollectionValidator {
 							if (typeErrorLayer != null) {
 								errLayer.mergeErrorLayer(typeErrorLayer);
 							}
+<<<<<<< HEAD
 						}
 						if (option instanceof SmallArea) {
 							double area = ((SmallArea) option).getArea();
@@ -314,6 +316,65 @@ public class CollectionValidator {
 							for (int r = 0; r < relationNames.size(); r++) {
 								typeErrorLayer = layerValidator.validateSelfEntity(validateLayerCollectionList
 										.getTypeLayers(relationNames.get(r), layerCollection));
+=======
+							
+							
+							if (option instanceof ConBreak) {
+								typeErrorLayer = layerValidator.validateConBreakLayers(neatLayer);
+							}
+							if (option instanceof ConIntersected) {
+								typeErrorLayer = layerValidator.validateConIntersected();
+							}
+							if (option instanceof ConOverDegree) {
+								double degree = ((ConOverDegree) option).getDegree();
+								typeErrorLayer = layerValidator.validateConOverDegree(degree);
+							}
+							if (option instanceof Z_ValueAmbiguous) {
+								String key = ((Z_ValueAmbiguous) option).getAttributeKey();
+								typeErrorLayer = layerValidator.validateZ_ValueAmbiguous(key);
+							}
+							if (option instanceof UselessPoint) {
+								typeErrorLayer = layerValidator.validateUselessPoint();
+							}
+							if (option instanceof EntityDuplicated) {
+								typeErrorLayer = layerValidator.validateEntityDuplicated();
+							}
+							if (option instanceof OutBoundary) {
+								List<String> relationNames = ((OutBoundary) option).getRelationType();
+								for (int r = 0; r < relationNames.size(); r++) {
+									typeErrorLayer = layerValidator.validateOutBoundary(validateLayerCollectionList
+											.getTypeLayers(relationNames.get(r), collection));
+								}
+								if (typeErrorLayer != null) {
+									errLayer.mergeErrorLayer(typeErrorLayer);
+								}
+							}
+							if (option instanceof SmallArea) {
+								double area = ((SmallArea) option).getArea();
+								typeErrorLayer = layerValidator.validateSmallArea(area);
+							}
+							if (option instanceof SmallLength) {
+								double length = ((SmallLength) option).getLength();
+								typeErrorLayer = layerValidator.validateSmallLength(length);
+							}
+							if (option instanceof SelfEntity) {
+								List<String> relationNames = ((SelfEntity) option).getRelationType();
+								for (int r = 0; r < relationNames.size(); r++) {
+									typeErrorLayer = layerValidator.validateSelfEntity(validateLayerCollectionList
+											.getTypeLayers(relationNames.get(r), collection));
+								}
+								if (typeErrorLayer != null) {
+									errLayer.mergeErrorLayer(typeErrorLayer);
+								}
+							}
+							if (option instanceof OverShoot) {
+								double tolerence = ((OverShoot) option).getTolerence();
+								typeErrorLayer = layerValidator.validateOverShoot(neatLayer, tolerence);
+							}
+							if (option instanceof UnderShoot) {
+								double tolerence = ((UnderShoot) option).getTolerence();
+								typeErrorLayer = layerValidator.validateUnderShoot(neatLayer, tolerence);
+>>>>>>> 50bbe3d790e7e08f193e6b2d79751c92375803bd
 							}
 							if (typeErrorLayer != null) {
 								errLayer.mergeErrorLayer(typeErrorLayer);
@@ -383,6 +444,7 @@ public class CollectionValidator {
 	}
 
 	@SuppressWarnings("unused")
+<<<<<<< HEAD
 	private void layerMissValidate(ValidateLayerTypeList types, GeoLayerCollection layerCollection)
 			throws SchemaException {
 		// TODO Auto-generated method stub
@@ -408,6 +470,36 @@ public class CollectionValidator {
 							typeErrorLayer = layerValidator.validateLayerMiss(typeNames);
 							if (typeErrorLayer != null) {
 								errLayer.mergeErrorLayer(typeErrorLayer);
+=======
+	private void layerMissValidate(ValidateLayerTypeList types, GeoLayerCollectionList layerCollections) throws SchemaException {
+		
+		// TODO Auto-generated method stub
+		for (int i = 0; i < layerCollections.size(); i++) {
+			GeoLayerCollection collection = layerCollections.get(i);
+			List<GeoLayer> collectionList = collection.getLayers();
+			ErrorLayer errLayer = new ErrorLayer();
+			for(int j=0; j < types.size(); j++){
+				ValidateLayerType type = types.get(j);
+				GeoLayerList typeLayers = validateLayerCollectionList.getTypeLayers(type.getTypeName(), collection);
+				List<ValidatorOption> options = type.getOptionList();
+				if(options != null){
+					ErrorLayer typeErrorLayer = null; 
+					for(int k = 0; k<options.size(); k++){
+						ValidatorOption option = options.get(k);
+						for (int l = 0; l < typeLayers.size(); l++) {
+							GeoLayer typeLayer = typeLayers.get(l);
+							if(typeLayer == null){
+								continue;
+							}
+							LayerValidatorImpl layerValidator = new LayerValidatorImpl(typeLayer);
+							if (option instanceof LayerMiss){
+								List<String> typeNames = ((LayerMiss) option).getLayerType();
+								typeErrorLayer = layerValidator.validateLayerMiss(typeNames);
+								if (typeErrorLayer != null) {
+									errLayer.mergeErrorLayer(typeErrorLayer);
+								}
+								collectionList.remove(typeLayer);
+>>>>>>> 50bbe3d790e7e08f193e6b2d79751c92375803bd
 							}
 							collectionList.remove(typeLayer);
 						}
