@@ -253,6 +253,7 @@ public class GeoserverLayerCollectionTree extends JSONArray {
 						String suLayerType = "";
 						
 						String codeFileName = preName +"_"+ fileType +"_" + fileName;
+						String groupName = "gro_"+fileType+"_"+fileName;
 						if (fileNames.contains(fileName)) {
 							if(fileType.equals("ngi")){
 								if(layerType.equals("POINT")){
@@ -364,7 +365,7 @@ public class GeoserverLayerCollectionTree extends JSONArray {
 								}
 								
 								fileNames.add(fileName);
-								fileNameJson.put("id", codeFileName);
+								fileNameJson.put("id", groupName);
 								fileNameJson.put("parent", "n_ngi");
 								fileNameJson.put("text", fileName);
 								fileNameJson.put("type", "n_"+fileType+"_group");
