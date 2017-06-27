@@ -27,7 +27,13 @@ gb.edit.FeatureRecord.prototype.getRemoved = function() {
 };
 gb.edit.FeatureRecord.prototype.isRemoved = function(layer, feature) {
 	var isRemoved = false;
-	if (this.removed.hasOwnProperty(layer.get("id"))) {
+	var lid;
+	if (layer instanceof ol.layer.Base) {
+		lid = layer.get("id");
+	} else if (typeof layer === "string") {
+		lid = layer;
+	}
+	if (this.removed.hasOwnProperty(lid)) {
 		if (this.removed[layer.get("id")].hasOwnProperty(this.id ? feature.get(this.id) : feature.getId())) {
 			isRemoved = true;
 		}
