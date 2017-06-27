@@ -115,9 +115,12 @@ public class FeatureAttributeValidatorImpl implements FeatureAttributeValidator 
 			throws SchemaException {
 		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
 		
-		Object attributeValue = simpleFeature.getAttribute(attributeKey);
 		
-		if(attributeValue.equals("null") || attributeValue.equals("0.0")){
+		System.out.println(simpleFeature.getAttribute("등고수치"));
+		
+		String attributeValue = simpleFeature.getAttribute(attributeKey).toString();
+		
+		if(attributeValue.equals("null") || attributeValue.equals("0.0") ){
 			ErrorFeature errorFeature = new ErrorFeature(simpleFeature.getID(), Z_ValueAmbiguous.Type.Z_VALUEAMBIGUOUS.errType(),
 					Z_ValueAmbiguous.Type.Z_VALUEAMBIGUOUS.errName(), geometry.getInteriorPoint());
 			return errorFeature;

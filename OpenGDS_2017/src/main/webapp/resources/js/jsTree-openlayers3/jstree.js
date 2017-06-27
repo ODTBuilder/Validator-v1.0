@@ -579,10 +579,31 @@
 						for (var i = 0; i < layers.getLength(); i++) {
 							lastZidx = that.setUniqueLayerZIndex(layers.item(i), lastZidx);
 						}
+					} else if (layer instanceof ol.layer.Tile) {
+						var git = layer.get("git");
+						if (!!git) {
+							if (git.hasOwnProperty("fake")) {
+								if (git.fake === "parent") {
+									layer.setZIndex(zidx);
+									lastZidx++;
+									var layers = layer.get("git").layers;
+									for (var i = 0; i < layers.getLength(); i++) {
+										lastZidx = that.setUniqueLayerZIndex(layers.item(i), lastZidx);
+									}
+								} else if (git.fake === "child") {
+									layer.setZIndex(zidx);
+									lastZidx++;
+								}
+							}
+						} else {
+							layer.setZIndex(zidx);
+							lastZidx++;
+						}
 					} else {
 						layer.setZIndex(zidx);
 						lastZidx++;
 					}
+					console.log(lastZidx);
 					return lastZidx;
 				},
 				/**
@@ -606,6 +627,25 @@
 								if (typeof layers.item(i).get("treeid") !== "string") {
 									that.setUniqueLayerId(layers.item(i), that._createLayerId());
 								}
+							}
+						} else if (layer instanceof ol.layer.Tile) {
+							var git = layer.get("git");
+							if (!!git) {
+								if (layer.get("git").hasOwnProperty("fake")) {
+									if (git.fake === "parent") {
+										layer.set("treeid", id);
+										var layers = layer.get("git").layers;
+										for (var i = 0; i < layers.getLength(); i++) {
+											if (typeof layers.item(i).get("treeid") !== "string") {
+												that.setUniqueLayerId(layers.item(i), that._createLayerId());
+											}
+										}
+									} else if (git.fake === "child") {
+										layer.set("treeid", id);
+									}
+								}
+							} else {
+								layer.set("treeid", id);
 							}
 						} else {
 							layer.set("treeid", id);
@@ -700,6 +740,7 @@
 								that.git.isContextmenu = false;
 							} else {
 								var json = that._createJSONFromLayer(addLayer);
+								console.log(json);
 								for (var i = 0; i < json.length; i++) {
 									that.create_node(json[i].parent, json[i], "first", false, false);
 								}
@@ -780,8 +821,8 @@
 									+ "li id='j"
 									+ this._id
 									+ "_loading' class='jstreeol3-initial-node jstreeol3-loading jstreeol3-leaf jstreeol3-last' role='tree-item'><i class='jstreeol3-icon jstreeol3-ocl'></i><"
-									+ "a class='jstreeol3-anchor' href='#'><i class='jstreeol3-icon jstreeol3-themeicon-hidden'></i>" + this.get_string("Loading ...")
-									+ "</a></li></ul>");
+									+ "a class='jstreeol3-anchor' href='#'><i class='jstreeol3-icon jstreeol3-themeicon-hidden'></i>"
+									+ this.get_string("Loading ...") + "</a></li></ul>");
 					this.element.attr('aria-activedescendant', 'j' + this._id + '_loading');
 					this._data.core.li_height = this.get_container_ul().children("li").first().height() || 24;
 					this._data.core.node = this._create_prototype_node();
@@ -1057,79 +1098,80 @@
 					// quick searching when the tree is focused
 					.on(
 							'keypress.jstreeol3',
-							$.proxy(function(e) {
-								if (e.target.tagName && e.target.tagName.toLowerCase() === "input") {
-									return true;
-								}
-								if (tout) {
-									clearTimeout(tout);
-								}
-								tout = setTimeout(function() {
-									word = '';
-								}, 500);
-
-								var chr = String.fromCharCode(e.which).toLowerCase(), col = this.element.find('.jstreeol3-anchor').filter(':visible'), ind = col
-										.index(document.activeElement) || 0, end = false;
-								word += chr;
-
-								// match for whole word from current
-								// node down (including the current
-								// node)
-								if (word.length > 1) {
-									col.slice(ind).each($.proxy(function(i, v) {
-										if ($(v).text().toLowerCase().indexOf(word) === 0) {
-											$(v).focus();
-											end = true;
-											return false;
+							$.proxy(
+									function(e) {
+										if (e.target.tagName && e.target.tagName.toLowerCase() === "input") {
+											return true;
 										}
-									}, this));
-									if (end) {
-										return;
-									}
+										if (tout) {
+											clearTimeout(tout);
+										}
+										tout = setTimeout(function() {
+											word = '';
+										}, 500);
 
-									// match for whole word from the
-									// beginning of the tree
-									col.slice(0, ind).each($.proxy(function(i, v) {
-										if ($(v).text().toLowerCase().indexOf(word) === 0) {
-											$(v).focus();
-											end = true;
-											return false;
-										}
-									}, this));
-									if (end) {
-										return;
-									}
-								}
-								// list nodes that start with that
-								// letter (only if word consists of a
-								// single char)
-								if (new RegExp('^' + chr.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&') + '+$').test(word)) {
-									// search for the next node starting
-									// with that letter
-									col.slice(ind + 1).each($.proxy(function(i, v) {
-										if ($(v).text().toLowerCase().charAt(0) === chr) {
-											$(v).focus();
-											end = true;
-											return false;
-										}
-									}, this));
-									if (end) {
-										return;
-									}
+										var chr = String.fromCharCode(e.which).toLowerCase(), col = this.element.find('.jstreeol3-anchor').filter(
+												':visible'), ind = col.index(document.activeElement) || 0, end = false;
+										word += chr;
 
-									// search from the beginning
-									col.slice(0, ind + 1).each($.proxy(function(i, v) {
-										if ($(v).text().toLowerCase().charAt(0) === chr) {
-											$(v).focus();
-											end = true;
-											return false;
+										// match for whole word from current
+										// node down (including the current
+										// node)
+										if (word.length > 1) {
+											col.slice(ind).each($.proxy(function(i, v) {
+												if ($(v).text().toLowerCase().indexOf(word) === 0) {
+													$(v).focus();
+													end = true;
+													return false;
+												}
+											}, this));
+											if (end) {
+												return;
+											}
+
+											// match for whole word from the
+											// beginning of the tree
+											col.slice(0, ind).each($.proxy(function(i, v) {
+												if ($(v).text().toLowerCase().indexOf(word) === 0) {
+													$(v).focus();
+													end = true;
+													return false;
+												}
+											}, this));
+											if (end) {
+												return;
+											}
 										}
-									}, this));
-									if (end) {
-										return;
-									}
-								}
-							}, this))
+										// list nodes that start with that
+										// letter (only if word consists of a
+										// single char)
+										if (new RegExp('^' + chr.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&') + '+$').test(word)) {
+											// search for the next node starting
+											// with that letter
+											col.slice(ind + 1).each($.proxy(function(i, v) {
+												if ($(v).text().toLowerCase().charAt(0) === chr) {
+													$(v).focus();
+													end = true;
+													return false;
+												}
+											}, this));
+											if (end) {
+												return;
+											}
+
+											// search from the beginning
+											col.slice(0, ind + 1).each($.proxy(function(i, v) {
+												if ($(v).text().toLowerCase().charAt(0) === chr) {
+													$(v).focus();
+													end = true;
+													return false;
+												}
+											}, this));
+											if (end) {
+												return;
+											}
+										}
+									}, this))
 					// THEME RELATED
 					.on("init.jstreeol3", $.proxy(function() {
 						var s = this.settings.core.themes;
@@ -1587,9 +1629,10 @@
 					if (obj.state.loaded) {
 						obj.state.loaded = false;
 						for (i = 0, j = obj.parents.length; i < j; i++) {
-							this._model.data[obj.parents[i]].children_d = $.vakata.array_filter(this._model.data[obj.parents[i]].children_d, function(v) {
-								return $.inArray(v, obj.children_d) === -1;
-							});
+							this._model.data[obj.parents[i]].children_d = $.vakata.array_filter(this._model.data[obj.parents[i]].children_d,
+									function(v) {
+										return $.inArray(v, obj.children_d) === -1;
+									});
 						}
 						for (k = 0, l = obj.children_d.length; k < l; k++) {
 							if (this._model.data[obj.children_d[k]].state.selected) {
@@ -1703,6 +1746,34 @@
 								if (!isUnique) {
 									break;
 								}
+							}
+						}
+					} else if (layer instanceof ol.layer.Tile) {
+						var git = layer.get("git");
+						if (!!git) {
+							if (layer.get("git").hasOwnProperty("fake")) {
+								if (git.fake === "parent") {
+									if (layer.get("treeid") === id) {
+										isUnique = false;
+										return isUnique;
+									} else {
+										var layers = layer.get("git").layers;
+										for (var i = 0; i < layers.getLength(); i++) {
+											isUnique = this._tour_CheckId(layers.item(i), id);
+											if (!isUnique) {
+												break;
+											}
+										}
+									}
+								} else if (git.fake === "child") {
+									if (layer.get("treeid") === id) {
+										isUnique = false;
+									}
+								}
+							}
+						} else {
+							if (layer.get("treeid") === id) {
+								isUnique = false;
 							}
 						}
 					} else {
@@ -1884,7 +1955,46 @@
 					} else if (layer instanceof ol.layer.Tile) {
 						if (layer.get("git")) {
 							var git = layer.get("git");
-							if (git.hasOwnProperty("validation")) {
+							if (git.hasOwnProperty("fake")) {
+								if (git["fake"] === "parent") {
+									obj.type = "Group";
+									result.push(obj);
+									var layers = layer.get("git").layers;
+									for (var i = 0; i < layers.getLength(); i++) {
+										result = result.concat(that._createJSONFromLayer(layers.item(i), layer.get("treeid")));
+									}
+								} else if (git["fake"] === "child") {
+									// if (git.editable &&
+									// git.hasOwnProperty("geometry")) {
+									// switch (git.geometry) {
+									// case "Point":
+									// obj.type = git.geometry;
+									// break;
+									// case "MultiPoint":
+									// obj.type = git.geometry;
+									// break;
+									// case "LineString":
+									// obj.type = git.geometry;
+									// break;
+									// case "MultiLineString":
+									// obj.type = git.geometry;
+									// break;
+									// case "Polygon":
+									// obj.type = git.geometry;
+									// break;
+									// case "MultiPolygon":
+									// obj.type = git.geometry;
+									// break;
+									// default:
+									// obj.type = "ImageTile";
+									// break;
+									// }
+									// } else {
+									obj.type = "ImageTile";
+									// }
+									result.push(obj);
+								}
+							} else if (git.hasOwnProperty("validation")) {
 								switch (git.validation) {
 								case "Up":
 									obj.type = git.validation;
@@ -1908,6 +2018,7 @@
 									obj.type = "ImageTile";
 									break;
 								}
+								result.push(obj);
 							} else if (git.hasOwnProperty("editable")) {
 								if (git.editable && git.hasOwnProperty("geometry")) {
 									switch (git.geometry) {
@@ -1936,13 +2047,16 @@
 								} else {
 									obj.type = "ImageTile";
 								}
+								result.push(obj);
 							} else {
 								obj.type = "ImageTile";
+								result.push(obj);
 							}
 						} else {
 							obj.type = "ImageTile";
+							result.push(obj);
 						}
-						result.push(obj);
+
 					} else if (layer instanceof ol.layer.Group) {
 						if (layer.get("git")) {
 							var git = layer.get("git");
@@ -2101,10 +2215,10 @@
 							if (d === false) {
 								callback.call(this, false);
 							} else {
-								this[typeof d === 'string' ? '_append_html_data' : '_append_json_data'](obj, typeof d === 'string' ? $($.parseHTML(d)).filter(
-										notTextOrCommentNode) : d, function(status) {
-									callback.call(this, status);
-								});
+								this[typeof d === 'string' ? '_append_html_data' : '_append_json_data'](obj,
+										typeof d === 'string' ? $($.parseHTML(d)).filter(notTextOrCommentNode) : d, function(status) {
+											callback.call(this, status);
+										});
 							}
 							// return d === false ? callback.call(this, false) :
 							// callback.call(this, this[typeof d === 'string' ?
@@ -3085,8 +3199,8 @@
 				 * @trigger redraw.jstreeol3
 				 */
 				_redraw : function() {
-					var nodes = this._model.force_full_redraw ? this._model.data[$.jstreeol3.root].children.concat([]) : this._model.changed.concat([]), f = document
-							.createElement('UL'), tmp, i, j, fe = this._data.core.focused;
+					var nodes = this._model.force_full_redraw ? this._model.data[$.jstreeol3.root].children.concat([]) : this._model.changed
+							.concat([]), f = document.createElement('UL'), tmp, i, j, fe = this._data.core.focused;
 					for (i = 0, j = nodes.length; i < j; i++) {
 						tmp = this.redraw_node(nodes[i], true, this._model.force_full_redraw);
 						if (tmp && this._model.force_full_redraw) {
@@ -3198,8 +3312,8 @@
 					}
 					deep = deep || obj.children.length === 0;
 					node = !document.querySelector ? document.getElementById(obj.id) : this.element[0].querySelector('#'
-							+ ("0123456789".indexOf(obj.id[0]) !== -1 ? '\\3' + obj.id[0] + ' ' + obj.id.substr(1).replace($.jstreeol3.idregex, '\\$&') : obj.id.replace(
-									$.jstreeol3.idregex, '\\$&'))); // ,
+							+ ("0123456789".indexOf(obj.id[0]) !== -1 ? '\\3' + obj.id[0] + ' '
+									+ obj.id.substr(1).replace($.jstreeol3.idregex, '\\$&') : obj.id.replace($.jstreeol3.idregex, '\\$&'))); // ,
 					// this.element);
 					if (!node) {
 						deep = true;
@@ -3450,15 +3564,16 @@
 								this.trigger('before_open', {
 									"node" : obj
 								});
-								d.children(".jstreeol3-children").css("display", "none").end().removeClass("jstreeol3-closed").addClass("jstreeol3-open").attr(
-										"aria-expanded", true).children(".jstreeol3-children").stop(true, true).slideDown(animation, function() {
-									this.style.display = "";
-									if (t.element) {
-										t.trigger("after_open", {
-											"node" : obj
+								d.children(".jstreeol3-children").css("display", "none").end().removeClass("jstreeol3-closed").addClass(
+										"jstreeol3-open").attr("aria-expanded", true).children(".jstreeol3-children").stop(true, true).slideDown(
+										animation, function() {
+											this.style.display = "";
+											if (t.element) {
+												t.trigger("after_open", {
+													"node" : obj
+												});
+											}
 										});
-									}
-								});
 							}
 						}
 						obj.state.opened = true;
@@ -3597,8 +3712,9 @@
 								"node" : obj
 							});
 						} else {
-							d.children(".jstreeol3-children").attr("style", "display:block !important").end().removeClass("jstreeol3-open").addClass("jstreeol3-closed")
-									.attr("aria-expanded", false).children(".jstreeol3-children").stop(true, true).slideUp(animation, function() {
+							d.children(".jstreeol3-children").attr("style", "display:block !important").end().removeClass("jstreeol3-open").addClass(
+									"jstreeol3-closed").attr("aria-expanded", false).children(".jstreeol3-children").stop(true, true).slideUp(
+									animation, function() {
 										this.style.display = "";
 										d.children('.jstreeol3-children').remove();
 										if (t.element) {
@@ -4018,7 +4134,8 @@
 						this._data.core.last_clicked = this.get_node(this._data.core.selected[this._data.core.selected.length - 1]);
 					}
 
-					if (!this.settings.core.multiple || (!e.metaKey && !e.ctrlKey && !e.shiftKey)
+					if (!this.settings.core.multiple
+							|| (!e.metaKey && !e.ctrlKey && !e.shiftKey)
 							|| (e.shiftKey && (!this._data.core.last_clicked || !this.get_parent(obj) || this.get_parent(obj) !== this._data.core.last_clicked.parent))) {
 						if (!this.settings.core.multiple && (e.metaKey || e.ctrlKey || e.shiftKey) && this.is_selected(obj)) {
 							this.deselect_node(obj, false, e);
@@ -4029,7 +4146,8 @@
 						}
 					} else {
 						if (e.shiftKey) {
-							var o = this.get_node(obj).id, l = this._data.core.last_clicked.id, p = this.get_node(this._data.core.last_clicked.parent).children, c = false, i, j;
+							var o = this.get_node(obj).id, l = this._data.core.last_clicked.id, p = this
+									.get_node(this._data.core.last_clicked.parent).children, c = false, i, j;
 							for (i = 0, j = p.length; i < j; i += 1) {
 								// separate IFs work whem o and l are the same
 								if (p[i] === o) {
@@ -4631,10 +4749,10 @@
 					var c = this.get_container_ul()[0].className;
 					if (!skip_loading) {
 						this.element.html("<" + "ul class='" + c + "' role='group'><"
-								+ "li class='jstreeol3-initial-node jstreeol3-loading jstreeol3-leaf jstreeol3-last' role='treeitem' id='j" + this._id
-								+ "_loading'><i class='jstreeol3-icon jstreeol3-ocl'></i><"
-								+ "a class='jstreeol3-anchor' href='#'><i class='jstreeol3-icon jstreeol3-themeicon-hidden'></i>" + this.get_string("Loading ...")
-								+ "</a></li></ul>");
+								+ "li class='jstreeol3-initial-node jstreeol3-loading jstreeol3-leaf jstreeol3-last' role='treeitem' id='j"
+								+ this._id + "_loading'><i class='jstreeol3-icon jstreeol3-ocl'></i><"
+								+ "a class='jstreeol3-anchor' href='#'><i class='jstreeol3-icon jstreeol3-themeicon-hidden'></i>"
+								+ this.get_string("Loading ...") + "</a></li></ul>");
 						this.element.attr('aria-activedescendant', 'j' + this._id + '_loading');
 					}
 					this.load_node($.jstreeol3.root, function(o, s) {
@@ -4807,6 +4925,30 @@
 								}
 							}
 						}
+					} else if (layer instanceof ol.layer.Tile) {
+						var git = layer.get("git");
+						if (!!git) {
+							if (layer.get("git").hasOwnProperty("fake")) {
+								if (git.fake === "parent" && layer.get("treeid") === id) {
+									result = layer;
+								} else if (git.fake === "parent" && layer.get("treeid") !== id) {
+									var layers = layer.get("git").layers;
+									for (var i = 0; i < layers.getLength(); i++) {
+										var isExist = this.tour_Layer(layers.item(i), id);
+										if (!!isExist) {
+											result = isExist;
+											break;
+										}
+									}
+								} else if (git.fake === "child" && layer.get("treeid") === id) {
+									result = layer;
+								}
+							}
+						} else {
+							if (layer.get("treeid") === id) {
+								result = layer;
+							}
+						}
 					} else {
 						if (layer.get("treeid") === id) {
 							result = layer;
@@ -4834,6 +4976,23 @@
 						var layers = layer.getLayers();
 						for (var i = 0; i < layers.getLength(); i++) {
 							num = this.sum_Layers(layers.item(i), num);
+						}
+					} else if (layer instanceof ol.layer.Tile) {
+						var git = layer.get("git");
+						if (!!git) {
+							if (layer.get("git").hasOwnProperty("fake")) {
+								if (git.fake === "parent") {
+									num += 1;
+									var layers = layer.get("git").layers;
+									for (var i = 0; i < layers.getLength(); i++) {
+										num = this.sum_Layers(layers.item(i), num);
+									}
+								} else if (git.fake === "child") {
+									num += 1;
+								}
+							}
+						} else {
+							num += 1;
 						}
 					} else {
 						num += 1;
@@ -5433,6 +5592,36 @@
 						subVal = this.sum_Layers(layer, subVal);
 						group.remove(layer);
 						this.git.lastPointer -= subVal;
+					} else if (pLayer instanceof ol.layer.Tile) {
+						var git = pLayer.get("git");
+						if (!!git) {
+							if (pLayer.get("git").hasOwnProperty("fake")) {
+								if (git.fake === "parent") {
+									var group = pLayer.get("git").layers;
+									layer = this.get_LayerById(obj.id, group);
+									var subVal = 0;
+									subVal = this.sum_Layers(layer, subVal);
+									group.remove(layer);
+									this.git.lastPointer -= subVal;
+								} else if (git.fake === "child") {
+									layer = this.get_LayerById(obj.id);
+									var subVal = 0;
+									subVal = this.sum_Layers(layer, subVal);
+									this.git.isContextmenu = true;
+									var map = this._data.core.map;
+									map.removeLayer(layer);
+									this.git.lastPointer -= subVal;
+								}
+							}
+						} else {
+							layer = this.get_LayerById(obj.id);
+							var subVal = 0;
+							subVal = this.sum_Layers(layer, subVal);
+							this.git.isContextmenu = true;
+							var map = this._data.core.map;
+							map.removeLayer(layer);
+							this.git.lastPointer -= subVal;
+						}
 					} else {
 						layer = this.get_LayerById(obj.id);
 						var subVal = 0;
@@ -5667,7 +5856,8 @@
 					var tmp = chk.match(/^move_node|copy_node|create_node$/i) ? par : obj, chc = this.settings.core.check_callback;
 					if (chk === "move_node" || chk === "copy_node") {
 						if ((!more || !more.is_multi)
-								&& (obj.id === par.id || (chk === "move_node" && $.inArray(obj.id, par.children) === pos) || $.inArray(par.id, obj.children_d) !== -1)) {
+								&& (obj.id === par.id || (chk === "move_node" && $.inArray(obj.id, par.children) === pos) || $.inArray(par.id,
+										obj.children_d) !== -1)) {
 							this._data.core.last_error = {
 								'error' : 'check',
 								'plugin' : 'core',
@@ -5795,8 +5985,8 @@
 					new_par = (!pos.toString().match(/^(before|after)$/) || par.id === $.jstreeol3.root) ? par : this.get_node(par.parent);
 					old_ins = origin ? origin : (this._model.data[obj.id] ? this : $.jstreeol3.reference(obj.id));
 					is_multi = !old_ins || !old_ins._id || (this._id !== old_ins._id);
-					old_pos = old_ins && old_ins._id && old_par && old_ins._model.data[old_par] && old_ins._model.data[old_par].children ? $.inArray(obj.id,
-							old_ins._model.data[old_par].children) : -1;
+					old_pos = old_ins && old_ins._id && old_par && old_ins._model.data[old_par] && old_ins._model.data[old_par].children ? $.inArray(
+							obj.id, old_ins._model.data[old_par].children) : -1;
 					if (old_ins && old_ins._id) {
 						obj = old_ins._model.data[obj.id];
 					}
@@ -5876,6 +6066,15 @@
 						var pLayer = this.get_LayerById(new_par.id);
 						if (pLayer instanceof ol.layer.Group) {
 							lastPointerTmp = pLayer.getZIndex() + 1;
+						} else if (pLayer instanceof ol.layer.Tile) {
+							var git = pLayer.get("git");
+							if (!!git) {
+								if (pLayer.get("git").hasOwnProperty("fake")) {
+									if (git.fake === "parent") {
+										lastPointerTmp = pLayer.getZIndex() + 1;
+									}
+								}
+							}
 						}
 						for (var i = arr.length - 1; i > -1; i--) {
 							lastPointerTmp = that.setUniqueLayerZIndex(this.get_LayerById(arr[i]), lastPointerTmp);
@@ -6288,19 +6487,20 @@
 					 * @param {jstreeol3}
 					 *            new_instance the instance of the new parent
 					 */
-					this.trigger('copy_node', {
-						"node" : tmp,
-						"original" : obj,
-						"parent" : new_par.id,
-						"position" : pos,
-						"old_parent" : old_par,
-						"old_position" : old_ins && old_ins._id && old_par && old_ins._model.data[old_par] && old_ins._model.data[old_par].children ? $.inArray(obj.id,
-								old_ins._model.data[old_par].children) : -1,
-						'is_multi' : (old_ins && old_ins._id && old_ins._id !== this._id),
-						'is_foreign' : (!old_ins || !old_ins._id),
-						'old_instance' : old_ins,
-						'new_instance' : this
-					});
+					this.trigger('copy_node',
+							{
+								"node" : tmp,
+								"original" : obj,
+								"parent" : new_par.id,
+								"position" : pos,
+								"old_parent" : old_par,
+								"old_position" : old_ins && old_ins._id && old_par && old_ins._model.data[old_par]
+										&& old_ins._model.data[old_par].children ? $.inArray(obj.id, old_ins._model.data[old_par].children) : -1,
+								'is_multi' : (old_ins && old_ins._id && old_ins._id !== this._id),
+								'is_foreign' : (!old_ins || !old_ins._id),
+								'old_instance' : old_ins,
+								'new_instance' : this
+							});
 					return tmp.id;
 				},
 				/**
@@ -7267,7 +7467,8 @@
 					this.element.on('model.jstreeol3', $.proxy(function(e, data) {
 						var m = this._model.data, p = m[data.parent], dpc = data.nodes, i, j;
 						for (i = 0, j = dpc.length; i < j; i++) {
-							m[dpc[i]].state.vanished = m[dpc[i]].state.vanished || (m[dpc[i]].original && m[dpc[i]].original.state && m[dpc[i]].original.state.vanished);
+							m[dpc[i]].state.vanished = m[dpc[i]].state.vanished
+									|| (m[dpc[i]].original && m[dpc[i]].original.state && m[dpc[i]].original.state.vanished);
 							if (m[dpc[i]].state.vanished) {
 								this._data.visibility.vanished.push(dpc[i]);
 							}
@@ -7275,78 +7476,86 @@
 					}, this));
 					if (this.settings.visibility.cascade.indexOf('up') !== -1 || this.settings.visibility.cascade.indexOf('down') !== -1) {
 						this.element
-								.on('model.jstreeol3', $.proxy(function(e, data) {
-									var m = this._model.data, p = m[data.parent], dpc = data.nodes, chd = [], c, i, j, k, l, tmp, s = this.settings.visibility.cascade;
+								.on(
+										'model.jstreeol3',
+										$
+												.proxy(
+														function(e, data) {
+															var m = this._model.data, p = m[data.parent], dpc = data.nodes, chd = [], c, i, j, k, l, tmp, s = this.settings.visibility.cascade;
 
-									if (s.indexOf('down') !== -1) {
-										// apply down
-										if (p.state['vanished']) {
-											for (i = 0, j = dpc.length; i < j; i++) {
-												m[dpc[i]].state['vanished'] = true;
-												var layer = this.get_LayerById(m[dpc[i]].id);
-												if (layer instanceof ol.layer.Base) {
-													layer.setVisible(false);
-												}
-											}
-											this._data['visibility'].vanished = this._data['visibility'].vanished.concat(dpc);
-										} else {
-											for (i = 0, j = dpc.length; i < j; i++) {
-												if (m[dpc[i]].state['vanished']) {
-													for (k = 0, l = m[dpc[i]].children_d.length; k < l; k++) {
-														m[m[dpc[i]].children_d[k]].state['vanished'] = true;
-														var layer = this.get_LayerById(m[m[dpc[i]].children_d[k]].id);
-														if (layer instanceof ol.layer.Base) {
-															layer.setVisible(false);
-														}
-													}
-													this._data['visibility'].vanished = this._data['visibility'].vanished.concat(m[dpc[i]].children_d);
-												}
-											}
-										}
-									}
+															if (s.indexOf('down') !== -1) {
+																// apply down
+																if (p.state['vanished']) {
+																	for (i = 0, j = dpc.length; i < j; i++) {
+																		m[dpc[i]].state['vanished'] = true;
+																		var layer = this.get_LayerById(m[dpc[i]].id);
+																		if (layer instanceof ol.layer.Base) {
+																			layer.setVisible(false);
+																		}
+																	}
+																	this._data['visibility'].vanished = this._data['visibility'].vanished.concat(dpc);
+																} else {
+																	for (i = 0, j = dpc.length; i < j; i++) {
+																		if (m[dpc[i]].state['vanished']) {
+																			for (k = 0, l = m[dpc[i]].children_d.length; k < l; k++) {
+																				m[m[dpc[i]].children_d[k]].state['vanished'] = true;
+																				var layer = this.get_LayerById(m[m[dpc[i]].children_d[k]].id);
+																				if (layer instanceof ol.layer.Base) {
+																					layer.setVisible(false);
+																				}
+																			}
+																			this._data['visibility'].vanished = this._data['visibility'].vanished
+																					.concat(m[dpc[i]].children_d);
+																		}
+																	}
+																}
+															}
 
-									if (s.indexOf('up') !== -1) {
-										// apply up
-										for (i = 0, j = p.children_d.length; i < j; i++) {
-											if (!m[p.children_d[i]].children.length) {
-												chd.push(m[p.children_d[i]].parent);
-											}
-										}
-										chd = $.vakata.array_unique(chd);
-										for (k = 0, l = chd.length; k < l; k++) {
-											p = m[chd[k]];
-											while (p && p.id !== $.jstreeol3.root) {
-												c = 0;
-												for (i = 0, j = p.children.length; i < j; i++) {
-													c += m[p.children[i]].state['vanished'];
-												}
-												if (c === j) {
-													p.state['vanished'] = true;
-													var layer = this.get_LayerById(p.id);
-													if (layer instanceof ol.layer.Base) {
-														layer.setVisible(false);
-													}
-													this._data['visibility'].vanished.push(p.id);
-													tmp = this.get_node(p, true);
-													if (tmp && tmp.length) {
-														tmp.attr('aria-selected', true).children('.jstreeol3-anchor').addClass('jstreeol3-checked');
-													}
-												} else {
-													break;
-												}
-												p = this.get_node(p.parent);
-											}
-										}
-									}
+															if (s.indexOf('up') !== -1) {
+																// apply up
+																for (i = 0, j = p.children_d.length; i < j; i++) {
+																	if (!m[p.children_d[i]].children.length) {
+																		chd.push(m[p.children_d[i]].parent);
+																	}
+																}
+																chd = $.vakata.array_unique(chd);
+																for (k = 0, l = chd.length; k < l; k++) {
+																	p = m[chd[k]];
+																	while (p && p.id !== $.jstreeol3.root) {
+																		c = 0;
+																		for (i = 0, j = p.children.length; i < j; i++) {
+																			c += m[p.children[i]].state['vanished'];
+																		}
+																		if (c === j) {
+																			p.state['vanished'] = true;
+																			var layer = this.get_LayerById(p.id);
+																			if (layer instanceof ol.layer.Base) {
+																				layer.setVisible(false);
+																			}
+																			this._data['visibility'].vanished.push(p.id);
+																			tmp = this.get_node(p, true);
+																			if (tmp && tmp.length) {
+																				tmp.attr('aria-selected', true).children('.jstreeol3-anchor')
+																						.addClass('jstreeol3-checked');
+																			}
+																		} else {
+																			break;
+																		}
+																		p = this.get_node(p.parent);
+																	}
+																}
+															}
 
-									this._data['visibility'].vanished = $.vakata.array_unique(this._data['visibility'].vanished);
-								}, this))
+															this._data['visibility'].vanished = $.vakata
+																	.array_unique(this._data['visibility'].vanished);
+														}, this))
 								.on(
 										'check_node.jstreeol3',
 										$
 												.proxy(
 														function(e, data) {
-															var obj = data.node, m = this._model.data, par = this.get_node(obj.parent), dom = this.get_node(obj, true), i, j, c, tmp, s = this.settings.visibility.cascade, sel = {}, cur = this._data['visibility'].vanished;
+															var obj = data.node, m = this._model.data, par = this.get_node(obj.parent), dom = this
+																	.get_node(obj, true), i, j, c, tmp, s = this.settings.visibility.cascade, sel = {}, cur = this._data['visibility'].vanished;
 
 															for (i = 0, j = cur.length; i < j; i++) {
 																sel[cur[i]] = true;
@@ -7369,7 +7578,8 @@
 																	if (layer instanceof ol.layer.Base) {
 																		layer.setVisible(false);
 																	}
-																	if (tmp && tmp.original && tmp.original.state && tmp.original.state.undeterminedVisibility) {
+																	if (tmp && tmp.original && tmp.original.state
+																			&& tmp.original.state.undeterminedVisibility) {
 																		tmp.original.state.undeterminedVisibility = false;
 																	}
 																}
@@ -7397,7 +7607,8 @@
 																		// ].selected.push(par.id);
 																		tmp = this.get_node(par, true);
 																		if (tmp && tmp.length) {
-																			tmp.attr('aria-selected', true).children('.jstreeol3-anchor').addClass('jstreeol3-checked');
+																			tmp.attr('aria-selected', true).children('.jstreeol3-anchor').addClass(
+																					'jstreeol3-checked');
 																		}
 																	} else {
 																		break;
@@ -7419,7 +7630,8 @@
 															// .children
 															// separately?)
 															if (s.indexOf('down') !== -1 && dom.length) {
-																dom.find('.jstreeol3-anchor').addClass('jstreeol3-checked').parent().attr('aria-selected', true);
+																dom.find('.jstreeol3-anchor').addClass('jstreeol3-checked').parent().attr(
+																		'aria-selected', true);
 															}
 														}, this))
 								.on('uncheck_all.jstreeol3', $.proxy(function(e, data) {
@@ -7437,7 +7649,8 @@
 												.proxy(
 														function(e, data) {
 															var obj = data.node, dom = this.get_node(obj, true), i, j, tmp, s = this.settings.visibility.cascade, cur = this._data['visibility'].vanished, sel = {};
-															if (obj && obj.original && obj.original.state && obj.original.state.undeterminedVisibility) {
+															if (obj && obj.original && obj.original.state
+																	&& obj.original.state.undeterminedVisibility) {
 																obj.original.state.undeterminedVisibility = false;
 															}
 
@@ -7450,7 +7663,8 @@
 																	if (layer instanceof ol.layer.Base) {
 																		layer.setVisible(true);
 																	}
-																	if (tmp && tmp.original && tmp.original.state && tmp.original.state.undeterminedVisibility) {
+																	if (tmp && tmp.original && tmp.original.state
+																			&& tmp.original.state.undeterminedVisibility) {
 																		tmp.original.state.undeterminedVisibility = false;
 																	}
 																}
@@ -7465,12 +7679,14 @@
 																	if (layer instanceof ol.layer.Base) {
 																		layer.setVisible(true);
 																	}
-																	if (tmp && tmp.original && tmp.original.state && tmp.original.state.undeterminedVisibility) {
+																	if (tmp && tmp.original && tmp.original.state
+																			&& tmp.original.state.undeterminedVisibility) {
 																		tmp.original.state.undeterminedVisibility = false;
 																	}
 																	tmp = this.get_node(obj.parents[i], true);
 																	if (tmp && tmp.length) {
-																		tmp.attr('aria-selected', false).children('.jstreeol3-anchor').removeClass('jstreeol3-checked');
+																		tmp.attr('aria-selected', false).children('.jstreeol3-anchor').removeClass(
+																				'jstreeol3-checked');
 																	}
 																}
 															}
@@ -7496,7 +7712,8 @@
 															// .children
 															// separately?)
 															if (s.indexOf('down') !== -1 && dom.length) {
-																dom.find('.jstreeol3-anchor').removeClass('jstreeol3-checked').parent().attr('aria-selected', false);
+																dom.find('.jstreeol3-anchor').removeClass('jstreeol3-checked').parent().attr(
+																		'aria-selected', false);
 															}
 														}, this));
 					}
@@ -7526,72 +7743,82 @@
 								}
 								p = this.get_node(p.parent);
 							}
-						}, this)).on('move_node.jstreeol3', $.proxy(function(e, data) {
-							// apply up (whole
-							// handler)
-							var is_multi = data.is_multi, old_par = data.old_parent, new_par = this.get_node(data.parent), m = this._model.data, p, c, i, j, tmp;
-							if (!is_multi) {
-								p = this.get_node(old_par);
-								while (p && p.id !== $.jstreeol3.root && !p.state['vanished']) {
-									c = 0;
-									for (i = 0, j = p.children.length; i < j; i++) {
-										c += m[p.children[i]].state['vanished'];
-									}
-									if (j > 0 && c === j) {
-										p.state['vanished'] = true;
-										var layer = this.get_LayerById(p.id);
-										if (layer instanceof ol.layer.Base) {
-											layer.setVisible(false);
-										}
-										this._data['visibility'].vanished.push(p.id);
-										tmp = this.get_node(p, true);
-										if (tmp && tmp.length) {
-											tmp.attr('aria-selected', true).children('.jstreeol3-anchor').addClass('jstreeol3-checked');
-										}
-									} else {
-										break;
-									}
-									p = this.get_node(p.parent);
-								}
-							}
-							p = new_par;
-							while (p && p.id !== $.jstreeol3.root) {
-								c = 0;
-								for (i = 0, j = p.children.length; i < j; i++) {
-									c += m[p.children[i]].state['vanished'];
-								}
-								if (c === j) {
-									if (!p.state['vanished']) {
-										p.state['vanished'] = true;
-										var layer = this.get_LayerById(p.id);
-										if (layer instanceof ol.layer.Base) {
-											layer.setVisible(false);
-										}
-										this._data['visibility'].vanished.push(p.id);
-										tmp = this.get_node(p, true);
-										if (tmp && tmp.length) {
-											tmp.attr('aria-selected', true).children('.jstreeol3-anchor').addClass('jstreeol3-checked');
-										}
-									}
-								} else {
-									if (p.state['vanished']) {
-										p.state['vanished'] = false;
-										var layer = this.get_LayerById(p.id);
-										if (layer instanceof ol.layer.Base) {
-											layer.setVisible(true);
-										}
-										this._data['visibility'].vanished = $.vakata.array_remove_item(this._data['visibility'].vanished, p.id);
-										tmp = this.get_node(p, true);
-										if (tmp && tmp.length) {
-											tmp.attr('aria-selected', false).children('.jstreeol3-anchor').removeClass('jstreeol3-checked');
-										}
-									} else {
-										break;
-									}
-								}
-								p = this.get_node(p.parent);
-							}
-						}, this));
+						}, this))
+								.on(
+										'move_node.jstreeol3',
+										$
+												.proxy(
+														function(e, data) {
+															// apply up (whole
+															// handler)
+															var is_multi = data.is_multi, old_par = data.old_parent, new_par = this
+																	.get_node(data.parent), m = this._model.data, p, c, i, j, tmp;
+															if (!is_multi) {
+																p = this.get_node(old_par);
+																while (p && p.id !== $.jstreeol3.root && !p.state['vanished']) {
+																	c = 0;
+																	for (i = 0, j = p.children.length; i < j; i++) {
+																		c += m[p.children[i]].state['vanished'];
+																	}
+																	if (j > 0 && c === j) {
+																		p.state['vanished'] = true;
+																		var layer = this.get_LayerById(p.id);
+																		if (layer instanceof ol.layer.Base) {
+																			layer.setVisible(false);
+																		}
+																		this._data['visibility'].vanished.push(p.id);
+																		tmp = this.get_node(p, true);
+																		if (tmp && tmp.length) {
+																			tmp.attr('aria-selected', true).children('.jstreeol3-anchor').addClass(
+																					'jstreeol3-checked');
+																		}
+																	} else {
+																		break;
+																	}
+																	p = this.get_node(p.parent);
+																}
+															}
+															p = new_par;
+															while (p && p.id !== $.jstreeol3.root) {
+																c = 0;
+																for (i = 0, j = p.children.length; i < j; i++) {
+																	c += m[p.children[i]].state['vanished'];
+																}
+																if (c === j) {
+																	if (!p.state['vanished']) {
+																		p.state['vanished'] = true;
+																		var layer = this.get_LayerById(p.id);
+																		if (layer instanceof ol.layer.Base) {
+																			layer.setVisible(false);
+																		}
+																		this._data['visibility'].vanished.push(p.id);
+																		tmp = this.get_node(p, true);
+																		if (tmp && tmp.length) {
+																			tmp.attr('aria-selected', true).children('.jstreeol3-anchor').addClass(
+																					'jstreeol3-checked');
+																		}
+																	}
+																} else {
+																	if (p.state['vanished']) {
+																		p.state['vanished'] = false;
+																		var layer = this.get_LayerById(p.id);
+																		if (layer instanceof ol.layer.Base) {
+																			layer.setVisible(true);
+																		}
+																		this._data['visibility'].vanished = $.vakata.array_remove_item(
+																				this._data['visibility'].vanished, p.id);
+																		tmp = this.get_node(p, true);
+																		if (tmp && tmp.length) {
+																			tmp.attr('aria-selected', false).children('.jstreeol3-anchor')
+																					.removeClass('jstreeol3-checked');
+																		}
+																	} else {
+																		break;
+																	}
+																}
+																p = this.get_node(p.parent);
+															}
+														}, this));
 					}
 				};
 				/**
@@ -7741,14 +7968,16 @@
 				this.is_undeterminedVisibility = function(obj) {
 					obj = this.get_node(obj);
 					var s = this.settings.visibility.cascade, i, j, d = this._data['visibility'].vanished, m = this._model.data;
-					if (!obj || obj.state['vanished'] === true || s.indexOf('undetermined') === -1 || (s.indexOf('down') === -1 && s.indexOf('up') === -1)) {
+					if (!obj || obj.state['vanished'] === true || s.indexOf('undetermined') === -1
+							|| (s.indexOf('down') === -1 && s.indexOf('up') === -1)) {
 						return false;
 					}
 					if (!obj.state.loaded && obj.original.state.undeterminedVisibility === true) {
 						return true;
 					}
 					for (i = 0, j = obj.children_d.length; i < j; i++) {
-						if ($.inArray(obj.children_d[i], d) !== -1 || (!m[obj.children_d[i]].state.loaded && m[obj.children_d[i]].original.state.undeterminedVisibility)) {
+						if ($.inArray(obj.children_d[i], d) !== -1
+								|| (!m[obj.children_d[i]].state.loaded && m[obj.children_d[i]].original.state.undeterminedVisibility)) {
 							return true;
 						}
 					}
@@ -8303,17 +8532,16 @@
 										}, this));
 					}
 					if (!this.settings.checkbox.tie_selection) {
-						this.element.on('model.jstreeol3', $.proxy(
-								function(e, data) {
-									var m = this._model.data, p = m[data.parent], dpc = data.nodes, i, j;
-									for (i = 0, j = dpc.length; i < j; i++) {
-										m[dpc[i]].state.checked = m[dpc[i]].state.checked
-												|| (m[dpc[i]].original && m[dpc[i]].original.state && m[dpc[i]].original.state.checked);
-										if (m[dpc[i]].state.checked) {
-											this._data.checkbox.selected.push(dpc[i]);
-										}
-									}
-								}, this));
+						this.element.on('model.jstreeol3', $.proxy(function(e, data) {
+							var m = this._model.data, p = m[data.parent], dpc = data.nodes, i, j;
+							for (i = 0, j = dpc.length; i < j; i++) {
+								m[dpc[i]].state.checked = m[dpc[i]].state.checked
+										|| (m[dpc[i]].original && m[dpc[i]].original.state && m[dpc[i]].original.state.checked);
+								if (m[dpc[i]].state.checked) {
+									this._data.checkbox.selected.push(dpc[i]);
+								}
+							}
+						}, this));
 					}
 					if (this.settings.checkbox.cascade.indexOf('up') !== -1 || this.settings.checkbox.cascade.indexOf('down') !== -1) {
 						this.element
@@ -8338,8 +8566,8 @@
 																			for (k = 0, l = m[dpc[i]].children_d.length; k < l; k++) {
 																				m[m[dpc[i]].children_d[k]].state[t ? 'selected' : 'checked'] = true;
 																			}
-																			this._data[t ? 'core' : 'checkbox'].selected = this._data[t ? 'core' : 'checkbox'].selected
-																					.concat(m[dpc[i]].children_d);
+																			this._data[t ? 'core' : 'checkbox'].selected = this._data[t ? 'core'
+																					: 'checkbox'].selected.concat(m[dpc[i]].children_d);
 																		}
 																	}
 																}
@@ -8365,8 +8593,8 @@
 																			this._data[t ? 'core' : 'checkbox'].selected.push(p.id);
 																			tmp = this.get_node(p, true);
 																			if (tmp && tmp.length) {
-																				tmp.attr('aria-selected', true).children('.jstreeol3-anchor').addClass(
-																						t ? 'jstreeol3-clicked' : 'jstreeol3-checked');
+																				tmp.attr('aria-selected', true).children('.jstreeol3-anchor')
+																						.addClass(t ? 'jstreeol3-clicked' : 'jstreeol3-checked');
 																			}
 																		} else {
 																			break;
@@ -8384,7 +8612,8 @@
 										$
 												.proxy(
 														function(e, data) {
-															var obj = data.node, m = this._model.data, par = this.get_node(obj.parent), dom = this.get_node(obj, true), i, j, c, tmp, s = this.settings.checkbox.cascade, t = this.settings.checkbox.tie_selection, sel = {}, cur = this._data[t ? 'core'
+															var obj = data.node, m = this._model.data, par = this.get_node(obj.parent), dom = this
+																	.get_node(obj, true), i, j, c, tmp, s = this.settings.checkbox.cascade, t = this.settings.checkbox.tie_selection, sel = {}, cur = this._data[t ? 'core'
 																	: 'checkbox'].selected;
 
 															for (i = 0, j = cur.length; i < j; i++) {
@@ -8451,19 +8680,20 @@
 															// .children
 															// separately?)
 															if (s.indexOf('down') !== -1 && dom.length) {
-																dom.find('.jstreeol3-anchor').addClass(t ? 'jstreeol3-clicked' : 'jstreeol3-checked').parent().attr(
-																		'aria-selected', true);
+																dom.find('.jstreeol3-anchor').addClass(t ? 'jstreeol3-clicked' : 'jstreeol3-checked')
+																		.parent().attr('aria-selected', true);
 															}
 														}, this))
-								.on(this.settings.checkbox.tie_selection ? 'deselect_all.jstreeol3' : 'uncheck_all.jstreeol3', $.proxy(function(e, data) {
-									var obj = this.get_node($.jstreeol3.root), m = this._model.data, i, j, tmp;
-									for (i = 0, j = obj.children_d.length; i < j; i++) {
-										tmp = m[obj.children_d[i]];
-										if (tmp && tmp.original && tmp.original.state && tmp.original.state.undetermined) {
-											tmp.original.state.undetermined = false;
-										}
-									}
-								}, this))
+								.on(this.settings.checkbox.tie_selection ? 'deselect_all.jstreeol3' : 'uncheck_all.jstreeol3',
+										$.proxy(function(e, data) {
+											var obj = this.get_node($.jstreeol3.root), m = this._model.data, i, j, tmp;
+											for (i = 0, j = obj.children_d.length; i < j; i++) {
+												tmp = m[obj.children_d[i]];
+												if (tmp && tmp.original && tmp.original.state && tmp.original.state.undetermined) {
+													tmp.original.state.undetermined = false;
+												}
+											}
+										}, this))
 								.on(
 										this.settings.checkbox.tie_selection ? 'deselect_node.jstreeol3' : 'uncheck_node.jstreeol3',
 										$
@@ -8523,35 +8753,41 @@
 															// .children
 															// separately?)
 															if (s.indexOf('down') !== -1 && dom.length) {
-																dom.find('.jstreeol3-anchor').removeClass(t ? 'jstreeol3-clicked' : 'jstreeol3-checked').parent().attr(
-																		'aria-selected', false);
+																dom.find('.jstreeol3-anchor').removeClass(
+																		t ? 'jstreeol3-clicked' : 'jstreeol3-checked').parent().attr('aria-selected',
+																		false);
 															}
 														}, this));
 					}
 					if (this.settings.checkbox.cascade.indexOf('up') !== -1) {
 						this.element
-								.on('delete_node.jstreeol3', $.proxy(function(e, data) {
-									// apply up (whole
-									// handler)
-									var p = this.get_node(data.parent), m = this._model.data, i, j, c, tmp, t = this.settings.checkbox.tie_selection;
-									while (p && p.id !== $.jstreeol3.root && !p.state[t ? 'selected' : 'checked']) {
-										c = 0;
-										for (i = 0, j = p.children.length; i < j; i++) {
-											c += m[p.children[i]].state[t ? 'selected' : 'checked'];
-										}
-										if (j > 0 && c === j) {
-											p.state[t ? 'selected' : 'checked'] = true;
-											this._data[t ? 'core' : 'checkbox'].selected.push(p.id);
-											tmp = this.get_node(p, true);
-											if (tmp && tmp.length) {
-												tmp.attr('aria-selected', true).children('.jstreeol3-anchor').addClass(t ? 'jstreeol3-clicked' : 'jstreeol3-checked');
-											}
-										} else {
-											break;
-										}
-										p = this.get_node(p.parent);
-									}
-								}, this))
+								.on(
+										'delete_node.jstreeol3',
+										$
+												.proxy(
+														function(e, data) {
+															// apply up (whole
+															// handler)
+															var p = this.get_node(data.parent), m = this._model.data, i, j, c, tmp, t = this.settings.checkbox.tie_selection;
+															while (p && p.id !== $.jstreeol3.root && !p.state[t ? 'selected' : 'checked']) {
+																c = 0;
+																for (i = 0, j = p.children.length; i < j; i++) {
+																	c += m[p.children[i]].state[t ? 'selected' : 'checked'];
+																}
+																if (j > 0 && c === j) {
+																	p.state[t ? 'selected' : 'checked'] = true;
+																	this._data[t ? 'core' : 'checkbox'].selected.push(p.id);
+																	tmp = this.get_node(p, true);
+																	if (tmp && tmp.length) {
+																		tmp.attr('aria-selected', true).children('.jstreeol3-anchor').addClass(
+																				t ? 'jstreeol3-clicked' : 'jstreeol3-checked');
+																	}
+																} else {
+																	break;
+																}
+																p = this.get_node(p.parent);
+															}
+														}, this))
 								.on(
 										'move_node.jstreeol3',
 										$
@@ -8559,7 +8795,8 @@
 														function(e, data) {
 															// apply up (whole
 															// handler)
-															var is_multi = data.is_multi, old_par = data.old_parent, new_par = this.get_node(data.parent), m = this._model.data, p, c, i, j, tmp, t = this.settings.checkbox.tie_selection;
+															var is_multi = data.is_multi, old_par = data.old_parent, new_par = this
+																	.get_node(data.parent), m = this._model.data, p, c, i, j, tmp, t = this.settings.checkbox.tie_selection;
 															if (!is_multi) {
 																p = this.get_node(old_par);
 																while (p && p.id !== $.jstreeol3.root && !p.state[t ? 'selected' : 'checked']) {
@@ -8600,12 +8837,12 @@
 																} else {
 																	if (p.state[t ? 'selected' : 'checked']) {
 																		p.state[t ? 'selected' : 'checked'] = false;
-																		this._data[t ? 'core' : 'checkbox'].selected = $.vakata.array_remove_item(this._data[t ? 'core'
-																				: 'checkbox'].selected, p.id);
+																		this._data[t ? 'core' : 'checkbox'].selected = $.vakata.array_remove_item(
+																				this._data[t ? 'core' : 'checkbox'].selected, p.id);
 																		tmp = this.get_node(p, true);
 																		if (tmp && tmp.length) {
-																			tmp.attr('aria-selected', false).children('.jstreeol3-anchor').removeClass(
-																					t ? 'jstreeol3-clicked' : 'jstreeol3-checked');
+																			tmp.attr('aria-selected', false).children('.jstreeol3-anchor')
+																					.removeClass(t ? 'jstreeol3-clicked' : 'jstreeol3-checked');
 																		}
 																	} else {
 																		break;
@@ -8647,7 +8884,8 @@
 							function() {
 								var tmp = tt.get_node(this), tmp2;
 								if (!tmp.state.loaded) {
-									if (tmp.original && tmp.original.state && tmp.original.state.undetermined && tmp.original.state.undetermined === true) {
+									if (tmp.original && tmp.original.state && tmp.original.state.undetermined
+											&& tmp.original.state.undetermined === true) {
 										if (o[tmp.id] === undefined && tmp.id !== $.jstreeol3.root) {
 											o[tmp.id] = true;
 											p.push(tmp.id);
@@ -8770,7 +9008,8 @@
 						return true;
 					}
 					for (i = 0, j = obj.children_d.length; i < j; i++) {
-						if ($.inArray(obj.children_d[i], d) !== -1 || (!m[obj.children_d[i]].state.loaded && m[obj.children_d[i]].original.state.undetermined)) {
+						if ($.inArray(obj.children_d[i], d) !== -1
+								|| (!m[obj.children_d[i]].state.loaded && m[obj.children_d[i]].original.state.undetermined)) {
 							return true;
 						}
 					}
@@ -9519,23 +9758,22 @@
 						cto = setTimeout(function() {
 							$(e.currentTarget).trigger('contextmenu', true);
 						}, 750);
-					})
-							.on(
-									'touchmove.vakata.jstreeol3',
-									function(e) {
-										if (cto
-												&& e.originalEvent
-												&& e.originalEvent.changedTouches
-												&& e.originalEvent.changedTouches[0]
-												&& (Math.abs(ex - e.originalEvent.changedTouches[0].clientX) > 50 || Math.abs(ey
-														- e.originalEvent.changedTouches[0].clientY) > 50)) {
-											clearTimeout(cto);
-										}
-									}).on('touchend.vakata.jstreeol3', function(e) {
-								if (cto) {
+					}).on(
+							'touchmove.vakata.jstreeol3',
+							function(e) {
+								if (cto
+										&& e.originalEvent
+										&& e.originalEvent.changedTouches
+										&& e.originalEvent.changedTouches[0]
+										&& (Math.abs(ex - e.originalEvent.changedTouches[0].clientX) > 50 || Math.abs(ey
+												- e.originalEvent.changedTouches[0].clientY) > 50)) {
 									clearTimeout(cto);
 								}
-							});
+							}).on('touchend.vakata.jstreeol3', function(e) {
+						if (cto) {
+							clearTimeout(cto);
+						}
+					});
 
 					/*
 					 * ! if(!('oncontextmenu' in document.body) &&
@@ -9726,12 +9964,15 @@
 										+ ($.vakata.context.settings.icons ? '' : 'style="margin-left:0px;"') + ">&#160;<" + "/a><" + "/li>";
 							}
 							sep = false;
-							str += "<" + "li class='" + (val._class || "") + (val._disabled === true || ($.isFunction(val._disabled) && val._disabled({
-								"item" : val,
-								"reference" : vakata_context.reference,
-								"element" : vakata_context.element
-							})) ? " vakata-contextmenu-disabled " : "") + "' " + (val.shortcut ? " data-shortcut='" + val.shortcut + "' " : '') + ">";
-							str += "<" + "a href='#' rel='" + (vakata_context.items.length - 1) + "' " + (val.title ? "title='" + val.title + "'" : "") + ">";
+							str += "<" + "li class='" + (val._class || "")
+									+ (val._disabled === true || ($.isFunction(val._disabled) && val._disabled({
+										"item" : val,
+										"reference" : vakata_context.reference,
+										"element" : vakata_context.element
+									})) ? " vakata-contextmenu-disabled " : "") + "' "
+									+ (val.shortcut ? " data-shortcut='" + val.shortcut + "' " : '') + ">";
+							str += "<" + "a href='#' rel='" + (vakata_context.items.length - 1) + "' "
+									+ (val.title ? "title='" + val.title + "'" : "") + ">";
 							if ($.vakata.context.settings.icons) {
 								str += "<" + "i ";
 								if (val.icon) {
@@ -9793,8 +10034,8 @@
 						if (!o.length || !o.children("ul").length) {
 							return;
 						}
-						var e = o.children("ul"), xl = o.offset().left, x = xl + o.outerWidth(), y = o.offset().top, w = e.width(), h = e.height(), dw = $(window)
-								.width()
+						var e = o.children("ul"), xl = o.offset().left, x = xl + o.outerWidth(), y = o.offset().top, w = e.width(), h = e.height(), dw = $(
+								window).width()
 								+ $(window).scrollLeft(), dh = $(window).height() + $(window).scrollTop();
 						// може да се спести е една проверка - дали няма някой
 						// от класовете вече нагоре
@@ -9927,24 +10168,28 @@
 					var to = false;
 
 					vakata_context.element = $("<ul class='vakata-context'></ul>");
-					vakata_context.element.on("mouseenter", "li", function(e) {
-						e.stopImmediatePropagation();
+					vakata_context.element.on(
+							"mouseenter",
+							"li",
+							function(e) {
+								e.stopImmediatePropagation();
 
-						if ($.contains(this, e.relatedTarget)) {
-							// премахнато заради delegate mouseleave
-							// по-долу
-							// $(this).find(".vakata-context-hover").removeClass("vakata-context-hover");
-							return;
-						}
+								if ($.contains(this, e.relatedTarget)) {
+									// премахнато заради delegate mouseleave
+									// по-долу
+									// $(this).find(".vakata-context-hover").removeClass("vakata-context-hover");
+									return;
+								}
 
-						if (to) {
-							clearTimeout(to);
-						}
-						vakata_context.element.find(".vakata-context-hover").removeClass("vakata-context-hover").end();
+								if (to) {
+									clearTimeout(to);
+								}
+								vakata_context.element.find(".vakata-context-hover").removeClass("vakata-context-hover").end();
 
-						$(this).siblings().find("ul").hide().end().end().parentsUntil(".vakata-context", "li").addBack().addClass("vakata-context-hover");
-						$.vakata.context._show_submenu(this);
-					})
+								$(this).siblings().find("ul").hide().end().end().parentsUntil(".vakata-context", "li").addBack().addClass(
+										"vakata-context-hover");
+								$.vakata.context._show_submenu(this);
+							})
 					// тестово - дали не натоварва?
 					.on("mouseleave", "li", function(e) {
 						if ($.contains(this, e.relatedTarget)) {
@@ -9960,14 +10205,18 @@
 								};
 							}(this)), $.vakata.context.settings.hide_onmouseleave);
 						}
-					}).on("click", "a", function(e) {
-						e.preventDefault();
-						// })
-						// .on("mouseup", "a", function (e) {
-						if (!$(this).blur().parent().hasClass("vakata-context-disabled") && $.vakata.context._execute($(this).attr("rel")) !== false) {
-							$.vakata.context.hide();
-						}
 					}).on(
+							"click",
+							"a",
+							function(e) {
+								e.preventDefault();
+								// })
+								// .on("mouseup", "a", function (e) {
+								if (!$(this).blur().parent().hasClass("vakata-context-disabled")
+										&& $.vakata.context._execute($(this).attr("rel")) !== false) {
+									$.vakata.context.hide();
+								}
+							}).on(
 							'keydown',
 							'a',
 							function(e) {
@@ -9981,8 +10230,8 @@
 									break;
 								case 37:
 									if (vakata_context.is_visible) {
-										vakata_context.element.find(".vakata-context-hover").last().closest("li").first().find("ul").hide().find(".vakata-context-hover")
-												.removeClass("vakata-context-hover").end().end().children('a').focus();
+										vakata_context.element.find(".vakata-context-hover").last().closest("li").first().find("ul").hide().find(
+												".vakata-context-hover").removeClass("vakata-context-hover").end().end().children('a').focus();
 										e.stopImmediatePropagation();
 										e.preventDefault();
 									}
@@ -9992,7 +10241,8 @@
 										o = vakata_context.element.find("ul:visible").addBack().last().children(".vakata-context-hover").removeClass(
 												"vakata-context-hover").prevAll("li:not(.vakata-context-separator)").first();
 										if (!o.length) {
-											o = vakata_context.element.find("ul:visible").addBack().last().children("li:not(.vakata-context-separator)").last();
+											o = vakata_context.element.find("ul:visible").addBack().last().children(
+													"li:not(.vakata-context-separator)").last();
 										}
 										o.addClass("vakata-context-hover").children('a').focus();
 										e.stopImmediatePropagation();
@@ -10001,8 +10251,9 @@
 									break;
 								case 39:
 									if (vakata_context.is_visible) {
-										vakata_context.element.find(".vakata-context-hover").last().children("ul").show().children("li:not(.vakata-context-separator)")
-												.removeClass("vakata-context-hover").first().addClass("vakata-context-hover").children('a').focus();
+										vakata_context.element.find(".vakata-context-hover").last().children("ul").show().children(
+												"li:not(.vakata-context-separator)").removeClass("vakata-context-hover").first().addClass(
+												"vakata-context-hover").children('a').focus();
 										e.stopImmediatePropagation();
 										e.preventDefault();
 									}
@@ -10012,7 +10263,8 @@
 										o = vakata_context.element.find("ul:visible").addBack().last().children(".vakata-context-hover").removeClass(
 												"vakata-context-hover").nextAll("li:not(.vakata-context-separator)").first();
 										if (!o.length) {
-											o = vakata_context.element.find("ul:visible").addBack().last().children("li:not(.vakata-context-separator)").first();
+											o = vakata_context.element.find("ul:visible").addBack().last().children(
+													"li:not(.vakata-context-separator)").first();
 										}
 										o.addClass("vakata-context-hover").children('a').focus();
 										e.stopImmediatePropagation();
@@ -10192,17 +10444,20 @@
 									$
 											.proxy(
 													function(e) {
-														if (this.settings.dnd.large_drag_target && $(e.target).closest('.jstreeol3-node')[0] !== e.currentTarget) {
+														if (this.settings.dnd.large_drag_target
+																&& $(e.target).closest('.jstreeol3-node')[0] !== e.currentTarget) {
 															return true;
 														}
 														if (e.type === "touchstart"
-																&& (!this.settings.dnd.touch || (this.settings.dnd.touch === 'selected' && !$(e.currentTarget).closest(
-																		'.jstreeol3-node').children('.jstreeol3-anchor').hasClass('jstreeol3-clicked')))) {
+																&& (!this.settings.dnd.touch || (this.settings.dnd.touch === 'selected' && !$(
+																		e.currentTarget).closest('.jstreeol3-node').children('.jstreeol3-anchor')
+																		.hasClass('jstreeol3-clicked')))) {
 															return true;
 														}
-														var obj = this.get_node(e.target), mlt = this.is_selected(obj) && this.settings.dnd.drag_selection ? this
-																.get_top_selected().length : 1, txt = (mlt > 1 ? mlt + ' ' + this.get_string('nodes') : this
-																.get_text(e.currentTarget));
+														var obj = this.get_node(e.target), mlt = this.is_selected(obj)
+																&& this.settings.dnd.drag_selection ? this.get_top_selected().length : 1, txt = (mlt > 1 ? mlt
+																+ ' ' + this.get_string('nodes')
+																: this.get_text(e.currentTarget));
 														if (this.settings.core.force_text) {
 															txt = $.vakata.html.escape(txt);
 														}
@@ -10210,7 +10465,8 @@
 																&& obj.id
 																&& obj.id !== $.jstreeol3.root
 																&& (e.which === 1 || e.type === "touchstart" || e.type === "dragstart")
-																&& (this.settings.dnd.is_draggable === true || ($.isFunction(this.settings.dnd.is_draggable) && this.settings.dnd.is_draggable
+																&& (this.settings.dnd.is_draggable === true || ($
+																		.isFunction(this.settings.dnd.is_draggable) && this.settings.dnd.is_draggable
 																		.call(this, (mlt > 1 ? this.get_top_selected(true) : [ obj ]), e)))) {
 															drg = {
 																'jstreeol3' : true,
@@ -10227,8 +10483,9 @@
 																});
 															} else {
 																this.element.trigger('mousedown.jstreeol3');
-																return $.vakata.dnd.start(e, drg, '<div id="jstreeol3-dnd" class="jstreeol3-' + this.get_theme()
-																		+ ' jstreeol3-' + this.get_theme() + '-' + this.get_theme_variant() + ' '
+																return $.vakata.dnd.start(e, drg, '<div id="jstreeol3-dnd" class="jstreeol3-'
+																		+ this.get_theme() + ' jstreeol3-' + this.get_theme() + '-'
+																		+ this.get_theme_variant() + ' '
 																		+ (this.settings.core.themes.responsive ? ' jstreeol3-dnd-responsive' : '')
 																		+ '"><i class="jstreeol3-icon jstreeol3-er"></i>' + txt
 																		+ '<ins class="jstreeol3-copy" style="display:none;">+</ins></div>');
@@ -10273,7 +10530,8 @@
 						} else {
 							var i, j, tmp = null;
 							for (i = 0, j = obj.childNodes.length; i < j; i++) {
-								if (obj.childNodes[i] && obj.childNodes[i].className && obj.childNodes[i].className.indexOf("jstreeol3-anchor") !== -1) {
+								if (obj.childNodes[i] && obj.childNodes[i].className
+										&& obj.childNodes[i].className.indexOf("jstreeol3-anchor") !== -1) {
 									tmp = obj.childNodes[i];
 									break;
 								}
@@ -10322,14 +10580,15 @@
 									var ins = $.jstreeol3.reference(data.event.target), ref = false, off = false, rel = false, tmp, l, t, h, p, i, o, ok, t1, t2, op, ps, pr, ip, tm, is_copy, pn;
 									// if we are over an instance
 									if (ins && ins._data && ins._data.dnd) {
-										marker.attr('class', 'jstreeol3-' + ins.get_theme() + (ins.settings.core.themes.responsive ? ' jstreeol3-dnd-responsive' : ''));
+										marker.attr('class', 'jstreeol3-' + ins.get_theme()
+												+ (ins.settings.core.themes.responsive ? ' jstreeol3-dnd-responsive' : ''));
 										is_copy = data.data.origin
 												&& (data.data.origin.settings.dnd.always_copy || (data.data.origin.settings.dnd.copy && (data.event.metaKey || data.event.ctrlKey)));
 										data.helper.children().attr(
 												'class',
-												'jstreeol3-' + ins.get_theme() + ' jstreeol3-' + ins.get_theme() + '-' + ins.get_theme_variant() + ' '
-														+ (ins.settings.core.themes.responsive ? ' jstreeol3-dnd-responsive' : '')).find('.jstreeol3-copy').first()[is_copy ? 'show'
-												: 'hide']();
+												'jstreeol3-' + ins.get_theme() + ' jstreeol3-' + ins.get_theme() + '-' + ins.get_theme_variant()
+														+ ' ' + (ins.settings.core.themes.responsive ? ' jstreeol3-dnd-responsive' : '')).find(
+												'.jstreeol3-copy').first()[is_copy ? 'show' : 'hide']();
 
 										// if are hovering the container itself
 										// add a new root node
@@ -10343,8 +10602,10 @@
 																.check(
 																		(data.data.origin
 																				&& (data.data.origin.settings.dnd.always_copy || (data.data.origin.settings.dnd.copy && (data.event.metaKey || data.event.ctrlKey))) ? "copy_node"
-																				: "move_node"), (data.data.origin && data.data.origin !== ins ? data.data.origin
-																				.get_node(data.data.nodes[t1]) : data.data.nodes[t1]), $.jstreeol3.root, 'last', {
+																				: "move_node"),
+																		(data.data.origin && data.data.origin !== ins ? data.data.origin
+																				.get_node(data.data.nodes[t1]) : data.data.nodes[t1]),
+																		$.jstreeol3.root, 'last', {
 																			'dnd' : true,
 																			'ref' : ins.get_node($.jstreeol3.root),
 																			'pos' : 'i',
@@ -10371,8 +10632,8 @@
 											}
 										} else {
 											// if we are hovering a tree node
-											ref = ins.settings.dnd.large_drop_target ? $(data.event.target).closest('.jstreeol3-node').children('.jstreeol3-anchor') : $(
-													data.event.target).closest('.jstreeol3-anchor');
+											ref = ins.settings.dnd.large_drop_target ? $(data.event.target).closest('.jstreeol3-node').children(
+													'.jstreeol3-anchor') : $(data.event.target).closest('.jstreeol3-anchor');
 											if (ref && ref.length && ref.parent().is('.jstreeol3-closed, .jstreeol3-open, .jstreeol3-leaf')) {
 												off = ref.offset();
 												rel = (data.event.pageY !== undefined ? data.event.pageY : data.event.originalEvent.pageY) - off.top;
@@ -10401,7 +10662,8 @@
 																		l = off.left - 2;
 																		t = off.top + h / 2 + 1;
 																		p = tm.id;
-																		i = ip === 'first' ? 0 : (ip === 'last' ? tm.children.length : Math.min(ip, tm.children.length));
+																		i = ip === 'first' ? 0 : (ip === 'last' ? tm.children.length : Math.min(ip,
+																				tm.children.length));
 																		break;
 																	case 'a':
 																		l = off.left - 6;
@@ -10416,7 +10678,8 @@
 																				&& (data.data.origin.settings.dnd.always_copy || (data.data.origin.settings.dnd.copy && (data.event.metaKey || data.event.ctrlKey))) ? "copy_node"
 																				: "move_node";
 																		ps = i;
-																		if (op === "move_node" && v === 'a' && (data.data.origin && data.data.origin === ins)
+																		if (op === "move_node" && v === 'a'
+																				&& (data.data.origin && data.data.origin === ins)
 																				&& p === ins.get_parent(data.data.nodes[t1])) {
 																			pr = ins.get_node(p);
 																			if (ps > $.inArray(data.data.nodes[t1], pr.children)) {
@@ -10425,15 +10688,21 @@
 																		}
 																		ok = ok
 																				&& ((ins && ins.settings && ins.settings.dnd && ins.settings.dnd.check_while_dragging === false) || ins
-																						.check(op, (data.data.origin && data.data.origin !== ins ? data.data.origin
-																								.get_node(data.data.nodes[t1]) : data.data.nodes[t1]), p, ps, {
-																							'dnd' : true,
-																							'ref' : ins.get_node(ref.parent()),
-																							'pos' : v,
-																							'origin' : data.data.origin,
-																							'is_multi' : (data.data.origin && data.data.origin !== ins),
-																							'is_foreign' : (!data.data.origin)
-																						}));
+																						.check(
+																								op,
+																								(data.data.origin && data.data.origin !== ins ? data.data.origin
+																										.get_node(data.data.nodes[t1])
+																										: data.data.nodes[t1]),
+																								p,
+																								ps,
+																								{
+																									'dnd' : true,
+																									'ref' : ins.get_node(ref.parent()),
+																									'pos' : v,
+																									'origin' : data.data.origin,
+																									'is_multi' : (data.data.origin && data.data.origin !== ins),
+																									'is_foreign' : (!data.data.origin)
+																								}));
 																		if (!ok) {
 																			if (ins && ins.last_error) {
 																				laster = ins.last_error();
@@ -10441,7 +10710,8 @@
 																			break;
 																		}
 																	}
-																	if (v === 'i' && ref.parent().is('.jstreeol3-closed') && ins.settings.dnd.open_timeout) {
+																	if (v === 'i' && ref.parent().is('.jstreeol3-closed')
+																			&& ins.settings.dnd.open_timeout) {
 																		opento = setTimeout((function(x, z) {
 																			return function() {
 																				x.open_node(z);
@@ -10457,15 +10727,18 @@
 																		lastmv = {
 																			'ins' : ins,
 																			'par' : p,
-																			'pos' : v === 'i' && ip === 'last' && i === 0 && !ins.is_loaded(tm) ? 'last' : i
+																			'pos' : v === 'i' && ip === 'last' && i === 0 && !ins.is_loaded(tm) ? 'last'
+																					: i
 																		};
 																		marker.css({
 																			'left' : l + 'px',
 																			'top' : t + 'px'
 																		}).show();
-																		data.helper.find('.jstreeol3-icon').first().removeClass('jstreeol3-er').addClass('jstreeol3-ok');
+																		data.helper.find('.jstreeol3-icon').first().removeClass('jstreeol3-er')
+																				.addClass('jstreeol3-ok');
 																		if (data.event.originalEvent && data.event.originalEvent.dataTransfer) {
-																			data.event.originalEvent.dataTransfer.dropEffect = is_copy ? 'copy' : 'move';
+																			data.event.originalEvent.dataTransfer.dropEffect = is_copy ? 'copy'
+																					: 'move';
 																		}
 																		laster = {};
 																		o = true;
@@ -10692,8 +10965,8 @@
 						if (e.type === "touchstart" && e.originalEvent && e.originalEvent.changedTouches && e.originalEvent.changedTouches[0]) {
 							e.pageX = e.originalEvent.changedTouches[0].pageX;
 							e.pageY = e.originalEvent.changedTouches[0].pageY;
-							e.target = document.elementFromPoint(e.originalEvent.changedTouches[0].pageX - window.pageXOffset, e.originalEvent.changedTouches[0].pageY
-									- window.pageYOffset);
+							e.target = document.elementFromPoint(e.originalEvent.changedTouches[0].pageX - window.pageXOffset,
+									e.originalEvent.changedTouches[0].pageY - window.pageYOffset);
 						}
 						if (vakata_dnd.is_drag) {
 							$.vakata.dnd.stop({});
@@ -10736,14 +11009,15 @@
 						if (e.type === "touchmove" && e.originalEvent && e.originalEvent.changedTouches && e.originalEvent.changedTouches[0]) {
 							e.pageX = e.originalEvent.changedTouches[0].pageX;
 							e.pageY = e.originalEvent.changedTouches[0].pageY;
-							e.target = document.elementFromPoint(e.originalEvent.changedTouches[0].pageX - window.pageXOffset, e.originalEvent.changedTouches[0].pageY
-									- window.pageYOffset);
+							e.target = document.elementFromPoint(e.originalEvent.changedTouches[0].pageX - window.pageXOffset,
+									e.originalEvent.changedTouches[0].pageY - window.pageYOffset);
 						}
 						if (!vakata_dnd.is_down) {
 							return;
 						}
 						if (!vakata_dnd.is_drag) {
-							if (Math.abs(e.pageX - vakata_dnd.init_x) > (vakata_dnd.is_touch ? $.vakata.dnd.settings.threshold_touch : $.vakata.dnd.settings.threshold)
+							if (Math.abs(e.pageX - vakata_dnd.init_x) > (vakata_dnd.is_touch ? $.vakata.dnd.settings.threshold_touch
+									: $.vakata.dnd.settings.threshold)
 									|| Math.abs(e.pageY - vakata_dnd.init_y) > (vakata_dnd.is_touch ? $.vakata.dnd.settings.threshold_touch
 											: $.vakata.dnd.settings.threshold)) {
 								if (vakata_dnd.helper) {
@@ -10782,9 +11056,11 @@
 						vakata_dnd.scroll_t = 0;
 						vakata_dnd.scroll_l = 0;
 						vakata_dnd.scroll_e = false;
-						$($(e.target).parentsUntil("body").addBack().get().reverse()).filter(function() {
-							return (/^auto|scroll$/).test($(this).css("overflow")) && (this.scrollHeight > this.offsetHeight || this.scrollWidth > this.offsetWidth);
-						}).each(function() {
+						$($(e.target).parentsUntil("body").addBack().get().reverse()).filter(
+								function() {
+									return (/^auto|scroll$/).test($(this).css("overflow"))
+											&& (this.scrollHeight > this.offsetHeight || this.scrollWidth > this.offsetWidth);
+								}).each(function() {
 							var t = $(this), o = t.offset();
 							if (this.scrollHeight > this.offsetHeight) {
 								if (o.top + t.height() - e.pageY < $.vakata.dnd.settings.scroll_proximity) {
@@ -10875,8 +11151,8 @@
 						if (e.type === "touchend" && e.originalEvent && e.originalEvent.changedTouches && e.originalEvent.changedTouches[0]) {
 							e.pageX = e.originalEvent.changedTouches[0].pageX;
 							e.pageY = e.originalEvent.changedTouches[0].pageY;
-							e.target = document.elementFromPoint(e.originalEvent.changedTouches[0].pageX - window.pageXOffset, e.originalEvent.changedTouches[0].pageY
-									- window.pageYOffset);
+							e.target = document.elementFromPoint(e.originalEvent.changedTouches[0].pageX - window.pageXOffset,
+									e.originalEvent.changedTouches[0].pageY - window.pageYOffset);
 						}
 						if (vakata_dnd.is_drag) {
 							/**
@@ -11027,10 +11303,10 @@
 				this._load_node = function(obj, callback) {
 					var data = this._data.massload[obj.id], rslt = null, dom;
 					if (data) {
-						rslt = this[typeof data === 'string' ? '_append_html_data' : '_append_json_data'](obj, typeof data === 'string' ? $($.parseHTML(data)).filter(
-								function() {
-									return this.nodeType !== 3;
-								}) : data, function(status) {
+						rslt = this[typeof data === 'string' ? '_append_html_data' : '_append_json_data'](obj, typeof data === 'string' ? $(
+								$.parseHTML(data)).filter(function() {
+							return this.nodeType !== 3;
+						}) : data, function(status) {
 							callback.call(this, status);
 						});
 						dom = this.get_node(obj.id, true);
@@ -11276,14 +11552,19 @@
 						caseSensitive : s.case_sensitive,
 						fuzzy : s.fuzzy
 					});
-					$.each(m[inside ? inside : $.jstreeol3.root].children_d, function(ii, i) {
-						var v = m[i];
-						if (v.text && !v.state.hidden && (!s.search_leaves_only || (v.state.loaded && v.children.length === 0))
-								&& ((s.search_callback && s.search_callback.call(this, str, v)) || (!s.search_callback && f.search(v.text).isMatch))) {
-							r.push(i);
-							p = p.concat(v.parents);
-						}
-					});
+					$
+							.each(m[inside ? inside : $.jstreeol3.root].children_d,
+									function(ii, i) {
+										var v = m[i];
+										if (v.text
+												&& !v.state.hidden
+												&& (!s.search_leaves_only || (v.state.loaded && v.children.length === 0))
+												&& ((s.search_callback && s.search_callback.call(this, str, v)) || (!s.search_callback && f
+														.search(v.text).isMatch))) {
+											r.push(i);
+											p = p.concat(v.parents);
+										}
+									});
 					if (r.length) {
 						p = $.vakata.array_unique(p);
 						for (i = 0, j = p.length; i < j; i++) {
@@ -11296,8 +11577,8 @@
 									+ $.map(
 											r,
 											function(v) {
-												return "0123456789".indexOf(v[0]) !== -1 ? '\\3' + v[0] + ' ' + v.substr(1).replace($.jstreeol3.idregex, '\\$&') : v
-														.replace($.jstreeol3.idregex, '\\$&');
+												return "0123456789".indexOf(v[0]) !== -1 ? '\\3' + v[0] + ' '
+														+ v.substr(1).replace($.jstreeol3.idregex, '\\$&') : v.replace($.jstreeol3.idregex, '\\$&');
 											}).join(', #')));
 							this._data.search.res = r;
 						} else {
@@ -11305,8 +11586,8 @@
 									+ $.map(
 											r,
 											function(v) {
-												return "0123456789".indexOf(v[0]) !== -1 ? '\\3' + v[0] + ' ' + v.substr(1).replace($.jstreeol3.idregex, '\\$&') : v
-														.replace($.jstreeol3.idregex, '\\$&');
+												return "0123456789".indexOf(v[0]) !== -1 ? '\\3' + v[0] + ' '
+														+ v.substr(1).replace($.jstreeol3.idregex, '\\$&') : v.replace($.jstreeol3.idregex, '\\$&');
 											}).join(', #'))));
 							this._data.search.res = $.vakata.array_unique(this._data.search.res.concat(r));
 						}
@@ -11371,8 +11652,8 @@
 								+ $.map(
 										this._data.search.res,
 										function(v) {
-											return "0123456789".indexOf(v[0]) !== -1 ? '\\3' + v[0] + ' ' + v.substr(1).replace($.jstreeol3.idregex, '\\$&') : v.replace(
-													$.jstreeol3.idregex, '\\$&');
+											return "0123456789".indexOf(v[0]) !== -1 ? '\\3' + v[0] + ' '
+													+ v.substr(1).replace($.jstreeol3.idregex, '\\$&') : v.replace($.jstreeol3.idregex, '\\$&');
 										}).join(', #')));
 						this._data.search.dom.children(".jstreeol3-anchor").removeClass("jstreeol3-search");
 					}
@@ -11388,7 +11669,8 @@
 						if ($.inArray(obj.id, this._data.search.res) !== -1) {
 							var i, j, tmp = null;
 							for (i = 0, j = obj.childNodes.length; i < j; i++) {
-								if (obj.childNodes[i] && obj.childNodes[i].className && obj.childNodes[i].className.indexOf("jstreeol3-anchor") !== -1) {
+								if (obj.childNodes[i] && obj.childNodes[i].className
+										&& obj.childNodes[i].className.indexOf("jstreeol3-anchor") !== -1) {
 									tmp = obj.childNodes[i];
 									break;
 								}
@@ -11994,7 +12276,8 @@
 								};
 								return false;
 							}
-							if (tmp.valid_children !== undefined && tmp.valid_children !== -1 && $.inArray((obj.type || 'default'), tmp.valid_children) === -1) {
+							if (tmp.valid_children !== undefined && tmp.valid_children !== -1
+									&& $.inArray((obj.type || 'default'), tmp.valid_children) === -1) {
 								this._data.core.last_error = {
 									'error' : 'check',
 									'plugin' : 'types',
@@ -12425,9 +12708,12 @@
 								tmp.children('.jstreeol3-wholerow').addClass('jstreeol3-wholerow-clicked');
 							}
 						}
-					}, this)).on("open_node.jstreeol3", $.proxy(function(e, data) {
-						this.get_node(data.node, true).find('.jstreeol3-clicked').parent().children('.jstreeol3-wholerow').addClass('jstreeol3-wholerow-clicked');
 					}, this)).on(
+							"open_node.jstreeol3",
+							$.proxy(function(e, data) {
+								this.get_node(data.node, true).find('.jstreeol3-clicked').parent().children('.jstreeol3-wholerow').addClass(
+										'jstreeol3-wholerow-clicked');
+							}, this)).on(
 							"hover_node.jstreeol3 dehover_node.jstreeol3",
 							$.proxy(function(e, data) {
 								if (e.type === "hover_node" && this.is_disabled(data.node)) {

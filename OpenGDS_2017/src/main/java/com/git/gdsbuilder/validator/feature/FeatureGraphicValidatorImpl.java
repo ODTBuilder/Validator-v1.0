@@ -735,10 +735,11 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 
 	public List<ErrorFeature> validateNodeMiss(SimpleFeature simpleFeature, List<SimpleFeature> relationSimpleFeatures, double tolerence) throws SchemaException{
 		List<ErrorFeature> errorFeatures = new ArrayList<ErrorFeature>();
+		GeometryFactory geometryFactory = new GeometryFactory();
 		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
 		Coordinate[] coordinates = geometry.getCoordinates();
-		GeometryFactory geometryFactory = new GeometryFactory();
 		LineString line = geometryFactory.createLineString(coordinates);
+		
 		for (int i = 0; i < relationSimpleFeatures.size(); i++) {
 			SimpleFeature lineSimpleFeature = relationSimpleFeatures.get(i);
 			Geometry lineGeometry = (Geometry) lineSimpleFeature.getDefaultGeometry();
@@ -746,37 +747,30 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 				Boolean flag = false;
 				Geometry intersectGeom = line.intersection(lineGeometry);
 				Coordinate[] intersectCoor = intersectGeom.getCoordinates();
-				
-				if(intersectGeom.getNumPoints() < 2){
-					Coordinate[] lineCoordinates = lineGeometry.getCoordinates();
-					for (int j = 0; j < lineCoordinates.length; j++) {
-						Coordinate lineCoordinate = lineCoordinates[j];
+				Coordinate[] lineCoordinates = lineGeometry.getCoordinates();
+				for (int j = 0; j < intersectCoor.length; j++) {
+					Coordinate interCoordinateValue = intersectCoor[j];
+					Geometry interPoint = geometryFactory.createPoint(interCoordinateValue);
+					
+					for (int k = 0; k < lineCoordinates.length; k++) {
+						Coordinate lineCoordinate = lineCoordinates[k];
 						Geometry linePoint = geometryFactory.createPoint(lineCoordinate);
-						if(Math.abs(linePoint.distance(intersectGeom)) < tolerence){
+						if(Math.abs(linePoint.distance(interPoint)) < tolerence){
 							flag = true;
 							break;
 						}
 					}
-					
 					if(flag == false){
 						ErrorFeature errorFeature = new ErrorFeature(lineSimpleFeature.getID(), NodeMiss.Type.NODEMISS.errType(),
-								NodeMiss.Type.NODEMISS.errName(), intersectGeom); 
+								NodeMiss.Type.NODEMISS.errName(), interPoint); 
+						errorFeatures.add(errorFeature);
 					}
-					
-				}else{
-					int numPoint = intersectGeom.getNumPoints();
 				}
-				//System.out.println(intersectGeom.getNumGeometries());
-				System.out.println(intersectGeom.getNumPoints());
-				
 			}
 		}
-		
-		
-		
-		
 		return errorFeatures;
 	}
+
 
 
 	// 객체 꼬임 여부 검사
