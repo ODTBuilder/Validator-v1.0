@@ -48,6 +48,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.git.gdsbuilder.FileRead.en.EnFileFormat;
 import com.git.gdsbuilder.edit.qa20.EditQA20LayerCollectionList;
@@ -61,6 +62,7 @@ import com.git.gdsbuilder.type.validate.layer.ValidateLayerTypeList;
 import com.git.opengds.parser.edit.feature.EditFeatureParser;
 import com.git.opengds.parser.edit.layer.EditLayerCollectionListParser;
 import com.git.opengds.parser.validate.ValidateTypeParser;
+import com.git.opengds.validator.service.ValidatorProgressService;
 
 /**
  * ValidateJSON을 파싱하는 클래스
@@ -91,13 +93,10 @@ public class BuilderJSONQA20Parser {
 	 * HashMap<String,Object> @throws FileNotFoundException @throws
 	 * IOException @throws ParseException @throws SchemaException @throws
 	 */
-	public static HashMap<String, Object> parseValidateObj(String j)
+	public static HashMap<String, Object> parseValidateObj(JSONObject jsonObj)
 			throws FileNotFoundException, IOException, ParseException, SchemaException {
 
 		HashMap<String, Object> validateMap = new HashMap<String, Object>();
-
-		JSONParser parser = new JSONParser();
-		JSONObject jsonObj = (JSONObject) parser.parse(j);
 
 		// 타입검수 파싱
 		JSONArray typeValidates = (JSONArray) jsonObj.get("typeValidate");

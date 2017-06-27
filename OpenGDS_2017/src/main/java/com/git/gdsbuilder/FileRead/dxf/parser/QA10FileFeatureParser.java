@@ -80,6 +80,8 @@ public class QA10FileFeatureParser {
 			// attribute
 			// style = QA10FileStyleParser.parseLWPolylinetStyle(dxfEntity);
 			// gemo
+
+			double elevation = dxfLwPolyline.getElevation();
 			boolean flag = dxfLwPolyline.isClosed();
 			geom = QA10FileGeomParser.parseDTLineString(flag, dxfLwPolyline.getVertexIterator(),
 					dxfLwPolyline.getVertexCount());
@@ -87,6 +89,7 @@ public class QA10FileFeatureParser {
 			QA10Feature dxfFeature = new QA10Feature(entityID);
 			dxfFeature.setFeatureType(entityType);
 			dxfFeature.setGeom(geom);
+			dxfFeature.setElevation(elevation);
 			// dxfFeature.setProperties(EnDXFPolyline.getProperties(style));
 			return dxfFeature;
 		} else {
