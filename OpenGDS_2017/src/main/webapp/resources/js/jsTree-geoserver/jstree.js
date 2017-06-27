@@ -7481,8 +7481,6 @@
 				 * @author 소이준
 				 */
 				this.import_fake_group = function(obj) {
-					console.log(obj);
-					var that = this;
 					// // =======================================
 					var that = this;
 					var parentLayer;
@@ -7530,7 +7528,7 @@
 											serverType : 'geoserver'
 										})
 									});
-									wms.set("name", data[i].name);
+									wms.set("name", obj.refer.get_node(data[i].name).text);
 									wms.set("id", data[i].name);
 									var git = {
 										"validation" : false,
