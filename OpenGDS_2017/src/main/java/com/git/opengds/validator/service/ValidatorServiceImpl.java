@@ -20,6 +20,7 @@ package com.git.opengds.validator.service;
 import java.net.MalformedURLException;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -82,8 +83,10 @@ public class ValidatorServiceImpl implements ValidatorService {
 			ValidateLayerCollectionList validateLayerCollection = new ValidateLayerCollectionList(collectionList,
 					validateLayerTypeList);
 			CollectionValidator validator = new CollectionValidator(validateLayerCollection);
+			
+			// progress : 2 / 3 -> 2 : 검수 성공, 3 : 검수 실패
+			Map<String, Object> progressMape = validator.getProgress();
 			ErrorLayerList errorLayerList = validator.getErrLayerList();
-
 			// 오류레이어 발행
 			boolean isSuccessPublish = publishErrorLayer(errorLayerList);
 			boolean isErrorLayer = false;
