@@ -230,6 +230,7 @@ public class CollectionValidator {
 
 	private void geometricValidate(ValidateLayerTypeList types, GeoLayerCollectionList layerCollections)
 			throws SchemaException, NoSuchAuthorityCodeException, FactoryException, TransformException, IOException {
+
 		ErrorLayerList geoErrorList = new ErrorLayerList();
 		for (int j = 0; j < layerCollections.size(); j++) {
 			GeoLayerCollection collection = layerCollections.get(j);
@@ -261,6 +262,7 @@ public class CollectionValidator {
 							if (typeErrorLayer != null) {
 								errLayer.mergeErrorLayer(typeErrorLayer);
 							}
+							
 							
 							if (option instanceof ConBreak) {
 								typeErrorLayer = layerValidator.validateConBreakLayers(neatLayer);
@@ -377,8 +379,8 @@ public class CollectionValidator {
 
 	@SuppressWarnings("unused")
 	private void layerMissValidate(ValidateLayerTypeList types, GeoLayerCollectionList layerCollections) throws SchemaException {
+		
 		// TODO Auto-generated method stub
-
 		for (int i = 0; i < layerCollections.size(); i++) {
 			GeoLayerCollection collection = layerCollections.get(i);
 			List<GeoLayer> collectionList = collection.getLayers();
