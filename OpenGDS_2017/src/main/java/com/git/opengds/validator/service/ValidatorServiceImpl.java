@@ -69,7 +69,6 @@ public class ValidatorServiceImpl implements ValidatorService {
 			// progress : 1 -> 검수 수행 중
 			for (int i = 0; i < layerCollectionNames.size(); i++) {
 				String collectionName = (String) layerCollectionNames.get(i);
-				String timeFormat = "YYYY. MM. DD HH:mm:ss";
 				progressService.setStateToProgressing(collectionName, fileType);
 			}
 
