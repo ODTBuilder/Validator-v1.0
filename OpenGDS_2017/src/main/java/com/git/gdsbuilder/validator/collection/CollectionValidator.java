@@ -86,6 +86,9 @@ import com.git.gdsbuilder.validator.layer.LayerValidatorImpl;
  * @Date 2017. 4. 18. 오후 3:30:17
  */
 public class CollectionValidator {
+	
+	protected static int validateSuccess = 2;
+	protected static int validateFail = 3;
 
 	ValidateLayerCollectionList validateLayerCollectionList;
 	ErrorLayerList errLayerList;
@@ -164,24 +167,24 @@ public class CollectionValidator {
 		GeoLayerCollectionList layerCollections = validateLayerCollectionList.getLayerCollectionList();
 
 		for (int i = 0; i < layerCollections.size(); i++) {
-
 			GeoLayerCollection collection = layerCollections.get(i);
-
-			// layerMiss 검수
-			layerMissValidate(types, collection);
-
-			// geometric 검수
-			geometricValidate(types, collection);
-
-			// attribute 검수
-			attributeValidate(types, collection);
-
-			// 인접도엽 검수
-			closeCollectionValidate(types, collection);
+			String collectionName = collection.getCollectionName();
+			try {
+				// layerMiss 검수
+				layerMissValidate(types, collection);
+				// geometric 검수
+				geometricValidate(types, collection);
+				// attribute 검수
+				attributeValidate(types, collection);
+				// 인접도엽 검수
+				closeCollectionValidate(types, collection);
+				progress.put(collectionName, validateSuccess);
+			} catch (Exception e) {
+				progress.put(collectionName, validateFail);
+			}
 		}
 	}
 	// closeValidate
-
 	private void closeCollectionValidate(ValidateLayerTypeList types, GeoLayerCollection layerCollection) {
 		// TODO Auto-generated method stub
 	}
