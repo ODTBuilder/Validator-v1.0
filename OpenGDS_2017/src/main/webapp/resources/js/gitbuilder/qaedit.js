@@ -603,7 +603,7 @@ gitbuilder.ui.QAEdit = $
 						this.showFeatureInfo(this.source.getFeatureById(this.lid + "." + this.count));
 					},
 					prevError : function() {
-						if (this.count > 1 && this.count < this.features.length) {
+						if (this.count > 1 && this.count < this.features.length + 1) {
 							this.count--;
 						}
 						var feature = this.source.getFeatureById(this.lid + "." + this.count);
@@ -670,7 +670,7 @@ gitbuilder.ui.QAEdit = $
 							success : function(data) {
 								console.log(data);
 								var features = new ol.format.GeoJSON().readFeatures(JSON.stringify(data));
-//								that.options.editingTool.open();
+								// that.options.editingTool.open();
 								that.options.editingTool.setFeatures(features);
 							}
 						});
