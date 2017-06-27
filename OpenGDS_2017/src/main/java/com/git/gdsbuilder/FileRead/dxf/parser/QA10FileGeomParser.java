@@ -64,7 +64,7 @@ public class QA10FileGeomParser {
 
 	}
 
-	// LWPOLYLINE
+	// POLYLINE
 	public static Geometry parseDTLineString(boolean isClosed, Iterator vertexIterator, int vertexCount) {
 
 		GeometryFactory gf = new GeometryFactory();
@@ -95,7 +95,41 @@ public class QA10FileGeomParser {
 				}
 			}
 		}
+		return gf.createLineString(coors);
+	}
 
+	// LWPOLYLINE
+	public static Geometry parseDT3DLineString(boolean isClosed, Iterator vertexIterator, int vertexCount,
+			double elevation) {
+
+		GeometryFactory gf = new GeometryFactory();
+		Coordinate[] coors;
+		if (isClosed) {
+			coors = new Coordinate[vertexCount + 1];
+			int i = 0;
+			while (vertexIterator.hasNext()) {
+				if (i < vertexCount) {
+					DXFVertex dxfVertex = (DXFVertex) vertexIterator.next();
+					coors[i] = new Coordinate(dxfVertex.getX(), dxfVertex.getY(), elevation);
+					i++;
+				} else {
+					break;
+				}
+			}
+			coors[vertexCount] = coors[0];
+		} else {
+			coors = new Coordinate[vertexCount];
+			int i = 0;
+			while (vertexIterator.hasNext()) {
+				if (i < vertexCount) {
+					DXFVertex dxfVertex = (DXFVertex) vertexIterator.next();
+					coors[i] = new Coordinate(dxfVertex.getX(), dxfVertex.getY(), elevation);
+					i++;
+				} else {
+					break;
+				}
+			}
+		}
 		return gf.createLineString(coors);
 	}
 

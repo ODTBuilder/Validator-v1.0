@@ -40,37 +40,42 @@ public class ValidatorServiceImpl implements ValidatorService {
 	@Autowired
 	private ErrorLayerService errorLayerService;
 
-	@Autowired
-	private ValidatorProgressService progressService;
-
 	// @Autowired
 	// private ErrorLayerExportService errorLayerExportService;
+
+	@Autowired
+	private ValidatorProgressService progressService;
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public JSONObject validate(String jsonObject) throws Exception {
 
-//		JSONParser parser = new JSONParser();
-//		JSONObject jsonObj = (JSONObject) parser.parse(jsonObject);
-//
-//		JSONObject layerCollections = (JSONObject) jsonObj.get("layerCollections");
-//		JSONArray layerCollectionNames = (JSONArray) layerCollections.get("collectionName");
-//		String fileType = (String) layerCollections.get("fileType");
-//
-//		// progress : 0 -> 검수 요청
-//		for (int i = 0; i < layerCollectionNames.size(); i++) {
-//			String collectionName = (String) layerCollectionNames.get(i);
-//			String timeFormat = "YYYY. MM. DD HH:mm:ss";
-//			progressService.setStateToRequest(collectionName, fileType,
-//					new SimpleDateFormat(timeFormat).format(System.currentTimeMillis()));
-//		}
+		JSONParser parser = new JSONParser();
+		JSONObject jsonObj = (JSONObject) parser.parse(jsonObject);
+
+		JSONObject layerCollections = (JSONObject) jsonObj.get("layerCollections");
+		JSONArray layerCollectionNames = (JSONArray) layerCollections.get("collectionName");
+		String fileType = (String) layerCollections.get("fileType");
+
+		// progress : 0 -> 검수 요청
+		for (int i = 0; i < layerCollectionNames.size(); i++) {
+			String collectionName = (String) layerCollectionNames.get(i);
+			String timeFormat = "YYYY. MM. DD HH:mm:ss";
+			progressService.setStateToRequest(collectionName, fileType,
+					new SimpleDateFormat(timeFormat).format(System.currentTimeMillis()));
+		}
 
 		try {
 			// progress : 1 -> 검수 수행 중
+			for (int i = 0; i < layerCollectionNames.size(); i++) {
+				String collectionName = (String) layerCollectionNames.get(i);
+				String timeFormat = "YYYY. MM. DD HH:mm:ss";
+				progressService.setStateToProgressing(collectionName, fileType);
+			}
 
 			// 파라미터 파싱
 			BuilderJSONQA20Parser parserManager = new BuilderJSONQA20Parser();
-			HashMap<String, Object> valdateObj = parserManager.parseValidateObj(jsonObject);
+			HashMap<String, Object> valdateObj = parserManager.parseValidateObj(jsonObj);
 			ValidateLayerTypeList validateLayerTypeList = (ValidateLayerTypeList) valdateObj.get("typeValidate");
 			GeoLayerCollectionList collectionList = (GeoLayerCollectionList) valdateObj.get("collectionList");
 
