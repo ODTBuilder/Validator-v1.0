@@ -374,7 +374,7 @@ public class CollectionValidator {
 							List<String> relationNames = ((CrossRoad) option).getRelationType();
 							for (int l = 0; l < relationNames.size(); l++) {
 								typeErrorLayer = layerValidator.validateCrossRoad(validateLayerCollectionList
-										.getTypeLayers(relationNames.get(l), layerCollection));
+										.getTypeLayers(relationNames.get(l), layerCollection), "",tolorence);
 							}
 							if (typeErrorLayer != null) {
 								errLayer.mergeErrorLayer(typeErrorLayer);
@@ -384,7 +384,7 @@ public class CollectionValidator {
 							List<String> relationNames = ((NodeMiss) option).getRelationType();
 							for (int l = 0; l < relationNames.size(); l++) {
 								typeErrorLayer = layerValidator.validateNodeMiss(validateLayerCollectionList
-										.getTypeLayers(relationNames.get(l), layerCollection), "", 0.001);
+										.getTypeLayers(relationNames.get(l), layerCollection), "",tolorence);
 							}
 							if (typeErrorLayer != null) {
 								errLayer.mergeErrorLayer(typeErrorLayer);
@@ -804,7 +804,7 @@ public class CollectionValidator {
 
 		}
 
-		for (int i = 0; i < layerCollections.size(); i++) {
+		/*for (int i = 0; i < layerCollections.size(); i++) {
 			GeoLayerCollection collection = layerCollections.get(i);
 			List<GeoLayer> collectionList = collection.getLayers();
 			ErrorLayer errLayer = new ErrorLayer();
@@ -838,7 +838,7 @@ public class CollectionValidator {
 				errLayer.setCollectionType(collection.getLayerCollectionType());
 				errLayerList.add(errLayer);
 			}
-		}
+		}*/
 	}
 
 	private void errLayerMerge(ErrorLayerList geoErrorList) {

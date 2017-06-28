@@ -83,6 +83,21 @@ public class LayerValidatorImpl implements LayerValidator {
 		this.validatorLayer = validatorLayer;
 	}
 
+	/**
+	 * @return the validatorLayer
+	 */
+	public GeoLayer getValidatorLayer() {
+		return validatorLayer;
+	}
+
+	/**
+	 * @param validatorLayer the validatorLayer to set
+	 */
+	public void setValidatorLayer(GeoLayer validatorLayer) {
+		this.validatorLayer = validatorLayer;
+	}
+
+	
 	public ErrorLayer validateConBreakLayers(GeoLayer neatLayer) throws SchemaException {
 
 		ErrorLayer errLayer = new ErrorLayer();
