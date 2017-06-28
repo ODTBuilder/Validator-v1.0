@@ -23,9 +23,10 @@ import com.git.gdsbuilder.type.validate.option.ValidatorOption;
 
 /**
  * ValidateLayerType 정보를 담고 있는 클래스
+ * 
  * @author DY.Oh
  * @Date 2017. 3. 11. 오후 3:02:56
- * */
+ */
 public class ValidateLayerType {
 
 	String typeName;
@@ -40,9 +41,10 @@ public class ValidateLayerType {
 		super();
 		// TODO Auto-generated constructor stub
 	}
-	
+
 	/**
 	 * ValidateLayerType 생성자
+	 * 
 	 * @param typeName
 	 * @param layerIDList
 	 * @param weight
@@ -56,6 +58,7 @@ public class ValidateLayerType {
 
 	/**
 	 * ValidateLayerType 생성자
+	 * 
 	 * @param typeName
 	 * @param layerIDList
 	 * @param optionList
@@ -68,89 +71,65 @@ public class ValidateLayerType {
 	}
 
 	/**
-	 * typeName getter
-	 * @author DY.Oh
-	 * @Date 2017. 3. 11. 오후 3:03:08
-	 * @return String
-	 * @throws
-	 * */
+	 * typeName getter @author DY.Oh @Date 2017. 3. 11. 오후 3:03:08 @return
+	 * String @throws
+	 */
 	public String getTypeName() {
 		return typeName;
 	}
 
 	/**
-	 * typeName setter
-	 * @author DY.Oh
-	 * @Date 2017. 3. 11. 오후 3:03:10
-	 * @param typeName void
-	 * @throws
-	 * */
+	 * typeName setter @author DY.Oh @Date 2017. 3. 11. 오후 3:03:10 @param
+	 * typeName void @throws
+	 */
 	public void setTypeName(String typeName) {
 		this.typeName = typeName;
 	}
 
 	/**
-	 * weight getter
-	 * @author DY.Oh
-	 * @Date 2017. 3. 11. 오후 3:03:12
-	 * @return double
-	 * @throws
-	 * */
+	 * weight getter @author DY.Oh @Date 2017. 3. 11. 오후 3:03:12 @return
+	 * double @throws
+	 */
 	public double getWeight() {
 		return weight;
 	}
 
 	/**
-	 * weight setter
-	 * @author DY.Oh
-	 * @Date 2017. 3. 11. 오후 3:03:15
-	 * @param weight void
-	 * @throws
-	 * */
+	 * weight setter @author DY.Oh @Date 2017. 3. 11. 오후 3:03:15 @param weight
+	 * void @throws
+	 */
 	public void setWeight(double weight) {
 		this.weight = weight;
 	}
 
 	/**
-	 * layerIDList getter
-	 * @author DY.Oh
-	 * @Date 2017. 3. 11. 오후 3:03:16
-	 * @return List<String>
-	 * @throws
-	 * */
+	 * layerIDList getter @author DY.Oh @Date 2017. 3. 11. 오후 3:03:16 @return
+	 * List<String> @throws
+	 */
 	public List<String> getLayerIDList() {
 		return layerIDList;
 	}
 
 	/**
-	 * layerIDList setter
-	 * @author DY.Oh
-	 * @Date 2017. 3. 11. 오후 3:03:18
-	 * @param layerIDList void
-	 * @throws
-	 * */
+	 * layerIDList setter @author DY.Oh @Date 2017. 3. 11. 오후 3:03:18 @param
+	 * layerIDList void @throws
+	 */
 	public void setLayerIDList(List<String> layerIDList) {
 		this.layerIDList = layerIDList;
 	}
 
 	/**
-	 * optionList getter
-	 * @author DY.Oh
-	 * @Date 2017. 3. 11. 오후 3:03:20
-	 * @return List<ValidatorOption>
-	 * @throws
-	 * */
+	 * optionList getter @author DY.Oh @Date 2017. 3. 11. 오후 3:03:20 @return
+	 * List<ValidatorOption> @throws
+	 */
 	public List<ValidatorOption> getOptionList() {
 		return optionList;
 	}
 
 	/**
-	 * optionList setter
-	 * @author DY.Oh
-	 * @Date 2017. 3. 11. 오후 3:03:21
-	 * @param optionList void
-	 * @throws
-	 * */
+	 * optionList setter @author DY.Oh @Date 2017. 3. 11. 오후 3:03:21 @param
+	 * optionList void @throws
+	 */
 	public void setOptionList(List<ValidatorOption> optionList) {
 		this.optionList = optionList;
 	}

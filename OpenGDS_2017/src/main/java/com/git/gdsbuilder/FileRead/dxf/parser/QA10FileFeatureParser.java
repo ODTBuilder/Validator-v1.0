@@ -19,6 +19,7 @@ import com.git.gdsbuilder.type.qa10.feature.style.DTDXFLWPolylineStyle;
 import com.git.gdsbuilder.type.qa10.feature.style.DTDXFPolylineStyle;
 import com.git.gdsbuilder.type.qa10.feature.style.DTDXFStyle;
 import com.git.gdsbuilder.type.qa10.feature.style.DTDXFTextSyle;
+import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 
 public class QA10FileFeatureParser {
@@ -59,10 +60,12 @@ public class QA10FileFeatureParser {
 			boolean flag = dxfPolyline.isClosed();
 			geom = QA10FileGeomParser.parseDTLineString(flag, dxfPolyline.getVertexIterator(),
 					dxfPolyline.getVertexCount());
+			double elevation = geom.getCoordinate().z;
 			String entityID = dxfPolyline.getID();
 			QA10Feature dxfFeature = new QA10Feature(entityID);
 			dxfFeature.setFeatureType(entityType);
 			dxfFeature.setGeom(geom);
+			dxfFeature.setElevation(elevation);
 			// dxfFeature.setProperties(EnDXFPolyline.getProperties(style));
 			return dxfFeature;
 		} else {

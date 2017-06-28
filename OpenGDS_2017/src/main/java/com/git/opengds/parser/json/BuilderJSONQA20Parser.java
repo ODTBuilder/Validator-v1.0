@@ -41,28 +41,20 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import org.geotools.feature.SchemaException;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import org.springframework.beans.factory.annotation.Autowired;
 
-import com.git.gdsbuilder.FileRead.en.EnFileFormat;
 import com.git.gdsbuilder.edit.qa20.EditQA20LayerCollectionList;
-import com.git.gdsbuilder.type.geoserver.collection.GeoLayerCollectionList;
-import com.git.gdsbuilder.type.geoserver.parser.GeoLayerCollectionParser;
 import com.git.gdsbuilder.type.qa10.feature.QA10Feature;
 import com.git.gdsbuilder.type.qa10.feature.QA10FeatureList;
 import com.git.gdsbuilder.type.qa20.feature.QA20Feature;
 import com.git.gdsbuilder.type.qa20.feature.QA20FeatureList;
-import com.git.gdsbuilder.type.validate.layer.ValidateLayerTypeList;
 import com.git.opengds.parser.edit.feature.EditFeatureParser;
 import com.git.opengds.parser.edit.layer.EditLayerCollectionListParser;
-import com.git.opengds.parser.validate.ValidateTypeParser;
-import com.git.opengds.validator.service.ValidatorProgressService;
 
 /**
  * ValidateJSON을 파싱하는 클래스
@@ -71,66 +63,7 @@ import com.git.opengds.validator.service.ValidatorProgressService;
  * @Date 2017. 4. 18. 오후 4:08:24
  */
 public class BuilderJSONQA20Parser {
-	private static final String URL;
-	private static final String ID;
-
-	static {
-		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-		Properties properties = new Properties();
-		try {
-			properties.load(classLoader.getResourceAsStream("geoserver.properties"));
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		URL = properties.getProperty("url");
-		ID = properties.getProperty("id");
-	}
-
-	/**
-	 * JSONObject를 ValidateLayerTypeList, LayerCollectionList로 파싱 @author
-	 * DY.Oh @Date 2017. 4. 18. 오후 4:08:26 @param j @return
-	 * HashMap<String,Object> @throws FileNotFoundException @throws
-	 * IOException @throws ParseException @throws SchemaException @throws
-	 */
-	public static HashMap<String, Object> parseValidateObj(JSONObject jsonObj)
-			throws FileNotFoundException, IOException, ParseException, SchemaException {
-
-		HashMap<String, Object> validateMap = new HashMap<String, Object>();
-
-		// 타입검수 파싱
-		JSONArray typeValidates = (JSONArray) jsonObj.get("typeValidate");
-		ValidateTypeParser validateTypeParser = new ValidateTypeParser(typeValidates);
-		ValidateLayerTypeList validateLayerTypeList = validateTypeParser.getValidateLayerTypeList();
-
-		// 도엽들 파싱
-		JSONObject layerCollections = (JSONObject) jsonObj.get("layerCollections");
-		String fileType = (String) layerCollections.get("fileType");
-		EnFileFormat enFileFormat;
-
-		if (fileType.equals("ngi")) {
-			enFileFormat = EnFileFormat.NGI;
-		} else if (fileType.equals("dxf")) {
-			enFileFormat = EnFileFormat.DXF;
-		} else if (fileType.equals("shp")) {
-			enFileFormat = EnFileFormat.SHP;
-		} else
-			throw new IllegalArgumentException("올바르지 않은 파일 타입");
-
-		String getCapabilities = URL + "/wfs?REQUEST=GetCapabilities&version=1.0.0";
-
-		GeoLayerCollectionParser collectionParser = new GeoLayerCollectionParser(layerCollections, ID, getCapabilities,
-				enFileFormat);
-		GeoLayerCollectionList collectionList = collectionParser.getLayerCollections();
-		if (collectionList.size() == 0 && validateLayerTypeList.size() == 0) {
-			return null;
-		} else {
-			validateMap.put("typeValidate", validateLayerTypeList);
-			validateMap.put("collectionList", collectionList);
-			return validateMap;
-		}
-	}
-
+	
 	public static Map<String, Object> parseEditLayerObj(JSONObject editLayerObj)
 			throws FileNotFoundException, IOException, com.vividsolutions.jts.io.ParseException, SchemaException {
 

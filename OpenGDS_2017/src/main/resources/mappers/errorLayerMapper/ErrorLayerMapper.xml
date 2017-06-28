@@ -25,6 +25,8 @@
 		${selectAllQuery}
 	</select>
 
-
+	<update id="dropErrorLayerTb" parameterType="hashMap">
+		${dropQuery}
+	</update>
 
 </mapper>

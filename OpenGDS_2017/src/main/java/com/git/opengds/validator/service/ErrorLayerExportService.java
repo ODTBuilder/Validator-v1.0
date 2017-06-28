@@ -4,5 +4,5 @@ import java.io.IOException;
 
 public interface ErrorLayerExportService {
 
-	public void test() throws IOException;
+	public void exportErrorLayer(String exportOption) throws IOException;
 }

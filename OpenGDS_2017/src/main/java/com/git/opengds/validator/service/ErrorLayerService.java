@@ -18,9 +18,16 @@
 package com.git.opengds.validator.service;
 
 import java.net.MalformedURLException;
+import java.util.Map;
 
+import com.git.gdsbuilder.type.validate.error.ErrorLayer;
 import com.git.gdsbuilder.type.validate.error.ErrorLayerList;
 
 public interface ErrorLayerService {
-	public boolean publishErrorLayer(ErrorLayerList errLayer) throws IllegalArgumentException, MalformedURLException;
+
+	public boolean publishErrorLayerList(ErrorLayerList errLayerList)
+			throws IllegalArgumentException, MalformedURLException;
+
+	public Map<String, Object> publishErrorLayer(ErrorLayer errLayer)
+			throws IllegalArgumentException, MalformedURLException;
 }

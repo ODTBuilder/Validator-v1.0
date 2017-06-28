@@ -712,25 +712,28 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 		}
 	}
 
-	public ErrorFeature validateCrossRoad(SimpleFeature simpleFeature, SimpleFeature relationSimpleFeature) throws SchemaException{
+	public List<ErrorFeature> validateCrossRoad(SimpleFeature simpleFeature, List<SimpleFeature> relationSimpleFeatures, double tolerence) throws SchemaException{
+		List<ErrorFeature> errorFeatures = new ArrayList<ErrorFeature>();
 		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
-		Geometry relGeometry = (Geometry) relationSimpleFeature.getDefaultGeometry();
-
-		if(geometry.contains(relGeometry) || geometry.overlaps(relGeometry)){
-			GeometryFactory geometryFactory = new GeometryFactory();
-			Coordinate[] relCoordinates = relGeometry.getCoordinates();
-			for (int i = 0; i < relCoordinates.length; i++) {
-
-				Coordinate coordinate = relCoordinates[i];
-				Geometry coorPoint = geometryFactory.createPoint(coordinate);
-				if(!(geometry.touches(coorPoint))){
-					ErrorFeature errorFeature = new ErrorFeature(relationSimpleFeature.getID(), CrossRoad.Type.CROSSROAD.errType(),
-							CrossRoad.Type.CROSSROAD.errName(), relGeometry.getInteriorPoint());
-					return errorFeature;
+		GeometryFactory geometryFactory = new GeometryFactory();
+		Coordinate[] coordinates = geometry.getCoordinates();
+	
+		for (int i = 0; i < relationSimpleFeatures.size(); i++) {
+			SimpleFeature relationSimpleFeature = relationSimpleFeatures.get(i);
+			Geometry relationGeom = (Geometry) relationSimpleFeature.getDefaultGeometry();
+			Coordinate[] relCoordinates = relationGeom.getCoordinates();
+			LineString lineString = geometryFactory.createLineString(relCoordinates);
+			for (int j = 0; j < coordinates.length; j++) {
+				Coordinate coordinate = coordinates[j];
+				Geometry point = geometryFactory.createPoint(coordinate);
+				if(Math.abs(lineString.distance(point)) > tolerence){
+					ErrorFeature errorFeature = new ErrorFeature(simpleFeature.getID(), CrossRoad.Type.CROSSROAD.errType(),
+							CrossRoad.Type.CROSSROAD.errName(), point); 
+					errorFeatures.add(errorFeature);
 				}
 			}
 		}
-		return null;
+		return errorFeatures;
 	}
 
 	public List<ErrorFeature> validateNodeMiss(SimpleFeature simpleFeature, List<SimpleFeature> relationSimpleFeatures, double tolerence) throws SchemaException{

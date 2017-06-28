@@ -53,4 +53,9 @@ public class ErrorLayerDAOImpl implements ErrorLayerDAO {
 		return sqlSession.selectList(namespace + ".selectAllErrorFeatures", selectAllQuery);
 	}
 
+	@Override
+	public void dropErrorLayerTb(HashMap<String, Object> dropQuery) {
+		sqlSession.update(namespace + ".dropErrorLayerTb", dropQuery);
+	}
+
 }

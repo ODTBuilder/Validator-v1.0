@@ -35,8 +35,8 @@ public class QA10DBQueryManager {
 
 		if (originLayerType.equals("TEXT")) {
 			defaultCreateQuery += ", text_value varchar(100)";
-		} 
-		if (originLayerType.equals("LWPOLYLINE")) {
+		}
+		if (originLayerType.equals("LWPOLYLINE") || originLayerType.equals("POLYLINE")) {
 			defaultCreateQuery += ", elevation double precision";
 		}
 		defaultCreateQuery += ")";
@@ -64,8 +64,8 @@ public class QA10DBQueryManager {
 				defaultInsertColumns += ", text_value";
 				values += ", '" + feature.getTextValue() + "'";
 			}
-			
-			if (originLayerType.equals("LWPOLYLINE")) {
+
+			if (originLayerType.equals("LWPOLYLINE") || originLayerType.equals("POLYLINE")) {
 				defaultInsertColumns += ", elevation";
 				values += "," + feature.getElevation();
 			}

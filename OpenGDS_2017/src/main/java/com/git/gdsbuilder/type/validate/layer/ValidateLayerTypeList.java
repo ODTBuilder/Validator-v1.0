@@ -18,12 +18,32 @@
 package com.git.gdsbuilder.type.validate.layer;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * ValidateLayerTypeList 정보를 담고 있는 클래스
+ * 
  * @author DY.Oh
  * @Date 2017. 3. 11. 오후 3:02:56
- * */
+ */
 public class ValidateLayerTypeList extends ArrayList<ValidateLayerType> {
+
+	List<String> layerIDList = new ArrayList<String>();
+
+	public List<String> getLayerIDList() {
+		return layerIDList;
+	}
+
+	public void setLayerIDList(List<String> layerIDList) {
+		this.layerIDList = layerIDList;
+	}
+
+	public void addAllLayerIdList(List<String> list) {
+		this.layerIDList.addAll(list);
+	}
+
+	public void addLayerId(String layerID) {
+		this.layerIDList.add(layerID);
+	}
 
 }

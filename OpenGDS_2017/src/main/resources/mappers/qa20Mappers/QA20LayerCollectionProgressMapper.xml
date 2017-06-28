@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.git.mappers.qa20Mappers.QA20LayerCollectionProgressMapper">
+
+	<!-- QA20 -->
+	<insert id="insertQA20RequestState" parameterType="hashMap">
+		${insertQuery}
+		
+		<selectKey keyProperty="p_idx" resultType="int" order="AFTER">
+			select currval('qa20_layercollection_qa_progress_p_idx_seq')
+		</selectKey>
+	</insert>
+
+	<select id="selectQA20ValidateProgressPid" parameterType="hashMap"
+		resultType="hashMap">
+		${selectQuery}
+	</select>
+
+	<select id="updateQA20ProgressingState" parameterType="hashMap"
+		resultType="hashMap">
+		${updateQuery}
+	</select>
+
+	<select id="updateQA20ValidateSuccessState" parameterType="hashMap"
+		resultType="hashMap">
+		${updateQuery}
+	</select>
+
+	<select id="updateQA20ValidateErrLayerFail" parameterType="hashMap"
+		resultType="hashMap">
+		${updateQuery}
+	</select>
+
+	<select id="updateQA20ValidateErrLayerSuccess" parameterType="hashMap"
+		resultType="hashMap">
+		${updateQuery}
+	</select>
+
+	<select id="updateQA20ResponseState" parameterType="hashMap"
+		resultType="hashMap">
+		${updateQuery}
+	</select>
+
+	<select id="updateQA20ErrorTableName" parameterType="hashMap"
+		resultType="hashMap">
+		${updateQuery}
+	</select>
+
+	<select id="selectQA20ErrorLayerTbNamesCount" parameterType="hashMap"
+		resultType="hashMap">
+		${selectQuery}
+	</select>
+
+</mapper>
