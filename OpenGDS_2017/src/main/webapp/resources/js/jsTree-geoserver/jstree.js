@@ -7156,7 +7156,7 @@
 				/**
 				 * 레이어 정보
 				 */
-				 layerInfo : undefined
+				layerInfo : undefined
 			};
 
 			$.jstree.plugins.geoserver = function(options, parent) {
@@ -7549,7 +7549,7 @@
 									"geoLayerList" : obj.refer.get_node(data[m].name).children
 								}
 								var names = [];
-//								console.log(JSON.stringify(arr));
+								// console.log(JSON.stringify(arr));
 								$.ajax({
 									url : "geoserver2/getGeoLayerInfoList.ajax",
 									method : "POST",
@@ -7884,6 +7884,111 @@
 									"action" : function(data) {
 										var inst = $.jstree.reference(data.reference), obj = inst.get_node(data.reference);
 										inst.import_vector();
+									}
+								}
+							}
+						},
+						"download" : {
+							"separator_before" : true,
+							"icon" : "fa fa-files-o",
+							"separator_after" : true,
+							"label" : "Download",
+							"action" : false,
+							"submenu" : {
+								"ngi" : {
+									"separator_before" : false,
+									"icon" : "fa fa-file-image-o",
+									"separator_after" : false,
+									"label" : "NGI",
+									"action" : function(data) {
+										var inst = $.jstree.reference(data.reference), obj = inst.get_node(data.reference);
+										var arr = inst.get_selected();
+										console.log(arr);
+										var downFiles = [];
+										for (var i = 0; i < arr.length; i++) {
+											var node = inst.get_node(arr[i]);
+											if (node.type === "n_ngi_layer_pt" || node.type === "n_ngi_layer_ln" || node.type === "n_ngi_layer_pg") {
+
+											} else if (node.type === "n_dxf_layer_arc" || node.type === "n_dxf_layer_cir"
+													|| node.type === "n_dxf_layer_ins" || node.type === "n_dxf_layer_lpl"
+													|| node.type === "n_dxf_layer_pl" || node.type === "n_dxf_layer_txt") {
+
+											} else if (node.type === "n_ngi_group") {
+
+											} else if (node.type === "n_dxf_group") {
+
+											} else if (node.type === "n_shp_layer_pt" || node.type === "n_shp_layer_ln"
+													|| node.type === "n_shp_layer_pg" || node.type === "e_ngi_layer" || node.type === "e_dxf_layer"
+													|| node.type === "e_shp_layer") {
+												var obj = {
+													"format" : "shp",
+													"type" : "layer",
+													"name" : node.id
+												}
+												console.log(obj);
+												downFiles.push(obj);
+											}
+										}
+									}
+								},
+								"dxf" : {
+									"separator_before" : false,
+									"icon" : "fa fa-file-excel-o",
+									"separator_after" : false,
+									"label" : "DXF",
+									"action" : function(data) {
+										var inst = $.jstree.reference(data.reference), obj = inst.get_node(data.reference);
+
+									}
+								},
+								"shp" : {
+									"separator_before" : false,
+									"icon" : "fa fa-file-excel-o",
+									"separator_after" : false,
+									"label" : "SHP",
+									"action" : function(data) {
+										var inst = $.jstree.reference(data.reference), obj = inst.get_node(data.reference);
+
+									}
+								},
+								"gml2" : {
+									"separator_before" : false,
+									"icon" : "fa fa-file-excel-o",
+									"separator_after" : false,
+									"label" : "GML2",
+									"action" : function(data) {
+										var inst = $.jstree.reference(data.reference), obj = inst.get_node(data.reference);
+
+									}
+								},
+								"gml3" : {
+									"separator_before" : false,
+									"icon" : "fa fa-file-excel-o",
+									"separator_after" : false,
+									"label" : "GML3",
+									"action" : function(data) {
+										var inst = $.jstree.reference(data.reference), obj = inst.get_node(data.reference);
+
+									}
+								},
+								"json" : {
+									"separator_before" : false,
+									"icon" : "fa fa-file-excel-o",
+									"separator_after" : false,
+									"label" : "JSON",
+									"action" : function(data) {
+										var inst = $.jstree.reference(data.reference), obj = inst.get_node(data.reference);
+
+									}
+								},
+								"csv" : {
+									"separator_before" : false,
+									"icon" : "fa fa-file-excel-o",
+									"separator_after" : false,
+									"label" : "CSV",
+									"action" : function(data) {
+										var inst = $.jstree.reference(data.reference), obj = inst.get_node(data.reference);
+
 									}
 								}
 							}
