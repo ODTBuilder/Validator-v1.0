@@ -1,6 +1,6 @@
 package com.git.gdsbuilder.type.validate.option;
 
-public class RefLayerMiss {
+public class RefLayerMiss extends ValidatorOption {
 	public enum Type {
 
 		REFLAYERMISS("RefLayerMiss", "CloseCollectionError");

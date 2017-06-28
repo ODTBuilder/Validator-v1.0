@@ -141,7 +141,7 @@ public class GeoLayerCollection {
 	 * 3. 11. 오전 11:48:22 @param layerName @param layerCollection @return
 	 * Layer @throws
 	 */
-	public static GeoLayer getLayer(String layerName, GeoLayerCollection layerCollection) {
+	public GeoLayer getLayer(String layerName, GeoLayerCollection layerCollection) {
 
 		GeoLayer layer = null;
 		List<GeoLayer> layers = layerCollection.getLayers();
@@ -150,6 +150,7 @@ public class GeoLayerCollection {
 			String validateLayerName = tmp.getLayerName();
 			if (validateLayerName.equalsIgnoreCase(layerName)) {
 				layer = tmp;
+				break;
 			}
 		}
 		return layer;

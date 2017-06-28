@@ -1,6 +1,6 @@
 package com.git.gdsbuilder.type.validate.option;
 
-public class RefAttributeMiss {
+public class RefAttributeMiss extends ValidatorOption {
 	public enum Type {
 
 		RefAttributeMiss("RefAttributeMiss", "CloseCollectionError");

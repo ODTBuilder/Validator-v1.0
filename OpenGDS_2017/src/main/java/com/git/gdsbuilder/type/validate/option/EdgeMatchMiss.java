@@ -1,6 +1,6 @@
 package com.git.gdsbuilder.type.validate.option;
 
-public class EdgeMatchMiss {
+public class EdgeMatchMiss extends ValidatorOption {
 
 	public enum Type {
 

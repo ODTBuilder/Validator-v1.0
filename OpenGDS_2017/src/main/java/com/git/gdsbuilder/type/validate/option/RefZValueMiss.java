@@ -1,6 +1,6 @@
 package com.git.gdsbuilder.type.validate.option;
 
-public class RefZValueMiss {
+public class RefZValueMiss extends ValidatorOption {
 	public enum Type {
 
 		REFZVALUEMISS("RefZValueMiss", "CloseCollectionError");

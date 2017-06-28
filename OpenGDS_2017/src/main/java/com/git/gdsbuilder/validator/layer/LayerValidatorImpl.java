@@ -36,7 +36,9 @@ package com.git.gdsbuilder.validator.layer;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.geotools.data.DataUtilities;
 import org.geotools.data.simple.SimpleFeatureCollection;
@@ -57,6 +59,7 @@ import org.opengis.referencing.operation.TransformException;
 import com.git.gdsbuilder.type.geoserver.layer.GeoLayer;
 import com.git.gdsbuilder.type.validate.error.ErrorFeature;
 import com.git.gdsbuilder.type.validate.error.ErrorLayer;
+import com.git.gdsbuilder.validator.collection.rule.MapSystemRule.MapSystemRuleType;
 import com.git.gdsbuilder.validator.feature.FeatureAttributeValidator;
 import com.git.gdsbuilder.validator.feature.FeatureAttributeValidatorImpl;
 import com.git.gdsbuilder.validator.feature.FeatureGraphicValidator;
@@ -65,6 +68,7 @@ import com.sun.org.apache.xalan.internal.xsltc.compiler.sym;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.Polygon;
 
@@ -82,6 +86,15 @@ public class LayerValidatorImpl implements LayerValidator {
 		super();
 		this.validatorLayer = validatorLayer;
 	}
+	
+	public GeoLayer getValidatorLayer() {
+		return validatorLayer;
+	}
+
+	public void setValidatorLayer(GeoLayer validatorLayer) {
+		this.validatorLayer = validatorLayer;
+	}
+
 
 	public ErrorLayer validateConBreakLayers(GeoLayer neatLayer) throws SchemaException {
 
@@ -807,6 +820,28 @@ public class LayerValidatorImpl implements LayerValidator {
 						}
 					}
 				}
+			}
+		}
+		if(errorLayer.getErrFeatureList().size() > 0){
+			return errorLayer;
+		}else{
+			return null;
+		}
+	}
+	
+	
+	public ErrorLayer validateEntityNone(Map<MapSystemRuleType, HashMap<List<SimpleFeature>, List<SimpleFeature>>> collectionFeaturesMap, Map<MapSystemRuleType, LineString> collectionBoundary,double tolorence) throws SchemaException{
+		ErrorLayer errorLayer = new ErrorLayer();
+		SimpleFeatureCollection sfc = validatorLayer.getSimpleFeatureCollection();
+		SimpleFeatureIterator simpleFeatureIterator = sfc.features();
+		while (simpleFeatureIterator.hasNext()) {
+			SimpleFeature simpleFeature = simpleFeatureIterator.next();
+			ErrorFeature errFeature = graphicValidator.validateWaterOpen(simpleFeature);
+			if(errFeature != null){
+				errFeature.setLayerName(validatorLayer.getLayerName());
+				errorLayer.addErrorFeature(errFeature);
+			}else{
+				continue;
 			}
 		}
 		if(errorLayer.getErrFeatureList().size() > 0){

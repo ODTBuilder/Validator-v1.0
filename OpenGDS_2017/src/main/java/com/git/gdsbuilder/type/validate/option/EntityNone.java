@@ -10,7 +10,7 @@ package com.git.gdsbuilder.type.validate.option;
 * @date 2017. 6. 13. 오후 4:56:22 
 *  
 */
-public class EntityNone {
+public class EntityNone extends ValidatorOption{
 	public enum Type{
 
 		ENTITYNONE("EntityNone", "GeometricError");
