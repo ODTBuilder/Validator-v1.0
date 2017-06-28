@@ -35,15 +35,25 @@
 package com.git.gdsbuilder.validator.collection;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.geotools.data.simple.SimpleFeatureCollection;
+import org.geotools.data.simple.SimpleFeatureIterator;
+import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.feature.SchemaException;
+import org.geotools.geometry.jts.JTSFactoryFinder;
 import org.json.simple.JSONObject;
+import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.filter.Filter;
+import org.opengis.filter.FilterFactory2;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.operation.TransformException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.git.gdsbuilder.type.geoserver.collection.GeoLayerCollection;
 import com.git.gdsbuilder.type.geoserver.collection.GeoLayerCollectionList;
@@ -63,11 +73,16 @@ import com.git.gdsbuilder.type.validate.option.ConBreak;
 import com.git.gdsbuilder.type.validate.option.ConIntersected;
 import com.git.gdsbuilder.type.validate.option.ConOverDegree;
 import com.git.gdsbuilder.type.validate.option.CrossRoad;
+import com.git.gdsbuilder.type.validate.option.EdgeMatchMiss;
 import com.git.gdsbuilder.type.validate.option.EntityDuplicated;
+import com.git.gdsbuilder.type.validate.option.EntityNone;
 import com.git.gdsbuilder.type.validate.option.LayerMiss;
 import com.git.gdsbuilder.type.validate.option.NodeMiss;
 import com.git.gdsbuilder.type.validate.option.OutBoundary;
 import com.git.gdsbuilder.type.validate.option.OverShoot;
+import com.git.gdsbuilder.type.validate.option.RefAttributeMiss;
+import com.git.gdsbuilder.type.validate.option.RefLayerMiss;
+import com.git.gdsbuilder.type.validate.option.RefZValueMiss;
 import com.git.gdsbuilder.type.validate.option.SelfEntity;
 import com.git.gdsbuilder.type.validate.option.SmallArea;
 import com.git.gdsbuilder.type.validate.option.SmallLength;
@@ -77,7 +92,15 @@ import com.git.gdsbuilder.type.validate.option.UselessPoint;
 import com.git.gdsbuilder.type.validate.option.ValidatorOption;
 import com.git.gdsbuilder.type.validate.option.WaterOpen;
 import com.git.gdsbuilder.type.validate.option.Z_ValueAmbiguous;
+import com.git.gdsbuilder.validator.collection.rule.MapSystemRule;
+import com.git.gdsbuilder.validator.collection.rule.MapSystemRule.MapSystemRuleType;
 import com.git.gdsbuilder.validator.layer.LayerValidatorImpl;
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jts.geom.LinearRing;
+import com.vividsolutions.jts.geom.Polygon;
 
 /**
  * ValidateLayerCollectionList를 검수하는 클래스
@@ -86,13 +109,13 @@ import com.git.gdsbuilder.validator.layer.LayerValidatorImpl;
  * @Date 2017. 4. 18. 오후 3:30:17
  */
 public class CollectionValidator {
-	
-	protected static int validateSuccess = 2;
-	protected static int validateFail = 3;
 
 	ValidateLayerCollectionList validateLayerCollectionList;
+	double tolorence = 0.001;
 	ErrorLayerList errLayerList;
 	Map<String, Object> progress;
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(CollectionValidator.class);
 
 	/**
 	 * CollectionValidator 생성자
@@ -166,27 +189,24 @@ public class CollectionValidator {
 		ValidateLayerTypeList types = validateLayerCollectionList.getValidateLayerTypeList();
 		GeoLayerCollectionList layerCollections = validateLayerCollectionList.getLayerCollectionList();
 
+		MapSystemRule mapSystemRule = new MapSystemRule(-10, 10, -1, 1);
+
 		for (int i = 0; i < layerCollections.size(); i++) {
+
 			GeoLayerCollection collection = layerCollections.get(i);
-			String collectionName = collection.getCollectionName();
-			try {
-				// layerMiss 검수
-				layerMissValidate(types, collection);
-				// geometric 검수
-				geometricValidate(types, collection);
-				// attribute 검수
-				attributeValidate(types, collection);
-				// 인접도엽 검수
-				closeCollectionValidate(types, collection);
-				progress.put(collectionName, validateSuccess);
-			} catch (Exception e) {
-				progress.put(collectionName, validateFail);
-			}
+
+			// layerMiss 검수
+			layerMissValidate(types, collection);
+
+			// geometric 검수
+			geometricValidate(types, collection);
+
+			// attribute 검수
+			attributeValidate(types, collection);
+
+			// 인접도엽 검수
+			closeCollectionValidate(types, mapSystemRule, collection);
 		}
-	}
-	// closeValidate
-	private void closeCollectionValidate(ValidateLayerTypeList types, GeoLayerCollection layerCollection) {
-		// TODO Auto-generated method stub
 	}
 
 	private void attributeValidate(ValidateLayerTypeList types, GeoLayerCollection layerCollection)
@@ -354,7 +374,7 @@ public class CollectionValidator {
 							List<String> relationNames = ((CrossRoad) option).getRelationType();
 							for (int l = 0; l < relationNames.size(); l++) {
 								typeErrorLayer = layerValidator.validateCrossRoad(validateLayerCollectionList
-										.getTypeLayers(relationNames.get(l), layerCollection),"", 0.001);
+										.getTypeLayers(relationNames.get(l), layerCollection));
 							}
 							if (typeErrorLayer != null) {
 								errLayer.mergeErrorLayer(typeErrorLayer);
@@ -423,6 +443,401 @@ public class CollectionValidator {
 			errLayer.setCollectionName(layerCollection.getCollectionName());
 			errLayer.setCollectionType(layerCollection.getLayerCollectionType());
 			errLayerList.add(errLayer);
+		}
+	}
+
+	// closeValidate
+
+	@SuppressWarnings("unused")
+	private void closeCollectionValidate(ValidateLayerTypeList types, MapSystemRule mapSystemRule,
+			GeoLayerCollection layerCollection) throws SchemaException {
+		// TODO Auto-generated method stub
+		FilterFactory2 ff = CommonFactoryFinder.getFilterFactory2();
+		
+		String geomCol = "geom"; //임시선언 geometry 컬럼
+		
+		
+		LayerValidatorImpl layerValidator = new LayerValidatorImpl();
+
+		if (layerCollection != null) {
+			String neatLineName = layerCollection.getNeatLine().getLayerName();
+			SimpleFeatureCollection neatLineCollection = layerCollection.getNeatLine().getSimpleFeatureCollection();
+			SimpleFeatureIterator featureIterator = neatLineCollection.features();
+
+			// 인접도엽 변수선언
+			GeoLayerCollection topGeoCollection = null;
+			GeoLayerCollection bottomGeoCollection = null;
+			GeoLayerCollection leftGeoCollection = null;
+			GeoLayerCollection rightGeoCollection = null;
+
+			GeoLayerCollectionList collectionList = this.validateLayerCollectionList.getLayerCollectionList();
+
+			if (collectionList != null) {
+				String collectionName = layerCollection.getCollectionName();
+				try {
+					// 인접도엽 GET
+					int collectionNum = Integer.parseInt(collectionName); // 대상도엽번호
+
+					int topColltionNum = collectionNum + mapSystemRule.getMapSystemlRule(MapSystemRuleType.TOP);
+					int bottomColltionNum = collectionNum + mapSystemRule.getMapSystemlRule(MapSystemRuleType.BOTTOM);
+					int leftColltionNum = collectionNum + mapSystemRule.getMapSystemlRule(MapSystemRuleType.LEFT);
+					int rightColltionNum = collectionNum + mapSystemRule.getMapSystemlRule(MapSystemRuleType.RIGHT);
+
+					for (GeoLayerCollection nearCollection : collectionList) {
+						try {
+							String nearCollectionName = nearCollection.getCollectionName();
+							int nearCollectionNum = Integer.parseInt(nearCollectionName);
+
+							if (topColltionNum == nearCollectionNum) {
+								topGeoCollection = nearCollection;
+							}
+							if (bottomColltionNum == nearCollectionNum) {
+								bottomGeoCollection = nearCollection;
+							}
+							if (leftColltionNum == nearCollectionNum) {
+								leftGeoCollection = nearCollection;
+							}
+							if (rightColltionNum == nearCollectionNum) {
+								rightGeoCollection = nearCollection;
+							}
+						} catch (NumberFormatException e) {
+							// TODO: handle exception
+							LOGGER.info("인접도엽이름 정수아님");
+						}
+
+					}
+				} catch (NumberFormatException e) {
+					LOGGER.info("대상도엽 숫자아님");
+					return;
+				}
+			} else {
+				LOGGER.info("도엽리스트 Null");
+				return;
+			}
+
+			// 도곽 좌표 추출
+			double minx = 0.0;
+			double miny = 0.0;
+			double maxx = 0.0;
+			double maxy = 0.0;
+
+			int i = 0;
+			while (featureIterator.hasNext()) {
+				if (i == 0) {
+					SimpleFeature feature = featureIterator.next();
+					Geometry geometry = (Geometry) feature.getDefaultGeometry();
+					Coordinate[] coordinateArray = geometry.getEnvelope().getCoordinates();
+					Coordinate minCoordinate = new Coordinate();
+					Coordinate maxCoordinate = new Coordinate();
+
+					minCoordinate = coordinateArray[0];
+					maxCoordinate = coordinateArray[2];
+
+					minx = minCoordinate.x;
+					miny = minCoordinate.y;
+					maxx = maxCoordinate.x;
+					maxy = maxCoordinate.y;
+					i++;
+				} else {
+					LOGGER.info("도곽레이어 객체 1개이상");
+					return;
+				}
+			}
+
+			GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory();
+			
+			// 도엽라인객체 생성
+			Coordinate[] topLineCoords = new Coordinate[] { new Coordinate(minx, miny), new Coordinate(maxx, miny) };
+			Coordinate[] bottomLineCoords = new Coordinate[] { new Coordinate(minx, maxy), new Coordinate(maxx, maxy) };
+			Coordinate[] leftLineCoords = new Coordinate[] { new Coordinate(minx, miny), new Coordinate(minx, maxy) };
+			Coordinate[] rightLineCoords = new Coordinate[] { new Coordinate(maxx, miny), new Coordinate(maxx, maxy) };
+			
+			LineString topLineString = geometryFactory.createLineString(topLineCoords);
+			LineString bottomLineString = geometryFactory.createLineString(bottomLineCoords);
+			LineString leftLineString = geometryFactory.createLineString(leftLineCoords);
+			LineString rightLineString = geometryFactory.createLineString(rightLineCoords);
+			
+			Map<MapSystemRuleType, LineString> collectionBoundary = new HashMap<MapSystemRule.MapSystemRuleType, LineString>();
+			
+			collectionBoundary.put(MapSystemRuleType.TOP, topLineString);
+			collectionBoundary.put(MapSystemRuleType.BOTTOM, bottomLineString);
+			collectionBoundary.put(MapSystemRuleType.LEFT, leftLineString);
+			collectionBoundary.put(MapSystemRuleType.RIGHT, rightLineString);
+			
+
+			// 대상도엽 객체 GET 폴리곤 생성
+			Coordinate[] topCoords = new Coordinate[] { new Coordinate(minx, miny),
+					new Coordinate(maxx, miny), new Coordinate(maxx, maxy+tolorence), new Coordinate(minx, maxy+tolorence),
+					new Coordinate(minx, miny) };
+			Coordinate[] bottomCoords = new Coordinate[] { new Coordinate(minx, maxy), new Coordinate(maxx, maxy),
+					new Coordinate(maxx, maxy - tolorence), new Coordinate(minx, maxy - tolorence),
+					new Coordinate(minx, maxy) };
+			Coordinate[] leftCoords = new Coordinate[] { new Coordinate(minx, miny),
+					new Coordinate(minx+tolorence, miny), new Coordinate(minx+tolorence, maxy), new Coordinate(minx, maxy),
+					new Coordinate(minx, miny) };
+			Coordinate[] rightCoords = new Coordinate[] { new Coordinate(maxx, miny),
+					new Coordinate(maxx - tolorence, miny), new Coordinate(maxx - tolorence, maxy),
+					new Coordinate(maxx, maxy), new Coordinate(maxx, miny) };
+
+			LinearRing topRing = geometryFactory.createLinearRing(topCoords);
+			LinearRing bottomRing = geometryFactory.createLinearRing(bottomCoords);
+			LinearRing leftRing = geometryFactory.createLinearRing(leftCoords);
+			LinearRing rightRing = geometryFactory.createLinearRing(rightCoords);
+
+			LinearRing holes[] = null; // use LinearRing[] to represent holes
+			Polygon topPolygon = geometryFactory.createPolygon(topRing, holes);
+			Polygon bottomPolygon = geometryFactory.createPolygon(bottomRing, holes);
+			Polygon leftPolygon = geometryFactory.createPolygon(leftRing, holes);
+			Polygon rightPolygon = geometryFactory.createPolygon(rightRing, holes);
+
+			// 인접도엽 top, bottom, left, right 객체로드를 위한 Map 생성
+			/*
+			 * Map<MapSystemRuleType, Polygon> nearCollectionBoundary = new
+			 * HashMap<MapSystemRuleType, Polygon>();
+			 * nearCollectionBoundary.put(MapSystemRuleType.TOP, topPolygon);
+			 * nearCollectionBoundary.put(MapSystemRuleType.BOTTOM,
+			 * bottomPolygon);
+			 * nearCollectionBoundary.put(MapSystemRuleType.LEFT, leftPolygon);
+			 * nearCollectionBoundary.put(MapSystemRuleType.RIGHT,
+			 * rightPolygon);
+			 */
+
+			// 인접도엽 객체 GET 폴리곤생성
+			Coordinate[] nearTopCoords = new Coordinate[] { new Coordinate(minx, miny - tolorence),
+					new Coordinate(maxx, miny - tolorence), new Coordinate(maxx, maxy), new Coordinate(minx, maxy),
+					new Coordinate(minx, miny - tolorence) };
+			Coordinate[] nearBottomCoords = new Coordinate[] { new Coordinate(minx, maxy), new Coordinate(maxx, maxy),
+					new Coordinate(maxx, maxy + tolorence), new Coordinate(minx, maxy + tolorence),
+					new Coordinate(minx, maxy) };
+			Coordinate[] nearLeftCoords = new Coordinate[] { new Coordinate(minx - tolorence, miny),
+					new Coordinate(minx, miny), new Coordinate(minx, maxy), new Coordinate(minx - tolorence, maxy),
+					new Coordinate(minx - tolorence, miny) };
+			Coordinate[] nearRightCoords = new Coordinate[] { new Coordinate(maxx, miny),
+					new Coordinate(maxx + tolorence, miny), new Coordinate(maxx + tolorence, maxy),
+					new Coordinate(maxx, maxy), new Coordinate(maxx, miny) };
+
+			LinearRing nearTopRing = geometryFactory.createLinearRing(nearTopCoords);
+			LinearRing nearBottomRing = geometryFactory.createLinearRing(nearBottomCoords);
+			LinearRing nearLeftRing = geometryFactory.createLinearRing(nearLeftCoords);
+			LinearRing nearRightRing = geometryFactory.createLinearRing(nearRightCoords);
+
+			LinearRing nearHoles[] = null; // use LinearRing[] to represent
+											// holes
+			Polygon nearTopPolygon = geometryFactory.createPolygon(nearTopRing, holes);
+			Polygon nearBottomPolygon = geometryFactory.createPolygon(nearBottomRing, holes);
+			Polygon nearLeftPolygon = geometryFactory.createPolygon(nearLeftRing, holes);
+			Polygon nearRightPolygon = geometryFactory.createPolygon(nearRightRing, holes);
+
+			// 인접도엽 top, bottom, left, right 객체로드를 위한 Map 생성
+/*			Map<MapSystemRuleType, Polygon> nearCollectionBoundary = new HashMap<MapSystemRuleType, Polygon>();
+			nearCollectionBoundary.put(MapSystemRuleType.TOP, topPolygon);
+			nearCollectionBoundary.put(MapSystemRuleType.BOTTOM, bottomPolygon);
+			nearCollectionBoundary.put(MapSystemRuleType.LEFT, leftPolygon);
+			nearCollectionBoundary.put(MapSystemRuleType.RIGHT, rightPolygon);
+*/
+			// 인접관련 옵션 객체선언
+			EdgeMatchMiss matchMiss = null;
+			RefZValueMiss refZValueMiss = null;
+			RefLayerMiss refLayerMiss = null;
+			RefAttributeMiss refAttributeMiss = null;
+			EntityNone entityNone = null;
+
+			for (ValidateLayerType layerType : types) {
+				GeoLayerList typeLayers = validateLayerCollectionList.getTypeLayers(layerType.getTypeName(),
+						layerCollection);
+				ErrorLayer errLayer = new ErrorLayer();
+				List<ValidatorOption> options = layerType.getOptionList();
+				if (options != null) {
+					ErrorLayer typeErrorLayer = null;
+
+					for (GeoLayer geoLayer : typeLayers) {
+						SimpleFeatureCollection currentCollection = geoLayer.getSimpleFeatureCollection();
+						Map<String, GeoLayer> nearGeoLayers = new HashMap<String, GeoLayer>();
+						layerValidator.setValidatorLayer(geoLayer);
+						Map<MapSystemRuleType, HashMap<List<SimpleFeature>, List<SimpleFeature>>> nearCollectionObj = new HashMap<MapSystemRuleType, HashMap<List<SimpleFeature>, List<SimpleFeature>>>(); // 인접검수대상
+																																																			// 객체
+																																																			// 변수
+																																																			// 선언
+
+						List<SimpleFeature> topFeatureList = new ArrayList<SimpleFeature>();
+						List<SimpleFeature> bottomFeatureList = new ArrayList<SimpleFeature>();
+						List<SimpleFeature> leftFeatureList = new ArrayList<SimpleFeature>();
+						List<SimpleFeature> rightFeatureList = new ArrayList<SimpleFeature>();
+
+						List<SimpleFeature> nearTopFeatureList = new ArrayList<SimpleFeature>();
+						List<SimpleFeature> nearBottomFeatureList = new ArrayList<SimpleFeature>();
+						List<SimpleFeature> nearLeftFeatureList = new ArrayList<SimpleFeature>();
+						List<SimpleFeature> nearRightFeatureList = new ArrayList<SimpleFeature>();
+
+						if (geoLayer != null) {
+							// 각 인접도엽별 객체 GET
+							if (topGeoCollection != null) {
+								Filter topFilter = ff.intersects(ff.property(geomCol), ff.literal(topPolygon));
+								Filter nearTopFilter = ff.intersects(ff.property(geomCol), ff.literal(nearTopPolygon));
+
+								GeoLayer targetLayer = topGeoCollection.getLayer(geoLayer.getLayerName(),
+										topGeoCollection);
+
+								SimpleFeatureCollection topCollection = currentCollection.subCollection(topFilter);
+								SimpleFeatureCollection nearTopCollection = targetLayer.getSimpleFeatureCollection()
+										.subCollection(nearTopFilter);
+
+								SimpleFeatureIterator topFeatureIterator = topCollection.features();
+								SimpleFeatureIterator nearTopFeatureIterator = nearTopCollection.features();
+
+								while (topFeatureIterator.hasNext()) {
+									topFeatureList.add(topFeatureIterator.next());
+								}
+
+								while (nearTopFeatureIterator.hasNext()) {
+									nearTopFeatureList.add(nearTopFeatureIterator.next());
+								}
+
+								HashMap<List<SimpleFeature>, List<SimpleFeature>> topFeaturesMap = new HashMap<List<SimpleFeature>, List<SimpleFeature>>();
+								topFeaturesMap.put(topFeatureList, nearTopFeatureList);
+								nearCollectionObj.put(MapSystemRuleType.TOP, topFeaturesMap);
+
+							}
+							if (bottomGeoCollection != null) {
+								Filter bottomFilter = ff.intersects(ff.property(geomCol), ff.literal(bottomPolygon));
+								Filter nearBottomFilter = ff.intersects(ff.property(geomCol),
+										ff.literal(nearBottomPolygon));
+
+								GeoLayer targetLayer = bottomGeoCollection.getLayer(geoLayer.getLayerName(),
+										bottomGeoCollection);
+
+								SimpleFeatureCollection bottomCollection = currentCollection
+										.subCollection(bottomFilter);
+								SimpleFeatureCollection nearbottomCollection = targetLayer.getSimpleFeatureCollection()
+										.subCollection(nearBottomFilter);
+
+								SimpleFeatureIterator bottomFeatureIterator = bottomCollection.features();
+								SimpleFeatureIterator nearBottomFeatureIterator = nearbottomCollection.features();
+
+								while (bottomFeatureIterator.hasNext()) {
+									topFeatureList.add(bottomFeatureIterator.next());
+								}
+
+								while (nearBottomFeatureIterator.hasNext()) {
+									nearTopFeatureList.add(nearBottomFeatureIterator.next());
+								}
+
+								HashMap<List<SimpleFeature>, List<SimpleFeature>> bottomFeaturesMap = new HashMap<List<SimpleFeature>, List<SimpleFeature>>();
+								bottomFeaturesMap.put(topFeatureList, nearTopFeatureList);
+								nearCollectionObj.put(MapSystemRuleType.BOTTOM, bottomFeaturesMap);
+							}
+							if (leftGeoCollection != null) {
+								Filter leftFilter = ff.intersects(ff.property(geomCol), ff.literal(leftPolygon));
+								Filter nearLeftFilter = ff.intersects(ff.property(geomCol),
+										ff.literal(nearLeftPolygon));
+
+								GeoLayer targetLayer = leftGeoCollection.getLayer(geoLayer.getLayerName(),
+										leftGeoCollection);
+
+								SimpleFeatureCollection leftCollection = currentCollection.subCollection(leftFilter);
+								SimpleFeatureCollection nearleftCollection = targetLayer.getSimpleFeatureCollection()
+										.subCollection(nearLeftFilter);
+
+								SimpleFeatureIterator leftFeatureIterator = leftCollection.features();
+								SimpleFeatureIterator nearLeftFeatureIterator = nearleftCollection.features();
+
+								while (leftFeatureIterator.hasNext()) {
+									topFeatureList.add(leftFeatureIterator.next());
+								}
+
+								while (nearLeftFeatureIterator.hasNext()) {
+									nearTopFeatureList.add(nearLeftFeatureIterator.next());
+								}
+
+								HashMap<List<SimpleFeature>, List<SimpleFeature>> leftFeaturesMap = new HashMap<List<SimpleFeature>, List<SimpleFeature>>();
+								leftFeaturesMap.put(topFeatureList, nearTopFeatureList);
+								nearCollectionObj.put(MapSystemRuleType.LEFT, leftFeaturesMap);
+							}
+							if (rightGeoCollection != null) {
+								Filter rightFilter = ff.intersects(ff.property(geomCol), ff.literal(rightPolygon));
+								Filter nearRightFilter = ff.intersects(ff.property(geomCol),
+										ff.literal(nearRightPolygon));
+
+								GeoLayer targetLayer = rightGeoCollection.getLayer(geoLayer.getLayerName(),
+										rightGeoCollection);
+
+								SimpleFeatureCollection rightCollection = currentCollection.subCollection(rightFilter);
+								SimpleFeatureCollection nearRightCollection = targetLayer.getSimpleFeatureCollection()
+										.subCollection(nearRightFilter);
+
+								SimpleFeatureIterator rightFeatureIterator = rightCollection.features();
+								SimpleFeatureIterator nearRightFeatureIterator = nearRightCollection.features();
+
+								while (rightFeatureIterator.hasNext()) {
+									topFeatureList.add(rightFeatureIterator.next());
+								}
+
+								while (nearRightFeatureIterator.hasNext()) {
+									nearTopFeatureList.add(nearRightFeatureIterator.next());
+								}
+
+								HashMap<List<SimpleFeature>, List<SimpleFeature>> rightFeaturesMap = new HashMap<List<SimpleFeature>, List<SimpleFeature>>();
+								rightFeaturesMap.put(topFeatureList, nearTopFeatureList);
+								nearCollectionObj.put(MapSystemRuleType.RIGHT, rightFeaturesMap);
+							}
+						} else
+							break;
+
+						// 인접관련 옵션 객체 생성
+						List<ValidatorOption> optionList = new ArrayList<ValidatorOption>();
+						for (ValidatorOption option : options) {
+							if (option instanceof EntityNone || option instanceof RefAttributeMiss
+									|| option instanceof RefLayerMiss || option instanceof RefZValueMiss
+									|| option instanceof EdgeMatchMiss) {
+								optionList.add(option);
+							}
+						}
+						
+						
+
+						for (ValidatorOption option : optionList) {
+
+						}
+					}
+				}
+			}
+
+		}
+
+		for (int i = 0; i < layerCollections.size(); i++) {
+			GeoLayerCollection collection = layerCollections.get(i);
+			List<GeoLayer> collectionList = collection.getLayers();
+			ErrorLayer errLayer = new ErrorLayer();
+			for (int j = 0; j < types.size(); j++) {
+				ValidateLayerType type = types.get(j);
+				GeoLayerList typeLayers = validateLayerCollectionList.getTypeLayers(type.getTypeName(), collection);
+				List<ValidatorOption> options = type.getOptionList();
+				if (options != null) {
+					ErrorLayer typeErrorLayer = null;
+					for (int k = 0; k < options.size(); k++) {
+						ValidatorOption option = options.get(k);
+						for (int l = 0; l < typeLayers.size(); l++) {
+							GeoLayer typeLayer = typeLayers.get(l);
+							if (typeLayer == null) {
+								continue;
+							}
+							if (option instanceof LayerMiss) {
+								List<String> typeNames = ((LayerMiss) option).getLayerType();
+								typeErrorLayer = layerValidator.validateLayerMiss(typeNames);
+								if (typeErrorLayer != null) {
+									errLayer.mergeErrorLayer(typeErrorLayer);
+								}
+								collectionList.remove(typeLayer);
+							}
+						}
+					}
+				}
+			}
+			if (errLayer != null) {
+				errLayer.setCollectionName(collection.getCollectionName());
+				errLayer.setCollectionType(collection.getLayerCollectionType());
+				errLayerList.add(errLayer);
+			}
 		}
 	}
 

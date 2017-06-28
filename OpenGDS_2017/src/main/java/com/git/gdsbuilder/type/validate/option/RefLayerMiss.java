@@ -1,19 +1,9 @@
-/**
- * 
- */
 package com.git.gdsbuilder.type.validate.option;
 
-/** 
-* @ClassName: EntityNone 
-* @Description: EntityNone 정보를 담고 있는 클래스
-* @author JY.Kim 
-* @date 2017. 6. 13. 오후 4:56:22 
-*  
-*/
-public class EntityNone extends ValidatorOption{
-	public enum Type{
+public class RefLayerMiss extends ValidatorOption {
+	public enum Type {
 
-		ENTITYNONE("EntityNone", "GeometricError");
+		REFLAYERMISS("RefLayerMiss", "CloseCollectionError");
 
 		String errName;
 		String errType;
