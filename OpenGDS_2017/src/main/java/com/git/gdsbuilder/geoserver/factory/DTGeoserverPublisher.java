@@ -34,7 +34,8 @@ public class DTGeoserverPublisher extends GeoServerRESTPublisher
   {
     String fileName = geoLayerInfo.getFileName();
     String src = geoLayerInfo.getOriginSrc();
-    String fullName = "err_" +geoLayerInfo.getFileType()+"_"+ fileName;
+ //   String fullName = "err_" +geoLayerInfo.getFileType()+"_"+ fileName;
+    String fullName = geoLayerInfo.getFileName();
 
     GSFeatureTypeEncoder fte = new GSFeatureTypeEncoder();
     GSLayerEncoder layerEncoder = new GSLayerEncoder();

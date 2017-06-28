@@ -7156,7 +7156,11 @@
 				/**
 				 * 레이어 정보
 				 */
-				 layerInfo : undefined
+				layerInfo : undefined,
+
+				layerInfoURL : undefined,
+				downloadNGIDXF : undefined,
+				downloadGeoserver : undefined
 			};
 
 			$.jstree.plugins.geoserver = function(options, parent) {
@@ -7171,6 +7175,9 @@
 					this._data.geoserver.map = this.settings.geoserver.map;
 					this._data.geoserver.user = this.settings.geoserver.user;
 					this._data.geoserver.layerInfo = this.settings.geoserver.layerInfo;
+					this._data.geoserver.layerInfoURL = this.settings.geoserver.layerInfoURL;
+					this._data.geoserver.downloadNGIDXF = this.settings.geoserver.downloadNGIDXF;
+					this._data.geoserver.downloadGeoserver = this.settings.geoserver.downloadGeoserver;
 				}
 
 				/**
@@ -7481,8 +7488,6 @@
 				 * @author 소이준
 				 */
 				this.import_fake_group = function(obj) {
-					console.log(obj);
-					var that = this;
 					// // =======================================
 					var that = this;
 					var parentLayer;
@@ -7530,7 +7535,7 @@
 											serverType : 'geoserver'
 										})
 									});
-									wms.set("name", data[i].name);
+									wms.set("name", obj.refer.get_node(data[i].name).text);
 									wms.set("id", data[i].name);
 									var git = {
 										"validation" : false,
@@ -7551,7 +7556,7 @@
 									"geoLayerList" : obj.refer.get_node(data[m].name).children
 								}
 								var names = [];
-//								console.log(JSON.stringify(arr));
+								// console.log(JSON.stringify(arr));
 								$.ajax({
 									url : "geoserver2/getGeoLayerInfoList.ajax",
 									method : "POST",
@@ -7886,6 +7891,452 @@
 									"action" : function(data) {
 										var inst = $.jstree.reference(data.reference), obj = inst.get_node(data.reference);
 										inst.import_vector();
+									}
+								}
+							}
+						},
+						"download" : {
+							"separator_before" : true,
+							"icon" : "fa fa-files-o",
+							"separator_after" : true,
+							"label" : "Download",
+							"action" : false,
+							"submenu" : {
+								"ngi" : {
+									"separator_before" : false,
+									"icon" : "fa fa-file-image-o",
+									"separator_after" : false,
+									"label" : "NGI",
+									"action" : function(data) {
+										var inst = $.jstree.reference(data.reference), obj = inst.get_node(data.reference);
+										var arr = inst.get_selected();
+										console.log(arr);
+										var downFiles = [];
+										for (var i = 0; i < arr.length; i++) {
+											var node = inst.get_node(arr[i]);
+											if (node.type === "n_ngi_group" || node.type === "n_dxf_group") {
+												var obj = {
+													"format" : "ngi",
+													"type" : "mapsheet",
+													"name" : node.id
+												}
+												console.log(obj);
+												downFiles.push(obj);
+											} else {
+												var obj = {
+													"format" : "ngi",
+													"type" : "layer",
+													"name" : node.id
+												}
+												console.log(obj);
+												downFiles.push(obj);
+											}
+										}
+										for (var j = 0; j < downFiles.length; j++) {
+											var path = inst._data.geoserver.downloadNGIDXF;
+											var target = "gitWindow";
+											var form = document.createElement("form");
+											form.setAttribute("method", "post");
+											form.setAttribute("action", path);
+											var keys = Object.keys(downFiles[j]);
+											for (var k = 0; k < keys.length; k++) {
+												var hiddenField = document.createElement("input");
+												hiddenField.setAttribute("type", "hidden");
+												hiddenField.setAttribute("name", keys[j]);
+												hiddenField.setAttribute("value", downFiles[j][keys[k]]);
+												form.appendChild(hiddenField);
+											}
+											form.target = target;
+											document.body.appendChild(form);
+											form.submit();
+										}
+									}
+								},
+								"dxf" : {
+									"separator_before" : false,
+									"icon" : "fa fa-file-excel-o",
+									"separator_after" : false,
+									"label" : "DXF",
+									"action" : function(data) {
+										var inst = $.jstree.reference(data.reference), obj = inst.get_node(data.reference);
+										var arr = inst.get_selected();
+										console.log(arr);
+										var downFiles = [];
+										for (var i = 0; i < arr.length; i++) {
+											var node = inst.get_node(arr[i]);
+											if (node.type === "n_ngi_group" || node.type === "n_dxf_group") {
+												var obj = {
+													"format" : "dxf",
+													"type" : "mapsheet",
+													"name" : node.id
+												}
+												console.log(obj);
+												downFiles.push(obj);
+											} else {
+												var obj = {
+													"format" : "dxf",
+													"type" : "layer",
+													"name" : node.id
+												}
+												console.log(obj);
+												downFiles.push(obj);
+											}
+										}
+										for (var j = 0; j < downFiles.length; j++) {
+											var path = inst._data.geoserver.downloadNGIDXF;
+											var target = "gitWindow";
+											var form = document.createElement("form");
+											form.setAttribute("method", "post");
+											form.setAttribute("action", path);
+											var keys = Object.keys(downFiles[j]);
+											for (var k = 0; k < keys.length; k++) {
+												var hiddenField = document.createElement("input");
+												hiddenField.setAttribute("type", "hidden");
+												hiddenField.setAttribute("name", keys[j]);
+												hiddenField.setAttribute("value", downFiles[j][keys[k]]);
+												form.appendChild(hiddenField);
+											}
+											form.target = target;
+											document.body.appendChild(form);
+											form.submit();
+										}
+									}
+								},
+								"shp" : {
+									"separator_before" : true,
+									"icon" : "fa fa-file-excel-o",
+									"separator_after" : false,
+									"label" : "SHP",
+									"action" : function(data) {
+										var inst = $.jstree.reference(data.reference), obj = inst.get_node(data.reference);
+										if (obj.type === "n_ngi_group" || obj.type === "n_dxf_group") {
+											console.error("not support");
+											return;
+										}
+										var arr = {
+											"geoLayerList" : [ obj.id ]
+										}
+										var names = [];
+										$.ajax({
+											url : inst._data.geoserver.layerInfoURL,
+											method : "POST",
+											contentType : "application/json; charset=UTF-8",
+											cache : false,
+											// async : false,
+											data : JSON.stringify(arr),
+											beforeSend : function() { // 호출전실행
+												// loadImageShow();
+											},
+											traditional : true,
+											success : function(data, textStatus, jqXHR) {
+												var path = inst._data.geoserver.downloadGeoserver;
+												var target = "_blank";
+												for (var i = 0; i < data.length; i++) {
+													var params = {
+														"serviceType" : "wfs",
+														"version" : "1.1.0",
+														"outputformat" : "SHAPE-ZIP",
+														"typeName" : data[i].lName
+													}
+													var form = document.createElement("form");
+													form.setAttribute("method", "post");
+													form.setAttribute("action", path);
+													var keys = Object.keys(params);
+													for (var j = 0; j < keys.length; j++) {
+														var hiddenField = document.createElement("input");
+														hiddenField.setAttribute("type", "hidden");
+														hiddenField.setAttribute("name", keys[j]);
+														hiddenField.setAttribute("value", params[keys[j]]);
+														form.appendChild(hiddenField);
+													}
+													form.target = target;
+													document.body.appendChild(form);
+													form.submit();
+												}
+											}
+										});
+									}
+								},
+								"gml2" : {
+									"separator_before" : false,
+									"icon" : "fa fa-file-excel-o",
+									"separator_after" : false,
+									"label" : "GML2",
+									"action" : function(data) {
+										var inst = $.jstree.reference(data.reference), obj = inst.get_node(data.reference);
+										if (obj.type === "n_ngi_group" || obj.type === "n_dxf_group") {
+											console.error("not support");
+											return;
+										}
+										var arr = {
+											"geoLayerList" : [ obj.id ]
+										}
+										var names = [];
+										$.ajax({
+											url : inst._data.geoserver.layerInfoURL,
+											method : "POST",
+											contentType : "application/json; charset=UTF-8",
+											cache : false,
+											// async : false,
+											data : JSON.stringify(arr),
+											beforeSend : function() { // 호출전실행
+												// loadImageShow();
+											},
+											traditional : true,
+											success : function(data, textStatus, jqXHR) {
+												var path = inst._data.geoserver.downloadGeoserver;
+												var target = "_blank";
+												for (var i = 0; i < data.length; i++) {
+													var params = {
+														"serviceType" : "wfs",
+														"version" : "1.1.0",
+														"outputformat" : "gml2",
+														"typeName" : data[i].lName
+													}
+													var form = document.createElement("form");
+													form.setAttribute("method", "post");
+													form.setAttribute("action", path);
+													var keys = Object.keys(params);
+													for (var j = 0; j < keys.length; j++) {
+														var hiddenField = document.createElement("input");
+														hiddenField.setAttribute("type", "hidden");
+														hiddenField.setAttribute("name", keys[j]);
+														hiddenField.setAttribute("value", params[keys[j]]);
+														form.appendChild(hiddenField);
+													}
+													form.target = target;
+													document.body.appendChild(form);
+													form.submit();
+												}
+											}
+										});
+									}
+								},
+								"gml3" : {
+									"separator_before" : false,
+									"icon" : "fa fa-file-excel-o",
+									"separator_after" : false,
+									"label" : "GML3",
+									"action" : function(data) {
+										var inst = $.jstree.reference(data.reference), obj = inst.get_node(data.reference);
+										if (obj.type === "n_ngi_group" || obj.type === "n_dxf_group") {
+											console.error("not support");
+											return;
+										}
+										var arr = {
+											"geoLayerList" : [ obj.id ]
+										}
+										var names = [];
+										$.ajax({
+											url : inst._data.geoserver.layerInfoURL,
+											method : "POST",
+											contentType : "application/json; charset=UTF-8",
+											cache : false,
+											// async : false,
+											data : JSON.stringify(arr),
+											beforeSend : function() { // 호출전실행
+												// loadImageShow();
+											},
+											traditional : true,
+											success : function(data, textStatus, jqXHR) {
+												var path = inst._data.geoserver.downloadGeoserver;
+												var target = "_blank";
+												for (var i = 0; i < data.length; i++) {
+													var params = {
+														"serviceType" : "wfs",
+														"version" : "1.1.0",
+														"outputformat" : "gml3",
+														"typeName" : data[i].lName
+													}
+													var form = document.createElement("form");
+													form.setAttribute("method", "post");
+													form.setAttribute("action", path);
+													var keys = Object.keys(params);
+													for (var j = 0; j < keys.length; j++) {
+														var hiddenField = document.createElement("input");
+														hiddenField.setAttribute("type", "hidden");
+														hiddenField.setAttribute("name", keys[j]);
+														hiddenField.setAttribute("value", params[keys[j]]);
+														form.appendChild(hiddenField);
+													}
+													form.target = target;
+													document.body.appendChild(form);
+													form.submit();
+												}
+											}
+										});
+									}
+								},
+								"json" : {
+									"separator_before" : false,
+									"icon" : "fa fa-file-excel-o",
+									"separator_after" : false,
+									"label" : "JSON",
+									"action" : function(data) {
+										var inst = $.jstree.reference(data.reference), obj = inst.get_node(data.reference);
+										if (obj.type === "n_ngi_group" || obj.type === "n_dxf_group") {
+											console.error("not support");
+											return;
+										}
+										var arr = {
+											"geoLayerList" : [ obj.id ]
+										}
+										var names = [];
+										$.ajax({
+											url : inst._data.geoserver.layerInfoURL,
+											method : "POST",
+											contentType : "application/json; charset=UTF-8",
+											cache : false,
+											// async : false,
+											data : JSON.stringify(arr),
+											beforeSend : function() { // 호출전실행
+												// loadImageShow();
+											},
+											traditional : true,
+											success : function(data, textStatus, jqXHR) {
+												var path = inst._data.geoserver.downloadGeoserver;
+												var target = "_blank";
+												for (var i = 0; i < data.length; i++) {
+													var params = {
+														"serviceType" : "wfs",
+														"version" : "1.1.0",
+														"outputformat" : "json",
+														"typeName" : data[i].lName
+													}
+													var form = document.createElement("form");
+													form.setAttribute("method", "post");
+													form.setAttribute("action", path);
+													var keys = Object.keys(params);
+													for (var j = 0; j < keys.length; j++) {
+														var hiddenField = document.createElement("input");
+														hiddenField.setAttribute("type", "hidden");
+														hiddenField.setAttribute("name", keys[j]);
+														hiddenField.setAttribute("value", params[keys[j]]);
+														form.appendChild(hiddenField);
+													}
+													form.target = target;
+													document.body.appendChild(form);
+													form.submit();
+												}
+											}
+										});
+									}
+								},
+								"csv" : {
+									"separator_before" : false,
+									"icon" : "fa fa-file-excel-o",
+									"separator_after" : false,
+									"label" : "CSV",
+									"action" : function(data) {
+										var inst = $.jstree.reference(data.reference), obj = inst.get_node(data.reference);
+										if (obj.type === "n_ngi_group" || obj.type === "n_dxf_group") {
+											console.error("not support");
+											return;
+										}
+										var arr = {
+											"geoLayerList" : [ obj.id ]
+										}
+										var names = [];
+										$.ajax({
+											url : inst._data.geoserver.layerInfoURL,
+											method : "POST",
+											contentType : "application/json; charset=UTF-8",
+											cache : false,
+											// async : false,
+											data : JSON.stringify(arr),
+											beforeSend : function() { // 호출전실행
+												// loadImageShow();
+											},
+											traditional : true,
+											success : function(data, textStatus, jqXHR) {
+												var path = inst._data.geoserver.downloadGeoserver;
+												console.log(path);
+												var target = "_blank";
+												for (var i = 0; i < data.length; i++) {
+													var params = {
+														"serviceType" : "wfs",
+														"version" : "1.1.0",
+														"outputformat" : "csv",
+														"typeName" : data[i].lName
+													}
+													var form = document.createElement("form");
+													form.setAttribute("method", "post");
+													form.setAttribute("action", path);
+													var keys = Object.keys(params);
+													for (var j = 0; j < keys.length; j++) {
+														var hiddenField = document.createElement("input");
+														hiddenField.setAttribute("type", "hidden");
+														hiddenField.setAttribute("name", keys[j]);
+														hiddenField.setAttribute("value", params[keys[j]]);
+														form.appendChild(hiddenField);
+													}
+													form.target = target;
+													document.body.appendChild(form);
+													form.submit();
+												}
+											}
+										});
+									}
+								},
+								"png" : {
+									"separator_before" : true,
+									"icon" : "fa fa-file-excel-o",
+									"separator_after" : false,
+									"label" : "PNG",
+									"action" : function(data) {
+										var inst = $.jstree.reference(data.reference), obj = inst.get_node(data.reference);
+										if (obj.type === "n_ngi_group" || obj.type === "n_dxf_group") {
+											console.error("not support");
+											return;
+										}
+										var arr = {
+											"geoLayerList" : [ obj.id ]
+										}
+										var names = [];
+										$.ajax({
+											url : inst._data.geoserver.layerInfoURL,
+											method : "POST",
+											contentType : "application/json; charset=UTF-8",
+											cache : false,
+											// async : false,
+											data : JSON.stringify(arr),
+											beforeSend : function() { // 호출전실행
+												// loadImageShow();
+											},
+											traditional : true,
+											success : function(data, textStatus, jqXHR) {
+												console.log(data);
+												var path = inst._data.geoserver.downloadGeoserver;
+												console.log(path);
+												var target = "_blank";
+												for (var i = 0; i < data.length; i++) {
+													var params = {
+														"serviceType" : "wms",
+														"version" : "1.1.0",
+														"format" : "image/png",
+														"crs" : data[i].srs,
+														"bbox" : [data[i].nbBox.minx, data[i].nbBox.miny, data[i].nbBox.maxx, data[i].nbBox.maxy],
+														"layers" : data[i].lName,
+														"width" : 1024,
+														"height" : 768
+													}
+													var form = document.createElement("form");
+													form.setAttribute("method", "post");
+													form.setAttribute("action", path);
+													var keys = Object.keys(params);
+													for (var j = 0; j < keys.length; j++) {
+														var hiddenField = document.createElement("input");
+														hiddenField.setAttribute("type", "hidden");
+														hiddenField.setAttribute("name", keys[j]);
+														hiddenField.setAttribute("value", params[keys[j]]);
+														form.appendChild(hiddenField);
+													}
+													form.target = target;
+													document.body.appendChild(form);
+													form.submit();
+												}
+											}
+										});
 									}
 								}
 							}

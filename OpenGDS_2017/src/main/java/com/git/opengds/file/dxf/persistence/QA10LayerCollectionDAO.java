@@ -43,7 +43,7 @@ public interface QA10LayerCollectionDAO {
 
 	public Integer selectTableCommonIdx(HashMap<String, Object> tableIdxQuery);
 
-	public List<HashMap<String, Object>>  selectBlockCommonIdx(HashMap<String, Object> tableIdxQuery);
+	public List<HashMap<String, Object>> selectBlockCommonIdx(HashMap<String, Object> tableIdxQuery);
 
 	public void updateQA10LayerMetadataLayerID(HashMap<String, Object> updateLayerNameQuery);
 

@@ -530,7 +530,10 @@ html {
 					"geoserver" : {
 						"map" : map,
 						"user" : "admin",
-						"layerInfo" : layerInfo
+						"layerInfo" : layerInfo,
+						"layerInfoURL" : "geoserver2/getGeoLayerInfoList.ajax",
+						"downloadNGIDXF" : "fileExport/fileExport.ajax",
+						"downloadGeoserver" : "geoserver2/downloadRequest.do"
 					},
 					"plugins" : [ "contextmenu", "search", "state", "types", "geoserver" ]
 				});

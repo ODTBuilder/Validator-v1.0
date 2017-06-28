@@ -37,6 +37,7 @@ package com.git.gdsbuilder.type.geoserver.parser;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.geotools.data.DataStore;
@@ -54,9 +55,10 @@ import com.git.gdsbuilder.type.geoserver.layer.GeoLayerList;
 
 /**
  * JSONObject를 LayerCollection 객체로 파싱하는 클래스
+ * 
  * @author DY.Oh
  * @Date 2017. 3. 11. 오후 1:35:41
- * */
+ */
 public class GeoLayerCollectionParser {
 
 	private JSONObject collectionObj;
@@ -65,22 +67,26 @@ public class GeoLayerCollectionParser {
 	private String getCapabilities;
 	private EnFileFormat fileFormat;
 	private DataStore dataStore;
+	private List<String> validateLayerList;
 
 	/**
 	 * LayerCollectionParser 생성자
+	 * 
 	 * @param collectionObject
+	 * @param validateLayerList
 	 * @throws FileNotFoundException
 	 * @throws IOException
 	 * @throws ParseException
 	 * @throws SchemaException
 	 */
-	public GeoLayerCollectionParser(JSONObject collectionObject, String workspaceName, String getCapabilities, EnFileFormat fileFormat)
+	public GeoLayerCollectionParser(JSONObject collectionObject, String workspaceName, String getCapabilities,
+			EnFileFormat fileFormat, List<String> validateLayerList)
 			throws FileNotFoundException, IOException, ParseException, SchemaException {
 		this.workspaceName = workspaceName;
 		this.collectionObj = collectionObject;
 		this.getCapabilities = getCapabilities;
 		this.fileFormat = fileFormat;
-		
+		this.validateLayerList = validateLayerList;
 		Map connectionParameters = new HashMap();
 		connectionParameters.put("WFSDataStoreFactory:GET_CAPABILITIES_URL", getCapabilities);
 		this.dataStore = DataStoreFinder.getDataStore(connectionParameters);
@@ -88,28 +94,21 @@ public class GeoLayerCollectionParser {
 	}
 
 	/**
-	 * layerCollections getter
-	 * @author DY.Oh
-	 * @Date 2017. 3. 11. 오후 1:36:58
-	 * @return LayerCollectionList
-	 * @throws
-	 * */
+	 * layerCollections getter @author DY.Oh @Date 2017. 3. 11. 오후
+	 * 1:36:58 @return LayerCollectionList @throws
+	 */
 	public GeoLayerCollectionList getLayerCollections() {
 		return layerCollections;
 	}
 
 	/**
-	 * layerCollections setter
-	 * @author DY.Oh
-	 * @Date 2017. 3. 11. 오후 1:37:01
-	 * @param layerCollections void
-	 * @throws
-	 * */
+	 * layerCollections setter @author DY.Oh @Date 2017. 3. 11. 오후
+	 * 1:37:01 @param layerCollections void @throws
+	 */
 	public void setLayerCollections(GeoLayerCollectionList layerCollections) {
 		this.layerCollections = layerCollections;
 	}
 
-	
 	public String getWorkspaceName() {
 		return workspaceName;
 	}
@@ -117,6 +116,7 @@ public class GeoLayerCollectionParser {
 	public void setWorkspaceName(String workspaceName) {
 		this.workspaceName = workspaceName;
 	}
+
 	public String getGetCapabilities() {
 		return getCapabilities;
 	}
@@ -132,24 +132,18 @@ public class GeoLayerCollectionParser {
 	public void setFileFormat(EnFileFormat fileFormat) {
 		this.fileFormat = fileFormat;
 	}
-	
-	
+
 	/**
-	 * 레이어 정의정보가 저장되어있는 JSONObject를 LayerCollection 객체로 파싱하는 클래스
-	 * @author DY.Oh
-	 * @Date 2017. 3. 11. 오후 1:37:03
-	 * @throws FileNotFoundException
-	 * @throws IOException
-	 * @throws ParseException
-	 * @throws SchemaException void
-	 * @throws
-	 * */
+	 * 레이어 정의정보가 저장되어있는 JSONObject를 LayerCollection 객체로 파싱하는 클래스 @author
+	 * DY.Oh @Date 2017. 3. 11. 오후 1:37:03 @throws FileNotFoundException @throws
+	 * IOException @throws ParseException @throws SchemaException void @throws
+	 */
 	private void collectionParser() throws FileNotFoundException, IOException, ParseException, SchemaException {
 
 		JSONArray collectionNames = (JSONArray) collectionObj.get("collectionName");
 		String neatLineLayerName = (String) collectionObj.get("neatLineLayer");
 		JSONArray layerNames = (JSONArray) collectionObj.get("layers");
-		
+		JSONArray checkedLayerNames = checkValidateLayerList(layerNames);
 
 		this.layerCollections = new GeoLayerCollectionList();
 		for (int i = 0; i < collectionNames.size(); i++) {
@@ -157,17 +151,36 @@ public class GeoLayerCollectionParser {
 			String collectionName = (String) collectionNames.get(i);
 			GeoLayerCollection layerCollection = new GeoLayerCollection(collectionName);
 			// 도곽선
-			GeoLayerParser neatLineParser = new GeoLayerParser(workspaceName, dataStore, fileFormat, collectionName, neatLineLayerName);
+			GeoLayerParser neatLineParser = new GeoLayerParser(workspaceName, dataStore, fileFormat, collectionName,
+					neatLineLayerName);
 			GeoLayer neatLineLayer = neatLineParser.getLayer();
 			layerCollection.setNeatLine(neatLineLayer);
 			// 레이어
-			GeoLayerParser layersParser = new GeoLayerParser(workspaceName, dataStore, fileFormat, collectionName, layerNames);
+			GeoLayerParser layersParser = new GeoLayerParser(workspaceName, dataStore, fileFormat, collectionName,
+					checkedLayerNames);
 			GeoLayerList layerList = layersParser.getLayerList();
-			if(layerList != null) {
+			if (layerList != null) {
 				layerCollection.setLayers(layerList);
 				layerCollection.setFileFormat(fileFormat);
 				layerCollections.add(layerCollection);
 			}
 		}
+	}
+
+	private JSONArray checkValidateLayerList(JSONArray layerNames) {
+
+		JSONArray checkedLayerNames = new JSONArray();
+		for (int i = 0; i < layerNames.size(); i++) {
+			String layer = (String) layerNames.get(i);
+			for (int j = 0; j < validateLayerList.size(); j++) {
+				String validateLayer = validateLayerList.get(j);
+				if (layer.equals(validateLayer)) {
+					checkedLayerNames.add(layer);
+				} else {
+					continue;
+				}
+			}
+		}
+		return checkedLayerNames;
 	}
 }

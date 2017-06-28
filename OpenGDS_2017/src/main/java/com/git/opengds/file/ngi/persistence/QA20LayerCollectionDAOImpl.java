@@ -139,7 +139,8 @@ public class QA20LayerCollectionDAOImpl implements QA20LayerCollectionDAO {
 
 	@Override
 	public int selectQA20LayerMetadataIdx(HashMap<String, Object> metadataIdxQuery) {
-		HashMap<String, Object> idxMap = sqlSession.selectOne(namespace + ".selectQA20LayerMetadataIdx", metadataIdxQuery);
+		HashMap<String, Object> idxMap = sqlSession.selectOne(namespace + ".selectQA20LayerMetadataIdx",
+				metadataIdxQuery);
 		return (Integer) idxMap.get("lm_idx");
 	}
 

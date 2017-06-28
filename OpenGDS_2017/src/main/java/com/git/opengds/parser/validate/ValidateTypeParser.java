@@ -101,6 +101,7 @@ public class ValidateTypeParser {
 				JSONObject layerType = (JSONObject) validateTypeArray.get(j);
 				ValidateLayerType type = typeOptionParser(layerType);
 				validateLayerTypeList.add(type);
+				validateLayerTypeList.addAllLayerIdList(type.getLayerIDList());
 			}
 		}
 	}

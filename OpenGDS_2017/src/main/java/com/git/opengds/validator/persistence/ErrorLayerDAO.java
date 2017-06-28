@@ -29,5 +29,7 @@ public interface ErrorLayerDAO {
 	public List<HashMap<String, Object>> selectErrorFeatures(HashMap<String, Object> selectQuery);
 	
 	public List<HashMap<String, Object>> selectAllErrorFeatures(HashMap<String, Object> selectQuery);
+	
+	public void dropErrorLayerTb(HashMap<String, Object> dropQuery);
 
 }
