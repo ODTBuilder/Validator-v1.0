@@ -31,8 +31,7 @@ public class ErrorLayerExportServiceImpl implements ErrorLayerExportService {
 	private DataSourceTransactionManager txManager;
 
 	@Override
-	public void test() throws IOException {
-		
+	public void exportErrorLayer(String exportOption) throws IOException {
 
 		String tableName = "\"" + "err_" + "ngi_33611044" + "\"";
 		String exportType = "dxf";
@@ -48,7 +47,7 @@ public class ErrorLayerExportServiceImpl implements ErrorLayerExportService {
 		} else if (exportType.equals("dxf")) {
 			QA10LayerCollection qa10LayerCollection = ErrorLayerDXFExportParser.parseQA10LayerCollection(tableName,
 					errAllFeatures);
-			
+
 			QA10FileWriter r = new QA10FileWriter();
 			r.writeDxfFile(qa10LayerCollection);
 		}
