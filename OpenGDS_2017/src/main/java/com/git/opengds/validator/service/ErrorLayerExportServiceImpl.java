@@ -31,21 +31,18 @@ public class ErrorLayerExportServiceImpl implements ErrorLayerExportService {
 	private DataSourceTransactionManager txManager;
 
 	@Override
-	public void exportErrorLayer(String exportOption) throws IOException {
-
-		String tableName = "\"" + "err_" + "ngi_33611044" + "\"";
-		String exportType = "dxf";
+	public void exportErrorLayer(String format, String type, String name) throws IOException {
 
 		ErrorLayerDBQueryManager dbManager = new ErrorLayerDBQueryManager();
-		HashMap<String, Object> selectQuery = dbManager.selectAllErrorFeaturesQuery(tableName);
+		HashMap<String, Object> selectQuery = dbManager.selectAllErrorFeaturesQuery(name);
 		List<HashMap<String, Object>> errAllFeatures = errLayerDAO.selectAllErrorFeatures(selectQuery);
-		if (exportType.equals("ngi")) {
-			QA20LayerCollection qa20LayerCollection = ErrorLayerNGIExportParser.parseQA20LayerCollection(tableName,
+		if (format.equals("ngi")) {
+			QA20LayerCollection qa20LayerCollection = ErrorLayerNGIExportParser.parseQA20LayerCollection(name,
 					errAllFeatures);
 			QA20FileWriter qa20Writer = new QA20FileWriter();
 			qa20Writer.writeNGIFile(qa20LayerCollection);
-		} else if (exportType.equals("dxf")) {
-			QA10LayerCollection qa10LayerCollection = ErrorLayerDXFExportParser.parseQA10LayerCollection(tableName,
+		} else if (format.equals("dxf")) {
+			QA10LayerCollection qa10LayerCollection = ErrorLayerDXFExportParser.parseQA10LayerCollection(name,
 					errAllFeatures);
 
 			QA10FileWriter r = new QA10FileWriter();
