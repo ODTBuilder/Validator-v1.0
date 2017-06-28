@@ -1057,7 +1057,7 @@ gitbuilder.ui.OptionDefinition = $.widget("gitbuilder.optiondefinition", {
 				$(that.nnullCodeSelect).append(opt);
 				if (i === 0) {
 					$(opt).prop("selected", true);
-					sCode = codes[i];
+					sCode = codes[i] + "_" + geom;
 				}
 			}
 			that._updateNotNullAttribute(sCode);
