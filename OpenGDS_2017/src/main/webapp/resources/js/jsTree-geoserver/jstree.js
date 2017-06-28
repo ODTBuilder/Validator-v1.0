@@ -7942,7 +7942,7 @@
 											for (var k = 0; k < keys.length; k++) {
 												var hiddenField = document.createElement("input");
 												hiddenField.setAttribute("type", "hidden");
-												hiddenField.setAttribute("name", keys[j]);
+												hiddenField.setAttribute("name", keys[k]);
 												hiddenField.setAttribute("value", downFiles[j][keys[k]]);
 												form.appendChild(hiddenField);
 											}
@@ -7992,7 +7992,7 @@
 											for (var k = 0; k < keys.length; k++) {
 												var hiddenField = document.createElement("input");
 												hiddenField.setAttribute("type", "hidden");
-												hiddenField.setAttribute("name", keys[j]);
+												hiddenField.setAttribute("name", keys[k]);
 												hiddenField.setAttribute("value", downFiles[j][keys[k]]);
 												form.appendChild(hiddenField);
 											}

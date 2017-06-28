@@ -1,10 +1,10 @@
 package com.git.opengds.validator.controller;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.json.simple.JSONObject;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -15,7 +15,7 @@ public class LayerFileExportController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/fileExport.ajax")
 	@ResponseBody
-	public JSONObject exportLayerToFile(HttpServletRequest request, @RequestBody String jsonStr) {
+	public JSONObject exportLayerToFile(HttpServletRequest request , HttpServletResponse response) {
 
 		return null;
 	}
