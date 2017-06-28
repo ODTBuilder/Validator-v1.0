@@ -102,27 +102,25 @@ public class GeoserverServiceImpl implements GeoserverService {
 
 		String fileName = layerInfo.getFileName();
 		List<String> layerNameList = layerInfo.getLayerNames();
-		String originSrc = "EPSG:"+layerInfo.getOriginSrc();
+		String originSrc = "EPSG:" + layerInfo.getOriginSrc();
 		List<String> successLayerList = new ArrayList<String>();
 		String fileType = layerInfo.getFileType();
 		boolean flag = false;
-		
+
 		Collection<Geometry> geometryCollection = new ArrayList<Geometry>();
 		GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory();
 
 		for (int i = 0; i < layerNameList.size(); i++) {
-			
+
 			GSFeatureTypeEncoder fte = new GSFeatureTypeEncoder();
 			GSLayerEncoder layerEncoder = new GSLayerEncoder();
 			String layerName = layerNameList.get(i);
 			String upperLayerName = layerName.toUpperCase();
-			
-			
+
 			int dash = layerName.indexOf("_");
 			String cutLayerName = layerName.substring(0, dash);
-			String layerType = layerName.substring(dash+1); // 파일명_레이어명
-			
-			
+			String layerType = layerName.substring(dash + 1); // 파일명_레이어명
+
 			String layerFullName = "geo_" + fileType + "_" + fileName + "_" + layerName;
 
 			fte.setProjectionPolicy(ProjectionPolicy.REPROJECT_TO_DECLARED);
@@ -133,20 +131,19 @@ public class GeoserverServiceImpl implements GeoserverService {
 			fte.setNativeName(layerFullName); // nativeName
 			// fte.setLatLonBoundingBox(minx, miny, maxx, maxy, originSrc);
 
-			
-			if(cutLayerName.toUpperCase().equals("H0059153_TEXT")){
-				if(fileType.equals("dxf")){
-					upperLayerName = "DXF_" + cutLayerName; 
+			if (cutLayerName.toUpperCase().equals("H0059153_TEXT")) {
+				if (fileType.equals("dxf")) {
+					upperLayerName = "DXF_" + cutLayerName;
 				}
-				if(fileType.equals("ngi")){
+				if (fileType.equals("ngi")) {
 					upperLayerName = "NGI_" + cutLayerName;
 				}
 			}
-			
-			if(layerType.equals("LWPOLYLINE")||layerType.equals("POLYLINE")||layerType.equals("LINE")){
-				upperLayerName = cutLayerName.toUpperCase()+"_LWPOLYLINE";
+
+			if (layerType.equals("LWPOLYLINE") || layerType.equals("POLYLINE") || layerType.equals("LINE")) {
+				upperLayerName = cutLayerName.toUpperCase() + "_LWPOLYLINE";
 			}
-			
+
 			boolean styleFlag = dtReader.existsStyle(upperLayerName);
 			if (styleFlag) {
 				layerEncoder.setDefaultStyle(upperLayerName);
@@ -156,32 +153,30 @@ public class GeoserverServiceImpl implements GeoserverService {
 
 			flag = dtPublisher.publishDBLayer(wsName, dsName, fte, layerEncoder);
 
-			
-			if(flag==true){
+			if (flag == true) {
 				RESTLayer layer = dtReader.getLayer(ID, layerFullName);
 				RESTFeatureType featureType = dtReader.getFeatureType(layer);
-				
-				
-			    double minx = featureType.getNativeBoundingBox().getMinX();
-			    double miny = featureType.getNativeBoundingBox().getMinY();
-			    double maxx = featureType.getNativeBoundingBox().getMaxX();
-			    double maxy = featureType.getNativeBoundingBox().getMaxY();
-			    
-			    if(minx!=0&&minx!=-1&&miny!=0&&miny!=-1&&maxx!=0&&maxx!=-1&&maxy!=0&&maxy!=-1){
-					Coordinate[] coords  =
-							   new Coordinate[] {new Coordinate(minx, miny), new Coordinate(maxx, miny),
-							                     new Coordinate(maxx, maxy), new Coordinate(minx, maxy), new Coordinate(minx, miny) };
 
-							LinearRing ring = geometryFactory.createLinearRing( coords );
-							LinearRing holes[] = null; // use LinearRing[] to represent holes
-							Polygon polygon = geometryFactory.createPolygon(ring, holes );
-							Geometry geometry = polygon;
-							geometryCollection.add(geometry);			    	
-			    }
-			}
-			else if (flag == false) {
+				double minx = featureType.getNativeBoundingBox().getMinX();
+				double miny = featureType.getNativeBoundingBox().getMinY();
+				double maxx = featureType.getNativeBoundingBox().getMaxX();
+				double maxy = featureType.getNativeBoundingBox().getMaxY();
+
+				if (minx != 0 && minx != -1 && miny != 0 && miny != -1 && maxx != 0 && maxx != -1 && maxy != 0
+						&& maxy != -1) {
+					Coordinate[] coords = new Coordinate[] { new Coordinate(minx, miny), new Coordinate(maxx, miny),
+							new Coordinate(maxx, maxy), new Coordinate(minx, maxy), new Coordinate(minx, miny) };
+
+					LinearRing ring = geometryFactory.createLinearRing(coords);
+					LinearRing holes[] = null; // use LinearRing[] to represent
+												// holes
+					Polygon polygon = geometryFactory.createPolygon(ring, holes);
+					Geometry geometry = polygon;
+					geometryCollection.add(geometry);
+				}
+			} else if (flag == false) {
 				System.out.println(layerName);
-				for(String sucLayerName : successLayerList){
+				for (String sucLayerName : successLayerList) {
 					dtPublisher.removeLayer(ID, sucLayerName);
 				}
 				dtPublisher.removeLayer(ID, layerName);
@@ -190,41 +185,48 @@ public class GeoserverServiceImpl implements GeoserverService {
 			}
 			successLayerList.add(layerFullName);
 		}
-		
+
 		GeometryCollection collection = (GeometryCollection) geometryFactory.buildGeometry(geometryCollection);
 		Geometry geometry = collection.union();
 		GSLayerGroupEncoder group = new GSLayerGroupEncoder();
-	    for (int i = 0; i < successLayerList.size(); i++) {
-	      String Layer = (String)successLayerList.get(i);
-	      group.addLayer(Layer);
-	    }
-	    
-	    Coordinate[] coordinateArray = geometry.getEnvelope().getCoordinates();
-	    Coordinate minCoordinate = new Coordinate();
-	    Coordinate maxCoordinate = new Coordinate();
-	    
-	    minCoordinate = coordinateArray[0];
-	    maxCoordinate = coordinateArray[2];
-	    
-	    double minx = minCoordinate.x;
-	    double miny = minCoordinate.y;
-	    double maxx = maxCoordinate.x;
-	    double maxy = maxCoordinate.y;
-	    
-	    group.setBounds(originSrc, minx, maxx, miny, maxy);
+		for (int i = 0; i < successLayerList.size(); i++) {
+			String Layer = (String) successLayerList.get(i);
+			group.addLayer(Layer);
+		}
 
-		dtPublisher.createLayerGroup(wsName, "gro_"+ fileType + "_" + fileName, group);
+		Coordinate[] coordinateArray = geometry.getEnvelope().getCoordinates();
+		Coordinate minCoordinate = new Coordinate();
+		Coordinate maxCoordinate = new Coordinate();
+
+		minCoordinate = coordinateArray[0];
+		maxCoordinate = coordinateArray[2];
+
+		double minx = minCoordinate.x;
+		double miny = minCoordinate.y;
+		double maxx = maxCoordinate.x;
+		double maxy = maxCoordinate.y;
+
+		group.setBounds(originSrc, minx, maxx, miny, maxy);
+
+		dtPublisher.createLayerGroup(wsName, "gro_" + fileType + "_" + fileName, group);
 		layerInfo.setServerPublishFlag(flag);
 
 		return layerInfo;
 	}
 
 	// 에러레이어 발행하기
-	public void errLayerPublishGeoserver(GeoLayerInfoList geoLayerInfoList) {
+	public boolean errLayerListPublishGeoserver(GeoLayerInfoList geoLayerInfoList) {
+		
+		boolean isSuccess = true;
 		for (int i = 0; i < geoLayerInfoList.size(); i++) {
 			GeoLayerInfo geoLayerInfo = geoLayerInfoList.get(i);
-			dtPublisher.publishErrLayer(ID, ID, geoLayerInfo);
+			isSuccess = dtPublisher.publishErrLayer(ID, ID, geoLayerInfo);
 		}
+		return isSuccess;
+	}
+
+	public boolean errLayerPublishGeoserver(GeoLayerInfo geoLayerInfo) {
+		return dtPublisher.publishErrLayer(ID, ID, geoLayerInfo);
 	}
 
 	/**
@@ -238,7 +240,7 @@ public class GeoserverServiceImpl implements GeoserverService {
 		GeoserverLayerCollectionTree collectionTree = dtReader.getGeoserverLayerCollectionTree(ID);
 		return collectionTree;
 	}
-	
+
 	/**
 	 * @since 2017. 6. 23.
 	 * @author SG.Lee
@@ -248,9 +250,9 @@ public class GeoserverServiceImpl implements GeoserverService {
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public JSONObject duplicateCheck(ArrayList<String> layerList){
+	public JSONObject duplicateCheck(ArrayList<String> layerList) {
 		JSONObject object = new JSONObject();
-		for(String layerName : layerList){
+		for (String layerName : layerList) {
 			object.put(layerName, dtReader.existsLayer(ID, layerName));
 		}
 		return object;
@@ -324,15 +326,15 @@ public class GeoserverServiceImpl implements GeoserverService {
 	public boolean removeGeoserverGroupLayer(String groupLayerName) {
 		return dtPublisher.removeLayerGroup(ID, groupLayerName);
 	}
-	
+
 	/**
 	 *
 	 * @author SG.Lee
 	 * @Date 2017. 6. 19. 오후 9:15:07
 	 * @return boolean
-	 * */
+	 */
 	@Override
-	public List<String> getGeoserverStyleList(){
+	public List<String> getGeoserverStyleList() {
 		return dtReader.getStyles().getNames();
 	}
 
@@ -380,36 +382,39 @@ public class GeoserverServiceImpl implements GeoserverService {
 	};
 
 	@Override
-	public boolean updateFeatureType(String orginalName, String name, String title, String abstractContent, String style,  boolean attChangeFlag) {
+	public boolean updateFeatureType(String orginalName, String name, String title, String abstractContent,
+			String style, boolean attChangeFlag) {
 		boolean updateFlag = false;
 		GSFeatureTypeEncoder fte = new GSFeatureTypeEncoder();
 		GSLayerEncoder layerEncoder = null;
-		
 
-		if (orginalName == null){
-//            throw new IllegalArgumentException("OriginalName may not be null!");
-            return false;
+		if (orginalName == null) {
+			// throw new IllegalArgumentException("OriginalName may not be
+			// null!");
+			return false;
 		}
-        if (orginalName.isEmpty()){
-//            throw new IllegalArgumentException("OriginalName may not be empty!");
-            return false;
-        }
-        if(name != null && !name.isEmpty()){
-        	fte.setName(name);
-        }
-        if(title != null && !title.isEmpty()){
-        	fte.setTitle(title);
-        }
-        if(abstractContent != null && !abstractContent.isEmpty()){
-        	fte.setAbstract(abstractContent);
-        }
-        if(style != null && !style.isEmpty()){
-        	layerEncoder = new GSLayerEncoder();
-        	layerEncoder.setDefaultStyle(style);
-        }
-        
-//		boolean flag = dtPublisher.recalculate(workspace, storename, layerFullName, testFte, testLayerEncoder);
-		updateFlag = dtPublisher.updateFeatureType(ID, ID, orginalName,fte, layerEncoder, attChangeFlag);
+		if (orginalName.isEmpty()) {
+			// throw new IllegalArgumentException("OriginalName may not be
+			// empty!");
+			return false;
+		}
+		if (name != null && !name.isEmpty()) {
+			fte.setName(name);
+		}
+		if (title != null && !title.isEmpty()) {
+			fte.setTitle(title);
+		}
+		if (abstractContent != null && !abstractContent.isEmpty()) {
+			fte.setAbstract(abstractContent);
+		}
+		if (style != null && !style.isEmpty()) {
+			layerEncoder = new GSLayerEncoder();
+			layerEncoder.setDefaultStyle(style);
+		}
+
+		// boolean flag = dtPublisher.recalculate(workspace, storename,
+		// layerFullName, testFte, testLayerEncoder);
+		updateFlag = dtPublisher.updateFeatureType(ID, ID, orginalName, fte, layerEncoder, attChangeFlag);
 
 		return updateFlag;
 	}

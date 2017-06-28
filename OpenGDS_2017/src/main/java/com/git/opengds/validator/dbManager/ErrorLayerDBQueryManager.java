@@ -56,16 +56,15 @@ public class ErrorLayerDBQueryManager {
 	/**
 	 * err_layer Tb Create Query 생성 @author DY.Oh @Date 2017. 4. 18. 오후
 	 * 4:09:35 @return HashMap<String,Object> @throws
+	 * 
+	 * @param errTableName
 	 */
-	public HashMap<String, Object> createErrorLayerTbQuery() {
+	public HashMap<String, Object> createErrorLayerTbQuery(String errTableName) {
 
-		String collectionName = this.errLayer.getCollectionName();
-		String collectionType = this.errLayer.getCollectionType();
-		String tableName = "\"" + "err_" + collectionType + "_" + collectionName + "\"";
-		String dafaultCreateQuery = "create table " + tableName + "(" + "err_idx serial primary key" + ","
-				+ "collection_name varchar(100)" + "," + "layer_name varchar(100)" + "," + "feature_id varchar(100)"
-				+ "," + "err_type varchar(100)" + "," + "err_name varchar(100)" + "," + "geom geometry(point, 5186)"
-				+ ")";
+		String dafaultCreateQuery = "create table " + "\"" + errTableName + "\"" + "(" + "err_idx serial primary key"
+				+ "," + "collection_name varchar(100)" + "," + "layer_name varchar(100)" + ","
+				+ "feature_id varchar(100)" + "," + "err_type varchar(100)" + "," + "err_name varchar(100)" + ","
+				+ "geom geometry(point, 5186)" + ")";
 
 		HashMap<String, Object> createQuery = new HashMap<String, Object>();
 		createQuery.put("createQuery", dafaultCreateQuery);
@@ -75,13 +74,12 @@ public class ErrorLayerDBQueryManager {
 	/**
 	 * err_layer field insert Query 생성 @author DY.Oh @Date 2017. 4. 18. 오후
 	 * 4:09:39 @return List<HashMap<String,Object>> @throws
+	 * 
+	 * @param errTableName
 	 */
-	public List<HashMap<String, Object>> insertErrorLayerQuery() {
+	public List<HashMap<String, Object>> insertErrorLayerQuery(String errTableName) {
 
 		String collectionName = this.errLayer.getCollectionName();
-		String collectionType = this.errLayer.getCollectionType();
-		String tableName = "\"" + "err_" + collectionType + "_" + collectionName + "\"";
-
 		List<HashMap<String, Object>> inertQueryMaps = new ArrayList<HashMap<String, Object>>();
 
 		List<ErrorFeature> errFeatures = errLayer.getErrFeatureList();
@@ -94,7 +92,7 @@ public class ErrorLayerDBQueryManager {
 			String errName = errFeature.getErrName();
 			Geometry errPt = (Point) errFeature.getErrPoint();
 
-			String insertQuery = "insert into " + tableName + "("
+			String insertQuery = "insert into " + "\"" + errTableName + "\"" + "("
 					+ "collection_name, layer_name, feature_id, err_type, err_name, geom) values" + "(" + "'"
 					+ collectionName + "'" + "," + "'" + layerName + "'" + "," + "'" + featureID + "'" + "," + "'"
 					+ errType + "'" + "," + "'" + errName + "'" + "," + "ST_GeomFromText('" + errPt.toString()
@@ -178,4 +176,28 @@ public class ErrorLayerDBQueryManager {
 		return selectQueryMap;
 	}
 
+	public HashMap<String, Object> selectQA10ErrorLayerTbNamesCountQuery(String fileType, String collectionName,
+			int cIdx) {
+		String tableName = "\"" + "qa10_layercollection_qa_progress" + "\"";
+		String countQueryStr = "select count (*) from " + tableName + "where c_idx = " + cIdx;
+		HashMap<String, Object> selectQueryMap = new HashMap<String, Object>();
+		selectQueryMap.put("selectQuery", countQueryStr);
+		return selectQueryMap;
+	}
+
+	public HashMap<String, Object> selectQA20ErrorLayerTbNamesCountQuery(String fileType, String collectionName,
+			Integer cIdx) {
+		String tableName = "\"" + "qa20_layercollection_qa_progress" + "\"";
+		String countQueryStr = "select count (*) from " + tableName + "where c_idx = " + cIdx;
+		HashMap<String, Object> selectQueryMap = new HashMap<String, Object>();
+		selectQueryMap.put("selectQuery", countQueryStr);
+		return selectQueryMap;
+	}
+
+	public HashMap<String, Object> dropjErrorLayerTbQuery(String errTableName) {
+		HashMap<String, Object> dropQueryMap = new HashMap<String, Object>();
+		String queryStr = "drop table " + "\"" + errTableName + "\"";
+		dropQueryMap.put("dropQuery", queryStr);
+		return dropQueryMap;
+	}
 }

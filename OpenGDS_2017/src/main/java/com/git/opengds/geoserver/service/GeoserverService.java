@@ -57,7 +57,9 @@ public interface GeoserverService {
 	 * @Date 2017. 5. 2. 오후 3:16:03
 	 * @param geoLayerInfoList - geoLayerInfo 리스트
 	 * */
-	public void errLayerPublishGeoserver(GeoLayerInfoList geoLayerInfoList);
+	public boolean errLayerListPublishGeoserver(GeoLayerInfoList geoLayerInfoList);
+	
+	public boolean errLayerPublishGeoserver(GeoLayerInfo geoLayerInfo);
 	
 	/**
 	 * Tree 형태의 GeoaerverLayerCollection JSONObject 객체
