@@ -580,7 +580,10 @@
 							lastZidx = that.setUniqueLayerZIndex(layers.item(i), lastZidx);
 						}
 					} else if (layer instanceof ol.layer.Tile) {
-						var git = layer.get("git");
+						var git;
+						if (layer) {
+							git = layer.get("git");
+						}
 						if (!!git) {
 							if (git.hasOwnProperty("fake")) {
 								if (git.fake === "parent") {
@@ -629,7 +632,10 @@
 								}
 							}
 						} else if (layer instanceof ol.layer.Tile) {
-							var git = layer.get("git");
+							var git;
+							if (layer) {
+								git = layer.get("git");
+							}
 							if (!!git) {
 								if (layer.get("git").hasOwnProperty("fake")) {
 									if (git.fake === "parent") {
@@ -740,7 +746,7 @@
 								that.git.isContextmenu = false;
 							} else {
 								var json = that._createJSONFromLayer(addLayer);
-//								console.log(json);
+								// console.log(json);
 								for (var i = 0; i < json.length; i++) {
 									that.create_node(json[i].parent, json[i], "first", false, false);
 								}
@@ -1749,7 +1755,10 @@
 							}
 						}
 					} else if (layer instanceof ol.layer.Tile) {
-						var git = layer.get("git");
+						var git;
+						if (layer) {
+							git = layer.get("git");
+						}
 						if (!!git) {
 							if (layer.get("git").hasOwnProperty("fake")) {
 								if (git.fake === "parent") {
@@ -6080,6 +6089,38 @@
 							lastPointerTmp = that.setUniqueLayerZIndex(this.get_LayerById(arr[i]), lastPointerTmp);
 						}
 
+						if (pLayer instanceof ol.layer.Tile) {
+							var git = pLayer.get("git");
+							if (!!git) {
+								if (pLayer.get("git").hasOwnProperty("fake")) {
+									if (git.fake === "parent") {
+										console.log(pLayer.getSource().getParams());
+										console.log(pLayer.get("git").layers);
+										var befSource = pLayer.getSource();
+										var param = befSource.getParams();
+										var inner = pLayer.get("git").layers.getArray().sort(function(a, b) {
+											return a.getZIndex() < b.getZIndex() ? -1 : a.getZIndex() > b.getZIndex() ? 1 : 0;
+										});
+										var names = [];
+										for (var i = 0; i < inner.length; i++) {
+											if (this.get_node(inner[i].get("treeid")).state.vanished === false ) {
+												names.push(inner[i].get("id"));	
+											}
+										}
+										console.log(names.toString());
+										param["LAYERS"] = names.toString();
+										befSource.updateParams(param);
+										console.log(inner);
+										// var arr = [];
+										// for (var i = 0; i <
+										// inner.getLength(); i++) {
+										// arr[i] =
+										// }
+									}
+								}
+							}
+						}
+
 						this._node_changed(new_par.id);
 						this.redraw(new_par.id === $.jstreeol3.root);
 					}
@@ -6710,7 +6751,7 @@
 					var source = layer.getSource();
 					if (source instanceof ol.source.TileWMS) {
 						var param = source.getParams();
-//						console.log(param);
+						// console.log(param);
 						var keys = Object.keys(param);
 						var bbx = "bbox";
 						for (var i = 0; i < keys.length; i++) {
@@ -7489,7 +7530,32 @@
 																	for (i = 0, j = dpc.length; i < j; i++) {
 																		m[dpc[i]].state['vanished'] = true;
 																		var layer = this.get_LayerById(m[dpc[i]].id);
-																		if (layer instanceof ol.layer.Base) {
+																		var git;
+																		if (layer) {
+																			git = layer.get("git");
+																		}
+																		if (layer instanceof ol.layer.Tile && git) {
+																			if (git["fake"] === "child") {
+																				console.log(obj);
+																				var parent = this.get_LayerById(m[dpc[i]].parent);
+																				var pgit;
+																				if (parent) {
+																					pgit = parent.get("git");
+																				}
+																				if (parent instanceof ol.layer.Tile && git) {
+																					var psource = parent.getSource();
+																					var pparams = parent.getSource().getParams();
+																					var childrenNames = pparams["LAYERS"].split(",");
+																					childrenNames.splice(childrenNames.indexOf(this.get_LayerById(
+																							obj.id).get("id")), 1);
+																					pparams["LAYERS"] = childrenNames.toString();
+																					psource.updateParams(pparams);
+																					console.log(childrenNames);
+																				}
+																			} else {
+																				layer.setVisible(false);
+																			}
+																		} else if (layer instanceof ol.layer.Base) {
 																			layer.setVisible(false);
 																		}
 																	}
@@ -7500,7 +7566,33 @@
 																			for (k = 0, l = m[dpc[i]].children_d.length; k < l; k++) {
 																				m[m[dpc[i]].children_d[k]].state['vanished'] = true;
 																				var layer = this.get_LayerById(m[m[dpc[i]].children_d[k]].id);
-																				if (layer instanceof ol.layer.Base) {
+																				var git;
+																				if (layer) {
+																					git = layer.get("git");
+																				}
+																				if (layer instanceof ol.layer.Tile && git) {
+																					if (git["fake"] === "child") {
+																						console.log(obj);
+																						var parent = this
+																								.get_LayerById(m[m[dpc[i]].children_d[k]].parent);
+																						var pgit;
+																						if (parent) {
+																							pgit = parent.get("git");
+																						}
+																						if (parent instanceof ol.layer.Tile && git) {
+																							var psource = parent.getSource();
+																							var pparams = parent.getSource().getParams();
+																							var childrenNames = pparams["LAYERS"].split(",");
+																							childrenNames.splice(childrenNames.indexOf(this
+																									.get_LayerById(obj.id).get("id")), 1);
+																							pparams["LAYERS"] = childrenNames.toString();
+																							psource.updateParams(pparams);
+																							console.log(childrenNames);
+																						}
+																					} else {
+																						layer.setVisible(false);
+																					}
+																				} else if (layer instanceof ol.layer.Base) {
 																					layer.setVisible(false);
 																				}
 																			}
@@ -7529,7 +7621,32 @@
 																		if (c === j) {
 																			p.state['vanished'] = true;
 																			var layer = this.get_LayerById(p.id);
-																			if (layer instanceof ol.layer.Base) {
+																			var git;
+																			if (layer) {
+																				git = layer.get("git");
+																			}
+																			if (layer instanceof ol.layer.Tile && git) {
+																				if (git["fake"] === "child") {
+																					console.log(obj);
+																					var parent = this.get_LayerById(p.parent);
+																					var pgit;
+																					if (parent) {
+																						pgit = parent.get("git");
+																					}
+																					if (parent instanceof ol.layer.Tile && git) {
+																						var psource = parent.getSource();
+																						var pparams = parent.getSource().getParams();
+																						var childrenNames = pparams["LAYERS"].split(",");
+																						childrenNames.splice(childrenNames.indexOf(this
+																								.get_LayerById(obj.id).get("id")), 1);
+																						pparams["LAYERS"] = childrenNames.toString();
+																						psource.updateParams(pparams);
+																						console.log(childrenNames);
+																					}
+																				} else {
+																					layer.setVisible(false);
+																				}
+																			} else if (layer instanceof ol.layer.Base) {
 																				layer.setVisible(false);
 																			}
 																			this._data['visibility'].vanished.push(p.id);
@@ -7575,7 +7692,32 @@
 																	tmp = m[obj.children_d[i]];
 																	tmp.state['vanished'] = true;
 																	var layer = this.get_LayerById(tmp.id);
-																	if (layer instanceof ol.layer.Base) {
+																	var git;
+																	if (layer) {
+																		git = layer.get("git");
+																	}
+																	if (layer instanceof ol.layer.Tile && git) {
+																		if (git["fake"] === "child") {
+																			console.log(obj);
+																			var parent = this.get_LayerById(tmp.parent);
+																			var pgit;
+																			if (parent) {
+																				pgit = parent.get("git");
+																			}
+																			if (parent instanceof ol.layer.Tile && git) {
+																				var psource = parent.getSource();
+																				var pparams = parent.getSource().getParams();
+																				var childrenNames = pparams["LAYERS"].split(",");
+																				childrenNames.splice(childrenNames.indexOf(this.get_LayerById(obj.id)
+																						.get("id")), 1);
+																				pparams["LAYERS"] = childrenNames.toString();
+																				psource.updateParams(pparams);
+																				console.log(childrenNames);
+																			}
+																		} else {
+																			layer.setVisible(false);
+																		}
+																	} else if (layer instanceof ol.layer.Base) {
 																		layer.setVisible(false);
 																	}
 																	if (tmp && tmp.original && tmp.original.state
@@ -7595,7 +7737,32 @@
 																	if (c === j) {
 																		par.state['vanished'] = true;
 																		var layer = this.get_LayerById(par.id);
-																		if (layer instanceof ol.layer.Base) {
+																		var git;
+																		if (layer) {
+																			git = layer.get("git");
+																		}
+																		if (layer instanceof ol.layer.Tile && git) {
+																			if (git["fake"] === "child") {
+																				console.log(obj);
+																				var parent = this.get_LayerById(par.parent);
+																				var pgit;
+																				if (parent) {
+																					pgit = parent.get("git");
+																				}
+																				if (parent instanceof ol.layer.Tile && git) {
+																					var psource = parent.getSource();
+																					var pparams = parent.getSource().getParams();
+																					var childrenNames = pparams["LAYERS"].split(",");
+																					childrenNames.splice(childrenNames.indexOf(this.get_LayerById(
+																							obj.id).get("id")), 1);
+																					pparams["LAYERS"] = childrenNames.toString();
+																					psource.updateParams(pparams);
+																					console.log(childrenNames);
+																				}
+																			} else {
+																				layer.setVisible(false);
+																			}
+																		} else if (layer instanceof ol.layer.Base) {
 																			layer.setVisible(false);
 																		}
 																		sel[par.id] = true;
@@ -7660,7 +7827,57 @@
 																	tmp = this._model.data[obj.children_d[i]];
 																	tmp.state['vanished'] = false;
 																	var layer = this.get_LayerById(tmp.id);
-																	if (layer instanceof ol.layer.Base) {
+																	var git;
+																	if (layer) {
+																		git = layer.get("git");
+																	}
+																	if (layer instanceof ol.layer.Tile && git) {
+																		if (git["fake"] === "child") {
+																			console.log(obj);
+																			var parent = this.get_LayerById(tmp.parent);
+																			var pgit;
+																			if (parent) {
+																				pgit = parent.get("git");
+																			}
+																			if (parent instanceof ol.layer.Tile && git) {
+																				var psource = parent.getSource();
+																				var pparams = parent.getSource().getParams();
+																				var childrenNames = [];
+																				if (pparams["LAYERS"] !== "") {
+																					childrenNames = pparams["LAYERS"].split(",");
+																				}
+
+																				var players = pgit.layers.getArray();
+																				var children = [];
+																				if (children.length === 0) {
+																					for (var i = 0; i < players.length; i++) {
+																						children.push(players[i]);
+																					}
+																				} else {
+																					for (var i = 0; i < players.length; i++) {
+																						if (childrenNames.indexOf(players[i].get("id")) !== -1) {
+																							children.push(players[i]);
+																						}
+																					}
+																					children.push(layer);
+																				}
+
+																				children.sort(function(a, b) {
+																					return a.getZIndex() < b.getZIndex() ? -1 : a.getZIndex() > b
+																							.getZIndex() ? 1 : 0;
+																				});
+																				var childrenNamesAfter = [];
+																				for (var i = 0; i < children.length; i++) {
+																					childrenNamesAfter.push(children[i].get("id"));
+																				}
+																				pparams["LAYERS"] = childrenNamesAfter.toString();
+																				psource.updateParams(pparams);
+																				console.log(childrenNames);
+																			}
+																		} else {
+																			layer.setVisible(true);
+																		}
+																	} else if (layer instanceof ol.layer.Base) {
 																		layer.setVisible(true);
 																	}
 																	if (tmp && tmp.original && tmp.original.state
@@ -7676,7 +7893,57 @@
 																	tmp = this._model.data[obj.parents[i]];
 																	tmp.state['vanished'] = false;
 																	var layer = this.get_LayerById(tmp.id);
-																	if (layer instanceof ol.layer.Base) {
+																	var git;
+																	if (layer) {
+																		git = layer.get("git");
+																	}
+																	if (layer instanceof ol.layer.Tile && git) {
+																		if (git["fake"] === "child") {
+																			console.log(obj);
+																			var parent = this.get_LayerById(tmp.parent);
+																			var pgit;
+																			if (parent) {
+																				pgit = parent.get("git");
+																			}
+																			if (parent instanceof ol.layer.Tile && git) {
+																				var psource = parent.getSource();
+																				var pparams = parent.getSource().getParams();
+																				var childrenNames = [];
+																				if (pparams["LAYERS"] !== "") {
+																					childrenNames = pparams["LAYERS"].split(",");
+																				}
+
+																				var players = pgit.layers.getArray();
+																				var children = [];
+																				if (children.length === 0) {
+																					for (var i = 0; i < players.length; i++) {
+																						children.push(players[i]);
+																					}
+																				} else {
+																					for (var i = 0; i < players.length; i++) {
+																						if (childrenNames.indexOf(players[i].get("id")) !== -1) {
+																							children.push(players[i]);
+																						}
+																					}
+																					children.push(layer);
+																				}
+
+																				children.sort(function(a, b) {
+																					return a.getZIndex() < b.getZIndex() ? -1 : a.getZIndex() > b
+																							.getZIndex() ? 1 : 0;
+																				});
+																				var childrenNamesAfter = [];
+																				for (var i = 0; i < children.length; i++) {
+																					childrenNamesAfter.push(children[i].get("id"));
+																				}
+																				pparams["LAYERS"] = childrenNamesAfter.toString();
+																				psource.updateParams(pparams);
+																				console.log(childrenNames);
+																			}
+																		} else {
+																			layer.setVisible(true);
+																		}
+																	} else if (layer instanceof ol.layer.Base) {
 																		layer.setVisible(true);
 																	}
 																	if (tmp && tmp.original && tmp.original.state
@@ -7730,7 +7997,31 @@
 								if (j > 0 && c === j) {
 									p.state['vanished'] = true;
 									var layer = this.get_LayerById(p.id);
-									if (layer instanceof ol.layer.Base) {
+									var git;
+									if (layer) {
+										git = layer.get("git");
+									}
+									if (layer instanceof ol.layer.Tile && git) {
+										if (git["fake"] === "child") {
+											console.log(obj);
+											var parent = this.get_LayerById(p.parent);
+											var pgit;
+											if (parent) {
+												pgit = parent.get("git");
+											}
+											if (parent instanceof ol.layer.Tile && git) {
+												var psource = parent.getSource();
+												var pparams = parent.getSource().getParams();
+												var childrenNames = pparams["LAYERS"].split(",");
+												childrenNames.splice(childrenNames.indexOf(this.get_LayerById(obj.id).get("id")), 1);
+												pparams["LAYERS"] = childrenNames.toString();
+												psource.updateParams(pparams);
+												console.log(childrenNames);
+											}
+										} else {
+											layer.setVisible(false);
+										}
+									} else if (layer instanceof ol.layer.Base) {
 										layer.setVisible(false);
 									}
 									this._data['visibility'].vanished.push(p.id);
@@ -7763,7 +8054,32 @@
 																	if (j > 0 && c === j) {
 																		p.state['vanished'] = true;
 																		var layer = this.get_LayerById(p.id);
-																		if (layer instanceof ol.layer.Base) {
+																		var git;
+																		if (layer) {
+																			git = layer.get("git");
+																		}
+																		if (layer instanceof ol.layer.Tile && git) {
+																			if (git["fake"] === "child") {
+																				console.log(obj);
+																				var parent = this.get_LayerById(p.parent);
+																				var pgit;
+																				if (parent) {
+																					pgit = parent.get("git");
+																				}
+																				if (parent instanceof ol.layer.Tile && git) {
+																					var psource = parent.getSource();
+																					var pparams = parent.getSource().getParams();
+																					var childrenNames = pparams["LAYERS"].split(",");
+																					childrenNames.splice(childrenNames.indexOf(this.get_LayerById(
+																							obj.id).get("id")), 1);
+																					pparams["LAYERS"] = childrenNames.toString();
+																					psource.updateParams(pparams);
+																					console.log(childrenNames);
+																				}
+																			} else {
+																				layer.setVisible(false);
+																			}
+																		} else if (layer instanceof ol.layer.Base) {
 																			layer.setVisible(false);
 																		}
 																		this._data['visibility'].vanished.push(p.id);
@@ -7788,7 +8104,32 @@
 																	if (!p.state['vanished']) {
 																		p.state['vanished'] = true;
 																		var layer = this.get_LayerById(p.id);
-																		if (layer instanceof ol.layer.Base) {
+																		var git;
+																		if (layer) {
+																			git = layer.get("git");
+																		}
+																		if (layer instanceof ol.layer.Tile && git) {
+																			if (git["fake"] === "child") {
+																				console.log(obj);
+																				var parent = this.get_LayerById(p.parent);
+																				var pgit;
+																				if (parent) {
+																					pgit = parent.get("git");
+																				}
+																				if (parent instanceof ol.layer.Tile && git) {
+																					var psource = parent.getSource();
+																					var pparams = parent.getSource().getParams();
+																					var childrenNames = pparams["LAYERS"].split(",");
+																					childrenNames.splice(childrenNames.indexOf(this.get_LayerById(
+																							obj.id).get("id")), 1);
+																					pparams["LAYERS"] = childrenNames.toString();
+																					psource.updateParams(pparams);
+																					console.log(childrenNames);
+																				}
+																			} else {
+																				layer.setVisible(false);
+																			}
+																		} else if (layer instanceof ol.layer.Base) {
 																			layer.setVisible(false);
 																		}
 																		this._data['visibility'].vanished.push(p.id);
@@ -7802,7 +8143,57 @@
 																	if (p.state['vanished']) {
 																		p.state['vanished'] = false;
 																		var layer = this.get_LayerById(p.id);
-																		if (layer instanceof ol.layer.Base) {
+																		var git;
+																		if (layer) {
+																			git = layer.get("git");
+																		}
+																		if (layer instanceof ol.layer.Tile && git) {
+																			if (git["fake"] === "child") {
+																				console.log(obj);
+																				var parent = this.get_LayerById(p.parent);
+																				var pgit;
+																				if (parent) {
+																					pgit = parent.get("git");
+																				}
+																				if (parent instanceof ol.layer.Tile && git) {
+																					var psource = parent.getSource();
+																					var pparams = parent.getSource().getParams();
+																					var childrenNames = [];
+																					if (pparams["LAYERS"] !== "") {
+																						childrenNames = pparams["LAYERS"].split(",");
+																					}
+
+																					var players = pgit.layers.getArray();
+																					var children = [];
+																					if (children.length === 0) {
+																						for (var i = 0; i < players.length; i++) {
+																							children.push(players[i]);
+																						}
+																					} else {
+																						for (var i = 0; i < players.length; i++) {
+																							if (childrenNames.indexOf(players[i].get("id")) !== -1) {
+																								children.push(players[i]);
+																							}
+																						}
+																						children.push(layer);
+																					}
+
+																					children.sort(function(a, b) {
+																						return a.getZIndex() < b.getZIndex() ? -1 : a.getZIndex() > b
+																								.getZIndex() ? 1 : 0;
+																					});
+																					var childrenNamesAfter = [];
+																					for (var i = 0; i < children.length; i++) {
+																						childrenNamesAfter.push(children[i].get("id"));
+																					}
+																					pparams["LAYERS"] = childrenNamesAfter.toString();
+																					psource.updateParams(pparams);
+																					console.log(childrenNames);
+																				}
+																			} else {
+																				layer.setVisible(true);
+																			}
+																		} else if (layer instanceof ol.layer.Base) {
 																			layer.setVisible(true);
 																		}
 																		this._data['visibility'].vanished = $.vakata.array_remove_item(
@@ -8119,7 +8510,31 @@
 					if (!obj.state.vanished) {
 						obj.state.vanished = true;
 						var layer = this.get_LayerById(obj.id);
-						if (layer instanceof ol.layer.Base) {
+						var git;
+						if (layer) {
+							git = layer.get("git");
+						}
+						if (layer instanceof ol.layer.Tile && git) {
+							if (git["fake"] === "child") {
+								console.log(obj);
+								var parent = this.get_LayerById(obj.parent);
+								var pgit;
+								if (parent) {
+									pgit = parent.get("git");
+								}
+								if (parent instanceof ol.layer.Tile && git) {
+									var psource = parent.getSource();
+									var pparams = parent.getSource().getParams();
+									var childrenNames = pparams["LAYERS"].split(",");
+									childrenNames.splice(childrenNames.indexOf(this.get_LayerById(obj.id).get("id")), 1);
+									pparams["LAYERS"] = childrenNames.toString();
+									psource.updateParams(pparams);
+									console.log(childrenNames);
+								}
+							} else {
+								layer.setVisible(false);
+							}
+						} else if (layer instanceof ol.layer.Base) {
 							layer.setVisible(false);
 						}
 						this._data.visibility.vanished.push(obj.id);
@@ -8176,7 +8591,69 @@
 					if (obj.state.vanished) {
 						obj.state.vanished = false;
 						var layer = this.get_LayerById(obj.id);
-						if (layer instanceof ol.layer.Base) {
+						var git;
+						if (layer) {
+							git = layer.get("git");
+						}
+						if (layer instanceof ol.layer.Tile && git) {
+							if (git["fake"] === "child") {
+								console.log(obj);
+								var parent = this.get_LayerById(obj.parent);
+								var pgit;
+								if (parent) {
+									pgit = parent.get("git");
+								}
+								if (parent instanceof ol.layer.Tile && git) {
+									var psource = parent.getSource();
+									var pparams = parent.getSource().getParams();
+									var childrenNames = [];
+									if (pparams["LAYERS"] !== "") {
+										childrenNames = pparams["LAYERS"].split(",");
+									}
+
+									var players = pgit.layers.getArray();
+									var children = [];
+									if (children.length === 0) {
+										for (var i = 0; i < players.length; i++) {
+											children.push(players[i]);
+											var vanObj = this.get_node(players[i].get("treeid"));
+//											vanObj.state.vanished = false;
+//											this.check_node(vanObj);
+										}
+									} else {
+										for (var i = 0; i < players.length; i++) {
+											if (childrenNames.indexOf(players[i].get("id")) !== -1) {
+												children.push(players[i]);
+												var vanObj = this.get_node(players[i].get("treeid"));
+//												vanObj.state.vanished = false;
+//												this.check_node(vanObj);
+											} else {
+												var vanObj = this.get_node(players[i].get("treeid"));
+//												vanObj.state.vanished = true;
+//												this.uncheck_node(vanObj);
+											}
+										}
+										children.push(layer);
+										var vanObj = this.get_node(players[i].get("treeid"));
+//										this.check_node(vanObj);
+									}
+
+									children.sort(function(a, b) {
+										return a.getZIndex() < b.getZIndex() ? -1 : a.getZIndex() > b
+												.getZIndex() ? 1 : 0;
+									});
+									var childrenNamesAfter = [];
+									for (var i = 0; i < children.length; i++) {
+										childrenNamesAfter.push(children[i].get("id"));
+									}
+									pparams["LAYERS"] = childrenNamesAfter.toString();
+									psource.updateParams(pparams);
+									console.log(childrenNames);
+								}
+							} else {
+								layer.setVisible(true);
+							}
+						} else if (layer instanceof ol.layer.Base) {
 							layer.setVisible(true);
 						}
 						this._data.visibility.vanished = $.vakata.array_remove_item(this._data.visibility.vanished, obj.id);
@@ -8222,7 +8699,31 @@
 						if (this._model.data[this._data.visibility.vanished[i]]) {
 							this._model.data[this._data.visibility.vanished[i]].state.vanished = true;
 							var layer = this.get_LayerById(this._model.data[this._data.visibility.vanished[i]].id);
-							if (layer instanceof ol.layer.Base) {
+							var git;
+							if (layer) {
+								git = layer.get("git");
+							}
+							if (layer instanceof ol.layer.Tile && git) {
+								if (git["fake"] === "child") {
+									console.log(obj);
+									var parent = this.get_LayerById(this._model.data[this._data.visibility.vanished[i]].parent);
+									var pgit;
+									if (parent) {
+										pgit = parent.get("git");
+									}
+									if (parent instanceof ol.layer.Tile && git) {
+										var psource = parent.getSource();
+										var pparams = parent.getSource().getParams();
+										var childrenNames = pparams["LAYERS"].split(",");
+										childrenNames.splice(childrenNames.indexOf(this.get_LayerById(obj.id).get("id")), 1);
+										pparams["LAYERS"] = childrenNames.toString();
+										psource.updateParams(pparams);
+										console.log(childrenNames);
+									}
+								} else {
+									layer.setVisible(false);
+								}
+							} else if (layer instanceof ol.layer.Base) {
 								layer.setVisible(false);
 							}
 						}
@@ -8258,7 +8759,57 @@
 						if (this._model.data[this._data.visibility.vanished[i]]) {
 							this._model.data[this._data.visibility.vanished[i]].state.vanished = false;
 							var layer = this.get_LayerById(this._model.data[this._data.visibility.vanished[i]].id);
-							if (layer instanceof ol.layer.Base) {
+							var git;
+							if (layer) {
+								git = layer.get("git");
+							}
+							if (layer instanceof ol.layer.Tile && git) {
+								if (git["fake"] === "child") {
+									console.log(obj);
+									var parent = this.get_LayerById(this._model.data[this._data.visibility.vanished[i]].parent);
+									var pgit;
+									if (parent) {
+										pgit = parent.get("git");
+									}
+									if (parent instanceof ol.layer.Tile && git) {
+										var psource = parent.getSource();
+										var pparams = parent.getSource().getParams();
+										var childrenNames = [];
+										if (pparams["LAYERS"] !== "") {
+											childrenNames = pparams["LAYERS"].split(",");
+										}
+
+										var players = pgit.layers.getArray();
+										var children = [];
+										if (children.length === 0) {
+											for (var i = 0; i < players.length; i++) {
+												children.push(players[i]);
+											}
+										} else {
+											for (var i = 0; i < players.length; i++) {
+												if (childrenNames.indexOf(players[i].get("id")) !== -1) {
+													children.push(players[i]);
+												}
+											}
+											children.push(layer);
+										}
+
+										children.sort(function(a, b) {
+											return a.getZIndex() < b.getZIndex() ? -1 : a.getZIndex() > b
+													.getZIndex() ? 1 : 0;
+										});
+										var childrenNamesAfter = [];
+										for (var i = 0; i < children.length; i++) {
+											childrenNamesAfter.push(children[i].get("id"));
+										}
+										pparams["LAYERS"] = childrenNamesAfter.toString();
+										psource.updateParams(pparams);
+										console.log(childrenNames);
+									}
+								} else {
+									layer.setVisible(true);
+								}
+							} else if (layer instanceof ol.layer.Base) {
 								layer.setVisible(true);
 							}
 						}

@@ -530,7 +530,8 @@ html {
 					"geoserver" : {
 						"map" : map,
 						"user" : "admin",
-						"layerInfo" : layerInfo
+						"layerInfo" : layerInfo,
+						"downloadURL" : ""
 					},
 					"plugins" : [ "contextmenu", "search", "state", "types", "geoserver" ]
 				});
