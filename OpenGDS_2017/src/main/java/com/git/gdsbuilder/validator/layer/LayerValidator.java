@@ -249,7 +249,7 @@ public interface LayerValidator {
 	 * @throws SchemaException ErrorLayer
 	 * @throws
 	 * */
-	public ErrorLayer validateCrossRoad(List<GeoLayer> relationLayers) throws SchemaException;
+	public ErrorLayer validateCrossRoad(List<GeoLayer> relationLayers,String geomColumn, double tolerence) throws SchemaException;
 	
 	/**
 	 * 검수항목 중 "교량명오류(BridgeName)" 검수를 수행

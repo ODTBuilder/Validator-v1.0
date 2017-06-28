@@ -354,7 +354,7 @@ public class CollectionValidator {
 							List<String> relationNames = ((CrossRoad) option).getRelationType();
 							for (int l = 0; l < relationNames.size(); l++) {
 								typeErrorLayer = layerValidator.validateCrossRoad(validateLayerCollectionList
-										.getTypeLayers(relationNames.get(l), layerCollection));
+										.getTypeLayers(relationNames.get(l), layerCollection),"", 0.001);
 							}
 							if (typeErrorLayer != null) {
 								errLayer.mergeErrorLayer(typeErrorLayer);
