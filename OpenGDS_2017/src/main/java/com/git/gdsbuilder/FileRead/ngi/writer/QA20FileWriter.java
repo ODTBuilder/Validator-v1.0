@@ -45,7 +45,6 @@ public class QA20FileWriter {
 				writeNdaFile(i, layer, ndaHeader);
 			}
 		}
-		System.out.println("");
 	}
 
 	private void writeNdaFile(int i, QA20Layer layer, NDAHeader ndaHeader) throws IOException {
@@ -221,5 +220,7 @@ public class QA20FileWriter {
 			ngiWriter.write(feature.getStyleID());
 			ngiWriter.newLine();
 		}
+		ngiWriter.write(endTg);
+		ngiWriter.newLine();
 	}
 }
