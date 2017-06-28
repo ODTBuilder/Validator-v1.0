@@ -804,7 +804,7 @@ public class CollectionValidator {
 
 		}
 
-		for (int i = 0; i < layerCollections.size(); i++) {
+/*		for (int i = 0; i < layerCollections.size(); i++) {
 			GeoLayerCollection collection = layerCollections.get(i);
 			List<GeoLayer> collectionList = collection.getLayers();
 			ErrorLayer errLayer = new ErrorLayer();
@@ -839,7 +839,7 @@ public class CollectionValidator {
 				errLayerList.add(errLayer);
 			}
 		}
-	}
+*/	}
 
 	private void errLayerMerge(ErrorLayerList geoErrorList) {
 		for (int i = 0; i < errLayerList.size(); i++) {
