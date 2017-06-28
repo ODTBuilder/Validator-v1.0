@@ -7932,6 +7932,24 @@
 												downFiles.push(obj);
 											}
 										}
+										for (var j = 0; j < downFiles.length; j++) {
+											var path = inst._data.geoserver.downloadNGIDXF;
+											var target = "gitWindow";
+											var form = document.createElement("form");
+											form.setAttribute("method", "post");
+											form.setAttribute("action", path);
+											var keys = Object.keys(downFiles[j]);
+											for (var k = 0; k < keys.length; k++) {
+												var hiddenField = document.createElement("input");
+												hiddenField.setAttribute("type", "hidden");
+												hiddenField.setAttribute("name", keys[j]);
+												hiddenField.setAttribute("value", downFiles[j][keys[k]]);
+												form.appendChild(hiddenField);
+											}
+											form.target = target;
+											document.body.appendChild(form);
+											form.submit();
+										}
 									}
 								},
 								"dxf" : {
