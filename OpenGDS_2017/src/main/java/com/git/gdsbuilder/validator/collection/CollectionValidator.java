@@ -374,7 +374,7 @@ public class CollectionValidator {
 							List<String> relationNames = ((CrossRoad) option).getRelationType();
 							for (int l = 0; l < relationNames.size(); l++) {
 								typeErrorLayer = layerValidator.validateCrossRoad(validateLayerCollectionList
-										.getTypeLayers(relationNames.get(l), layerCollection));
+										.getTypeLayers(relationNames.get(l), layerCollection), "",tolorence);
 							}
 							if (typeErrorLayer != null) {
 								errLayer.mergeErrorLayer(typeErrorLayer);
@@ -384,7 +384,7 @@ public class CollectionValidator {
 							List<String> relationNames = ((NodeMiss) option).getRelationType();
 							for (int l = 0; l < relationNames.size(); l++) {
 								typeErrorLayer = layerValidator.validateNodeMiss(validateLayerCollectionList
-										.getTypeLayers(relationNames.get(l), layerCollection), "", 0.001);
+										.getTypeLayers(relationNames.get(l), layerCollection), "",tolorence);
 							}
 							if (typeErrorLayer != null) {
 								errLayer.mergeErrorLayer(typeErrorLayer);
@@ -804,41 +804,41 @@ public class CollectionValidator {
 
 		}
 
-//		for (int i = 0; i < layerCollections.size(); i++) {
-//			GeoLayerCollection collection = layerCollections.get(i);
-//			List<GeoLayer> collectionList = collection.getLayers();
-//			ErrorLayer errLayer = new ErrorLayer();
-//			for (int j = 0; j < types.size(); j++) {
-//				ValidateLayerType type = types.get(j);
-//				GeoLayerList typeLayers = validateLayerCollectionList.getTypeLayers(type.getTypeName(), collection);
-//				List<ValidatorOption> options = type.getOptionList();
-//				if (options != null) {
-//					ErrorLayer typeErrorLayer = null;
-//					for (int k = 0; k < options.size(); k++) {
-//						ValidatorOption option = options.get(k);
-//						for (int l = 0; l < typeLayers.size(); l++) {
-//							GeoLayer typeLayer = typeLayers.get(l);
-//							if (typeLayer == null) {
-//								continue;
-//							}
-//							if (option instanceof LayerMiss) {
-//								List<String> typeNames = ((LayerMiss) option).getLayerType();
-//								typeErrorLayer = layerValidator.validateLayerMiss(typeNames);
-//								if (typeErrorLayer != null) {
-//									errLayer.mergeErrorLayer(typeErrorLayer);
-//								}
-//								collectionList.remove(typeLayer);
-//							}
-//						}
-//					}
-//				}
-//			}
-//			if (errLayer != null) {
-//				errLayer.setCollectionName(collection.getCollectionName());
-//				errLayer.setCollectionType(collection.getLayerCollectionType());
-//				errLayerList.add(errLayer);
-//			}
-//		}
+		/*for (int i = 0; i < layerCollections.size(); i++) {
+			GeoLayerCollection collection = layerCollections.get(i);
+			List<GeoLayer> collectionList = collection.getLayers();
+			ErrorLayer errLayer = new ErrorLayer();
+			for (int j = 0; j < types.size(); j++) {
+				ValidateLayerType type = types.get(j);
+				GeoLayerList typeLayers = validateLayerCollectionList.getTypeLayers(type.getTypeName(), collection);
+				List<ValidatorOption> options = type.getOptionList();
+				if (options != null) {
+					ErrorLayer typeErrorLayer = null;
+					for (int k = 0; k < options.size(); k++) {
+						ValidatorOption option = options.get(k);
+						for (int l = 0; l < typeLayers.size(); l++) {
+							GeoLayer typeLayer = typeLayers.get(l);
+							if (typeLayer == null) {
+								continue;
+							}
+							if (option instanceof LayerMiss) {
+								List<String> typeNames = ((LayerMiss) option).getLayerType();
+								typeErrorLayer = layerValidator.validateLayerMiss(typeNames);
+								if (typeErrorLayer != null) {
+									errLayer.mergeErrorLayer(typeErrorLayer);
+								}
+								collectionList.remove(typeLayer);
+							}
+						}
+					}
+				}
+			}
+			if (errLayer != null) {
+				errLayer.setCollectionName(collection.getCollectionName());
+				errLayer.setCollectionType(collection.getLayerCollectionType());
+				errLayerList.add(errLayer);
+			}
+		}*/
 	}
 
 	private void errLayerMerge(ErrorLayerList geoErrorList) {

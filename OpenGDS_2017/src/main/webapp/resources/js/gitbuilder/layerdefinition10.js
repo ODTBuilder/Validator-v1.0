@@ -106,11 +106,11 @@ gitbuilder.ui.LayerDefinition10 = $.widget("gitbuilder.layerdefinition10",
 								"type" : "text"
 							});
 							var ty1 = $("<option>").text("Insert").val("insert");
-							var ty2 = $("<option>").text("Line").val("line");
+//							var ty2 = $("<option>").text("Line").val("line");
 							var ty3 = $("<option>").text("LWPolyline").val("lwpolyline");
 							var ty4 = $("<option>").text("Polyline").val("polyline");
 							var ty5 = $("<option>").text("Text").val("text");
-							var gtype = $("<select>").append(ty1).append(ty2).append(ty3).append(ty4).append(ty5);
+							var gtype = $("<select>").append(ty1).append(ty3).append(ty4).append(ty5);
 							this._addClass(gtype, "form-control");
 							var td4 = $("<td>").append(gtype);
 							var icon = $("<i>").attr("aria-hidden", true);
@@ -418,11 +418,11 @@ gitbuilder.ui.LayerDefinition10 = $.widget("gitbuilder.layerdefinition10",
 					var td3 = $("<td>").append(lcode);
 
 					var ty1 = $("<option>").text("Insert").val("insert");
-					var ty2 = $("<option>").text("Line").val("line");
+//					var ty2 = $("<option>").text("Line").val("line");
 					var ty3 = $("<option>").text("LWPolyline").val("lwpolyline");
 					var ty4 = $("<option>").text("Polyline").val("polyline");
 					var ty5 = $("<option>").text("Text").val("text");
-					var gtype = $("<select>").append(ty1).append(ty2).append(ty3).append(ty4).append(ty5).val(obj[keys[i]].geom);
+					var gtype = $("<select>").append(ty1).append(ty3).append(ty4).append(ty5).val(obj[keys[i]].geom);
 					this._addClass(gtype, "form-control");
 					var td4 = $("<td>").append(gtype);
 
