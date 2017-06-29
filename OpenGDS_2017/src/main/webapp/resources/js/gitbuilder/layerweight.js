@@ -68,15 +68,17 @@ gitbuilder.ui.WeightDefinition = $.widget("gitbuilder.weightdefinition", {
 		 * 
 		 * 
 		 */
-		var tdhead1 = $("<td>").text("#");
-		var tdhead2 = $("<td>").text("Layer Name");
-		var tdhead3 = $("<td>").text("Layer Code");
-		var tdhead4 = $("<td>").text("Geometry Type");
-		var tdhead7 = $("<td>").text("Weight");
+		var tdhead1 = $("<td>").addClass("col-md-1").text("#");
+		var tdhead2 = $("<td>").addClass("col-md-3").text("Layer Name");
+		var tdhead3 = $("<td>").addClass("col-md-4").text("Layer Code");
+		var tdhead4 = $("<td>").addClass("col-md-2").text("Geometry Type");
+		var tdhead7 = $("<td>").addClass("col-md-2").text("Weight");
 		var trhead = $("<tr>").append(tdhead1).append(tdhead2).append(tdhead3).append(tdhead4).append(tdhead7);
 		var thead = $("<thead>").append(trhead);
 		that.tbody = $("<tbody>");
-		var tb = $("<table>").append(thead).append(that.tbody);
+		var tb = $("<table>").css({
+			"table-layout" : "fixed"
+		}).append(thead).append(that.tbody);
 		this._addClass(tb, "table");
 		this._addClass(tb, "table-striped");
 		this._addClass(tb, "text-center");
@@ -342,7 +344,10 @@ gitbuilder.ui.WeightDefinition = $.widget("gitbuilder.weightdefinition", {
 
 			var td2 = $("<td>").text(wkeys[i]);
 
-			var td3 = $("<td>").text(this.getLayerDef()[wkeys[i]].code.toString());
+			var td3 = $("<td>").css({
+				"text-overflow" : "ellipsis",
+				"overflow" : "hidden"
+			}).text(this.getLayerDef()[wkeys[i]].code.toString());
 
 			var td4 = $("<td>").text(this.getLayerDef()[wkeys[i]].geom);
 
