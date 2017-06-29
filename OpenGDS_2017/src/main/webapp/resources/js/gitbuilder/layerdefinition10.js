@@ -320,7 +320,7 @@ gitbuilder.ui.LayerDefinition10 = $.widget("gitbuilder.layerdefinition10",
 					for (var j = 0; j < children.length; j++) {
 						if (i !== j) {
 							if ($(children[i]).find("td:eq(1)>input").val() !== ""
-									&& $(children[i]).find("td:eq(1)>input").val() === $(children[j]).find("td:eq(1)>input").val()) {
+									&& $(children[i]).find("td:eq(1)>input").val().replace(/s/gi, '') === $(children[j]).find("td:eq(1)>input").val().replace(/s/gi, '')) {
 								error.push(children[i]);
 								error.push(children[j]);
 								flag = false;
@@ -359,7 +359,7 @@ gitbuilder.ui.LayerDefinition10 = $.widget("gitbuilder.layerdefinition10",
 					}
 					// var wVal =
 					// parseInt($(children[i]).find("td:eq(6)>input[type=number]").val());
-					def[$(children[i]).find("td:eq(1)>input").val()] = {
+					def[$(children[i]).find("td:eq(1)>input").val().replace(/s/gi, '')] = {
 						"code" : spCode,
 						"geom" : geom,
 						"area" : area

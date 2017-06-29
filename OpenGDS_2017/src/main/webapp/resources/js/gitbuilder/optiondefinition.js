@@ -16,9 +16,11 @@ gitbuilder.ui.OptionDefinition = $.widget("gitbuilder.optiondefinition", {
 	optDefCopy : undefined,
 	layerDef : undefined,
 	itemList : {
-//		line : [ "SelfEntity", "LayerMiss", "UselessEntity", "OverShoot", "UnderShoot", "RefZValueMiss", "ConBreak", "ConIntersected",
-//				"ConOverDegree", "UselessPoint", "RefLayerMiss", "EntityNone", "EdgeMatchMiss", "PointDuplicated", "zValueAmbiguous",
-//				"EntityDuplicated" ],
+		// line : [ "SelfEntity", "LayerMiss", "UselessEntity", "OverShoot",
+		// "UnderShoot", "RefZValueMiss", "ConBreak", "ConIntersected",
+		// "ConOverDegree", "UselessPoint", "RefLayerMiss", "EntityNone",
+		// "EdgeMatchMiss", "PointDuplicated", "zValueAmbiguous",
+		// "EntityDuplicated" ],
 		polyline : [ "SelfEntity", "BSymbolOutSided", "BuildingOpen", "WaterOpen", "EntityNone", "EdgeMatchMiss", "ConBreak", "ConIntersected",
 				"ConOverDegree", "UselessEntity", "EntityDuplicated", "PointDuplicated", "UselessPoint", "LayerMiss", "zValueAmbiguous", "OverShoot",
 				"UnderShoot", "RefLayerMiss", "RefZValueMiss" ],
@@ -1038,7 +1040,7 @@ gitbuilder.ui.OptionDefinition = $.widget("gitbuilder.optiondefinition", {
 				$(that.codeSelect).append(opt);
 				if (i === 0) {
 					$(opt).prop("selected", true);
-					sCode = codes[i];
+					sCode = codes[i] + "_" + geom;
 				}
 			}
 			that._updateAttribute(sCode);
