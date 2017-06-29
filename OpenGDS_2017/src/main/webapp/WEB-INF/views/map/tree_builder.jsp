@@ -506,7 +506,8 @@ html {
 			layersURL : 'geoserver2/getGeolayerCollectionTree.ajax',
 			featureWMSURL : "geoserver2/geoserverWMSLayerLoad.do",
 			featureWFSURL : "geoserver2/geoserverWFSGetFeature.ajax",
-			groupInfoURL : "geoserver2/getGeoGroupLayerInfoList.ajax"
+			groupInfoURL : "geoserver2/getGeoGroupLayerInfoList.ajax",
+			layerInfoURL : "geoserver2/getGeoLayerInfoList.ajax"
 		});
 
 		var layerInfo = new gb.edit.LayerInformation({
