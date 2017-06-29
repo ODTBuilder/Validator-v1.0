@@ -16,7 +16,6 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 
 public class ErrorLayerNGIExportParser {
 	
-	
 	protected static String layerID = "1";
 
 	// ngi
@@ -97,7 +96,7 @@ public class ErrorLayerNGIExportParser {
 			qa20Layer.add(qa20Feature);
 		}
 		QA20LayerCollection qa20LayerCollection = new QA20LayerCollection();
-		qa20LayerCollection.setId(tableName);
+		qa20LayerCollection.setFileName(tableName);
 		qa20LayerCollection.addQA20Layer(qa20Layer);
 
 		return qa20LayerCollection;

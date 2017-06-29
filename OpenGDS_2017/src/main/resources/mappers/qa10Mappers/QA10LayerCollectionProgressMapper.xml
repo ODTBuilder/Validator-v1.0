@@ -54,4 +54,9 @@
 		${selectQuery}
 	</select>
 
+	<select id="selectAllQA10ValidateProgress" parameterType="hashMap"
+		resultType="hashMap">
+		${selectAllQuery}
+	</select>
+
 </mapper>
