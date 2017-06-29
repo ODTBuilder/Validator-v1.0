@@ -99,7 +99,7 @@ public class ErrorLayerServiceImpl implements ErrorLayerService {
 						errTableName += collectionName;
 					} else {
 						Long count = errTbCount + 1;
-						errTableName += collectionName + "(" + count + ")";
+						errTableName += collectionName + "_" + count;
 					}
 				}
 				if (fileType.equals("dxf")) {
@@ -113,7 +113,7 @@ public class ErrorLayerServiceImpl implements ErrorLayerService {
 						errTableName += collectionName;
 					} else {
 						Long count = errTbCount + 1;
-						errTableName += collectionName + "(" + count + ")";
+						errTableName += collectionName + "_" + count;
 					}
 				}
 				errTableName += "\"";
@@ -173,7 +173,7 @@ public class ErrorLayerServiceImpl implements ErrorLayerService {
 				if (errTbCount == null) {
 					errTableName += collectionName;
 				} else {
-					errTableName += collectionName + "(" + errTbCount + ")";
+					errTableName += collectionName + "_" + errTbCount;
 
 				}
 			}
@@ -187,7 +187,7 @@ public class ErrorLayerServiceImpl implements ErrorLayerService {
 				if (errTbCount == null) {
 					errTableName += collectionName;
 				} else {
-					errTableName += collectionName + "(" + errTbCount + ")";
+					errTableName += collectionName +  "_" + errTbCount;
 				}
 			}
 

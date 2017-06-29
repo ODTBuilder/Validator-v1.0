@@ -68,6 +68,9 @@ public class QA10Header {
 		extmax.put("20", "10000000.0");
 		extmax.put("30", "10000000.0");
 		variables.add(extmax);
+	
+		
+		headerMap.put("defualtHeader", variables);
 
 		// DXFVariable linmin = new DXFVariable("$LIMMIN");
 		// linmin.setValue("9", "$LIMMIN");

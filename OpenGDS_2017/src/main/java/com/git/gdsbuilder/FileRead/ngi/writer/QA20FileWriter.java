@@ -5,6 +5,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.git.gdsbuilder.type.qa20.collection.QA20LayerCollection;
 import com.git.gdsbuilder.type.qa20.feature.QA20Feature;
@@ -19,6 +20,9 @@ import com.vividsolutions.jts.geom.Geometry;
 
 public class QA20FileWriter {
 
+	protected static String ngiExe = ".ngi";
+	protected static String ndaExe = ".nda";
+
 	protected static String layerStartTg = "<LAYER_START>";
 	protected static String layerEndTg = "<LAYER_END>";
 	protected static String headerTg = "<HEADER>";
@@ -28,11 +32,17 @@ public class QA20FileWriter {
 	BufferedWriter ngiWriter;
 	BufferedWriter ndaWriter;
 
-	public void writeNGIFile(QA20LayerCollection qa20LayerCollection) throws IOException {
+	public Map<String, Object> writeNGIFile(QA20LayerCollection qa20LayerCollection) throws IOException {
 
-		String collectionId = qa20LayerCollection.getId();
-		String ngiFileRoot = "D:\\err_" + collectionId + ".ngi";
-		String ndaFileRoot = "D:\\err_" + collectionId + ".nda";
+		String collectionName = qa20LayerCollection.getFileName();
+		String ngiFileRoot = "D:\\" + collectionName + ngiExe;
+		String ndaFileRoot = "D:\\" + collectionName + ndaExe;
+
+		Map<String, Object> ngiFileMap = new HashMap<String, Object>();
+		ngiFileMap.put("fileName", collectionName);
+		ngiFileMap.put("NgifileDir", ngiFileRoot);
+		ngiFileMap.put("NdafileDir", ndaFileRoot);
+
 		this.ngiWriter = new BufferedWriter(new FileWriter(ngiFileRoot, true));
 		this.ndaWriter = new BufferedWriter(new FileWriter(ndaFileRoot, true));
 
@@ -45,6 +55,7 @@ public class QA20FileWriter {
 				writeNdaFile(i, layer, ndaHeader);
 			}
 		}
+		return ngiFileMap;
 	}
 
 	private void writeNdaFile(int i, QA20Layer layer, NDAHeader ndaHeader) throws IOException {

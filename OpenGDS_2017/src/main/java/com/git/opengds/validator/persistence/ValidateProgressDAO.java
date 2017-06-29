@@ -1,6 +1,7 @@
 package com.git.opengds.validator.persistence;
 
 import java.util.HashMap;
+import java.util.List;
 
 public interface ValidateProgressDAO {
 
@@ -43,5 +44,11 @@ public interface ValidateProgressDAO {
 	public Long selectQA20ErrorLayerTbNamesCount(HashMap<String, Object> selectIdxQuery);
 
 	public Long selectQA10ErrorLayerTbNamesCount(HashMap<String, Object> selectIdxQuery);
+
+	public List<HashMap<String, Object>> selectAllQA10ValidateProgress(
+			HashMap<String, Object> selectAllQA10ValidateProgress);
+
+	public List<HashMap<String, Object>> selectAllQA20ValidateProgress(
+			HashMap<String, Object> selectAllQA20ValidateProgress);
 
 }
