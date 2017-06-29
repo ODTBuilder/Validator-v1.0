@@ -10,7 +10,7 @@
 		${insertQuery}
 
 		<selectKey keyProperty="p_idx" resultType="int" order="AFTER">
-			select currval('qa20_layercollection_qa_progress_p_idx_seq')
+			select currval('qa10_layercollection_qa_progress_p_idx_seq')
 		</selectKey>
 	</insert>
 
