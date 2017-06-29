@@ -86,7 +86,6 @@ import com.git.gdsbuilder.type.validate.option.RefZValueMiss;
 import com.git.gdsbuilder.type.validate.option.SelfEntity;
 import com.git.gdsbuilder.type.validate.option.SmallArea;
 import com.git.gdsbuilder.type.validate.option.SmallLength;
-import com.git.gdsbuilder.type.validate.option.UnderShoot;
 import com.git.gdsbuilder.type.validate.option.UselessEntity;
 import com.git.gdsbuilder.type.validate.option.UselessPoint;
 import com.git.gdsbuilder.type.validate.option.ValidatorOption;
@@ -196,7 +195,7 @@ public class CollectionValidator {
 			GeoLayerCollection collection = layerCollections.get(i);
 
 			// layerMiss 검수
-			layerMissValidate(types, collection);
+			//layerMissValidate(types, collection);
 
 			// geometric 검수
 			geometricValidate(types, collection);
@@ -205,7 +204,7 @@ public class CollectionValidator {
 			attributeValidate(types, collection);
 
 			// 인접도엽 검수
-			closeCollectionValidate(types, mapSystemRule, collection);
+//			closeCollectionValidate(types, mapSystemRule, collection);
 		}
 	}
 
@@ -272,6 +271,9 @@ public class CollectionValidator {
 		for (int i = 0; i < types.size(); i++) {
 			// getType
 			ValidateLayerType type = types.get(i);
+			if(type.getTypeName().equals("건물_P")) {
+				System.out.println("");
+			}
 			// getTypeLayers
 			GeoLayerList typeLayers = validateLayerCollectionList.getTypeLayers(type.getTypeName(), layerCollection);
 			// getTypeOption
@@ -347,10 +349,10 @@ public class CollectionValidator {
 							double tolerence = ((OverShoot) option).getTolerence();
 							typeErrorLayer = layerValidator.validateOverShoot(neatLayer, tolerence);
 						}
-						if (option instanceof UnderShoot) {
+					/*	if (option instanceof UnderShoot) {
 							double tolerence = ((UnderShoot) option).getTolerence();
 							typeErrorLayer = layerValidator.validateUnderShoot(neatLayer, tolerence);
-						}
+						}*/
 						if (option instanceof UselessEntity) {
 							typeErrorLayer = layerValidator.validateUselessEntity();
 						}
