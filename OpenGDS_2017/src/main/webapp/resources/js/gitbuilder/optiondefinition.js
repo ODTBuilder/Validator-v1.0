@@ -19,20 +19,20 @@ gitbuilder.ui.OptionDefinition = $.widget("gitbuilder.optiondefinition", {
 		// line : [ "SelfEntity", "LayerMiss", "UselessEntity", "OverShoot",
 		// "UnderShoot", "RefZValueMiss", "ConBreak", "ConIntersected",
 		// "ConOverDegree", "UselessPoint", "RefLayerMiss", "EntityNone",
-		// "EdgeMatchMiss", "PointDuplicated", "zValueAmbiguous",
+		// "EdgeMatchMiss", "PointDuplicated", "ZValueAmbiguous",
 		// "EntityDuplicated" ],
 		polyline : [ "SelfEntity", "BSymbolOutSided", "BuildingOpen", "WaterOpen", "EntityNone", "EdgeMatchMiss", "ConBreak", "ConIntersected",
-				"ConOverDegree", "UselessEntity", "EntityDuplicated", "PointDuplicated", "UselessPoint", "LayerMiss", "zValueAmbiguous", "OverShoot",
+				"ConOverDegree", "UselessEntity", "EntityDuplicated", "PointDuplicated", "UselessPoint", "LayerMiss", "ZValueAmbiguous", "OverShoot",
 				"UnderShoot", "RefLayerMiss", "RefZValueMiss" ],
 		lwpolyline : [ "SelfEntity", "BSymbolOutSided", "BuildingOpen", "WaterOpen", "EntityNone", "EdgeMatchMiss", "ConBreak", "ConIntersected",
-				"ConOverDegree", "UselessEntity", "EntityDuplicated", "PointDuplicated", "UselessPoint", "LayerMiss", "zValueAmbiguous", "OverShoot",
+				"ConOverDegree", "UselessEntity", "EntityDuplicated", "PointDuplicated", "UselessPoint", "LayerMiss", "ZValueAmbiguous", "OverShoot",
 				"UnderShoot", "RefLayerMiss", "RefZValueMiss" ],
 		text : [ "SelfEntity", "LayerMiss", "UselessEntity", "EntityDuplicated" ],
 		insert : [ "SelfEntity", "LayerMiss", "UselessEntity", "EntityDuplicated" ],
 		point : [ "LayerMiss", "UselessEntity", "EntityDuplicated", "SelfEntity", "AttributeFix", "OutBoundary", "CharacterAccuracy", "OverShoot",
 				"UnderShoot" ],
 		linestring : [ "RefAttributeMiss", "EdgeMatchMiss", "UselessEntity", "LayerMiss", "RefLayerMiss", "SmallLength", "EntityDuplicated",
-				"SelfEntity", "PointDuplicated", "ConIntersected", "ConOverDegree", "ConBreak", "AttributeFix", "OutBoundary", "zValueAmbiguous",
+				"SelfEntity", "PointDuplicated", "ConIntersected", "ConOverDegree", "ConBreak", "AttributeFix", "OutBoundary", "ZValueAmbiguous",
 				"UselessPoint", "OverShoot", "UnderShoot" ],
 		polygon : [ "Admin", "CrossRoad", "RefAttributeMiss", "BridgeName", "NodeMiss", "EdgeMatchMiss", "UselessEntity", "LayerMiss",
 				"RefLayerMiss", "SmallArea", "EntityDuplicated", "SelfEntity", "PointDuplicated", "AttributeFix", "OutBoundary", "OverShoot",
@@ -167,9 +167,9 @@ gitbuilder.ui.OptionDefinition = $.widget("gitbuilder.optiondefinition", {
 			"alias" : "ConBreak",
 			"type" : "none"
 		},
-		"zValueAmbiguous" : {
+		"ZValueAmbiguous" : {
 			"title" : "Altitude Error",
-			"alias" : "zValueAmbiguous",
+			"alias" : "ZValueAmbiguous",
 			"type" : "notnull"
 		},
 		"UselessPoint" : {
