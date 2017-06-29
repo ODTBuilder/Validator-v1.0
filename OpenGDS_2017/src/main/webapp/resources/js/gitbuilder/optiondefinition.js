@@ -99,7 +99,7 @@ gitbuilder.ui.OptionDefinition = $.widget("gitbuilder.optiondefinition", {
 		"RefLayerMiss" : {
 			"title" : "Layer Error Between Map Sheets",
 			"alias" : "RefLayerMiss",
-			"type" : "notnull"
+			"type" : "none"
 		},
 		"RefZValueMiss" : {
 			"title" : "Altitude Error Between Map Sheets",
