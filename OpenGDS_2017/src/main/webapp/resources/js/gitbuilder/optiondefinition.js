@@ -84,7 +84,7 @@ gitbuilder.ui.OptionDefinition = $.widget("gitbuilder.optiondefinition", {
 		"EdgeMatchMiss" : {
 			"title" : "Entity missing in adjacent map sheet",
 			"alias" : "EdgeMatchMiss",
-			"type" : "notnull"
+			"type" : "none"
 		},
 		"UselessEntity" : {
 			"title" : "Unknown use entity",
