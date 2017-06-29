@@ -16,14 +16,15 @@ gitbuilder.ui.OptionDefinition = $.widget("gitbuilder.optiondefinition", {
 	optDefCopy : undefined,
 	layerDef : undefined,
 	itemList : {
-		line : [ "SelfEntity", "LayerMiss", "UselessEntity", "OverShoot", "UnderShoot", "RefZValueMiss", "ConBreak", "ConIntersected", "ConOverDegree",
-				"UselessPoint", "RefLayerMiss", "EntityNone", "EdgeMatchMiss", "PointDuplicated", "zValueAmbiguous", "EntityDuplicated" ],
-		polyline : [ "SelfEntity", "BSymbolOutSided", "BuildingOpen", "WaterOpen", "EntityNone", "EdgeMatchMiss", "ConBreak", "ConIntersected", "ConOverDegree",
-				"UselessEntity", "EntityDuplicated", "PointDuplicated", "UselessPoint", "LayerMiss", "zValueAmbiguous", "OverShoot", "UnderShoot",
-				"RefLayerMiss" ],
-		lwpolyline : [ "SelfEntity", "BSymbolOutSided", "BuildingOpen", "WaterOpen", "EntityNone", "EdgeMatchMiss", "ConBreak", "ConIntersected", "ConOverDegree",
-				"UselessEntity", "EntityDuplicated", "PointDuplicated", "UselessPoint", "LayerMiss", "zValueAmbiguous", "OverShoot", "UnderShoot",
-				"RefLayerMiss" ],
+		line : [ "SelfEntity", "LayerMiss", "UselessEntity", "OverShoot", "UnderShoot", "RefZValueMiss", "ConBreak", "ConIntersected",
+				"ConOverDegree", "UselessPoint", "RefLayerMiss", "EntityNone", "EdgeMatchMiss", "PointDuplicated", "zValueAmbiguous",
+				"EntityDuplicated" ],
+		polyline : [ "SelfEntity", "BSymbolOutSided", "BuildingOpen", "WaterOpen", "EntityNone", "EdgeMatchMiss", "ConBreak", "ConIntersected",
+				"ConOverDegree", "UselessEntity", "EntityDuplicated", "PointDuplicated", "UselessPoint", "LayerMiss", "zValueAmbiguous", "OverShoot",
+				"UnderShoot", "RefLayerMiss" ],
+		lwpolyline : [ "SelfEntity", "BSymbolOutSided", "BuildingOpen", "WaterOpen", "EntityNone", "EdgeMatchMiss", "ConBreak", "ConIntersected",
+				"ConOverDegree", "UselessEntity", "EntityDuplicated", "PointDuplicated", "UselessPoint", "LayerMiss", "zValueAmbiguous", "OverShoot",
+				"UnderShoot", "RefLayerMiss" ],
 		text : [ "SelfEntity", "LayerMiss", "UselessEntity", "EntityDuplicated" ],
 		insert : [ "SelfEntity", "LayerMiss", "UselessEntity", "EntityDuplicated" ],
 		point : [ "LayerMiss", "UselessEntity", "EntityDuplicated", "SelfEntity", "AttributeFix", "OutBoundary", "CharacterAccuracy", "OverShoot",
@@ -259,7 +260,7 @@ gitbuilder.ui.OptionDefinition = $.widget("gitbuilder.optiondefinition", {
 		this.setDefinition(this.options.definition);
 		// this.optDef = $.extend({}, this.options.definition);
 		if (this.getDefinition()) {
-			this.setOptDefCopy(JSON.parse(JSON.stringify(this.getDefinition())));
+			this.setOptDefCopy(Object.assign({}, this.getDefinition()));
 		}
 		// this.optDefCopy =
 		// JSON.parse(JSON.stringify(this.optDef));
@@ -758,6 +759,7 @@ gitbuilder.ui.OptionDefinition = $.widget("gitbuilder.optiondefinition", {
 			click : function(event) {
 				if (event.target === okBtn[0]) {
 					that.setDefinition(that.getOptDefCopy());
+					that.setOptDefCopy(undefined);
 					that.close();
 				}
 			}
@@ -806,7 +808,7 @@ gitbuilder.ui.OptionDefinition = $.widget("gitbuilder.optiondefinition", {
 		}
 		this.setDefinition(this.options.definition);
 		if (this.getDefinition()) {
-			this.setOptDefCopy(JSON.parse(JSON.stringify(this.getDefinition())));
+			this.setOptDefCopy(Object.assign({}, this.getDefinition()));
 		}
 	},
 	_updateNotNullForm : function() {
@@ -1235,7 +1237,7 @@ gitbuilder.ui.OptionDefinition = $.widget("gitbuilder.optiondefinition", {
 		}
 	},
 	open : function() {
-		this.setOptDefCopy(JSON.parse(JSON.stringify(this.getDefinition())));
+		this.setOptDefCopy(Object.assign({}, this.getDefinition()));
 		this.window.modal('show');
 		this.update();
 	},
