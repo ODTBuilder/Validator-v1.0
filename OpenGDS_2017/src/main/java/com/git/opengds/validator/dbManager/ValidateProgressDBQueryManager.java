@@ -89,7 +89,7 @@ public class ValidateProgressDBQueryManager {
 
 	public HashMap<String, Object> getInsertQA10ResponseState(int pIdx) {
 		String tableName = "\"" + "qa10_layercollection_qa_progress" + "\"";
-		String updateQueryStr = "update " + tableName + " set state = response_time = " + "CURRENT_TIMESTAMP"
+		String updateQueryStr = "update " + tableName + " set response_time = " + "CURRENT_TIMESTAMP"
 				+ " where p_idx = " + pIdx;
 		HashMap<String, Object> updateQueryQueryMap = new HashMap<String, Object>();
 		updateQueryQueryMap.put("updateQuery", updateQueryStr);
