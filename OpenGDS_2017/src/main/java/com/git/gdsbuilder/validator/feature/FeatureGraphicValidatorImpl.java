@@ -619,7 +619,8 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 
 		for (int i = 0; i < typeNames.size(); i++) {
 			String typeName = typeNames.get(i);
-			if(typeName.equals(upperType)){
+			String upperTpyeName = typeName.toUpperCase();
+			if(upperTpyeName.equals(upperType)){
 				flag = true;
 				break;
 			}else{
