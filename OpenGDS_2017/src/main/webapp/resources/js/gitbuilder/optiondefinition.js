@@ -369,7 +369,7 @@ gitbuilder.ui.OptionDefinition = $.widget("gitbuilder.optiondefinition", {
 			if ($(this).val() === "") {
 				delete that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow];
 				that._toggleCheckbox(that.selectedValidationNow, false);
-			} else if ($.isNumeric($(this).val())) {
+			} else if ($.isNumeric($(this).val().replace(/(\s*)/g, ''))) {
 				if (!that.getOptDefCopy().hasOwnProperty(that.selectedLayerNow)) {
 					that.getOptDefCopy()[that.selectedLayerNow] = {};
 				}
@@ -378,7 +378,7 @@ gitbuilder.ui.OptionDefinition = $.widget("gitbuilder.optiondefinition", {
 						"figure" : undefined
 					};
 				}
-				that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]["figure"] = $(this).val();
+				that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]["figure"] = $(this).val().replace(/(\s*)/g, '');
 				that._toggleCheckbox(that.selectedValidationNow, true);
 			} else {
 				delete that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow];
@@ -567,7 +567,7 @@ gitbuilder.ui.OptionDefinition = $.widget("gitbuilder.optiondefinition", {
 			var obj = {};
 			for (var i = 0; i < attrs.length; i++) {
 				var key = $(attrs[i]).val();
-				var values = $(attrs[i]).parent().parent().next().find("input[type=text].optiondefinition-attr-text2").val().split(",");
+				var values = $(attrs[i]).parent().parent().next().find("input[type=text].optiondefinition-attr-text2").val().replace(/(\s*)/g, '').split(",");
 				obj[key] = values;
 			}
 			var selected = $(that.codeSelect).val();
