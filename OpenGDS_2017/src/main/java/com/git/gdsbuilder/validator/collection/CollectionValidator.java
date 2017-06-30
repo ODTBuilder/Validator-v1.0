@@ -94,7 +94,6 @@ import com.git.gdsbuilder.type.validate.option.Z_ValueAmbiguous;
 import com.git.gdsbuilder.validator.collection.rule.MapSystemRule;
 import com.git.gdsbuilder.validator.collection.rule.MapSystemRule.MapSystemRuleType;
 import com.git.gdsbuilder.validator.layer.LayerValidatorImpl;
-import com.sun.source.tree.TryTree;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
@@ -194,19 +193,24 @@ public class CollectionValidator {
 		for (int i = 0; i < layerCollections.size(); i++) {
 
 			GeoLayerCollection collection = layerCollections.get(i);
-
+			String collectionName = collection.getCollectionName();
 			try {
+				ErrorLayer errorLayer = new ErrorLayer();
+				errorLayer.setCollectionName(collectionName);
 				// layerMiss 검수
-				layerMissValidate(types, collection);
+				layerMissValidate(types, collection, errorLayer);
 
 				// geometric 검수
-				geometricValidate(types, collection);
-
+				geometricValidate(types, collection, errorLayer);
+				
 				// attribute 검수
-				attributeValidate(types, collection);
+				attributeValidate(types, collection, errorLayer);
 
 				// 인접도엽 검수
 				// closeCollectionValidate(types, mapSystemRule, collection);
+				
+				errLayerList.add(errorLayer);
+				
 				progress.put(collection.getCollectionName(), 2);
 			} catch (Exception e) {
 				progress.put(collection.getCollectionName(), 3);
@@ -214,11 +218,11 @@ public class CollectionValidator {
 		}
 	}
 
-	private void attributeValidate(ValidateLayerTypeList types, GeoLayerCollection layerCollection)
+	private void attributeValidate(ValidateLayerTypeList types, GeoLayerCollection layerCollection, ErrorLayer errorLayer)
 			throws SchemaException {
 		ErrorLayerList geoErrorList = new ErrorLayerList();
 		String collectionName = layerCollection.getCollectionName();
-		ErrorLayer errLayer = new ErrorLayer();
+		//ErrorLayer errLayer = new ErrorLayer();
 		for (int j = 0; j < types.size(); j++) {
 			ValidateLayerType type = types.get(j);
 			GeoLayerList typeLayers = validateLayerCollectionList.getTypeLayers(type.getTypeName(), layerCollection);
@@ -256,23 +260,23 @@ public class CollectionValidator {
 							typeErrorLayer = layerValidator.validateZ_ValueAmbiguous(attributeKey);
 						}
 						if (typeErrorLayer != null) {
-							errLayer.mergeErrorLayer(typeErrorLayer);
+							errorLayer.mergeErrorLayer(typeErrorLayer);
 						}
 					}
 				}
 			}
 		}
-		errLayer.setCollectionName(collectionName);
-		geoErrorList.add(errLayer);
-		this.errLayerMerge(geoErrorList);
+		//errorLayer.setCollectionName(collectionName);
+		//geoErrorList.add(errorLayer);
+		//this.errLayerMerge(geoErrorList);
 	}
 
-	private void geometricValidate(ValidateLayerTypeList types, GeoLayerCollection layerCollection)
+	private void geometricValidate(ValidateLayerTypeList types, GeoLayerCollection layerCollection,ErrorLayer errorLayer)
 			throws SchemaException, NoSuchAuthorityCodeException, FactoryException, TransformException, IOException {
 
 		ErrorLayerList geoErrorList = new ErrorLayerList();
 		GeoLayer neatLayer = layerCollection.getNeatLine();
-		ErrorLayer errLayer = new ErrorLayer();
+		//ErrorLayer errLayer = new ErrorLayer();
 
 		for (int i = 0; i < types.size(); i++) {
 			// getType
@@ -297,7 +301,7 @@ public class CollectionValidator {
 						typeErrorLayer = layerValidator.validateTwistedPolygon();
 
 						if (typeErrorLayer != null) {
-							errLayer.mergeErrorLayer(typeErrorLayer);
+							errorLayer.mergeErrorLayer(typeErrorLayer);
 						}
 
 						if (option instanceof ConBreak) {
@@ -327,7 +331,7 @@ public class CollectionValidator {
 										.getTypeLayers(relationNames.get(r), layerCollection));
 							}
 							if (typeErrorLayer != null) {
-								errLayer.mergeErrorLayer(typeErrorLayer);
+								errorLayer.mergeErrorLayer(typeErrorLayer);
 							}
 						}
 						if (option instanceof SmallArea) {
@@ -345,7 +349,7 @@ public class CollectionValidator {
 										.getTypeLayers(relationNames.get(r), layerCollection));
 							}
 							if (typeErrorLayer != null) {
-								errLayer.mergeErrorLayer(typeErrorLayer);
+								errorLayer.mergeErrorLayer(typeErrorLayer);
 							}
 						}
 						if (option instanceof OverShoot) {
@@ -375,7 +379,7 @@ public class CollectionValidator {
 										.getTypeLayers(relationNames.get(l), layerCollection));
 							}
 							if (typeErrorLayer != null) {
-								errLayer.mergeErrorLayer(typeErrorLayer);
+								errorLayer.mergeErrorLayer(typeErrorLayer);
 							}
 						}
 						if (option instanceof CrossRoad) {
@@ -385,7 +389,7 @@ public class CollectionValidator {
 										.getTypeLayers(relationNames.get(l), layerCollection), "", tolorence);
 							}
 							if (typeErrorLayer != null) {
-								errLayer.mergeErrorLayer(typeErrorLayer);
+								errorLayer.mergeErrorLayer(typeErrorLayer);
 							}
 						}
 						if (option instanceof NodeMiss) {
@@ -395,12 +399,12 @@ public class CollectionValidator {
 										.getTypeLayers(relationNames.get(l), layerCollection), "", tolorence);
 							}
 							if (typeErrorLayer != null) {
-								errLayer.mergeErrorLayer(typeErrorLayer);
+								errorLayer.mergeErrorLayer(typeErrorLayer);
 							}
 						}
 
 						if (typeErrorLayer != null) {
-							errLayer.mergeErrorLayer(typeErrorLayer);
+							errorLayer.mergeErrorLayer(typeErrorLayer);
 						}
 					}
 				}
@@ -408,19 +412,19 @@ public class CollectionValidator {
 				continue;
 			}
 		}
-		errLayer.setCollectionName(layerCollection.getCollectionName());
-		geoErrorList.add(errLayer);
-		this.errLayerMerge(geoErrorList);
-		// errLayerList.add(errLayer);
+		/*errLayer.setCollectionName(layerCollection.getCollectionName());
+		//geoErrorList.add(errLayer);
+		//this.errLayerMerge(geoErrorList);
+		errLayerList.add(errLayer);*/
 	}
 
 	@SuppressWarnings("unused")
-	private void layerMissValidate(ValidateLayerTypeList types, GeoLayerCollection layerCollection)
+	private void layerMissValidate(ValidateLayerTypeList types, GeoLayerCollection layerCollection, ErrorLayer errorLayer)
 			throws SchemaException {
 		// TODO Auto-generated method stub
 
 		List<GeoLayer> collectionList = layerCollection.getLayers();
-		ErrorLayer errLayer = new ErrorLayer();
+		//ErrorLayer errLayer = new ErrorLayer();
 		for (int j = 0; j < types.size(); j++) {
 			ValidateLayerType type = types.get(j);
 			GeoLayerList typeLayers = validateLayerCollectionList.getTypeLayers(type.getTypeName(), layerCollection);
@@ -439,7 +443,7 @@ public class CollectionValidator {
 							List<String> typeNames = ((LayerMiss) option).getLayerType();
 							typeErrorLayer = layerValidator.validateLayerMiss(typeNames);
 							if (typeErrorLayer != null) {
-								errLayer.mergeErrorLayer(typeErrorLayer);
+								errorLayer.mergeErrorLayer(typeErrorLayer);
 								collectionList.remove(typeLayer);
 							}
 
@@ -448,11 +452,11 @@ public class CollectionValidator {
 				}
 			}
 		}
-		if (errLayer != null) {
+		/*if (errLayer != null) {
 			errLayer.setCollectionName(layerCollection.getCollectionName());
 			errLayer.setCollectionType(layerCollection.getLayerCollectionType());
 			errLayerList.add(errLayer);
-		}
+		}*/
 	}
 
 	// closeValidate

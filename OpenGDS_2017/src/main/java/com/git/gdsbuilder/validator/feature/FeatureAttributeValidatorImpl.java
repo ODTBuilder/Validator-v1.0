@@ -196,8 +196,8 @@ public class FeatureAttributeValidatorImpl implements FeatureAttributeValidator 
 		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
 		Geometry returnGeom = null; 
 		if(geometry.intersects(relGeometry) || geometry.crosses(relGeometry) || geometry.overlaps(relGeometry)){
-			Object simValue = simpleFeature.getAttribute("명칭");
-			Object relValue = relationSimpleFeature.getAttribute("하천명");
+			Object simValue = simpleFeature.getAttribute("하천명");
+			Object relValue = relationSimpleFeature.getAttribute("명칭");
 			if(simValue.equals("null") || relValue.equals("null")){
 				returnGeom = geometry.intersection(relGeometry);
 				ErrorFeature errorFeature = new ErrorFeature(simpleFeature.getID(), BridgeName.Type.BRIDGENAME.errType(),
