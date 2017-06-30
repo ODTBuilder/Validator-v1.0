@@ -195,7 +195,7 @@ public class CollectionValidator {
 			GeoLayerCollection collection = layerCollections.get(i);
 
 			// layerMiss 검수
-			//layerMissValidate(types, collection);
+			layerMissValidate(types, collection);
 
 			// geometric 검수
 			geometricValidate(types, collection);
@@ -434,8 +434,9 @@ public class CollectionValidator {
 							typeErrorLayer = layerValidator.validateLayerMiss(typeNames);
 							if (typeErrorLayer != null) {
 								errLayer.mergeErrorLayer(typeErrorLayer);
+								collectionList.remove(typeLayer);
 							}
-							collectionList.remove(typeLayer);
+							
 						}
 					}
 				}
