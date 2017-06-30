@@ -130,10 +130,10 @@ gitbuilder.ui.Validation = $.widget("gitbuilder.validation", {
 					that.updateLayerList(r);
 				}
 			}
-//			if (r.length > 0) {
+// if (r.length > 0) {
 				that.updateValidationDef(r);
 				that.updateLayerList(r);
-//			}
+// }
 		});
 		$(this.tree).on('select_node.jstree', function(e, data) {
 			var r = [];
@@ -166,10 +166,10 @@ gitbuilder.ui.Validation = $.widget("gitbuilder.validation", {
 					that.updateLayerList(r);
 				}
 			}
-//			if (r.length > 0) {
+// if (r.length > 0) {
 				that.updateValidationDef(r);
 				that.updateLayerList(r);
-//			}
+// }
 		});
 		var layerlist = $("<div>").append(listhead).append(listbody);
 		this._addClass(layerlist, "panel");
@@ -541,10 +541,10 @@ gitbuilder.ui.Validation = $.widget("gitbuilder.validation", {
 			}
 		}
 
-//		if (r.length > 0) {
+// if (r.length > 0) {
 			this.updateValidationDef(r);
 			this.updateLayerList(r);
-//		}
+// }
 	},
 	close : function() {
 		this.window.modal('hide');
