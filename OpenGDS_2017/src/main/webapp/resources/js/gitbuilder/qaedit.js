@@ -419,6 +419,7 @@ gitbuilder.ui.QAEdit = $
 						$.ajax({
 							url : groupInfoURL,
 							method : "POST",
+							async : false,
 							contentType : "application/json; charset=UTF-8",
 							cache : false,
 							// async : false,
@@ -473,7 +474,7 @@ gitbuilder.ui.QAEdit = $
 					},
 					loadChildrenLayer : function(jstreeRefer, layerInfoURL, wmsURL, wfsURL, group, lastSheet, nowSheet, childrenLayerName,
 							parentLayer, errorLayerName, errorCallback, instance) {
-//						var that = this;
+						// var that = this;
 						var arr = {
 							"geoLayerList" : childrenLayerName
 						}
@@ -482,7 +483,7 @@ gitbuilder.ui.QAEdit = $
 							method : "POST",
 							contentType : "application/json; charset=UTF-8",
 							cache : false,
-							// async : false,
+							async : false,
 							data : JSON.stringify(arr),
 							beforeSend : function() { // 호출전실행
 								// loadImageShow();
@@ -545,7 +546,7 @@ gitbuilder.ui.QAEdit = $
 
 					},
 					loadErrorLayer : function(jstreeRefer, wfsURL, errorLayerName, group, inputCallback, instance) {
-//						var that = this;
+						// var that = this;
 						var defaultParameters = {
 							service : 'WFS',
 							version : '1.0.0',
@@ -561,6 +562,7 @@ gitbuilder.ui.QAEdit = $
 							url : wfsURL,
 							data : defaultParameters,
 							dataType : 'jsonp',
+							async : false,
 							jsonpCallback : 'getJson',
 							success : function(errorData, textStatus, jqXHR) {
 								console.log(errorData);

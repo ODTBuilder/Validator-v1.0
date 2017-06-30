@@ -690,7 +690,7 @@ gitbuilder.ui.OptionDefinition = $.widget("gitbuilder.optiondefinition", {
 				reader.readAsText(fileList[0]);
 				that._on(false, reader, {
 					load : function(event) {
-						var obj = JSON.parse(reader.result);
+						var obj = JSON.parse(reader.result.replace(/(\s*)/g, ''));
 						that.setOptDefCopy(obj);
 						that.update();
 						$(lower).css("display", "none");
