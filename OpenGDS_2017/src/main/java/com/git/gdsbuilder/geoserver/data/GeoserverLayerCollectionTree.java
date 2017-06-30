@@ -122,7 +122,7 @@ public class GeoserverLayerCollectionTree extends JSONArray {
 		validatorLayers.put("parent", "#");
 		validatorLayers.put("text", "ValidatorLayers");
 		validatorLayers.put("type", "error");
-		
+
 		ngiValLayers.put("id", "e_ngi");
 		ngiValLayers.put("parent", "valLayers");
 		ngiValLayers.put("text", "NGI");
@@ -142,7 +142,7 @@ public class GeoserverLayerCollectionTree extends JSONArray {
 		generalizationLayers.put("parent", "#");
 		generalizationLayers.put("text", "GeneralizationLayers");
 		generalizationLayers.put("type", "generalization");
-		
+
 		ngiGenLayers.put("id", "g_ngi");
 		ngiGenLayers.put("parent", "genLayers");
 		ngiGenLayers.put("text", "NGI");
@@ -174,16 +174,23 @@ public class GeoserverLayerCollectionTree extends JSONArray {
 		if (featureTypeList.size() > 1) {
 			List<String> layerNames = new ArrayList<String>(); // 레이어 이름 리스트
 			layerNames = featureTypeList.getNames();
-			List<String> fileNames = new ArrayList<String>(); // 파일명 리스트(서로 중복된
-			// 파일명 없음)
+			List<String> ngiFileNames = new ArrayList<String>(); // 파일명 리스트(서로
+																	// 중복된 파일명
+																	// 없음)
+			List<String> shpFileNames = new ArrayList<String>(); // 파일명 리스트(서로
+																	// 중복된 파일명
+																	// 없음)
+			List<String> dxfFileNames = new ArrayList<String>(); // 파일명 리스트(서로
+																	// 중복된 파일명
+																	// 없음)
 
 			for (String layerName : layerNames) {
 				int con = layerName.indexOf("_");
 				if (con != -1) {
 
 					String preName = layerName.substring(0, con); // 구분코드
-					String cutLayerName = layerName.substring(con+1);
-					
+					String cutLayerName = layerName.substring(con + 1);
+
 					// or
 					// 레이어명(구분코드가
 					// gen일 경우)
@@ -194,45 +201,41 @@ public class GeoserverLayerCollectionTree extends JSONArray {
 						int dash = cutLayerName.indexOf("_");
 
 						String fileType = cutLayerName.substring(0, dash);
-						String lastName = cutLayerName.substring(dash+1); // 파일명_레이어명
-						
-						if(fileType.toLowerCase().equals("ngi")){
+						String lastName = cutLayerName.substring(dash + 1); // 파일명_레이어명
+
+						if (fileType.toLowerCase().equals("ngi")) {
 							layerJson.put("id", layerName);
 							layerJson.put("parent", "e_ngi");
 							layerJson.put("text", lastName);
 							layerJson.put("type", "e_ngi_layer");
-						}
-						else if(fileType.toLowerCase().equals("dxf")){
+						} else if (fileType.toLowerCase().equals("dxf")) {
 							layerJson.put("id", layerName);
 							layerJson.put("parent", "e_dxf");
 							layerJson.put("text", lastName);
 							layerJson.put("type", "e_dxf_layer");
-						}
-						else if(fileType.toLowerCase().equals("shp")){
+						} else if (fileType.toLowerCase().equals("shp")) {
 							layerJson.put("id", layerName);
 							layerJson.put("parent", "e_shp");
 							layerJson.put("text", lastName);
 							layerJson.put("type", "e_shp_layer");
 						}
-				super.add(layerJson);
+						super.add(layerJson);
 					} else if (preName.equals("gen")) { // 파일명이 gen인 경우
 						int dash = cutLayerName.indexOf("_");
 						String fileType = cutLayerName.substring(0, dash);
-						String lastName = cutLayerName.substring(dash+1); // 파일명_레이어명
-						
-						if(fileType.toLowerCase().equals("ngi")){
+						String lastName = cutLayerName.substring(dash + 1); // 파일명_레이어명
+
+						if (fileType.toLowerCase().equals("ngi")) {
 							layerJson.put("id", layerName);
 							layerJson.put("parent", "g_ngi");
 							layerJson.put("text", lastName);
 							layerJson.put("type", "g_layer_ngi");
-						}
-						else if(fileType.toLowerCase().equals("dxf")){
+						} else if (fileType.toLowerCase().equals("dxf")) {
 							layerJson.put("id", layerName);
 							layerJson.put("parent", "g_dxf");
 							layerJson.put("text", lastName);
 							layerJson.put("type", "g_layer_dxf");
-						}
-						else if(fileType.toLowerCase().equals("shp")){
+						} else if (fileType.toLowerCase().equals("shp")) {
 							layerJson.put("id", layerName);
 							layerJson.put("parent", "g_shp");
 							layerJson.put("text", lastName);
@@ -243,195 +246,171 @@ public class GeoserverLayerCollectionTree extends JSONArray {
 					} else {
 						int dash = cutLayerName.indexOf("_");
 						String fileType = cutLayerName.substring(0, dash);
-						if(fileType.equals(EnFileFormat.DXF.getStateName())||fileType.equals(EnFileFormat.NGI.getStateName())||fileType.equals(EnFileFormat.SHP.getStateName())){
-							
-						
-						String lastName = cutLayerName.substring(dash+1); // 파일명_레이어명
-						int div = lastName.indexOf("_");
-						String fileName = lastName.substring(0, div);
-						String lastLayerName = lastName.substring(div + 1);
-						
-						int layerTypeDash = lastLayerName.indexOf("_");
-						String exTypelayerName = lastLayerName.substring(0, layerTypeDash);
-						String layerType = lastLayerName.substring(layerTypeDash + 1);
-						String suLayerType = "";
-						
-						String codeFileName = preName +"_"+ fileType +"_" + fileName;
-						String groupName = "gro_"+fileType+"_"+fileName;
-						if (fileNames.contains(fileName)) {
-							if(fileType.equals("ngi")){
-								if(layerType.equals("POINT")){
-									suLayerType = "pt";
-								}
-								else if(layerType.equals("LINESTRING")){
-									suLayerType = "ln";
-								}
-								else if(layerType.equals("POLYGON")){
-									suLayerType = "pg";
-								}
-								else if(layerType.equals("TEXT")){
-									suLayerType = "txt";
-								}
-								else if(layerType.equals("MULTIPOINT")){
-									suLayerType = "mpt";
-								}
-								else if(layerType.equals("MULTILINESTRING")){
-									suLayerType = "mln";
-								}
-								else if(layerType.equals("MULTIPOLYGON")){
-									suLayerType = "mpg";
-								}
-								else if(layerType.equals("TEXT")){
-									suLayerType = "txt";
-								}
-								else{
-									suLayerType = "defalut";
-									layerJson.put("type",suLayerType);
-								}
-								
-								layerJson.put("id", layerName);
-								layerJson.put("parent", groupName);
-								layerJson.put("text", exTypelayerName);
-								if(!suLayerType.equals("defalut")){
-									layerJson.put("type", "n_"+fileType+"_layer_"+suLayerType);
-								}
-								super.add(layerJson);
-							}else if(fileType.equals("dxf")){
-								if(layerType.equals("ARC")){
-									suLayerType = "arc";
-								}
-								else if(layerType.equals("CIRCLE")){
-									suLayerType = "cir";
-								}
-								else if(layerType.equals("INSERT")){
-									suLayerType = "ins";
-								}
-								else if(layerType.equals("LWPOLYLINE")){
-									suLayerType = "lpl";
-								}
-								else if(layerType.equals("POLYLINE")){
-									suLayerType = "pl";
-								}
-								else if(layerType.equals("TEXT")){
-									suLayerType = "txt";
-								}
-								else{
-									suLayerType = "defalut";
-									layerJson.put("type",suLayerType);
-								}							
-								
-								layerJson.put("id", layerName);
-								layerJson.put("parent", groupName);
-								layerJson.put("text", exTypelayerName);
-								if(!suLayerType.equals("defalut")){
-									layerJson.put("type", "n_"+fileType+"_layer_"+suLayerType);
-								}
-								super.add(layerJson);
-							}else if(fileType.equals("shp")){
-								layerJson.put("id", layerName);
-								layerJson.put("parent", groupName);
-								layerJson.put("text", exTypelayerName);
-								if(!suLayerType.equals("defalut")){
-									layerJson.put("type", "n_"+fileType+"_layer_"+suLayerType);
-								}
-								super.add(layerJson);
-							}
-						} else {
+						if (fileType.equals(EnFileFormat.DXF.getStateName())
+								|| fileType.equals(EnFileFormat.NGI.getStateName())
+								|| fileType.equals(EnFileFormat.SHP.getStateName())) {
+
+							String lastName = cutLayerName.substring(dash + 1); // 파일명_레이어명
+							int div = lastName.indexOf("_");
+							String fileName = lastName.substring(0, div);
+							String lastLayerName = lastName.substring(div + 1);
+
+							int layerTypeDash = lastLayerName.indexOf("_");
+							String exTypelayerName = lastLayerName.substring(0, layerTypeDash);
+							String layerType = lastLayerName.substring(layerTypeDash + 1);
+							String suLayerType = "";
+
+							String codeFileName = preName + "_" + fileType + "_" + fileName;
+							String groupName = "gro_" + fileType + "_" + fileName;
+
 							JSONObject fileNameJson = new JSONObject();
-							if(fileType.equals("ngi")){
-								if(layerType.equals("POINT")){
-									suLayerType = "pt";
+							if (fileType.equals("ngi")) {
+								if (ngiFileNames.contains(fileName)) {
+									if (layerType.equals("POINT")) {
+										suLayerType = "pt";
+									} else if (layerType.equals("LINESTRING")) {
+										suLayerType = "ln";
+									} else if (layerType.equals("POLYGON")) {
+										suLayerType = "pg";
+									} else if (layerType.equals("TEXT")) {
+										suLayerType = "txt";
+									} else if (layerType.equals("MULTIPOINT")) {
+										suLayerType = "mpt";
+									} else if (layerType.equals("MULTILINESTRING")) {
+										suLayerType = "mln";
+									} else if (layerType.equals("MULTIPOLYGON")) {
+										suLayerType = "mpg";
+									} else if (layerType.equals("TEXT")) {
+										suLayerType = "txt";
+									} else {
+										suLayerType = "defalut";
+										layerJson.put("type", suLayerType);
+									}
+
+									layerJson.put("id", layerName);
+									layerJson.put("parent", groupName);
+									layerJson.put("text", exTypelayerName);
+									if (!suLayerType.equals("defalut")) {
+										layerJson.put("type", "n_" + fileType + "_layer_" + suLayerType);
+									}
+									super.add(layerJson);
+								} else {
+									if (layerType.equals("POINT")) {
+										suLayerType = "pt";
+									} else if (layerType.equals("LINESTRING")) {
+										suLayerType = "ln";
+									} else if (layerType.equals("POLYGON")) {
+										suLayerType = "pg";
+									} else if (layerType.equals("TEXT")) {
+										suLayerType = "txt";
+									} else if (layerType.equals("MULTIPOINT")) {
+										suLayerType = "mpt";
+									} else if (layerType.equals("MULTILINESTRING")) {
+										suLayerType = "mln";
+									} else if (layerType.equals("MULTIPOLYGON")) {
+										suLayerType = "mpg";
+									} else if (layerType.equals("TEXT")) {
+										suLayerType = "txt";
+									} else {
+										suLayerType = "defalut";
+										layerJson.put("type", suLayerType);
+									}
+
+									ngiFileNames.add(fileName);
+									fileNameJson.put("id", groupName);
+									fileNameJson.put("parent", "n_ngi");
+									fileNameJson.put("text", fileName);
+									fileNameJson.put("type", "n_" + fileType + "_group");
+									layerJson.put("id", layerName);
+									layerJson.put("parent", groupName);
+									layerJson.put("text", exTypelayerName);
+									if (!suLayerType.equals("defalut")) {
+										layerJson.put("type", "n_" + fileType + "_layer_" + suLayerType);
+									}
+									super.add(fileNameJson);
+									super.add(layerJson);
 								}
-								else if(layerType.equals("LINESTRING")){
-									suLayerType = "ln";
+							} else if (fileType.equals("dxf")) {
+								if (dxfFileNames.contains(fileName)) {
+									if (layerType.equals("ARC")) {
+										suLayerType = "arc";
+									} else if (layerType.equals("CIRCLE")) {
+										suLayerType = "cir";
+									} else if (layerType.equals("INSERT")) {
+										suLayerType = "ins";
+									} else if (layerType.equals("LWPOLYLINE")) {
+										suLayerType = "lpl";
+									} else if (layerType.equals("POLYLINE")) {
+										suLayerType = "pl";
+									} else if (layerType.equals("TEXT")) {
+										suLayerType = "txt";
+									} else {
+										suLayerType = "defalut";
+										layerJson.put("type", suLayerType);
+									}
+
+									layerJson.put("id", layerName);
+									layerJson.put("parent", groupName);
+									layerJson.put("text", exTypelayerName);
+									if (!suLayerType.equals("defalut")) {
+										layerJson.put("type", "n_" + fileType + "_layer_" + suLayerType);
+									}
+									super.add(layerJson);
+								} else {
+									if (layerType.equals("ARC")) {
+										suLayerType = "arc";
+									} else if (layerType.equals("CIRCLE")) {
+										suLayerType = "cir";
+									} else if (layerType.equals("INSERT")) {
+										suLayerType = "ins";
+									} else if (layerType.equals("LWPOLYLINE")) {
+										suLayerType = "lpl";
+									} else if (layerType.equals("POLYLINE")) {
+										suLayerType = "pl";
+									} else if (layerType.equals("TEXT")) {
+										suLayerType = "txt";
+									} else {
+										suLayerType = "defalut";
+										layerJson.put("type", suLayerType);
+									}
+
+									dxfFileNames.add(fileName);
+									fileNameJson.put("id", groupName);
+									fileNameJson.put("parent", "n_dxf");
+									fileNameJson.put("text", fileName);
+									fileNameJson.put("type", "n_" + fileType + "_group");
+									layerJson.put("id", layerName);
+									layerJson.put("parent", groupName);
+									layerJson.put("text", exTypelayerName);
+									if (!suLayerType.equals("defalut")) {
+										layerJson.put("type", "n_" + fileType + "_layer_" + suLayerType);
+									}
+									super.add(fileNameJson);
+									super.add(layerJson);
 								}
-								else if(layerType.equals("POLYGON")){
-									suLayerType = "pg";
+							} else if (fileType.equals("shp")) {
+								if (shpFileNames.contains(fileName)) {
+									layerJson.put("id", layerName);
+									layerJson.put("parent", groupName);
+									layerJson.put("text", exTypelayerName);
+									if (!suLayerType.equals("defalut")) {
+										layerJson.put("type", "n_" + fileType + "_layer_" + suLayerType);
+									}
+									super.add(layerJson);
 								}
-								else if(layerType.equals("TEXT")){
-									suLayerType = "txt";
-								}
-								else if(layerType.equals("MULTIPOINT")){
-									suLayerType = "mpt";
-								}
-								else if(layerType.equals("MULTILINESTRING")){
-									suLayerType = "mln";
-								}
-								else if(layerType.equals("MULTIPOLYGON")){
-									suLayerType = "mpg";
-								}
-								else if(layerType.equals("TEXT")){
-									suLayerType = "txt";
-								}
-								else{
-									suLayerType = "defalut";
-									layerJson.put("type",suLayerType);
-								}
-								
-								fileNames.add(fileName);
-								fileNameJson.put("id", groupName);
-								fileNameJson.put("parent", "n_ngi");
-								fileNameJson.put("text", fileName);
-								fileNameJson.put("type", "n_"+fileType+"_group");
-								layerJson.put("id", layerName);
-								layerJson.put("parent", groupName);
-								layerJson.put("text", exTypelayerName);
-								if(!suLayerType.equals("defalut")){
-									layerJson.put("type", "n_"+fileType+"_layer_"+suLayerType);
-								}
-								super.add(fileNameJson);
-								super.add(layerJson);
-							}else if(fileType.equals("dxf")){
-								if(layerType.equals("ARC")){
-									suLayerType = "arc";
-								}
-								else if(layerType.equals("CIRCLE")){
-									suLayerType = "cir";
-								}
-								else if(layerType.equals("INSERT")){
-									suLayerType = "ins";
-								}
-								else if(layerType.equals("LWPOLYLINE")){
-									suLayerType = "lpl";
-								}
-								else if(layerType.equals("POLYLINE")){
-									suLayerType = "pl";
-								}
-								else if(layerType.equals("TEXT")){
-									suLayerType = "txt";
-								}
-								else{
-									suLayerType = "defalut";
-									layerJson.put("type",suLayerType);
-								}				
-								
-								fileNames.add(fileName);
-								fileNameJson.put("id", groupName);
-								fileNameJson.put("parent", "n_dxf");
-								fileNameJson.put("text", fileName);
-								fileNameJson.put("type", "n_"+fileType+"_group");
-								layerJson.put("id", layerName);
-								layerJson.put("parent", groupName);
-								layerJson.put("text", exTypelayerName);
-								if(!suLayerType.equals("defalut")){
-									layerJson.put("type", "n_"+fileType+"_layer_"+suLayerType);
-								}
-								super.add(fileNameJson);
-								super.add(layerJson);
-							}else if(fileType.equals("shp")){
-								fileNames.add(fileName);
+							} else {
+								shpFileNames.add(fileName);
 								fileNameJson.put("id", groupName);
 								fileNameJson.put("parent", "n_shp");
 								fileNameJson.put("text", fileName);
-								fileNameJson.put("type", "n_"+fileType+"_group");
+								fileNameJson.put("type", "n_" + fileType + "_group");
 								layerJson.put("id", layerName);
 								layerJson.put("parent", groupName);
 								layerJson.put("text", exTypelayerName);
-								layerJson.put("type", "n_"+fileType+"_layer_"+suLayerType);
+								layerJson.put("type", "n_" + fileType + "_layer_" + suLayerType);
 								super.add(fileNameJson);
 								super.add(layerJson);
 							}
-						}
 						}
 					}
 				}
