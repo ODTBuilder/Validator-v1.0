@@ -113,6 +113,7 @@ public class CollectionValidator {
 	double tolorence = 0.001;
 	ErrorLayerList errLayerList;
 	Map<String, Object> progress;
+	String collectionType;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(CollectionValidator.class);
 
@@ -126,10 +127,11 @@ public class CollectionValidator {
 	 * @throws TransformException
 	 * @throws IOException
 	 */
-	public CollectionValidator(ValidateLayerCollectionList validateLayerCollectionList)
+	public CollectionValidator(ValidateLayerCollectionList validateLayerCollectionList, String collectionType)
 			throws NoSuchAuthorityCodeException, SchemaException, FactoryException, TransformException, IOException {
 		this.validateLayerCollectionList = validateLayerCollectionList;
 		this.progress = new HashMap<String, Object>();
+		this.collectionType = collectionType;
 		collectionValidate();
 	}
 
@@ -173,6 +175,22 @@ public class CollectionValidator {
 		this.progress = progress;
 	}
 
+	public double getTolorence() {
+		return tolorence;
+	}
+
+	public void setTolorence(double tolorence) {
+		this.tolorence = tolorence;
+	}
+
+	public String getCollectionType() {
+		return collectionType;
+	}
+
+	public void setCollectionType(String collectionType) {
+		this.collectionType = collectionType;
+	}
+
 	/**
 	 * validateLayerCollectionList를 검수 @author DY.Oh @Date 2017. 4. 18. 오후
 	 * 3:30:31 @throws SchemaException @throws
@@ -197,20 +215,21 @@ public class CollectionValidator {
 			try {
 				ErrorLayer errorLayer = new ErrorLayer();
 				errorLayer.setCollectionName(collectionName);
+				errorLayer.setCollectionType(this.collectionType);
+				
 				// layerMiss 검수
 				layerMissValidate(types, collection, errorLayer);
 
 				// geometric 검수
 				geometricValidate(types, collection, errorLayer);
-				
+
 				// attribute 검수
 				attributeValidate(types, collection, errorLayer);
 
 				// 인접도엽 검수
 				// closeCollectionValidate(types, mapSystemRule, collection);
-				
+
 				errLayerList.add(errorLayer);
-				
 				progress.put(collection.getCollectionName(), 2);
 			} catch (Exception e) {
 				progress.put(collection.getCollectionName(), 3);
@@ -218,11 +237,11 @@ public class CollectionValidator {
 		}
 	}
 
-	private void attributeValidate(ValidateLayerTypeList types, GeoLayerCollection layerCollection, ErrorLayer errorLayer)
-			throws SchemaException {
+	private void attributeValidate(ValidateLayerTypeList types, GeoLayerCollection layerCollection,
+			ErrorLayer errorLayer) throws SchemaException {
 		ErrorLayerList geoErrorList = new ErrorLayerList();
 		String collectionName = layerCollection.getCollectionName();
-		//ErrorLayer errLayer = new ErrorLayer();
+		// ErrorLayer errLayer = new ErrorLayer();
 		for (int j = 0; j < types.size(); j++) {
 			ValidateLayerType type = types.get(j);
 			GeoLayerList typeLayers = validateLayerCollectionList.getTypeLayers(type.getTypeName(), layerCollection);
@@ -266,17 +285,18 @@ public class CollectionValidator {
 				}
 			}
 		}
-		//errorLayer.setCollectionName(collectionName);
-		//geoErrorList.add(errorLayer);
-		//this.errLayerMerge(geoErrorList);
+		// errorLayer.setCollectionName(collectionName);
+		// geoErrorList.add(errorLayer);
+		// this.errLayerMerge(geoErrorList);
 	}
 
-	private void geometricValidate(ValidateLayerTypeList types, GeoLayerCollection layerCollection,ErrorLayer errorLayer)
+	private void geometricValidate(ValidateLayerTypeList types, GeoLayerCollection layerCollection,
+			ErrorLayer errorLayer)
 			throws SchemaException, NoSuchAuthorityCodeException, FactoryException, TransformException, IOException {
 
 		ErrorLayerList geoErrorList = new ErrorLayerList();
 		GeoLayer neatLayer = layerCollection.getNeatLine();
-		//ErrorLayer errLayer = new ErrorLayer();
+		// ErrorLayer errLayer = new ErrorLayer();
 
 		for (int i = 0; i < types.size(); i++) {
 			// getType
@@ -412,19 +432,20 @@ public class CollectionValidator {
 				continue;
 			}
 		}
-		/*errLayer.setCollectionName(layerCollection.getCollectionName());
-		//geoErrorList.add(errLayer);
-		//this.errLayerMerge(geoErrorList);
-		errLayerList.add(errLayer);*/
+		/*
+		 * errLayer.setCollectionName(layerCollection.getCollectionName());
+		 * //geoErrorList.add(errLayer); //this.errLayerMerge(geoErrorList);
+		 * errLayerList.add(errLayer);
+		 */
 	}
 
 	@SuppressWarnings("unused")
-	private void layerMissValidate(ValidateLayerTypeList types, GeoLayerCollection layerCollection, ErrorLayer errorLayer)
-			throws SchemaException {
+	private void layerMissValidate(ValidateLayerTypeList types, GeoLayerCollection layerCollection,
+			ErrorLayer errorLayer) throws SchemaException {
 		// TODO Auto-generated method stub
 
 		List<GeoLayer> collectionList = layerCollection.getLayers();
-		//ErrorLayer errLayer = new ErrorLayer();
+		// ErrorLayer errLayer = new ErrorLayer();
 		for (int j = 0; j < types.size(); j++) {
 			ValidateLayerType type = types.get(j);
 			GeoLayerList typeLayers = validateLayerCollectionList.getTypeLayers(type.getTypeName(), layerCollection);
@@ -452,11 +473,12 @@ public class CollectionValidator {
 				}
 			}
 		}
-		/*if (errLayer != null) {
-			errLayer.setCollectionName(layerCollection.getCollectionName());
-			errLayer.setCollectionType(layerCollection.getLayerCollectionType());
-			errLayerList.add(errLayer);
-		}*/
+		/*
+		 * if (errLayer != null) {
+		 * errLayer.setCollectionName(layerCollection.getCollectionName());
+		 * errLayer.setCollectionType(layerCollection.getLayerCollectionType());
+		 * errLayerList.add(errLayer); }
+		 */
 	}
 
 	// closeValidate
