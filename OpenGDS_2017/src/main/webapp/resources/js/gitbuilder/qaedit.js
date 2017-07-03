@@ -130,7 +130,7 @@ gitbuilder.ui.QAEdit = $
 											"action" : function(data) {
 												var inst = $.jstree.reference(data.reference), obj = inst.get_node(data.reference);
 												if (obj.type === "n_ngi_group" || obj.type === "n_dxf_group") {
-													that.assign_center(obj.id);
+													that.assign_center(obj);
 												}
 											}
 										},
@@ -151,7 +151,7 @@ gitbuilder.ui.QAEdit = $
 											"action" : function(data) {
 												var inst = $.jstree.reference(data.reference), obj = inst.get_node(data.reference);
 												if (obj.type === "n_ngi_group" || obj.type === "n_dxf_group") {
-													that.assign_up(obj.id);
+													that.assign_up(obj);
 												}
 											}
 										},
@@ -172,7 +172,7 @@ gitbuilder.ui.QAEdit = $
 											"action" : function(data) {
 												var inst = $.jstree.reference(data.reference), obj = inst.get_node(data.reference);
 												if (obj.type === "n_ngi_group" || obj.type === "n_dxf_group") {
-													that.assign_down(obj.id);
+													that.assign_down(obj);
 												}
 											}
 										},
@@ -193,7 +193,7 @@ gitbuilder.ui.QAEdit = $
 											"action" : function(data) {
 												var inst = $.jstree.reference(data.reference), obj = inst.get_node(data.reference);
 												if (obj.type === "n_ngi_group" || obj.type === "n_dxf_group") {
-													that.assign_left(obj.id);
+													that.assign_left(obj);
 												}
 											}
 										},
@@ -214,7 +214,7 @@ gitbuilder.ui.QAEdit = $
 											"action" : function(data) {
 												var inst = $.jstree.reference(data.reference), obj = inst.get_node(data.reference);
 												if (obj.type === "n_ngi_group" || obj.type === "n_dxf_group") {
-													that.assign_right(obj.id);
+													that.assign_right(obj);
 												}
 											}
 										},
@@ -235,7 +235,7 @@ gitbuilder.ui.QAEdit = $
 											"action" : function(data) {
 												var inst = $.jstree.reference(data.reference), obj = inst.get_node(data.reference);
 												if (obj.type === "e_ngi_layer" || obj.type === "e_dxf_layer") {
-													that.assign_error(obj.id);
+													that.assign_error(obj);
 												}
 											}
 										}
@@ -355,54 +355,54 @@ gitbuilder.ui.QAEdit = $
 					/**
 					 * 오류 레이어 할당
 					 */
-					assign_error : function(name) {
-						this.mapsheet.error = name;
-						$(this.errbtn).text(name);
+					assign_error : function(obj) {
+						this.mapsheet.error = obj.id;
+						$(this.errbtn).text(obj.text);
 						console.log(this.mapsheet);
 					},
 
 					/**
 					 * 가운데 레이어 할당
 					 */
-					assign_center : function(name) {
-						this.mapsheet.center = name;
-						$(this.centerbtn).text(name);
+					assign_center : function(obj) {
+						this.mapsheet.center = obj.id;
+						$(this.centerbtn).text(obj.text);
 						console.log(this.mapsheet);
 					},
 
 					/**
 					 * 위 레이어 할당
 					 */
-					assign_up : function(name) {
-						this.mapsheet.up = name;
-						$(this.upbtn).text(name);
+					assign_up : function(obj) {
+						this.mapsheet.up = obj.id;
+						$(this.upbtn).text(obj.text);
 						console.log(this.mapsheet);
 					},
 
 					/**
 					 * 아래 레이어 할당
 					 */
-					assign_down : function(name) {
-						this.mapsheet.down = name;
-						$(this.downbtn).text(name);
+					assign_down : function(obj) {
+						this.mapsheet.down = obj.id;
+						$(this.downbtn).text(obj.text);
 						console.log(this.mapsheet);
 					},
 
 					/**
 					 * 왼 레이어 할당
 					 */
-					assign_left : function(name) {
-						this.mapsheet.left = name;
-						$(this.leftbtn).text(name);
+					assign_left : function(obj) {
+						this.mapsheet.left = obj.id;
+						$(this.leftbtn).text(obj.text);
 						console.log(this.mapsheet);
 					},
 
 					/**
 					 * 오른 레이어 할당
 					 */
-					assign_right : function(name) {
-						this.mapsheet.right = name;
-						$(this.rightbtn).text(name);
+					assign_right : function(obj) {
+						this.mapsheet.right = obj.id;
+						$(this.rightbtn).text(obj.text);
 						console.log(this.mapsheet);
 					},
 					loadGroupLayer : function(jstreeRefer, layerInfoURL, groupInfoURL, wmsURL, wfsURL, groupLayerName, lastMapSheet, errorLayerName,

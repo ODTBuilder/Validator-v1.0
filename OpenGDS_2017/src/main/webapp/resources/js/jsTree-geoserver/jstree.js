@@ -7180,6 +7180,67 @@
 					this._data.geoserver.downloadGeoserver = this.settings.geoserver.downloadGeoserver;
 				}
 
+				this.import_fake_image_notload = function(obj) {
+					// // =======================================
+					var that = this;
+					var parentLayer;
+					var farr = {
+						"geoLayerList" : [ obj.parent ]
+					}
+					console.log(JSON.stringify(farr));
+					$.ajax({
+						url : "geoserver2/getGeoGroupLayerInfoList.ajax",
+						method : "POST",
+						contentType : "application/json; charset=UTF-8",
+						cache : false,
+						// async : false,
+						data : JSON.stringify(farr),
+						beforeSend : function() { // 호출전실행
+							$("body").css("cursor", "wait");
+						},
+						traditional : true,
+						success : function(data, textStatus, jqXHR) {
+							console.log(data);
+							if (Array.isArray(data)) {
+								for (var i = 0; i < data.length; i++) {
+									var wms = new ol.layer.Tile({
+										source : new ol.source.TileWMS({
+											url : "geoserver2/geoserverWMSLayerLoad.do",
+											params : {
+												'LAYERS' : obj.arr.toString(),
+												// 'LAYERS' :
+												// that._data.geoserver.user +
+												// ":" + data[i].name,
+												'TILED' : true,
+												'FORMAT' : 'image/png8',
+												'VERSION' : '1.1.0',
+												'CRS' : 'EPSG:5186',
+												'SRS' : 'EPSG:5186',
+												'BBOX' : data[i].bbox.minx.toString() + "," + data[i].bbox.miny.toString() + ","
+														+ data[i].bbox.maxx.toString() + "," + data[i].bbox.maxy.toString()
+											},
+											serverType : 'geoserver'
+										})
+									});
+									wms.set("name", obj.refer.get_node(data[i].name).text);
+									wms.set("id", data[i].name);
+									var git = {
+										"validation" : false,
+										"geometry" : data[i].geomType,
+										"editable" : true,
+										"fake" : "parent"
+									}
+									wms.set("git", git);
+									parentLayer = wms;
+									console.log(wms);
+									// wms.set("type", "ImageTile");
+									// that._data.geoserver.map.addLayer(wms);
+								}
+							}
+						}
+					});
+				};
+
 				/**
 				 * wms레이어를 트리형태로 임포트
 				 * 
@@ -7188,7 +7249,6 @@
 				 * @author 소이준
 				 */
 				this.import_fake_image = function(obj) {
-					var that = this;
 					// // =======================================
 					var that = this;
 					var parentLayer;
@@ -8315,7 +8375,7 @@
 														"version" : "1.1.0",
 														"format" : "image/png",
 														"crs" : data[i].srs,
-														"bbox" : [data[i].nbBox.minx, data[i].nbBox.miny, data[i].nbBox.maxx, data[i].nbBox.maxy],
+														"bbox" : [ data[i].nbBox.minx, data[i].nbBox.miny, data[i].nbBox.maxx, data[i].nbBox.maxy ],
 														"layers" : data[i].lName,
 														"width" : 1024,
 														"height" : 768
