@@ -37,6 +37,7 @@ package com.git.gdsbuilder.validator.layer;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.geotools.data.DataUtilities;
 import org.geotools.data.simple.SimpleFeatureCollection;
@@ -49,23 +50,23 @@ import org.json.simple.JSONObject;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory2;
-import org.opengis.filter.MultiValuedFilter.MatchAction;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.operation.TransformException;
 
 import com.git.gdsbuilder.type.geoserver.layer.GeoLayer;
+import com.git.gdsbuilder.type.validate.collection.close.ValidateCloseCollectionLayer;
 import com.git.gdsbuilder.type.validate.error.ErrorFeature;
 import com.git.gdsbuilder.type.validate.error.ErrorLayer;
+import com.git.gdsbuilder.type.validate.option.ValidatorOption;
+import com.git.gdsbuilder.validator.collection.rule.MapSystemRule.MapSystemRuleType;
 import com.git.gdsbuilder.validator.feature.FeatureAttributeValidator;
 import com.git.gdsbuilder.validator.feature.FeatureAttributeValidatorImpl;
+import com.git.gdsbuilder.validator.feature.FeatureCloseCollectionValidator;
+import com.git.gdsbuilder.validator.feature.FeatureCloseCollectionValidatorImpl;
 import com.git.gdsbuilder.validator.feature.FeatureGraphicValidator;
 import com.git.gdsbuilder.validator.feature.FeatureGraphicValidatorImpl;
-import com.sun.org.apache.xalan.internal.xsltc.compiler.sym;
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.LinearRing;
+import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.Polygon;
 
 public class LayerValidatorImpl implements LayerValidator {
@@ -73,6 +74,7 @@ public class LayerValidatorImpl implements LayerValidator {
 	GeoLayer validatorLayer;
 	FeatureGraphicValidator graphicValidator = new FeatureGraphicValidatorImpl();
 	FeatureAttributeValidator attributeValidator = new FeatureAttributeValidatorImpl();
+	FeatureCloseCollectionValidator closeCollectionValidator = new FeatureCloseCollectionValidatorImpl();
 
 	public LayerValidatorImpl() {
 
@@ -186,7 +188,7 @@ public class LayerValidatorImpl implements LayerValidator {
 		}
 	}
 
-	public ErrorLayer validateZ_ValueAmbiguous(String attributeKey) throws SchemaException {
+	public ErrorLayer validateZValueAmbiguous(String attributeKey) throws SchemaException {
 
 		ErrorLayer errLayer = new ErrorLayer();
 
@@ -851,7 +853,227 @@ public class LayerValidatorImpl implements LayerValidator {
 			return null;
 		}
 	}
+	
+	
+	public ErrorLayer validateCloseCollection(ValidateCloseCollectionLayer closeCollectionLayer, String geomColunm){
+		FilterFactory2 ff = CommonFactoryFinder.getFilterFactory2();
+		
+		ErrorLayer errorLayer = new ErrorLayer();
+		
+		if(closeCollectionLayer!=null){
+			GeoLayer targetLayer = validatorLayer;
+			Map<MapSystemRuleType, GeoLayer> collectionMap = closeCollectionLayer.getCollectionMap();
+			Map<MapSystemRuleType, LineString> collectionBoundary = closeCollectionLayer.getCollectionBoundary();
+			double tolorence = closeCollectionLayer.getTolorence();
+			List<ValidatorOption> closeValidateOptions = closeCollectionLayer.getCloseValidateOptions();
+			Map<MapSystemRuleType, Polygon> targetFeaturesGetBoundary = closeCollectionLayer.getTargetFeaturesGetBoundary();
+			Map<MapSystemRuleType, Polygon> nearFeaturesGetBoundary = closeCollectionLayer.getNearFeaturesGetBoundary();
+			
+			//인접도엽 옵션객체 선언
+			/*EntityNone entityNone = null;
+			EdgeMatchMiss matchMiss = null;
+			RefZValueMiss refZValueMiss = null;
+			RefLayerMiss refLayerMiss = null;
+			RefAttributeMiss refAttributeMiss = null;
+			
+			for(ValidatorOption validatorOption : closeValidateOptions){
+				if (validatorOption instanceof EntityNone) {
+					entityNone = (EntityNone) validatorOption;
+				}
+				if (validatorOption instanceof EdgeMatchMiss) {
+					matchMiss = (EdgeMatchMiss) validatorOption;
+				}
+				if (validatorOption instanceof RefZValueMiss) {
+					refZValueMiss = (RefZValueMiss) validatorOption;
+				}
+				if (validatorOption instanceof EntityNone) {
+					refLayerMiss = (RefLayerMiss) validatorOption;
+				}
+				if (validatorOption instanceof EntityNone) {
+					refAttributeMiss = (RefAttributeMiss) validatorOption;
+				}
+			}*/
+			
+			//도엽 라인 선언			
+			LineString topLineString = null;
+			LineString bottomLineString = null;
+			LineString leftLineString = null;
+			LineString rightLineString = null;
+			if(collectionBoundary!=null){
+				topLineString = collectionBoundary.get(MapSystemRuleType.TOP);
+				bottomLineString = collectionBoundary.get(MapSystemRuleType.BOTTOM);
+				leftLineString = collectionBoundary.get(MapSystemRuleType.LEFT);
+				rightLineString = collectionBoundary.get(MapSystemRuleType.RIGHT);
+			}
+			else
+				return null;
+			
+			
 
+			// 인접도엽 레이어 GET
+			GeoLayer topGeoLayer = collectionMap.get(MapSystemRuleType.TOP);;
+			GeoLayer bottomGeoLayer = collectionMap.get(MapSystemRuleType.BOTTOM);
+			GeoLayer leftGeoLayer = collectionMap.get(MapSystemRuleType.LEFT);
+			GeoLayer rightGeoLayer = collectionMap.get(MapSystemRuleType.RIGHT);
+			
+			
+			// 대상도엽 Boundary GET
+			Polygon topPolygon = targetFeaturesGetBoundary.get(MapSystemRuleType.TOP);
+			Polygon bottomPolygon = targetFeaturesGetBoundary.get(MapSystemRuleType.BOTTOM);
+			Polygon leftPolygon = targetFeaturesGetBoundary.get(MapSystemRuleType.LEFT);
+			Polygon rightPolygon = targetFeaturesGetBoundary.get(MapSystemRuleType.RIGHT);
+			
+			
+			// 인접도엽 Boundary GET
+			Polygon nearTopPolygon = nearFeaturesGetBoundary.get(MapSystemRuleType.TOP);
+			Polygon nearBottomPolygon = nearFeaturesGetBoundary.get(MapSystemRuleType.BOTTOM);
+			Polygon nearLeftPolygon = nearFeaturesGetBoundary.get(MapSystemRuleType.LEFT);
+			Polygon nearRightPolygon = nearFeaturesGetBoundary.get(MapSystemRuleType.RIGHT);
+			
+			
+			// 대상도엽 Feature 리스트
+			List<SimpleFeature> topFeatureList = new ArrayList<SimpleFeature>();
+			List<SimpleFeature> bottomFeatureList = new ArrayList<SimpleFeature>();
+			List<SimpleFeature> leftFeatureList = new ArrayList<SimpleFeature>();
+			List<SimpleFeature> rightFeatureList = new ArrayList<SimpleFeature>();
 
+			
+			// 인접도엽 Feature 리스트
+			List<SimpleFeature> nearTopFeatureList = new ArrayList<SimpleFeature>();
+			List<SimpleFeature> nearBottomFeatureList = new ArrayList<SimpleFeature>();
+			List<SimpleFeature> nearLeftFeatureList = new ArrayList<SimpleFeature>();
+			List<SimpleFeature> nearRightFeatureList = new ArrayList<SimpleFeature>();
 
+			
+			// 대상도엽, 인접도엽 Tolorence 영역내 FeatureList GET
+			if(topGeoLayer!=null){
+				Filter topFilter = ff.intersects(ff.property(geomColunm), ff.literal(topPolygon));
+				Filter nearTopFilter = ff.intersects(ff.property(geomColunm), ff.literal(nearTopPolygon));
+				
+				
+				SimpleFeatureCollection topCollection = targetLayer.getSimpleFeatureCollection().subCollection(topFilter);
+				SimpleFeatureCollection nearTopCollection = topGeoLayer.getSimpleFeatureCollection().subCollection(nearTopFilter);
+				
+				SimpleFeatureIterator topFeatureIterator = topCollection.features();
+				SimpleFeatureIterator nearTopFeatureIterator = nearTopCollection.features();
+
+				while (topFeatureIterator.hasNext()) {
+					topFeatureList.add(topFeatureIterator.next());
+				}
+
+				while (nearTopFeatureIterator.hasNext()) {
+					nearTopFeatureList.add(nearTopFeatureIterator.next());
+				}
+				
+				List<ErrorFeature> errorFeatures = new ArrayList<ErrorFeature>();
+				for(SimpleFeature targetFeature : topFeatureList){
+					errorFeatures = closeCollectionValidator.ValidateCloseCollection(targetFeature, nearTopFeatureList, closeValidateOptions, topLineString, tolorence);	
+				}
+				
+				for(ErrorFeature errorFeature : errorFeatures){
+					errorFeature.setLayerName(validatorLayer.getLayerName());
+					errorLayer.addErrorFeature(errorFeature);
+				}
+				
+			}
+			
+			if(bottomGeoLayer!=null){
+				Filter bottomFilter = ff.intersects(ff.property(geomColunm), ff.literal(bottomPolygon));
+				Filter bottomTopFilter = ff.intersects(ff.property(geomColunm), ff.literal(nearBottomPolygon));
+				
+				
+				SimpleFeatureCollection bottomCollection = targetLayer.getSimpleFeatureCollection().subCollection(bottomFilter);
+				SimpleFeatureCollection nearBottomCollection = topGeoLayer.getSimpleFeatureCollection().subCollection(bottomTopFilter);
+				
+				SimpleFeatureIterator bottomFeatureIterator = bottomCollection.features();
+				SimpleFeatureIterator nearBottomFeatureIterator = nearBottomCollection.features();
+
+				while (bottomFeatureIterator.hasNext()) {
+					bottomFeatureList.add(bottomFeatureIterator.next());
+				}
+
+				while (nearBottomFeatureIterator.hasNext()) {
+					nearBottomFeatureList.add(nearBottomFeatureIterator.next());
+				}
+				
+				List<ErrorFeature> errorFeatures = new ArrayList<ErrorFeature>();
+				for(SimpleFeature targetFeature : bottomFeatureList){
+					errorFeatures = closeCollectionValidator.ValidateCloseCollection(targetFeature, nearBottomFeatureList, closeValidateOptions, bottomLineString, tolorence);	
+				}
+				
+				for(ErrorFeature errorFeature : errorFeatures){
+					errorFeature.setLayerName(validatorLayer.getLayerName());
+					errorLayer.addErrorFeature(errorFeature);
+				}
+			}
+			
+			if(leftGeoLayer!=null){
+				Filter leftFilter = ff.intersects(ff.property(geomColunm), ff.literal(leftPolygon));
+				Filter nearLeftFilter = ff.intersects(ff.property(geomColunm), ff.literal(nearLeftPolygon));
+				
+				
+				SimpleFeatureCollection leftCollection = targetLayer.getSimpleFeatureCollection().subCollection(leftFilter);
+				SimpleFeatureCollection nearLeftCollection = topGeoLayer.getSimpleFeatureCollection().subCollection(nearLeftFilter);
+				
+				SimpleFeatureIterator leftFeatureIterator = leftCollection.features();
+				SimpleFeatureIterator nearLeftFeatureIterator = nearLeftCollection.features();
+
+				while (leftFeatureIterator.hasNext()) {
+					leftFeatureList.add(leftFeatureIterator.next());
+				}
+
+				while (nearLeftFeatureIterator.hasNext()) {
+					nearLeftFeatureList.add(nearLeftFeatureIterator.next());
+				}
+				
+				List<ErrorFeature> errorFeatures = new ArrayList<ErrorFeature>();
+				for(SimpleFeature targetFeature : leftFeatureList){
+					errorFeatures = closeCollectionValidator.ValidateCloseCollection(targetFeature, nearLeftFeatureList, closeValidateOptions, leftLineString, tolorence);	
+				}
+				
+				for(ErrorFeature errorFeature : errorFeatures){
+					errorFeature.setLayerName(validatorLayer.getLayerName());
+					errorLayer.addErrorFeature(errorFeature);
+				}
+			}
+			
+			if(rightGeoLayer!=null){
+				Filter rightFilter = ff.intersects(ff.property(geomColunm), ff.literal(rightPolygon));
+				Filter nearRightFilter = ff.intersects(ff.property(geomColunm), ff.literal(nearRightPolygon));
+				
+				
+				SimpleFeatureCollection rightCollection = targetLayer.getSimpleFeatureCollection().subCollection(rightFilter);
+				SimpleFeatureCollection nearRightCollection = topGeoLayer.getSimpleFeatureCollection().subCollection(nearRightFilter);
+				
+				SimpleFeatureIterator rightFeatureIterator = rightCollection.features();
+				SimpleFeatureIterator nearRightFeatureIterator = nearRightCollection.features();
+
+				while (rightFeatureIterator.hasNext()) {
+					rightFeatureList.add(rightFeatureIterator.next());
+				}
+
+				while (nearRightFeatureIterator.hasNext()) {
+					nearRightFeatureList.add(nearRightFeatureIterator.next());
+				}
+				
+				List<ErrorFeature> errorFeatures = new ArrayList<ErrorFeature>();
+				for(SimpleFeature targetFeature : rightFeatureList){
+					errorFeatures = closeCollectionValidator.ValidateCloseCollection(targetFeature, nearRightFeatureList, closeValidateOptions, rightLineString, tolorence);	
+				}
+				
+				for(ErrorFeature errorFeature : errorFeatures){
+					errorFeature.setLayerName(validatorLayer.getLayerName());
+					errorLayer.addErrorFeature(errorFeature);
+				}
+			}
+		}
+		else
+			return null;
+		
+		if(errorLayer.getErrFeatureList().size() > 0){
+			return errorLayer;
+		}else{
+			return null;
+		}
+	}
 }

@@ -35,11 +35,12 @@
 package com.git.gdsbuilder.validator.feature;
 
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.feature.SchemaException;
 import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
 import org.opengis.feature.simple.SimpleFeature;
 
 import com.git.gdsbuilder.type.validate.error.ErrorFeature;
@@ -47,7 +48,7 @@ import com.git.gdsbuilder.type.validate.error.ErrorLayer;
 import com.git.gdsbuilder.type.validate.option.Admin;
 import com.git.gdsbuilder.type.validate.option.AttributeFix;
 import com.git.gdsbuilder.type.validate.option.BridgeName;
-import com.git.gdsbuilder.type.validate.option.Z_ValueAmbiguous;
+import com.git.gdsbuilder.type.validate.option.ZValueAmbiguous;
 import com.vividsolutions.jts.geom.Geometry;
 
 public class FeatureAttributeValidatorImpl implements FeatureAttributeValidator {
@@ -119,15 +120,15 @@ public class FeatureAttributeValidatorImpl implements FeatureAttributeValidator 
 //		Boolean flag = true;
 		if(attributeValue != null){
 			if(attributeValue.toString().equals("") || attributeValue.toString().equals("0.0") ){
-				errorFeature = new ErrorFeature(simpleFeature.getID(), Z_ValueAmbiguous.Type.Z_VALUEAMBIGUOUS.errType(),
-						Z_ValueAmbiguous.Type.Z_VALUEAMBIGUOUS.errName(), geometry.getInteriorPoint());
+				errorFeature = new ErrorFeature(simpleFeature.getID(), ZValueAmbiguous.Type.ZVALUEAMBIGUOUS.errType(),
+						ZValueAmbiguous.Type.ZVALUEAMBIGUOUS.errName(), geometry.getInteriorPoint());
 			}else{
 				String attributeStr = attributeValue.toString();
 					Double num = new Double(Double.parseDouble(attributeStr));
 					int a = num.intValue();
 					if(num>a){
-						errorFeature = new ErrorFeature(simpleFeature.getID(), Z_ValueAmbiguous.Type.Z_VALUEAMBIGUOUS.errType(),
-								Z_ValueAmbiguous.Type.Z_VALUEAMBIGUOUS.errName(), geometry.getInteriorPoint());
+						errorFeature = new ErrorFeature(simpleFeature.getID(), ZValueAmbiguous.Type.ZVALUEAMBIGUOUS.errType(),
+								ZValueAmbiguous.Type.ZVALUEAMBIGUOUS.errName(), geometry.getInteriorPoint());
 					}
 /*
 				if(flag == false){
@@ -137,15 +138,15 @@ public class FeatureAttributeValidatorImpl implements FeatureAttributeValidator 
 				}*/
 			}
 		}else{
-			errorFeature = new ErrorFeature(simpleFeature.getID(), Z_ValueAmbiguous.Type.Z_VALUEAMBIGUOUS.errType(),
-					Z_ValueAmbiguous.Type.Z_VALUEAMBIGUOUS.errName(), geometry.getInteriorPoint());
+			errorFeature = new ErrorFeature(simpleFeature.getID(), ZValueAmbiguous.Type.ZVALUEAMBIGUOUS.errType(),
+					ZValueAmbiguous.Type.ZVALUEAMBIGUOUS.errName(), geometry.getInteriorPoint());
 		}
 		return errorFeature;
 	}
 
 
 	@Override
-	public ErrorFeature validateAttributeFix(SimpleFeature simpleFeature, JSONObject notNullAtt)
+	public ErrorFeature validateAttributeFix(SimpleFeature simpleFeature, Map<String,List<String>> notNullAtt)
 			throws SchemaException {
 		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
 		boolean flag = true;

@@ -36,14 +36,10 @@ package com.git.gdsbuilder.validator.feature;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.TooManyListenersException;
-
-import javax.management.relation.RelationServiceMBean;
 
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureIterator;
 import org.geotools.feature.SchemaException;
-import org.geotools.geojson.geom.GeometryJSON;
 import org.geotools.geometry.jts.JTS;
 import org.geotools.geometry.jts.JTSFactoryFinder;
 import org.geotools.referencing.CRS;
@@ -84,9 +80,6 @@ import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
-import com.vividsolutions.jtsexample.geom.ExtendedCoordinate;
-
-import jdk.nashorn.internal.ir.Flags;
 
 public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 
@@ -792,5 +785,6 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 			return null;
 		}
 	}
+	
 
 }

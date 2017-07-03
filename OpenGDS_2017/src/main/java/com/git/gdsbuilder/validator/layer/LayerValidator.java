@@ -36,6 +36,7 @@ package com.git.gdsbuilder.validator.layer;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import org.geotools.feature.SchemaException;
 import org.json.simple.JSONObject;
@@ -94,7 +95,7 @@ public interface LayerValidator {
 	 * @throws SchemaException 
 	 * @throws
 	 * */
-	public ErrorLayer validateZ_ValueAmbiguous(String attributeKey) throws SchemaException;
+	public ErrorLayer validateZValueAmbiguous(String attributeKey) throws SchemaException;
 
 	/**
 	 * 검수 항목 중 “허용 범위 이하 면적 (Small Area)” 검수

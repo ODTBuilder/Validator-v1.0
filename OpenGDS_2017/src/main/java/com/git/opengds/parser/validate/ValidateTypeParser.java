@@ -36,12 +36,16 @@ import com.git.gdsbuilder.type.validate.option.ConBreak;
 import com.git.gdsbuilder.type.validate.option.ConIntersected;
 import com.git.gdsbuilder.type.validate.option.ConOverDegree;
 import com.git.gdsbuilder.type.validate.option.CrossRoad;
+import com.git.gdsbuilder.type.validate.option.EdgeMatchMiss;
 import com.git.gdsbuilder.type.validate.option.EntityDuplicated;
+import com.git.gdsbuilder.type.validate.option.EntityNone;
 import com.git.gdsbuilder.type.validate.option.LayerMiss;
 import com.git.gdsbuilder.type.validate.option.NodeMiss;
 import com.git.gdsbuilder.type.validate.option.OutBoundary;
 import com.git.gdsbuilder.type.validate.option.OverShoot;
 import com.git.gdsbuilder.type.validate.option.PointDuplicated;
+import com.git.gdsbuilder.type.validate.option.RefAttributeMiss;
+import com.git.gdsbuilder.type.validate.option.RefZValueMiss;
 import com.git.gdsbuilder.type.validate.option.SelfEntity;
 import com.git.gdsbuilder.type.validate.option.SmallArea;
 import com.git.gdsbuilder.type.validate.option.SmallLength;
@@ -50,7 +54,7 @@ import com.git.gdsbuilder.type.validate.option.UselessEntity;
 import com.git.gdsbuilder.type.validate.option.UselessPoint;
 import com.git.gdsbuilder.type.validate.option.ValidatorOption;
 import com.git.gdsbuilder.type.validate.option.WaterOpen;
-import com.git.gdsbuilder.type.validate.option.Z_ValueAmbiguous;
+import com.git.gdsbuilder.type.validate.option.ZValueAmbiguous;
 
 /**
  * JSONArray를 ValidateLayerTypeList 객체로 파싱하는 클래스
@@ -152,6 +156,7 @@ public class ValidateTypeParser {
 	 * qaOptions를 List<ValidatorOption> 객체로 파싱 @author DY.Oh @Date 2017. 4. 18.
 	 * 오후 3:26:05 @param qaOptions @return List<ValidatorOption> @throws
 	 */
+	@SuppressWarnings("unchecked")
 	public List<ValidatorOption> parseOption(JSONObject qaOptions) {
 
 		List<ValidatorOption> optionList = new ArrayList<ValidatorOption>();
@@ -189,13 +194,13 @@ public class ValidateTypeParser {
 				}
 			}
 			if
-			(optionName.equalsIgnoreCase(Z_ValueAmbiguous.Type.Z_VALUEAMBIGUOUS.errName())){
-				Object z_Value = qaOptions.get("Z_ValueAmbiguous");
+			(optionName.equalsIgnoreCase(ZValueAmbiguous.Type.ZVALUEAMBIGUOUS.errName())){
+				Object z_Value = qaOptions.get("ZValueAmbiguous");
 				if (z_Value == null) {
 					continue;
 				} else {
-					String z_ValueKey = (String) z_Value;
-					ValidatorOption Z_ValueAmbiguous = new Z_ValueAmbiguous(z_ValueKey);
+					String z_ValueKey = (String) z_Value.toString().trim();
+					ValidatorOption Z_ValueAmbiguous = new ZValueAmbiguous(z_ValueKey);
 					optionList.add(Z_ValueAmbiguous);
 				}
 			}
@@ -351,7 +356,6 @@ public class ValidateTypeParser {
 					ValidatorOption b_SymbolOutSided = new B_SymbolOutSided(relations);
 					optionList.add(b_SymbolOutSided);
 				}
-
 			}
 
 			if (optionName.equalsIgnoreCase(PointDuplicated.Type.POINTDUPLICATED.errName())) {
@@ -438,6 +442,46 @@ public class ValidateTypeParser {
 					optionList.add(nodeMiss);
 				}
 			}
+			if(optionName.equalsIgnoreCase(EntityNone.Type.ENTITYNONE.errName())){
+				Boolean isTrue = (Boolean) qaOptions.get("EntityNone");
+				if (isTrue) {
+					EntityNone entityNone = new EntityNone();
+					optionList.add(entityNone);
+				}
+			}
+			
+			if (optionName.equalsIgnoreCase(EdgeMatchMiss.Type.EDGEMATCHMISS.errName())) {
+				Boolean isTrue = (Boolean) qaOptions.get("EdgeMatchMiss");
+				if (isTrue) {
+					EdgeMatchMiss edgeMatchMiss = new EdgeMatchMiss();
+					optionList.add(edgeMatchMiss);
+				}
+			}
+			
+			if(optionName.equalsIgnoreCase(RefZValueMiss.Type.REFZVALUEMISS.errName())){
+				/*Object z_Value = qaOptions.get("RefZValueMiss");
+				if (z_Value == null) {
+					continue;
+				} else {
+					String z_ValueKey = (String) z_Value;
+					ValidatorOption refZValueMiss = new RefZValueMiss(z_ValueKey);
+					optionList.add(refZValueMiss);
+				}*/
+			}
+			
+
+			if(optionName.equalsIgnoreCase(RefAttributeMiss.Type.RefAttributeMiss.errName())){
+				Object refAttributeMissObj = qaOptions.get("RefAttributeMiss");
+				if(refAttributeMissObj == null){
+					continue;
+				}else{
+					List<String> colunms = new ArrayList<String>();
+					colunms = (List<String>) refAttributeMissObj;
+					ValidatorOption refAttributeOption = new RefAttributeMiss(colunms);
+					optionList.add(refAttributeOption);
+				}
+			}
+			
 		}
 		return optionList;
 	}

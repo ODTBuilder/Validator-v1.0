@@ -1,6 +1,11 @@
 package com.git.gdsbuilder.type.validate.option;
 
+import org.json.simple.JSONObject;
+
 public class RefZValueMiss extends ValidatorOption {
+	
+	JSONObject refZValueMissOpts;
+	
 	public enum Type {
 
 		REFZVALUEMISS("RefZValueMiss", "CloseCollectionError");
@@ -27,4 +32,18 @@ public class RefZValueMiss extends ValidatorOption {
 			return errType;
 		}
 	}
+	
+	public RefZValueMiss(JSONObject refZValueMissOpts) {
+		super();
+		this.refZValueMissOpts = refZValueMissOpts;
+	}
+
+	public JSONObject getRefZValueMissOpts() {
+		return refZValueMissOpts;
+	}
+
+	public void setRefZValueMissOpts(JSONObject refZValueMissOpts) {
+		this.refZValueMissOpts = refZValueMissOpts;
+	}
+	
 }
