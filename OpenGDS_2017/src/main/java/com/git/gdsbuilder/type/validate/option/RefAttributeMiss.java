@@ -1,8 +1,16 @@
 package com.git.gdsbuilder.type.validate.option;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class RefAttributeMiss extends ValidatorOption {
+	
+	List<String> colunms = new ArrayList<String>();
+	
 	public enum Type {
 
+		
+		
 		RefAttributeMiss("RefAttributeMiss", "CloseCollectionError");
 
 		String errName;
@@ -27,4 +35,19 @@ public class RefAttributeMiss extends ValidatorOption {
 			return errType;
 		}
 	}
+	
+	public RefAttributeMiss(List<String> colunms) {
+		super();
+		this.colunms = colunms;
+	}
+	
+
+	public List<String> getColunms() {
+		return colunms;
+	}
+
+	public void setColunms(List<String> colunms) {
+		this.colunms = colunms;
+	}
+
 }

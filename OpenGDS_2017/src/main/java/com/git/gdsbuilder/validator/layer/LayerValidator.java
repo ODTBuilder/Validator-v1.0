@@ -36,6 +36,7 @@ package com.git.gdsbuilder.validator.layer;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import org.geotools.feature.SchemaException;
 import org.json.simple.JSONObject;
@@ -263,7 +264,7 @@ public interface LayerValidator {
 	public ErrorLayer validateBridgeName(List<GeoLayer> relationLayers) throws SchemaException;
 	public ErrorLayer validateAdmin() throws SchemaException;
 	public ErrorLayer validateTwistedPolygon() throws SchemaException;
-	public ErrorLayer validateAttributeFix(JSONObject notNullAtt) throws SchemaException;
+	public ErrorLayer validateAttributeFix(Map<String,List<String>> notNullAtt) throws SchemaException;
 	public ErrorLayer validateNodeMiss(List<GeoLayer> relationLayers, String geomColumn, double tolerence) throws SchemaException, IOException;
 
 }

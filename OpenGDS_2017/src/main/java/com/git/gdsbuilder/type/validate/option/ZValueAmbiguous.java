@@ -22,7 +22,7 @@ package com.git.gdsbuilder.type.validate.option;
  * @author DY.Oh
  * @Date 2017. 4. 18. 오후 3:09:34
  * */
-public class Z_ValueAmbiguous extends ValidatorOption {
+public class ZValueAmbiguous extends ValidatorOption {
 
 	String attributeKey;
 	
@@ -33,7 +33,7 @@ public class Z_ValueAmbiguous extends ValidatorOption {
 	 * */
 	public enum Type {
 
-		Z_VALUEAMBIGUOUS("Z_ValueAmbiguous", "AttributeError");
+		ZVALUEAMBIGUOUS("ZValueAmbiguous", "AttributeError");
 		String errName;
 		String errType; 
 
@@ -70,7 +70,7 @@ public class Z_ValueAmbiguous extends ValidatorOption {
 		}
 	};
 
-	public Z_ValueAmbiguous(String attributeKey) {
+	public ZValueAmbiguous(String attributeKey) {
 		super();
 		this.attributeKey = attributeKey;
 	}

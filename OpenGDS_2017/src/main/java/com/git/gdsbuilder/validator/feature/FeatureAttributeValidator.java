@@ -34,9 +34,11 @@
 
 package com.git.gdsbuilder.validator.feature;
 
+import java.util.List;
+import java.util.Map;
+
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.feature.SchemaException;
-import org.json.simple.JSONObject;
 import org.opengis.feature.simple.SimpleFeature;
 
 import com.git.gdsbuilder.type.validate.error.ErrorFeature;
@@ -59,7 +61,7 @@ public interface FeatureAttributeValidator {
 	 * @throws SchemaException ErrorLayer
 	 * @throws
 	 * */
-	public ErrorFeature validateAttributeFix(SimpleFeature simpleFeature, JSONObject notNullAtt)
+	public ErrorFeature validateAttributeFix(SimpleFeature simpleFeature, Map<String,List<String>> notNullAtt)
 			throws SchemaException;
 
 	/**

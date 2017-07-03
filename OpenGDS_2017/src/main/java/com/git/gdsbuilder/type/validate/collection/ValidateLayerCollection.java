@@ -106,7 +106,7 @@ public class ValidateLayerCollection {
 				List<String> names = type.getLayerIDList();
 				for (int i = 0; i < names.size(); i++) {
 					String name = names.get(i);
-					layers.add(GeoLayerCollection.getLayer(name, layerCollection));
+					layers.add(layerCollection.getLayer(name, layerCollection));
 				}
 			}
 		}

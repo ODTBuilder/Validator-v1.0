@@ -18,12 +18,11 @@
 package com.git.gdsbuilder.type.validate.option;
 
 import java.util.HashMap;
-
-import org.json.simple.JSONObject;
+import java.util.List;
 
 public class AttributeFix extends ValidatorOption {
 
-	HashMap<String, Object> attributeKey;
+	HashMap<String, List<String>> attFixList = new HashMap<String, List<String>>();
 
 	public enum Type{
 
@@ -55,32 +54,27 @@ public class AttributeFix extends ValidatorOption {
 	/**
 	 * @param relationType
 	 */
-	public AttributeFix(HashMap<String, Object> attributeKey) {
+	public AttributeFix(HashMap<String, List<String>> attFixList) {
 		super();
-		this.attributeKey = attributeKey;
+		this.attFixList = attFixList;
 	}
 	
 	public AttributeFix(){
 		super();
-		this.attributeKey = new HashMap<String, Object>();
+		this.attFixList = new HashMap<String, List<String>>();
 	}
 
 	/**
 	 * @return the relationType
 	 */
-	public HashMap<String, Object> getRelationType() {
-		return attributeKey;
+	public HashMap<String, List<String>> getAttributeFixList() {
+		return attFixList;
 	}
 
 	/**
 	 * @param relationType the relationType to set
 	 */
-	public void setAttributeType(HashMap<String, Object> attributeKey) {
-		this.attributeKey = attributeKey;
+	public void setAttributeFixList(HashMap<String, List<String>> attFixList) {
+		this.attFixList = attFixList;
 	}
-	
-	public void addRelationLayerType(String notNullAtt, JSONObject attJsonObject){
-		attributeKey.put(notNullAtt, attJsonObject);
-	}
-
 }
