@@ -7236,7 +7236,7 @@
 											serverType : 'geoserver'
 										})
 									});
-									wms.set("name", data[i].name);
+									wms.set("name", obj.refer.get_node(data[i].name).text);
 									wms.set("id", data[i].name);
 									var git = {
 										"validation" : false,
@@ -7867,7 +7867,7 @@
 													"arr" : arr,
 													"parent" : inst.get_parent(obj)
 												}
-												inst.import_image(wmsInfo);
+												inst.import_fake_image(wmsInfo);
 											}
 										} else if (obj.type === "n_ngi_group" || obj.type === "n_dxf_group") {
 											var arr = inst.get_selected();

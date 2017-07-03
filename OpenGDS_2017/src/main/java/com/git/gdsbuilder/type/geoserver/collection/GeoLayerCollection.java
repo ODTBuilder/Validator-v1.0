@@ -151,6 +151,8 @@ public class GeoLayerCollection {
 			if (validateLayerName.equalsIgnoreCase(layerName)) {
 				layer = tmp;
 				break;
+			} else {
+				continue;
 			}
 		}
 		return layer;

@@ -95,7 +95,7 @@ public interface LayerValidator {
 	 * @throws SchemaException 
 	 * @throws
 	 * */
-	public ErrorLayer validateZ_ValueAmbiguous(String attributeKey) throws SchemaException;
+	public ErrorLayer validateZValueAmbiguous(String attributeKey) throws SchemaException;
 
 	/**
 	 * 검수 항목 중 “허용 범위 이하 면적 (Small Area)” 검수
@@ -264,7 +264,7 @@ public interface LayerValidator {
 	public ErrorLayer validateBridgeName(List<GeoLayer> relationLayers) throws SchemaException;
 	public ErrorLayer validateAdmin() throws SchemaException;
 	public ErrorLayer validateTwistedPolygon() throws SchemaException;
-	public ErrorLayer validateAttributeFix(Map<String,List<String>> notNullAtt) throws SchemaException;
+	public ErrorLayer validateAttributeFix(JSONObject notNullAtt) throws SchemaException;
 	public ErrorLayer validateNodeMiss(List<GeoLayer> relationLayers, String geomColumn, double tolerence) throws SchemaException, IOException;
 
 }

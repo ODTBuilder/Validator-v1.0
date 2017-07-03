@@ -6,7 +6,6 @@ import java.util.Enumeration;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,14 +16,14 @@ import com.git.opengds.validator.service.ErrorLayerExportService;
 @Controller("layerFileExportController")
 @RequestMapping("/fileExport")
 public class LayerFileExportController {
-	
+
 	@Autowired
 	ErrorLayerExportService exportService;
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/fileExport.ajax")
 	@ResponseBody
-	public JSONObject exportLayerToFile(HttpServletRequest request, HttpServletResponse response) throws IOException {
+	public boolean exportLayerToFile(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
 		String format = null;
 		String type = null;
@@ -41,7 +40,6 @@ public class LayerFileExportController {
 				name = request.getParameter(key);
 			}
 		}
-		exportService.exportErrorLayer(format, type, name);
-		return null;
+		return exportService.exportErrorLayer(format, type, name, request, response);
 	}
 }

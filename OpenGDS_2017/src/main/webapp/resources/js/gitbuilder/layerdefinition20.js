@@ -168,7 +168,7 @@ gitbuilder.ui.LayerDefinition20 = $.widget("gitbuilder.layerdefinition20", {
 				reader.readAsText(fileList[0]);
 				that._on(false, reader, {
 					load : function(event) {
-						var obj = JSON.parse(reader.result);
+						var obj = JSON.parse(reader.result.replace(/(\s*)/g, ''));
 						that.update(obj);
 						$(lower).css("display", "none");
 					}
@@ -316,7 +316,7 @@ gitbuilder.ui.LayerDefinition20 = $.widget("gitbuilder.layerdefinition20", {
 			$(children[i]).removeClass("danger");
 			for (var j = 0; j < children.length; j++) {
 				if (i !== j) {
-					if ($(children[i]).find("td:eq(1)>input").val() !== "" && $(children[i]).find("td:eq(1)>input").val() === $(children[j]).find("td:eq(1)>input").val()) {
+					if ($(children[i]).find("td:eq(1)>input").val() !== "" && $(children[i]).find("td:eq(1)>input").val().replace(/(\s*)/g, '') === $(children[j]).find("td:eq(1)>input").val().replace(/(\s*)/g, '')) {
 						 error.push(children[i]);
 						 error.push(children[j]);
 						flag = false;
@@ -345,7 +345,7 @@ gitbuilder.ui.LayerDefinition20 = $.widget("gitbuilder.layerdefinition20", {
 			}
 
 			var code = $(children[i]).find("td:eq(2)>input").val();
-			code.replace(/s/gi, '');
+			code.replace(/(\s*)/g, '');
 			var spCode = code.split(",");
 			var geom = $(children[i]).find("td:eq(3)>select").val();
 			var area;
@@ -355,7 +355,7 @@ gitbuilder.ui.LayerDefinition20 = $.widget("gitbuilder.layerdefinition20", {
 				area = false;
 			}
 //			var wVal = parseInt($(children[i]).find("td:eq(6)>input[type=number]").val());
-			def[$(children[i]).find("td:eq(1)>input").val()] = {
+			def[$(children[i]).find("td:eq(1)>input").val().replace(/(\s*)/g, '')] = {
 				"code" : spCode,
 				"geom" : geom,
 				"area" : area

@@ -7,7 +7,7 @@
 	<!-- QA20 -->
 	<insert id="insertQA20RequestState" parameterType="hashMap">
 		${insertQuery}
-		
+
 		<selectKey keyProperty="p_idx" resultType="int" order="AFTER">
 			select currval('qa20_layercollection_qa_progress_p_idx_seq')
 		</selectKey>
@@ -51,6 +51,11 @@
 	<select id="selectQA20ErrorLayerTbNamesCount" parameterType="hashMap"
 		resultType="hashMap">
 		${selectQuery}
+	</select>
+
+	<select id="selectAllQA20ValidateProgress" parameterType="hashMap"
+		resultType="hashMap">
+		${selectAllQuery}
 	</select>
 
 </mapper>

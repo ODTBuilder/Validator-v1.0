@@ -69,12 +69,16 @@ html {
 		class="navbar navbar-toggleable-md navbar-default fixed-top">
 
 		<ul class="nav navbar-nav">
-			<li><a href="#" id="newVector" title="Vector"><i
-					class="fa fa-file-o fa-lg" aria-hidden="true"></i> New</a></li>
-			<li><a href="#" id="uploadFile" title="Upload File"
-				onclick="gitbuilder.ui.NewFileWindow()"><i
-					class="fa fa-file-o fa-lg" aria-hidden="true"></i> File</a></li>
 
+			<li class="dropdown"><a href="#" class="dropdown-toggle"
+				data-toggle="dropdown" role="button" aria-expanded="false"
+				title="New layer"><i class="fa fa-file-o fa-lg"
+					aria-hidden="true"></i> New</a>
+				<ul class="dropdown-menu" role="menu">
+					<li><a href="#" id="newVector" title="Vector">New</a></li>
+					<li><a href="#" id="uploadFile" title="Upload File"
+						onclick="gitbuilder.ui.NewFileWindow()">File</a></li>
+				</ul></li>
 			<li class="dropdown"><a href="#" class="dropdown-toggle"
 				data-toggle="dropdown" role="button" aria-expanded="false"
 				title="Save"><i class="fa fa-floppy-o fa-lg" aria-hidden="true"></i>
@@ -506,37 +510,37 @@ html {
 			layersURL : 'geoserver2/getGeolayerCollectionTree.ajax',
 			featureWMSURL : "geoserver2/geoserverWMSLayerLoad.do",
 			featureWFSURL : "geoserver2/geoserverWFSGetFeature.ajax",
-			groupInfoURL : "geoserver2/getGeoGroupLayerInfoList.ajax"
+			groupInfoURL : "geoserver2/getGeoGroupLayerInfoList.ajax",
+			layerInfoURL : "geoserver2/getGeoLayerInfoList.ajax"
 		});
 
 		var layerInfo = new gb.edit.LayerInformation({
 			url : "geoserver2/getGeoLayerInfoList.ajax"
 		});
 
-		$("#builderServerLayer").jstree(
-				{
-					"core" : {
-						"animation" : 0,
-						"check_callback" : true,
-						"themes" : {
-							"stripes" : true
-						},
-						'data' : {
-							'url' : function() {
-								return 'geoserver2/getGeolayerCollectionTree.ajax';
-							}
-						}
-					},
-					"geoserver" : {
-						"map" : map,
-						"user" : "admin",
-						"layerInfo" : layerInfo,
-						"layerInfoURL" : "geoserver2/getGeoLayerInfoList.ajax",
-						"downloadNGIDXF" : "fileExport/fileExport.ajax",
-						"downloadGeoserver" : "geoserver2/downloadRequest.do"
-					},
-					"plugins" : [ "contextmenu", "search", "state", "types", "geoserver" ]
-				});
+		$("#builderServerLayer").jstree({
+			"core" : {
+				"animation" : 0,
+				"check_callback" : true,
+				"themes" : {
+					"stripes" : true
+				},
+				'data' : {
+					'url' : function() {
+						return 'geoserver2/getGeolayerCollectionTree.ajax';
+					}
+				}
+			},
+			"geoserver" : {
+				"map" : map,
+				"user" : "admin",
+				"layerInfo" : layerInfo,
+				"layerInfoURL" : "geoserver2/getGeoLayerInfoList.ajax",
+				"downloadNGIDXF" : "fileExport/fileExport.ajax",
+				"downloadGeoserver" : "geoserver2/downloadRequest.do"
+			},
+			"plugins" : [ "contextmenu", "search", "state", "types", "geoserver" ]
+		});
 	</script>
 
 </body>

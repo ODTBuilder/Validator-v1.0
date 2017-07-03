@@ -89,10 +89,27 @@ public class ValidateProgressDBQueryManager {
 
 	public HashMap<String, Object> getInsertQA10ResponseState(int pIdx) {
 		String tableName = "\"" + "qa10_layercollection_qa_progress" + "\"";
-		String updateQueryStr = "update " + tableName + " set state = response_time = " + "CURRENT_TIMESTAMP"
+		String updateQueryStr = "update " + tableName + " set response_time = " + "CURRENT_TIMESTAMP"
 				+ " where p_idx = " + pIdx;
 		HashMap<String, Object> updateQueryQueryMap = new HashMap<String, Object>();
 		updateQueryQueryMap.put("updateQuery", updateQueryStr);
 		return updateQueryQueryMap;
 	}
+
+	public HashMap<String, Object> getSelectAllQA10ValidateProgress() {
+		String tableName = "\"" + "qa10_layercollection_qa_progress" + "\"";
+		String selectQuery = "select * from " + tableName + " order by request_time DESC";
+		HashMap<String, Object> selectQueryMap = new HashMap<String, Object>();
+		selectQueryMap.put("selectAllQuery", selectQuery);
+		return selectQueryMap;
+	}
+
+	public HashMap<String, Object>  getSelectAllQA20ValidateProgress() {
+		String tableName = "\"" + "qa20_layercollection_qa_progress" + "\"";
+		String selectQuery = "select * from " + tableName + " order by request_time DESC";
+		HashMap<String, Object> selectQueryMap = new HashMap<String, Object>();
+		selectQueryMap.put("selectAllQuery", selectQuery);
+		return selectQueryMap;
+	}
+
 }

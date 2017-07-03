@@ -188,7 +188,7 @@ public class LayerValidatorImpl implements LayerValidator {
 		}
 	}
 
-	public ErrorLayer validateZ_ValueAmbiguous(String attributeKey) throws SchemaException {
+	public ErrorLayer validateZValueAmbiguous(String attributeKey) throws SchemaException {
 
 		ErrorLayer errLayer = new ErrorLayer();
 
@@ -752,7 +752,7 @@ public class LayerValidatorImpl implements LayerValidator {
 		}
 	}
 
-	public ErrorLayer validateAttributeFix(Map<String,List<String>> notNullAtt) throws SchemaException{
+	public ErrorLayer validateAttributeFix(JSONObject notNullAtt) throws SchemaException{
 		ErrorLayer errorLayer = new ErrorLayer();
 		SimpleFeatureCollection sfc = validatorLayer.getSimpleFeatureCollection();
 		DefaultFeatureCollection featureCollection = new DefaultFeatureCollection();
@@ -908,9 +908,6 @@ public class LayerValidatorImpl implements LayerValidator {
 			else
 				return null;
 			
-			
-			
-//			SimpleFeatureCollection targetCollection = targetLayer.getSimpleFeatureCollection();
 			
 
 			// 인접도엽 레이어 GET

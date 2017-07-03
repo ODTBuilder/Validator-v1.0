@@ -10,7 +10,7 @@
 		${insertQuery}
 
 		<selectKey keyProperty="p_idx" resultType="int" order="AFTER">
-			select currval('qa20_layercollection_qa_progress_p_idx_seq')
+			select currval('qa10_layercollection_qa_progress_p_idx_seq')
 		</selectKey>
 	</insert>
 
@@ -52,6 +52,11 @@
 	<select id="selectQA10ErrorLayerTbNamesCount" parameterType="hashMap"
 		resultType="hashMap">
 		${selectQuery}
+	</select>
+
+	<select id="selectAllQA10ValidateProgress" parameterType="hashMap"
+		resultType="hashMap">
+		${selectAllQuery}
 	</select>
 
 </mapper>

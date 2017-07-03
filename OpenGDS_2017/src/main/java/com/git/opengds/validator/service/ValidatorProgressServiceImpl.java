@@ -1,12 +1,15 @@
 package com.git.opengds.validator.service;
 
 import java.util.HashMap;
+import java.util.List;
 
 import javax.inject.Inject;
 
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.stereotype.Service;
 
+import com.git.gdsbuilder.type.validate.collection.ValidateProgress;
+import com.git.gdsbuilder.type.validate.collection.ValidateProgressList;
 import com.git.opengds.file.dxf.dbManager.QA10DBQueryManager;
 import com.git.opengds.file.dxf.persistence.QA10LayerCollectionDAO;
 import com.git.opengds.file.ngi.dbManager.QA20DBQueryManager;
@@ -118,5 +121,32 @@ public class ValidatorProgressServiceImpl implements ValidatorProgressService {
 			HashMap<String, Object> insertQuery = queryManager.getInsertQA10ResponseState(pIdx);
 			progressDAO.insertQA10ResponseState(insertQuery);
 		}
+	}
+
+	public ValidateProgressList selectProgressOfCollection(String type, String collectionName) {
+
+		ValidateProgressDBQueryManager queryManager = new ValidateProgressDBQueryManager();
+		List<HashMap<String, Object>> progressListMap = null;
+		if (type.equals("ngi")) {
+			progressListMap = progressDAO
+					.selectAllQA20ValidateProgress(queryManager.getSelectAllQA20ValidateProgress());
+		} else if (type.equals("dxf")) {
+			progressListMap = progressDAO
+					.selectAllQA10ValidateProgress(queryManager.getSelectAllQA10ValidateProgress());
+		}
+		ValidateProgressList progressList = new ValidateProgressList();
+		for (int i = 0; i < progressListMap.size(); i++) {
+			ValidateProgress progress = new ValidateProgress();
+			HashMap<String, Object> progressMap = progressListMap.get(i);
+			progress.setpIdx((Integer) progressMap.get("p_idx"));
+			progress.setCollectionName((String) progressMap.get("collection_name"));
+			progress.setFileType((String) progressMap.get("file_type"));
+			progress.setState((Integer) progressMap.get("state"));
+			progress.setRequestTime(progressMap.get("request_time").toString());
+			progress.setRequestTime(progressMap.get("response_time").toString());
+			progress.setErrLayerName((String) progressMap.get("err_layer_name"));
+			progressList.add(progress);
+		}
+		return progressList;
 	}
 }

@@ -40,6 +40,9 @@ public class ValidatorController extends AbstractController {
 	@RequestMapping(value = "/validate.ajax")
 	@ResponseBody
 	public JSONObject geoserverAddLoadAjax(HttpServletRequest request, @RequestBody String geo) throws Exception {
+		
+		System.out.println(geo);
+		
 		return validatorService.validate(geo);
 	}
 }

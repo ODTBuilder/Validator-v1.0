@@ -3,6 +3,7 @@ package com.git.gdsbuilder.FileRead.dxf.writer;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -38,11 +39,14 @@ public class QA10FileWriter {
 
 	protected static String entities = "ENTITIES";
 
-	public void writeDxfFile(QA10LayerCollection qa10LayerCollection) throws IOException {
+	public Map<String, Object> writeDxfFile(QA10LayerCollection qa10LayerCollection) throws IOException {
+
+		Map<String, Object> dxfFileMap = new HashMap<String, Object>();
 
 		String collectionName = qa10LayerCollection.getCollectionName();
-		String dxfFileRoot = "D:\\err_" + "dxfTest" + exe;
-
+		dxfFileMap.put("fileName", collectionName);
+		String dxfFileRoot = "D:\\" + collectionName + exe;
+		dxfFileMap.put("fileDxfDir", dxfFileRoot);
 		this.dxfWriter = new BufferedWriter(new FileWriter(dxfFileRoot, true));
 
 		// header
@@ -61,6 +65,8 @@ public class QA10FileWriter {
 
 		dxfWriter.flush();
 		dxfWriter.close();
+
+		return dxfFileMap;
 	}
 
 	private void writeDefaultBlockSection() throws IOException {
@@ -259,6 +265,7 @@ public class QA10FileWriter {
 		dxfWriter.write(header);
 		dxfWriter.newLine();
 
+		qa10Header.setDefaultHeaderValues();
 		Map<String, Object> defaultValues = qa10Header.getDefaultValues();
 		List<LinkedHashMap<String, Object>> variables = (List<LinkedHashMap<String, Object>>) defaultValues
 				.get("defualtHeader");

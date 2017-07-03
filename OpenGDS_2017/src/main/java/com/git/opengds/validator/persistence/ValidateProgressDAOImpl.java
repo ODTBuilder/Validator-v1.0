@@ -1,6 +1,7 @@
 package com.git.opengds.validator.persistence;
 
 import java.util.HashMap;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -126,5 +127,18 @@ public class ValidateProgressDAOImpl implements ValidateProgressDAO {
 		HashMap<String, Object> countMap = sqlSession.selectOne(qa10Namespace + ".selectQA10ErrorLayerTbNamesCount",
 				selectIdxQuery);
 		return (Long) countMap.get("count");
+	}
+
+	@Override
+	public List<HashMap<String, Object>> selectAllQA10ValidateProgress(
+			HashMap<String, Object> selectAllQA10ValidateProgress) {
+		return sqlSession.selectList(qa10Namespace + ".selectAllQA10ValidateProgress", selectAllQA10ValidateProgress);
+	}
+
+	@Override
+	public List<HashMap<String, Object>> selectAllQA20ValidateProgress(
+			HashMap<String, Object> selectAllQA20ValidateProgress) {
+		// TODO Auto-generated method stub
+		return sqlSession.selectList(qa20Namespace + ".selectAllQA20ValidateProgress", selectAllQA20ValidateProgress);
 	}
 }

@@ -2,6 +2,7 @@ package com.git.gdsbuilder.type.validate.collection;
 
 public class ValidateProgress {
 
+	int pIdx;
 	String collectionName;
 	String fileType;
 	int state;
@@ -13,15 +14,24 @@ public class ValidateProgress {
 
 	}
 
-	public ValidateProgress(String collectionName, String fileType, int state, String requestTime, String responseTime,
-			String errLayerName) {
+	public ValidateProgress(int pIdx, String collectionName, String fileType, int state, String requestTime,
+			String responseTime, String errLayerName) {
 		super();
+		this.pIdx = pIdx;
 		this.collectionName = collectionName;
 		this.fileType = fileType;
 		this.state = state;
 		this.requestTime = requestTime;
 		this.responseTime = responseTime;
 		this.errLayerName = errLayerName;
+	}
+
+	public int getpIdx() {
+		return pIdx;
+	}
+
+	public void setpIdx(int pIdx) {
+		this.pIdx = pIdx;
 	}
 
 	public String getCollectionName() {

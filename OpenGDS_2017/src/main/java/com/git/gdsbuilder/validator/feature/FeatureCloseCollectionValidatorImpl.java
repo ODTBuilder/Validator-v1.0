@@ -86,7 +86,7 @@ public class FeatureCloseCollectionValidatorImpl implements FeatureCloseCollecti
 				}
 
 				if(refZValueMiss!=null){
-					Object tValue = simpleFeature.getAttribute(refZValueMiss.getAttributeKey()); //대상 피쳐
+				/*	Object tValue = simpleFeature.getAttribute(refZValueMiss.getAttributeKey()); //대상 피쳐
 					Object rValue = simpleFeature.getAttribute(refZValueMiss.getAttributeKey()); //인접 피쳐
 					
 					String tValueString = "";
@@ -101,7 +101,7 @@ public class FeatureCloseCollectionValidatorImpl implements FeatureCloseCollecti
 					if(!tValueString.equals(rValueString)){
 						ErrorFeature rZVErrFeature = new ErrorFeature(simpleFeature.getID(), RefZValueMiss.Type.REFZVALUEMISS.errType(),RefZValueMiss.Type.REFZVALUEMISS.errName(),targetGeometry.getInteriorPoint());
 						collectionErrors.add(rZVErrFeature);
-					}
+					}*/
 				}
 				if(refAttributeMiss!=null){
 					List<String> colunms = refAttributeMiss.getColunms();

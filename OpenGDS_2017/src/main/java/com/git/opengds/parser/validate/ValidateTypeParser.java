@@ -412,13 +412,13 @@ public class ValidateTypeParser {
 				if(attributeFixObj == null){
 					continue;
 				}else{
-					HashMap<String, List<String>> hashMap = new HashMap<String, List<String>>();
+					HashMap<String, Object> hashMap = new HashMap<String, Object>();
 					JSONObject attributeFixValue = (JSONObject) attributeFixObj;
 					Iterator iterator = attributeFixValue.keySet().iterator();
 					while (iterator.hasNext()) {
-						String colunm = (String) iterator.next();
-						List<String> attributeObj =  (List<String>) attributeFixValue.get(colunm);
-						hashMap.put(colunm, attributeObj);
+						String layerName = (String) iterator.next();
+						JSONObject attributeObj = (JSONObject) attributeFixValue.get(layerName);
+						hashMap.put(layerName, attributeObj);
 					}
 					ValidatorOption attributeFix = new AttributeFix(hashMap);
 					optionList.add(attributeFix);
@@ -459,14 +459,14 @@ public class ValidateTypeParser {
 			}
 			
 			if(optionName.equalsIgnoreCase(RefZValueMiss.Type.REFZVALUEMISS.errName())){
-				Object z_Value = qaOptions.get("RefZValueMiss");
+				/*Object z_Value = qaOptions.get("RefZValueMiss");
 				if (z_Value == null) {
 					continue;
 				} else {
 					String z_ValueKey = (String) z_Value;
 					ValidatorOption refZValueMiss = new RefZValueMiss(z_ValueKey);
 					optionList.add(refZValueMiss);
-				}
+				}*/
 			}
 			
 

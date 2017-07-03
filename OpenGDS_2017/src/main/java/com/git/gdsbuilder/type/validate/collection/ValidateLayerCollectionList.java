@@ -88,6 +88,10 @@ public class ValidateLayerCollectionList {
 	 */
 	public GeoLayerList getTypeLayers(String typeName, GeoLayerCollection layerCollection) {
 
+		if(typeName.equals("건물_P")) {
+			System.out.println("");
+		}
+		
 		GeoLayerList layers = new GeoLayerList();
 		for (int j = 0; j < validateLayerTypeList.size(); j++) {
 			ValidateLayerType type = validateLayerTypeList.get(j);
