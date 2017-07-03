@@ -89,7 +89,7 @@ public class ValidatorServiceImpl implements ValidatorService {
 			// 검수수행
 			ValidateLayerCollectionList validateLayerCollection = new ValidateLayerCollectionList(collectionList,
 					validateLayerTypeList);
-			CollectionValidator validator = new CollectionValidator(validateLayerCollection);
+			CollectionValidator validator = new CollectionValidator(validateLayerCollection, fileType);
 
 			// progress : 2 / 3 -> 2 : 검수 성공, 3 : 검수 실패
 			Map<String, Object> validateProgressMap = validator.getProgress();
