@@ -52,7 +52,8 @@ gitbuilder.ui.OptionDefinition = $.widget("gitbuilder.optiondefinition", {
 		"RefAttributeMiss" : {
 			"title" : "Attribute Error Between Map Sheets",
 			"alias" : "RefAttributeMiss",
-			"type" : "notnull"
+			"type" : "notnull",
+			"multi" : true
 		},
 		"BridgeName" : {
 			"title" : "Bridge Name Error",
@@ -107,7 +108,8 @@ gitbuilder.ui.OptionDefinition = $.widget("gitbuilder.optiondefinition", {
 		"RefZValueMiss" : {
 			"title" : "Altitude Error Between Map Sheets",
 			"alias" : "RefZValueMiss",
-			"type" : "acolumn"
+			"type" : "notnull",
+			"multi" : false
 		},
 		"CharacterAccuracy" : {
 			"title" : "Accuracy of Characters",
@@ -170,7 +172,8 @@ gitbuilder.ui.OptionDefinition = $.widget("gitbuilder.optiondefinition", {
 		"ZValueAmbiguous" : {
 			"title" : "Altitude Error",
 			"alias" : "ZValueAmbiguous",
-			"type" : "acolumn"
+			"type" : "notnull",
+			"multi" : false
 		},
 		"UselessPoint" : {
 			"title" : "Contour Straightening Error",
@@ -240,10 +243,8 @@ gitbuilder.ui.OptionDefinition = $.widget("gitbuilder.optiondefinition", {
 		this.dOption = $("<ul>").addClass("list-group").css({
 			"margin-bottom" : 0
 		});
-		// this.codeSelect =
-		// $("<select>").addClass("form-control").addClass("optiondefinition-attr-select");
-		// this.nnullCodeSelect =
-		// $("<select>").addClass("form-control").addClass("optiondefinition-nnullattr-select");
+		this.codeSelect = $("<select>").addClass("form-control").addClass("optiondefinition-attr-select");
+		this.nnullCodeSelect = $("<select>").addClass("form-control").addClass("optiondefinition-nnullattr-select");
 		this.attrForm = $("<tbody>");
 		this.nnullAttrForm = $("<tbody>");
 		this.addBtn = $("<button>").text("Add Attribute").addClass("optiondefinition-attr-addrow").addClass("btn").addClass("btn-default");
@@ -446,32 +447,28 @@ gitbuilder.ui.OptionDefinition = $.widget("gitbuilder.optiondefinition", {
 					}
 					// console.log(that.getOptDefCopy()[that.selectedLayerNow]);
 				});
-		// $(document).on("change", this.eventNamespace + "
-		// .optiondefinition-attr-select", function() {
-		// that._updateAttribute($(this).val());
-		// });
-		// $(document).on("change", this.eventNamespace + "
-		// .optiondefinition-nnullattr-select", function() {
-		// that._updateNotNullAttribute($(this).val());
-		// });
+		$(document).on("change", this.eventNamespace + " .optiondefinition-attr-select", function() {
+			that._updateAttribute($(this).val());
+		});
+		$(document).on("change", this.eventNamespace + " .optiondefinition-nnullattr-select", function() {
+			var isMulti = that.optItem[that.selectedValidationNow].multi;
+			that._updateNotNullAttribute($(this).val(), isMulti);
+		});
 		$(document).on("click", this.eventNamespace + " .optiondefinition-attr-del", function() {
 			var row1 = $(this).parent().parent();
 			var row2 = $(this).parent().parent().next();
 			var keyname = $(row1).find("input[type=text]").val();
-			// var selected = $(that.codeSelect).val();
+			var selected = $(that.codeSelect).val();
 			if (keyname !== "") {
-				delete that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow][keyname];
-				// delete
-				// that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow][selected][keyname];
-
+				delete that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow][selected][keyname];
 				var keys = Object.keys(that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]);
 				var count = 0;
 				for (var i = 0; i < keys.length; i++) {
-					var option = that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow][keys[i]];
-					if (option.length === 0) {
-						delete that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow][keys[i]];
+					var length = Object.keys(that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow][keys[i]]).length;
+					if (length === 0) {
+						delete that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow][keys[i]]
 					}
-					count = count + option.length;
+					count = count + length;
 				}
 				if (!count) {
 					delete that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow];
@@ -484,42 +481,38 @@ gitbuilder.ui.OptionDefinition = $.widget("gitbuilder.optiondefinition", {
 		});
 		$(document).on("click", this.eventNamespace + " .optiondefinition-nnullattr-del", function() {
 			var row1 = $(this).parent().parent();
-			var keyname = $(row1).find("input[type=text]").val();
-			// var selected = $(that.nnullCodeSelect).val();
-			// var optArr =
-			// that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow][selected];
-			var optArr = that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow];
-			var idx;
-			if (Array.isArray(optArr)) {
-				idx = that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow].indexOf(keyname);
-				var deletedArr = that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow];
-				deletedArr.splice(idx, 1);
-				that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow] = deletedArr;
+			var keyname = $(row1).find("input[type=text]").val().replace(/(\s*)/g, '');
+			var selected = $(that.nnullCodeSelect).val().replace(/(\s*)/g, '');
+			if (that.getOptDefCopy()[that.selectedLayerNow].hasOwnProperty(that.selectedValidationNow)) {
+				if (that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow].hasOwnProperty(selected)) {
+					var optArr = that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow][selected];
+					var idx;
+					if (Array.isArray(optArr)) {
+						idx = that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow][selected].indexOf(keyname);
+						var deletedArr = that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow][selected];
+						deletedArr.splice(idx, 1);
+						that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow][selected] = deletedArr;
+					}
+					var keys = Object.keys(that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]);
+					var count = 0;
+					for (var i = 0; i < keys.length; i++) {
+						var length = that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow][keys[i]].length;
+						if (length === 0) {
+							delete that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow][keys[i]]
+						}
+						count = count + length;
+					}
+					if (!count) {
+						delete that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow];
+					}
+					that._toggleCheckbox(that.selectedValidationNow, !!count);
+				} else {
+					delete that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow];
+					that._toggleCheckbox(that.selectedValidationNow, false);
+				}
 			}
 
-			// delete
-			// that.optDefCopy[that.selectedLayerNow][that.selectedValidationNow][selected][keyname];
-			// var keys =
-			// Object.keys(that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]);
-			var option = that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow];
-
-			if (option.length === 0) {
-				delete that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow];
-			}
-
-			// var count = 0;
-			// for (var i = 0; i < option.length; i++) {
-			// var length =
-			// that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow][keys[i]].length;
-			// if (length === 0) {
-			// delete
-			// that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow][keys[i]]
-			// }
-			// count = count + length;
-			// }
-			that._toggleCheckbox(that.selectedValidationNow, !!option.length);
 			$(row1).remove();
-			that._updateNotNullForm();
 		});
 		$(document).on("click", this.eventNamespace + " .optiondefinition-nnullattr-addrow", function() {
 			var text = $("<input>").attr({
@@ -595,27 +588,22 @@ gitbuilder.ui.OptionDefinition = $.widget("gitbuilder.optiondefinition", {
 								/(\s*)/g, '').split(",");
 						obj[key] = values;
 					}
-					// var selected = $(that.codeSelect).val();
+					var selected = $(that.codeSelect).val();
 					if (!that.getOptDefCopy().hasOwnProperty(that.selectedLayerNow)) {
 						that.getOptDefCopy()[that.selectedLayerNow] = {};
 					}
-					// if
-					// (!that.getOptDefCopy()[that.selectedLayerNow].hasOwnProperty(that.selectedValidationNow))
-					// {
-					// that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]
-					// = {};
-					// }
-					// that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow][selected]
-					// = obj;
-					that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow] = obj;
+					if (!that.getOptDefCopy()[that.selectedLayerNow].hasOwnProperty(that.selectedValidationNow)) {
+						that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow] = {};
+					}
+					that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow][selected] = obj;
 					var keys = Object.keys(that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]);
 					var count = 0;
 					for (var i = 0; i < keys.length; i++) {
-						var option = that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow][keys[i]];
-						if (option.length === 0) {
+						var length = Object.keys(that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow][keys[i]]).length;
+						if (length === 0) {
 							delete that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow][keys[i]]
 						}
-						count = count + option.length;
+						count = count + length;
 					}
 					that._toggleCheckbox(that.selectedValidationNow, !!count);
 					// var flag = false;
@@ -638,22 +626,17 @@ gitbuilder.ui.OptionDefinition = $.widget("gitbuilder.optiondefinition", {
 			// that._updateNotNullForm();
 			var attrs = $(that.nnullAttrForm).find("input.optiondefinition-nnullattr-text");
 			var obj = [];
-			// var selected = $(that.nnullCodeSelect).val();
+			var selected = $(that.nnullCodeSelect).val();
 			var curOpt;
 			if (!that.getOptDefCopy().hasOwnProperty(that.selectedLayerNow)) {
 				that.getOptDefCopy()[that.selectedLayerNow] = {};
 			}
 			if (!that.getOptDefCopy()[that.selectedLayerNow].hasOwnProperty(that.selectedValidationNow)) {
-				that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow] = [];
-				// that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]
-				// = {};
+				that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow] = {};
 			}
-			// if
-			// (!that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow].hasOwnProperty(selected))
-			// {
-			// that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow][selected]
-			// = [];
-			// }
+			if (!that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow].hasOwnProperty(selected)) {
+				that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow][selected] = [];
+			}
 			// curOpt =
 			// that.optDefCopy[that.selectedLayerNow][that.selectedValidationNow][selected];
 			curOpt = [];
@@ -663,50 +646,21 @@ gitbuilder.ui.OptionDefinition = $.widget("gitbuilder.optiondefinition", {
 				}
 			}
 
-			that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow] = curOpt;
-			// that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow][selected]
-			// = curOpt;
-			// var keys =
-			// Object.keys(that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]);
-			var option = that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow];
-			if (option.length === 0) {
-				delete that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow];
-			}
-
-			// var count = 0;
-			// for (var i = 0; i < keys.length; i++) {
-			// var length =
-			// Object.keys(that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow][keys[i]]).length;
-			// if (length === 0) {
-			// delete
-			// that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow][keys[i]]
-			// }
-			// count = count + length;
-			// }
-			that._toggleCheckbox(that.selectedValidationNow, !!option.length);
-			// console.log(that.getOptDefCopy());
-		});
-		$(document).on("input", this.eventNamespace + " .optiondefinition-col-text", function() {
-//			console.log($(this).val());
-			if ($(this).val() === "") {
-				delete that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow];
-				that._toggleCheckbox(that.selectedValidationNow, false);
-			} else {
-				// $.isNumeric($(this).val().replace(/(\s*)/g, ''))
-				if (!that.getOptDefCopy().hasOwnProperty(that.selectedLayerNow)) {
-					that.getOptDefCopy()[that.selectedLayerNow] = {};
+			that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow][selected] = curOpt;
+			var keys = Object.keys(that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]);
+			var count = 0;
+			for (var i = 0; i < keys.length; i++) {
+				var length = Object.keys(that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow][keys[i]]).length;
+				if (length === 0) {
+					delete that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow][keys[i]]
 				}
-				// if
-				// (!that.getOptDefCopy()[that.selectedLayerNow].hasOwnProperty(that.selectedValidationNow))
-				// {
-				// that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]
-				// = {
-				// "figure" : undefined
-				// };
-				// }
-				that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow] = $(this).val().replace(/(\s*)/g, '');
-				that._toggleCheckbox(that.selectedValidationNow, true);
+				count = count + length;
 			}
+			if (!count) {
+				delete that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow];
+			}
+			that._toggleCheckbox(that.selectedValidationNow, !!count);
+			// console.log(that.getOptDefCopy());
 		});
 
 		this._addClass(this.pbody2, "panel-body");
@@ -879,59 +833,6 @@ gitbuilder.ui.OptionDefinition = $.widget("gitbuilder.optiondefinition", {
 		if (this.getDefinition()) {
 			this.setOptDefCopy(Object.assign({}, this.getDefinition()));
 		}
-	},
-	_updateNotNullForm : function() {
-		var that = this;
-		var attrs = $(that.nnullAttrForm).find("input.optiondefinition-nnullattr-text");
-		var obj = [];
-		// var selected = $(that.nnullCodeSelect).val();
-		var curOpt;
-		if (!that.getOptDefCopy().hasOwnProperty(that.selectedLayerNow)) {
-			that.getOptDefCopy()[that.selectedLayerNow] = {};
-		}
-		if (!that.getOptDefCopy()[that.selectedLayerNow].hasOwnProperty(that.selectedValidationNow)) {
-			// that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]
-			// = {};
-			that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow] = [];
-		}
-		// if
-		// (!that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow].hasOwnProperty(selected))
-		// {
-		// that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow][selected]
-		// = [];
-		// }
-		curOpt = that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow];
-		// curOpt =
-		// that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow][selected];
-		for (var i = 0; i < attrs.length; i++) {
-			if (curOpt.indexOf($(attrs[i]).val()) === -1 && $(attrs[i]).val() !== "") {
-				curOpt.push($(attrs[i]).val());
-			}
-		}
-
-		// that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow][selected]
-		// = curOpt;
-		that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow] = curOpt;
-
-		var option = that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow];
-		if (option.length === 0) {
-			delete that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow];
-		}
-
-		// var keys =
-		// Object.keys(that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]);
-		// var count = 0;
-		// for (var i = 0; i < keys.length; i++) {
-		// var length =
-		// Object.keys(that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow][keys[i]]).length;
-		// if (length === 0) {
-		// delete
-		// that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow][keys[i]]
-		// }
-		// count = count + length;
-		// }
-		that._toggleCheckbox(that.selectedValidationNow, !!option.length);
-		// console.log(that.getOptDefCopy());
 	},
 	downloadSetting : function() {
 		var setting = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(this.getOptDefCopy()));
@@ -1116,21 +1017,19 @@ gitbuilder.ui.OptionDefinition = $.widget("gitbuilder.optiondefinition", {
 			}
 			break;
 		case "attribute":
-			// $(that.codeSelect).empty();
-			// var codes =
-			// that.getLayerDefinition()[that.selectedLayerNow].code;
-			// var geom =
-			// that.getLayerDefinition()[that.selectedLayerNow].geom.toUpperCase();
-			// var sCode;
-			// for (var i = 0; i < codes.length; i++) {
-			// var opt = $("<option>").text(codes[i] + "_" + geom);
-			// $(that.codeSelect).append(opt);
-			// if (i === 0) {
-			// $(opt).prop("selected", true);
-			// sCode = codes[i] + "_" + geom;
-			// }
-			// }
-			that._updateAttribute();
+			$(that.codeSelect).empty();
+			var codes = that.getLayerDefinition()[that.selectedLayerNow].code;
+			var geom = that.getLayerDefinition()[that.selectedLayerNow].geom.toUpperCase();
+			var sCode;
+			for (var i = 0; i < codes.length; i++) {
+				var opt = $("<option>").text(codes[i] + "_" + geom);
+				$(that.codeSelect).append(opt);
+				if (i === 0) {
+					$(opt).prop("selected", true);
+					sCode = codes[i] + "_" + geom;
+				}
+			}
+			that._updateAttribute(sCode);
 
 			var tb = $("<table>").append(that.attrForm);
 			that._addClass(tb, "table");
@@ -1139,37 +1038,29 @@ gitbuilder.ui.OptionDefinition = $.widget("gitbuilder.optiondefinition", {
 			$(that.dOption).append(that.codeSelect).append(tb).append(that.addBtn);
 			break;
 		case "notnull":
-			// $(that.nnullCodeSelect).empty();
-			// var codes =
-			// that.getLayerDefinition()[that.selectedLayerNow].code;
-			// var geom =
-			// that.getLayerDefinition()[that.selectedLayerNow].geom.toUpperCase();
-			// var sCode;
-			// for (var i = 0; i < codes.length; i++) {
-			// var opt = $("<option>").text(codes[i] + "_" + geom);
-			// $(that.nnullCodeSelect).append(opt);
-			// if (i === 0) {
-			// $(opt).prop("selected", true);
-			// sCode = codes[i] + "_" + geom;
-			// }
-			// }
-			that._updateNotNullAttribute();
+			$(that.nnullCodeSelect).empty();
+			var codes = that.getLayerDefinition()[that.selectedLayerNow].code;
+			var geom = that.getLayerDefinition()[that.selectedLayerNow].geom.toUpperCase();
+			var sCode;
+			for (var i = 0; i < codes.length; i++) {
+				var opt = $("<option>").text(codes[i] + "_" + geom);
+				$(that.nnullCodeSelect).append(opt);
+				if (i === 0) {
+					$(opt).prop("selected", true);
+					sCode = codes[i] + "_" + geom;
+				}
+			}
+			that._updateNotNullAttribute(sCode, obj.multi);
 
 			var tb = $("<table>").append(that.nnullAttrForm);
 			that._addClass(tb, "table");
 			that._addClass(tb, "text-center");
 
-			$(that.dOption).append(tb).append(that.addAttrBtn);
-			break;
-		case "acolumn":
-
-			var keyInput = $("<input>").addClass("form-control").addClass("optiondefinition-col-text").attr({
-				"type" : "text"
-			});
-			if (!!that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]) {
-				$(keyInput).val(that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow].replace(/(\s*)/g, ''));
+			if (obj.multi) {
+				$(that.dOption).append(that.nnullCodeSelect).append(tb).append(that.addAttrBtn);
+			} else {
+				$(that.dOption).append(that.nnullCodeSelect).append(tb);
 			}
-			$(that.dOption).append(keyInput);
 			break;
 		case "geometry":
 			var keys = Object.keys(that.itemList);
@@ -1235,12 +1126,12 @@ gitbuilder.ui.OptionDefinition = $.widget("gitbuilder.optiondefinition", {
 			break;
 		}
 	},
-	_updateAttribute : function() {
+	_updateAttribute : function(code) {
 		var that = this;
 		var attrs;
 		if (that.getOptDefCopy().hasOwnProperty(that.selectedLayerNow)) {
 			if (that.getOptDefCopy()[that.selectedLayerNow].hasOwnProperty(that.selectedValidationNow)) {
-				attrs = that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow];
+				attrs = that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow][code];
 			}
 		}
 		$(that.attrForm).empty();
@@ -1288,47 +1179,78 @@ gitbuilder.ui.OptionDefinition = $.widget("gitbuilder.optiondefinition", {
 			$(that.attrForm).append(btr1).append(btr2);
 		}
 	},
-	_updateNotNullAttribute : function() {
+	_updateNotNullAttribute : function(code, multi) {
 		var that = this;
 		var attrs;
 		if (that.getOptDefCopy().hasOwnProperty(that.selectedLayerNow)) {
 			if (that.getOptDefCopy()[that.selectedLayerNow].hasOwnProperty(that.selectedValidationNow)) {
-				attrs = that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow];
-				// attrs =
-				// that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow][code];
+				attrs = that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow][code];
 			}
 		}
 		$(that.nnullAttrForm).empty();
-		if (!attrs) {
+		if (!attrs && multi) {
 			return;
-		}
-		var keys = attrs;
-		for (var j = 0; j < keys.length; j++) {
+		} else if (!attrs && !multi) {
 			var text = $("<input>").attr({
 				"type" : "text",
-				"value" : keys[j]
+				"value" : ""
 			}).css({
 				"display" : "inline-block"
 			});
 			that._addClass(text, "form-control");
 			that._addClass(text, "optiondefinition-nnullattr-text");
 			var td1 = $("<td>").append(text);
-
-			var icon = $("<i>").attr("aria-hidden", true);
-			this._addClass(icon, "fa");
-			this._addClass(icon, "fa-times");
-			var btn = $("<button>").css({
-				"display" : "inline-block"
-			}).append(icon);
-			that._addClass(btn, "btn");
-			that._addClass(btn, "btn-default");
-			that._addClass(btn, "optiondefinition-nnullattr-del");
-			var td2 = $("<td>").append(btn);
-
-			var btr1 = $("<tr>").append(td1).append(td2);
-
+			btr1 = $("<tr>").append(td1);
 			$(that.nnullAttrForm).append(btr1);
+		} else if (attrs && multi) {
+			var keys = attrs;
+			for (var j = 0; j < keys.length; j++) {
+				var text = $("<input>").attr({
+					"type" : "text",
+					"value" : keys[j]
+				}).css({
+					"display" : "inline-block"
+				});
+				that._addClass(text, "form-control");
+				that._addClass(text, "optiondefinition-nnullattr-text");
+				var td1 = $("<td>").append(text);
+
+				var icon = $("<i>").attr("aria-hidden", true);
+				this._addClass(icon, "fa");
+				this._addClass(icon, "fa-times");
+
+				var btr1;
+
+				var btn = $("<button>").css({
+					"display" : "inline-block"
+				}).append(icon);
+				that._addClass(btn, "btn");
+				that._addClass(btn, "btn-default");
+				that._addClass(btn, "optiondefinition-nnullattr-del");
+				var td2 = $("<td>").append(btn);
+
+				btr1 = $("<tr>").append(td1).append(td2);
+				$(that.nnullAttrForm).append(btr1);
+			}
+		} else if (attrs && !multi) {
+			var keys = attrs;
+			for (var j = 0; j < keys.length; j++) {
+				var text = $("<input>").attr({
+					"type" : "text",
+					"value" : keys[j]
+				}).css({
+					"display" : "inline-block"
+				});
+				that._addClass(text, "form-control");
+				that._addClass(text, "optiondefinition-nnullattr-text");
+				var td1 = $("<td>").append(text);
+				btr1 = $("<tr>").append(td1);
+				$(that.nnullAttrForm).append(btr1);
+			}
+		} else {
+			console.error("unknown");
 		}
+
 	},
 	_toggleCheckbox : function(vtem, bool) {
 		var that = this;

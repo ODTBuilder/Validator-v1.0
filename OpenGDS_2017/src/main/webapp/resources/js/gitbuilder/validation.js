@@ -397,7 +397,7 @@ gitbuilder.ui.Validation = $.widget("gitbuilder.validation", {
 			$(this.tbody).append(tr);
 		}
 		if (names.length > 0) {
-			this.setMessage('Press the "Start" to start the QA');	
+			this.setMessage('Press "Start" to start the QA');	
 		} else {
 			this.setMessage('Select map sheets for QA');
 		}
@@ -436,6 +436,10 @@ gitbuilder.ui.Validation = $.widget("gitbuilder.validation", {
 
 		var typeValidate = [];
 		for (var i = 0; i < lkeys.length; i++) {
+			if (ldef.hasOwnProperty(lkeys[i])) {
+				console.log(lkeys[i]+"is not defined.");
+				break;
+			}
 			if (ldef[lkeys[i]].area) {
 				if (ldef[lkeys[i]].code.length !== 1) {
 					console.error("Validating area must be single");
