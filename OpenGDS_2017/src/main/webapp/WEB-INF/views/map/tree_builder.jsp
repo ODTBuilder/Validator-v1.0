@@ -356,126 +356,12 @@ html {
 		});
 
 		$("#layerDefinition").layerdefinition20({
-			definition : {
-				"RoadBoundary" : {
-					"code" : [ "A0010000" ],
-					"geom" : "polygon",
-					"area" : false
-				},
-				"NeatLine" : {
-					"code" : [ "H0010000" ],
-					"geom" : "linestring",
-					"area" : true
-				},
-				"Building" : {
-					"code" : [ "B0010000" ],
-					"geom" : "polygon",
-					"area" : false
-				},
-				"Wall" : {
-					"code" : [ "B0020000" ],
-					"geom" : "linestring",
-					"area" : false
-				},
-				"RiverBoundary" : {
-					"code" : [ "E0010001" ],
-					"geom" : "polygon",
-					"area" : false
-				},
-				"farmLand" : {
-					"code" : [ "D0010000" ],
-					"geom" : "polygon",
-					"area" : false
-				},
-				"ContourLine" : {
-					"code" : [ "F0010000" ],
-					"geom" : "linestring",
-					"area" : false
-				}
-			}
+			
 		});
 
 		$("#validDefinition").optiondefinition({
 			layerDefinition : function() {
 				return $("#layerDefinition").layerdefinition20("getDefinition");
-			},
-			definition : {
-				"RoadBoundary" : {
-					"SmallArea" : {
-						"figure" : "0.1"
-					},
-					"SelfEntity" : {
-						"relation" : [ "Building" ]
-					},
-					"EntityDuplicated" : true
-				},
-				"NeatLine" : {
-					"EntityDuplicated" : true,
-					"SmallLength" : {
-						"figure" : "0.1"
-					},
-					"SelfEntity" : {
-						"relation" : [ "NeatLine" ]
-					}
-				},
-				"Building" : {
-					"SmallArea" : {
-						"figure" : "0.1"
-					},
-					"SelfEntity" : {
-						"relation" : [ "Wall", "NeatLine", "RoadBoundary", "RiverBoundary", "farmLand", "ContourLine", "Building" ]
-					},
-					"EntityDuplicated" : true,
-					"OverShoot" : {
-						"figure" : "0.1"
-					},
-					"UnderShoot" : {
-						"figure" : "0.1"
-					}
-				},
-				"Wall" : {
-					"SmallLength" : {
-						"figure" : "0.1"
-					},
-					"EntityDuplicated" : true,
-					"OverShoot" : {
-						"figure" : "0.1"
-					},
-					"UnderShoot" : {
-						"figure" : "0.1"
-					}
-				},
-				"RiverBoundary" : {
-					"SelfEntity" : {
-						"relation" : [ "Building" ]
-					}
-				},
-				"farmLand" : {
-					"SmallArea" : {
-						"figure" : "0.1"
-					},
-					"EntityDuplicated" : true,
-					"SelfEntity" : {
-						"relation" : [ "Building", "RiverBoundary", "Wall" ]
-					}
-				},
-				"ContourLine" : {
-					"ConIntersected" : true,
-					"ConOverDegree" : {
-						"figure" : "90"
-					},
-					"ConBreak" : true,
-					"SmallLength" : {
-						"figure" : "0.1"
-					},
-					"EntityDuplicated" : true,
-					"OverShoot" : {
-						"figure" : "0.1"
-					},
-					"UnderShoot" : {
-						"figure" : "0.1"
-					}
-				}
 			}
 		});
 

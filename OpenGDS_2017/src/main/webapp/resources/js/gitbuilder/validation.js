@@ -436,6 +436,15 @@ gitbuilder.ui.Validation = $.widget("gitbuilder.validation", {
 
 		var typeValidate = [];
 		for (var i = 0; i < lkeys.length; i++) {
+			if (!ldef[lkeys[i]].hasOwnProperty("area")) {
+				console.error(lkeys[i]+"레이어의 검수영역이 없음");
+			}
+			if (!ldef[lkeys[i]].hasOwnProperty("code")) {
+				console.error(lkeys[i]+"레이어의 레이어 코드가 없음");
+			}
+			if (!ldef[lkeys[i]].hasOwnProperty("geom")) {
+				console.error(lkeys[i]+"레이어의 지오메트리가 없음");
+			}
 			if (ldef[lkeys[i]].area) {
 				if (ldef[lkeys[i]].code.length !== 1) {
 					console.error("Validating area must be single");
