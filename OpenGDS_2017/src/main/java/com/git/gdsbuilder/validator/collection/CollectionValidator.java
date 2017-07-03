@@ -47,7 +47,6 @@ import org.geotools.feature.SchemaException;
 import org.geotools.geometry.jts.JTSFactoryFinder;
 import org.json.simple.JSONObject;
 import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
@@ -60,6 +59,7 @@ import com.git.gdsbuilder.type.geoserver.collection.GeoLayerCollectionList;
 import com.git.gdsbuilder.type.geoserver.layer.GeoLayer;
 import com.git.gdsbuilder.type.geoserver.layer.GeoLayerList;
 import com.git.gdsbuilder.type.validate.collection.ValidateLayerCollectionList;
+import com.git.gdsbuilder.type.validate.collection.close.ValidateCloseCollectionLayer;
 import com.git.gdsbuilder.type.validate.error.ErrorLayer;
 import com.git.gdsbuilder.type.validate.error.ErrorLayerList;
 import com.git.gdsbuilder.type.validate.layer.ValidateLayerType;
@@ -81,7 +81,6 @@ import com.git.gdsbuilder.type.validate.option.NodeMiss;
 import com.git.gdsbuilder.type.validate.option.OutBoundary;
 import com.git.gdsbuilder.type.validate.option.OverShoot;
 import com.git.gdsbuilder.type.validate.option.RefAttributeMiss;
-import com.git.gdsbuilder.type.validate.option.RefLayerMiss;
 import com.git.gdsbuilder.type.validate.option.RefZValueMiss;
 import com.git.gdsbuilder.type.validate.option.SelfEntity;
 import com.git.gdsbuilder.type.validate.option.SmallArea;
@@ -90,7 +89,6 @@ import com.git.gdsbuilder.type.validate.option.UselessEntity;
 import com.git.gdsbuilder.type.validate.option.UselessPoint;
 import com.git.gdsbuilder.type.validate.option.ValidatorOption;
 import com.git.gdsbuilder.type.validate.option.WaterOpen;
-import com.git.gdsbuilder.type.validate.option.Z_ValueAmbiguous;
 import com.git.gdsbuilder.validator.collection.rule.MapSystemRule;
 import com.git.gdsbuilder.validator.collection.rule.MapSystemRule.MapSystemRuleType;
 import com.git.gdsbuilder.validator.layer.LayerValidatorImpl;
@@ -121,18 +119,35 @@ public class CollectionValidator {
 	 * CollectionValidator 생성자
 	 * 
 	 * @param validateLayerCollectionList
+	 * @param fileType
 	 * @throws NoSuchAuthorityCodeException
 	 * @throws SchemaException
 	 * @throws FactoryException
 	 * @throws TransformException
 	 * @throws IOException
 	 */
-	public CollectionValidator(ValidateLayerCollectionList validateLayerCollectionList, String collectionType)
+	public CollectionValidator(ValidateLayerCollectionList validateLayerCollectionList, String fileType)
 			throws NoSuchAuthorityCodeException, SchemaException, FactoryException, TransformException, IOException {
 		this.validateLayerCollectionList = validateLayerCollectionList;
 		this.progress = new HashMap<String, Object>();
-		this.collectionType = collectionType;
+		this.collectionType = "";
 		collectionValidate();
+	}
+
+	public double getTolorence() {
+		return tolorence;
+	}
+
+	public void setTolorence(double tolorence) {
+		this.tolorence = tolorence;
+	}
+
+	public String getCollectionType() {
+		return collectionType;
+	}
+
+	public void setCollectionType(String collectionType) {
+		this.collectionType = collectionType;
 	}
 
 	/**
@@ -175,22 +190,6 @@ public class CollectionValidator {
 		this.progress = progress;
 	}
 
-	public double getTolorence() {
-		return tolorence;
-	}
-
-	public void setTolorence(double tolorence) {
-		this.tolorence = tolorence;
-	}
-
-	public String getCollectionType() {
-		return collectionType;
-	}
-
-	public void setCollectionType(String collectionType) {
-		this.collectionType = collectionType;
-	}
-
 	/**
 	 * validateLayerCollectionList를 검수 @author DY.Oh @Date 2017. 4. 18. 오후
 	 * 3:30:31 @throws SchemaException @throws
@@ -227,9 +226,10 @@ public class CollectionValidator {
 				// attributeValidate(types, collection, errorLayer);
 
 				// 인접도엽 검수
-				// closeCollectionValidate(types, mapSystemRule, collection);
+				// closeCollectionValidate(types, mapSystemRule, collection,"");
 
 				errLayerList.add(errorLayer);
+
 				progress.put(collection.getCollectionName(), 2);
 			} catch (Exception e) {
 				progress.put(collection.getCollectionName(), 3);
@@ -274,10 +274,13 @@ public class CollectionValidator {
 							JSONObject attrJson = (JSONObject) attributeNames.get(layerCode);
 							typeErrorLayer = layerValidator.validateAttributeFix(attrJson);
 						}
-						if (option instanceof Z_ValueAmbiguous) {
-							String attributeKey = ((Z_ValueAmbiguous) option).getAttributeKey();
-							typeErrorLayer = layerValidator.validateZ_ValueAmbiguous(attributeKey);
-						}
+						/*
+						 * if (option instanceof ZValueAmbiguous) { String
+						 * attributeKey = ((ZValueAmbiguous)
+						 * option).getAttributeKey(); typeErrorLayer =
+						 * layerValidator.validateZValueAmbiguous(attributeKey);
+						 * }
+						 */
 						if (typeErrorLayer != null) {
 							errorLayer.mergeErrorLayer(typeErrorLayer);
 						}
@@ -334,10 +337,12 @@ public class CollectionValidator {
 							double degree = ((ConOverDegree) option).getDegree();
 							typeErrorLayer = layerValidator.validateConOverDegree(degree);
 						}
-						if (option instanceof Z_ValueAmbiguous) {
-							String key = ((Z_ValueAmbiguous) option).getAttributeKey();
-							typeErrorLayer = layerValidator.validateZ_ValueAmbiguous(key);
-						}
+						/*
+						 * if (option instanceof Z_ValueAmbiguous) { String key
+						 * = ((Z_ValueAmbiguous) option).getAttributeKey();
+						 * typeErrorLayer =
+						 * layerValidator.validateZ_ValueAmbiguous(key); }
+						 */
 						if (option instanceof UselessPoint) {
 							typeErrorLayer = layerValidator.validateUselessPoint();
 						}
@@ -485,7 +490,7 @@ public class CollectionValidator {
 
 	@SuppressWarnings("unused")
 	private void closeCollectionValidate(ValidateLayerTypeList types, MapSystemRule mapSystemRule,
-			GeoLayerCollection layerCollection) throws SchemaException {
+			GeoLayerCollection layerCollection, String geomColumn) throws SchemaException {
 		// TODO Auto-generated method stub
 		FilterFactory2 ff = CommonFactoryFinder.getFilterFactory2();
 
@@ -624,16 +629,11 @@ public class CollectionValidator {
 			Polygon rightPolygon = geometryFactory.createPolygon(rightRing, holes);
 
 			// 인접도엽 top, bottom, left, right 객체로드를 위한 Map 생성
-			/*
-			 * Map<MapSystemRuleType, Polygon> nearCollectionBoundary = new
-			 * HashMap<MapSystemRuleType, Polygon>();
-			 * nearCollectionBoundary.put(MapSystemRuleType.TOP, topPolygon);
-			 * nearCollectionBoundary.put(MapSystemRuleType.BOTTOM,
-			 * bottomPolygon);
-			 * nearCollectionBoundary.put(MapSystemRuleType.LEFT, leftPolygon);
-			 * nearCollectionBoundary.put(MapSystemRuleType.RIGHT,
-			 * rightPolygon);
-			 */
+			Map<MapSystemRuleType, Polygon> targetFeaturesGetBoundary = new HashMap<MapSystemRuleType, Polygon>();
+			targetFeaturesGetBoundary.put(MapSystemRuleType.TOP, topPolygon);
+			targetFeaturesGetBoundary.put(MapSystemRuleType.BOTTOM, bottomPolygon);
+			targetFeaturesGetBoundary.put(MapSystemRuleType.LEFT, leftPolygon);
+			targetFeaturesGetBoundary.put(MapSystemRuleType.RIGHT, rightPolygon);
 
 			// 인접도엽 객체 GET 폴리곤생성
 			Coordinate[] nearTopCoords = new Coordinate[] { new Coordinate(minx, miny - tolorence),
@@ -662,181 +662,83 @@ public class CollectionValidator {
 			Polygon nearRightPolygon = geometryFactory.createPolygon(nearRightRing, holes);
 
 			// 인접도엽 top, bottom, left, right 객체로드를 위한 Map 생성
-			/*
-			 * Map<MapSystemRuleType, Polygon> nearCollectionBoundary = new
-			 * HashMap<MapSystemRuleType, Polygon>();
-			 * nearCollectionBoundary.put(MapSystemRuleType.TOP, topPolygon);
-			 * nearCollectionBoundary.put(MapSystemRuleType.BOTTOM,
-			 * bottomPolygon);
-			 * nearCollectionBoundary.put(MapSystemRuleType.LEFT, leftPolygon);
-			 * nearCollectionBoundary.put(MapSystemRuleType.RIGHT,
-			 * rightPolygon);
-			 */
-			// 인접관련 옵션 객체선언
-			EdgeMatchMiss matchMiss = null;
-			RefZValueMiss refZValueMiss = null;
-			RefLayerMiss refLayerMiss = null;
-			RefAttributeMiss refAttributeMiss = null;
-			EntityNone entityNone = null;
+			Map<MapSystemRuleType, Polygon> nearFeaturesGetBoundary = new HashMap<MapSystemRuleType, Polygon>();
+			nearFeaturesGetBoundary.put(MapSystemRuleType.TOP, topPolygon);
+			nearFeaturesGetBoundary.put(MapSystemRuleType.BOTTOM, bottomPolygon);
+			nearFeaturesGetBoundary.put(MapSystemRuleType.LEFT, leftPolygon);
+			nearFeaturesGetBoundary.put(MapSystemRuleType.RIGHT, rightPolygon);
+
+			ErrorLayer errLayer = new ErrorLayer();
 
 			for (ValidateLayerType layerType : types) {
 				GeoLayerList typeLayers = validateLayerCollectionList.getTypeLayers(layerType.getTypeName(),
 						layerCollection);
-				ErrorLayer errLayer = new ErrorLayer();
 				List<ValidatorOption> options = layerType.getOptionList();
 				if (options != null) {
 					ErrorLayer typeErrorLayer = null;
 
+					// 인접관련 옵션 객체선언
+					EntityNone entityNone = null;
+					EdgeMatchMiss matchMiss = null;
+					RefZValueMiss refZValueMiss = null;
+					RefAttributeMiss refAttributeMiss = null;
+
+					List<ValidatorOption> optionList = new ArrayList<ValidatorOption>();
+					for (ValidatorOption option : options) {
+						if (option instanceof EntityNone || option instanceof RefAttributeMiss
+								|| option instanceof RefZValueMiss || option instanceof EdgeMatchMiss) {
+							optionList.add(option);
+						}
+					}
+
 					for (GeoLayer geoLayer : typeLayers) {
-						SimpleFeatureCollection currentCollection = geoLayer.getSimpleFeatureCollection();
 						Map<String, GeoLayer> nearGeoLayers = new HashMap<String, GeoLayer>();
 						layerValidator.setValidatorLayer(geoLayer);
-						Map<MapSystemRuleType, HashMap<List<SimpleFeature>, List<SimpleFeature>>> nearCollectionObj = new HashMap<MapSystemRuleType, HashMap<List<SimpleFeature>, List<SimpleFeature>>>(); // 인접검수대상
-																																																			// 객체
-																																																			// 변수
-																																																			// 선언
+						// 선언
 
-						List<SimpleFeature> topFeatureList = new ArrayList<SimpleFeature>();
-						List<SimpleFeature> bottomFeatureList = new ArrayList<SimpleFeature>();
-						List<SimpleFeature> leftFeatureList = new ArrayList<SimpleFeature>();
-						List<SimpleFeature> rightFeatureList = new ArrayList<SimpleFeature>();
-
-						List<SimpleFeature> nearTopFeatureList = new ArrayList<SimpleFeature>();
-						List<SimpleFeature> nearBottomFeatureList = new ArrayList<SimpleFeature>();
-						List<SimpleFeature> nearLeftFeatureList = new ArrayList<SimpleFeature>();
-						List<SimpleFeature> nearRightFeatureList = new ArrayList<SimpleFeature>();
+						Map<MapSystemRuleType, GeoLayer> collctionMap = new HashMap<MapSystemRule.MapSystemRuleType, GeoLayer>();
+						GeoLayer topLayer = null;
+						GeoLayer bottomLayer = null;
+						GeoLayer leftLayer = null;
+						GeoLayer rightLayer = null;
 
 						if (geoLayer != null) {
-							// 각 인접도엽별 객체 GET
 							if (topGeoCollection != null) {
-								Filter topFilter = ff.intersects(ff.property(geomCol), ff.literal(topPolygon));
-								Filter nearTopFilter = ff.intersects(ff.property(geomCol), ff.literal(nearTopPolygon));
-
-								GeoLayer targetLayer = topGeoCollection.getLayer(geoLayer.getLayerName(),
-										topGeoCollection);
-
-								SimpleFeatureCollection topCollection = currentCollection.subCollection(topFilter);
-								SimpleFeatureCollection nearTopCollection = targetLayer.getSimpleFeatureCollection()
-										.subCollection(nearTopFilter);
-
-								SimpleFeatureIterator topFeatureIterator = topCollection.features();
-								SimpleFeatureIterator nearTopFeatureIterator = nearTopCollection.features();
-
-								while (topFeatureIterator.hasNext()) {
-									topFeatureList.add(topFeatureIterator.next());
-								}
-
-								while (nearTopFeatureIterator.hasNext()) {
-									nearTopFeatureList.add(nearTopFeatureIterator.next());
-								}
-
-								HashMap<List<SimpleFeature>, List<SimpleFeature>> topFeaturesMap = new HashMap<List<SimpleFeature>, List<SimpleFeature>>();
-								topFeaturesMap.put(topFeatureList, nearTopFeatureList);
-								nearCollectionObj.put(MapSystemRuleType.TOP, topFeaturesMap);
-
+								topLayer = topGeoCollection.getLayer(geoLayer.getLayerName(), topGeoCollection);
+								collctionMap.put(MapSystemRuleType.TOP, topLayer);
 							}
 							if (bottomGeoCollection != null) {
-								Filter bottomFilter = ff.intersects(ff.property(geomCol), ff.literal(bottomPolygon));
-								Filter nearBottomFilter = ff.intersects(ff.property(geomCol),
-										ff.literal(nearBottomPolygon));
-
-								GeoLayer targetLayer = bottomGeoCollection.getLayer(geoLayer.getLayerName(),
+								bottomLayer = bottomGeoCollection.getLayer(geoLayer.getLayerName(),
 										bottomGeoCollection);
-
-								SimpleFeatureCollection bottomCollection = currentCollection
-										.subCollection(bottomFilter);
-								SimpleFeatureCollection nearbottomCollection = targetLayer.getSimpleFeatureCollection()
-										.subCollection(nearBottomFilter);
-
-								SimpleFeatureIterator bottomFeatureIterator = bottomCollection.features();
-								SimpleFeatureIterator nearBottomFeatureIterator = nearbottomCollection.features();
-
-								while (bottomFeatureIterator.hasNext()) {
-									topFeatureList.add(bottomFeatureIterator.next());
-								}
-
-								while (nearBottomFeatureIterator.hasNext()) {
-									nearTopFeatureList.add(nearBottomFeatureIterator.next());
-								}
-
-								HashMap<List<SimpleFeature>, List<SimpleFeature>> bottomFeaturesMap = new HashMap<List<SimpleFeature>, List<SimpleFeature>>();
-								bottomFeaturesMap.put(topFeatureList, nearTopFeatureList);
-								nearCollectionObj.put(MapSystemRuleType.BOTTOM, bottomFeaturesMap);
+								collctionMap.put(MapSystemRuleType.BOTTOM, topLayer);
 							}
 							if (leftGeoCollection != null) {
-								Filter leftFilter = ff.intersects(ff.property(geomCol), ff.literal(leftPolygon));
-								Filter nearLeftFilter = ff.intersects(ff.property(geomCol),
-										ff.literal(nearLeftPolygon));
-
-								GeoLayer targetLayer = leftGeoCollection.getLayer(geoLayer.getLayerName(),
-										leftGeoCollection);
-
-								SimpleFeatureCollection leftCollection = currentCollection.subCollection(leftFilter);
-								SimpleFeatureCollection nearleftCollection = targetLayer.getSimpleFeatureCollection()
-										.subCollection(nearLeftFilter);
-
-								SimpleFeatureIterator leftFeatureIterator = leftCollection.features();
-								SimpleFeatureIterator nearLeftFeatureIterator = nearleftCollection.features();
-
-								while (leftFeatureIterator.hasNext()) {
-									topFeatureList.add(leftFeatureIterator.next());
-								}
-
-								while (nearLeftFeatureIterator.hasNext()) {
-									nearTopFeatureList.add(nearLeftFeatureIterator.next());
-								}
-
-								HashMap<List<SimpleFeature>, List<SimpleFeature>> leftFeaturesMap = new HashMap<List<SimpleFeature>, List<SimpleFeature>>();
-								leftFeaturesMap.put(topFeatureList, nearTopFeatureList);
-								nearCollectionObj.put(MapSystemRuleType.LEFT, leftFeaturesMap);
+								leftLayer = leftGeoCollection.getLayer(geoLayer.getLayerName(), leftGeoCollection);
+								collctionMap.put(MapSystemRuleType.LEFT, topLayer);
 							}
 							if (rightGeoCollection != null) {
-								Filter rightFilter = ff.intersects(ff.property(geomCol), ff.literal(rightPolygon));
-								Filter nearRightFilter = ff.intersects(ff.property(geomCol),
-										ff.literal(nearRightPolygon));
-
-								GeoLayer targetLayer = rightGeoCollection.getLayer(geoLayer.getLayerName(),
-										rightGeoCollection);
-
-								SimpleFeatureCollection rightCollection = currentCollection.subCollection(rightFilter);
-								SimpleFeatureCollection nearRightCollection = targetLayer.getSimpleFeatureCollection()
-										.subCollection(nearRightFilter);
-
-								SimpleFeatureIterator rightFeatureIterator = rightCollection.features();
-								SimpleFeatureIterator nearRightFeatureIterator = nearRightCollection.features();
-
-								while (rightFeatureIterator.hasNext()) {
-									topFeatureList.add(rightFeatureIterator.next());
-								}
-
-								while (nearRightFeatureIterator.hasNext()) {
-									nearTopFeatureList.add(nearRightFeatureIterator.next());
-								}
-
-								HashMap<List<SimpleFeature>, List<SimpleFeature>> rightFeaturesMap = new HashMap<List<SimpleFeature>, List<SimpleFeature>>();
-								rightFeaturesMap.put(topFeatureList, nearTopFeatureList);
-								nearCollectionObj.put(MapSystemRuleType.RIGHT, rightFeaturesMap);
+								rightLayer = rightGeoCollection.getLayer(geoLayer.getLayerName(), rightGeoCollection);
+								collctionMap.put(MapSystemRuleType.RIGHT, topLayer);
 							}
-						} else
-							break;
 
-						// 인접관련 옵션 객체 생성
-						List<ValidatorOption> optionList = new ArrayList<ValidatorOption>();
-						for (ValidatorOption option : options) {
-							if (option instanceof EntityNone || option instanceof RefAttributeMiss
-									|| option instanceof RefLayerMiss || option instanceof RefZValueMiss
-									|| option instanceof EdgeMatchMiss) {
-								optionList.add(option);
+							ValidateCloseCollectionLayer closeCollectionLayer = new ValidateCloseCollectionLayer(
+									geoLayer, collctionMap, tolorence, optionList, collectionBoundary,
+									targetFeaturesGetBoundary, nearFeaturesGetBoundary);
+
+							typeErrorLayer = layerValidator.validateCloseCollection(closeCollectionLayer, geomCol);
+
+							if (typeErrorLayer != null) {
+								errLayer.mergeErrorLayer(typeErrorLayer);
 							}
-						}
-
-						for (ValidatorOption option : optionList) {
-
 						}
 					}
 				}
 			}
-
+			if (errLayer != null) {
+				errLayer.setCollectionName(layerCollection.getCollectionName());
+				errLayer.setCollectionType(layerCollection.getLayerCollectionType());
+				errLayerList.add(errLayer);
+			}
 		}
 
 		/*
