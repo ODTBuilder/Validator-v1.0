@@ -195,10 +195,8 @@ public class GeoLayerParser {
 		SimpleFeatureCollection sfc = null;
 		if (this.dataStore != null) {
 			String fullLayerName = "geo_" + fileFormat.getStateName() + "_" + collectionName + "_" + layerName;
-			System.out.println(fullLayerName);
 			SimpleFeatureSource source = this.dataStore.getFeatureSource(workspaceName + ":" + fullLayerName);
 			sfc = source.getFeatures();
-
 			if (sfc != null) {
 				GeoLayer layer = new GeoLayer();
 				layer.setLayerName(this.layerName);

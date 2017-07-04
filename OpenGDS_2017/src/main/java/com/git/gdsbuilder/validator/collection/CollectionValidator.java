@@ -107,8 +107,14 @@ import com.vividsolutions.jts.geom.Polygon;
  */
 public class CollectionValidator {
 
+	protected static double lineInvadedTolorence = 0.01; // 선형이 면형 객체 침범 (m)
+	protected static double polygonInvadedTolorence = 0.001; // 면형이 면형 객체 침범
+																// (m2)
+	protected static double lineOverTolorence = 0.01; // 중심선이 경계면 초과 (m2)
+	protected static double areaRatioTolorence = 0.1; // 지류계와 경지계 불일치 (%)
+	protected static double spatialAccuracyTolorence = 0.001; // 공간분석 정밀도 설정 (m)
+
 	ValidateLayerCollectionList validateLayerCollectionList;
-	double tolorence = 0.001;
 	ErrorLayerList errLayerList;
 	Map<String, Object> progress;
 	String collectionType;
@@ -132,14 +138,6 @@ public class CollectionValidator {
 		this.progress = new HashMap<String, Object>();
 		this.collectionType = fileType;
 		collectionValidate();
-	}
-
-	public double getTolorence() {
-		return tolorence;
-	}
-
-	public void setTolorence(double tolorence) {
-		this.tolorence = tolorence;
 	}
 
 	public String getCollectionType() {
@@ -287,9 +285,6 @@ public class CollectionValidator {
 				}
 			}
 		}
-		// errorLayer.setCollectionName(collectionName);
-		// geoErrorList.add(errorLayer);
-		// this.errLayerMerge(geoErrorList);
 	}
 
 	private void geometricValidate(ValidateLayerTypeList types, GeoLayerCollection layerCollection,
@@ -318,7 +313,7 @@ public class CollectionValidator {
 						if (typeLayer == null) {
 							continue;
 						}
-						
+
 						// twistedFeature
 						LayerValidatorImpl layerValidator = new LayerValidatorImpl(typeLayer);
 						typeErrorLayer = layerValidator.validateTwistedPolygon();
@@ -443,7 +438,8 @@ public class CollectionValidator {
 							List<String> relationNames = ((CrossRoad) option).getRelationType();
 							for (int l = 0; l < relationNames.size(); l++) {
 								typeErrorLayer = layerValidator.validateCrossRoad(validateLayerCollectionList
-										.getTypeLayers(relationNames.get(l), layerCollection), "", tolorence);
+										.getTypeLayers(relationNames.get(l), layerCollection), "",
+										spatialAccuracyTolorence);
 							}
 							if (typeErrorLayer != null) {
 								errorLayer.mergeErrorLayer(typeErrorLayer);
@@ -453,27 +449,19 @@ public class CollectionValidator {
 							List<String> relationNames = ((NodeMiss) option).getRelationType();
 							for (int l = 0; l < relationNames.size(); l++) {
 								typeErrorLayer = layerValidator.validateNodeMiss(validateLayerCollectionList
-										.getTypeLayers(relationNames.get(l), layerCollection), "", tolorence);
+										.getTypeLayers(relationNames.get(l), layerCollection), "",
+										spatialAccuracyTolorence);
 							}
 							if (typeErrorLayer != null) {
 								errorLayer.mergeErrorLayer(typeErrorLayer);
 							}
 						}
-
-						// if (typeErrorLayer != null) {
-						// errorLayer.mergeErrorLayer(typeErrorLayer);
-						// }
 					}
 				}
 			} else {
 				continue;
 			}
 		}
-		/*
-		 * errLayer.setCollectionName(layerCollection.getCollectionName());
-		 * //geoErrorList.add(errLayer); //this.errLayerMerge(geoErrorList);
-		 * errLayerList.add(errLayer);
-		 */
 	}
 
 	@SuppressWarnings("unused")
@@ -510,12 +498,6 @@ public class CollectionValidator {
 				}
 			}
 		}
-		/*
-		 * if (errLayer != null) {
-		 * errLayer.setCollectionName(layerCollection.getCollectionName());
-		 * errLayer.setCollectionType(layerCollection.getLayerCollectionType());
-		 * errLayerList.add(errLayer); }
-		 */
 	}
 
 	// closeValidate
@@ -637,17 +619,19 @@ public class CollectionValidator {
 
 			// 대상도엽 객체 GET 폴리곤 생성
 			Coordinate[] topCoords = new Coordinate[] { new Coordinate(minx, miny), new Coordinate(maxx, miny),
-					new Coordinate(maxx, maxy + tolorence), new Coordinate(minx, maxy + tolorence),
-					new Coordinate(minx, miny) };
+					new Coordinate(maxx, maxy + spatialAccuracyTolorence),
+					new Coordinate(minx, maxy + spatialAccuracyTolorence), new Coordinate(minx, miny) };
 			Coordinate[] bottomCoords = new Coordinate[] { new Coordinate(minx, maxy), new Coordinate(maxx, maxy),
-					new Coordinate(maxx, maxy - tolorence), new Coordinate(minx, maxy - tolorence),
-					new Coordinate(minx, maxy) };
+					new Coordinate(maxx, maxy - spatialAccuracyTolorence),
+					new Coordinate(minx, maxy - spatialAccuracyTolorence), new Coordinate(minx, maxy) };
 			Coordinate[] leftCoords = new Coordinate[] { new Coordinate(minx, miny),
-					new Coordinate(minx + tolorence, miny), new Coordinate(minx + tolorence, maxy),
-					new Coordinate(minx, maxy), new Coordinate(minx, miny) };
+					new Coordinate(minx + spatialAccuracyTolorence, miny),
+					new Coordinate(minx + spatialAccuracyTolorence, maxy), new Coordinate(minx, maxy),
+					new Coordinate(minx, miny) };
 			Coordinate[] rightCoords = new Coordinate[] { new Coordinate(maxx, miny),
-					new Coordinate(maxx - tolorence, miny), new Coordinate(maxx - tolorence, maxy),
-					new Coordinate(maxx, maxy), new Coordinate(maxx, miny) };
+					new Coordinate(maxx - spatialAccuracyTolorence, miny),
+					new Coordinate(maxx - spatialAccuracyTolorence, maxy), new Coordinate(maxx, maxy),
+					new Coordinate(maxx, miny) };
 
 			LinearRing topRing = geometryFactory.createLinearRing(topCoords);
 			LinearRing bottomRing = geometryFactory.createLinearRing(bottomCoords);
@@ -668,18 +652,20 @@ public class CollectionValidator {
 			targetFeaturesGetBoundary.put(MapSystemRuleType.RIGHT, rightPolygon);
 
 			// 인접도엽 객체 GET 폴리곤생성
-			Coordinate[] nearTopCoords = new Coordinate[] { new Coordinate(minx, miny - tolorence),
-					new Coordinate(maxx, miny - tolorence), new Coordinate(maxx, maxy), new Coordinate(minx, maxy),
-					new Coordinate(minx, miny - tolorence) };
+			Coordinate[] nearTopCoords = new Coordinate[] { new Coordinate(minx, miny - spatialAccuracyTolorence),
+					new Coordinate(maxx, miny - spatialAccuracyTolorence), new Coordinate(maxx, maxy),
+					new Coordinate(minx, maxy), new Coordinate(minx, miny - spatialAccuracyTolorence) };
 			Coordinate[] nearBottomCoords = new Coordinate[] { new Coordinate(minx, maxy), new Coordinate(maxx, maxy),
-					new Coordinate(maxx, maxy + tolorence), new Coordinate(minx, maxy + tolorence),
-					new Coordinate(minx, maxy) };
-			Coordinate[] nearLeftCoords = new Coordinate[] { new Coordinate(minx - tolorence, miny),
-					new Coordinate(minx, miny), new Coordinate(minx, maxy), new Coordinate(minx - tolorence, maxy),
-					new Coordinate(minx - tolorence, miny) };
+					new Coordinate(maxx, maxy + spatialAccuracyTolorence),
+					new Coordinate(minx, maxy + spatialAccuracyTolorence), new Coordinate(minx, maxy) };
+			Coordinate[] nearLeftCoords = new Coordinate[] { new Coordinate(minx - spatialAccuracyTolorence, miny),
+					new Coordinate(minx, miny), new Coordinate(minx, maxy),
+					new Coordinate(minx - spatialAccuracyTolorence, maxy),
+					new Coordinate(minx - spatialAccuracyTolorence, miny) };
 			Coordinate[] nearRightCoords = new Coordinate[] { new Coordinate(maxx, miny),
-					new Coordinate(maxx + tolorence, miny), new Coordinate(maxx + tolorence, maxy),
-					new Coordinate(maxx, maxy), new Coordinate(maxx, miny) };
+					new Coordinate(maxx + spatialAccuracyTolorence, miny),
+					new Coordinate(maxx + spatialAccuracyTolorence, maxy), new Coordinate(maxx, maxy),
+					new Coordinate(maxx, miny) };
 
 			LinearRing nearTopRing = geometryFactory.createLinearRing(nearTopCoords);
 			LinearRing nearBottomRing = geometryFactory.createLinearRing(nearBottomCoords);
@@ -754,7 +740,7 @@ public class CollectionValidator {
 							}
 
 							ValidateCloseCollectionLayer closeCollectionLayer = new ValidateCloseCollectionLayer(
-									geoLayer, collctionMap, tolorence, optionList, collectionBoundary,
+									geoLayer, collctionMap, spatialAccuracyTolorence, optionList, collectionBoundary,
 									targetFeaturesGetBoundary, nearFeaturesGetBoundary);
 
 							typeErrorLayer = layerValidator.validateCloseCollection(closeCollectionLayer, geomCol);

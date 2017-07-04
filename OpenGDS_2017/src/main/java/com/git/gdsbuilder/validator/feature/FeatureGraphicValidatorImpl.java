@@ -43,6 +43,7 @@ import org.geotools.feature.SchemaException;
 import org.geotools.geometry.jts.JTS;
 import org.geotools.geometry.jts.JTSFactoryFinder;
 import org.geotools.referencing.CRS;
+import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
@@ -461,6 +462,9 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 					Coordinate j = geomJCoor[i];
 					double distance = geometryI.distance(new GeometryFactory().createPoint(j));
 					if (distance > 0.01 ) {
+						
+						System.out.println("d : " + distance);
+						
 						Geometry returnGome = geometryJ.getCentroid();
 						errFeature = new ErrorFeature(simpleFeature.getID(), OutBoundary.Type.OUTBOUNDARY.errType(),
 								OutBoundary.Type.OUTBOUNDARY.errName(), returnGome);
@@ -772,7 +776,9 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 						}
 					}
 					if (flag == false) {
-						ErrorFeature errorFeature = new ErrorFeature(lineSimpleFeature.getID(),
+						Property featuerIDPro = lineSimpleFeature.getProperty("feature_id");
+						String featureID = (String) featuerIDPro.getValue();
+						ErrorFeature errorFeature = new ErrorFeature(featureID,
 								NodeMiss.Type.NODEMISS.errType(), NodeMiss.Type.NODEMISS.errName(), interPoint);
 						errorFeatures.add(errorFeature);
 					}

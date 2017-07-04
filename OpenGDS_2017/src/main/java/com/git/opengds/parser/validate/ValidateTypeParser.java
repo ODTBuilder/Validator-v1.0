@@ -449,38 +449,38 @@ public class ValidateTypeParser {
 					optionList.add(entityNone);
 				}
 			}
-			
-			if (optionName.equalsIgnoreCase(EdgeMatchMiss.Type.EDGEMATCHMISS.errName())) {
-				Boolean isTrue = (Boolean) qaOptions.get("EdgeMatchMiss");
-				if (isTrue) {
-					EdgeMatchMiss edgeMatchMiss = new EdgeMatchMiss();
-					optionList.add(edgeMatchMiss);
-				}
-			}
-			
-			if(optionName.equalsIgnoreCase(RefZValueMiss.Type.REFZVALUEMISS.errName())){
-				/*Object z_Value = qaOptions.get("RefZValueMiss");
-				if (z_Value == null) {
-					continue;
-				} else {
-					String z_ValueKey = (String) z_Value;
-					ValidatorOption refZValueMiss = new RefZValueMiss(z_ValueKey);
-					optionList.add(refZValueMiss);
-				}*/
-			}
+//			
+//			if (optionName.equalsIgnoreCase(EdgeMatchMiss.Type.EDGEMATCHMISS.errName())) {
+//				Boolean isTrue = (Boolean) qaOptions.get("EdgeMatchMiss");
+//				if (isTrue) {
+//					EdgeMatchMiss edgeMatchMiss = new EdgeMatchMiss();
+//					optionList.add(edgeMatchMiss);
+//				}
+//			}
+//			
+//			if(optionName.equalsIgnoreCase(RefZValueMiss.Type.REFZVALUEMISS.errName())){
+//				/*Object z_Value = qaOptions.get("RefZValueMiss");
+//				if (z_Value == null) {
+//					continue;
+//				} else {
+//					String z_ValueKey = (String) z_Value;
+//					ValidatorOption refZValueMiss = new RefZValueMiss(z_ValueKey);
+//					optionList.add(refZValueMiss);
+//				}*/
+//			}
 			
 
-			if(optionName.equalsIgnoreCase(RefAttributeMiss.Type.RefAttributeMiss.errName())){
-				Object refAttributeMissObj = qaOptions.get("RefAttributeMiss");
-				if(refAttributeMissObj == null){
-					continue;
-				}else{
-					List<String> colunms = new ArrayList<String>();
-					colunms = (List<String>) refAttributeMissObj;
-					ValidatorOption refAttributeOption = new RefAttributeMiss(colunms);
-					optionList.add(refAttributeOption);
-				}
-			}
+//			if(optionName.equalsIgnoreCase(RefAttributeMiss.Type.RefAttributeMiss.errName())){
+//				Object refAttributeMissObj = qaOptions.get("RefAttributeMiss");
+//				if(refAttributeMissObj == null){
+//					continue;
+//				}else{
+//					List<String> colunms = new ArrayList<String>();
+//					colunms = (List<String>) refAttributeMissObj;
+//					ValidatorOption refAttributeOption = new RefAttributeMiss(colunms);
+//					optionList.add(refAttributeOption);
+//				}
+//			}
 			
 		}
 		return optionList;

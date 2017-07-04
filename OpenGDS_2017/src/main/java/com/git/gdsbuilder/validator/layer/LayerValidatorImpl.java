@@ -93,13 +93,13 @@ public class LayerValidatorImpl implements LayerValidator {
 	}
 
 	/**
-	 * @param validatorLayer the validatorLayer to set
+	 * @param validatorLayer
+	 *            the validatorLayer to set
 	 */
 	public void setValidatorLayer(GeoLayer validatorLayer) {
 		this.validatorLayer = validatorLayer;
 	}
 
-	
 	public ErrorLayer validateConBreakLayers(GeoLayer neatLayer) throws SchemaException {
 
 		ErrorLayer errLayer = new ErrorLayer();
@@ -272,7 +272,7 @@ public class LayerValidatorImpl implements LayerValidator {
 				for (ErrorFeature errFeature : errFeatures) {
 					errFeature.setLayerName(validatorLayer.getLayerName());
 					errLayer.addErrorFeature(errFeature);
-				} 
+				}
 			} else {
 				continue;
 			}
@@ -504,7 +504,7 @@ public class LayerValidatorImpl implements LayerValidator {
 	}
 
 	/****************************************** 추가 **********************/
-	public ErrorLayer validateUselessEntity() throws SchemaException{
+	public ErrorLayer validateUselessEntity() throws SchemaException {
 		ErrorLayer errLayer = new ErrorLayer();
 		SimpleFeatureCollection sfc = validatorLayer.getSimpleFeatureCollection();
 
@@ -526,70 +526,70 @@ public class LayerValidatorImpl implements LayerValidator {
 		}
 	}
 
-	public ErrorLayer validateBuildingOpen() throws SchemaException{
+	public ErrorLayer validateBuildingOpen() throws SchemaException {
 		ErrorLayer errorLayer = new ErrorLayer();
 		SimpleFeatureCollection sfc = validatorLayer.getSimpleFeatureCollection();
 		SimpleFeatureIterator simpleFeatureIterator = sfc.features();
 		while (simpleFeatureIterator.hasNext()) {
 			SimpleFeature simpleFeature = simpleFeatureIterator.next();
 			ErrorFeature errFeature = graphicValidator.validateBuildingOpen(simpleFeature);
-			if(errFeature != null){
+			if (errFeature != null) {
 				errFeature.setLayerName(validatorLayer.getLayerName());
 				errorLayer.addErrorFeature(errFeature);
-			}else {
+			} else {
 				continue;
 			}
 		}
-		if(errorLayer.getErrFeatureList().size() > 0){
+		if (errorLayer.getErrFeatureList().size() > 0) {
 			return errorLayer;
-		}else{
+		} else {
 			return null;
 		}
 	}
 
-	public ErrorLayer validateWaterOpen() throws SchemaException{
+	public ErrorLayer validateWaterOpen() throws SchemaException {
 		ErrorLayer errorLayer = new ErrorLayer();
 		SimpleFeatureCollection sfc = validatorLayer.getSimpleFeatureCollection();
 		SimpleFeatureIterator simpleFeatureIterator = sfc.features();
 		while (simpleFeatureIterator.hasNext()) {
 			SimpleFeature simpleFeature = simpleFeatureIterator.next();
 			ErrorFeature errFeature = graphicValidator.validateWaterOpen(simpleFeature);
-			if(errFeature != null){
+			if (errFeature != null) {
 				errFeature.setLayerName(validatorLayer.getLayerName());
 				errorLayer.addErrorFeature(errFeature);
-			}else{
+			} else {
 				continue;
 			}
 		}
-		if(errorLayer.getErrFeatureList().size() > 0){
+		if (errorLayer.getErrFeatureList().size() > 0) {
 			return errorLayer;
-		}else{
+		} else {
 			return null;
 		}
 	}
 
-	public ErrorLayer validateLayerMiss(List<String> typeNames) throws SchemaException{
+	public ErrorLayer validateLayerMiss(List<String> typeNames) throws SchemaException {
 		ErrorLayer errorLayer = new ErrorLayer();
 		SimpleFeatureCollection sfc = validatorLayer.getSimpleFeatureCollection();
-		SimpleFeatureIterator simpleFeatureIterator = sfc.features(); 
+		SimpleFeatureIterator simpleFeatureIterator = sfc.features();
 		while (simpleFeatureIterator.hasNext()) {
 			SimpleFeature simpleFeature = simpleFeatureIterator.next();
 			ErrorFeature errorFeature = graphicValidator.validateLayerMiss(simpleFeature, typeNames);
-			if(errorFeature != null){
+			if (errorFeature != null) {
 				errorFeature.setLayerName(validatorLayer.getLayerName());
 				errorLayer.addErrorFeature(errorFeature);
-			}else{
+			} else {
 				continue;
 			}
 		}
-		if(errorLayer.getErrFeatureList().size() > 0){
+		if (errorLayer.getErrFeatureList().size() > 0) {
 			return errorLayer;
-		}else{
+		} else {
 			return null;
 		}
 	}
 
-	public ErrorLayer vallidateB_SymbolOutSided(List<GeoLayer> relationLayers) throws SchemaException{
+	public ErrorLayer vallidateB_SymbolOutSided(List<GeoLayer> relationLayers) throws SchemaException {
 		ErrorLayer errorLayer = new ErrorLayer();
 
 		SimpleFeatureCollection sfc = validatorLayer.getSimpleFeatureCollection();
@@ -607,11 +607,12 @@ public class LayerValidatorImpl implements LayerValidator {
 			SimpleFeatureIterator relationSimpleFeatureIterator = relationSfc.features();
 			while (relationSimpleFeatureIterator.hasNext()) {
 				SimpleFeature relationSimpleFeature = relationSimpleFeatureIterator.next();
-				ErrorFeature errorFeature = graphicValidator.validateB_SymbolOutSided(simpleFeatures, relationSimpleFeature);
-				if(errorFeature != null){
+				ErrorFeature errorFeature = graphicValidator.validateB_SymbolOutSided(simpleFeatures,
+						relationSimpleFeature);
+				if (errorFeature != null) {
 					errorFeature.setLayerName(validatorLayer.getLayerName());
 					errorLayer.addErrorFeature(errorFeature);
-				}else{
+				} else {
 					continue;
 				}
 			}
@@ -619,15 +620,15 @@ public class LayerValidatorImpl implements LayerValidator {
 		return errorLayer;
 	}
 
-	public ErrorLayer validateCrossRoad(List<GeoLayer> relationLayers, String geomColumn, double tolerence) throws SchemaException{
+	public ErrorLayer validateCrossRoad(List<GeoLayer> relationLayers, String geomColumn, double tolerence)
+			throws SchemaException {
 
 		String geomCol = "";
 		FilterFactory2 ff = CommonFactoryFinder.getFilterFactory2();
 
-		if(geomColumn.equals("")){
+		if (geomColumn.equals("")) {
 			geomCol = "geom";
-		}
-		else{
+		} else {
 			geomCol = geomColumn;
 		}
 
@@ -647,18 +648,19 @@ public class LayerValidatorImpl implements LayerValidator {
 
 				Filter contationFilter = ff.contains(ff.property(geomCol), ff.literal(polygon));
 				Filter overlapsFilter = ff.overlaps(ff.property(geomCol), ff.literal(polygon));
-				Filter filter = ff.or(contationFilter,overlapsFilter);
+				Filter filter = ff.or(contationFilter, overlapsFilter);
 
 				SimpleFeatureCollection collection = relationSfc.subCollection(filter);
 				SimpleFeatureIterator featureIterator = collection.features();
 
-				while(featureIterator.hasNext()){
+				while (featureIterator.hasNext()) {
 					SimpleFeature feature = featureIterator.next();
 					relationSimplFeatureList.add(feature);
 				}
 
 				if (relationSimplFeatureList != null) {
-					List<ErrorFeature> errorFeatures = graphicValidator.validateCrossRoad(simpleFeature, relationSimplFeatureList, tolerence);
+					List<ErrorFeature> errorFeatures = graphicValidator.validateCrossRoad(simpleFeature,
+							relationSimplFeatureList, tolerence);
 					if (errorFeatures != null) {
 						for (ErrorFeature errorFeature : errorFeatures) {
 							errorFeature.setLayerName(validatorLayer.getLayerName());
@@ -671,7 +673,7 @@ public class LayerValidatorImpl implements LayerValidator {
 		return errorLayer;
 	}
 
-	public ErrorLayer validateBridgeName(List<GeoLayer> relationLayers) throws SchemaException{
+	public ErrorLayer validateBridgeName(List<GeoLayer> relationLayers) throws SchemaException {
 		ErrorLayer errorLayer = new ErrorLayer();
 		SimpleFeatureCollection sfc = validatorLayer.getSimpleFeatureCollection();
 
@@ -689,45 +691,46 @@ public class LayerValidatorImpl implements LayerValidator {
 				SimpleFeature relationSimpleFeature = relationSimpleFeatureIterator.next();
 				for (int j = 0; j < simpleFeatures.size(); j++) {
 					SimpleFeature simpleFeature = simpleFeatures.get(j);
-					ErrorFeature errorFeature = attributeValidator.validateBridgeName(simpleFeature, relationSimpleFeature);
-					if(errorFeature != null){
+					ErrorFeature errorFeature = attributeValidator.validateBridgeName(simpleFeature,
+							relationSimpleFeature);
+					if (errorFeature != null) {
 						errorFeature.setLayerName(validatorLayer.getLayerName());
 						errorLayer.addErrorFeature(errorFeature);
-					}else{
+					} else {
 						continue;
 					}
 				}
 			}
 		}
-		if(errorLayer.getErrFeatureList().size() > 0){
+		if (errorLayer.getErrFeatureList().size() > 0) {
 			return errorLayer;
-		}else{
+		} else {
 			return null;
 		}
 	}
 
-	public ErrorLayer validateAdmin() throws SchemaException{
+	public ErrorLayer validateAdmin() throws SchemaException {
 		ErrorLayer errorLayer = new ErrorLayer();
 		SimpleFeatureCollection sfc = validatorLayer.getSimpleFeatureCollection();
 		SimpleFeatureIterator simpleFeatureIterator = sfc.features();
 		while (simpleFeatureIterator.hasNext()) {
 			SimpleFeature simpleFeature = simpleFeatureIterator.next();
 			ErrorFeature errorFeature = attributeValidator.validateAdmin(simpleFeature);
-			if(errorFeature != null){
+			if (errorFeature != null) {
 				errorFeature.setLayerName(validatorLayer.getLayerName());
 				errorLayer.addErrorFeature(errorFeature);
-			}else{
+			} else {
 				continue;
 			}
 		}
-		if(errorLayer.getErrFeatureList().size() > 0){
+		if (errorLayer.getErrFeatureList().size() > 0) {
 			return errorLayer;
-		}else{
+		} else {
 			return null;
 		}
 	}
 
-	public ErrorLayer validateTwistedPolygon() throws SchemaException{
+	public ErrorLayer validateTwistedPolygon() throws SchemaException {
 		ErrorLayer errorLayer = new ErrorLayer();
 		SimpleFeatureCollection sfc = validatorLayer.getSimpleFeatureCollection();
 		DefaultFeatureCollection featureCollection = new DefaultFeatureCollection();
@@ -736,23 +739,23 @@ public class LayerValidatorImpl implements LayerValidator {
 		while (simpleFeatureIterator.hasNext()) {
 			SimpleFeature simpleFeature = simpleFeatureIterator.next();
 			ErrorFeature errorFeature = graphicValidator.validateTwistedPolygon(simpleFeature);
-			if(errorFeature != null){
+			if (errorFeature != null) {
 				errorFeature.setLayerName(validatorLayer.getLayerName());
 				errorLayer.addErrorFeature(errorFeature);
-			}else{
+			} else {
 				featureCollection.add(simpleFeature);
 				continue;
 			}
 		}
 		validatorLayer.setSimpleFeatureCollection(featureCollection);
-		if(errorLayer.getErrFeatureList().size() > 0){
+		if (errorLayer.getErrFeatureList().size() > 0) {
 			return errorLayer;
-		}else{
+		} else {
 			return null;
 		}
 	}
 
-	public ErrorLayer validateAttributeFix(JSONObject notNullAtt) throws SchemaException{
+	public ErrorLayer validateAttributeFix(JSONObject notNullAtt) throws SchemaException {
 		ErrorLayer errorLayer = new ErrorLayer();
 		SimpleFeatureCollection sfc = validatorLayer.getSimpleFeatureCollection();
 		DefaultFeatureCollection featureCollection = new DefaultFeatureCollection();
@@ -760,30 +763,30 @@ public class LayerValidatorImpl implements LayerValidator {
 		while (simpleFeatureIterator.hasNext()) {
 			SimpleFeature simpleFeature = simpleFeatureIterator.next();
 			ErrorFeature errorFeature = attributeValidator.validateAttributeFix(simpleFeature, notNullAtt);
-			if(errorFeature != null){
+			if (errorFeature != null) {
 				errorFeature.setLayerName(validatorLayer.getLayerName());
 				errorLayer.addErrorFeature(errorFeature);
-			}else{
+			} else {
 				featureCollection.add(simpleFeature);
 				continue;
 			}
 		}
 		validatorLayer.setSimpleFeatureCollection(featureCollection);
-		if(errorLayer.getErrFeatureList().size() > 0){
+		if (errorLayer.getErrFeatureList().size() > 0) {
 			return errorLayer;
-		}else{
+		} else {
 			return null;
 		}
 	}
 
-	public ErrorLayer validateNodeMiss(List<GeoLayer> relationLayers, String geomColumn, double tolerence) throws SchemaException, IOException{
+	public ErrorLayer validateNodeMiss(List<GeoLayer> relationLayers, String geomColumn, double tolerence)
+			throws SchemaException, IOException {
 		String geomCol = "";
 		FilterFactory2 ff = CommonFactoryFinder.getFilterFactory2();
 
-		if(geomColumn.equals("")){
+		if (geomColumn.equals("")) {
 			geomCol = "geom";
-		}
-		else{
+		} else {
 			geomCol = geomColumn;
 		}
 
@@ -791,10 +794,10 @@ public class LayerValidatorImpl implements LayerValidator {
 		SimpleFeatureCollection sfc = validatorLayer.getSimpleFeatureCollection();
 		List<SimpleFeature> simpleFeatures = new ArrayList<SimpleFeature>();
 		SimpleFeatureIterator simpleFeatureIterator = sfc.features();
-		/*while (simpleFeatureIterator.hasNext()) {
-			SimpleFeature simpleFeature = simpleFeatureIterator.next();
-			simpleFeatures.add(simpleFeature);
-		}*/
+		/*
+		 * while (simpleFeatureIterator.hasNext()) { SimpleFeature simpleFeature
+		 * = simpleFeatureIterator.next(); simpleFeatures.add(simpleFeature); }
+		 */
 
 		for (int i = 0; i < relationLayers.size(); i++) {
 
@@ -802,42 +805,52 @@ public class LayerValidatorImpl implements LayerValidator {
 			SimpleFeatureCollection relationSfc = relationLayer.getSimpleFeatureCollection();
 			SimpleFeatureSource featureSource = DataUtilities.source(relationSfc);
 
-			/*SimpleFeatureIterator relationSimpleFeatureIterator = relationSfc.features();
-			List<SimpleFeature> relationSimplFeatures = new ArrayList<SimpleFeature>();
-			while (relationSimpleFeatureIterator.hasNext()) {
-				SimpleFeature relationSimpleFeature = relationSimpleFeatureIterator.next();
-				System.out.println(relationSimpleFeature.getAttribute("ID")+", ");
-				relationSimplFeatures.add(relationSimpleFeature);
-			}*/
+			/*
+			 * SimpleFeatureIterator relationSimpleFeatureIterator =
+			 * relationSfc.features(); List<SimpleFeature> relationSimplFeatures
+			 * = new ArrayList<SimpleFeature>(); while
+			 * (relationSimpleFeatureIterator.hasNext()) { SimpleFeature
+			 * relationSimpleFeature = relationSimpleFeatureIterator.next();
+			 * System.out.println(relationSimpleFeature.getAttribute("ID")+", "
+			 * ); relationSimplFeatures.add(relationSimpleFeature); }
+			 */
 
 			while (simpleFeatureIterator.hasNext()) {
 				SimpleFeature simpleFeature = simpleFeatureIterator.next();
 
 				Polygon polygon = (Polygon) simpleFeature.getDefaultGeometry();
-				/* Geometry geometry = (Geometry)simpleFeature.getDefaultGeometry(); 
-				  Coordinate[] coordinates = geometry.getCoordinates(); 
-				  LinearRing ring = geometryFactory.createLinearRing(coordinates); 
-				  LinearRing holes[] = null; 
-				  Polygon polygon = geometryFactory.createPolygon(ring, holes);*/
+				/*
+				 * Geometry geometry =
+				 * (Geometry)simpleFeature.getDefaultGeometry(); Coordinate[]
+				 * coordinates = geometry.getCoordinates(); LinearRing ring =
+				 * geometryFactory.createLinearRing(coordinates); LinearRing
+				 * holes[] = null; Polygon polygon =
+				 * geometryFactory.createPolygon(ring, holes);
+				 */
 				List<SimpleFeature> relationSimplFeatures2 = new ArrayList<SimpleFeature>();
 
 				Filter filter = ff.intersects(ff.property(geomCol), ff.literal(polygon));
-				/*Filter filter2 = ff.within(ff.property(geomCol), ff.literal(polygon));
+				/*
+				 * Filter filter2 = ff.within(ff.property(geomCol),
+				 * ff.literal(polygon));
 				 * 
-				Filter orFilter = ff.or(filter, filter2);*/
+				 * Filter orFilter = ff.or(filter, filter2);
+				 */
 				SimpleFeatureCollection collection = relationSfc.subCollection(filter);
 				SimpleFeatureIterator featureIterator = collection.features();
 
-				while(featureIterator.hasNext()){
+				while (featureIterator.hasNext()) {
 					SimpleFeature feature = featureIterator.next();
 					relationSimplFeatures2.add(feature);
 				}
 
-
-				//				SimpleFeatureCollection relationSimplFeatures = featureSource.getFeatures(filter);
+				// SimpleFeatureCollection relationSimplFeatures =
+				// featureSource.getFeatures(filter);
 				if (relationSimplFeatures2 != null) {
-					//List<ErrorFeature> errorFeatures = graphicValidator.validateNodeMiss(simpleFeature,relationSfc.subCollection(filter));
-					List<ErrorFeature> errorFeatures = graphicValidator.validateNodeMiss(simpleFeature,relationSimplFeatures2, tolerence);
+					// List<ErrorFeature> errorFeatures =
+					// graphicValidator.validateNodeMiss(simpleFeature,relationSfc.subCollection(filter));
+					List<ErrorFeature> errorFeatures = graphicValidator.validateNodeMiss(simpleFeature,
+							relationSimplFeatures2, tolerence);
 					if (errorFeatures != null) {
 						for (ErrorFeature errorFeature : errorFeatures) {
 							errorFeature.setLayerName(validatorLayer.getLayerName());
@@ -847,113 +860,99 @@ public class LayerValidatorImpl implements LayerValidator {
 				}
 			}
 		}
-		if(errorLayer.getErrFeatureList().size() > 0){
+		if (errorLayer.getErrFeatureList().size() > 0) {
 			return errorLayer;
-		}else{
+		} else {
 			return null;
 		}
 	}
-	
-	
-	public ErrorLayer validateCloseCollection(ValidateCloseCollectionLayer closeCollectionLayer, String geomColunm){
+
+	public ErrorLayer validateCloseCollection(ValidateCloseCollectionLayer closeCollectionLayer, String geomColunm) {
 		FilterFactory2 ff = CommonFactoryFinder.getFilterFactory2();
-		
+
 		ErrorLayer errorLayer = new ErrorLayer();
-		
-		if(closeCollectionLayer!=null){
+
+		if (closeCollectionLayer != null) {
 			GeoLayer targetLayer = validatorLayer;
 			Map<MapSystemRuleType, GeoLayer> collectionMap = closeCollectionLayer.getCollectionMap();
 			Map<MapSystemRuleType, LineString> collectionBoundary = closeCollectionLayer.getCollectionBoundary();
 			double tolorence = closeCollectionLayer.getTolorence();
 			List<ValidatorOption> closeValidateOptions = closeCollectionLayer.getCloseValidateOptions();
-			Map<MapSystemRuleType, Polygon> targetFeaturesGetBoundary = closeCollectionLayer.getTargetFeaturesGetBoundary();
+			Map<MapSystemRuleType, Polygon> targetFeaturesGetBoundary = closeCollectionLayer
+					.getTargetFeaturesGetBoundary();
 			Map<MapSystemRuleType, Polygon> nearFeaturesGetBoundary = closeCollectionLayer.getNearFeaturesGetBoundary();
-			
-			//인접도엽 옵션객체 선언
-			/*EntityNone entityNone = null;
-			EdgeMatchMiss matchMiss = null;
-			RefZValueMiss refZValueMiss = null;
-			RefLayerMiss refLayerMiss = null;
-			RefAttributeMiss refAttributeMiss = null;
-			
-			for(ValidatorOption validatorOption : closeValidateOptions){
-				if (validatorOption instanceof EntityNone) {
-					entityNone = (EntityNone) validatorOption;
-				}
-				if (validatorOption instanceof EdgeMatchMiss) {
-					matchMiss = (EdgeMatchMiss) validatorOption;
-				}
-				if (validatorOption instanceof RefZValueMiss) {
-					refZValueMiss = (RefZValueMiss) validatorOption;
-				}
-				if (validatorOption instanceof EntityNone) {
-					refLayerMiss = (RefLayerMiss) validatorOption;
-				}
-				if (validatorOption instanceof EntityNone) {
-					refAttributeMiss = (RefAttributeMiss) validatorOption;
-				}
-			}*/
-			
-			//도엽 라인 선언			
+
+			// 인접도엽 옵션객체 선언
+			/*
+			 * EntityNone entityNone = null; EdgeMatchMiss matchMiss = null;
+			 * RefZValueMiss refZValueMiss = null; RefLayerMiss refLayerMiss =
+			 * null; RefAttributeMiss refAttributeMiss = null;
+			 * 
+			 * for(ValidatorOption validatorOption : closeValidateOptions){ if
+			 * (validatorOption instanceof EntityNone) { entityNone =
+			 * (EntityNone) validatorOption; } if (validatorOption instanceof
+			 * EdgeMatchMiss) { matchMiss = (EdgeMatchMiss) validatorOption; }
+			 * if (validatorOption instanceof RefZValueMiss) { refZValueMiss =
+			 * (RefZValueMiss) validatorOption; } if (validatorOption instanceof
+			 * EntityNone) { refLayerMiss = (RefLayerMiss) validatorOption; } if
+			 * (validatorOption instanceof EntityNone) { refAttributeMiss =
+			 * (RefAttributeMiss) validatorOption; } }
+			 */
+
+			// 도엽 라인 선언
 			LineString topLineString = null;
 			LineString bottomLineString = null;
 			LineString leftLineString = null;
 			LineString rightLineString = null;
-			if(collectionBoundary!=null){
+			if (collectionBoundary != null) {
 				topLineString = collectionBoundary.get(MapSystemRuleType.TOP);
 				bottomLineString = collectionBoundary.get(MapSystemRuleType.BOTTOM);
 				leftLineString = collectionBoundary.get(MapSystemRuleType.LEFT);
 				rightLineString = collectionBoundary.get(MapSystemRuleType.RIGHT);
-			}
-			else
+			} else
 				return null;
-			
-			
 
 			// 인접도엽 레이어 GET
-			GeoLayer topGeoLayer = collectionMap.get(MapSystemRuleType.TOP);;
+			GeoLayer topGeoLayer = collectionMap.get(MapSystemRuleType.TOP);
+			;
 			GeoLayer bottomGeoLayer = collectionMap.get(MapSystemRuleType.BOTTOM);
 			GeoLayer leftGeoLayer = collectionMap.get(MapSystemRuleType.LEFT);
 			GeoLayer rightGeoLayer = collectionMap.get(MapSystemRuleType.RIGHT);
-			
-			
+
 			// 대상도엽 Boundary GET
 			Polygon topPolygon = targetFeaturesGetBoundary.get(MapSystemRuleType.TOP);
 			Polygon bottomPolygon = targetFeaturesGetBoundary.get(MapSystemRuleType.BOTTOM);
 			Polygon leftPolygon = targetFeaturesGetBoundary.get(MapSystemRuleType.LEFT);
 			Polygon rightPolygon = targetFeaturesGetBoundary.get(MapSystemRuleType.RIGHT);
-			
-			
+
 			// 인접도엽 Boundary GET
 			Polygon nearTopPolygon = nearFeaturesGetBoundary.get(MapSystemRuleType.TOP);
 			Polygon nearBottomPolygon = nearFeaturesGetBoundary.get(MapSystemRuleType.BOTTOM);
 			Polygon nearLeftPolygon = nearFeaturesGetBoundary.get(MapSystemRuleType.LEFT);
 			Polygon nearRightPolygon = nearFeaturesGetBoundary.get(MapSystemRuleType.RIGHT);
-			
-			
+
 			// 대상도엽 Feature 리스트
 			List<SimpleFeature> topFeatureList = new ArrayList<SimpleFeature>();
 			List<SimpleFeature> bottomFeatureList = new ArrayList<SimpleFeature>();
 			List<SimpleFeature> leftFeatureList = new ArrayList<SimpleFeature>();
 			List<SimpleFeature> rightFeatureList = new ArrayList<SimpleFeature>();
 
-			
 			// 인접도엽 Feature 리스트
 			List<SimpleFeature> nearTopFeatureList = new ArrayList<SimpleFeature>();
 			List<SimpleFeature> nearBottomFeatureList = new ArrayList<SimpleFeature>();
 			List<SimpleFeature> nearLeftFeatureList = new ArrayList<SimpleFeature>();
 			List<SimpleFeature> nearRightFeatureList = new ArrayList<SimpleFeature>();
 
-			
 			// 대상도엽, 인접도엽 Tolorence 영역내 FeatureList GET
-			if(topGeoLayer!=null){
+			if (topGeoLayer != null) {
 				Filter topFilter = ff.intersects(ff.property(geomColunm), ff.literal(topPolygon));
 				Filter nearTopFilter = ff.intersects(ff.property(geomColunm), ff.literal(nearTopPolygon));
-				
-				
-				SimpleFeatureCollection topCollection = targetLayer.getSimpleFeatureCollection().subCollection(topFilter);
-				SimpleFeatureCollection nearTopCollection = topGeoLayer.getSimpleFeatureCollection().subCollection(nearTopFilter);
-				
+
+				SimpleFeatureCollection topCollection = targetLayer.getSimpleFeatureCollection()
+						.subCollection(topFilter);
+				SimpleFeatureCollection nearTopCollection = topGeoLayer.getSimpleFeatureCollection()
+						.subCollection(nearTopFilter);
+
 				SimpleFeatureIterator topFeatureIterator = topCollection.features();
 				SimpleFeatureIterator nearTopFeatureIterator = nearTopCollection.features();
 
@@ -964,27 +963,29 @@ public class LayerValidatorImpl implements LayerValidator {
 				while (nearTopFeatureIterator.hasNext()) {
 					nearTopFeatureList.add(nearTopFeatureIterator.next());
 				}
-				
+
 				List<ErrorFeature> errorFeatures = new ArrayList<ErrorFeature>();
-				for(SimpleFeature targetFeature : topFeatureList){
-					errorFeatures = closeCollectionValidator.ValidateCloseCollection(targetFeature, nearTopFeatureList, closeValidateOptions, topLineString, tolorence);	
+				for (SimpleFeature targetFeature : topFeatureList) {
+					errorFeatures = closeCollectionValidator.ValidateCloseCollection(targetFeature, nearTopFeatureList,
+							closeValidateOptions, topLineString, tolorence);
 				}
-				
-				for(ErrorFeature errorFeature : errorFeatures){
+
+				for (ErrorFeature errorFeature : errorFeatures) {
 					errorFeature.setLayerName(validatorLayer.getLayerName());
 					errorLayer.addErrorFeature(errorFeature);
 				}
-				
+
 			}
-			
-			if(bottomGeoLayer!=null){
+
+			if (bottomGeoLayer != null) {
 				Filter bottomFilter = ff.intersects(ff.property(geomColunm), ff.literal(bottomPolygon));
 				Filter bottomTopFilter = ff.intersects(ff.property(geomColunm), ff.literal(nearBottomPolygon));
-				
-				
-				SimpleFeatureCollection bottomCollection = targetLayer.getSimpleFeatureCollection().subCollection(bottomFilter);
-				SimpleFeatureCollection nearBottomCollection = topGeoLayer.getSimpleFeatureCollection().subCollection(bottomTopFilter);
-				
+
+				SimpleFeatureCollection bottomCollection = targetLayer.getSimpleFeatureCollection()
+						.subCollection(bottomFilter);
+				SimpleFeatureCollection nearBottomCollection = topGeoLayer.getSimpleFeatureCollection()
+						.subCollection(bottomTopFilter);
+
 				SimpleFeatureIterator bottomFeatureIterator = bottomCollection.features();
 				SimpleFeatureIterator nearBottomFeatureIterator = nearBottomCollection.features();
 
@@ -995,26 +996,28 @@ public class LayerValidatorImpl implements LayerValidator {
 				while (nearBottomFeatureIterator.hasNext()) {
 					nearBottomFeatureList.add(nearBottomFeatureIterator.next());
 				}
-				
+
 				List<ErrorFeature> errorFeatures = new ArrayList<ErrorFeature>();
-				for(SimpleFeature targetFeature : bottomFeatureList){
-					errorFeatures = closeCollectionValidator.ValidateCloseCollection(targetFeature, nearBottomFeatureList, closeValidateOptions, bottomLineString, tolorence);	
+				for (SimpleFeature targetFeature : bottomFeatureList) {
+					errorFeatures = closeCollectionValidator.ValidateCloseCollection(targetFeature,
+							nearBottomFeatureList, closeValidateOptions, bottomLineString, tolorence);
 				}
-				
-				for(ErrorFeature errorFeature : errorFeatures){
+
+				for (ErrorFeature errorFeature : errorFeatures) {
 					errorFeature.setLayerName(validatorLayer.getLayerName());
 					errorLayer.addErrorFeature(errorFeature);
 				}
 			}
-			
-			if(leftGeoLayer!=null){
+
+			if (leftGeoLayer != null) {
 				Filter leftFilter = ff.intersects(ff.property(geomColunm), ff.literal(leftPolygon));
 				Filter nearLeftFilter = ff.intersects(ff.property(geomColunm), ff.literal(nearLeftPolygon));
-				
-				
-				SimpleFeatureCollection leftCollection = targetLayer.getSimpleFeatureCollection().subCollection(leftFilter);
-				SimpleFeatureCollection nearLeftCollection = topGeoLayer.getSimpleFeatureCollection().subCollection(nearLeftFilter);
-				
+
+				SimpleFeatureCollection leftCollection = targetLayer.getSimpleFeatureCollection()
+						.subCollection(leftFilter);
+				SimpleFeatureCollection nearLeftCollection = topGeoLayer.getSimpleFeatureCollection()
+						.subCollection(nearLeftFilter);
+
 				SimpleFeatureIterator leftFeatureIterator = leftCollection.features();
 				SimpleFeatureIterator nearLeftFeatureIterator = nearLeftCollection.features();
 
@@ -1025,26 +1028,28 @@ public class LayerValidatorImpl implements LayerValidator {
 				while (nearLeftFeatureIterator.hasNext()) {
 					nearLeftFeatureList.add(nearLeftFeatureIterator.next());
 				}
-				
+
 				List<ErrorFeature> errorFeatures = new ArrayList<ErrorFeature>();
-				for(SimpleFeature targetFeature : leftFeatureList){
-					errorFeatures = closeCollectionValidator.ValidateCloseCollection(targetFeature, nearLeftFeatureList, closeValidateOptions, leftLineString, tolorence);	
+				for (SimpleFeature targetFeature : leftFeatureList) {
+					errorFeatures = closeCollectionValidator.ValidateCloseCollection(targetFeature, nearLeftFeatureList,
+							closeValidateOptions, leftLineString, tolorence);
 				}
-				
-				for(ErrorFeature errorFeature : errorFeatures){
+
+				for (ErrorFeature errorFeature : errorFeatures) {
 					errorFeature.setLayerName(validatorLayer.getLayerName());
 					errorLayer.addErrorFeature(errorFeature);
 				}
 			}
-			
-			if(rightGeoLayer!=null){
+
+			if (rightGeoLayer != null) {
 				Filter rightFilter = ff.intersects(ff.property(geomColunm), ff.literal(rightPolygon));
 				Filter nearRightFilter = ff.intersects(ff.property(geomColunm), ff.literal(nearRightPolygon));
-				
-				
-				SimpleFeatureCollection rightCollection = targetLayer.getSimpleFeatureCollection().subCollection(rightFilter);
-				SimpleFeatureCollection nearRightCollection = topGeoLayer.getSimpleFeatureCollection().subCollection(nearRightFilter);
-				
+
+				SimpleFeatureCollection rightCollection = targetLayer.getSimpleFeatureCollection()
+						.subCollection(rightFilter);
+				SimpleFeatureCollection nearRightCollection = topGeoLayer.getSimpleFeatureCollection()
+						.subCollection(nearRightFilter);
+
 				SimpleFeatureIterator rightFeatureIterator = rightCollection.features();
 				SimpleFeatureIterator nearRightFeatureIterator = nearRightCollection.features();
 
@@ -1055,24 +1060,24 @@ public class LayerValidatorImpl implements LayerValidator {
 				while (nearRightFeatureIterator.hasNext()) {
 					nearRightFeatureList.add(nearRightFeatureIterator.next());
 				}
-				
+
 				List<ErrorFeature> errorFeatures = new ArrayList<ErrorFeature>();
-				for(SimpleFeature targetFeature : rightFeatureList){
-					errorFeatures = closeCollectionValidator.ValidateCloseCollection(targetFeature, nearRightFeatureList, closeValidateOptions, rightLineString, tolorence);	
+				for (SimpleFeature targetFeature : rightFeatureList) {
+					errorFeatures = closeCollectionValidator.ValidateCloseCollection(targetFeature,
+							nearRightFeatureList, closeValidateOptions, rightLineString, tolorence);
 				}
-				
-				for(ErrorFeature errorFeature : errorFeatures){
+
+				for (ErrorFeature errorFeature : errorFeatures) {
 					errorFeature.setLayerName(validatorLayer.getLayerName());
 					errorLayer.addErrorFeature(errorFeature);
 				}
 			}
-		}
-		else
+		} else
 			return null;
-		
-		if(errorLayer.getErrFeatureList().size() > 0){
+
+		if (errorLayer.getErrFeatureList().size() > 0) {
 			return errorLayer;
-		}else{
+		} else {
 			return null;
 		}
 	}
