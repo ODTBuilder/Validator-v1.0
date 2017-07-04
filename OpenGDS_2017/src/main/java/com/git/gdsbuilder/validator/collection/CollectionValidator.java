@@ -111,7 +111,7 @@ import com.vividsolutions.jts.geom.Polygon;
 public class CollectionValidator {
 
 	ValidateLayerCollectionList validateLayerCollectionList;
-	double tolorence = 0.001;
+	double tolorence = 0.01;
 	ErrorLayerList errLayerList;
 	Map<String, Object> progress;
 	String collectionType;
@@ -280,9 +280,9 @@ public class CollectionValidator {
 						if (option instanceof ZValueAmbiguous){
 							HashMap<String, String> hashMap = ((ZValueAmbiguous) option).getRelationType();
 							String typeLayerName = typeLayer.getLayerName();
-							int index = typeLayerName.indexOf("_");
-							String layerCode = typeLayerName.substring(0, index);
-							String zValue = hashMap.get(layerCode);
+						/*	int index = typeLayerName.indexOf("_");
+							String layerCode = typeLayerName.substring(0, index);*/
+							String zValue = hashMap.get(typeLayerName);
 							typeErrorLayer = layerValidator.validateZValueAmbiguous(zValue);
 						}
 						if (typeErrorLayer != null) {
