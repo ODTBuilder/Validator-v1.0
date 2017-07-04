@@ -7224,6 +7224,18 @@
 									});
 									wms.set("name", obj.refer.get_node(data[i].name).text);
 									wms.set("id", data[i].name);
+									for (var i = 0; i < data[i].publishedList.names.length; i++) {
+										var layer = new ol.layer.Base();
+										var id = data[i].publishedList.names[i];
+										// var name = id.
+										var gchild = {
+											"validation" : false,
+											"editable" : true,
+											"fake" : "child"
+										}
+										
+										layer.set("git", gchild);
+									}
 									var git = {
 										"validation" : false,
 										"geometry" : data[i].geomType,

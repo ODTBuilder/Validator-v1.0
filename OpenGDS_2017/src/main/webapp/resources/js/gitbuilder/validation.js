@@ -436,8 +436,8 @@ gitbuilder.ui.Validation = $.widget("gitbuilder.validation", {
 
 		var typeValidate = [];
 		for (var i = 0; i < lkeys.length; i++) {
-			if (ldef.hasOwnProperty(lkeys[i])) {
-				console.log(lkeys[i]+"is not defined.");
+			if (!ldef.hasOwnProperty(lkeys[i])) {
+				console.log("'"+lkeys[i]+"' layer is not defined.");
 				break;
 			}
 			if (ldef[lkeys[i]].area) {
