@@ -108,8 +108,6 @@ public class ErrorLayer {
 	 */
 	public void mergeErrorLayer(ErrorLayer errLayer) {
 		this.errFeatureList.addAll(errLayer.getErrFeatureList());
-		System.out.println(this.errFeatureList.addAll(errLayer.getErrFeatureList()));
-		System.out.println("");
 	}
 
 	public String getCollectionType() {
