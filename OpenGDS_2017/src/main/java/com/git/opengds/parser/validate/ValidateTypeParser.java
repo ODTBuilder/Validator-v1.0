@@ -210,6 +210,8 @@ public class ValidateTypeParser {
 							hashMap.put(layerName, relationID);
 						}
 					}
+					ValidatorOption zValueAmbiguous = new ZValueAmbiguous(hashMap);
+					optionList.add(zValueAmbiguous);
 				}
 				
 			}
