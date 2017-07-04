@@ -194,7 +194,7 @@ public class ValidateTypeParser {
 				}
 			}
 			if(optionName.equalsIgnoreCase(ZValueAmbiguous.Type.ZVALUEAMBIGUOUS.errName())){
-				Object z_Value = qaOptions.get("zValueAmbiguous");
+				Object z_Value = qaOptions.get("ZValueAmbiguous");
 				if(z_Value == null){
 					continue;
 				}else{
