@@ -33,7 +33,7 @@ gitbuilder.ui.OptionDefinition = $.widget("gitbuilder.optiondefinition", {
 				"UnderShoot" ],
 		linestring : [ "RefAttributeMiss", "EdgeMatchMiss", "UselessEntity", "LayerMiss", "RefLayerMiss", "SmallLength", "EntityDuplicated",
 				"SelfEntity", "PointDuplicated", "ConIntersected", "ConOverDegree", "ConBreak", "AttributeFix", "OutBoundary", "ZValueAmbiguous",
-				"UselessPoint", "OverShoot", "UnderShoot" ],
+				"UselessPoint", "OverShoot", "UnderShoot", "RefZValueMiss" ],
 		polygon : [ "Admin", "CrossRoad", "RefAttributeMiss", "BridgeName", "NodeMiss", "EdgeMatchMiss", "UselessEntity", "LayerMiss",
 				"RefLayerMiss", "SmallArea", "EntityDuplicated", "SelfEntity", "PointDuplicated", "AttributeFix", "OutBoundary", "OverShoot",
 				"UnderShoot" ]
@@ -365,6 +365,10 @@ gitbuilder.ui.OptionDefinition = $.widget("gitbuilder.optiondefinition", {
 				}
 			} else {
 				delete that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow];
+				var keys = Object.keys(that.getOptDefCopy()[that.selectedLayerNow]);
+				if (keys.length === 0) {
+					delete that.getOptDefCopy()[that.selectedLayerNow];
+				}
 			}
 		});
 
@@ -1258,6 +1262,12 @@ gitbuilder.ui.OptionDefinition = $.widget("gitbuilder.optiondefinition", {
 		for (var i = 0; i < inputs.length; i++) {
 			if ($(inputs[i]).val() === vtem) {
 				$(inputs[i]).prop("checked", bool);
+				if (!bool) {
+					var keys = Object.keys(that.getOptDefCopy()[that.selectedLayerNow]);
+					if (keys.length === 0) {
+						delete that.getOptDefCopy()[that.selectedLayerNow];
+					}
+				}
 			}
 		}
 	},
