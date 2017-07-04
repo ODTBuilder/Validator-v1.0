@@ -130,7 +130,7 @@ public class CollectionValidator {
 			throws NoSuchAuthorityCodeException, SchemaException, FactoryException, TransformException, IOException {
 		this.validateLayerCollectionList = validateLayerCollectionList;
 		this.progress = new HashMap<String, Object>();
-		this.collectionType = "";
+		this.collectionType = fileType;
 		collectionValidate();
 	}
 
@@ -229,7 +229,6 @@ public class CollectionValidator {
 				// closeCollectionValidate(types, mapSystemRule, collection,"");
 
 				errLayerList.add(errorLayer);
-
 				progress.put(collection.getCollectionName(), 2);
 			} catch (Exception e) {
 				progress.put(collection.getCollectionName(), 3);
@@ -319,23 +318,32 @@ public class CollectionValidator {
 						if (typeLayer == null) {
 							continue;
 						}
+						
+						// twistedFeature
 						LayerValidatorImpl layerValidator = new LayerValidatorImpl(typeLayer);
-
 						typeErrorLayer = layerValidator.validateTwistedPolygon();
-
 						if (typeErrorLayer != null) {
 							errorLayer.mergeErrorLayer(typeErrorLayer);
 						}
 
 						if (option instanceof ConBreak) {
 							typeErrorLayer = layerValidator.validateConBreakLayers(neatLayer);
+							if (typeErrorLayer != null) {
+								errorLayer.mergeErrorLayer(typeErrorLayer);
+							}
 						}
 						if (option instanceof ConIntersected) {
 							typeErrorLayer = layerValidator.validateConIntersected();
+							if (typeErrorLayer != null) {
+								errorLayer.mergeErrorLayer(typeErrorLayer);
+							}
 						}
 						if (option instanceof ConOverDegree) {
 							double degree = ((ConOverDegree) option).getDegree();
 							typeErrorLayer = layerValidator.validateConOverDegree(degree);
+							if (typeErrorLayer != null) {
+								errorLayer.mergeErrorLayer(typeErrorLayer);
+							}
 						}
 						/*
 						 * if (option instanceof Z_ValueAmbiguous) { String key
@@ -345,9 +353,15 @@ public class CollectionValidator {
 						 */
 						if (option instanceof UselessPoint) {
 							typeErrorLayer = layerValidator.validateUselessPoint();
+							if (typeErrorLayer != null) {
+								errorLayer.mergeErrorLayer(typeErrorLayer);
+							}
 						}
 						if (option instanceof EntityDuplicated) {
 							typeErrorLayer = layerValidator.validateEntityDuplicated();
+							if (typeErrorLayer != null) {
+								errorLayer.mergeErrorLayer(typeErrorLayer);
+							}
 						}
 						if (option instanceof OutBoundary) {
 							List<String> relationNames = ((OutBoundary) option).getRelationType();
@@ -362,10 +376,16 @@ public class CollectionValidator {
 						if (option instanceof SmallArea) {
 							double area = ((SmallArea) option).getArea();
 							typeErrorLayer = layerValidator.validateSmallArea(area);
+							if (typeErrorLayer != null) {
+								errorLayer.mergeErrorLayer(typeErrorLayer);
+							}
 						}
 						if (option instanceof SmallLength) {
 							double length = ((SmallLength) option).getLength();
 							typeErrorLayer = layerValidator.validateSmallLength(length);
+							if (typeErrorLayer != null) {
+								errorLayer.mergeErrorLayer(typeErrorLayer);
+							}
 						}
 						if (option instanceof SelfEntity) {
 							List<String> relationNames = ((SelfEntity) option).getRelationType();
@@ -380,6 +400,9 @@ public class CollectionValidator {
 						if (option instanceof OverShoot) {
 							double tolerence = ((OverShoot) option).getTolerence();
 							typeErrorLayer = layerValidator.validateOverShoot(neatLayer, tolerence);
+							if (typeErrorLayer != null) {
+								errorLayer.mergeErrorLayer(typeErrorLayer);
+							}
 						}
 						/*
 						 * if (option instanceof UnderShoot) { double tolerence
@@ -390,12 +413,21 @@ public class CollectionValidator {
 						 */
 						if (option instanceof UselessEntity) {
 							typeErrorLayer = layerValidator.validateUselessEntity();
+							if (typeErrorLayer != null) {
+								errorLayer.mergeErrorLayer(typeErrorLayer);
+							}
 						}
 						if (option instanceof BuildingOpen) {
 							typeErrorLayer = layerValidator.validateBuildingOpen();
+							if (typeErrorLayer != null) {
+								errorLayer.mergeErrorLayer(typeErrorLayer);
+							}
 						}
 						if (option instanceof WaterOpen) {
 							typeErrorLayer = layerValidator.validateWaterOpen();
+							if (typeErrorLayer != null) {
+								errorLayer.mergeErrorLayer(typeErrorLayer);
+							}
 						}
 						if (option instanceof B_SymbolOutSided) {
 							List<String> relationNames = ((B_SymbolOutSided) option).getRelationType();
@@ -428,9 +460,9 @@ public class CollectionValidator {
 							}
 						}
 
-						if (typeErrorLayer != null) {
-							errorLayer.mergeErrorLayer(typeErrorLayer);
-						}
+						// if (typeErrorLayer != null) {
+						// errorLayer.mergeErrorLayer(typeErrorLayer);
+						// }
 					}
 				}
 			} else {
