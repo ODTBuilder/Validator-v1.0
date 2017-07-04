@@ -17,6 +17,10 @@
 
 package com.git.gdsbuilder.type.validate.option;
 
+import java.util.HashMap;
+
+import org.json.simple.JSONObject;
+
 /**
  * Z_ValueAmbiguous 정보를 담고 있는 클래스
  * @author DY.Oh
@@ -24,63 +28,71 @@ package com.git.gdsbuilder.type.validate.option;
  * */
 public class ZValueAmbiguous extends ValidatorOption {
 
-	String attributeKey;
+	
+	HashMap<String, String> attributeKey;
+	//String attributeKey;
 	
 	/**
 	 * Z_ValueAmbiguous 타입 정보를 담고 있는 클래스
 	 * @author DY.Oh
 	 * @Date 2017. 4. 18. 오후 3:10:55
 	 * */
-	public enum Type {
+	public enum Type{
 
 		ZVALUEAMBIGUOUS("ZValueAmbiguous", "AttributeError");
-		String errName;
-		String errType; 
 
-		/**
-		 * Type 생성자
-		 * @param errName
-		 * @param errType
-		 */
+		String errName;
+		String errType;
+
 		Type(String errName, String errType) {
 			this.errName = errName;
 			this.errType = errType;
 		}
 
 		/**
-		 * errName getter
-		 * @author DY.Oh
-		 * @Date 2017. 4. 18. 오후 3:09:38
-		 * @return String
-		 * @throws
-		 * */
+		 * @return the errName
+		 */
 		public String errName() {
 			return errName;
 		}
 
 		/**
-		 * errType getter
-		 * @author DY.Oh
-		 * @Date 2017. 4. 18. 오후 3:09:40
-		 * @return String
-		 * @throws
-		 * */
+		 * @return the errType
+		 */
 		public String errType() {
 			return errType;
 		}
-	};
+	}
 
-	public ZValueAmbiguous(String attributeKey) {
+	/**
+	 * @param relationType
+	 */
+	public ZValueAmbiguous(HashMap<String, String> attributeKey) {
 		super();
 		this.attributeKey = attributeKey;
 	}
+	
+	public ZValueAmbiguous(){
+		super();
+		this.attributeKey = new HashMap<String, String>();
+	}
 
-	public String getAttributeKey() {
+	/**
+	 * @return the relationType
+	 */
+	public HashMap<String, String> getRelationType() {
 		return attributeKey;
 	}
 
-	public void setAttributeKey(String attributeKey) {
+	/**
+	 * @param relationType the relationType to set
+	 */
+	public void setAttributeType(HashMap<String, String> attributeKey) {
 		this.attributeKey = attributeKey;
+	}
+	
+	public void addRelationLayerType(String notNullAtt, String zValue){
+		attributeKey.put(notNullAtt, zValue);
 	}
 
 }

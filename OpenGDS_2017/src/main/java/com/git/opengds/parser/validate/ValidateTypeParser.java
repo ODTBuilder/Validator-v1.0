@@ -193,7 +193,29 @@ public class ValidateTypeParser {
 					optionList.add(conOverDegree);
 				}
 			}
-			if
+			if(optionName.equalsIgnoreCase(ZValueAmbiguous.Type.ZVALUEAMBIGUOUS.errName())){
+				Object z_Value = qaOptions.get("ZValueAmbiguous");
+				if(z_Value == null){
+					continue;
+				}else{
+					HashMap<String, String> hashMap = new HashMap<String, String>();
+					JSONObject zvalueJsonObj = (JSONObject) z_Value;
+					Iterator iterator = zvalueJsonObj.keySet().iterator();
+					while(iterator.hasNext()){
+						String layerName = (String) iterator.next();
+						JSONArray jsonArray = (JSONArray) zvalueJsonObj.get(layerName);
+						int valueSize = jsonArray.size();
+						for (int i = 0; i < valueSize; i++) {
+							String relationID = (String) jsonArray.get(i);
+							hashMap.put(layerName, relationID);
+						}
+					}
+					ValidatorOption zValueAmbiguous = new ZValueAmbiguous(hashMap);
+					optionList.add(zValueAmbiguous);
+				}
+				
+			}
+			/*if
 			(optionName.equalsIgnoreCase(ZValueAmbiguous.Type.ZVALUEAMBIGUOUS.errName())){
 				Object z_Value = qaOptions.get("ZValueAmbiguous");
 				if (z_Value == null) {
@@ -203,7 +225,7 @@ public class ValidateTypeParser {
 					ValidatorOption Z_ValueAmbiguous = new ZValueAmbiguous(z_ValueKey);
 					optionList.add(Z_ValueAmbiguous);
 				}
-			}
+			}*/
 			if (optionName.equalsIgnoreCase(UselessPoint.Type.USELESSPOINT.errName())) {
 				Boolean isTrue = (Boolean) qaOptions.get("UselessPoint");
 				if (isTrue) {

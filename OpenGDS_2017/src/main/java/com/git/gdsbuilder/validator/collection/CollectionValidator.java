@@ -34,6 +34,8 @@
 
 package com.git.gdsbuilder.validator.collection;
 
+import static org.hamcrest.CoreMatchers.instanceOf;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -89,6 +91,7 @@ import com.git.gdsbuilder.type.validate.option.UselessEntity;
 import com.git.gdsbuilder.type.validate.option.UselessPoint;
 import com.git.gdsbuilder.type.validate.option.ValidatorOption;
 import com.git.gdsbuilder.type.validate.option.WaterOpen;
+import com.git.gdsbuilder.type.validate.option.ZValueAmbiguous;
 import com.git.gdsbuilder.validator.collection.rule.MapSystemRule;
 import com.git.gdsbuilder.validator.collection.rule.MapSystemRule.MapSystemRuleType;
 import com.git.gdsbuilder.validator.layer.LayerValidatorImpl;
@@ -221,7 +224,7 @@ public class CollectionValidator {
 				geometricValidate(types, collection, errorLayer);
 
 				// attribute 검수
-				// attributeValidate(types, collection, errorLayer);
+				attributeValidate(types, collection, errorLayer);
 
 				// 인접도엽 검수
 				// closeCollectionValidate(types, mapSystemRule, collection,"");
@@ -234,6 +237,7 @@ public class CollectionValidator {
 		}
 	}
 
+	@SuppressWarnings("unused")
 	private void attributeValidate(ValidateLayerTypeList types, GeoLayerCollection layerCollection,
 			ErrorLayer errorLayer) throws SchemaException {
 		ErrorLayerList geoErrorList = new ErrorLayerList();
@@ -271,13 +275,14 @@ public class CollectionValidator {
 							JSONObject attrJson = (JSONObject) attributeNames.get(layerCode);
 							typeErrorLayer = layerValidator.validateAttributeFix(attrJson);
 						}
-						/*
-						 * if (option instanceof ZValueAmbiguous) { String
-						 * attributeKey = ((ZValueAmbiguous)
-						 * option).getAttributeKey(); typeErrorLayer =
-						 * layerValidator.validateZValueAmbiguous(attributeKey);
-						 * }
-						 */
+						if (option instanceof ZValueAmbiguous){
+							HashMap<String, String> hashMap = ((ZValueAmbiguous) option).getRelationType();
+							String typeLayerName = typeLayer.getLayerName();
+							int index = typeLayerName.indexOf("_");
+							String layerCode = typeLayerName.substring(0, index);
+							String zValue = hashMap.get(layerCode);
+							typeErrorLayer = layerValidator.validateZValueAmbiguous(zValue);
+						}
 						if (typeErrorLayer != null) {
 							errorLayer.mergeErrorLayer(typeErrorLayer);
 						}
@@ -340,12 +345,6 @@ public class CollectionValidator {
 								errorLayer.mergeErrorLayer(typeErrorLayer);
 							}
 						}
-						/*
-						 * if (option instanceof Z_ValueAmbiguous) { String key
-						 * = ((Z_ValueAmbiguous) option).getAttributeKey();
-						 * typeErrorLayer =
-						 * layerValidator.validateZ_ValueAmbiguous(key); }
-						 */
 						if (option instanceof UselessPoint) {
 							typeErrorLayer = layerValidator.validateUselessPoint();
 							if (typeErrorLayer != null) {
