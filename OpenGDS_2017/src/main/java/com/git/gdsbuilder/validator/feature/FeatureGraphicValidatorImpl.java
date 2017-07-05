@@ -825,13 +825,24 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 
 	@Override
 	public List<ErrorFeature> validatePointDuplicated(SimpleFeature simpleFeature) {
-		
+
 		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
-		
-		
-		
-		
-		
+		String geomType = geometry.getGeometryType();
+		if (!geomType.equals("Point")) {
+			Coordinate[] coors = geometry.getCoordinates();
+			int coorLength = coors.length;
+			if (coorLength < 3) {
+
+			} else {
+				for (int i = 0; i < coors.length; i++) {
+					Coordinate coor0 = coors[i];
+					Coordinate coor1 = coors[i + 1];
+					Coordinate coor2 = coors[i + 2];
+				}
+			}
+		} else {
+
+		}
 		return null;
 	}
 }
