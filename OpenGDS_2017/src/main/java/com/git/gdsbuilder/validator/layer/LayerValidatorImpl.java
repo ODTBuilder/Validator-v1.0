@@ -101,7 +101,7 @@ public class LayerValidatorImpl implements LayerValidator {
 	}
 
 	
-	public ErrorLayer validateConBreakLayers(GeoLayer neatLayer) throws SchemaException {
+	public ErrorLayer validateConBreakLayers(GeoLayer neatLayer, double tolerence) throws SchemaException {
 
 		ErrorLayer errLayer = new ErrorLayer();
 
@@ -111,7 +111,7 @@ public class LayerValidatorImpl implements LayerValidator {
 
 		while (simpleFeatureIterator.hasNext()) {
 			SimpleFeature simpleFeature = simpleFeatureIterator.next();
-			List<ErrorFeature> errFeatures = graphicValidator.validateConBreak(simpleFeature, neatLineSfc);
+			List<ErrorFeature> errFeatures = graphicValidator.validateConBreak(simpleFeature, neatLineSfc, tolerence);
 			if (errFeatures != null) {
 				for (ErrorFeature errFeature : errFeatures) {
 					errFeature.setLayerName(validatorLayer.getLayerName());
@@ -527,26 +527,28 @@ public class LayerValidatorImpl implements LayerValidator {
 		}
 	}
 
-	public ErrorLayer validateBuildingOpen() throws SchemaException{
+	public ErrorLayer validateBuildingOpen(GeoLayer neatLayer, double tolerence) throws SchemaException {
 		ErrorLayer errorLayer = new ErrorLayer();
+		SimpleFeatureCollection neatLineSfc = neatLayer.getSimpleFeatureCollection();
 		SimpleFeatureCollection sfc = validatorLayer.getSimpleFeatureCollection();
 		SimpleFeatureIterator simpleFeatureIterator = sfc.features();
 		while (simpleFeatureIterator.hasNext()) {
 			SimpleFeature simpleFeature = simpleFeatureIterator.next();
-			ErrorFeature errFeature = graphicValidator.validateBuildingOpen(simpleFeature);
-			if(errFeature != null){
+			ErrorFeature errFeature = graphicValidator.validateBuildingOpen(simpleFeature,neatLineSfc,tolerence);
+			if (errFeature != null) {
 				errFeature.setLayerName(validatorLayer.getLayerName());
 				errorLayer.addErrorFeature(errFeature);
-			}else {
+			} else {
 				continue;
 			}
 		}
-		if(errorLayer.getErrFeatureList().size() > 0){
+		if (errorLayer.getErrFeatureList().size() > 0) {
 			return errorLayer;
-		}else{
+		} else {
 			return null;
 		}
 	}
+
 
 	public ErrorLayer validateWaterOpen() throws SchemaException{
 		ErrorLayer errorLayer = new ErrorLayer();

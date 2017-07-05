@@ -319,15 +319,21 @@ public class CollectionValidator {
 							continue;
 						}
 
-						// twistedFeature
+						String layerFullName = typeLayer.getLayerName();
+						int dash = layerFullName.indexOf("_");
+						String layerType = layerFullName.substring(dash+1);
+						String upperLayerType = layerType.toUpperCase();
 						LayerValidatorImpl layerValidator = new LayerValidatorImpl(typeLayer);
-						typeErrorLayer = layerValidator.validateTwistedPolygon();
-						if (typeErrorLayer != null) {
-							errorLayer.mergeErrorLayer(typeErrorLayer);
+						if(upperLayerType.equals("POLYGON")){
+							// twistedFeature
+							typeErrorLayer = layerValidator.validateTwistedPolygon();
+							if (typeErrorLayer != null) {
+								errorLayer.mergeErrorLayer(typeErrorLayer);
+							}
 						}
 
 						if (option instanceof ConBreak) {
-							typeErrorLayer = layerValidator.validateConBreakLayers(neatLayer);
+							typeErrorLayer = layerValidator.validateConBreakLayers(neatLayer, polygonInvadedTolorence);
 							if (typeErrorLayer != null) {
 								errorLayer.mergeErrorLayer(typeErrorLayer);
 							}
@@ -412,7 +418,7 @@ public class CollectionValidator {
 							}
 						}
 						if (option instanceof BuildingOpen) {
-							typeErrorLayer = layerValidator.validateBuildingOpen();
+							typeErrorLayer = layerValidator.validateBuildingOpen(neatLayer, polygonInvadedTolorence);
 							if (typeErrorLayer != null) {
 								errorLayer.mergeErrorLayer(typeErrorLayer);
 							}
