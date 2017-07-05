@@ -51,7 +51,7 @@ public class BuilderJSONParser {
 		ValidateTypeParser validateTypeParser = new ValidateTypeParser(typeValidates);
 		ValidateLayerTypeList validateLayerTypeList = validateTypeParser.getValidateLayerTypeList();
 		List<String> validateLayerList = validateLayerTypeList.getLayerIDList();
-		
+
 		// 도엽들 파싱
 		JSONObject layerCollections = (JSONObject) jsonObj.get("layerCollections");
 		String fileType = (String) layerCollections.get("fileType");
@@ -79,5 +79,4 @@ public class BuilderJSONParser {
 			return validateMap;
 		}
 	}
-
 }
