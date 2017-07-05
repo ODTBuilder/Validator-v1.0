@@ -41,12 +41,10 @@ import java.util.Map;
 
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureIterator;
-import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.feature.SchemaException;
 import org.geotools.geometry.jts.JTSFactoryFinder;
 import org.json.simple.JSONObject;
 import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.filter.FilterFactory2;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.operation.TransformException;
@@ -227,7 +225,7 @@ public class CollectionValidator {
 			attributeValidate(types, collection, errorLayer);
 
 			// 인접도엽 검수
-			// closeCollectionValidate(types, mapSystemRule, collection,"");
+			closeCollectionValidate(types, mapSystemRule, collection,"");
 
 			errLayerList.add(errorLayer);
 			progress.put(collection.getCollectionName(), 2);
@@ -518,14 +516,11 @@ public class CollectionValidator {
 	private void closeCollectionValidate(ValidateLayerTypeList types, MapSystemRule mapSystemRule,
 			GeoLayerCollection layerCollection, String geomColumn) throws SchemaException {
 		// TODO Auto-generated method stub
-		FilterFactory2 ff = CommonFactoryFinder.getFilterFactory2();
-
 		String geomCol = "geom"; // 임시선언 geometry 컬럼
 
 		LayerValidatorImpl layerValidator = new LayerValidatorImpl();
 
 		if (layerCollection != null) {
-			String neatLineName = layerCollection.getNeatLine().getLayerName();
 			SimpleFeatureCollection neatLineCollection = layerCollection.getNeatLine().getSimpleFeatureCollection();
 			SimpleFeatureIterator featureIterator = neatLineCollection.features();
 
@@ -591,10 +586,38 @@ public class CollectionValidator {
 				if (i == 0) {
 					SimpleFeature feature = featureIterator.next();
 					Geometry geometry = (Geometry) feature.getDefaultGeometry();
+					
+					Coordinate[] testCoordinateArray = geometry.getCoordinates();
+					
+					Coordinate minxMiny;
+					Coordinate maxxMiny;
+					Coordinate maxxMaxy;
+					Coordinate minxMaxy;
+					
+					double fPointX=0.0;
+					double fPointY=0.0;
+					double sPointX=0.0;
+					double sPointY=0.0;
+					
+					for(int j=0; j<testCoordinateArray.length; j++){
+						fPointX = testCoordinateArray[j].x;
+						fPointY = testCoordinateArray[j].y;
+						for(int k=1; k<testCoordinateArray.length-1;k++){
+							sPointX = testCoordinateArray[k].x;
+							sPointY = testCoordinateArray[k].y;	
+						}
+					}
+					
+					for(Coordinate test : testCoordinateArray){
+						
+					}
+					
+					
 					Coordinate[] coordinateArray = geometry.getEnvelope().getCoordinates();
 					Coordinate minCoordinate = new Coordinate();
 					Coordinate maxCoordinate = new Coordinate();
 
+					
 					minCoordinate = coordinateArray[0];
 					maxCoordinate = coordinateArray[2];
 
@@ -631,10 +654,10 @@ public class CollectionValidator {
 
 			// 대상도엽 객체 GET 폴리곤 생성
 			Coordinate[] topCoords = new Coordinate[] { new Coordinate(minx, miny), new Coordinate(maxx, miny),
-					new Coordinate(maxx, maxy + spatialAccuracyTolorence), new Coordinate(minx, maxy + spatialAccuracyTolorence),
+					new Coordinate(maxx, maxy - spatialAccuracyTolorence), new Coordinate(minx, maxy - spatialAccuracyTolorence),
 					new Coordinate(minx, miny) };
 			Coordinate[] bottomCoords = new Coordinate[] { new Coordinate(minx, maxy), new Coordinate(maxx, maxy),
-					new Coordinate(maxx, maxy - spatialAccuracyTolorence), new Coordinate(minx, maxy - spatialAccuracyTolorence),
+					new Coordinate(maxx, maxy + spatialAccuracyTolorence), new Coordinate(minx, maxy + spatialAccuracyTolorence),
 					new Coordinate(minx, maxy) };
 			Coordinate[] leftCoords = new Coordinate[] { new Coordinate(minx, miny),
 					new Coordinate(minx + spatialAccuracyTolorence, miny), new Coordinate(minx + spatialAccuracyTolorence, maxy),
@@ -662,11 +685,11 @@ public class CollectionValidator {
 			targetFeaturesGetBoundary.put(MapSystemRuleType.RIGHT, rightPolygon);
 
 			// 인접도엽 객체 GET 폴리곤생성
-			Coordinate[] nearTopCoords = new Coordinate[] { new Coordinate(minx, miny - spatialAccuracyTolorence),
-					new Coordinate(maxx, miny - spatialAccuracyTolorence), new Coordinate(maxx, maxy), new Coordinate(minx, maxy),
-					new Coordinate(minx, miny - spatialAccuracyTolorence) };
+			Coordinate[] nearTopCoords = new Coordinate[] { new Coordinate(minx, miny + spatialAccuracyTolorence),
+					new Coordinate(maxx, miny + spatialAccuracyTolorence), new Coordinate(maxx, maxy), new Coordinate(minx, maxy),
+					new Coordinate(minx, miny + spatialAccuracyTolorence) };
 			Coordinate[] nearBottomCoords = new Coordinate[] { new Coordinate(minx, maxy), new Coordinate(maxx, maxy),
-					new Coordinate(maxx, maxy + spatialAccuracyTolorence), new Coordinate(minx, maxy + spatialAccuracyTolorence),
+					new Coordinate(maxx, maxy - spatialAccuracyTolorence), new Coordinate(minx, maxy - spatialAccuracyTolorence),
 					new Coordinate(minx, maxy) };
 			Coordinate[] nearLeftCoords = new Coordinate[] { new Coordinate(minx - spatialAccuracyTolorence, miny),
 					new Coordinate(minx, miny), new Coordinate(minx, maxy), new Coordinate(minx - spatialAccuracyTolorence, maxy),
@@ -682,17 +705,17 @@ public class CollectionValidator {
 
 			LinearRing nearHoles[] = null; // use LinearRing[] to represent
 											// holes
-			Polygon nearTopPolygon = geometryFactory.createPolygon(nearTopRing, holes);
-			Polygon nearBottomPolygon = geometryFactory.createPolygon(nearBottomRing, holes);
-			Polygon nearLeftPolygon = geometryFactory.createPolygon(nearLeftRing, holes);
-			Polygon nearRightPolygon = geometryFactory.createPolygon(nearRightRing, holes);
+			Polygon nearTopPolygon = geometryFactory.createPolygon(nearTopRing, nearHoles);
+			Polygon nearBottomPolygon = geometryFactory.createPolygon(nearBottomRing, nearHoles);
+			Polygon nearLeftPolygon = geometryFactory.createPolygon(nearLeftRing, nearHoles);
+			Polygon nearRightPolygon = geometryFactory.createPolygon(nearRightRing, nearHoles);
 
 			// 인접도엽 top, bottom, left, right 객체로드를 위한 Map 생성
 			Map<MapSystemRuleType, Polygon> nearFeaturesGetBoundary = new HashMap<MapSystemRuleType, Polygon>();
-			nearFeaturesGetBoundary.put(MapSystemRuleType.TOP, topPolygon);
-			nearFeaturesGetBoundary.put(MapSystemRuleType.BOTTOM, bottomPolygon);
-			nearFeaturesGetBoundary.put(MapSystemRuleType.LEFT, leftPolygon);
-			nearFeaturesGetBoundary.put(MapSystemRuleType.RIGHT, rightPolygon);
+			nearFeaturesGetBoundary.put(MapSystemRuleType.TOP, nearTopPolygon);
+			nearFeaturesGetBoundary.put(MapSystemRuleType.BOTTOM, nearBottomPolygon);
+			nearFeaturesGetBoundary.put(MapSystemRuleType.LEFT, nearLeftPolygon);
+			nearFeaturesGetBoundary.put(MapSystemRuleType.RIGHT, nearRightPolygon);
 
 			ErrorLayer errLayer = new ErrorLayer();
 
