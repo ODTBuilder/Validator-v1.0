@@ -85,8 +85,8 @@ import com.vividsolutions.jts.geom.Polygon;
 public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 
 	@Override
-	public List<ErrorFeature> validateConBreak(SimpleFeature simpleFeature, SimpleFeatureCollection aop, double tolerence)
-			throws SchemaException {
+	public List<ErrorFeature> validateConBreak(SimpleFeature simpleFeature, SimpleFeatureCollection aop,
+			double tolerence) throws SchemaException {
 
 		List<ErrorFeature> errFeatures = new ArrayList<ErrorFeature>();
 
@@ -269,36 +269,6 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 	@Override
 	public ErrorLayer validatePointDuplicated(SimpleFeatureCollection validatorLayer) throws SchemaException {
 		return null;
-
-		// ErrorLayer errLayer = new ErrorLayer();
-		// DefaultFeatureCollection errSFC = new DefaultFeatureCollection();
-		// List<DetailsValidatorResult> dtReports = new
-		// ArrayList<DetailsValidatorResult>();
-		//
-		// GeometryValidator geometryValidator = new GeometryValidatorImpl();
-		// SimpleFeatureIterator simpleFeatureIterator =
-		// validatorLayer.features();
-		// while (simpleFeatureIterator.hasNext()) {
-		// SimpleFeature simpleFeature = simpleFeatureIterator.next();
-		// List<ErrorFeature> errFeatures =
-		// geometryValidator.pointDuplicated(simpleFeature);
-		// if (errFeatures != null) {
-		// for (ErrorFeature tmp : errFeatures) {
-		// errSFC.add(tmp.getErrFeature());
-		// dtReports.add(tmp.getDtReport());
-		// }
-		// } else {
-		// continue;
-		// }
-		// }
-		// if (errSFC.size() > 0 && dtReports.size() > 0) {
-		// errLayer.setErrFeatureCollection(errSFC);
-		// errLayer.setDetailsValidatorReport(dtReports);
-		// return errLayer;
-		// } else {
-		// return null;
-		// }
-
 	}
 
 	@Override
@@ -458,8 +428,8 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 	}
 
 	@Override
-	public ErrorFeature validateOutBoundary(SimpleFeature simpleFeature, SimpleFeature relationSimpleFeature)
-			throws SchemaException {
+	public ErrorFeature validateOutBoundary(SimpleFeature simpleFeature, SimpleFeature relationSimpleFeature,
+			double spatialAccuracyTolorence) throws SchemaException {
 
 		Geometry geometryI = (Geometry) simpleFeature.getDefaultGeometry();
 		Geometry geometryJ = (Geometry) relationSimpleFeature.getDefaultGeometry();
@@ -472,7 +442,7 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 				for (int i = 0; i < geomJCoor.length; i++) {
 					Coordinate j = geomJCoor[i];
 					double distance = geometryI.distance(new GeometryFactory().createPoint(j));
-					if (distance > 0.01) {
+					if (distance > spatialAccuracyTolorence) {
 						Geometry returnGome = geometryJ.getCentroid();
 						Property featuerIDPro = simpleFeature.getProperty("feature_id");
 						String featureID = (String) featuerIDPro.getValue();
@@ -589,7 +559,8 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 		}
 	}
 
-	public ErrorFeature validateBuildingOpen(SimpleFeature simpleFeature, SimpleFeatureCollection aop, double tolerence) throws SchemaException {
+	public ErrorFeature validateBuildingOpen(SimpleFeature simpleFeature, SimpleFeatureCollection aop, double tolerence)
+			throws SchemaException {
 		GeometryFactory geometryFactory = new GeometryFactory();
 		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
 		Coordinate[] coordinates = geometry.getCoordinates();
@@ -601,14 +572,16 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 		if (coorSize > 3) {
 			if (!(start.equals2D(end))) {
 				SimpleFeatureIterator iterator = aop.features();
-				while(iterator.hasNext()){
+				while (iterator.hasNext()) {
 					SimpleFeature aopSimpleFeature = iterator.next();
 					Geometry aopGeom = (Geometry) aopSimpleFeature.getDefaultGeometry();
-					if(Math.abs(aopGeom.distance(startGeom)) > tolerence || Math.abs(aopGeom.distance(endGeom)) > tolerence){
+					if (Math.abs(aopGeom.distance(startGeom)) > tolerence
+							|| Math.abs(aopGeom.distance(endGeom)) > tolerence) {
 						Property featuerIDPro = simpleFeature.getProperty("feature_id");
 						String featureID = (String) featuerIDPro.getValue();
-						ErrorFeature errorFeature = new ErrorFeature(featureID, BuildingOpen.Type.BUILDINGOPEN.errType(),
-								BuildingOpen.Type.BUILDINGOPEN.errName(), geometry.getInteriorPoint());
+						ErrorFeature errorFeature = new ErrorFeature(featureID,
+								BuildingOpen.Type.BUILDINGOPEN.errType(), BuildingOpen.Type.BUILDINGOPEN.errName(),
+								geometry.getInteriorPoint());
 						return errorFeature;
 					}
 				}
@@ -617,10 +590,11 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 			}
 		} else {
 			SimpleFeatureIterator iterator = aop.features();
-			while(iterator.hasNext()){
+			while (iterator.hasNext()) {
 				SimpleFeature aopSimpleFeature = iterator.next();
 				Geometry aopGeom = (Geometry) aopSimpleFeature.getDefaultGeometry();
-				if(Math.abs(aopGeom.distance(startGeom)) > tolerence || Math.abs(aopGeom.distance(endGeom)) > tolerence){
+				if (Math.abs(aopGeom.distance(startGeom)) > tolerence
+						|| Math.abs(aopGeom.distance(endGeom)) > tolerence) {
 					Property featuerIDPro = simpleFeature.getProperty("feature_id");
 					String featureID = (String) featuerIDPro.getValue();
 					ErrorFeature errorFeature = new ErrorFeature(featureID, BuildingOpen.Type.BUILDINGOPEN.errType(),
@@ -835,7 +809,6 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 	// 객체 꼬임 여부 검사
 	public ErrorFeature validateTwistedPolygon(SimpleFeature simpleFeature) throws SchemaException {
 		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
-
 		if (!(geometry.isValid())) {
 			GeometryFactory f = new GeometryFactory();
 			Coordinate[] coordinates = geometry.getCoordinates();
@@ -850,4 +823,15 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 		}
 	}
 
+	@Override
+	public List<ErrorFeature> validatePointDuplicated(SimpleFeature simpleFeature) {
+		
+		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
+		
+		
+		
+		
+		
+		return null;
+	}
 }
