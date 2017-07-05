@@ -207,6 +207,7 @@ gitbuilder.ui.OptionDefinition = $.widget("gitbuilder.optiondefinition", {
 	addBtn : undefined,
 	addAttrBtn : undefined,
 	file : undefined,
+	emptyLayers : undefined,
 	options : {
 		definition : undefined,
 		layerDefinition : undefined,
@@ -270,6 +271,13 @@ gitbuilder.ui.OptionDefinition = $.widget("gitbuilder.optiondefinition", {
 		// this.optDefCopy =
 		// JSON.parse(JSON.stringify(this.optDef));
 
+		this.emptyLayers = {};
+		var ldefinition = this.getLayerDefinition();
+		var ldefKeys = Object.keys(ldefinition);
+		for (var i = 0; i < ldefKeys.length; i++) {
+			this.emptyLayers[ldefKeys[i]] = 0;
+		}
+		console.log(this.emptyLayers);
 		var that = this;
 		this._on(false, this.element, {
 			click : function(event) {
@@ -363,12 +371,17 @@ gitbuilder.ui.OptionDefinition = $.widget("gitbuilder.optiondefinition", {
 					}
 					that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow] = true;
 				}
-			} else {
+			} else if (that.optItem[$(this).val()].type === "relation") {
+
+				var relation = that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow].relation;
+				that.updateRelation(relation, "down");
 				delete that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow];
 				var keys = Object.keys(that.getOptDefCopy()[that.selectedLayerNow]);
 				if (keys.length === 0) {
 					delete that.getOptDefCopy()[that.selectedLayerNow];
 				}
+			} else {
+				delete that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow];
 			}
 		});
 
@@ -409,12 +422,16 @@ gitbuilder.ui.OptionDefinition = $.widget("gitbuilder.optiondefinition", {
 						}
 						if (that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]["relation"].indexOf($(this).val()) === -1) {
 							that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]["relation"].push($(this).val());
+							that.updateRelation($(this).val(), "up");
+							console.log(that.emptyLayers);
 						}
 						that._toggleCheckbox(that.selectedValidationNow, true);
 					} else {
 						if (that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]["relation"].indexOf($(this).val()) !== -1) {
 							that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]["relation"].splice(
-									that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]["relation"].indexOf($(this).val()), 0);
+									that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]["relation"].indexOf($(this).val()), 1);
+							that.updateRelation($(this).val(), "down");
+							console.log(that.emptyLayers);
 						}
 					}
 					var checks = $(this).parent().parent().parent().find("input:checked");
@@ -441,7 +458,7 @@ gitbuilder.ui.OptionDefinition = $.widget("gitbuilder.optiondefinition", {
 					} else {
 						if (that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow].indexOf($(this).val()) !== -1) {
 							that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow].splice(
-									that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow].indexOf($(this).val()), 0);
+									that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow].indexOf($(this).val()), 1);
 						}
 					}
 					var checks = $(this).parent().parent().parent().find("input:checked");
@@ -785,7 +802,20 @@ gitbuilder.ui.OptionDefinition = $.widget("gitbuilder.optiondefinition", {
 		this._on(false, okBtn, {
 			click : function(event) {
 				if (event.target === okBtn[0]) {
-					that.setDefinition(that.getOptDefCopy());
+					var cobj = that.getOptDefCopy();
+					var ekeys = this.emptyLayers;
+					for (var i = 0; i < ekeys.length; i++) {
+						if (this.emptyLayers[ekeys[i]] < 1 && cobj.hasOwnProperty(ekeys[i])) {
+							var keys = Object.keys(cobj[ekeys[i]]);
+							if (keys.length === 0) {
+								delete cobj[ekeys[i]];
+							}
+						} else if (this.emptyLayers[ekeys[i]] > 0 && !cobj.hasOwnProperty(ekeys[i])) {
+							cobj[ekeys[i]] = {};
+						}
+					}
+					that.setDefinition(cobj);
+					console.log(cobj);
 					that.setOptDefCopy(undefined);
 					that.close();
 				}
@@ -837,6 +867,41 @@ gitbuilder.ui.OptionDefinition = $.widget("gitbuilder.optiondefinition", {
 		if (this.getDefinition()) {
 			this.setOptDefCopy(Object.assign({}, this.getDefinition()));
 		}
+
+		var def = this.getDefinition();
+		var dkeys = Object.keys(def);
+		for (var i = 0; i < dkeys.length; i++) {
+			var vkeys = Object.keys(def[dkeys[i]]);
+			for (var j = 0; j < vkeys.length; j++) {
+				if (this.optItem[vkeys[j]].type === "relation") {
+					var relation = def[dkeys[i]][vkeys[j]].relation;
+					for (var k = 0; k < relation.length; k++) {
+						if (!def.hasOwnProperty(relation[k])) {
+							this.getDefinition()[relation[k]] = {};
+							console.log(this.getDefinition());
+						}
+					}
+				}
+			}
+		}
+	},
+	updateRelation : function(alias, und) {
+		if (typeof alias === "string") {
+			if (und === "up") {
+				this.emptyLayers[alias]++;
+			} else if (und === "down") {
+				this.emptyLayers[alias]--;
+			}
+		} else if (Array.isArray(alias)) {
+			for (var i = 0; i < alias.length; i++) {
+				if (und === "up") {
+					this.emptyLayers[alias[i]]++;
+				} else if (und === "down") {
+					this.emptyLayers[alias[i]]--;
+				}
+			}
+		}
+
 	},
 	downloadSetting : function() {
 		var setting = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(this.getOptDefCopy()));
@@ -1264,7 +1329,7 @@ gitbuilder.ui.OptionDefinition = $.widget("gitbuilder.optiondefinition", {
 				$(inputs[i]).prop("checked", bool);
 				if (!bool) {
 					var keys = Object.keys(that.getOptDefCopy()[that.selectedLayerNow]);
-					if (keys.length === 0) {
+					if (keys.length === 0 && this.emptyLayers[that.selectedLayerNow] < 1) {
 						delete that.getOptDefCopy()[that.selectedLayerNow];
 					}
 				}
