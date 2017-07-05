@@ -88,11 +88,6 @@ public class FeatureAttributeValidatorImpl implements FeatureAttributeValidator 
 		
 		Property test = simpleFeature.getProperty("feature_id");
 		String tes = (String) test.getValue();
-		if(tes.equals("RECORD 1145")) {
-			System.out.println("");
-		}
-		
-		
 		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
 		boolean flag = true;
 		if (notNullAtt != null) {
