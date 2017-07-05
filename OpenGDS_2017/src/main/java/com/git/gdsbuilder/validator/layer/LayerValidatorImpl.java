@@ -59,6 +59,7 @@ import com.git.gdsbuilder.type.validate.collection.close.ValidateCloseCollection
 import com.git.gdsbuilder.type.validate.error.ErrorFeature;
 import com.git.gdsbuilder.type.validate.error.ErrorLayer;
 import com.git.gdsbuilder.type.validate.option.ValidatorOption;
+import com.git.gdsbuilder.validator.collection.opt.ValCollectionOption;
 import com.git.gdsbuilder.validator.collection.rule.MapSystemRule.MapSystemRuleType;
 import com.git.gdsbuilder.validator.feature.FeatureAttributeValidator;
 import com.git.gdsbuilder.validator.feature.FeatureAttributeValidatorImpl;
@@ -865,7 +866,7 @@ public class LayerValidatorImpl implements LayerValidator {
 			Map<MapSystemRuleType, GeoLayer> collectionMap = closeCollectionLayer.getCollectionMap();
 			Map<MapSystemRuleType, LineString> collectionBoundary = closeCollectionLayer.getCollectionBoundary();
 			double tolorence = closeCollectionLayer.getTolorence();
-			List<ValidatorOption> closeValidateOptions = closeCollectionLayer.getCloseValidateOptions();
+			ValCollectionOption closeValidateOptions = closeCollectionLayer.getCloseValidateOptions();
 			Map<MapSystemRuleType, Polygon> targetFeaturesGetBoundary = closeCollectionLayer.getTargetFeaturesGetBoundary();
 			Map<MapSystemRuleType, Polygon> nearFeaturesGetBoundary = closeCollectionLayer.getNearFeaturesGetBoundary();
 			

@@ -213,19 +213,7 @@ public class ValidateTypeParser {
 					ValidatorOption zValueAmbiguous = new ZValueAmbiguous(hashMap);
 					optionList.add(zValueAmbiguous);
 				}
-				
 			}
-			/*if
-			(optionName.equalsIgnoreCase(ZValueAmbiguous.Type.ZVALUEAMBIGUOUS.errName())){
-				Object z_Value = qaOptions.get("ZValueAmbiguous");
-				if (z_Value == null) {
-					continue;
-				} else {
-					String z_ValueKey = (String) z_Value.toString().trim();
-					ValidatorOption Z_ValueAmbiguous = new ZValueAmbiguous(z_ValueKey);
-					optionList.add(Z_ValueAmbiguous);
-				}
-			}*/
 			if (optionName.equalsIgnoreCase(UselessPoint.Type.USELESSPOINT.errName())) {
 				Boolean isTrue = (Boolean) qaOptions.get("UselessPoint");
 				if (isTrue) {
@@ -481,29 +469,42 @@ public class ValidateTypeParser {
 			}
 			
 			if(optionName.equalsIgnoreCase(RefZValueMiss.Type.REFZVALUEMISS.errName())){
-				/*Object z_Value = qaOptions.get("RefZValueMiss");
-				if (z_Value == null) {
+				Object refZValueMissObj = qaOptions.get("RefZValueMiss");
+				if (refZValueMissObj == null) {
 					continue;
 				} else {
-					String z_ValueKey = (String) z_Value;
-					ValidatorOption refZValueMiss = new RefZValueMiss(z_ValueKey);
+					HashMap<String, String> optMap = new HashMap<String, String>();
+					JSONObject refZValueMissJSON = (JSONObject) refZValueMissObj;
+					Iterator iterator = refZValueMissJSON.keySet().iterator();
+					while(iterator.hasNext()){
+						String layerName = (String) iterator.next();
+						String attValue = "";
+						attValue = (String) refZValueMissJSON.get(layerName);
+						optMap.put(layerName, attValue);
+					}
+					ValidatorOption refZValueMiss = new RefZValueMiss(optMap);
 					optionList.add(refZValueMiss);
-				}*/
+				}
 			}
-			
 
 			if(optionName.equalsIgnoreCase(RefAttributeMiss.Type.RefAttributeMiss.errName())){
 				Object refAttributeMissObj = qaOptions.get("RefAttributeMiss");
-				if(refAttributeMissObj == null){
+				if (refAttributeMissObj == null) {
 					continue;
-				}else{
-					List<String> colunms = new ArrayList<String>();
-					colunms = (List<String>) refAttributeMissObj;
-					ValidatorOption refAttributeOption = new RefAttributeMiss(colunms);
-					optionList.add(refAttributeOption);
+				} else {
+					HashMap<String, List<String>> optMap = new HashMap<String, List<String>>();
+					JSONObject refAttributeMissJSON = (JSONObject) refAttributeMissObj;
+					Iterator<String> iterator = refAttributeMissJSON.keySet().iterator();
+					while(iterator.hasNext()){
+						String layerName = (String) iterator.next();
+						List<String> attLists = new ArrayList<String>();
+						attLists = (List<String>) refAttributeMissJSON.get(layerName);
+						optMap.put(layerName, attLists);
+					}
+					ValidatorOption refAttributeMiss = new RefAttributeMiss(optMap);
+					optionList.add(refAttributeMiss);
 				}
 			}
-			
 		}
 		return optionList;
 	}

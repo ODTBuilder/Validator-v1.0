@@ -1,11 +1,11 @@
 package com.git.gdsbuilder.type.validate.option;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class RefAttributeMiss extends ValidatorOption {
 	
-	List<String> colunms = new ArrayList<String>();
+	HashMap<String,List<String>> refAttributeMaissOpts;
 	
 	public enum Type {
 
@@ -36,18 +36,26 @@ public class RefAttributeMiss extends ValidatorOption {
 		}
 	}
 	
-	public RefAttributeMiss(List<String> colunms) {
+	public RefAttributeMiss(HashMap<String,List<String>> refAttributeMaissOpts) {
 		super();
-		this.colunms = colunms;
+		this.refAttributeMaissOpts = refAttributeMaissOpts;
 	}
 	
 
-	public List<String> getColunms() {
-		return colunms;
+	public HashMap<String,List<String>> getRefAttributeMaissOpts() {
+		return refAttributeMaissOpts;
 	}
 
-	public void setColunms(List<String> colunms) {
-		this.colunms = colunms;
+	public void setRefAttributeMaissOpts(HashMap<String,List<String>> refAttributeMaissOpts) {
+		this.refAttributeMaissOpts = refAttributeMaissOpts;
+	}
+	
+	public List<String> getRefAttributeMaissOpt(String layerName) {
+		List<String> colunms = null;
+		if(!layerName.isEmpty()&&!layerName.equals("")){
+			colunms = this.refAttributeMaissOpts.get(layerName);
+		}
+		return colunms;
 	}
 
 }
