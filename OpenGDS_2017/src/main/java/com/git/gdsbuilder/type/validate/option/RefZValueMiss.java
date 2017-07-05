@@ -1,10 +1,11 @@
 package com.git.gdsbuilder.type.validate.option;
 
-import org.json.simple.JSONObject;
+import java.util.HashMap;
+import java.util.List;
 
 public class RefZValueMiss extends ValidatorOption {
 	
-	JSONObject refZValueMissOpts;
+	HashMap<String, String> refZValueMissOpts;
 	
 	public enum Type {
 
@@ -33,16 +34,24 @@ public class RefZValueMiss extends ValidatorOption {
 		}
 	}
 	
-	public RefZValueMiss(JSONObject refZValueMissOpts) {
+	public RefZValueMiss(HashMap<String, String> refZValueMissOpts) {
 		super();
 		this.refZValueMissOpts = refZValueMissOpts;
 	}
 
-	public JSONObject getRefZValueMissOpts() {
+	public HashMap<String, String> getRefZValueMissOpts() {
 		return refZValueMissOpts;
 	}
+	
+	public String getRefZValueMissOpt(String layerName) {
+		String colunm = "";
+		if(!layerName.isEmpty()&&!layerName.equals("")){
+			colunm = this.refZValueMissOpts.get(layerName);
+		}
+		return colunm;
+	}
 
-	public void setRefZValueMissOpts(JSONObject refZValueMissOpts) {
+	public void setRefZValueMissOpts(HashMap<String, String> refZValueMissOpts) {
 		this.refZValueMissOpts = refZValueMissOpts;
 	}
 	

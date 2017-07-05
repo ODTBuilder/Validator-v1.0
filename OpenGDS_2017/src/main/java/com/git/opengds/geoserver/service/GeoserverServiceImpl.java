@@ -42,6 +42,7 @@ import com.git.gdsbuilder.geosolutions.geoserver.rest.encoder.GSResourceEncoder.
 import com.git.gdsbuilder.geosolutions.geoserver.rest.encoder.feature.GSFeatureTypeEncoder;
 import com.git.gdsbuilder.type.geoserver.layer.GeoLayerInfo;
 import com.git.gdsbuilder.type.geoserver.layer.GeoLayerInfoList;
+import com.git.opengds.geoserver.data.style.GeoserverSldTextType;
 import com.git.opengds.upload.domain.FileMeta;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
@@ -109,6 +110,8 @@ public class GeoserverServiceImpl implements GeoserverService {
 
 		Collection<Geometry> geometryCollection = new ArrayList<Geometry>();
 		GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory();
+		
+		GeoserverSldTextType sldType = new GeoserverSldTextType(); //Geoserver TEXT 타입 
 
 		for (int i = 0; i < layerNameList.size(); i++) {
 
@@ -119,8 +122,7 @@ public class GeoserverServiceImpl implements GeoserverService {
 
 			int dash = layerName.indexOf("_");
 			String cutLayerName = layerName.substring(0, dash);
-			String layerType = layerName.substring(dash + 1); // 파일명_레이어명
-
+			String layerType = layerName.substring(dash + 1);
 			String layerFullName = "geo_" + fileType + "_" + fileName + "_" + layerName;
 
 			fte.setProjectionPolicy(ProjectionPolicy.REPROJECT_TO_DECLARED);
@@ -131,22 +133,77 @@ public class GeoserverServiceImpl implements GeoserverService {
 			fte.setNativeName(layerFullName); // nativeName
 			// fte.setLatLonBoundingBox(minx, miny, maxx, maxy, originSrc);
 
-			if (cutLayerName.toUpperCase().equals("H0059153_TEXT")) {
-				if (fileType.equals("dxf")) {
-					upperLayerName = "DXF_" + cutLayerName;
+			
+			
+			
+			//Style 적용
+			String styleName = upperLayerName;
+			
+			if(layerType.equals("TEXT")){
+				List<String> smallTextList = sldType.getSmallTextList();
+				List<String> mediumTextList = sldType.getMediumTextList();
+				List<String> largeTextList = sldType.getLargeTextList();
+				List<String> exceptTextList = sldType.getExceptTextList();
+				
+				
+				boolean isTextStyle = false;
+				
+				for(String stext : smallTextList){
+					if(cutLayerName.equals(stext)){
+						styleName = "SMALL_TEXT";
+						isTextStyle = true;
+						break;
+					}
 				}
-				if (fileType.equals("ngi")) {
-					upperLayerName = "NGI_" + cutLayerName;
+				
+				if(!isTextStyle){
+					for(String mtext : mediumTextList){
+						if(cutLayerName.equals(mtext)){
+							styleName = "MEDIUM_TEXT";
+							isTextStyle = true;
+							break;
+						}
+					}
+					if(!isTextStyle){
+						for(String ltext : largeTextList){
+							if(cutLayerName.equals(ltext)){
+								styleName = "LARGE_TEXT";
+								isTextStyle = true;
+								break;
+							}
+						}
+					}
+					if(!isTextStyle){
+						for(String etext : exceptTextList){
+							if(cutLayerName.toUpperCase().equals("H0059153")){
+								if(fileType.equals("dxf")){
+									styleName = "DXF_"+ cutLayerName + "+_TEXT";
+									isTextStyle = true;
+								}
+								else if(fileType.equals("ngi")){
+									styleName = "NGI_"+ cutLayerName + "+_TEXT";
+									isTextStyle = true;
+								}
+								break;
+							}
+							else if(cutLayerName.equals("H0040000")){
+								styleName = cutLayerName + "+_TEXT";
+								isTextStyle = true;
+								break;
+							}
+						}
+					}
 				}
 			}
+			
 
 			if (layerType.equals("LWPOLYLINE") || layerType.equals("POLYLINE") || layerType.equals("LINE")) {
-				upperLayerName = cutLayerName.toUpperCase() + "_LWPOLYLINE";
+				styleName = cutLayerName.toUpperCase() + "_LWPOLYLINE";
 			}
 
-			boolean styleFlag = dtReader.existsStyle(upperLayerName);
+			boolean styleFlag = dtReader.existsStyle(styleName);
 			if (styleFlag) {
-				layerEncoder.setDefaultStyle(upperLayerName);
+				layerEncoder.setDefaultStyle(styleName);
 			} else {
 				layerEncoder.setDefaultStyle("defaultStyle");
 			}
