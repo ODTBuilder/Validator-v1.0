@@ -85,7 +85,7 @@ import com.vividsolutions.jts.geom.Polygon;
 public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 
 	@Override
-	public List<ErrorFeature> validateConBreak(SimpleFeature simpleFeature, SimpleFeatureCollection aop)
+	public List<ErrorFeature> validateConBreak(SimpleFeature simpleFeature, SimpleFeatureCollection aop, double tolerence)
 			throws SchemaException {
 
 		List<ErrorFeature> errFeatures = new ArrayList<ErrorFeature>();
@@ -107,7 +107,7 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 					int tempSize = temp.length;
 					for (int i = 0; i < tempSize; i++) {
 						Geometry returnGeom = geometryFactory.createPoint(temp[i]);
-						if (Math.abs(returnGeom.distance(aopGeom)) > 0.2 || returnGeom.crosses(aopGeom)) {
+						if (Math.abs(returnGeom.distance(aopGeom)) > tolerence || returnGeom.crosses(aopGeom)) {
 							Property featuerIDPro = simpleFeature.getProperty("feature_id");
 							String featureID = (String) featuerIDPro.getValue();
 							ErrorFeature errFeature = new ErrorFeature(featureID, ConBreak.Type.CONBREAK.errType(),

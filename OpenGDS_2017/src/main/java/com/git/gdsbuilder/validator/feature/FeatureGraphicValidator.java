@@ -149,7 +149,7 @@ public interface FeatureGraphicValidator {
 	 * @throws SchemaException 
 	 * @throws
 	 * */
-	public List<ErrorFeature> validateConBreak(SimpleFeature validatorLayer, SimpleFeatureCollection aop)
+	public List<ErrorFeature> validateConBreak(SimpleFeature validatorLayer, SimpleFeatureCollection aop, double tolerence)
 			throws SchemaException;
 
 	/**

@@ -100,7 +100,7 @@ public class LayerValidatorImpl implements LayerValidator {
 		this.validatorLayer = validatorLayer;
 	}
 
-	public ErrorLayer validateConBreakLayers(GeoLayer neatLayer) throws SchemaException {
+	public ErrorLayer validateConBreakLayers(GeoLayer neatLayer, double tolerence) throws SchemaException {
 
 		ErrorLayer errLayer = new ErrorLayer();
 
@@ -110,7 +110,7 @@ public class LayerValidatorImpl implements LayerValidator {
 
 		while (simpleFeatureIterator.hasNext()) {
 			SimpleFeature simpleFeature = simpleFeatureIterator.next();
-			List<ErrorFeature> errFeatures = graphicValidator.validateConBreak(simpleFeature, neatLineSfc);
+			List<ErrorFeature> errFeatures = graphicValidator.validateConBreak(simpleFeature, neatLineSfc, tolerence);
 			if (errFeatures != null) {
 				for (ErrorFeature errFeature : errFeatures) {
 					errFeature.setLayerName(validatorLayer.getLayerName());

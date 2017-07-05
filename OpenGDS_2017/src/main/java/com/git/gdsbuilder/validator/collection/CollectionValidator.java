@@ -323,7 +323,7 @@ public class CollectionValidator {
 						}
 
 						if (option instanceof ConBreak) {
-							typeErrorLayer = layerValidator.validateConBreakLayers(neatLayer);
+							typeErrorLayer = layerValidator.validateConBreakLayers(neatLayer, polygonInvadedTolorence);
 							if (typeErrorLayer != null) {
 								errorLayer.mergeErrorLayer(typeErrorLayer);
 							}
