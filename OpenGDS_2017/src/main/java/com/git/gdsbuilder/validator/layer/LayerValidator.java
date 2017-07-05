@@ -207,7 +207,7 @@ public interface LayerValidator {
 	 * @throws SchemaException ErrorLayer
 	 * @throws
 	 * */
-	public ErrorLayer validateBuildingOpen() throws SchemaException;
+	public ErrorLayer validateBuildingOpen(GeoLayer neatLayer,double tolerence) throws SchemaException;
 	
 	/**
 	 * 검수항목 중 "수부코드폐합오류(WaterOpen)" 검수를 수행

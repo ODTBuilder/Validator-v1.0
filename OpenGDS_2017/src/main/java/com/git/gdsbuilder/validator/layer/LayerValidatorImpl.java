@@ -526,13 +526,14 @@ public class LayerValidatorImpl implements LayerValidator {
 		}
 	}
 
-	public ErrorLayer validateBuildingOpen() throws SchemaException {
+	public ErrorLayer validateBuildingOpen(GeoLayer neatLayer, double tolerence) throws SchemaException {
 		ErrorLayer errorLayer = new ErrorLayer();
+		SimpleFeatureCollection neatLineSfc = neatLayer.getSimpleFeatureCollection();
 		SimpleFeatureCollection sfc = validatorLayer.getSimpleFeatureCollection();
 		SimpleFeatureIterator simpleFeatureIterator = sfc.features();
 		while (simpleFeatureIterator.hasNext()) {
 			SimpleFeature simpleFeature = simpleFeatureIterator.next();
-			ErrorFeature errFeature = graphicValidator.validateBuildingOpen(simpleFeature);
+			ErrorFeature errFeature = graphicValidator.validateBuildingOpen(simpleFeature,neatLineSfc,tolerence);
 			if (errFeature != null) {
 				errFeature.setLayerName(validatorLayer.getLayerName());
 				errorLayer.addErrorFeature(errFeature);

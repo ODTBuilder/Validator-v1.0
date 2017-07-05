@@ -270,9 +270,7 @@ public class CollectionValidator {
 						if (option instanceof AttributeFix) {
 							HashMap<String, Object> attributeNames = ((AttributeFix) option).getRelationType();
 							String typeLayerName = typeLayer.getLayerName();
-							int index = typeLayerName.indexOf("_");
-							String layerCode = typeLayerName.substring(0, index);
-							JSONObject attrJson = (JSONObject) attributeNames.get(layerCode);
+							JSONObject attrJson = (JSONObject) attributeNames.get(typeLayerName);
 							typeErrorLayer = layerValidator.validateAttributeFix(attrJson);
 						}
 						if (option instanceof ZValueAmbiguous){
@@ -410,7 +408,7 @@ public class CollectionValidator {
 							}
 						}
 						if (option instanceof BuildingOpen) {
-							typeErrorLayer = layerValidator.validateBuildingOpen();
+							typeErrorLayer = layerValidator.validateBuildingOpen(neatLayer, polygonInvadedTolorence);
 							if (typeErrorLayer != null) {
 								errorLayer.mergeErrorLayer(typeErrorLayer);
 							}

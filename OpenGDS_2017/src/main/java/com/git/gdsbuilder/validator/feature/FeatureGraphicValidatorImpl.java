@@ -589,31 +589,47 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 		}
 	}
 
-	public ErrorFeature validateBuildingOpen(SimpleFeature simpleFeature) throws SchemaException {
-
+	public ErrorFeature validateBuildingOpen(SimpleFeature simpleFeature, SimpleFeatureCollection aop, double tolerence) throws SchemaException {
+		GeometryFactory geometryFactory = new GeometryFactory();
 		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
 		Coordinate[] coordinates = geometry.getCoordinates();
 		int coorSize = coordinates.length;
 		Coordinate start = coordinates[0];
 		Coordinate end = coordinates[coorSize - 1];
-
+		Geometry startGeom = geometryFactory.createPoint(start);
+		Geometry endGeom = geometryFactory.createPoint(end);
 		if (coorSize > 3) {
 			if (!(start.equals2D(end))) {
-				Property featuerIDPro = simpleFeature.getProperty("feature_id");
-				String featureID = (String) featuerIDPro.getValue();
-				ErrorFeature errorFeature = new ErrorFeature(featureID, BuildingOpen.Type.BUILDINGOPEN.errType(),
-						BuildingOpen.Type.BUILDINGOPEN.errName(), geometry.getInteriorPoint());
-				return errorFeature;
+				SimpleFeatureIterator iterator = aop.features();
+				while(iterator.hasNext()){
+					SimpleFeature aopSimpleFeature = iterator.next();
+					Geometry aopGeom = (Geometry) aopSimpleFeature.getDefaultGeometry();
+					if(Math.abs(aopGeom.distance(startGeom)) > tolerence || Math.abs(aopGeom.distance(endGeom)) > tolerence){
+						Property featuerIDPro = simpleFeature.getProperty("feature_id");
+						String featureID = (String) featuerIDPro.getValue();
+						ErrorFeature errorFeature = new ErrorFeature(featureID, BuildingOpen.Type.BUILDINGOPEN.errType(),
+								BuildingOpen.Type.BUILDINGOPEN.errName(), geometry.getInteriorPoint());
+						return errorFeature;
+					}
+				}
 			} else {
 				return null;
 			}
 		} else {
-			Property featuerIDPro = simpleFeature.getProperty("feature_id");
-			String featureID = (String) featuerIDPro.getValue();
-			ErrorFeature errorFeature = new ErrorFeature(featureID, BuildingOpen.Type.BUILDINGOPEN.errType(),
-					BuildingOpen.Type.BUILDINGOPEN.errName(), geometry.getInteriorPoint());
-			return errorFeature;
+			SimpleFeatureIterator iterator = aop.features();
+			while(iterator.hasNext()){
+				SimpleFeature aopSimpleFeature = iterator.next();
+				Geometry aopGeom = (Geometry) aopSimpleFeature.getDefaultGeometry();
+				if(Math.abs(aopGeom.distance(startGeom)) > tolerence || Math.abs(aopGeom.distance(endGeom)) > tolerence){
+					Property featuerIDPro = simpleFeature.getProperty("feature_id");
+					String featureID = (String) featuerIDPro.getValue();
+					ErrorFeature errorFeature = new ErrorFeature(featureID, BuildingOpen.Type.BUILDINGOPEN.errType(),
+							BuildingOpen.Type.BUILDINGOPEN.errName(), geometry.getInteriorPoint());
+					return errorFeature;
+				}
+			}
 		}
+		return null;
 	}
 
 	public ErrorFeature validateWaterOpen(SimpleFeature simpleFeature) throws SchemaException {
