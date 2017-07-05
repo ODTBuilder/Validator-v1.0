@@ -101,7 +101,7 @@ public class ValidatorServiceImpl implements ValidatorService {
 				if (state == validateSuccess) {
 					progressService.setStateToValidateSuccess(validateSuccess, fileType, pIdx);
 				} else if (state == validateFail) {
-					progressService.setStateToValidateFail(validateFail, fileType, pIdx);
+				//	progressService.setStateToValidateFail(validateFail, fileType, pIdx);
 				}
 			}
 

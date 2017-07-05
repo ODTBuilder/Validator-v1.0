@@ -85,20 +85,33 @@ public class FeatureAttributeValidatorImpl implements FeatureAttributeValidator 
 	@Override
 	public ErrorFeature validateAttributeFix(SimpleFeature simpleFeature, Map<String, List<String>> notNullAtt)
 			throws SchemaException {
+		
+		Property test = simpleFeature.getProperty("feature_id");
+		String tes = (String) test.getValue();
+		if(tes.equals("RECORD 1145")) {
+			System.out.println("");
+		}
+		
+		
 		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
 		boolean flag = true;
 		if (notNullAtt != null) {
 			Iterator iterator = notNullAtt.keySet().iterator();
 			while (iterator.hasNext()) {
 				String attributeKey = (String) iterator.next();
-				String attribute = (String) simpleFeature.getAttribute(attributeKey);
+				Object attribute = simpleFeature.getAttribute(attributeKey);
 				JSONArray attributeArray = (JSONArray) notNullAtt.get(attributeKey);
 				if (!(attributeArray.isEmpty())) {
 					if (attribute != null) {
+						String attributeStr = attribute.toString();
 						Iterator attrIterator = attributeArray.iterator();
 						while (attrIterator.hasNext()) {
 							String attributeValue = (String) attrIterator.next();
-							if (!(attributeValue.equals(attribute))) {
+							if (attributeValue.equals("") && !attributeStr.equals("")) {
+								flag = true;
+								break;
+							}
+							if (!(attributeValue.equals(attributeStr))) {
 								flag = false;
 							} else {
 								flag = true;
@@ -110,7 +123,7 @@ public class FeatureAttributeValidatorImpl implements FeatureAttributeValidator 
 						break;
 					}
 				} else {
-					if (attribute.equals("null")) {
+					if (attribute == null) {
 						flag = false;
 						break;
 					}

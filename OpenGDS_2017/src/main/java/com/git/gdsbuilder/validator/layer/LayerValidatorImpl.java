@@ -758,6 +758,12 @@ public class LayerValidatorImpl implements LayerValidator {
 	public ErrorLayer validateAttributeFix(JSONObject notNullAtt) throws SchemaException {
 		ErrorLayer errorLayer = new ErrorLayer();
 		SimpleFeatureCollection sfc = validatorLayer.getSimpleFeatureCollection();
+		
+		if(validatorLayer.getLayerName().equals("D0020000_POLYGON")) {
+			System.out.println("");
+		}
+		
+		
 		DefaultFeatureCollection featureCollection = new DefaultFeatureCollection();
 		SimpleFeatureIterator simpleFeatureIterator = sfc.features();
 		while (simpleFeatureIterator.hasNext()) {

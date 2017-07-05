@@ -39,6 +39,7 @@ import java.util.List;
 
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureIterator;
+import org.geotools.feature.DefaultFeatureCollection;
 import org.geotools.feature.SchemaException;
 import org.geotools.geometry.jts.JTS;
 import org.geotools.geometry.jts.JTSFactoryFinder;
@@ -269,36 +270,6 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 	@Override
 	public ErrorLayer validatePointDuplicated(SimpleFeatureCollection validatorLayer) throws SchemaException {
 		return null;
-
-		// ErrorLayer errLayer = new ErrorLayer();
-		// DefaultFeatureCollection errSFC = new DefaultFeatureCollection();
-		// List<DetailsValidatorResult> dtReports = new
-		// ArrayList<DetailsValidatorResult>();
-		//
-		// GeometryValidator geometryValidator = new GeometryValidatorImpl();
-		// SimpleFeatureIterator simpleFeatureIterator =
-		// validatorLayer.features();
-		// while (simpleFeatureIterator.hasNext()) {
-		// SimpleFeature simpleFeature = simpleFeatureIterator.next();
-		// List<ErrorFeature> errFeatures =
-		// geometryValidator.pointDuplicated(simpleFeature);
-		// if (errFeatures != null) {
-		// for (ErrorFeature tmp : errFeatures) {
-		// errSFC.add(tmp.getErrFeature());
-		// dtReports.add(tmp.getDtReport());
-		// }
-		// } else {
-		// continue;
-		// }
-		// }
-		// if (errSFC.size() > 0 && dtReports.size() > 0) {
-		// errLayer.setErrFeatureCollection(errSFC);
-		// errLayer.setDetailsValidatorReport(dtReports);
-		// return errLayer;
-		// } else {
-		// return null;
-		// }
-
 	}
 
 	@Override

@@ -34,8 +34,6 @@
 
 package com.git.gdsbuilder.validator.collection;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -212,16 +210,16 @@ public class CollectionValidator {
 
 			GeoLayerCollection collection = layerCollections.get(i);
 			String collectionName = collection.getCollectionName();
-			try {
+	//		try {
 				ErrorLayer errorLayer = new ErrorLayer();
 				errorLayer.setCollectionName(collectionName);
 				errorLayer.setCollectionType(this.collectionType);
 
 				// layerMiss 검수
-				layerMissValidate(types, collection, errorLayer);
+			//	layerMissValidate(types, collection, errorLayer);
 
 				// geometric 검수
-				geometricValidate(types, collection, errorLayer);
+			//	geometricValidate(types, collection, errorLayer);
 
 				// attribute 검수
 				attributeValidate(types, collection, errorLayer);
@@ -231,9 +229,9 @@ public class CollectionValidator {
 
 				errLayerList.add(errorLayer);
 				progress.put(collection.getCollectionName(), 2);
-			} catch (Exception e) {
-				progress.put(collection.getCollectionName(), 3);
-			}
+//			} catch (Exception e) {
+//				progress.put(collection.getCollectionName(), 3);
+//			}
 		}
 	}
 
@@ -270,17 +268,19 @@ public class CollectionValidator {
 						if (option instanceof AttributeFix) {
 							HashMap<String, Object> attributeNames = ((AttributeFix) option).getRelationType();
 							String typeLayerName = typeLayer.getLayerName();
-							int index = typeLayerName.indexOf("_");
-							String layerCode = typeLayerName.substring(0, index);
-							JSONObject attrJson = (JSONObject) attributeNames.get(layerCode);
+							// int index = typeLayerName.indexOf("_");
+							// String layerCode = typeLayerName.substring(0,
+							// index);
+							JSONObject attrJson = (JSONObject) attributeNames.get(typeLayerName);
 							typeErrorLayer = layerValidator.validateAttributeFix(attrJson);
 						}
-						if (option instanceof ZValueAmbiguous){
+						if (option instanceof ZValueAmbiguous) {
 							HashMap<String, String> hashMap = ((ZValueAmbiguous) option).getRelationType();
 							String typeLayerName = typeLayer.getLayerName();
-							int index = typeLayerName.indexOf("_");
-							String layerCode = typeLayerName.substring(0, index);
-							String zValue = hashMap.get(layerCode);
+							// int index = typeLayerName.indexOf("_");
+							// String layerCode = typeLayerName.substring(0,
+							// index);
+							String zValue = hashMap.get(typeLayerName);
 							typeErrorLayer = layerValidator.validateZValueAmbiguous(zValue);
 						}
 						if (typeErrorLayer != null) {
