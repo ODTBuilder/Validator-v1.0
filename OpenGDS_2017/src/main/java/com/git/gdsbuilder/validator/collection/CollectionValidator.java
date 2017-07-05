@@ -703,17 +703,7 @@ public class CollectionValidator {
 				if (options != null) {
 					ErrorLayer typeErrorLayer = null;
 
-					// 인접관련 옵션 객체선언
-					EntityNone entityNone = null;
-					EdgeMatchMiss matchMiss = null;
-					RefZValueMiss refZValueMiss = null;
-					RefAttributeMiss refAttributeMiss = null;
-
-					
-					
-
 					for (GeoLayer geoLayer : typeLayers) {
-						Map<String, GeoLayer> nearGeoLayers = new HashMap<String, GeoLayer>();
 						layerValidator.setValidatorLayer(geoLayer);
 						
 						
@@ -755,15 +745,15 @@ public class CollectionValidator {
 							if (bottomGeoCollection != null) {
 								bottomLayer = bottomGeoCollection.getLayer(layerName,
 										bottomGeoCollection);
-								collctionMap.put(MapSystemRuleType.BOTTOM, topLayer);
+								collctionMap.put(MapSystemRuleType.BOTTOM, bottomLayer);
 							}
 							if (leftGeoCollection != null) {
 								leftLayer = leftGeoCollection.getLayer(layerName, leftGeoCollection);
-								collctionMap.put(MapSystemRuleType.LEFT, topLayer);
+								collctionMap.put(MapSystemRuleType.LEFT, leftLayer);
 							}
 							if (rightGeoCollection != null) {
 								rightLayer = rightGeoCollection.getLayer(layerName, rightGeoCollection);
-								collctionMap.put(MapSystemRuleType.RIGHT, topLayer);
+								collctionMap.put(MapSystemRuleType.RIGHT, rightLayer);
 							}
 
 							ValidateCloseCollectionLayer closeCollectionLayer = new ValidateCloseCollectionLayer(
