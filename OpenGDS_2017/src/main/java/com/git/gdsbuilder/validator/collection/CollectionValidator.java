@@ -314,12 +314,18 @@ public class CollectionValidator {
 						if (typeLayer == null) {
 							continue;
 						}
-
-						// twistedFeature
+						
+						String layerFullName = typeLayer.getLayerName();
+						int dash = layerFullName.indexOf("_");
+						String layerType = layerFullName.substring(dash+1);
+						String upperLayerType = layerType.toUpperCase();
 						LayerValidatorImpl layerValidator = new LayerValidatorImpl(typeLayer);
-						typeErrorLayer = layerValidator.validateTwistedPolygon();
-						if (typeErrorLayer != null) {
-							errorLayer.mergeErrorLayer(typeErrorLayer);
+						if(upperLayerType.equals("POLYGON")){
+							// twistedFeature
+							typeErrorLayer = layerValidator.validateTwistedPolygon();
+							if (typeErrorLayer != null) {
+								errorLayer.mergeErrorLayer(typeErrorLayer);
+							}
 						}
 
 						if (option instanceof ConBreak) {
