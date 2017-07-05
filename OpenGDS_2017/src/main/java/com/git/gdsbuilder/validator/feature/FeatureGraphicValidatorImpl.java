@@ -831,10 +831,14 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 		if (!geomType.equals("Point")) {
 			Coordinate[] coors = geometry.getCoordinates();
 			int coorLength = coors.length;
-			if (coorLength < 3) {
-
-			} else {
-				for (int i = 0; i < coors.length; i++) {
+			if (coorLength > 0 && coorLength < 3) {
+				for (int i = 0; i < coorLength; i++) {
+					Coordinate coor0 = coors[i];
+					Coordinate coor1 = coors[i + 1];
+				}
+			}
+			if (coorLength > 3) {
+				for (int i = 0; i < coorLength; i++) {
 					Coordinate coor0 = coors[i];
 					Coordinate coor1 = coors[i + 1];
 					Coordinate coor2 = coors[i + 2];
