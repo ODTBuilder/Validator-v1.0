@@ -63,7 +63,7 @@ public class FeatureCloseCollectionValidatorImpl implements FeatureCloseCollecti
 		
 		boolean existFlag = false; //인접도엽 객체존재여부
 		
-		for(SimpleFeature relationSimpleFeature : relationSimpleFeatures){			
+		for(SimpleFeature relationSimpleFeature : relationSimpleFeatures){
 			Geometry relationGeometry = (Geometry) relationSimpleFeature.getDefaultGeometry();
 			if(Math.abs(targetGeometry.distance(relationGeometry)) < tolerence * 2){
 				existFlag = true;
