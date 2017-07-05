@@ -113,7 +113,7 @@ public class CollectionValidator {
 																// (m2)
 	protected static double lineOverTolorence = 0.01; // 중심선이 경계면 초과 (m2)
 	protected static double areaRatioTolorence = 0.1; // 지류계와 경지계 불일치 (%)
-	protected static double spatialAccuracyTolorence = 0.001; // 공간분석 정밀도 설정 (m)
+	protected static double spatialAccuracyTolorence = 0.01; // 공간분석 정밀도 설정 (m)
 
 	ValidateLayerCollectionList validateLayerCollectionList;
 	ErrorLayerList errLayerList;
@@ -333,7 +333,7 @@ public class CollectionValidator {
 						}
 
 						if (option instanceof ConBreak) {
-							typeErrorLayer = layerValidator.validateConBreakLayers(neatLayer, polygonInvadedTolorence);
+							typeErrorLayer = layerValidator.validateConBreakLayers(neatLayer, spatialAccuracyTolorence);
 							if (typeErrorLayer != null) {
 								errorLayer.mergeErrorLayer(typeErrorLayer);
 							}
@@ -418,7 +418,7 @@ public class CollectionValidator {
 							}
 						}
 						if (option instanceof BuildingOpen) {
-							typeErrorLayer = layerValidator.validateBuildingOpen(neatLayer, polygonInvadedTolorence);
+							typeErrorLayer = layerValidator.validateBuildingOpen(neatLayer, spatialAccuracyTolorence);
 							if (typeErrorLayer != null) {
 								errorLayer.mergeErrorLayer(typeErrorLayer);
 							}
