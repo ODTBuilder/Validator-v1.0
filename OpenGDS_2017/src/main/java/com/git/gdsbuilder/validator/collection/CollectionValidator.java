@@ -80,6 +80,7 @@ import com.git.gdsbuilder.type.validate.option.LayerMiss;
 import com.git.gdsbuilder.type.validate.option.NodeMiss;
 import com.git.gdsbuilder.type.validate.option.OutBoundary;
 import com.git.gdsbuilder.type.validate.option.OverShoot;
+import com.git.gdsbuilder.type.validate.option.PointDuplicated;
 import com.git.gdsbuilder.type.validate.option.RefAttributeMiss;
 import com.git.gdsbuilder.type.validate.option.RefZValueMiss;
 import com.git.gdsbuilder.type.validate.option.SelfEntity;
@@ -92,6 +93,7 @@ import com.git.gdsbuilder.type.validate.option.WaterOpen;
 import com.git.gdsbuilder.type.validate.option.ZValueAmbiguous;
 import com.git.gdsbuilder.validator.collection.rule.MapSystemRule;
 import com.git.gdsbuilder.validator.collection.rule.MapSystemRule.MapSystemRuleType;
+import com.git.gdsbuilder.validator.layer.LayerValidator;
 import com.git.gdsbuilder.validator.layer.LayerValidatorImpl;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
@@ -210,28 +212,28 @@ public class CollectionValidator {
 
 			GeoLayerCollection collection = layerCollections.get(i);
 			String collectionName = collection.getCollectionName();
-	//		try {
-				ErrorLayer errorLayer = new ErrorLayer();
-				errorLayer.setCollectionName(collectionName);
-				errorLayer.setCollectionType(this.collectionType);
+			// try {
+			ErrorLayer errorLayer = new ErrorLayer();
+			errorLayer.setCollectionName(collectionName);
+			errorLayer.setCollectionType(this.collectionType);
 
-				// layerMiss 검수
-			//	layerMissValidate(types, collection, errorLayer);
+			// layerMiss 검수
+			// layerMissValidate(types, collection, errorLayer);
 
-				// geometric 검수
-			//	geometricValidate(types, collection, errorLayer);
+			// geometric 검수
+			// geometricValidate(types, collection, errorLayer);
 
-				// attribute 검수
-				attributeValidate(types, collection, errorLayer);
+			// attribute 검수
+			attributeValidate(types, collection, errorLayer);
 
-				// 인접도엽 검수
-				// closeCollectionValidate(types, mapSystemRule, collection,"");
+			// 인접도엽 검수
+			// closeCollectionValidate(types, mapSystemRule, collection,"");
 
-				errLayerList.add(errorLayer);
-				progress.put(collection.getCollectionName(), 2);
-//			} catch (Exception e) {
-//				progress.put(collection.getCollectionName(), 3);
-//			}
+			errLayerList.add(errorLayer);
+			progress.put(collection.getCollectionName(), 2);
+			// } catch (Exception e) {
+			// progress.put(collection.getCollectionName(), 3);
+			// }
 		}
 	}
 
@@ -318,13 +320,12 @@ public class CollectionValidator {
 						if (typeLayer == null) {
 							continue;
 						}
-
 						String layerFullName = typeLayer.getLayerName();
 						int dash = layerFullName.indexOf("_");
-						String layerType = layerFullName.substring(dash+1);
+						String layerType = layerFullName.substring(dash + 1);
 						String upperLayerType = layerType.toUpperCase();
-						LayerValidatorImpl layerValidator = new LayerValidatorImpl(typeLayer);
-						if(upperLayerType.equals("POLYGON")){
+						LayerValidator layerValidator = new LayerValidatorImpl(typeLayer);
+						if (upperLayerType.equals("POLYGON")) {
 							// twistedFeature
 							typeErrorLayer = layerValidator.validateTwistedPolygon();
 							if (typeErrorLayer != null) {
@@ -367,7 +368,8 @@ public class CollectionValidator {
 							List<String> relationNames = ((OutBoundary) option).getRelationType();
 							for (int r = 0; r < relationNames.size(); r++) {
 								typeErrorLayer = layerValidator.validateOutBoundary(validateLayerCollectionList
-										.getTypeLayers(relationNames.get(r), layerCollection));
+										.getTypeLayers(relationNames.get(r), layerCollection),
+										spatialAccuracyTolorence);
 							}
 							if (typeErrorLayer != null) {
 								errorLayer.mergeErrorLayer(typeErrorLayer);
@@ -457,6 +459,12 @@ public class CollectionValidator {
 										.getTypeLayers(relationNames.get(l), layerCollection), "",
 										spatialAccuracyTolorence);
 							}
+							if (typeErrorLayer != null) {
+								errorLayer.mergeErrorLayer(typeErrorLayer);
+							}
+						}
+						if(option instanceof PointDuplicated) {
+							typeErrorLayer = layerValidator.validatePointDuplicated();
 							if (typeErrorLayer != null) {
 								errorLayer.mergeErrorLayer(typeErrorLayer);
 							}
