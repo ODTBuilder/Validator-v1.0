@@ -1,12 +1,10 @@
 package com.git.gdsbuilder.type.validate.collection.close;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import com.git.gdsbuilder.type.geoserver.layer.GeoLayer;
-import com.git.gdsbuilder.type.validate.option.ValidatorOption;
+import com.git.gdsbuilder.validator.collection.opt.ValCollectionOption;
 import com.git.gdsbuilder.validator.collection.rule.MapSystemRule;
 import com.git.gdsbuilder.validator.collection.rule.MapSystemRule.MapSystemRuleType;
 import com.vividsolutions.jts.geom.LineString;
@@ -15,13 +13,13 @@ import com.vividsolutions.jts.geom.Polygon;
 public class ValidateCloseCollectionLayer {
 	private Map<MapSystemRuleType, GeoLayer> collectionMap;
 	private double tolorence = 0.0;
-	private List<ValidatorOption> closeValidateOptions = new ArrayList<ValidatorOption>();
+	private ValCollectionOption closeValidateOptions;
 	private Map<MapSystemRuleType, LineString> collectionBoundary = new HashMap<MapSystemRule.MapSystemRuleType, LineString>();
 	private Map<MapSystemRuleType, Polygon> targetFeaturesGetBoundary = new HashMap<MapSystemRule.MapSystemRuleType, Polygon>();
 	private Map<MapSystemRuleType, Polygon> nearFeaturesGetBoundary = new HashMap<MapSystemRule.MapSystemRuleType, Polygon>();
 	
 	
-	public ValidateCloseCollectionLayer(GeoLayer targetLayer, Map<MapSystemRuleType, GeoLayer> collectionMap, double tolorence, List<ValidatorOption> closeValidateOptions, Map<MapSystemRuleType, LineString> collectionBoundary
+	public ValidateCloseCollectionLayer(GeoLayer targetLayer, Map<MapSystemRuleType, GeoLayer> collectionMap, double tolorence, ValCollectionOption closeValidateOptions, Map<MapSystemRuleType, LineString> collectionBoundary
 			,Map<MapSystemRuleType, Polygon> targetFeaturesGetBoundary, Map<MapSystemRuleType, Polygon> nearFeaturesGetBoundary) {
 		// TODO Auto-generated constructor stub
 		this.collectionMap = collectionMap;
@@ -76,11 +74,11 @@ public class ValidateCloseCollectionLayer {
 		this.tolorence = tolorence;
 	}
 
-	public List<ValidatorOption> getCloseValidateOptions() {
+	public ValCollectionOption getCloseValidateOptions() {
 		return closeValidateOptions;
 	}
 
-	public void setCloseValidateOptions(List<ValidatorOption> closeValidateOptions) {
+	public void setCloseValidateOptions(ValCollectionOption closeValidateOptions) {
 		this.closeValidateOptions = closeValidateOptions;
 	}
 }

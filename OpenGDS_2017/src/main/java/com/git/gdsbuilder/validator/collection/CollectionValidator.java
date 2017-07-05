@@ -90,6 +90,7 @@ import com.git.gdsbuilder.type.validate.option.UselessPoint;
 import com.git.gdsbuilder.type.validate.option.ValidatorOption;
 import com.git.gdsbuilder.type.validate.option.WaterOpen;
 import com.git.gdsbuilder.type.validate.option.ZValueAmbiguous;
+import com.git.gdsbuilder.validator.collection.opt.ValCollectionOption;
 import com.git.gdsbuilder.validator.collection.rule.MapSystemRule;
 import com.git.gdsbuilder.validator.collection.rule.MapSystemRule.MapSystemRuleType;
 import com.git.gdsbuilder.validator.layer.LayerValidatorImpl;
@@ -108,14 +109,8 @@ import com.vividsolutions.jts.geom.Polygon;
  */
 public class CollectionValidator {
 
-	protected static double lineInvadedTolorence = 0.01; // 선형이 면형 객체 침범 (m)
-	protected static double polygonInvadedTolorence = 0.001; // 면형이 면형 객체 침범
-																// (m2)
-	protected static double lineOverTolorence = 0.01; // 중심선이 경계면 초과 (m2)
-	protected static double areaRatioTolorence = 0.1; // 지류계와 경지계 불일치 (%)
-	protected static double spatialAccuracyTolorence = 0.001; // 공간분석 정밀도 설정 (m)
-
 	ValidateLayerCollectionList validateLayerCollectionList;
+	double tolorence = 0.001;
 	ErrorLayerList errLayerList;
 	Map<String, Object> progress;
 	String collectionType;
@@ -139,6 +134,14 @@ public class CollectionValidator {
 		this.progress = new HashMap<String, Object>();
 		this.collectionType = fileType;
 		collectionValidate();
+	}
+
+	public double getTolorence() {
+		return tolorence;
+	}
+
+	public void setTolorence(double tolorence) {
+		this.tolorence = tolorence;
 	}
 
 	public String getCollectionType() {
@@ -222,10 +225,10 @@ public class CollectionValidator {
 			//	geometricValidate(types, collection, errorLayer);
 
 				// attribute 검수
-				attributeValidate(types, collection, errorLayer);
+//				attributeValidate(types, collection, errorLayer);
 
 				// 인접도엽 검수
-				// closeCollectionValidate(types, mapSystemRule, collection,"");
+				closeCollectionValidate(types, mapSystemRule, collection,"");
 
 				errLayerList.add(errorLayer);
 				progress.put(collection.getCollectionName(), 2);
@@ -290,6 +293,9 @@ public class CollectionValidator {
 				}
 			}
 		}
+		// errorLayer.setCollectionName(collectionName);
+		// geoErrorList.add(errorLayer);
+		// this.errLayerMerge(geoErrorList);
 	}
 
 	private void geometricValidate(ValidateLayerTypeList types, GeoLayerCollection layerCollection,
@@ -318,12 +324,20 @@ public class CollectionValidator {
 						if (typeLayer == null) {
 							continue;
 						}
+						
 
-						// twistedFeature
+						String layerFullName = typeLayer.getLayerName();
+						int dash = layerFullName.indexOf("_");
+						String layerType = layerFullName.substring(dash+1);
+						String upperLayerType = layerType.toUpperCase();
+
 						LayerValidatorImpl layerValidator = new LayerValidatorImpl(typeLayer);
-						typeErrorLayer = layerValidator.validateTwistedPolygon();
-						if (typeErrorLayer != null) {
-							errorLayer.mergeErrorLayer(typeErrorLayer);
+						if(upperLayerType.equals("POLYGON")){
+							// twistedFeature
+							typeErrorLayer = layerValidator.validateTwistedPolygon();
+							if (typeErrorLayer != null) {
+								errorLayer.mergeErrorLayer(typeErrorLayer);
+							}
 						}
 
 						if (option instanceof ConBreak) {
@@ -437,8 +451,7 @@ public class CollectionValidator {
 							List<String> relationNames = ((CrossRoad) option).getRelationType();
 							for (int l = 0; l < relationNames.size(); l++) {
 								typeErrorLayer = layerValidator.validateCrossRoad(validateLayerCollectionList
-										.getTypeLayers(relationNames.get(l), layerCollection), "",
-										spatialAccuracyTolorence);
+										.getTypeLayers(relationNames.get(l), layerCollection), "", tolorence);
 							}
 							if (typeErrorLayer != null) {
 								errorLayer.mergeErrorLayer(typeErrorLayer);
@@ -448,19 +461,27 @@ public class CollectionValidator {
 							List<String> relationNames = ((NodeMiss) option).getRelationType();
 							for (int l = 0; l < relationNames.size(); l++) {
 								typeErrorLayer = layerValidator.validateNodeMiss(validateLayerCollectionList
-										.getTypeLayers(relationNames.get(l), layerCollection), "",
-										spatialAccuracyTolorence);
+										.getTypeLayers(relationNames.get(l), layerCollection), "", tolorence);
 							}
 							if (typeErrorLayer != null) {
 								errorLayer.mergeErrorLayer(typeErrorLayer);
 							}
 						}
+
+						// if (typeErrorLayer != null) {
+						// errorLayer.mergeErrorLayer(typeErrorLayer);
+						// }
 					}
 				}
 			} else {
 				continue;
 			}
 		}
+		/*
+		 * errLayer.setCollectionName(layerCollection.getCollectionName());
+		 * //geoErrorList.add(errLayer); //this.errLayerMerge(geoErrorList);
+		 * errLayerList.add(errLayer);
+		 */
 	}
 
 	@SuppressWarnings("unused")
@@ -497,6 +518,12 @@ public class CollectionValidator {
 				}
 			}
 		}
+		/*
+		 * if (errLayer != null) {
+		 * errLayer.setCollectionName(layerCollection.getCollectionName());
+		 * errLayer.setCollectionType(layerCollection.getLayerCollectionType());
+		 * errLayerList.add(errLayer); }
+		 */
 	}
 
 	// closeValidate
@@ -618,19 +645,17 @@ public class CollectionValidator {
 
 			// 대상도엽 객체 GET 폴리곤 생성
 			Coordinate[] topCoords = new Coordinate[] { new Coordinate(minx, miny), new Coordinate(maxx, miny),
-					new Coordinate(maxx, maxy + spatialAccuracyTolorence),
-					new Coordinate(minx, maxy + spatialAccuracyTolorence), new Coordinate(minx, miny) };
-			Coordinate[] bottomCoords = new Coordinate[] { new Coordinate(minx, maxy), new Coordinate(maxx, maxy),
-					new Coordinate(maxx, maxy - spatialAccuracyTolorence),
-					new Coordinate(minx, maxy - spatialAccuracyTolorence), new Coordinate(minx, maxy) };
-			Coordinate[] leftCoords = new Coordinate[] { new Coordinate(minx, miny),
-					new Coordinate(minx + spatialAccuracyTolorence, miny),
-					new Coordinate(minx + spatialAccuracyTolorence, maxy), new Coordinate(minx, maxy),
+					new Coordinate(maxx, maxy + tolorence), new Coordinate(minx, maxy + tolorence),
 					new Coordinate(minx, miny) };
+			Coordinate[] bottomCoords = new Coordinate[] { new Coordinate(minx, maxy), new Coordinate(maxx, maxy),
+					new Coordinate(maxx, maxy - tolorence), new Coordinate(minx, maxy - tolorence),
+					new Coordinate(minx, maxy) };
+			Coordinate[] leftCoords = new Coordinate[] { new Coordinate(minx, miny),
+					new Coordinate(minx + tolorence, miny), new Coordinate(minx + tolorence, maxy),
+					new Coordinate(minx, maxy), new Coordinate(minx, miny) };
 			Coordinate[] rightCoords = new Coordinate[] { new Coordinate(maxx, miny),
-					new Coordinate(maxx - spatialAccuracyTolorence, miny),
-					new Coordinate(maxx - spatialAccuracyTolorence, maxy), new Coordinate(maxx, maxy),
-					new Coordinate(maxx, miny) };
+					new Coordinate(maxx - tolorence, miny), new Coordinate(maxx - tolorence, maxy),
+					new Coordinate(maxx, maxy), new Coordinate(maxx, miny) };
 
 			LinearRing topRing = geometryFactory.createLinearRing(topCoords);
 			LinearRing bottomRing = geometryFactory.createLinearRing(bottomCoords);
@@ -651,20 +676,18 @@ public class CollectionValidator {
 			targetFeaturesGetBoundary.put(MapSystemRuleType.RIGHT, rightPolygon);
 
 			// 인접도엽 객체 GET 폴리곤생성
-			Coordinate[] nearTopCoords = new Coordinate[] { new Coordinate(minx, miny - spatialAccuracyTolorence),
-					new Coordinate(maxx, miny - spatialAccuracyTolorence), new Coordinate(maxx, maxy),
-					new Coordinate(minx, maxy), new Coordinate(minx, miny - spatialAccuracyTolorence) };
+			Coordinate[] nearTopCoords = new Coordinate[] { new Coordinate(minx, miny - tolorence),
+					new Coordinate(maxx, miny - tolorence), new Coordinate(maxx, maxy), new Coordinate(minx, maxy),
+					new Coordinate(minx, miny - tolorence) };
 			Coordinate[] nearBottomCoords = new Coordinate[] { new Coordinate(minx, maxy), new Coordinate(maxx, maxy),
-					new Coordinate(maxx, maxy + spatialAccuracyTolorence),
-					new Coordinate(minx, maxy + spatialAccuracyTolorence), new Coordinate(minx, maxy) };
-			Coordinate[] nearLeftCoords = new Coordinate[] { new Coordinate(minx - spatialAccuracyTolorence, miny),
-					new Coordinate(minx, miny), new Coordinate(minx, maxy),
-					new Coordinate(minx - spatialAccuracyTolorence, maxy),
-					new Coordinate(minx - spatialAccuracyTolorence, miny) };
+					new Coordinate(maxx, maxy + tolorence), new Coordinate(minx, maxy + tolorence),
+					new Coordinate(minx, maxy) };
+			Coordinate[] nearLeftCoords = new Coordinate[] { new Coordinate(minx - tolorence, miny),
+					new Coordinate(minx, miny), new Coordinate(minx, maxy), new Coordinate(minx - tolorence, maxy),
+					new Coordinate(minx - tolorence, miny) };
 			Coordinate[] nearRightCoords = new Coordinate[] { new Coordinate(maxx, miny),
-					new Coordinate(maxx + spatialAccuracyTolorence, miny),
-					new Coordinate(maxx + spatialAccuracyTolorence, maxy), new Coordinate(maxx, maxy),
-					new Coordinate(maxx, miny) };
+					new Coordinate(maxx + tolorence, miny), new Coordinate(maxx + tolorence, maxy),
+					new Coordinate(maxx, maxy), new Coordinate(maxx, miny) };
 
 			LinearRing nearTopRing = geometryFactory.createLinearRing(nearTopCoords);
 			LinearRing nearBottomRing = geometryFactory.createLinearRing(nearBottomCoords);
@@ -700,18 +723,15 @@ public class CollectionValidator {
 					RefZValueMiss refZValueMiss = null;
 					RefAttributeMiss refAttributeMiss = null;
 
-					List<ValidatorOption> optionList = new ArrayList<ValidatorOption>();
-					for (ValidatorOption option : options) {
-						if (option instanceof EntityNone || option instanceof RefAttributeMiss
-								|| option instanceof RefZValueMiss || option instanceof EdgeMatchMiss) {
-							optionList.add(option);
-						}
-					}
+					
+					
 
 					for (GeoLayer geoLayer : typeLayers) {
 						Map<String, GeoLayer> nearGeoLayers = new HashMap<String, GeoLayer>();
 						layerValidator.setValidatorLayer(geoLayer);
-						// 선언
+						
+						
+						
 
 						Map<MapSystemRuleType, GeoLayer> collctionMap = new HashMap<MapSystemRule.MapSystemRuleType, GeoLayer>();
 						GeoLayer topLayer = null;
@@ -720,26 +740,50 @@ public class CollectionValidator {
 						GeoLayer rightLayer = null;
 
 						if (geoLayer != null) {
+							String layerName = geoLayer.getLayerName();
+							
+							//인접도엽 검수옵션 생성 - 레이어단위
+							ValCollectionOption collectionOptions = new ValCollectionOption();
+							for (ValidatorOption option : options) {
+								if (option instanceof EntityNone) {
+									collectionOptions.putEntityNoneOption(true);
+								}
+								if (option instanceof RefAttributeMiss) {
+									List<String> colunms = (List<String>) ((RefAttributeMiss) option).getRefAttributeMaissOpt(layerName);
+									collectionOptions.putRefAttributeMissOption(colunms);
+								}
+								if (option instanceof RefZValueMiss) {
+									String colunm = ((RefZValueMiss) option).getRefZValueMissOpt(layerName);
+									collectionOptions.putRefZValueMissOption(colunm);
+								}
+								if (option instanceof EdgeMatchMiss) {
+									collectionOptions.putEdgeMatchMissOption(true);
+								}
+							}
+							
+							
+							
+							
 							if (topGeoCollection != null) {
-								topLayer = topGeoCollection.getLayer(geoLayer.getLayerName(), topGeoCollection);
+								topLayer = topGeoCollection.getLayer(layerName, topGeoCollection);
 								collctionMap.put(MapSystemRuleType.TOP, topLayer);
 							}
 							if (bottomGeoCollection != null) {
-								bottomLayer = bottomGeoCollection.getLayer(geoLayer.getLayerName(),
+								bottomLayer = bottomGeoCollection.getLayer(layerName,
 										bottomGeoCollection);
 								collctionMap.put(MapSystemRuleType.BOTTOM, topLayer);
 							}
 							if (leftGeoCollection != null) {
-								leftLayer = leftGeoCollection.getLayer(geoLayer.getLayerName(), leftGeoCollection);
+								leftLayer = leftGeoCollection.getLayer(layerName, leftGeoCollection);
 								collctionMap.put(MapSystemRuleType.LEFT, topLayer);
 							}
 							if (rightGeoCollection != null) {
-								rightLayer = rightGeoCollection.getLayer(geoLayer.getLayerName(), rightGeoCollection);
+								rightLayer = rightGeoCollection.getLayer(layerName, rightGeoCollection);
 								collctionMap.put(MapSystemRuleType.RIGHT, topLayer);
 							}
 
 							ValidateCloseCollectionLayer closeCollectionLayer = new ValidateCloseCollectionLayer(
-									geoLayer, collctionMap, spatialAccuracyTolorence, optionList, collectionBoundary,
+									geoLayer, collctionMap, tolorence, collectionOptions, collectionBoundary,
 									targetFeaturesGetBoundary, nearFeaturesGetBoundary);
 
 							typeErrorLayer = layerValidator.validateCloseCollection(closeCollectionLayer, geomCol);
@@ -758,27 +802,43 @@ public class CollectionValidator {
 			}
 		}
 
-		/*
-		 * for (int i = 0; i < layerCollections.size(); i++) {
-		 * GeoLayerCollection collection = layerCollections.get(i);
-		 * List<GeoLayer> collectionList = collection.getLayers(); ErrorLayer
-		 * errLayer = new ErrorLayer(); for (int j = 0; j < types.size(); j++) {
-		 * ValidateLayerType type = types.get(j); GeoLayerList typeLayers =
-		 * validateLayerCollectionList.getTypeLayers(type.getTypeName(),
-		 * collection); List<ValidatorOption> options = type.getOptionList(); if
-		 * (options != null) { ErrorLayer typeErrorLayer = null; for (int k = 0;
-		 * k < options.size(); k++) { ValidatorOption option = options.get(k);
-		 * for (int l = 0; l < typeLayers.size(); l++) { GeoLayer typeLayer =
-		 * typeLayers.get(l); if (typeLayer == null) { continue; } if (option
-		 * instanceof LayerMiss) { List<String> typeNames = ((LayerMiss)
-		 * option).getLayerType(); typeErrorLayer =
-		 * layerValidator.validateLayerMiss(typeNames); if (typeErrorLayer !=
-		 * null) { errLayer.mergeErrorLayer(typeErrorLayer); }
-		 * collectionList.remove(typeLayer); } } } } } if (errLayer != null) {
-		 * errLayer.setCollectionName(collection.getCollectionName());
-		 * errLayer.setCollectionType(collection.getLayerCollectionType());
-		 * errLayerList.add(errLayer); } }
-		 */
+		
+	/*	for (int i = 0; i < layerCollections.size(); i++) {
+			GeoLayerCollection collection = layerCollections.get(i);
+			List<GeoLayer> collectionList = collection.getLayers();
+			ErrorLayer errLayer = new ErrorLayer();
+			for (int j = 0; j < types.size(); j++) {
+				ValidateLayerType type = types.get(j);
+				GeoLayerList typeLayers = validateLayerCollectionList.getTypeLayers(type.getTypeName(), collection);
+				List<ValidatorOption> options = type.getOptionList();
+				if (options != null) {
+					ErrorLayer typeErrorLayer = null;
+					for (int k = 0; k < options.size(); k++) {
+						ValidatorOption option = options.get(k);
+						for (int l = 0; l < typeLayers.size(); l++) {
+							GeoLayer typeLayer = typeLayers.get(l);
+							if (typeLayer == null) {
+								continue;
+							}
+							if (option instanceof LayerMiss) {
+								List<String> typeNames = ((LayerMiss) option).getLayerType();
+								typeErrorLayer = layerValidator.validateLayerMiss(typeNames);
+								if (typeErrorLayer != null) {
+									errLayer.mergeErrorLayer(typeErrorLayer);
+								}
+								collectionList.remove(typeLayer);
+							}
+						}
+					}
+				}
+			}
+			if (errLayer != null) {
+				errLayer.setCollectionName(collection.getCollectionName());
+				errLayer.setCollectionType(collection.getLayerCollectionType());
+				errLayerList.add(errLayer);
+			}
+		}*/
+		 
 	}
 
 	private void errLayerMerge(ErrorLayerList geoErrorList) {
