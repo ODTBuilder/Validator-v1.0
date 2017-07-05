@@ -46,53 +46,31 @@ import com.git.gdsbuilder.type.validate.error.ErrorLayer;
 
 /**
  * SimpleFeatureCollection를 속성 검수하는 클래스
+ * 
  * @author DY.Oh
  * @Date 2017. 4. 18. 오후 3:32:00
- * */
+ */
 public interface FeatureAttributeValidator {
 
 	/**
-	 * 검수 항목 중 “필수 속성 오류(Attribute Fix)” 검수
-	 * @author DY.Oh
-	 * @Date 2017. 4. 18. 오후 3:32:33
-	 * @param validatorLayer
-	 * @param notNullAtt
-	 * @return
-	 * @throws SchemaException ErrorLayer
-	 * @throws
-	 * */
-	public ErrorFeature validateAttributeFix(SimpleFeature simpleFeature, Map<String,List<String>> notNullAtt)
+	 * 검수 항목 중 “필수 속성 오류(Attribute Fix)” 검수 @author DY.Oh @Date 2017. 4. 18. 오후
+	 * 3:32:33 @param validatorLayer @param notNullAtt @return @throws
+	 * SchemaException ErrorLayer @throws
+	 */
+	public ErrorFeature validateAttributeFix(SimpleFeature simpleFeature, Map<String, List<String>> notNullAtt)
 			throws SchemaException;
 
 	/**
-	 * 검수 항목 중 “고도값 오류 (Z-Value Abmiguous)” 검수
-	 * @author DY.Oh
-	 * @Date 2017. 4. 18. 오후 3:32:55
-	 * @param simpleFeature
-	 * @param notNullAtt
-	 * @return
-	 * @throws SchemaException ErrorFeature
-	 * @throws
-	 * */
+	 * 검수 항목 중 “고도값 오류 (Z-Value Abmiguous)” 검수 @author DY.Oh @Date 2017. 4. 18.
+	 * 오후 3:32:55 @param simpleFeature @param notNullAtt @return @throws
+	 * SchemaException ErrorFeature @throws
+	 */
 	public ErrorFeature validateZvalueAmbiguous(SimpleFeature simpleFeature, String attributeKey)
 			throws SchemaException;
 
-	/**
-	 * 검수 항목 중 “문자의 정확성 오류 (character Accuracy)” 검수
-	 * @author DY.Oh
-	 * @Date 2017. 4. 18. 오후 3:33:07
-	 * @param validatorLayer
-	 * @param string
-	 * @param relationLayer
-	 * @param string2
-	 * @return
-	 * @throws SchemaException ErrorLayer
-	 * @throws
-	 * */
-	public ErrorLayer validateCharacterAccuracy(SimpleFeatureCollection validatorLayer, String string,
-			SimpleFeatureCollection relationLayer, String string2) throws SchemaException;
-	
-	public ErrorFeature validateBridgeName(SimpleFeature simpleFeature, SimpleFeature relationSimpleFeature) throws SchemaException;
+	public ErrorFeature validateBridgeName(SimpleFeature simpleFeature, SimpleFeature relationSimpleFeature)
+			throws SchemaException;
+
 	public ErrorFeature validateAdmin(SimpleFeature simpleFeature) throws SchemaException;
-	
+
 }

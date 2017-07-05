@@ -63,7 +63,7 @@ public interface LayerValidator {
 	 * @throws SchemaException 
 	 * @throws
 	 * */
-	public ErrorLayer validateConBreakLayers(GeoLayer neatLayer) throws SchemaException;
+	public ErrorLayer validateConBreakLayers(GeoLayer neatLayer, double tolerence) throws SchemaException;
 
 	/**
 	 *  검수 항목 중 “등고선 교차 오류(ConIntersected)” 검수를 수행
@@ -207,7 +207,7 @@ public interface LayerValidator {
 	 * @throws SchemaException ErrorLayer
 	 * @throws
 	 * */
-	public ErrorLayer validateBuildingOpen() throws SchemaException;
+	public ErrorLayer validateBuildingOpen(GeoLayer neatLayer,double tolerence) throws SchemaException;
 	
 	/**
 	 * 검수항목 중 "수부코드폐합오류(WaterOpen)" 검수를 수행

@@ -38,13 +38,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.feature.SchemaException;
 import org.json.simple.JSONArray;
+import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
 
 import com.git.gdsbuilder.type.validate.error.ErrorFeature;
-import com.git.gdsbuilder.type.validate.error.ErrorLayer;
 import com.git.gdsbuilder.type.validate.option.Admin;
 import com.git.gdsbuilder.type.validate.option.AttributeFix;
 import com.git.gdsbuilder.type.validate.option.BridgeName;
@@ -53,206 +52,150 @@ import com.vividsolutions.jts.geom.Geometry;
 
 public class FeatureAttributeValidatorImpl implements FeatureAttributeValidator {
 
-	@Override
-	public ErrorLayer validateCharacterAccuracy(SimpleFeatureCollection validatorLayer, String labelI,
-			SimpleFeatureCollection relationLayer, String labelJ) throws SchemaException {
-		return null;
-
-		//		ErrorLayer errLayer = new ErrorLayer();
-		//		DefaultFeatureCollection errSFC = new DefaultFeatureCollection();
-		//		List<DetailsValidatorResult> dtReports = new ArrayList<DetailsValidatorResult>();
-		//
-		//		List<SimpleFeature> tmpSimpleFeaturesI = new ArrayList<SimpleFeature>();
-		//		SimpleFeatureIterator simpleFeatureIteratorI = validatorLayer.features();
-		//		while (simpleFeatureIteratorI.hasNext()) {
-		//			SimpleFeature simpleFeature = simpleFeatureIteratorI.next();
-		//			tmpSimpleFeaturesI.add(simpleFeature);
-		//		}
-		//
-		//		List<SimpleFeature> tmpSimpleFeaturesJ = new ArrayList<SimpleFeature>();
-		//		SimpleFeatureIterator simpleFeatureIteratorJ = relationLayer.features();
-		//		while (simpleFeatureIteratorJ.hasNext()) {
-		//			SimpleFeature simpleFeature = simpleFeatureIteratorJ.next();
-		//			tmpSimpleFeaturesJ.add(simpleFeature);
-		//		}
-		//
-		//		AttributeValidator attributeValidator = new AttributeValidatorImpl();
-		//		int tmpSizeI = tmpSimpleFeaturesI.size();
-		//		int tmpSizeJ = tmpSimpleFeaturesJ.size();
-		//		for (int i = 0; i < tmpSizeI; i++) {
-		//			SimpleFeature simpleFeatureI = tmpSimpleFeaturesI.get(i);
-		//			boolean isTrue = false;
-		//			int trueCount = 0;
-		//			for (int j = 0; j < tmpSizeJ; j++) {
-		//				SimpleFeature simpleFeatureJ = tmpSimpleFeaturesJ.get(j);
-		//				isTrue = attributeValidator.isEqualsCharacter(simpleFeatureI, labelI, simpleFeatureJ, labelJ);
-		//				if (isTrue) {
-		//					trueCount++;
-		//				}
-		//			}
-		//			if (trueCount == 0) {
-		//				ErrorFeature errFeature = attributeValidator.characterAccuracy(simpleFeatureI);
-		//				if (errFeature != null) {
-		//					errSFC.add(errFeature.getErrFeature());
-		//					dtReports.add(errFeature.getDtReport());
-		//				} else {
-		//					continue;
-		//				}
-		//			}
-		//		}
-		//		if (errSFC.size() > 0 && dtReports.size() > 0) {
-		//			errLayer.setErrFeatureCollection(errSFC);
-		//			errLayer.setDetailsValidatorReport(dtReports);
-		//			return errLayer;
-		//		} else {
-		//			return null;
-		//		}
-	}
-
 	@SuppressWarnings("unused")
 	@Override
-	public ErrorFeature validateZvalueAmbiguous(SimpleFeature simpleFeature, String attributeKey){
+	public ErrorFeature validateZvalueAmbiguous(SimpleFeature simpleFeature, String attributeKey) {
 		ErrorFeature errorFeature = null;
 		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
 		Object attributeValue = simpleFeature.getAttribute(attributeKey);
-//		int aa = Integer.parseInt(attributeValue.toString());
-//		System.out.println(attributeValue.toString());
-//		Boolean flag = true;
-		if(attributeValue != null){
-			if(attributeValue.toString().equals("") || attributeValue.toString().equals("0.0") ){
-				errorFeature = new ErrorFeature(simpleFeature.getID(), ZValueAmbiguous.Type.ZVALUEAMBIGUOUS.errType(),
+
+		Property featuerIDPro = simpleFeature.getProperty("feature_id");
+		String featureID = (String) featuerIDPro.getValue();
+
+		if (attributeValue != null) {
+			if (attributeValue.toString().equals("") || attributeValue.toString().equals("0.0")) {
+				errorFeature = new ErrorFeature(featureID, ZValueAmbiguous.Type.ZVALUEAMBIGUOUS.errType(),
 						ZValueAmbiguous.Type.ZVALUEAMBIGUOUS.errName(), geometry.getInteriorPoint());
-			}else{
+			} else {
 				String attributeStr = attributeValue.toString();
-					Double num = new Double(Double.parseDouble(attributeStr));
-					int a = num.intValue();
-					if(num>a){
-						errorFeature = new ErrorFeature(simpleFeature.getID(), ZValueAmbiguous.Type.ZVALUEAMBIGUOUS.errType(),
-								ZValueAmbiguous.Type.ZVALUEAMBIGUOUS.errName(), geometry.getInteriorPoint());
-					}
-/*
-				if(flag == false){
-					ErrorFeature errorFeature = new ErrorFeature(simpleFeature.getID(), Z_ValueAmbiguous.Type.Z_VALUEAMBIGUOUS.errType(),
-							Z_ValueAmbiguous.Type.Z_VALUEAMBIGUOUS.errName(), geometry.getInteriorPoint());
-					return errorFeature;
-				}*/
+				Double num = new Double(Double.parseDouble(attributeStr));
+				int a = num.intValue();
+				if (num > a) {
+					errorFeature = new ErrorFeature(featureID, ZValueAmbiguous.Type.ZVALUEAMBIGUOUS.errType(),
+							ZValueAmbiguous.Type.ZVALUEAMBIGUOUS.errName(), geometry.getInteriorPoint());
+				}
 			}
-		}else{
-			errorFeature = new ErrorFeature(simpleFeature.getID(), ZValueAmbiguous.Type.ZVALUEAMBIGUOUS.errType(),
+		} else {
+			errorFeature = new ErrorFeature(featureID, ZValueAmbiguous.Type.ZVALUEAMBIGUOUS.errType(),
 					ZValueAmbiguous.Type.ZVALUEAMBIGUOUS.errName(), geometry.getInteriorPoint());
 		}
 		return errorFeature;
 	}
 
-
 	@Override
-	public ErrorFeature validateAttributeFix(SimpleFeature simpleFeature, Map<String,List<String>> notNullAtt)
+	public ErrorFeature validateAttributeFix(SimpleFeature simpleFeature, Map<String, List<String>> notNullAtt)
 			throws SchemaException {
 		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
 		boolean flag = true;
-		if(notNullAtt != null){
+		if (notNullAtt != null) {
 			Iterator iterator = notNullAtt.keySet().iterator();
-			while(iterator.hasNext()){
-
-				String attributeKey = (String) iterator.next(); 
-				String attribute = (String) simpleFeature.getAttribute(attributeKey); 
-				JSONArray attributeArray = (JSONArray) notNullAtt.get(attributeKey); 
-
-				if(!(attributeArray.isEmpty())){
-					if(attribute != null){
+			while (iterator.hasNext()) {
+				String attributeKey = (String) iterator.next();
+				String attribute = (String) simpleFeature.getAttribute(attributeKey);
+				JSONArray attributeArray = (JSONArray) notNullAtt.get(attributeKey);
+				if (!(attributeArray.isEmpty())) {
+					if (attribute != null) {
 						Iterator attrIterator = attributeArray.iterator();
 						while (attrIterator.hasNext()) {
 							String attributeValue = (String) attrIterator.next();
-							if(!(attributeValue.equals(attribute))){
+							if (!(attributeValue.equals(attribute))) {
 								flag = false;
-							}else{
+							} else {
 								flag = true;
 								break;
 							}
 						}
-					}else{
+					} else {
 						flag = false;
 						break;
 					}
-				}else{
-					if(attribute.equals("null")){
+				} else {
+					if (attribute.equals("null")) {
 						flag = false;
 						break;
 					}
 				}
 			}
 		}
-
-		if(flag == false){
-			ErrorFeature errorFeature = new ErrorFeature(simpleFeature.getID(), AttributeFix.Type.ATTRIBUTEFIX.errType(),
+		if (flag == false) {
+			Property featuerIDPro = simpleFeature.getProperty("feature_id");
+			String featureID = (String) featuerIDPro.getValue();
+			ErrorFeature errorFeature = new ErrorFeature(featureID, AttributeFix.Type.ATTRIBUTEFIX.errType(),
 					AttributeFix.Type.ATTRIBUTEFIX.errName(), geometry.getInteriorPoint());
 			return errorFeature;
-		}else{
+		} else {
 			return null;
 		}
 	}
 
-	public ErrorFeature validateBridgeName(SimpleFeature simpleFeature, SimpleFeature relationSimpleFeature) throws SchemaException{
+	public ErrorFeature validateBridgeName(SimpleFeature simpleFeature, SimpleFeature relationSimpleFeature)
+			throws SchemaException {
 		Geometry relGeometry = (Geometry) relationSimpleFeature.getDefaultGeometry();
 		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
-		Geometry returnGeom = null; 
-		if(geometry.intersects(relGeometry) || geometry.crosses(relGeometry) || geometry.overlaps(relGeometry)){
+		Geometry returnGeom = null;
+		if (geometry.intersects(relGeometry) || geometry.crosses(relGeometry) || geometry.overlaps(relGeometry)) {
 			Object simValue = simpleFeature.getAttribute("하천명");
 			Object relValue = relationSimpleFeature.getAttribute("명칭");
-			if(simValue.equals("null") || relValue.equals("null")){
+			if (simValue.equals("null") || relValue.equals("null")) {
 				returnGeom = geometry.intersection(relGeometry);
-				ErrorFeature errorFeature = new ErrorFeature(simpleFeature.getID(), BridgeName.Type.BRIDGENAME.errType(),
+				Property featuerIDPro = simpleFeature.getProperty("feature_id");
+				String featureID = (String) featuerIDPro.getValue();
+				ErrorFeature errorFeature = new ErrorFeature(featureID, BridgeName.Type.BRIDGENAME.errType(),
 						BridgeName.Type.BRIDGENAME.errName(), returnGeom.getInteriorPoint());
 				return errorFeature;
-			}else{
-				if(!(simValue.equals(relValue))){
+			} else {
+				if (!(simValue.equals(relValue))) {
 					returnGeom = geometry.intersection(relGeometry);
-					ErrorFeature errorFeature = new ErrorFeature(simpleFeature.getID(), BridgeName.Type.BRIDGENAME.errType(),
+					Property featuerIDPro = simpleFeature.getProperty("feature_id");
+					String featureID = (String) featuerIDPro.getValue();
+					ErrorFeature errorFeature = new ErrorFeature(featureID, BridgeName.Type.BRIDGENAME.errType(),
 							BridgeName.Type.BRIDGENAME.errName(), returnGeom.getInteriorPoint());
 					return errorFeature;
-				}else{
+				} else {
 					return null;
 				}
 			}
-		}else{
+		} else {
 			return null;
 		}
 	}
 
-	public ErrorFeature validateAdmin(SimpleFeature simpleFeature) throws SchemaException{
+	public ErrorFeature validateAdmin(SimpleFeature simpleFeature) throws SchemaException {
 		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
 		String title = simpleFeature.getAttribute("명칭").toString();
 		int titleLength = title.length();
 		String division = simpleFeature.getAttribute("구분").toString();
 		int divisionLength = division.length();
 
-		if(title == null || division == null){
-			ErrorFeature errorFeature = new ErrorFeature(simpleFeature.getID(), Admin.Type.ADMIN.errType(), 
+		Property featuerIDPro = simpleFeature.getProperty("feature_id");
+		String featureID = (String) featuerIDPro.getValue();
+
+		if (title == null || division == null) {
+			ErrorFeature errorFeature = new ErrorFeature(featureID, Admin.Type.ADMIN.errType(),
 					Admin.Type.ADMIN.errName(), geometry.getInteriorPoint());
 			return errorFeature;
-		}else{
-			if(titleLength < 2){
-				ErrorFeature errorFeature = new ErrorFeature(simpleFeature.getID(), Admin.Type.ADMIN.errType(), 
+		} else {
+			if (titleLength < 2) {
+				ErrorFeature errorFeature = new ErrorFeature(featureID, Admin.Type.ADMIN.errType(),
 						Admin.Type.ADMIN.errName(), geometry.getInteriorPoint());
 				return errorFeature;
-			}else{
-				if(titleLength > divisionLength){
+			} else {
+				if (titleLength > divisionLength) {
 					int length = titleLength - divisionLength;
 					String title_end = title.substring(length);
-					if(!(title_end.equals(division))){
-						ErrorFeature errorFeature = new ErrorFeature(simpleFeature.getID(), Admin.Type.ADMIN.errType(), 
+					if (!(title_end.equals(division))) {
+						ErrorFeature errorFeature = new ErrorFeature(featureID, Admin.Type.ADMIN.errType(),
 								Admin.Type.ADMIN.errName(), geometry.getInteriorPoint());
 						return errorFeature;
-					}else{
+					} else {
 						return null;
 					}
-				}else{
-					ErrorFeature errorFeature = new ErrorFeature(simpleFeature.getID(), Admin.Type.ADMIN.errType(), 
+				} else {
+					ErrorFeature errorFeature = new ErrorFeature(featureID, Admin.Type.ADMIN.errType(),
 							Admin.Type.ADMIN.errName(), geometry.getInteriorPoint());
 					return errorFeature;
 				}
 			}
 		}
 	}
-
 }

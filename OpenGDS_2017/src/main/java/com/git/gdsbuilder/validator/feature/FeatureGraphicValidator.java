@@ -149,7 +149,7 @@ public interface FeatureGraphicValidator {
 	 * @throws SchemaException 
 	 * @throws
 	 * */
-	public List<ErrorFeature> validateConBreak(SimpleFeature validatorLayer, SimpleFeatureCollection aop)
+	public List<ErrorFeature> validateConBreak(SimpleFeature validatorLayer, SimpleFeatureCollection aop, double tolerence)
 			throws SchemaException;
 
 	/**
@@ -228,7 +228,7 @@ public interface FeatureGraphicValidator {
 	 * @throws SchemaException ErrorFeature
 	 * @throws
 	 * */
-	public ErrorFeature validateBuildingOpen(SimpleFeature simpleFeature) throws SchemaException ;
+	public ErrorFeature validateBuildingOpen(SimpleFeature simpleFeature, SimpleFeatureCollection aop, double tolerence) throws SchemaException ;
 	
 	/**
 	 * 검수 항목 중 "수부코드 폐합 오류(WaterOpen)" 검수
