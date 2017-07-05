@@ -58,7 +58,6 @@ import com.git.gdsbuilder.type.geoserver.layer.GeoLayer;
 import com.git.gdsbuilder.type.validate.collection.close.ValidateCloseCollectionLayer;
 import com.git.gdsbuilder.type.validate.error.ErrorFeature;
 import com.git.gdsbuilder.type.validate.error.ErrorLayer;
-import com.git.gdsbuilder.type.validate.option.ValidatorOption;
 import com.git.gdsbuilder.validator.collection.opt.ValCollectionOption;
 import com.git.gdsbuilder.validator.collection.rule.MapSystemRule.MapSystemRuleType;
 import com.git.gdsbuilder.validator.feature.FeatureAttributeValidator;
