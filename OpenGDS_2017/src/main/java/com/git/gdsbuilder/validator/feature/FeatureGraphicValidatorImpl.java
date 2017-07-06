@@ -64,6 +64,7 @@ import com.git.gdsbuilder.type.validate.option.LayerMiss;
 import com.git.gdsbuilder.type.validate.option.NodeMiss;
 import com.git.gdsbuilder.type.validate.option.OutBoundary;
 import com.git.gdsbuilder.type.validate.option.OverShoot;
+import com.git.gdsbuilder.type.validate.option.PointDuplicated;
 import com.git.gdsbuilder.type.validate.option.SelfEntity;
 import com.git.gdsbuilder.type.validate.option.SmallArea;
 import com.git.gdsbuilder.type.validate.option.SmallLength;
@@ -75,6 +76,7 @@ import com.git.gdsbuilder.type.validate.option.WaterOpen;
 import com.vividsolutions.jts.algorithm.Angle;
 import com.vividsolutions.jts.algorithm.CentroidPoint;
 import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.CoordinateArrays;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
@@ -833,26 +835,40 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 			int coorLength = coors.length;
 			if (coorLength == 0 || coorLength == 1) {
 				return null;
-			}
-			if (coorLength == 2) {
-				Coordinate coor0 = coors[0];
-				Coordinate coor1 = coors[1];
-				if (coor0.equals3D(coor1)) {
-					// errFeature
-				}
-			}
-			if (coorLength > 3) {
-				for (int i = 0; i < coorLength - 1; i++) {
-					Coordinate coor0 = coors[i];
-					Coordinate coor1 = coors[i + 1];
+			} else {
+				List<ErrorFeature> errFeatures = new ArrayList<ErrorFeature>();
+				Property featuerIDPro = simpleFeature.getProperty("feature_id");
+				String featureID = (String) featuerIDPro.getValue();
 
+				if (coorLength == 2) {
+					Coordinate coor0 = coors[0];
+					Coordinate coor1 = coors[1];
 					if (coor0.equals3D(coor1)) {
+						// errFeature
+						Geometry errGeom = new GeometryFactory().createPoint(coor1);
+						ErrorFeature errorFeature = new ErrorFeature(featureID,
+								PointDuplicated.Type.POINTDUPLICATED.errType(),
+								PointDuplicated.Type.POINTDUPLICATED.errName(), errGeom);
 
+						errFeatures.add(errorFeature);
 					}
 				}
+				if (coorLength > 3) {
+					for (int i = 0; i < coorLength - 1; i++) {
+						Coordinate coor0 = coors[i];
+						Coordinate coor1 = coors[i + 1];
+						if (coor0.equals3D(coor1)) {
+							// errFeature
+							Geometry errGeom = new GeometryFactory().createPoint(coor1);
+							ErrorFeature errorFeature = new ErrorFeature(featureID,
+									PointDuplicated.Type.POINTDUPLICATED.errType(),
+									PointDuplicated.Type.POINTDUPLICATED.errName(), errGeom);
+							errFeatures.add(errorFeature);
+						}
+					}
+				}
+				return errFeatures;
 			}
-		} else {
-
 		}
 		return null;
 	}
