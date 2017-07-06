@@ -7280,14 +7280,13 @@
 											wms.set("id", data[i].name);
 											wms.set("git", git);
 											var mapLayers = that._data.geoserver.map.getLayers();
+
 											for (var j = 0; j < mapLayers.getLength(); j++) {
-												for (var k = 0; k < obj.arr.length; k++) {
-													if (mapLayers.item(j).get("id") === obj.arr[k]
-															&& mapLayers.item(j) instanceof ol.layer.Tile
-															&& mapLayers.item(j).get("git").hasOwnProperty("fake")) {
-														that._data.geoserver.map.removeLayer(mapLayers.item(j));
-														break;
-													}
+												if (mapLayers.item(j).get("id") === wms.get("id")
+														&& mapLayers.item(j) instanceof ol.layer.Tile
+														&& mapLayers.item(j).get("git").hasOwnProperty("fake")) {
+													that._data.geoserver.map.removeLayer(mapLayers.item(j));
+													break;
 												}
 											}
 											console.log(wms);
@@ -8113,7 +8112,8 @@
 									"label" : "Image",
 									"action" : function(data) {
 										var inst = $.jstree.reference(data.reference), obj = inst.get_node(data.reference);
-										if (obj.type === "n_ngi_layer_pt" || obj.type === "n_ngi_layer_ln" || obj.type === "n_ngi_layer_pg") {
+										if (obj.type === "n_ngi_layer_pt" || obj.type === "n_ngi_layer_ln" || obj.type === "n_ngi_layer_pg"
+												|| obj.type === "n_ngi_layer_txt") {
 											var arr = inst.get_selected();
 											if (inst.get_node(inst.get_parent(obj)).type === "n_ngi_group") {
 												var wmsInfo = {
