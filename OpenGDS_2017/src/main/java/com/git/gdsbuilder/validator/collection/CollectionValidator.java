@@ -208,7 +208,7 @@ public class CollectionValidator {
 
 		for (int i = 0; i < layerCollections.size(); i++) {
 
-			GeoLayerCollection collection = layerCollections.get(i);
+			GeoLayerCollection collection = layerCollections.get(i); 
 			String collectionName = collection.getCollectionName();
 			// try {
 			ErrorLayer errorLayer = new ErrorLayer();
@@ -225,7 +225,7 @@ public class CollectionValidator {
 			attributeValidate(types, collection, errorLayer);
 
 			// 인접도엽 검수
-			closeCollectionValidate(types, mapSystemRule, collection, "");
+			//closeCollectionValidate(types, mapSystemRule, collection, "");
 
 			errLayerList.add(errorLayer);
 			progress.put(collection.getCollectionName(), 2);
@@ -248,7 +248,9 @@ public class CollectionValidator {
 			if (options != null) {
 				ErrorLayer typeErrorLayer = null;
 				for (int k = 0; k < options.size(); k++) {
+					
 					ValidatorOption option = options.get(k);
+					//System.out.println("typeLayerSize: " + typeLayers.size());
 					for (int a = 0; a < typeLayers.size(); a++) {
 						GeoLayer typeLayer = typeLayers.get(a);
 						if (typeLayer == null) {
@@ -264,6 +266,9 @@ public class CollectionValidator {
 						}
 						if (option instanceof Admin) {
 							typeErrorLayer = layerValidator.validateAdmin();
+							if (typeErrorLayer != null) {
+								errorLayer.mergeErrorLayer(typeErrorLayer);
+							}
 						}
 						if (option instanceof AttributeFix) {
 							HashMap<String, Object> attributeNames = ((AttributeFix) option).getRelationType();
@@ -273,19 +278,22 @@ public class CollectionValidator {
 							// index);
 							JSONObject attrJson = (JSONObject) attributeNames.get(typeLayerName);
 							typeErrorLayer = layerValidator.validateAttributeFix(attrJson);
+							if (typeErrorLayer != null) {
+								errorLayer.mergeErrorLayer(typeErrorLayer);
+							}
 						}
 						if (option instanceof ZValueAmbiguous) {
-							HashMap<String, String> hashMap = ((ZValueAmbiguous) option).getRelationType();
+							HashMap<String, Object> hashMap = ((ZValueAmbiguous) option).getRelationType();
 							String typeLayerName = typeLayer.getLayerName();
-							// int index = typeLayerName.indexOf("_");
-							// String layerCode = typeLayerName.substring(0,
-							// index);
-							String zValue = hashMap.get(typeLayerName);
+							JSONObject zValue = (JSONObject) hashMap.get(typeLayerName);
 							typeErrorLayer = layerValidator.validateZValueAmbiguous(zValue);
+							if (typeErrorLayer != null) {
+								errorLayer.mergeErrorLayer(typeErrorLayer);
+							}
 						}
-						if (typeErrorLayer != null) {
-							errorLayer.mergeErrorLayer(typeErrorLayer);
-						}
+//						if (typeErrorLayer != null) {
+//							errorLayer.mergeErrorLayer(typeErrorLayer);
+//						}
 					}
 				}
 			}
@@ -424,7 +432,7 @@ public class CollectionValidator {
 							}
 						}
 						if (option instanceof WaterOpen) {
-							typeErrorLayer = layerValidator.validateWaterOpen();
+							typeErrorLayer = layerValidator.validateWaterOpen(neatLayer, spatialAccuracyTolorence);
 							if (typeErrorLayer != null) {
 								errorLayer.mergeErrorLayer(typeErrorLayer);
 							}

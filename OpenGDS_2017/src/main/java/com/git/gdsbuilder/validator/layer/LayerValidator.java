@@ -78,7 +78,7 @@ public interface LayerValidator {
 	 * 검수 항목 중 “고도값 오류 (Z-Value Abmiguous)” 검수 @author DY.Oh @Date 2017. 4. 18.
 	 * 오후 3:50:55 @param key @return @throws SchemaException @throws
 	 */
-	public ErrorLayer validateZValueAmbiguous(String attributeKey) throws SchemaException;
+	public ErrorLayer validateZValueAmbiguous(JSONObject attributeKey) throws SchemaException;
 
 	/**
 	 * 검수 항목 중 “허용 범위 이하 면적 (Small Area)” 검수 @author DY.Oh @Date 2017. 4. 18. 오후
@@ -152,7 +152,7 @@ public interface LayerValidator {
 	 * 검수항목 중 "수부코드폐합오류(WaterOpen)" 검수를 수행 @author JY.Kim @Date 2017. 6. 26. 오후
 	 * 4:20:42 @return @throws SchemaException ErrorLayer @throws
 	 */
-	public ErrorLayer validateWaterOpen() throws SchemaException;
+	public ErrorLayer validateWaterOpen(GeoLayer neatLayer, double tolerence) throws SchemaException;
 
 	/**
 	 * 검수항목 중 "계층오류(LayerMiss)" 검수를 수행 @author JY.Kim @Date 2017. 6. 26. 오후

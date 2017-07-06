@@ -170,7 +170,7 @@ public interface FeatureGraphicValidator {
 	 * 11:40:18 @param simpleFeature @return ErrorFeature @throws
 	 * SchemaException ErrorFeature @throws
 	 */
-	public ErrorFeature validateWaterOpen(SimpleFeature simpleFeature) throws SchemaException;
+	public ErrorFeature validateWaterOpen(SimpleFeature simpleFeature, SimpleFeatureCollection aop, double tolerence) throws SchemaException;
 
 	/**
 	 * 검수 항목 중 "계층 오류(LayerMiss)" 검수 @author JY.Kim @Date 2017. 6. 12. 오전
