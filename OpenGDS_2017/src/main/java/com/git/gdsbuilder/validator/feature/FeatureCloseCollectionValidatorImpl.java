@@ -11,7 +11,6 @@ import com.git.gdsbuilder.type.validate.option.EdgeMatchMiss;
 import com.git.gdsbuilder.type.validate.option.EntityNone;
 import com.git.gdsbuilder.type.validate.option.RefAttributeMiss;
 import com.git.gdsbuilder.type.validate.option.RefZValueMiss;
-import com.git.gdsbuilder.type.validate.option.ValidatorOption;
 import com.git.gdsbuilder.validator.collection.opt.ValCollectionOption;
 import com.git.gdsbuilder.validator.collection.opt.ValCollectionOption.ValCollectionOptionType;
 import com.vividsolutions.jts.geom.Coordinate;
@@ -42,16 +41,17 @@ public class FeatureCloseCollectionValidatorImpl implements FeatureCloseCollecti
 			Iterator<ValCollectionOptionType> typeItr = closeValidateOptions.keySet().iterator();
 		
 			while(typeItr.hasNext()){
-				if(typeItr.next().getTypeName().equals(ValCollectionOptionType.ENTITYNONE.getTypeName())){
+				String iteratorVal = typeItr.next().getTypeName();
+				if(iteratorVal.equals(ValCollectionOptionType.ENTITYNONE.getTypeName())){
 					entityNone = (Boolean) closeValidateOptions.get(ValCollectionOptionType.ENTITYNONE);
 				}
-				if(typeItr.next().getTypeName().equals(ValCollectionOptionType.ENTITYNONE.getTypeName())){
+				if(iteratorVal.equals(ValCollectionOptionType.EDGEMATCHMISS.getTypeName())){
 					matchMiss = (Boolean) closeValidateOptions.get(ValCollectionOptionType.EDGEMATCHMISS);
 				}
-				if(typeItr.next().getTypeName().equals(ValCollectionOptionType.REFZVALUEMISS.getTypeName())){
+				if(iteratorVal.equals(ValCollectionOptionType.REFZVALUEMISS.getTypeName())){
 					refZValueMiss = (String) closeValidateOptions.get(ValCollectionOptionType.REFZVALUEMISS);
 				}
-				if(typeItr.next().getTypeName().equals(ValCollectionOptionType.REFATTRIBUTEMISS.getTypeName())){
+				if(iteratorVal.equals(ValCollectionOptionType.REFATTRIBUTEMISS.getTypeName())){
 					refAttributeMiss = (List<String>) closeValidateOptions.get(ValCollectionOptionType.REFATTRIBUTEMISS);
 				}
 			}
@@ -112,7 +112,7 @@ public class FeatureCloseCollectionValidatorImpl implements FeatureCloseCollecti
 
 				if(!refZValueMiss.equals("")){
 					Object tValue = simpleFeature.getAttribute(refZValueMiss); //대상 피쳐
-					Object rValue = simpleFeature.getAttribute(refZValueMiss); //인접 피쳐
+					Object rValue = relationSimpleFeature.getAttribute(refZValueMiss); //인접 피쳐
 					
 					String tValueString = "";
 					String rValueString  = "";
@@ -134,7 +134,7 @@ public class FeatureCloseCollectionValidatorImpl implements FeatureCloseCollecti
 					
 					for(String colunm : colunms){
 						Object tValue = simpleFeature.getAttribute(colunm);
-						Object rValue = simpleFeature.getAttribute(colunm);
+						Object rValue = relationSimpleFeature.getAttribute(colunm);
 						
 						String tValueString = "";
 						String rValueString  = "";
