@@ -108,7 +108,8 @@ gitbuilder.ui.LayerDefinition20 = $.widget("gitbuilder.layerdefinition20", {
 					var ty1 = $("<option>").text("Point").val("point");
 					var ty2 = $("<option>").text("LineString").val("linestring");
 					var ty3 = $("<option>").text("Polygon").val("polygon");
-					var gtype = $("<select>").append(ty1).append(ty2).append(ty3);
+					var ty4 = $("<option>").text("Text").val("text");
+					var gtype = $("<select>").append(ty1).append(ty2).append(ty3).append(ty4);
 					this._addClass(gtype, "form-control");
 					var td4 = $("<td>").append(gtype);
 					var icon = $("<i>").attr("aria-hidden", true);
@@ -416,7 +417,8 @@ gitbuilder.ui.LayerDefinition20 = $.widget("gitbuilder.layerdefinition20", {
 			var ty1 = $("<option>").text("Point").val("point");
 			var ty2 = $("<option>").text("LineString").val("linestring");
 			var ty3 = $("<option>").text("Polygon").val("polygon");
-			var gtype = $("<select>").append(ty1).append(ty2).append(ty3).val(obj[keys[i]].geom);
+			var ty4 = $("<option>").text("Text").val("text");
+			var gtype = $("<select>").append(ty1).append(ty2).append(ty3).append(ty4).val(obj[keys[i]].geom);
 			this._addClass(gtype, "form-control");
 			var td4 = $("<td>").append(gtype);
 

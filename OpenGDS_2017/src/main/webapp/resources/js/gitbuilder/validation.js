@@ -431,7 +431,7 @@ gitbuilder.ui.Validation = $.widget("gitbuilder.validation", {
 		} else {
 			$(this.windiw).find(".validation-btn-start").prop("disabled", false);
 		}
-		var lkeys = Object.keys(ldef);
+		var lkeys = Object.keys(odef);
 		var layers = [];
 
 		var typeValidate = [];
