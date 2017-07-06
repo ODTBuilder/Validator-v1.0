@@ -6080,7 +6080,7 @@
 						var pLayer = this.get_LayerById(new_par.id);
 						if (pLayer instanceof ol.layer.Group) {
 							lastPointerTmp = pLayer.getZIndex() + 1;
-						} else if (layer instanceof ol.layer.Base) {
+						} else if (pLayer instanceof ol.layer.Base) {
 							var git = pLayer.get("git");
 							if (!!git) {
 								if (pLayer.get("git").hasOwnProperty("fake")) {
