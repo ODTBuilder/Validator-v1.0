@@ -7213,7 +7213,7 @@
 					var that = this;
 					var parentLayer;
 					var farr = {
-						"geoLayerList" : obj.parent
+						"geoLayerList" : obj.arr
 					}
 					console.log(JSON.stringify(farr));
 					var parentParam;
@@ -7279,7 +7279,17 @@
 											wms.set("name", obj.refer.get_node(data[i].name).text);
 											wms.set("id", data[i].name);
 											wms.set("git", git);
-
+											var mapLayers = that._data.geoserver.map.getLayers();
+											for (var j = 0; j < mapLayers.getLength(); j++) {
+												for (var k = 0; k < obj.arr.length; k++) {
+													if (mapLayers.item(j).get("id") === obj.arr[k]
+															&& mapLayers.item(j) instanceof ol.layer.Tile
+															&& mapLayers.item(j).get("git").hasOwnProperty("fake")) {
+														that._data.geoserver.map.removeLayer(mapLayers.item(j));
+														break;
+													}
+												}
+											}
 											console.log(wms);
 											// wms.set("type", "ImageTile");
 											that._data.geoserver.map.addLayer(wms);
@@ -8129,13 +8139,14 @@
 											}
 										} else if (obj.type === "n_ngi_group" || obj.type === "n_dxf_group") {
 											var arr = inst.get_selected();
-											var arr2 = [];
-											for (var i = 0; i < arr.length; i++) {
-												arr2.push(inst.get_node(arr[i]).id);
-											}
+											// var arr2 = [];
+											// for (var i = 0; i < arr.length;
+											// i++) {
+											// arr2.push(inst.get_node(arr[i]).id);
+											// }
 											var obj = {
 												"refer" : inst,
-												"parent" : arr2
+												"arr" : arr
 											};
 											// inst.import_fake_group(obj);
 											inst.import_fake_group_notload(obj);

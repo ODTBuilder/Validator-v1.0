@@ -112,6 +112,10 @@
 <script
 	src="${pageContext.request.contextPath}/resources/js/gitbuilder/interaction.js"></script>
 
+<%-- 오픈 레이어스 프로토타입 확장 --%>
+<script
+	src="${pageContext.request.contextPath}/resources/js/gitbuilder/olextension.js"></script>
+
 <%-- 레이어 정보 --%>
 <script
 	src="${pageContext.request.contextPath}/resources/js/gitbuilder/layerinformation.js"></script>
