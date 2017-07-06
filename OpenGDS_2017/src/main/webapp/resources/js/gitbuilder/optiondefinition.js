@@ -14,6 +14,11 @@ gitbuilder.ui.OptionDefinition = $
 		.widget(
 				"gitbuilder.optiondefinition",
 				{
+					options : {
+						definition : undefined,
+						layerDefinition : undefined,
+						appendTo : "body"
+					},
 					widnow : undefined,
 					optDef : undefined,
 					optDefCopy : undefined,
@@ -219,11 +224,7 @@ gitbuilder.ui.OptionDefinition = $
 					addAttrBtn : undefined,
 					file : undefined,
 					emptyLayers : undefined,
-					options : {
-						definition : undefined,
-						layerDefinition : undefined,
-						appendTo : "body"
-					},
+
 					setDefinition : function(obj) {
 						// console.log(obj);
 						this.optDef = $.extend({}, obj);
@@ -269,15 +270,7 @@ gitbuilder.ui.OptionDefinition = $
 							"type" : "file"
 						});
 
-						if (typeof this.options.layerDefinition === "function") {
-							// this.layerDef = $.extend({},
-							// this.options.layerDefinition());
-							this.setLayerDefinition(this.options.layerDefinition());
-						} else {
-							// this.layerDef = $.extend({},
-							// this.options.layerDefinition);
-							this.setLayerDefinition(this.options.layerDefinition);
-						}
+						this.updateLayerDefinition();
 						this.setDefinition(this.options.definition);
 						// this.optDef = $.extend({}, this.options.definition);
 						if (this.getDefinition()) {
@@ -866,18 +859,8 @@ gitbuilder.ui.OptionDefinition = $
 						this._on(false, okBtn, {
 							click : function(event) {
 								if (event.target === okBtn[0]) {
+									this.beforeSaveRelation();
 									var cobj = that.getOptDefCopy();
-									var ekeys = this.emptyLayers;
-									for (var i = 0; i < ekeys.length; i++) {
-										if (this.emptyLayers[ekeys[i]] < 1 && cobj.hasOwnProperty(ekeys[i])) {
-											var keys = Object.keys(cobj[ekeys[i]]);
-											if (keys.length === 0) {
-												delete cobj[ekeys[i]];
-											}
-										} else if (this.emptyLayers[ekeys[i]] > 0 && !cobj.hasOwnProperty(ekeys[i])) {
-											cobj[ekeys[i]] = {};
-										}
-									}
 									that.setDefinition(cobj);
 									console.log(cobj);
 									that.setOptDefCopy(undefined);
@@ -922,18 +905,25 @@ gitbuilder.ui.OptionDefinition = $
 						});
 					},
 					_init : function() {
-						if (typeof this.options.layerDefinition === "function") {
-							this.setLayerDefinition(this.options.layerDefinition());
-						} else {
-							this.setLayerDefinition(this.options.layerDefinition);
-						}
+						this.updateLayerDefinition();
 						this.setDefinition(this.options.definition);
 						if (this.getDefinition()) {
 							this.setOptDefCopy(Object.assign({}, this.getDefinition()));
 						}
 
-						this.resetRelation();
-						
+					},
+					updateLayerDefinition : function() {
+						if (typeof this.options.layerDefinition === "function") {
+							// this.layerDef = $.extend({},
+							// this.options.layerDefinition());
+							this.setLayerDefinition(this.options.layerDefinition());
+						} else {
+							// this.layerDef = $.extend({},
+							// this.options.layerDefinition);
+							this.setLayerDefinition(this.options.layerDefinition);
+						}
+					},
+					afterStartRelation : function() {
 						var def = this.getDefinition();
 						var dkeys = Object.keys(def);
 						for (var i = 0; i < dkeys.length; i++) {
@@ -950,20 +940,59 @@ gitbuilder.ui.OptionDefinition = $
 								}
 							}
 						}
+						console.log("afterStartRelation: ");
+						console.log(this.emptyLayers);
+					},
+					beforeSaveRelation : function() {
+						var cobj = this.getOptDefCopy();
+						var ekeys = Object.keys(this.emptyLayers);
+						for (var i = 0; i < ekeys.length; i++) {
+							if (this.emptyLayers[ekeys[i]] < 1 && cobj.hasOwnProperty(ekeys[i])) {
+								var keys = Object.keys(cobj[ekeys[i]]);
+								if (keys.length === 0) {
+									delete cobj[ekeys[i]];
+								}
+							} else if (this.emptyLayers[ekeys[i]] > 0 && !cobj.hasOwnProperty(ekeys[i])) {
+								cobj[ekeys[i]] = {};
+							}
+						}
+						console.log("beforeSaveRelation: ");
+						console.log(this.emptyLayers);
 					},
 					getRelation : function() {
 						return this.emptyLayers;
 					},
 					resetRelation : function() {
-						this.emptyLayers = {};
+//						if (!this.getRelation()) {
+							this.emptyLayers = {};
+//						}
 						var ldefinition = this.getLayerDefinition();
 						var ldefKeys = Object.keys(ldefinition);
 						for (var i = 0; i < ldefKeys.length; i++) {
 							this.emptyLayers[ldefKeys[i]] = 0;
 						}
+
+						var def = this.getDefinition();
+						var dkeys = Object.keys(def);
+						for (var i = 0; i < dkeys.length; i++) {
+							var vkeys = Object.keys(def[dkeys[i]]);
+							for (var j = 0; j < vkeys.length; j++) {
+								if (this.optItem[vkeys[j]].type === "relation") {
+									var relation = def[dkeys[i]][vkeys[j]].relation;
+									for (var k = 0; k < relation.length; k++) {
+										this.updateRelation(relation[k], "up");
+										if (!def.hasOwnProperty(relation[k])) {
+											this.getDefinition()[relation[k]] = {};
+											console.log(this.getDefinition());
+										}
+									}
+								}
+							}
+						}
+						console.log("resetRelation: ");
 						console.log(this.emptyLayers);
 					},
-					
+
 					updateRelation : function(alias, und) {
 						if (typeof alias === "string") {
 							if (und === "up") {
@@ -980,7 +1009,8 @@ gitbuilder.ui.OptionDefinition = $
 								}
 							}
 						}
-
+						console.log("updateRelation: ");
+						console.log(this.emptyLayers);
 					},
 					downloadSetting : function() {
 						var setting = "data:text/json;charset=utf-8,"
@@ -996,13 +1026,8 @@ gitbuilder.ui.OptionDefinition = $
 						if (!obj) {
 							obj = this.layerDef;
 						}
-						if (typeof this.options.layerDefinition === "function") {
-							this.setLayerDefinition(this.options.layerDefinition());
-							obj = this.getLayerDefinition();
-						} else {
-							this.setLayerDefinition(this.options.layerDefinition);
-							obj = this.getLayerDefinition();
-						}
+						this.updateLayerDefinition();
+						obj = this.getLayerDefinition();
 						$(this.pbody1).empty();
 						$(this.pbody1).append(this.lAlias)
 						$(this.lAlias).empty();
@@ -1417,7 +1442,10 @@ gitbuilder.ui.OptionDefinition = $
 						}
 					},
 					open : function() {
+						this.updateLayerDefinition();
 						this.setOptDefCopy(Object.assign({}, this.getDefinition()));
+						this.resetRelation();
+						// this.afterStartRelation();
 						this.window.modal('show');
 						this.update();
 					},
