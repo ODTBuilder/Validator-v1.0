@@ -145,7 +145,8 @@ gitbuilder.ui.OptionDefinition = $
 						"AttributeFix" : {
 							"title" : "Fixed Attribute",
 							"alias" : "AttributeFix",
-							"type" : "attribute"
+							"type" : "attribute",
+							"multi" : true
 						},
 						"OutBoundary" : {
 							"title" : "Out-of-bounds Error",
@@ -188,7 +189,7 @@ gitbuilder.ui.OptionDefinition = $
 						"ZValueAmbiguous" : {
 							"title" : "Altitude Error",
 							"alias" : "ZValueAmbiguous",
-							"type" : "notnull",
+							"type" : "attribute",
 							"multi" : false
 						},
 						"UselessPoint" : {
@@ -494,7 +495,8 @@ gitbuilder.ui.OptionDefinition = $
 											// console.log(that.getOptDefCopy()[that.selectedLayerNow]);
 										});
 						$(document).on("change", this.eventNamespace + " .optiondefinition-attr-select", function() {
-							that._updateAttribute($(this).val());
+							var isMulti = that.optItem[that.selectedValidationNow].multi;
+							that._updateAttribute($(this).val(), isMulti);
 						});
 						$(document).on("change", this.eventNamespace + " .optiondefinition-nnullattr-select",
 								function() {
@@ -963,9 +965,9 @@ gitbuilder.ui.OptionDefinition = $
 						return this.emptyLayers;
 					},
 					resetRelation : function() {
-//						if (!this.getRelation()) {
-							this.emptyLayers = {};
-//						}
+						// if (!this.getRelation()) {
+						this.emptyLayers = {};
+						// }
 						var ldefinition = this.getLayerDefinition();
 						var ldefKeys = Object.keys(ldefinition);
 						for (var i = 0; i < ldefKeys.length; i++) {
@@ -1203,13 +1205,17 @@ gitbuilder.ui.OptionDefinition = $
 									sCode = codes[i] + "_" + geom;
 								}
 							}
-							that._updateAttribute(sCode);
+							that._updateAttribute(sCode, obj.multi);
 
 							var tb = $("<table>").append(that.attrForm);
 							that._addClass(tb, "table");
 							that._addClass(tb, "text-center");
+							if (obj.multi) {
+								$(that.dOption).append(that.codeSelect).append(tb).append(that.addBtn);
+							} else {
+								$(that.dOption).append(that.codeSelect).append(tb);
+							}
 
-							$(that.dOption).append(that.codeSelect).append(tb).append(that.addBtn);
 							break;
 						case "notnull":
 							$(that.nnullCodeSelect).empty();
@@ -1300,7 +1306,7 @@ gitbuilder.ui.OptionDefinition = $
 							break;
 						}
 					},
-					_updateAttribute : function(code) {
+					_updateAttribute : function(code, multi) {
 						var that = this;
 						var attrs;
 						if (that.getOptDefCopy().hasOwnProperty(that.selectedLayerNow)) {
@@ -1309,14 +1315,58 @@ gitbuilder.ui.OptionDefinition = $
 							}
 						}
 						$(that.attrForm).empty();
-						if (!attrs) {
+						if (!attrs && multi) {
 							return;
-						}
-						var keys = Object.keys(attrs);
-						for (var j = 0; j < keys.length; j++) {
+						} else if (attrs && multi) {
+							var keys = Object.keys(attrs);
+							for (var j = 0; j < keys.length; j++) {
+								var text = $("<input>").attr({
+									"type" : "text",
+									"value" : keys[j],
+									"placeholder" : "Key"
+								}).css({
+									"display" : "inline-block"
+								});
+								that._addClass(text, "form-control");
+								that._addClass(text, "optiondefinition-attr-text");
+								var td1 = $("<td>").append(text);
+
+								var icon = $("<i>").attr("aria-hidden", true);
+								this._addClass(icon, "fa");
+								this._addClass(icon, "fa-times");
+								var btn = $("<button>").css({
+									"display" : "inline-block"
+								}).append(icon);
+								that._addClass(btn, "btn");
+								that._addClass(btn, "btn-default");
+								that._addClass(btn, "optiondefinition-attr-del");
+								var td2 = $("<td>").append(btn);
+
+								var text2 = $("<input>").attr({
+									"type" : "text",
+									"value" : attrs[keys[j]].toString(),
+									"placeholder" : "Value"
+								});
+								that._addClass(text2, "form-control");
+								that._addClass(text2, "optiondefinition-attr-text2");
+								var td3 = $("<td>").attr({
+									"colspan" : "2"
+								}).css({
+									"border-top" : 0
+								}).append(text2);
+
+								var btr1 = $("<tr>").append(td1).append(td2);
+								var btr2 = $("<tr>").append(td3);
+
+								$(that.attrForm).append(btr1).append(btr2);
+							}
+						} else if (attrs && !multi) {
+							var keys = Object.keys(attrs);
+
 							var text = $("<input>").attr({
 								"type" : "text",
-								"value" : keys[j]
+								"value" : keys[0] ? keys[0] : "",
+								"placeholder" : "Key"
 							}).css({
 								"display" : "inline-block"
 							});
@@ -1324,20 +1374,10 @@ gitbuilder.ui.OptionDefinition = $
 							that._addClass(text, "optiondefinition-attr-text");
 							var td1 = $("<td>").append(text);
 
-							var icon = $("<i>").attr("aria-hidden", true);
-							this._addClass(icon, "fa");
-							this._addClass(icon, "fa-times");
-							var btn = $("<button>").css({
-								"display" : "inline-block"
-							}).append(icon);
-							that._addClass(btn, "btn");
-							that._addClass(btn, "btn-default");
-							that._addClass(btn, "optiondefinition-attr-del");
-							var td2 = $("<td>").append(btn);
-
 							var text2 = $("<input>").attr({
 								"type" : "text",
-								"value" : attrs[keys[j]].toString()
+								"value" : attrs[keys[0]] ? attrs[keys[0]].toString() : "",
+								"placeholder" : "Value"
 							});
 							that._addClass(text2, "form-control");
 							that._addClass(text2, "optiondefinition-attr-text2");
@@ -1347,11 +1387,41 @@ gitbuilder.ui.OptionDefinition = $
 								"border-top" : 0
 							}).append(text2);
 
-							var btr1 = $("<tr>").append(td1).append(td2);
+							var btr1 = $("<tr>").append(td1);
 							var btr2 = $("<tr>").append(td3);
 
 							$(that.attrForm).append(btr1).append(btr2);
+						} else if (!attrs && !multi) {
+							var text = $("<input>").attr({
+								"type" : "text",
+								"placeholder" : "Key"
+							}).css({
+								"display" : "inline-block"
+							});
+							that._addClass(text, "form-control");
+							that._addClass(text, "optiondefinition-attr-text");
+							var td1 = $("<td>").append(text);
+
+							var text2 = $("<input>").attr({
+								"type" : "text",
+								"placeholder" : "Value"
+							});
+							that._addClass(text2, "form-control");
+							that._addClass(text2, "optiondefinition-attr-text2");
+							var td3 = $("<td>").attr({
+								"colspan" : "2"
+							}).css({
+								"border-top" : 0
+							}).append(text2);
+
+							var btr1 = $("<tr>").append(td1);
+							var btr2 = $("<tr>").append(td3);
+
+							$(that.attrForm).append(btr1).append(btr2);
+						} else {
+							console.error("unknown");
 						}
+
 					},
 					_updateNotNullAttribute : function(code, multi) {
 						var that = this;
