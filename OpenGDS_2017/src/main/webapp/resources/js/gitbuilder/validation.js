@@ -468,7 +468,9 @@ gitbuilder.ui.Validation = $.widget("gitbuilder.validation", {
 				tvObj["weight"] = wdef[lkeys[i]];
 			} 
 			if (odef.hasOwnProperty(lkeys[i])) {
-				tvObj["option"] = odef[lkeys[i]];
+				if (Object.keys(odef[lkeys[i]]).length > 0 ) {
+					tvObj["option"] = odef[lkeys[i]];	
+				}
 			}
 			typeValidate.push(tvObj);
 		}
