@@ -65,7 +65,7 @@ public interface FeatureAttributeValidator {
 	 * 오후 3:32:55 @param simpleFeature @param notNullAtt @return @throws
 	 * SchemaException ErrorFeature @throws
 	 */
-	public ErrorFeature validateZvalueAmbiguous(SimpleFeature simpleFeature, String attributeKey)
+	public ErrorFeature validateZvalueAmbiguous(SimpleFeature simpleFeature,  Map<String, List<String>> attributeKey)
 			throws SchemaException;
 
 	public ErrorFeature validateBridgeName(SimpleFeature simpleFeature, SimpleFeature relationSimpleFeature)

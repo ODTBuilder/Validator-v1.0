@@ -56,31 +56,49 @@ public class FeatureAttributeValidatorImpl implements FeatureAttributeValidator 
 
 	@SuppressWarnings("unused")
 	@Override
-	public ErrorFeature validateZvalueAmbiguous(SimpleFeature simpleFeature, String attributeKey) {
+	public ErrorFeature validateZvalueAmbiguous(SimpleFeature simpleFeature,  Map<String, List<String>> attributeKey) {
 		ErrorFeature errorFeature = null;
 		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
-		Object attributeValue = simpleFeature.getAttribute(attributeKey);
 
 		Property featuerIDPro = simpleFeature.getProperty("feature_id");
 		String featureID = (String) featuerIDPro.getValue();
-
-		if (attributeValue != null) {
-			if (attributeValue.toString().equals("") || attributeValue.toString().equals("0.0")) {
-				errorFeature = new ErrorFeature(featureID, ZValueAmbiguous.Type.ZVALUEAMBIGUOUS.errType(),
-						ZValueAmbiguous.Type.ZVALUEAMBIGUOUS.errName(), geometry.getInteriorPoint());
-			} else {
-				String attributeStr = attributeValue.toString();
-				Double num = new Double(Double.parseDouble(attributeStr));
-				int a = num.intValue();
-				if (num > a) {
-					errorFeature = new ErrorFeature(featureID, ZValueAmbiguous.Type.ZVALUEAMBIGUOUS.errType(),
-							ZValueAmbiguous.Type.ZVALUEAMBIGUOUS.errName(), geometry.getInteriorPoint());
+		if (attributeKey != null) {
+			Iterator iterator = attributeKey.keySet().iterator();
+			while(iterator.hasNext()){
+				String key = (String) iterator.next();
+				Object attributeValue = simpleFeature.getAttribute(key);
+				if(attributeValue != null){
+					if (attributeValue.toString().equals("") || attributeValue.toString().equals("0.0")) {
+						errorFeature = new ErrorFeature(featureID, ZValueAmbiguous.Type.ZVALUEAMBIGUOUS.errType(),
+								ZValueAmbiguous.Type.ZVALUEAMBIGUOUS.errName(), geometry.getInteriorPoint());
+					}else{
+						String attributeStr = attributeValue.toString();
+						Double num = new Double(Double.parseDouble(attributeStr));
+						int intNum = num.intValue();
+						if (!(num == intNum)) {
+							
+							
+							errorFeature = new ErrorFeature(featureID, ZValueAmbiguous.Type.ZVALUEAMBIGUOUS.errType(),
+									ZValueAmbiguous.Type.ZVALUEAMBIGUOUS.errName(), geometry.getInteriorPoint());
+						}else{
+							JSONArray zValueArray  = (JSONArray) attributeKey.get(key);
+							String tolerence = zValueArray.get(0).toString();
+							Double tolerenceDou = new Double(Double.parseDouble(tolerence));
+							Double result = num % tolerenceDou ;
+							
+							if(!(result == 0.0)){
+								errorFeature = new ErrorFeature(featureID, ZValueAmbiguous.Type.ZVALUEAMBIGUOUS.errType(),
+										ZValueAmbiguous.Type.ZVALUEAMBIGUOUS.errName(), geometry.getInteriorPoint());
+							}
+						}
+					}
 				}
 			}
-		} else {
+		}else {
 			errorFeature = new ErrorFeature(featureID, ZValueAmbiguous.Type.ZVALUEAMBIGUOUS.errType(),
 					ZValueAmbiguous.Type.ZVALUEAMBIGUOUS.errName(), geometry.getInteriorPoint());
 		}
+	
 		return errorFeature;
 	}
 

@@ -29,7 +29,7 @@ import org.json.simple.JSONObject;
 public class ZValueAmbiguous extends ValidatorOption {
 
 	
-	HashMap<String, String> attributeKey;
+	HashMap<String, Object> attributeKey;
 	//String attributeKey;
 	
 	/**
@@ -67,27 +67,27 @@ public class ZValueAmbiguous extends ValidatorOption {
 	/**
 	 * @param relationType
 	 */
-	public ZValueAmbiguous(HashMap<String, String> attributeKey) {
+	public ZValueAmbiguous(HashMap<String, Object> attributeKey) {
 		super();
 		this.attributeKey = attributeKey;
 	}
 	
 	public ZValueAmbiguous(){
 		super();
-		this.attributeKey = new HashMap<String, String>();
+		this.attributeKey = new HashMap<String, Object>();
 	}
 
 	/**
 	 * @return the relationType
 	 */
-	public HashMap<String, String> getRelationType() {
+	public HashMap<String, Object> getRelationType() {
 		return attributeKey;
 	}
 
 	/**
 	 * @param relationType the relationType to set
 	 */
-	public void setAttributeType(HashMap<String, String> attributeKey) {
+	public void setAttributeType(HashMap<String, Object> attributeKey) {
 		this.attributeKey = attributeKey;
 	}
 	

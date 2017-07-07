@@ -188,7 +188,7 @@ public class LayerValidatorImpl implements LayerValidator {
 		}
 	}
 
-	public ErrorLayer validateZValueAmbiguous(String attributeKey) throws SchemaException {
+	public ErrorLayer validateZValueAmbiguous(JSONObject attributeKey) throws SchemaException {
 
 		ErrorLayer errLayer = new ErrorLayer();
 
@@ -575,13 +575,14 @@ public class LayerValidatorImpl implements LayerValidator {
 		}
 	}
 
-	public ErrorLayer validateWaterOpen() throws SchemaException {
+	public ErrorLayer validateWaterOpen(GeoLayer neatLayer, double tolerence) throws SchemaException {
 		ErrorLayer errorLayer = new ErrorLayer();
+		SimpleFeatureCollection neatLineSfc = neatLayer.getSimpleFeatureCollection();
 		SimpleFeatureCollection sfc = validatorLayer.getSimpleFeatureCollection();
 		SimpleFeatureIterator simpleFeatureIterator = sfc.features();
 		while (simpleFeatureIterator.hasNext()) {
 			SimpleFeature simpleFeature = simpleFeatureIterator.next();
-			ErrorFeature errFeature = graphicValidator.validateWaterOpen(simpleFeature);
+			ErrorFeature errFeature = graphicValidator.validateWaterOpen(simpleFeature, neatLineSfc, tolerence);
 			if (errFeature != null) {
 				errFeature.setLayerName(validatorLayer.getLayerName());
 				errorLayer.addErrorFeature(errFeature);
