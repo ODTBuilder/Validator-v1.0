@@ -41,7 +41,7 @@ public class EditController {
 
 		editService.editLayerCollection(geo);
 		
-		System.out.println("");
+		System.out.println("완료");
 	}
 }
 

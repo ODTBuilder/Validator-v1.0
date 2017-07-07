@@ -356,16 +356,19 @@ public class QA20DBQueryManager {
 
 		// properties
 		HashMap<String, Object> properties = createFeature.getProperties();
-		int propertiesSize = properties.size();
-		if (propertiesSize != 0) {
-			Iterator keys = properties.keySet().iterator();
-			while (keys.hasNext()) {
-				String key = (String) keys.next();
-				Object value = properties.get(key);
-				insertDefaultQuery += "\"" + key + "\"" + ", ";
-				insertDefaultValues += "'" + value + "', ";
+		if (properties != null) {
+			int propertiesSize = properties.size();
+			if (propertiesSize != 0) {
+				Iterator keys = properties.keySet().iterator();
+				while (keys.hasNext()) {
+					String key = (String) keys.next();
+					Object value = properties.get(key);
+					insertDefaultQuery += "\"" + key + "\"" + ", ";
+					insertDefaultValues += "'" + value + "', ";
+				}
 			}
 		}
+
 		int lastIndextC = insertDefaultQuery.lastIndexOf(",");
 		String returnQueryC = insertDefaultQuery.substring(0, lastIndextC) + ")";
 		int lastIndextV = insertDefaultValues.lastIndexOf(",");

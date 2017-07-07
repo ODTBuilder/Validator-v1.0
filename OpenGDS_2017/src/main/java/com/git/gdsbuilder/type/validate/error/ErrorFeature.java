@@ -21,18 +21,20 @@ import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * ErrorFeature 정보를 담고 있는 클래스
+ * 
  * @author DY.Oh
  * @Date 2017. 3. 11. 오후 2:57:39
- * */
+ */
 public class ErrorFeature {
 
 	String layerID;
 	String layerName;
 	String featureID;
+	String featureIdx;
 	String errType;
 	String errName;
 	Geometry errPoint;
-	
+
 	/**
 	 * ErrorFeature 생성자
 	 */
@@ -40,16 +42,18 @@ public class ErrorFeature {
 		super();
 		// TODO Auto-generated constructor stub
 	}
-	
+
 	/**
 	 * ErrorFeature 생성자
+	 * 
 	 * @param featureID
 	 * @param errType
 	 * @param errName
 	 * @param errPoint
 	 */
-	public ErrorFeature(String featureID, String errType, String errName, Geometry errPoint) {
+	public ErrorFeature(String featureId, String featureID, String errType, String errName, Geometry errPoint) {
 		super();
+		this.featureIdx = featureId;
 		this.layerID = "";
 		this.layerName = "";
 		this.featureID = featureID;
@@ -58,134 +62,106 @@ public class ErrorFeature {
 		this.errPoint = errPoint;
 	}
 
+	public String getFeatureIdx() {
+		return featureIdx;
+	}
+
+	public void setFeatureIdx(String featureIdx) {
+		this.featureIdx = featureIdx;
+	}
+
 	/**
-	 * layerID getter
-	 * @author DY.Oh
-	 * @Date 2017. 3. 11. 오후 2:57:47
-	 * @return String
-	 * @throws
-	 * */
+	 * layerID getter @author DY.Oh @Date 2017. 3. 11. 오후 2:57:47 @return
+	 * String @throws
+	 */
 	public String getLayerID() {
 		return layerID;
 	}
 
 	/**
-	 * layerID setter
-	 * @author DY.Oh
-	 * @Date 2017. 3. 11. 오후 2:57:48
-	 * @param layerID void
-	 * @throws
-	 * */
+	 * layerID setter @author DY.Oh @Date 2017. 3. 11. 오후 2:57:48 @param layerID
+	 * void @throws
+	 */
 	public void setLayerID(String layerID) {
 		this.layerID = layerID;
 	}
 
 	/**
-	 * layerName getter
-	 * @author DY.Oh
-	 * @Date 2017. 3. 11. 오후 2:57:53
-	 * @return String
-	 * @throws
-	 * */
+	 * layerName getter @author DY.Oh @Date 2017. 3. 11. 오후 2:57:53 @return
+	 * String @throws
+	 */
 	public String getLayerName() {
 		return layerName;
 	}
 
 	/**
-	 * layerName setter
-	 * @author DY.Oh
-	 * @Date 2017. 3. 11. 오후 2:57:56
-	 * @param layerName void
-	 * @throws
-	 * */
+	 * layerName setter @author DY.Oh @Date 2017. 3. 11. 오후 2:57:56 @param
+	 * layerName void @throws
+	 */
 	public void setLayerName(String layerName) {
 		this.layerName = layerName;
 	}
 
 	/**
-	 * featureID getter
-	 * @author DY.Oh
-	 * @Date 2017. 3. 11. 오후 2:57:58
-	 * @return String
-	 * @throws
-	 * */
+	 * featureID getter @author DY.Oh @Date 2017. 3. 11. 오후 2:57:58 @return
+	 * String @throws
+	 */
 	public String getFeatureID() {
 		return featureID;
 	}
 
 	/**
-	 * featureID setter
-	 * @author DY.Oh
-	 * @Date 2017. 3. 11. 오후 2:58:01
-	 * @param featureID void
-	 * @throws
-	 * */
+	 * featureID setter @author DY.Oh @Date 2017. 3. 11. 오후 2:58:01 @param
+	 * featureID void @throws
+	 */
 	public void setFeatureID(String featureID) {
 		this.featureID = featureID;
 	}
 
 	/**
-	 * errType getter
-	 * @author DY.Oh
-	 * @Date 2017. 3. 11. 오후 2:58:03
-	 * @return String
-	 * @throws
-	 * */
+	 * errType getter @author DY.Oh @Date 2017. 3. 11. 오후 2:58:03 @return
+	 * String @throws
+	 */
 	public String getErrType() {
 		return errType;
 	}
 
 	/**
-	 * errType setter
-	 * @author DY.Oh
-	 * @Date 2017. 3. 11. 오후 2:58:05
-	 * @param errType void
-	 * @throws
-	 * */
+	 * errType setter @author DY.Oh @Date 2017. 3. 11. 오후 2:58:05 @param errType
+	 * void @throws
+	 */
 	public void setErrType(String errType) {
 		this.errType = errType;
 	}
 
 	/**
-	 * errName getter
-	 * @author DY.Oh
-	 * @Date 2017. 3. 11. 오후 2:58:07
-	 * @return String
-	 * @throws
-	 * */
+	 * errName getter @author DY.Oh @Date 2017. 3. 11. 오후 2:58:07 @return
+	 * String @throws
+	 */
 	public String getErrName() {
 		return errName;
 	}
 
 	/**
-	 * errName setter
-	 * @author DY.Oh
-	 * @Date 2017. 3. 11. 오후 2:58:10
-	 * @param errName void
-	 * @throws
-	 * */
+	 * errName setter @author DY.Oh @Date 2017. 3. 11. 오후 2:58:10 @param errName
+	 * void @throws
+	 */
 	public void setErrName(String errName) {
 		this.errName = errName;
 	}
 
-	/** 
-	 * errPoint getter
-	 * @author DY.Oh
-	 * @Date 2017. 3. 11. 오후 2:58:13
-	 * @return Geometry
-	 * @throws
-	 * */
+	/**
+	 * errPoint getter @author DY.Oh @Date 2017. 3. 11. 오후 2:58:13 @return
+	 * Geometry @throws
+	 */
 	public Geometry getErrPoint() {
 		return errPoint;
 	}
 
 	/**
-	 * errPoint setter
-	 * @author DY.Oh
-	 * @Date 2017. 3. 11. 오후 2:58:15
-	 * @param errPoint void
-	 * @throws
-	 * */
+	 * errPoint setter @author DY.Oh @Date 2017. 3. 11. 오후 2:58:15 @param
+	 * errPoint void @throws
+	 */
 	public void setErrPoint(Geometry errPoint) {
 		this.errPoint = errPoint;
 	}

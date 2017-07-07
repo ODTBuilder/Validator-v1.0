@@ -194,21 +194,17 @@ public class ValidateTypeParser {
 				}
 			}
 			if(optionName.equalsIgnoreCase(ZValueAmbiguous.Type.ZVALUEAMBIGUOUS.errName())){
-				Object z_Value = qaOptions.get("zValueAmbiguous");
+				Object z_Value = qaOptions.get("ZValueAmbiguous");
 				if(z_Value == null){
 					continue;
 				}else{
-					HashMap<String, String> hashMap = new HashMap<String, String>();
+					HashMap<String, Object> hashMap = new HashMap<String, Object>();
 					JSONObject zvalueJsonObj = (JSONObject) z_Value;
 					Iterator iterator = zvalueJsonObj.keySet().iterator();
 					while(iterator.hasNext()){
 						String layerName = (String) iterator.next();
-						JSONArray jsonArray = (JSONArray) zvalueJsonObj.get(layerName);
-						int valueSize = jsonArray.size();
-						for (int i = 0; i < valueSize; i++) {
-							String relationID = (String) jsonArray.get(i);
-							hashMap.put(layerName, relationID);
-						}
+						JSONObject zValueObj = (JSONObject) zvalueJsonObj.get(layerName);
+						hashMap.put(layerName, zValueObj);
 					}
 					ValidatorOption zValueAmbiguous = new ZValueAmbiguous(hashMap);
 					optionList.add(zValueAmbiguous);
@@ -468,7 +464,7 @@ public class ValidateTypeParser {
 				}
 			}
 			
-			if(optionName.equalsIgnoreCase(RefZValueMiss.Type.REFZVALUEMISS.errName())){
+			/*if(optionName.equalsIgnoreCase(RefZValueMiss.Type.REFZVALUEMISS.errName())){
 				Object refZValueMissObj = qaOptions.get("RefZValueMiss");
 				if (refZValueMissObj == null) {
 					continue;
@@ -485,7 +481,7 @@ public class ValidateTypeParser {
 					ValidatorOption refZValueMiss = new RefZValueMiss(optMap);
 					optionList.add(refZValueMiss);
 				}
-			}
+			}*/
 
 			if(optionName.equalsIgnoreCase(RefAttributeMiss.Type.RefAttributeMiss.errName())){
 				Object refAttributeMissObj = qaOptions.get("RefAttributeMiss");

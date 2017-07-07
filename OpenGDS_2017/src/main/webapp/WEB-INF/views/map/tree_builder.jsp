@@ -404,6 +404,9 @@ html {
 			url : "geoserver2/getGeoLayerInfoList.ajax"
 		});
 
+		var createLayer = new gb.geoserver.CreateLayer({
+			url : undefined
+		});
 		$("#builderServerLayer").jstree({
 			"core" : {
 				"animation" : 0,
@@ -422,6 +425,7 @@ html {
 				"user" : "admin",
 				"layerInfo" : layerInfo,
 				"layerInfoURL" : "geoserver2/getGeoLayerInfoList.ajax",
+				"createLayer" : createLayer,
 				"downloadNGIDXF" : "fileExport/fileExport.ajax",
 				"downloadGeoserver" : "geoserver2/downloadRequest.do"
 			},

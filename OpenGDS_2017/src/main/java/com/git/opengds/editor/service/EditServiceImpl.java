@@ -45,17 +45,16 @@ public class EditServiceImpl implements EditService {
 	public void editLayerCollection(String editJSONStr) throws Exception {
 
 		// 옵션 넘겨 받음
-		JSONParser jsonParser = new JSONParser();
-		Object obj = jsonParser.parse(new FileReader("D:\\editDXFTest.txt"));
-		JSONObject editJSONObject = (JSONObject) obj;
-
 		// JSONParser jsonParser = new JSONParser();
-		// JSONObject editJSONObject = (JSONObject)
-		// jsonParser.parse(editJSONStr);
+		// Object obj = jsonParser.parse(new FileReader("D:\\editDXFTest.txt"));
+		// JSONObject editJSONObject = (JSONObject) obj;
+
+		JSONParser jsonParser = new JSONParser();
+		JSONObject editJSONObject = (JSONObject) jsonParser.parse(editJSONStr);
 
 		// layerEdit
-		JSONObject layerEditObj = (JSONObject) editJSONObject.get("layer");
-		editLayerService.editLayer(layerEditObj);
+//		JSONObject layerEditObj = (JSONObject) editJSONObject.get("layer");
+//		editLayerService.editLayer(layerEditObj);
 
 		// featureEdit
 		JSONObject featureEditObj = (JSONObject) editJSONObject.get("feature");

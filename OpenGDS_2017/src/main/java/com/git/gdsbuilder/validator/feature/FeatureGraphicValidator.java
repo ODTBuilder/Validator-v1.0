@@ -83,7 +83,7 @@ public interface FeatureGraphicValidator {
 	 * 오후 3:34:56 @param validatorLayer @return ErrorLayer @throws
 	 * SchemaException @throws
 	 */
-	public ErrorLayer validatePointDuplicated(SimpleFeatureCollection validatorLayer) throws SchemaException;
+	public List<ErrorFeature> validatePointDuplicated(SimpleFeature simpleFeature);
 
 	/**
 	 * 검수 항목 중 두 레이어의 “단독 존재 오류 (Self Entity)” 검수를 수행 @author DY.Oh @Date 2017.
@@ -170,7 +170,7 @@ public interface FeatureGraphicValidator {
 	 * 11:40:18 @param simpleFeature @return ErrorFeature @throws
 	 * SchemaException ErrorFeature @throws
 	 */
-	public ErrorFeature validateWaterOpen(SimpleFeature simpleFeature) throws SchemaException;
+	public ErrorFeature validateWaterOpen(SimpleFeature simpleFeature, SimpleFeatureCollection aop, double tolerence) throws SchemaException;
 
 	/**
 	 * 검수 항목 중 "계층 오류(LayerMiss)" 검수 @author JY.Kim @Date 2017. 6. 12. 오전
@@ -190,5 +190,7 @@ public interface FeatureGraphicValidator {
 	public List<ErrorFeature> validateNodeMiss(SimpleFeature simpleFeature, List<SimpleFeature> relationSimpleFeature,
 			double tolerence) throws SchemaException;
 
-	public List<ErrorFeature> validatePointDuplicated(SimpleFeature simpleFeature);
+	public List<ErrorFeature> validateConIntersected(SimpleFeature tmpSimpleFeatureI);
+
+	
 }

@@ -7205,6 +7205,7 @@
 					this._data.geoserver.user = this.settings.geoserver.user;
 					this._data.geoserver.layerInfo = this.settings.geoserver.layerInfo;
 					this._data.geoserver.layerInfoURL = this.settings.geoserver.layerInfoURL;
+					this._data.geoserver.createLayer = this.settings.geoserver.createLayer;
 					this._data.geoserver.downloadNGIDXF = this.settings.geoserver.downloadNGIDXF;
 					this._data.geoserver.downloadGeoserver = this.settings.geoserver.downloadGeoserver;
 				};
@@ -8124,7 +8125,7 @@
 									"label" : "Map sheet",
 									"action" : function(data) {
 										var inst = $.jstree.reference(data.reference), obj = inst.get_node(data.reference);
-										if (obj.type === "n_ngi" || obj.type === "n_dxf") {
+										if (obj.type === "n_ngi") {
 											var arr = inst.get_selected();
 											// var arr2 = [];
 											// for (var i = 0; i < arr.length;
@@ -8137,6 +8138,11 @@
 											};
 											// inst.import_fake_group(obj);
 											console.log("map sheet");
+											inst._data.geoserver.createLayer.setForm("ngi", "mapsheet");
+											inst._data.geoserver.createLayer.open();
+										} else if (obj.type === "n_dxf") {
+											inst._data.geoserver.createLayer.setForm("dxf", "mapsheet");
+											inst._data.geoserver.createLayer.open();
 										}
 									}
 								},
@@ -8151,19 +8157,12 @@
 									"label" : "Layer",
 									"action" : function(data) {
 										var inst = $.jstree.reference(data.reference), obj = inst.get_node(data.reference);
-										if (obj.type === "n_ngi_group" || obj.type === "n_dxf_group") {
-											var arr = inst.get_selected();
-											// var arr2 = [];
-											// for (var i = 0; i < arr.length;
-											// i++) {
-											// arr2.push(inst.get_node(arr[i]).id);
-											// }
-											var obj = {
-												"refer" : inst,
-												"arr" : arr
-											};
-											// inst.import_fake_group(obj);
-											console.log("layer");
+										if (obj.type === "n_ngi_group") {
+											inst._data.geoserver.createLayer.setForm("ngi", "layer", obj.text);
+											inst._data.geoserver.createLayer.open();
+										} else if (obj.type === "n_dxf_group") {
+											inst._data.geoserver.createLayer.setForm("dxf", "layer", obj.text);
+											inst._data.geoserver.createLayer.open();
 										}
 									}
 								}
