@@ -8115,8 +8115,9 @@
 							"submenu" : {
 								"mapsheet" : {
 									"separator_before" : false,
-									"_disabled" : function (data) {
-										return !($.jstree.reference(data.reference).get_node(data.reference).type === "n_ngi" || $.jstree.reference(data.reference).get_node(data.reference).type === "n_dxf")
+									"_disabled" : function(data) {
+										return !($.jstree.reference(data.reference).get_node(data.reference).type === "n_ngi" || $.jstree
+												.reference(data.reference).get_node(data.reference).type === "n_dxf")
 									},
 									"icon" : "fa fa-file-image-o",
 									"separator_after" : false,
@@ -8141,15 +8142,16 @@
 								},
 								"layer" : {
 									"separator_before" : false,
-									"_disabled" : function (data) {
-										return !($.jstree.reference(data.reference).get_node(data.reference).type === "n_ngi" || $.jstree.reference(data.reference).get_node(data.reference).type === "n_dxf")
+									"_disabled" : function(data) {
+										return !($.jstree.reference(data.reference).get_node(data.reference).type === "n_ngi_group" || $.jstree
+												.reference(data.reference).get_node(data.reference).type === "n_dxf_group")
 									},
 									"icon" : "fa fa-file-image-o",
 									"separator_after" : false,
 									"label" : "Layer",
 									"action" : function(data) {
 										var inst = $.jstree.reference(data.reference), obj = inst.get_node(data.reference);
-										if (obj.type === "n_ngi" || obj.type === "n_dxf") {
+										if (obj.type === "n_ngi_group" || obj.type === "n_dxf_group") {
 											var arr = inst.get_selected();
 											// var arr2 = [];
 											// for (var i = 0; i < arr.length;
@@ -8161,7 +8163,7 @@
 												"arr" : arr
 											};
 											// inst.import_fake_group(obj);
-											console.log("map sheet");
+											console.log("layer");
 										}
 									}
 								}
