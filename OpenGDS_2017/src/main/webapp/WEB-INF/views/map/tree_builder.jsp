@@ -391,7 +391,7 @@ html {
 		$("#qaedit").qaedit({
 			map : map,
 			editingTool : $("#edit").editingtool("instance"),
-			linkKey : "feature_id",
+			linkKey : "feature_idx",
 			user : "admin",
 			layersURL : 'geoserver2/getGeolayerCollectionTree.ajax',
 			featureWMSURL : "geoserver2/geoserverWMSLayerLoad.do",
