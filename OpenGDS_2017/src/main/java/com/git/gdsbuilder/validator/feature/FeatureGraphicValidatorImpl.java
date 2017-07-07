@@ -52,7 +52,6 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 
 import com.git.gdsbuilder.type.validate.error.ErrorFeature;
-import com.git.gdsbuilder.type.validate.error.ErrorLayer;
 import com.git.gdsbuilder.type.validate.option.B_SymbolOutSided;
 import com.git.gdsbuilder.type.validate.option.BuildingOpen;
 import com.git.gdsbuilder.type.validate.option.ConBreak;
@@ -76,7 +75,6 @@ import com.git.gdsbuilder.type.validate.option.WaterOpen;
 import com.vividsolutions.jts.algorithm.Angle;
 import com.vividsolutions.jts.algorithm.CentroidPoint;
 import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.CoordinateArrays;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
@@ -253,21 +251,25 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 	@Override
 	public ErrorFeature validateEntityDuplicated(SimpleFeature simpleFeatureI, SimpleFeature simpleFeatureJ)
 			throws SchemaException {
-
 		Geometry geometryI = (Geometry) simpleFeatureI.getDefaultGeometry();
 		Geometry geometryJ = (Geometry) simpleFeatureJ.getDefaultGeometry();
 
+		// geom 비교
 		if (geometryI.equals(geometryJ)) {
-			Property featuerIDPro = simpleFeatureI.getProperty("feature_id");
-			String featureID = (String) featuerIDPro.getValue();
-			ErrorFeature errFeature = new ErrorFeature(featureID, EntityDuplicated.Type.ENTITYDUPLICATED.errType(),
-					EntityDuplicated.Type.ENTITYDUPLICATED.errName(), geometryI.getInteriorPoint());
-			return errFeature;
+			if (simpleFeatureI.getAttributeCount() != 0 && simpleFeatureJ.getAttributeCount() != 0) {
+				FeatureAttributeValidator attributeValidator = new FeatureAttributeValidatorImpl();
+				return attributeValidator.validateEntityDuplicated(simpleFeatureI, simpleFeatureJ);
+			} else {
+				Property featuerIDPro = simpleFeatureI.getProperty("feature_id");
+				String featureID = (String) featuerIDPro.getValue();
+				ErrorFeature errFeature = new ErrorFeature(featureID, EntityDuplicated.Type.ENTITYDUPLICATED.errType(),
+						EntityDuplicated.Type.ENTITYDUPLICATED.errName(), geometryI.getInteriorPoint());
+				return errFeature;
+			}
 		} else {
 			return null;
 		}
 	}
-
 
 	@Override
 	public List<ErrorFeature> validateSelfEntity(SimpleFeature simpleFeatureI, SimpleFeature simpleFeatureJ)
@@ -460,25 +462,25 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 
 		List<ErrorFeature> errFeatures = new ArrayList<ErrorFeature>();
 
-		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry(); // feature
+		Geometry geom = (Geometry) simpleFeature.getDefaultGeometry();
 		SimpleFeatureIterator iterator = aop.features();
 		while (iterator.hasNext()) {
-			SimpleFeature simpleFeatureJ = iterator.next();
-			Geometry relationGeometry = (Geometry) simpleFeatureJ.getDefaultGeometry(); // aop
-			Geometry aopBuffer = relationGeometry.buffer(tolerence); // tolerence
-			// : 사용자
-			// 입력 파라미터
-			Geometry envelope = relationGeometry.getEnvelope();
-			GeometryFactory factory = new GeometryFactory();
-			Coordinate[] featureCoor = geometry.getCoordinates();
-			for (int i = 0; i < featureCoor.length; i++) {
-				Geometry featurePt = factory.createPoint(featureCoor[i]);
-				if (!aopBuffer.contains(featurePt)) {
-					if (!envelope.contains(featurePt)) {
+			SimpleFeature aopSimpleFeature = iterator.next();
+			Geometry aopGeom = (Geometry) aopSimpleFeature.getDefaultGeometry();
+			Coordinate[] aopCoors = aopGeom.getCoordinates();
+			LinearRing ring = new GeometryFactory().createLinearRing(aopCoors);
+			Geometry aopPolygon = new GeometryFactory().createPolygon(ring, null);
+			Coordinate[] geomCoors = geom.getCoordinates();
+			for (int i = 0; i < geomCoors.length; i++) {
+				Coordinate geomCoor = geomCoors[i];
+				Geometry geomPt = new GeometryFactory().createPoint(geomCoor);
+				if (!geomPt.within(aopPolygon)) {
+					Geometry toleGeom = aopPolygon.buffer(tolerence);
+					if (!geomPt.within(toleGeom)) {
 						Property featuerIDPro = simpleFeature.getProperty("feature_id");
 						String featureID = (String) featuerIDPro.getValue();
 						ErrorFeature errFeature = new ErrorFeature(featureID, OverShoot.Type.OVERSHOOT.errType(),
-								OverShoot.Type.OVERSHOOT.errName(), featurePt);
+								OverShoot.Type.OVERSHOOT.errName(), geomPt);
 						errFeatures.add(errFeature);
 					}
 				}

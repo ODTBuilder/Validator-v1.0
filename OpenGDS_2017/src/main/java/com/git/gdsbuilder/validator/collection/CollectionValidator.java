@@ -225,7 +225,7 @@ public class CollectionValidator {
 			attributeValidate(types, collection, errorLayer);
 
 			// 인접도엽 검수
-			closeCollectionValidate(types, mapSystemRule, collection, "");
+			// closeCollectionValidate(types, mapSystemRule, collection, "");
 
 			errLayerList.add(errorLayer);
 			progress.put(collection.getCollectionName(), 2);

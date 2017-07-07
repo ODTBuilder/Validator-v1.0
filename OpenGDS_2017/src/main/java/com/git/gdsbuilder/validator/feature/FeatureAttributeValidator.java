@@ -73,4 +73,6 @@ public interface FeatureAttributeValidator {
 
 	public ErrorFeature validateAdmin(SimpleFeature simpleFeature) throws SchemaException;
 
+	public ErrorFeature validateEntityDuplicated(SimpleFeature simpleFeatureI, SimpleFeature simpleFeatureJ);
+
 }

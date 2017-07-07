@@ -47,6 +47,8 @@ import com.git.gdsbuilder.type.validate.error.ErrorFeature;
 import com.git.gdsbuilder.type.validate.option.Admin;
 import com.git.gdsbuilder.type.validate.option.AttributeFix;
 import com.git.gdsbuilder.type.validate.option.BridgeName;
+import com.git.gdsbuilder.type.validate.option.EntityDuplicated;
+import com.git.gdsbuilder.type.validate.option.SmallArea;
 import com.git.gdsbuilder.type.validate.option.ZValueAmbiguous;
 import com.vividsolutions.jts.geom.Geometry;
 
@@ -85,7 +87,7 @@ public class FeatureAttributeValidatorImpl implements FeatureAttributeValidator 
 	@Override
 	public ErrorFeature validateAttributeFix(SimpleFeature simpleFeature, Map<String, List<String>> notNullAtt)
 			throws SchemaException {
-		
+
 		Property test = simpleFeature.getProperty("feature_id");
 		String tes = (String) test.getValue();
 		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
@@ -204,6 +206,35 @@ public class FeatureAttributeValidatorImpl implements FeatureAttributeValidator 
 					return errorFeature;
 				}
 			}
+		}
+	}
+
+	public ErrorFeature validateEntityDuplicated(SimpleFeature simpleFeatureI, SimpleFeature simpleFeatureJ) {
+
+		List attrIList = simpleFeatureI.getAttributes();
+		List attrJList = simpleFeatureJ.getAttributes();
+
+		int equalsCount = 0;
+		for (int i = 1; i < attrIList.size(); i++) {
+			Object attrI = attrIList.get(i);
+			breakOut: for (int j = 1; j < attrJList.size(); j++) {
+				Object attrJ = attrJList.get(j);
+				if (attrI.toString().equals(attrJ.toString())) {
+					equalsCount++;
+					break breakOut;
+				}
+			}
+		}
+		if (equalsCount == attrIList.size() - 1) {
+			Property featuerIDPro = simpleFeatureI.getProperty("feature_id");
+			String featureID = (String) featuerIDPro.getValue();
+			Geometry geometryI = (Geometry) simpleFeatureI.getDefaultGeometry();
+			ErrorFeature errFeature = new ErrorFeature(featureID, EntityDuplicated.Type.ENTITYDUPLICATED.errType(),
+					EntityDuplicated.Type.ENTITYDUPLICATED.errName(), geometryI.getInteriorPoint());
+
+			return errFeature;
+		} else {
+			return null;
 		}
 	}
 }
