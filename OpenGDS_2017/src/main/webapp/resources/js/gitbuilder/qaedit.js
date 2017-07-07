@@ -248,43 +248,42 @@ gitbuilder.ui.QAEdit = $.widget("gitbuilder.qaedit",
 					$("body").find(".vakata-context").css("z-index", "1100");
 				});
 
-				// var upBtn =
-				this.upbtn = $("<input>").addClass("btn").addClass("btn-default").attr({
+				this.upbtn = $("<input>").addClass("gitbuilder-qaedit-delup").addClass("btn").addClass("btn-default").attr({
 					"type" : "button",
 					"value" : "Up : Not assigned"
 				}).css({
 					"width" : "100%",
 					"margin-left" : 0
 				});
-				this.leftbtn = $("<input>").addClass("btn").addClass("btn-default").attr({
+				this.leftbtn = $("<input>").addClass("gitbuilder-qaedit-delleft").addClass("btn").addClass("btn-default").attr({
 					"type" : "button",
 					"value" : "Left : Not assigned"
 				}).css({
 					"width" : "100%",
 					"margin-left" : 0
 				});
-				this.centerbtn = $("<input>").addClass("btn").addClass("btn-default").attr({
+				this.centerbtn = $("<input>").addClass("gitbuilder-qaedit-delcenter").addClass("btn").addClass("btn-default").attr({
 					"type" : "button",
 					"value" : "Center : Not assigned"
 				}).css({
 					"width" : "100%",
 					"margin-left" : 0
 				});
-				this.rightbtn = $("<input>").addClass("btn").addClass("btn-default").attr({
+				this.rightbtn = $("<input>").addClass("gitbuilder-qaedit-delright").addClass("btn").addClass("btn-default").attr({
 					"type" : "button",
 					"value" : "Right : Not assigned"
 				}).css({
 					"width" : "100%",
 					"margin-left" : 0
 				});
-				this.downbtn = $("<input>").addClass("btn").addClass("btn-default").attr({
+				this.downbtn = $("<input>").addClass("gitbuilder-qaedit-deldown").addClass("btn").addClass("btn-default").attr({
 					"type" : "button",
 					"value" : "Down : Not assigned"
 				}).css({
 					"width" : "100%",
 					"margin-left" : 0
 				});
-				this.errbtn = $("<input>").addClass("btn").addClass("btn-default").attr({
+				this.errbtn = $("<input>").addClass("gitbuilder-qaedit-delerror").addClass("btn").addClass("btn-default").attr({
 					"type" : "button",
 					"value" : "Error : Not assigned"
 				}).css({
@@ -360,6 +359,7 @@ gitbuilder.ui.QAEdit = $.widget("gitbuilder.qaedit",
 					tabIndex : -1,
 					role : "dialog",
 				}).html(dialog);
+				this._addClass(this.window, this.eventNamespace.substr(1));
 				$(this.window).addClass("modal");
 				$(this.window).addClass("fade");
 
@@ -370,7 +370,7 @@ gitbuilder.ui.QAEdit = $.widget("gitbuilder.qaedit",
 					show : false,
 				});
 
-				$(document).on("click", ".gitbuilder-qaedit-navigator-link", function() {
+				$(document).on("click", this.eventNamespace + " .gitbuilder-qaedit-navigator-link", function() {
 					console.log($(this).attr("value"));
 					var fid = $(this).attr("value");
 					var lid = fid.substring(0, fid.indexOf("."));
@@ -379,6 +379,37 @@ gitbuilder.ui.QAEdit = $.widget("gitbuilder.qaedit",
 						return;
 					}
 					that.selectOriginalFeature(lid, fid);
+				});
+
+				$(document).on("click", this.eventNamespace + " .gitbuilder-qaedit-delup", function() {
+					that.mapsheet.up = undefined;
+					$(this).val("Up : Not assigned");
+					console.log(that.mapsheet);
+				});
+				$(document).on("click", this.eventNamespace + " .gitbuilder-qaedit-deldown", function() {
+					that.mapsheet.down = undefined;
+					$(this).val("Down : Not assigned");
+					console.log(that.mapsheet);
+				});
+				$(document).on("click", this.eventNamespace + " .gitbuilder-qaedit-delleft", function() {
+					that.mapsheet.left = undefined;
+					$(this).val("Left : Not assigned");
+					console.log(that.mapsheet);
+				});
+				$(document).on("click", this.eventNamespace + " .gitbuilder-qaedit-delright", function() {
+					that.mapsheet.right = undefined;
+					$(this).val("right : Not assigned");
+					console.log(that.mapsheet);
+				});
+				$(document).on("click", this.eventNamespace + " .gitbuilder-qaedit-delcenter", function() {
+					that.mapsheet.center = undefined;
+					$(this).val("Center : Not assigned");
+					console.log(that.mapsheet);
+				});
+				$(document).on("click", this.eventNamespace + " .gitbuilder-qaedit-delerror", function() {
+					that.mapsheet.error = undefined;
+					$(this).val("Error : Not assigned");
+					console.log(that.mapsheet);
 				});
 
 				this._create_navigator();
@@ -393,7 +424,7 @@ gitbuilder.ui.QAEdit = $.widget("gitbuilder.qaedit",
 			 */
 			assign_error : function(obj) {
 				this.mapsheet.error = obj.id;
-				$(this.errbtn).text(obj.text);
+				$(this.errbtn).val(obj.text);
 				console.log(this.mapsheet);
 			},
 
@@ -402,7 +433,7 @@ gitbuilder.ui.QAEdit = $.widget("gitbuilder.qaedit",
 			 */
 			assign_center : function(obj) {
 				this.mapsheet.center = obj.id;
-				$(this.centerbtn).text(obj.text);
+				$(this.centerbtn).val(obj.text);
 				console.log(this.mapsheet);
 			},
 
@@ -411,7 +442,7 @@ gitbuilder.ui.QAEdit = $.widget("gitbuilder.qaedit",
 			 */
 			assign_up : function(obj) {
 				this.mapsheet.up = obj.id;
-				$(this.upbtn).text(obj.text);
+				$(this.upbtn).val(obj.text);
 				console.log(this.mapsheet);
 			},
 
@@ -420,7 +451,7 @@ gitbuilder.ui.QAEdit = $.widget("gitbuilder.qaedit",
 			 */
 			assign_down : function(obj) {
 				this.mapsheet.down = obj.id;
-				$(this.downbtn).text(obj.text);
+				$(this.downbtn).val(obj.text);
 				console.log(this.mapsheet);
 			},
 
@@ -429,7 +460,7 @@ gitbuilder.ui.QAEdit = $.widget("gitbuilder.qaedit",
 			 */
 			assign_left : function(obj) {
 				this.mapsheet.left = obj.id;
-				$(this.leftbtn).text(obj.text);
+				$(this.leftbtn).val(obj.text);
 				console.log(this.mapsheet);
 			},
 
@@ -438,7 +469,7 @@ gitbuilder.ui.QAEdit = $.widget("gitbuilder.qaedit",
 			 */
 			assign_right : function(obj) {
 				this.mapsheet.right = obj.id;
-				$(this.rightbtn).text(obj.text);
+				$(this.rightbtn).val(obj.text);
 				console.log(this.mapsheet);
 			},
 			_import_fake_group : function(jstreeRefer, group, groupInfoURL, wmsURL, wfsURL, groupLayerName, lastMapSheet, errorLayerName,
@@ -793,10 +824,10 @@ gitbuilder.ui.QAEdit = $.widget("gitbuilder.qaedit",
 				var btnPrev = $("<button>").addClass("gitbuilder-qaedit-navigator-prev").addClass("btn").addClass("btn-default").append(
 						prevIcon), btnNext = $("<button>").addClass("gitbuilder-qaedit-navigator-next").addClass("btn").addClass(
 						"btn-default").append(nextIcon);
-				$(document).on("click", ".gitbuilder-qaedit-navigator-prev", function() {
+				$(document).on("click", this.eventNamespace + " .gitbuilder-qaedit-navigator-prev", function() {
 					that.prevError();
 				});
-				$(document).on("click", ".gitbuilder-qaedit-navigator-next", function() {
+				$(document).on("click", this.eventNamespace + " .gitbuilder-qaedit-navigator-next", function() {
 					that.nextError();
 				});
 				var td1 = $("<td>").append(btnPrev), td3 = $("<td>").append(btnNext);
@@ -814,7 +845,7 @@ gitbuilder.ui.QAEdit = $.widget("gitbuilder.qaedit",
 					"right" : 0,
 					"position" : "absolute",
 					"z-Index" : "999",
-				}).append(pdf);
+				}).addClass(this.eventNamespace.substr(1)).append(pdf);
 
 				$("body").append(this.naviWindow);
 				$(this.naviWindow).hide();
@@ -862,7 +893,7 @@ gitbuilder.ui.QAEdit = $.widget("gitbuilder.qaedit",
 					if (keys[i] === this.options.linkKey) {
 						var anc = $("<a>").addClass("gitbuilder-qaedit-navigator-link").attr({
 							"href" : "#",
-							"value" : prop[keys[i]] 
+							"value" : prop[keys[i]]
 						}).text("Move to feature");
 						var td2 = $("<td>").attr("colspan", 2).append(anc);
 					} else {
