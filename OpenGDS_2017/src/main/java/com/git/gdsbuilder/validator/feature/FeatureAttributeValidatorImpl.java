@@ -56,49 +56,50 @@ public class FeatureAttributeValidatorImpl implements FeatureAttributeValidator 
 
 	@SuppressWarnings("unused")
 	@Override
-	public ErrorFeature validateZvalueAmbiguous(SimpleFeature simpleFeature,  Map<String, List<String>> attributeKey) {
+	public ErrorFeature validateZvalueAmbiguous(SimpleFeature simpleFeature, Map<String, List<String>> attributeKey) {
 		ErrorFeature errorFeature = null;
 		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
-
+		String featureIdx = simpleFeature.getID();
 		Property featuerIDPro = simpleFeature.getProperty("feature_id");
 		String featureID = (String) featuerIDPro.getValue();
 		if (attributeKey != null) {
 			Iterator iterator = attributeKey.keySet().iterator();
-			while(iterator.hasNext()){
+			while (iterator.hasNext()) {
 				String key = (String) iterator.next();
 				Object attributeValue = simpleFeature.getAttribute(key);
-				if(attributeValue != null){
+				if (attributeValue != null) {
 					if (attributeValue.toString().equals("") || attributeValue.toString().equals("0.0")) {
-						errorFeature = new ErrorFeature(featureID, ZValueAmbiguous.Type.ZVALUEAMBIGUOUS.errType(),
+						errorFeature = new ErrorFeature(featureIdx, featureID,
+								ZValueAmbiguous.Type.ZVALUEAMBIGUOUS.errType(),
 								ZValueAmbiguous.Type.ZVALUEAMBIGUOUS.errName(), geometry.getInteriorPoint());
-					}else{
+					} else {
 						String attributeStr = attributeValue.toString();
 						Double num = new Double(Double.parseDouble(attributeStr));
 						int intNum = num.intValue();
 						if (!(num == intNum)) {
-							
-							
-							errorFeature = new ErrorFeature(featureID, ZValueAmbiguous.Type.ZVALUEAMBIGUOUS.errType(),
+							errorFeature = new ErrorFeature(featureIdx, featureID,
+									ZValueAmbiguous.Type.ZVALUEAMBIGUOUS.errType(),
 									ZValueAmbiguous.Type.ZVALUEAMBIGUOUS.errName(), geometry.getInteriorPoint());
-						}else{
-							JSONArray zValueArray  = (JSONArray) attributeKey.get(key);
+						} else {
+							JSONArray zValueArray = (JSONArray) attributeKey.get(key);
 							String tolerence = zValueArray.get(0).toString();
 							Double tolerenceDou = new Double(Double.parseDouble(tolerence));
-							Double result = num % tolerenceDou ;
-							
-							if(!(result == 0.0)){
-								errorFeature = new ErrorFeature(featureID, ZValueAmbiguous.Type.ZVALUEAMBIGUOUS.errType(),
+							Double result = num % tolerenceDou;
+
+							if (!(result == 0.0)) {
+								errorFeature = new ErrorFeature(featureIdx, featureID,
+										ZValueAmbiguous.Type.ZVALUEAMBIGUOUS.errType(),
 										ZValueAmbiguous.Type.ZVALUEAMBIGUOUS.errName(), geometry.getInteriorPoint());
 							}
 						}
 					}
 				}
 			}
-		}else {
-			errorFeature = new ErrorFeature(featureID, ZValueAmbiguous.Type.ZVALUEAMBIGUOUS.errType(),
+		} else {
+			errorFeature = new ErrorFeature(featureIdx, featureID, ZValueAmbiguous.Type.ZVALUEAMBIGUOUS.errType(),
 					ZValueAmbiguous.Type.ZVALUEAMBIGUOUS.errName(), geometry.getInteriorPoint());
 		}
-	
+
 		return errorFeature;
 	}
 
@@ -106,8 +107,6 @@ public class FeatureAttributeValidatorImpl implements FeatureAttributeValidator 
 	public ErrorFeature validateAttributeFix(SimpleFeature simpleFeature, Map<String, List<String>> notNullAtt)
 			throws SchemaException {
 
-		Property test = simpleFeature.getProperty("feature_id");
-		String tes = (String) test.getValue();
 		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
 		boolean flag = true;
 		if (notNullAtt != null) {
@@ -146,10 +145,12 @@ public class FeatureAttributeValidatorImpl implements FeatureAttributeValidator 
 			}
 		}
 		if (flag == false) {
+			String featureIdx = simpleFeature.getID();
 			Property featuerIDPro = simpleFeature.getProperty("feature_id");
 			String featureID = (String) featuerIDPro.getValue();
-			ErrorFeature errorFeature = new ErrorFeature(featureID, AttributeFix.Type.ATTRIBUTEFIX.errType(),
-					AttributeFix.Type.ATTRIBUTEFIX.errName(), geometry.getInteriorPoint());
+			ErrorFeature errorFeature = new ErrorFeature(featureIdx, featureID,
+					AttributeFix.Type.ATTRIBUTEFIX.errType(), AttributeFix.Type.ATTRIBUTEFIX.errName(),
+					geometry.getInteriorPoint());
 			return errorFeature;
 		} else {
 			return null;
@@ -166,18 +167,22 @@ public class FeatureAttributeValidatorImpl implements FeatureAttributeValidator 
 			Object relValue = relationSimpleFeature.getAttribute("명칭");
 			if (simValue.equals("null") || relValue.equals("null")) {
 				returnGeom = geometry.intersection(relGeometry);
+				String featureIdx = simpleFeature.getID();
 				Property featuerIDPro = simpleFeature.getProperty("feature_id");
 				String featureID = (String) featuerIDPro.getValue();
-				ErrorFeature errorFeature = new ErrorFeature(featureID, BridgeName.Type.BRIDGENAME.errType(),
-						BridgeName.Type.BRIDGENAME.errName(), returnGeom.getInteriorPoint());
+				ErrorFeature errorFeature = new ErrorFeature(featureIdx, featureID,
+						BridgeName.Type.BRIDGENAME.errType(), BridgeName.Type.BRIDGENAME.errName(),
+						returnGeom.getInteriorPoint());
 				return errorFeature;
 			} else {
 				if (!(simValue.equals(relValue))) {
 					returnGeom = geometry.intersection(relGeometry);
+					String featureIdx = simpleFeature.getID();
 					Property featuerIDPro = simpleFeature.getProperty("feature_id");
 					String featureID = (String) featuerIDPro.getValue();
-					ErrorFeature errorFeature = new ErrorFeature(featureID, BridgeName.Type.BRIDGENAME.errType(),
-							BridgeName.Type.BRIDGENAME.errName(), returnGeom.getInteriorPoint());
+					ErrorFeature errorFeature = new ErrorFeature(featureIdx, featureID,
+							BridgeName.Type.BRIDGENAME.errType(), BridgeName.Type.BRIDGENAME.errName(),
+							returnGeom.getInteriorPoint());
 					return errorFeature;
 				} else {
 					return null;
@@ -189,22 +194,24 @@ public class FeatureAttributeValidatorImpl implements FeatureAttributeValidator 
 	}
 
 	public ErrorFeature validateAdmin(SimpleFeature simpleFeature) throws SchemaException {
+		
 		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
 		String title = simpleFeature.getAttribute("명칭").toString();
 		int titleLength = title.length();
 		String division = simpleFeature.getAttribute("구분").toString();
 		int divisionLength = division.length();
 
+		String featureIdx = simpleFeature.getID();
 		Property featuerIDPro = simpleFeature.getProperty("feature_id");
 		String featureID = (String) featuerIDPro.getValue();
 
 		if (title == null || division == null) {
-			ErrorFeature errorFeature = new ErrorFeature(featureID, Admin.Type.ADMIN.errType(),
+			ErrorFeature errorFeature = new ErrorFeature(featureIdx, featureID, Admin.Type.ADMIN.errType(),
 					Admin.Type.ADMIN.errName(), geometry.getInteriorPoint());
 			return errorFeature;
 		} else {
 			if (titleLength < 2) {
-				ErrorFeature errorFeature = new ErrorFeature(featureID, Admin.Type.ADMIN.errType(),
+				ErrorFeature errorFeature = new ErrorFeature(featureIdx, featureID, Admin.Type.ADMIN.errType(),
 						Admin.Type.ADMIN.errName(), geometry.getInteriorPoint());
 				return errorFeature;
 			} else {
@@ -212,14 +219,14 @@ public class FeatureAttributeValidatorImpl implements FeatureAttributeValidator 
 					int length = titleLength - divisionLength;
 					String title_end = title.substring(length);
 					if (!(title_end.equals(division))) {
-						ErrorFeature errorFeature = new ErrorFeature(featureID, Admin.Type.ADMIN.errType(),
+						ErrorFeature errorFeature = new ErrorFeature(featureIdx, featureID, Admin.Type.ADMIN.errType(),
 								Admin.Type.ADMIN.errName(), geometry.getInteriorPoint());
 						return errorFeature;
 					} else {
 						return null;
 					}
 				} else {
-					ErrorFeature errorFeature = new ErrorFeature(featureID, Admin.Type.ADMIN.errType(),
+					ErrorFeature errorFeature = new ErrorFeature(featureIdx, featureID, Admin.Type.ADMIN.errType(),
 							Admin.Type.ADMIN.errName(), geometry.getInteriorPoint());
 					return errorFeature;
 				}
@@ -244,10 +251,11 @@ public class FeatureAttributeValidatorImpl implements FeatureAttributeValidator 
 			}
 		}
 		if (equalsCount == attrIList.size() - 1) {
+			String featureIdx = simpleFeatureI.getID();
 			Property featuerIDPro = simpleFeatureI.getProperty("feature_id");
 			String featureID = (String) featuerIDPro.getValue();
 			Geometry geometryI = (Geometry) simpleFeatureI.getDefaultGeometry();
-			ErrorFeature errFeature = new ErrorFeature(featureID, EntityDuplicated.Type.ENTITYDUPLICATED.errType(),
+			ErrorFeature errFeature = new ErrorFeature(featureIdx, featureID, EntityDuplicated.Type.ENTITYDUPLICATED.errType(),
 					EntityDuplicated.Type.ENTITYDUPLICATED.errName(), geometryI.getInteriorPoint());
 
 			return errFeature;
