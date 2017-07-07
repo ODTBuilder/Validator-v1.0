@@ -466,6 +466,11 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 		List<ErrorFeature> errFeatures = new ArrayList<ErrorFeature>();
 
 		Geometry geom = (Geometry) simpleFeature.getDefaultGeometry();
+
+		if (!geom.isSimple()) {
+			System.out.println("");
+		}
+
 		SimpleFeatureIterator iterator = aop.features();
 		while (iterator.hasNext()) {
 			SimpleFeature aopSimpleFeature = iterator.next();
@@ -609,7 +614,8 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 		return null;
 	}
 
-	public ErrorFeature validateWaterOpen(SimpleFeature simpleFeature, SimpleFeatureCollection aop, double tolerence) throws SchemaException {
+	public ErrorFeature validateWaterOpen(SimpleFeature simpleFeature, SimpleFeatureCollection aop, double tolerence)
+			throws SchemaException {
 		GeometryFactory geometryFactory = new GeometryFactory();
 		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
 		Coordinate[] coordinates = geometry.getCoordinates();
@@ -891,5 +897,24 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 			}
 		}
 		return null;
+	}
+
+	@Override
+	public ErrorFeature validateConIntersected(SimpleFeature simpleFeature) {
+
+		List<ErrorFeature> errFeatures = new ArrayList<ErrorFeature>();
+		GeometryFactory geometryFactory = new GeometryFactory();
+		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
+
+		if (!geometry.isSimple()) {
+			Property featuerIDPro = simpleFeature.getProperty("feature_id");
+			String featureID = (String) featuerIDPro.getValue();
+			
+			ErrorFeature errFeature = new ErrorFeature(featureID, ConIntersected.Type.CONINTERSECTED.errType(),
+					ConIntersected.Type.CONINTERSECTED.errName(), null);
+			return errFeature;
+		} else {
+			return null;	
+		}
 	}
 }

@@ -190,5 +190,7 @@ public interface FeatureGraphicValidator {
 	public List<ErrorFeature> validateNodeMiss(SimpleFeature simpleFeature, List<SimpleFeature> relationSimpleFeature,
 			double tolerence) throws SchemaException;
 
+	public ErrorFeature validateConIntersected(SimpleFeature tmpSimpleFeatureI);
+
 	
 }

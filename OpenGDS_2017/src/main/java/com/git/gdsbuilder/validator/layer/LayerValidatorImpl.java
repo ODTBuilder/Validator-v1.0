@@ -142,6 +142,10 @@ public class LayerValidatorImpl implements LayerValidator {
 		int tmpsSimpleFeaturesSize = tmpsSimpleFeatures.size();
 		for (int i = 0; i < tmpsSimpleFeaturesSize - 1; i++) {
 			SimpleFeature tmpSimpleFeatureI = tmpsSimpleFeatures.get(i);
+			ErrorFeature selfErrFeature = graphicValidator.validateConIntersected(tmpSimpleFeatureI);
+			if (selfErrFeature != null) {
+				errLayer.addErrorFeature(selfErrFeature);
+			}
 			for (int j = i + 1; j < tmpsSimpleFeaturesSize; j++) {
 				SimpleFeature tmpSimpleFeatureJ = tmpsSimpleFeatures.get(j);
 				List<ErrorFeature> errFeatures = graphicValidator.validateConIntersected(tmpSimpleFeatureI,
@@ -426,8 +430,8 @@ public class LayerValidatorImpl implements LayerValidator {
 				SimpleFeature relationSimpleFeature = relationSimpleFeatureIterator.next();
 				for (int j = 0; j < simpleFeatures.size(); j++) {
 					SimpleFeature simpleFeature = simpleFeatures.get(j);
-					ErrorFeature errFeature = graphicValidator.validateOutBoundary(simpleFeature,
-							relationSimpleFeature, spatialAccuracyTolorence);
+					ErrorFeature errFeature = graphicValidator.validateOutBoundary(simpleFeature, relationSimpleFeature,
+							spatialAccuracyTolorence);
 					if (errFeature != null) {
 						errFeature.setLayerName(validatorLayer.getLayerName());
 						errLayer.addErrorFeature(errFeature);
@@ -469,9 +473,9 @@ public class LayerValidatorImpl implements LayerValidator {
 			return null;
 		}
 	}
-	
+
 	public ErrorLayer validatePointDuplicated() {
-		
+
 		ErrorLayer errLayer = new ErrorLayer();
 
 		SimpleFeatureCollection sfc = validatorLayer.getSimpleFeatureCollection();
@@ -494,7 +498,6 @@ public class LayerValidatorImpl implements LayerValidator {
 			return null;
 		}
 	}
-	
 
 	public ErrorLayer validateEntityDuplicated() throws SchemaException {
 
