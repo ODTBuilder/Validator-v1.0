@@ -119,7 +119,7 @@
 <%-- 레이어 정보 --%>
 <script
 	src="${pageContext.request.contextPath}/resources/js/gitbuilder/layerinformation.js"></script>
-	
+
 <%-- 레이어 정보 객체--%>
 <script
 	src="${pageContext.request.contextPath}/resources/js/gitbuilder/layerinfo.js"></script>
@@ -127,7 +127,11 @@
 <%-- 애트리뷰트 정보 객체 --%>
 <script
 	src="${pageContext.request.contextPath}/resources/js/gitbuilder/attributeinformation.js"></script>
-	
+
+<%-- 지오서버 레이어 생성--%>
+<script
+	src="${pageContext.request.contextPath}/resources/js/gitbuilder/createlayer.js"></script>
+
 <%-- 파일업로드 --%>
 <script src="${ctx}/resources/js/dropzone/dropzone.js"></script>
 <link rel="stylesheet"
