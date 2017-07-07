@@ -371,8 +371,8 @@ gitbuilder.ui.QAEdit = $.widget("gitbuilder.qaedit",
 				});
 
 				$(document).on("click", ".gitbuilder-qaedit-navigator-link", function() {
-					console.log($(this).text());
-					var fid = $(this).text();
+					console.log($(this).attr("value"));
+					var fid = $(this).attr("value");
 					var lid = fid.substring(0, fid.indexOf("."));
 					if (lid.indexOf(".") !== -1) {
 						console.error("layer name error");
@@ -861,8 +861,9 @@ gitbuilder.ui.QAEdit = $.widget("gitbuilder.qaedit",
 					var td1 = $("<td>").text(keys[i]);
 					if (keys[i] === this.options.linkKey) {
 						var anc = $("<a>").addClass("gitbuilder-qaedit-navigator-link").attr({
-							"href" : "#"
-						}).text(prop[keys[i]]);
+							"href" : "#",
+							"value" : prop[keys[i]] 
+						}).text("Move to feature");
 						var td2 = $("<td>").attr("colspan", 2).append(anc);
 					} else {
 						var td2 = $("<td>").attr("colspan", 2).text(prop[keys[i]]);
