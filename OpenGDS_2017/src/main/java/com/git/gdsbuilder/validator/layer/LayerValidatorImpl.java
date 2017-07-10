@@ -142,10 +142,13 @@ public class LayerValidatorImpl implements LayerValidator {
 		int tmpsSimpleFeaturesSize = tmpsSimpleFeatures.size();
 		for (int i = 0; i < tmpsSimpleFeaturesSize - 1; i++) {
 			SimpleFeature tmpSimpleFeatureI = tmpsSimpleFeatures.get(i);
-			ErrorFeature selfErrFeature = graphicValidator.validateConIntersected(tmpSimpleFeatureI);
+			List<ErrorFeature> selfErrFeature = graphicValidator.validateConIntersected(tmpSimpleFeatureI);
 			if (selfErrFeature != null) {
-				errLayer.addErrorFeature(selfErrFeature);
-			}
+				for (ErrorFeature errFeature : selfErrFeature) {
+					errFeature.setLayerName(validatorLayer.getLayerName());
+					errLayer.addErrorFeature(errFeature);
+				}
+			} 
 			for (int j = i + 1; j < tmpsSimpleFeaturesSize; j++) {
 				SimpleFeature tmpSimpleFeatureJ = tmpsSimpleFeatures.get(j);
 				List<ErrorFeature> errFeatures = graphicValidator.validateConIntersected(tmpSimpleFeatureI,
