@@ -7206,6 +7206,7 @@
 					this._data.geoserver.layerInfo = this.settings.geoserver.layerInfo;
 					this._data.geoserver.layerInfoURL = this.settings.geoserver.layerInfoURL;
 					this._data.geoserver.createLayer = this.settings.geoserver.createLayer;
+					this._data.geoserver.deleteLayer = this.settings.geoserver.deleteLayer;
 					this._data.geoserver.downloadNGIDXF = this.settings.geoserver.downloadNGIDXF;
 					this._data.geoserver.downloadGeoserver = this.settings.geoserver.downloadGeoserver;
 				};
@@ -8252,6 +8253,48 @@
 							 */
 							"action" : function(data) {
 								var inst = $.jstree.reference(data.reference), obj = inst.get_node(data.reference);
+								var arr = inst.get_selected();
+								var sameGroupParent = {};
+								var sameParent = [];
+								for (var i = 0; i < arr.length; i++) {
+									var node = inst.get_node(arr[i]);
+									var parent = inst.get_node(node.parent);
+									if (parent.type === "n_ngi_group" || parent.type === "n_dxf_group") {
+										if (!sameGroupParent.hasOwnProperty(parent.id)) {
+											sameGroupParent[parent.id] = {};
+										}
+										sameGroupParent[parent.id][node.id] = node;
+									} else if (parent.type === "n_shp" || parent.type === "e_ngi" || parent.type === "e_dxf"
+											|| parent.type === "e_shp") {
+										sameParent.push(node);
+									} else if (parent.type === "n_ngi" || parent.type === "n_dxf") {
+										inst._data.geoserver.deleteLayer.addStructure("all", node.children);
+									}
+								}
+								if (sameParent.length > 0) {
+									var part = [];
+									for (var j = 0; j < sameParent.length; j++) {
+										part.push(sameParent[j].id);
+									}
+									inst._data.geoserver.deleteLayer.addStructure("part", part);
+								}
+								var pkeys = Object.keys(sameGroupParent);
+								if (pkeys.length > 0) {
+									for (var i = 0; i < pkeys.length; i++) {
+										var parent = inst.get_node(pkeys[i]);
+										var group = [];
+										var ckeys = Object.keys(sameGroupParent[pkeys[i]]);
+										for (var j = 0; j < ckeys.length; j++) {
+											group.push(ckeys[j]);
+										}
+										inst._data.geoserver.deleteLayer.addStructure(
+												Object.keys(sameGroupParent[pkeys[i]]).length === parent.children.length ? "all" : "part",
+												group);
+									}
+								}
+								console.log(inst._data.geoserver.deleteLayer.getStructure());
+								inst._data.geoserver.deleteLayer.sendData(inst._data.geoserver.deleteLayer.getStructure());
+								// inst._data.geoserver.deleteLayer
 								// inst._data.geoserver.layerInfo.load(obj.id,
 								// obj.text);
 								// console.log("Not yet(layer info)");

@@ -132,6 +132,10 @@
 <script
 	src="${pageContext.request.contextPath}/resources/js/gitbuilder/createlayer.js"></script>
 
+<%-- 지오서버 레이어 삭제--%>
+<script
+	src="${pageContext.request.contextPath}/resources/js/gitbuilder/deletelayer.js"></script>
+
 <%-- 파일업로드 --%>
 <script src="${ctx}/resources/js/dropzone/dropzone.js"></script>
 <link rel="stylesheet"

@@ -356,7 +356,7 @@ html {
 		});
 
 		$("#layerDefinition").layerdefinition20({
-			
+
 		});
 
 		$("#validDefinition").optiondefinition({
@@ -403,8 +403,10 @@ html {
 		var layerInfo = new gb.edit.LayerInformation({
 			url : "geoserver2/getGeoLayerInfoList.ajax"
 		});
-
 		var createLayer = new gb.geoserver.CreateLayer({
+			url : undefined
+		});
+		var deleteLayer = new gb.geoserver.DeleteLayer({
 			url : undefined
 		});
 		$("#builderServerLayer").jstree({
@@ -426,6 +428,7 @@ html {
 				"layerInfo" : layerInfo,
 				"layerInfoURL" : "geoserver2/getGeoLayerInfoList.ajax",
 				"createLayer" : createLayer,
+				"deleteLayer" : deleteLayer,
 				"downloadNGIDXF" : "fileExport/fileExport.ajax",
 				"downloadGeoserver" : "geoserver2/downloadRequest.do"
 			},
