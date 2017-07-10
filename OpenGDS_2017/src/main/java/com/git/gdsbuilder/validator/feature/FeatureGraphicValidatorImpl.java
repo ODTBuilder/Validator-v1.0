@@ -459,8 +459,8 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 					double distance = geometryI.distance(new GeometryFactory().createPoint(j));
 					if (distance > spatialAccuracyTolorence) {
 						Geometry returnGome = geometryJ.getCentroid();
-						String featureIdx = simpleFeature.getID();
-						Property featuerIDPro = simpleFeature.getProperty("feature_id");
+						String featureIdx = relationSimpleFeature.getID();
+						Property featuerIDPro = relationSimpleFeature.getProperty("feature_id");
 						String featureID = (String) featuerIDPro.getValue();
 						errFeature = new ErrorFeature(featureIdx, featureID, OutBoundary.Type.OUTBOUNDARY.errType(),
 								OutBoundary.Type.OUTBOUNDARY.errName(), returnGome);
@@ -479,11 +479,6 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 		List<ErrorFeature> errFeatures = new ArrayList<ErrorFeature>();
 
 		Geometry geom = (Geometry) simpleFeature.getDefaultGeometry();
-
-		if (!geom.isSimple()) {
-			System.out.println("");
-		}
-
 		SimpleFeatureIterator iterator = aop.features();
 		while (iterator.hasNext()) {
 			SimpleFeature aopSimpleFeature = iterator.next();

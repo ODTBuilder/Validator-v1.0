@@ -210,29 +210,30 @@ public class CollectionValidator {
 
 		for (int i = 0; i < layerCollections.size(); i++) {
 
-			GeoLayerCollection collection = layerCollections.get(i); 
+			GeoLayerCollection collection = layerCollections.get(i);
 			String collectionName = collection.getCollectionName();
-			// try {
-			ErrorLayer errorLayer = new ErrorLayer();
-			errorLayer.setCollectionName(collectionName);
-			errorLayer.setCollectionType(this.collectionType);
+			try {
+				ErrorLayer errorLayer = new ErrorLayer();
+				errorLayer.setCollectionName(collectionName);
+				errorLayer.setCollectionType(this.collectionType);
 
-			// layerMiss 검수
-			// layerMissValidate(types, collection, errorLayer);
+				// layerMiss 검수
+				layerMissValidate(types, collection, errorLayer);
 
-			// geometric 검수
-			geometricValidate(types, collection, errorLayer);
+				// geometric 검수
+				geometricValidate(types, collection, errorLayer);
 
-			// attribute 검수
-			attributeValidate(types, collection, errorLayer);
+				// attribute 검수
+				attributeValidate(types, collection, errorLayer);
 
-			// 인접도엽 검수
-			// closeCollectionValidate(types, mapSystemRule, collection, "");
-			errLayerList.add(errorLayer);
-			progress.put(collection.getCollectionName(), 2);
-			// } catch (Exception e) {
-			// progress.put(collection.getCollectionName(), 3);
-			// }
+				// 인접도엽 검수
+				// closeCollectionValidate(types, mapSystemRule, collection,
+				// "");
+				errLayerList.add(errorLayer);
+				progress.put(collection.getCollectionName(), 2);
+			} catch (Exception e) {
+				progress.put(collection.getCollectionName(), 3);
+			}
 		}
 	}
 
@@ -249,9 +250,10 @@ public class CollectionValidator {
 			if (options != null) {
 				ErrorLayer typeErrorLayer = null;
 				for (int k = 0; k < options.size(); k++) {
-					
+
 					ValidatorOption option = options.get(k);
-					//System.out.println("typeLayerSize: " + typeLayers.size());
+					// System.out.println("typeLayerSize: " +
+					// typeLayers.size());
 					for (int a = 0; a < typeLayers.size(); a++) {
 						GeoLayer typeLayer = typeLayers.get(a);
 						if (typeLayer == null) {
@@ -263,6 +265,9 @@ public class CollectionValidator {
 							for (int l = 0; l < relationNames.size(); l++) {
 								typeErrorLayer = layerValidator.validateBridgeName(validateLayerCollectionList
 										.getTypeLayers(relationNames.get(l), layerCollection));
+								if (typeErrorLayer != null) {
+									errorLayer.mergeErrorLayer(typeErrorLayer);
+								}
 							}
 						}
 						if (option instanceof Admin) {
@@ -292,9 +297,9 @@ public class CollectionValidator {
 								errorLayer.mergeErrorLayer(typeErrorLayer);
 							}
 						}
-//						if (typeErrorLayer != null) {
-//							errorLayer.mergeErrorLayer(typeErrorLayer);
-//						}
+						// if (typeErrorLayer != null) {
+						// errorLayer.mergeErrorLayer(typeErrorLayer);
+						// }
 					}
 				}
 			}
@@ -377,9 +382,9 @@ public class CollectionValidator {
 								typeErrorLayer = layerValidator.validateOutBoundary(validateLayerCollectionList
 										.getTypeLayers(relationNames.get(r), layerCollection),
 										spatialAccuracyTolorence);
-							}
-							if (typeErrorLayer != null) {
-								errorLayer.mergeErrorLayer(typeErrorLayer);
+								if (typeErrorLayer != null) {
+									errorLayer.mergeErrorLayer(typeErrorLayer);
+								}
 							}
 						}
 						if (option instanceof SmallArea) {
@@ -401,9 +406,9 @@ public class CollectionValidator {
 							for (int r = 0; r < relationNames.size(); r++) {
 								typeErrorLayer = layerValidator.validateSelfEntity(validateLayerCollectionList
 										.getTypeLayers(relationNames.get(r), layerCollection));
-							}
-							if (typeErrorLayer != null) {
-								errorLayer.mergeErrorLayer(typeErrorLayer);
+								if (typeErrorLayer != null) {
+									errorLayer.mergeErrorLayer(typeErrorLayer);
+								}
 							}
 						}
 						if (option instanceof OverShoot) {
@@ -443,9 +448,9 @@ public class CollectionValidator {
 							for (int l = 0; l < relationNames.size(); l++) {
 								typeErrorLayer = layerValidator.vallidateB_SymbolOutSided(validateLayerCollectionList
 										.getTypeLayers(relationNames.get(l), layerCollection));
-							}
-							if (typeErrorLayer != null) {
-								errorLayer.mergeErrorLayer(typeErrorLayer);
+								if (typeErrorLayer != null) {
+									errorLayer.mergeErrorLayer(typeErrorLayer);
+								}
 							}
 						}
 						if (option instanceof CrossRoad) {
@@ -454,9 +459,9 @@ public class CollectionValidator {
 								typeErrorLayer = layerValidator.validateCrossRoad(validateLayerCollectionList
 										.getTypeLayers(relationNames.get(l), layerCollection), "",
 										spatialAccuracyTolorence);
-							}
-							if (typeErrorLayer != null) {
-								errorLayer.mergeErrorLayer(typeErrorLayer);
+								if (typeErrorLayer != null) {
+									errorLayer.mergeErrorLayer(typeErrorLayer);
+								}
 							}
 						}
 						if (option instanceof NodeMiss) {
@@ -465,9 +470,9 @@ public class CollectionValidator {
 								typeErrorLayer = layerValidator.validateNodeMiss(validateLayerCollectionList
 										.getTypeLayers(relationNames.get(l), layerCollection), "",
 										spatialAccuracyTolorence);
-							}
-							if (typeErrorLayer != null) {
-								errorLayer.mergeErrorLayer(typeErrorLayer);
+								if (typeErrorLayer != null) {
+									errorLayer.mergeErrorLayer(typeErrorLayer);
+								}
 							}
 						}
 						if (option instanceof PointDuplicated) {

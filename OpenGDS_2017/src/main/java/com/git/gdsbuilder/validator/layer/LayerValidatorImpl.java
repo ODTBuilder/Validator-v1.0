@@ -326,19 +326,12 @@ public class LayerValidatorImpl implements LayerValidator {
 			SimpleFeature simpleFeature = simpleFeatureIterator.next();
 			simpleFeatures.add(simpleFeature);
 		}
-		// ErrorLayer selfErrorLayer = selfEntity(simpleFeatures);
-		// if (selfErrorLayer != null) {
-		// errLayer.mergeErrorLayer(selfErrorLayer);
-		// }
-
+		ErrorLayer selfErrorLayer = selfEntity(simpleFeatures);
+//		if (selfErrorLayer != null) {
+//			errLayer.mergeErrorLayer(selfErrorLayer);
+//		}
 		for (int i = 0; i < relationLayers.size(); i++) {
 			GeoLayer relationLayer = relationLayers.get(i);
-
-			if (relationLayer.getLayerName().equals("F0010000_LINESTRING")) {
-				System.out.println("");
-
-			}
-
 			SimpleFeatureCollection relationSfc = relationLayer.getSimpleFeatureCollection();
 			List<SimpleFeature> relationSimpleFeatures = new ArrayList<SimpleFeature>();
 			SimpleFeatureIterator relationSimpleFeatureIterator = relationSfc.features();
@@ -790,11 +783,6 @@ public class LayerValidatorImpl implements LayerValidator {
 	public ErrorLayer validateAttributeFix(JSONObject notNullAtt) throws SchemaException {
 		ErrorLayer errorLayer = new ErrorLayer();
 		SimpleFeatureCollection sfc = validatorLayer.getSimpleFeatureCollection();
-
-		if (validatorLayer.getLayerName().equals("D0020000_POLYGON")) {
-			System.out.println("");
-		}
-
 		DefaultFeatureCollection featureCollection = new DefaultFeatureCollection();
 		SimpleFeatureIterator simpleFeatureIterator = sfc.features();
 		while (simpleFeatureIterator.hasNext()) {

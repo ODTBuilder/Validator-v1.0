@@ -48,7 +48,6 @@ import com.git.gdsbuilder.type.validate.option.Admin;
 import com.git.gdsbuilder.type.validate.option.AttributeFix;
 import com.git.gdsbuilder.type.validate.option.BridgeName;
 import com.git.gdsbuilder.type.validate.option.EntityDuplicated;
-import com.git.gdsbuilder.type.validate.option.SmallArea;
 import com.git.gdsbuilder.type.validate.option.ZValueAmbiguous;
 import com.vividsolutions.jts.geom.Geometry;
 
