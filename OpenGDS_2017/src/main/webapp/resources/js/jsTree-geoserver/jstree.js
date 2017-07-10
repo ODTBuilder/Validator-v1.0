@@ -8099,75 +8099,6 @@
 				 */
 				items : function(o, cb) { // Could be an object directly
 					return {
-						"create" : {
-							"separator_before" : false,
-							"icon" : "fa fa-asterisk",
-							"separator_after" : false,
-							"_disabled" : false, // (this.check("rename_node",
-							// data.reference,
-							// this.get_parent(data.reference),
-							// "")),
-							"label" : "Create",
-							/*
-							 * ! "shortcut" : 113, "shortcut_label" : 'F2',
-							 * "icon" : "glyphicon glyphicon-leaf",
-							 */
-							"action" : false,
-							"submenu" : {
-								"mapsheet" : {
-									"separator_before" : false,
-									"_disabled" : function(data) {
-										return !($.jstree.reference(data.reference).get_node(data.reference).type === "n_ngi" || $.jstree
-												.reference(data.reference).get_node(data.reference).type === "n_dxf")
-									},
-									"icon" : "fa fa-file-image-o",
-									"separator_after" : false,
-									"label" : "Map sheet",
-									"action" : function(data) {
-										var inst = $.jstree.reference(data.reference), obj = inst.get_node(data.reference);
-										if (obj.type === "n_ngi") {
-											var arr = inst.get_selected();
-											// var arr2 = [];
-											// for (var i = 0; i < arr.length;
-											// i++) {
-											// arr2.push(inst.get_node(arr[i]).id);
-											// }
-											var obj = {
-												"refer" : inst,
-												"arr" : arr
-											};
-											// inst.import_fake_group(obj);
-											console.log("map sheet");
-											inst._data.geoserver.createLayer.setForm("ngi", "mapsheet");
-											inst._data.geoserver.createLayer.open();
-										} else if (obj.type === "n_dxf") {
-											inst._data.geoserver.createLayer.setForm("dxf", "mapsheet");
-											inst._data.geoserver.createLayer.open();
-										}
-									}
-								},
-								"layer" : {
-									"separator_before" : false,
-									"_disabled" : function(data) {
-										return !($.jstree.reference(data.reference).get_node(data.reference).type === "n_ngi_group" || $.jstree
-												.reference(data.reference).get_node(data.reference).type === "n_dxf_group")
-									},
-									"icon" : "fa fa-file-image-o",
-									"separator_after" : false,
-									"label" : "Layer",
-									"action" : function(data) {
-										var inst = $.jstree.reference(data.reference), obj = inst.get_node(data.reference);
-										if (obj.type === "n_ngi_group") {
-											inst._data.geoserver.createLayer.setForm("ngi", "layer", obj.text);
-											inst._data.geoserver.createLayer.open();
-										} else if (obj.type === "n_dxf_group") {
-											inst._data.geoserver.createLayer.setForm("dxf", "layer", obj.text);
-											inst._data.geoserver.createLayer.open();
-										}
-									}
-								}
-							}
-						},
 						"import" : {
 							"separator_before" : true,
 							"icon" : "fa fa-download",
@@ -8233,6 +8164,97 @@
 										inst.import_vector();
 									}
 								}
+							}
+						},
+						"create" : {
+							"separator_before" : false,
+							"icon" : "fa fa-asterisk",
+							"separator_after" : false,
+							"_disabled" : false, // (this.check("rename_node",
+							// data.reference,
+							// this.get_parent(data.reference),
+							// "")),
+							"label" : "Create",
+							/*
+							 * ! "shortcut" : 113, "shortcut_label" : 'F2',
+							 * "icon" : "glyphicon glyphicon-leaf",
+							 */
+							"action" : false,
+							"submenu" : {
+								"mapsheet" : {
+									"separator_before" : false,
+									"_disabled" : function(data) {
+										return !($.jstree.reference(data.reference).get_node(data.reference).type === "n_ngi" || $.jstree
+												.reference(data.reference).get_node(data.reference).type === "n_dxf")
+									},
+									"icon" : "fa fa-file-image-o",
+									"separator_after" : false,
+									"label" : "Map sheet",
+									"action" : function(data) {
+										var inst = $.jstree.reference(data.reference), obj = inst.get_node(data.reference);
+										inst._data.geoserver.createLayer.setReference(inst);
+										if (obj.type === "n_ngi") {
+											var arr = inst.get_selected();
+											// var arr2 = [];
+											// for (var i = 0; i < arr.length;
+											// i++) {
+											// arr2.push(inst.get_node(arr[i]).id);
+											// }
+											var obj = {
+												"refer" : inst,
+												"arr" : arr
+											};
+											// inst.import_fake_group(obj);
+											console.log("map sheet");
+											inst._data.geoserver.createLayer.setForm("ngi", "mapsheet");
+											inst._data.geoserver.createLayer.open();
+										} else if (obj.type === "n_dxf") {
+											inst._data.geoserver.createLayer.setForm("dxf", "mapsheet");
+											inst._data.geoserver.createLayer.open();
+										}
+									}
+								},
+								"layer" : {
+									"separator_before" : false,
+									"_disabled" : function(data) {
+										return !($.jstree.reference(data.reference).get_node(data.reference).type === "n_ngi_group" || $.jstree
+												.reference(data.reference).get_node(data.reference).type === "n_dxf_group")
+									},
+									"icon" : "fa fa-file-image-o",
+									"separator_after" : false,
+									"label" : "Layer",
+									"action" : function(data) {
+										var inst = $.jstree.reference(data.reference), obj = inst.get_node(data.reference);
+										inst._data.geoserver.createLayer.setReference(inst);
+										if (obj.type === "n_ngi_group") {
+											inst._data.geoserver.createLayer.setForm("ngi", "layer", obj.text);
+											inst._data.geoserver.createLayer.open();
+										} else if (obj.type === "n_dxf_group") {
+											inst._data.geoserver.createLayer.setForm("dxf", "layer", obj.text);
+											inst._data.geoserver.createLayer.open();
+										}
+									}
+								}
+							}
+						},
+						"delete" : {
+							"separator_before" : false,
+							"icon" : "fa fa-trash",
+							"separator_after" : false,
+							"_disabled" : false, // (this.check("rename_node",
+							// data.reference,
+							// this.get_parent(data.reference),
+							// "")),
+							"label" : "Delete",
+							/*
+							 * ! "shortcut" : 113, "shortcut_label" : 'F2',
+							 * "icon" : "glyphicon glyphicon-leaf",
+							 */
+							"action" : function(data) {
+								var inst = $.jstree.reference(data.reference), obj = inst.get_node(data.reference);
+								// inst._data.geoserver.layerInfo.load(obj.id,
+								// obj.text);
+								// console.log("Not yet(layer info)");
 							}
 						},
 						"download" : {
