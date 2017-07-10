@@ -211,7 +211,7 @@ gb.edit.LayerInformation.prototype.close = function() {
 gb.edit.LayerInformation.prototype.save = function(obj) {
 
 };
-gb.edit.LayerInformation.prototype.load = function(name,  code) {
+gb.edit.LayerInformation.prototype.load = function(name, code) {
 	var that = this;
 	var arr = {
 		"geoLayerList" : [ name ]
@@ -240,32 +240,31 @@ gb.edit.LayerInformation.prototype.load = function(name,  code) {
 			var nameInput = $("<input>").addClass("form-control").attr({
 				"type" : "text"
 			}).val(code);
+			var div1 = $("<div>").css("margin-bottom", "10px").append(name).append(nameInput);
 
 			var title = $("<p>").text("Title");
 			var titleInput = $("<input>").addClass("form-control").attr({
 				"type" : "text"
 			}).val(data[0].title);
+			var div2 = $("<div>").css("margin-bottom", "10px").append(title).append(titleInput);
 
 			var summary = $("<p>").text("Summary");
 			var summaryInput = $("<textarea>").addClass("form-control").attr({
 				"rows" : "3"
 			}).text(data[0].abstractContent);
+			var div3 = $("<div>").css("margin-bottom", "10px").append(summary).append(summaryInput);
 
 			var minBound = $("<p>").text("Minimum Boundary of Original Data");
 
-			var bminx = $("<p>").text("Min X");
-			var td1 = $("<td>").append(bminx);
+			var td1 = $("<td>").text("Min X");
 
-			var bminy = $("<p>").text("Min Y");
-			var td2 = $("<td>").append(bminy);
+			var td2 = $("<td>").text("Min Y");
 
-			var bmaxx = $("<p>").text("Max X");
-			var td3 = $("<td>").append(bmaxx);
+			var td3 = $("<td>").text("Max X");
 
-			var bmaxy = $("<p>").text("Max Y");
-			var td4 = $("<td>").append(bmaxy);
+			var td4 = $("<td>").text("Max Y");
 
-			var tr1 = $("<tr>").append(td1).append(td2).append(td3).append(td4);
+			var tr1 = $("<thead>").append(td1).append(td2).append(td3).append(td4);
 
 			var bminx2 = $("<input>").addClass("form-control").attr({
 				"type" : "text",
@@ -292,24 +291,21 @@ gb.edit.LayerInformation.prototype.load = function(name,  code) {
 			var td44 = $("<td>").append(bmaxy2);
 
 			var tr11 = $("<tr>").append(td11).append(td22).append(td33).append(td44);
-
-			var tb1 = $("<table>").addClass("table").append(tr1).append(tr11);
+			var tbd = $("<tbody>").append(tr11);
+			var tb1 = $("<table>").addClass("table").addClass("text-center").append(tr1).append(tbd);
+			var div4 = $("<div>").css("margin-bottom", "10px").append(minBound).append(tb1);
 
 			var lonlatBound = $("<p>").text("Latitude / Longitude Area");
 
-			var bminx1 = $("<p>").text("Min X");
-			var td111 = $("<td>").append(bminx1);
+			var td111 = $("<td>").text("Min X");
 
-			var bminy1 = $("<p>").text("Min Y");
-			var td222 = $("<td>").append(bminy1);
+			var td222 = $("<td>").text("Min Y");
 
-			var bmaxx1 = $("<p>").text("Max X");
-			var td333 = $("<td>").append(bmaxx1);
+			var td333 = $("<td>").text("Max X");
 
-			var bmaxy1 = $("<p>").text("Max Y");
-			var td444 = $("<td>").append(bmaxy1);
+			var td444 = $("<td>").text("Max Y");
 
-			var tr111 = $("<tr>").append(td111).append(td222).append(td333).append(td444);
+			var tr111 = $("<thead>").append(td111).append(td222).append(td333).append(td444);
 
 			var bminx3 = $("<input>").addClass("form-control").attr({
 				"type" : "text",
@@ -336,24 +332,24 @@ gb.edit.LayerInformation.prototype.load = function(name,  code) {
 			var td4444 = $("<td>").append(bmaxy3);
 
 			var tr1111 = $("<tr>").append(td1111).append(td2222).append(td3333).append(td4444);
+			var tbd2 = $("<tbody>").append(tr1111);
+			var tb2 = $("<table>").addClass("table").addClass("text-center").append(tr111).append(tbd2);
+			var div5 = $("<div>").css("margin-bottom", "10px").append(lonlatBound).append(tb2);
 
-			var tb2 = $("<table>").addClass("table").append(tr111).append(tr1111);
-
-			var ftb = $("<table>");
-
-			var thtd1 = $("<td>").text("Attribute");
+			var attrkey = $("<p>").text("Attribute");
+			var thtd1 = $("<td>").text("Name");
 			var thtd2 = $("<td>").text("Type");
 			var thtd3 = $("<td>").text("Nullable");
 			var thead = $("<thead>").append(thtd1).append(thtd2).append(thtd3);
 			var tbody = $("<tbody>");
-			var fttb = $("<table>").addClass("table").append(thead).append(tbody);
+			var fttb = $("<table>").addClass("table").addClass("text-center").append(thead).append(tbody);
 			var keys = Object.keys(data[0].attInfo);
 			for (var i = 0; i < keys.length; i++) {
 				var input = $("<input>").addClass("form-control").attr({
 					"type" : "text"
 				}).val(keys[i]);
 				var td1 = $("<td>").append(input);
-				
+
 				var stritem = $("<option>").text("String");
 				var dblitem = $("<option>").text("Double");
 				var intitem = $("<option>").text("Integer");
@@ -361,7 +357,7 @@ gb.edit.LayerInformation.prototype.load = function(name,  code) {
 					"disabled" : true
 				}).addClass("form-control").append(stritem).append(dblitem).append(intitem).val(data[0].attInfo[keys[i]]["type"]);
 				var td2 = $("<td>").append(select);
-				
+
 				var check = $("<input>").attr({
 					"type" : "checkbox",
 					"disabled" : true
@@ -373,10 +369,9 @@ gb.edit.LayerInformation.prototype.load = function(name,  code) {
 				var tr = $("<tr>").append(td1).append(td2).append(td3);
 				$(tbody).append(tr);
 			}
-
+			var div6 = $("<div>").css("margin-bottom", "10px").append(attrkey).append(fttb);
 			$(that.body).empty();
-			$(that.body).append(name).append(nameInput).append(title).append(titleInput).append(summary).append(summaryInput).append(minBound).append(tb1).append(
-					lonlatBound).append(tb2).append(fttb);
+			$(that.body).append(div1).append(div2).append(div3).append(div4).append(div5).append(div6);
 			// $(body).addClass("modal-body");
 
 			that.open();
