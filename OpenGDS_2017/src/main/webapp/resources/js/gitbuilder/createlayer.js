@@ -124,7 +124,11 @@ gb.geoserver.CreateLayer.prototype.setForm = function(format, type, sheetNum) {
 	this.format = format;
 	this.type = type;
 	if (type === "mapsheet") {
-		$(this.htag).text("Create a map sheet");
+		if (format === "dxf") {
+			$(this.htag).text("Create a map sheet (DXF)");
+		} else if (format === "ngi") {
+			$(this.htag).text("Create a map sheet (NGI)");
+		}
 		$(this.sheetNumInput).val("");
 		$(this.layerNameForm).hide();
 		$(this.typeForm).hide();
@@ -167,7 +171,14 @@ gb.geoserver.CreateLayer.prototype.initTypeForm = function(type) {
 
 };
 gb.geoserver.CreateLayer.prototype.initAttrForm = function() {
-
+	var key = $("<input>").addClass("form-control").attr({"type" : "text"});
+	var td1 = $("<td>").append(key);
+	
+	var type = $("<select>");
+	
+	$(this.typeForm).empty();
+	var tp = $("<p>").text("Attribute");
+	$(this.typeForm).append(tp);
 };
 gb.geoserver.CreateLayer.prototype.load = function(obj) {
 	var that = this;
