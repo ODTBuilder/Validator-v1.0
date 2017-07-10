@@ -430,7 +430,7 @@ gitbuilder.ui.EditingTool = $.widget("gitbuilder.editingtool", {
 			}
 		}
 		that.interaction.select.getFeatures().extend(newFeatures);
-		
+
 		this.activeIntrct([ "select" ]);
 		this.isOn.select = true;
 		this.activeBtn("selectBtn");
@@ -534,7 +534,7 @@ gitbuilder.ui.EditingTool = $.widget("gitbuilder.editingtool", {
 			} else {
 				sourceLayer = layer[0];
 			}
-		} else if (layer instanceof ol.layer.Tile) {
+		} else if (layer instanceof ol.layer.Base) {
 			sourceLayer = layer;
 		} else {
 			return;
@@ -545,10 +545,79 @@ gitbuilder.ui.EditingTool = $.widget("gitbuilder.editingtool", {
 			if (!!this.interaction.select) {
 				this.activeIntrct("select");
 			}
-		} else if (sourceLayer instanceof ol.layer.Tile
-				&& (sourceLayer.get("git").geometry === "Point" || sourceLayer.get("git").geometry === "LineString"
-						|| sourceLayer.get("git").geometry === "Polygon" || sourceLayer.get("git").geometry === "MultiPoint"
-						|| sourceLayer.get("git").geometry === "MultiLineString" || sourceLayer.get("git").geometry === "MultiPolygon")) {
+		} else if (sourceLayer instanceof ol.layer.Base) {
+			// && (sourceLayer.get("git").geometry === "Point" ||
+			// sourceLayer.get("git").geometry === "LineString"
+			// || sourceLayer.get("git").geometry === "Polygon" ||
+			// sourceLayer.get("git").geometry === "MultiPoint"
+			// || sourceLayer.get("git").geometry === "MultiLineString" ||
+			// sourceLayer.get("git").geometry === "MultiPolygon")
+			if (!sourceLayer instanceof ol.layer.Tile && !sourceLayer.get("git").hasOwnProperty("fake")) {
+				return;
+			}
+			if (sourceLayer instanceof ol.layer.Base && sourceLayer.get("git").hasOwnProperty("fake")) {
+				if (sourceLayer.get("git").fake === "child") {
+					var arr = {
+						"geoLayerList" : [ sourceLayer.get("id") ]
+					}
+					var names = [];
+					// console.log(JSON.stringify(arr));
+
+					$.ajax({
+						url : "geoserver2/getGeoLayerInfoList.ajax",
+						method : "POST",
+						contentType : "application/json; charset=UTF-8",
+						cache : false,
+						// async : false,
+						data : JSON.stringify(arr),
+						beforeSend : function() { // 호출전실행
+							$("body").css("cursor", "wait");
+						},
+						traditional : true,
+						success : function(data2, textStatus, jqXHR) {
+							console.log(data2);
+							if (Array.isArray(data2)) {
+								for (var i = 0; i < data2.length; i++) {
+									var source = new ol.source.TileWMS({
+										url : "geoserver2/geoserverWMSLayerLoad.do",
+										params : {
+											'LAYERS' : data2[i].lName,
+											'TILED' : true,
+											'FORMAT' : 'image/png8',
+											'VERSION' : '1.1.0',
+											'CRS' : 'EPSG:5186',
+											'SRS' : 'EPSG:5186',
+											'BBOX' : data2[i].nbBox.minx.toString() + "," + data2[i].nbBox.miny.toString() + ","
+													+ data2[i].nbBox.maxx.toString() + "," + data2[i].nbBox.maxy.toString()
+										},
+										serverType : 'geoserver'
+									});
+									sourceLayer.setSource(source);
+									var ogit = sourceLayer.get("git");
+									ogit["attribute"] = data2[i].attInfo;
+									ogit["geometry"] = data2[i].geomType;
+//									var git = {
+//										"validation" : false,
+//										"geometry" : data2[i].geomType,
+//										"editable" : true,
+//										"attribute" : data2[i].attInfo,
+//										"fake" : "child"
+//									}
+//									wms.set("name", obj.refer.get_node(data2[i].lName).text);
+//									wms.set("id", data2[i].lName);
+									// wms.setVisible(false);
+//									console.log(wms.get("id"));
+									// wms.set("type", "ImageTile");
+//									wms.set("git", git);
+//									console.log(wms);
+								}
+
+								$("body").css("cursor", "default");
+							}
+						}
+					});
+				}
+			}
 			console.log("image-select");
 			if (!this.tempSelectSource) {
 				this.tempSelectSource = new ol.source.Vector();

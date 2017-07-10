@@ -181,24 +181,31 @@ gb.interaction.SelectWMS.prototype.setExtent = function(extent) {
 	} else if (this.conLayer instanceof ol.layer.Base){
 		this.layer = this.conLayer;
 	}
-	if (!(this.layer.getSource().getParams().CRS || this.layer.getSource().getParams().SRS)) {
-		console.error("no params");
-	}
 	this.extent_ = extent;
 	var that = this;
-	var url = this.layer.getSource().getGetFeatureInfoUrl(extent, this.map_.getView().getResolution(),
-			this.layer.getSource().getParams().CRS ? this.layer.getSource().getParams().CRS : this.layer.getSource().getParams().SRS, {
-				'INFO_FORMAT' : 'text/html'
-			});
-	var params = {
-			"service" : "WFS",
-			"version" : "1.0.0",
-			"request" : "GetFeature",
-			"typeName" : "admin:" + that.layer.getSource().getParams().LAYERS,
-			"outputformat" : "text/javascript",
-			"bbox" : extent.toString(),
-			"format_options" : "callback:getJson"
-	};
+	var params;
+	if (that.layer instanceof ol.layer.Tile) {
+		params = {
+				"service" : "WFS",
+				"version" : "1.0.0",
+				"request" : "GetFeature",
+				"typeName" : "admin:" + that.layer.getSource().getParams().LAYERS,
+				"outputformat" : "text/javascript",
+				"bbox" : extent.toString(),
+				"format_options" : "callback:getJson"
+		};
+	} else if (that.layer instanceof ol.layer.Base && that.layer.get("git").hasOwnProperty("fake")) {
+		params = {
+				"service" : "WFS",
+				"version" : "1.0.0",
+				"request" : "GetFeature",
+				"typeName" : "admin:" + that.layer.get("id"),
+				"outputformat" : "text/javascript",
+				"bbox" : extent.toString(),
+				"format_options" : "callback:getJson"
+		};
+	}
+
 	var addr = this.url_;
 
 	$.ajax({
@@ -207,10 +214,10 @@ gb.interaction.SelectWMS.prototype.setExtent = function(extent) {
 		dataType : 'jsonp',
 		jsonpCallback : 'getJson',
 		beforeSend : function(){
-			$("#"+ that.map_.getTarget()).css("cursor", "wait");
+			$("body").css("cursor", "wait");
 		},
 		complete : function(){
-			$("#"+ that.map_.getTarget()).css("cursor", "default");
+			$("body").css("cursor", "default");
 		},
 		success : function(data){
 			that.features_.clear();
@@ -228,11 +235,11 @@ gb.interaction.SelectWMS.prototype.setExtent = function(extent) {
 				if (selFeatures.item(k).getId().search(that.layer.get("id")+".new") !== -1) {
 					cFeatures.push(selFeatures.item(k));
 				}
-//				else {
-//					if (!that.record.isRemoved(that.layer, selFeatures.item(k))) {
-//						cFeatures.push(selFeatures.item(k));
-//					}
-//				}
+// else {
+// if (!that.record.isRemoved(that.layer, selFeatures.item(k))) {
+// cFeatures.push(selFeatures.item(k));
+// }
+// }
 			}
 			that.select_.getFeatures().clear();
 			that.select_.getFeatures().extend(cFeatures);

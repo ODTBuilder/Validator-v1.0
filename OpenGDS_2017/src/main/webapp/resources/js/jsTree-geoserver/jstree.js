@@ -37,7 +37,8 @@
 			 */
 
 			// internal variables
-			var instance_counter = 0, ccp_node = false, ccp_mode = false, ccp_inst = false, themes_loaded = [], src = $('script:last').attr('src'), document = window.document; // local
+			var instance_counter = 0, ccp_node = false, ccp_mode = false, ccp_inst = false, themes_loaded = [], src = $('script:last')
+					.attr('src'), document = window.document; // local
 			// variable
 			// is
 			// always
@@ -870,88 +871,87 @@
 					// quick searching when the tree is focused
 					.on(
 							'keypress.jstree',
-							$.proxy(
-									function(e) {
-										if (e.target.tagName && e.target.tagName.toLowerCase() === "input") {
-											return true;
-										}
-										if (tout) {
-											clearTimeout(tout);
-										}
-										tout = setTimeout(function() {
-											word = '';
-										}, 500);
+							$.proxy(function(e) {
+								if (e.target.tagName && e.target.tagName.toLowerCase() === "input") {
+									return true;
+								}
+								if (tout) {
+									clearTimeout(tout);
+								}
+								tout = setTimeout(function() {
+									word = '';
+								}, 500);
 
-										var chr = String.fromCharCode(e.which).toLowerCase(), col = this.element.find('.jstree-anchor').filter(
-												':visible'), ind = col.index(document.activeElement) || 0, end = false;
-										word += chr;
+								var chr = String.fromCharCode(e.which).toLowerCase(), col = this.element.find('.jstree-anchor').filter(
+										':visible'), ind = col.index(document.activeElement) || 0, end = false;
+								word += chr;
 
-										// match for whole word
-										// from current node
-										// down (including the
-										// current node)
-										if (word.length > 1) {
-											col.slice(ind).each($.proxy(function(i, v) {
-												if ($(v).text().toLowerCase().indexOf(word) === 0) {
-													$(v).focus();
-													end = true;
-													return false;
-												}
-											}, this));
-											if (end) {
-												return;
-											}
-
-											// match for whole
-											// word from the
-											// beginning of the
-											// tree
-											col.slice(0, ind).each($.proxy(function(i, v) {
-												if ($(v).text().toLowerCase().indexOf(word) === 0) {
-													$(v).focus();
-													end = true;
-													return false;
-												}
-											}, this));
-											if (end) {
-												return;
-											}
+								// match for whole word
+								// from current node
+								// down (including the
+								// current node)
+								if (word.length > 1) {
+									col.slice(ind).each($.proxy(function(i, v) {
+										if ($(v).text().toLowerCase().indexOf(word) === 0) {
+											$(v).focus();
+											end = true;
+											return false;
 										}
-										// list nodes that start
-										// with that letter
-										// (only if word
-										// consists of a single
-										// char)
-										if (new RegExp('^' + chr.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&') + '+$').test(word)) {
-											// search for the
-											// next node
-											// starting with
-											// that letter
-											col.slice(ind + 1).each($.proxy(function(i, v) {
-												if ($(v).text().toLowerCase().charAt(0) === chr) {
-													$(v).focus();
-													end = true;
-													return false;
-												}
-											}, this));
-											if (end) {
-												return;
-											}
+									}, this));
+									if (end) {
+										return;
+									}
 
-											// search from the
-											// beginning
-											col.slice(0, ind + 1).each($.proxy(function(i, v) {
-												if ($(v).text().toLowerCase().charAt(0) === chr) {
-													$(v).focus();
-													end = true;
-													return false;
-												}
-											}, this));
-											if (end) {
-												return;
-											}
+									// match for whole
+									// word from the
+									// beginning of the
+									// tree
+									col.slice(0, ind).each($.proxy(function(i, v) {
+										if ($(v).text().toLowerCase().indexOf(word) === 0) {
+											$(v).focus();
+											end = true;
+											return false;
 										}
-									}, this))
+									}, this));
+									if (end) {
+										return;
+									}
+								}
+								// list nodes that start
+								// with that letter
+								// (only if word
+								// consists of a single
+								// char)
+								if (new RegExp('^' + chr.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&') + '+$').test(word)) {
+									// search for the
+									// next node
+									// starting with
+									// that letter
+									col.slice(ind + 1).each($.proxy(function(i, v) {
+										if ($(v).text().toLowerCase().charAt(0) === chr) {
+											$(v).focus();
+											end = true;
+											return false;
+										}
+									}, this));
+									if (end) {
+										return;
+									}
+
+									// search from the
+									// beginning
+									col.slice(0, ind + 1).each($.proxy(function(i, v) {
+										if ($(v).text().toLowerCase().charAt(0) === chr) {
+											$(v).focus();
+											end = true;
+											return false;
+										}
+									}, this));
+									if (end) {
+										return;
+									}
+								}
+							}, this))
 					// THEME RELATED
 					.on("init.jstree", $.proxy(function() {
 						var s = this.settings.core.themes;
@@ -1409,8 +1409,8 @@
 					if (obj.state.loaded) {
 						obj.state.loaded = false;
 						for (i = 0, j = obj.parents.length; i < j; i++) {
-							this._model.data[obj.parents[i]].children_d = $.vakata.array_filter(this._model.data[obj.parents[i]].children_d,
-									function(v) {
+							this._model.data[obj.parents[i]].children_d = $.vakata.array_filter(
+									this._model.data[obj.parents[i]].children_d, function(v) {
 										return $.inArray(v, obj.children_d) === -1;
 									});
 						}
@@ -1607,10 +1607,10 @@
 							if (d === false) {
 								callback.call(this, false);
 							} else {
-								this[typeof d === 'string' ? '_append_html_data' : '_append_json_data'](obj,
-										typeof d === 'string' ? $($.parseHTML(d)).filter(notTextOrCommentNode) : d, function(status) {
-											callback.call(this, status);
-										});
+								this[typeof d === 'string' ? '_append_html_data' : '_append_json_data'](obj, typeof d === 'string' ? $(
+										$.parseHTML(d)).filter(notTextOrCommentNode) : d, function(status) {
+									callback.call(this, status);
+								});
 							}
 							// return d === false ? callback.call(this, false) :
 							// callback.call(this, this[typeof d === 'string' ?
@@ -2589,8 +2589,8 @@
 				 * @trigger redraw.jstree
 				 */
 				_redraw : function() {
-					var nodes = this._model.force_full_redraw ? this._model.data[$.jstree.root].children.concat([]) : this._model.changed.concat([]), f = document
-							.createElement('UL'), tmp, i, j, fe = this._data.core.focused;
+					var nodes = this._model.force_full_redraw ? this._model.data[$.jstree.root].children.concat([]) : this._model.changed
+							.concat([]), f = document.createElement('UL'), tmp, i, j, fe = this._data.core.focused;
 					for (i = 0, j = nodes.length; i < j; i++) {
 						tmp = this.redraw_node(nodes[i], true, this._model.force_full_redraw);
 						if (tmp && this._model.force_full_redraw) {
@@ -2702,14 +2702,15 @@
 					}
 					deep = deep || obj.children.length === 0;
 					node = !document.querySelector ? document.getElementById(obj.id) : this.element[0].querySelector('#'
-							+ ("0123456789".indexOf(obj.id[0]) !== -1 ? '\\3' + obj.id[0] + ' ' + obj.id.substr(1).replace($.jstree.idregex, '\\$&')
-									: obj.id.replace($.jstree.idregex, '\\$&'))); // ,
+							+ ("0123456789".indexOf(obj.id[0]) !== -1 ? '\\3' + obj.id[0] + ' '
+									+ obj.id.substr(1).replace($.jstree.idregex, '\\$&') : obj.id.replace($.jstree.idregex, '\\$&'))); // ,
 					// this.element);
 					if (!node) {
 						deep = true;
 						// node = d.createElement('LI');
 						if (!is_callback) {
-							par = obj.parent !== $.jstree.root ? $('#' + obj.parent.replace($.jstree.idregex, '\\$&'), this.element)[0] : null;
+							par = obj.parent !== $.jstree.root ? $('#' + obj.parent.replace($.jstree.idregex, '\\$&'), this.element)[0]
+									: null;
 							if (par !== null && (!par || !m[obj.parent].state.opened)) {
 								return false;
 							}
@@ -2852,7 +2853,8 @@
 							par = this.element[0];
 						}
 						for (i = 0, j = par.childNodes.length; i < j; i++) {
-							if (par.childNodes[i] && par.childNodes[i].className && par.childNodes[i].className.indexOf('jstree-children') !== -1) {
+							if (par.childNodes[i] && par.childNodes[i].className
+									&& par.childNodes[i].className.indexOf('jstree-children') !== -1) {
 								tmp = par.childNodes[i];
 								break;
 							}
@@ -2954,8 +2956,9 @@
 								this.trigger('before_open', {
 									"node" : obj
 								});
-								d.children(".jstree-children").css("display", "none").end().removeClass("jstree-closed").addClass("jstree-open")
-										.attr("aria-expanded", true).children(".jstree-children").stop(true, true).slideDown(animation, function() {
+								d.children(".jstree-children").css("display", "none").end().removeClass("jstree-closed").addClass(
+										"jstree-open").attr("aria-expanded", true).children(".jstree-children").stop(true, true).slideDown(
+										animation, function() {
 											this.style.display = "";
 											if (t.element) {
 												t.trigger("after_open", {
@@ -3101,9 +3104,9 @@
 								"node" : obj
 							});
 						} else {
-							d.children(".jstree-children").attr("style", "display:block !important").end().removeClass("jstree-open").addClass(
-									"jstree-closed").attr("aria-expanded", false).children(".jstree-children").stop(true, true).slideUp(animation,
-									function() {
+							d.children(".jstree-children").attr("style", "display:block !important").end().removeClass("jstree-open")
+									.addClass("jstree-closed").attr("aria-expanded", false).children(".jstree-children").stop(true, true)
+									.slideUp(animation, function() {
 										this.style.display = "";
 										d.children('.jstree-children').remove();
 										if (t.element) {
@@ -3538,7 +3541,8 @@
 							var o = this.get_node(obj).id, l = this._data.core.last_clicked.id, p = this
 									.get_node(this._data.core.last_clicked.parent).children, c = false, i, j;
 							for (i = 0, j = p.length; i < j; i += 1) {
-								// separate IFs work whem o and l are the same
+								// separate IFs work whem o and l are the
+								// same
 								if (p[i] === o) {
 									c = !c;
 								}
@@ -4346,7 +4350,8 @@
 						'a_attr' : $.extend(true, {}, obj.a_attr),
 						'state' : {},
 						'data' : options && options.no_data ? false : $.extend(true, {}, obj.data)
-					// ( this.get_node(obj, true).length ? this.get_node(obj,
+					// ( this.get_node(obj, true).length ?
+					// this.get_node(obj,
 					// true).data() : obj.data ),
 					}, i, j;
 					if (options && options.flat) {
@@ -4624,9 +4629,10 @@
 					tmp = obj.children_d.concat([]);
 					tmp.push(obj.id);
 					for (i = 0, j = obj.parents.length; i < j; i++) {
-						this._model.data[obj.parents[i]].children_d = $.vakata.array_filter(this._model.data[obj.parents[i]].children_d, function(v) {
-							return $.inArray(v, tmp) === -1;
-						});
+						this._model.data[obj.parents[i]].children_d = $.vakata.array_filter(this._model.data[obj.parents[i]].children_d,
+								function(v) {
+									return $.inArray(v, tmp) === -1;
+								});
 					}
 					for (k = 0, l = tmp.length; k < l; k++) {
 						if (this._model.data[tmp[k]].state.selected) {
@@ -4710,8 +4716,8 @@
 					var tmp = chk.match(/^move_node|copy_node|create_node$/i) ? par : obj, chc = this.settings.core.check_callback;
 					if (chk === "move_node" || chk === "copy_node") {
 						if ((!more || !more.is_multi)
-								&& (obj.id === par.id || (chk === "move_node" && $.inArray(obj.id, par.children) === pos) || $.inArray(par.id,
-										obj.children_d) !== -1)) {
+								&& (obj.id === par.id || (chk === "move_node" && $.inArray(obj.id, par.children) === pos) || $.inArray(
+										par.id, obj.children_d) !== -1)) {
 							this._data.core.last_error = {
 								'error' : 'check',
 								'plugin' : 'core',
@@ -4747,7 +4753,8 @@
 						}
 						return tmp.functions[chk];
 					}
-					if (chc === false || ($.isFunction(chc) && chc.call(this, chk, obj, par, pos, more) === false) || (chc && chc[chk] === false)) {
+					if (chc === false || ($.isFunction(chc) && chc.call(this, chk, obj, par, pos, more) === false)
+							|| (chc && chc[chk] === false)) {
 						this._data.core.last_error = {
 							'error' : 'check',
 							'plugin' : 'core',
@@ -4840,8 +4847,9 @@
 					new_par = (!pos.toString().match(/^(before|after)$/) || par.id === $.jstree.root) ? par : this.get_node(par.parent);
 					old_ins = origin ? origin : (this._model.data[obj.id] ? this : $.jstree.reference(obj.id));
 					is_multi = !old_ins || !old_ins._id || (this._id !== old_ins._id);
-					old_pos = old_ins && old_ins._id && old_par && old_ins._model.data[old_par] && old_ins._model.data[old_par].children ? $.inArray(
-							obj.id, old_ins._model.data[old_par].children) : -1;
+					old_pos = old_ins && old_ins._id && old_par && old_ins._model.data[old_par] && old_ins._model.data[old_par].children ? $
+							.inArray(obj.id, old_ins._model.data[old_par].children)
+							: -1;
 					if (old_ins && old_ins._id) {
 						obj = old_ins._model.data[obj.id];
 					}
@@ -5196,20 +5204,19 @@
 					 * @param {jsTree}
 					 *            new_instance the instance of the new parent
 					 */
-					this.trigger('copy_node',
-							{
-								"node" : tmp,
-								"original" : obj,
-								"parent" : new_par.id,
-								"position" : pos,
-								"old_parent" : old_par,
-								"old_position" : old_ins && old_ins._id && old_par && old_ins._model.data[old_par]
-										&& old_ins._model.data[old_par].children ? $.inArray(obj.id, old_ins._model.data[old_par].children) : -1,
-								'is_multi' : (old_ins && old_ins._id && old_ins._id !== this._id),
-								'is_foreign' : (!old_ins || !old_ins._id),
-								'old_instance' : old_ins,
-								'new_instance' : this
-							});
+					this.trigger('copy_node', {
+						"node" : tmp,
+						"original" : obj,
+						"parent" : new_par.id,
+						"position" : pos,
+						"old_parent" : old_par,
+						"old_position" : old_ins && old_ins._id && old_par && old_ins._model.data[old_par]
+								&& old_ins._model.data[old_par].children ? $.inArray(obj.id, old_ins._model.data[old_par].children) : -1,
+						'is_multi' : (old_ins && old_ins._id && old_ins._id !== this._id),
+						'is_foreign' : (!old_ins || !old_ins._id),
+						'old_instance' : old_ins,
+						'new_instance' : this
+					});
 					return tmp.id;
 				},
 				/**
@@ -5470,7 +5477,8 @@
 							s.remove();
 							t = f ? t : $('<div></div>').append($.parseHTML(t)).html();
 							this.set_text(obj, t);
-							nv = !!this.rename_node(obj, f ? $('<div></div>').text(v).text() : $('<div></div>').append($.parseHTML(v)).html());
+							nv = !!this.rename_node(obj, f ? $('<div></div>').text(v).text() : $('<div></div>').append($.parseHTML(v))
+									.html());
 							if (!nv) {
 								this.set_text(obj, t); // move
 								// this
@@ -5843,7 +5851,8 @@
 						}
 					} else {
 						dom.removeClass(old).css("background", "");
-						dom.addClass('jstree-themeicon-custom').css("background", "url('" + icon + "') center center no-repeat").attr("rel", icon);
+						dom.addClass('jstree-themeicon-custom').css("background", "url('" + icon + "') center center no-repeat").attr(
+								"rel", icon);
 						if (old === false) {
 							this.show_icon(obj);
 						}
@@ -6181,8 +6190,8 @@
 																	for (i = 0, j = dpc.length; i < j; i++) {
 																		m[dpc[i]].state[t ? 'selected' : 'checked'] = true;
 																	}
-																	this._data[t ? 'core' : 'checkbox'].selected = this._data[t ? 'core' : 'checkbox'].selected
-																			.concat(dpc);
+																	this._data[t ? 'core' : 'checkbox'].selected = this._data[t ? 'core'
+																			: 'checkbox'].selected.concat(dpc);
 																} else {
 																	for (i = 0, j = dpc.length; i < j; i++) {
 																		if (m[dpc[i]].state[t ? 'selected' : 'checked']) {
@@ -6216,8 +6225,8 @@
 																			this._data[t ? 'core' : 'checkbox'].selected.push(p.id);
 																			tmp = this.get_node(p, true);
 																			if (tmp && tmp.length) {
-																				tmp.attr('aria-selected', true).children('.jstree-anchor').addClass(
-																						t ? 'jstree-clicked' : 'jstree-checked');
+																				tmp.attr('aria-selected', true).children('.jstree-anchor')
+																						.addClass(t ? 'jstree-clicked' : 'jstree-checked');
 																			}
 																		} else {
 																			break;
@@ -6256,7 +6265,8 @@
 																	sel[obj.children_d[i]] = true;
 																	tmp = m[obj.children_d[i]];
 																	tmp.state[t ? 'selected' : 'checked'] = true;
-																	if (tmp && tmp.original && tmp.original.state && tmp.original.state.undetermined) {
+																	if (tmp && tmp.original && tmp.original.state
+																			&& tmp.original.state.undetermined) {
 																		tmp.original.state.undetermined = false;
 																	}
 																}
@@ -6280,8 +6290,8 @@
 																		// ].selected.push(par.id);
 																		tmp = this.get_node(par, true);
 																		if (tmp && tmp.length) {
-																			tmp.attr('aria-selected', true).children('.jstree-anchor').addClass(
-																					t ? 'jstree-clicked' : 'jstree-checked');
+																			tmp.attr('aria-selected', true).children('.jstree-anchor')
+																					.addClass(t ? 'jstree-clicked' : 'jstree-checked');
 																		}
 																	} else {
 																		break;
@@ -6303,19 +6313,21 @@
 															// .children
 															// separately?)
 															if (s.indexOf('down') !== -1 && dom.length) {
-																dom.find('.jstree-anchor').addClass(t ? 'jstree-clicked' : 'jstree-checked').parent()
-																		.attr('aria-selected', true);
+																dom.find('.jstree-anchor')
+																		.addClass(t ? 'jstree-clicked' : 'jstree-checked').parent().attr(
+																				'aria-selected', true);
 															}
 														}, this))
-								.on(this.settings.checkbox.tie_selection ? 'deselect_all.jstree' : 'uncheck_all.jstree', $.proxy(function(e, data) {
-									var obj = this.get_node($.jstree.root), m = this._model.data, i, j, tmp;
-									for (i = 0, j = obj.children_d.length; i < j; i++) {
-										tmp = m[obj.children_d[i]];
-										if (tmp && tmp.original && tmp.original.state && tmp.original.state.undetermined) {
-											tmp.original.state.undetermined = false;
-										}
-									}
-								}, this))
+								.on(this.settings.checkbox.tie_selection ? 'deselect_all.jstree' : 'uncheck_all.jstree',
+										$.proxy(function(e, data) {
+											var obj = this.get_node($.jstree.root), m = this._model.data, i, j, tmp;
+											for (i = 0, j = obj.children_d.length; i < j; i++) {
+												tmp = m[obj.children_d[i]];
+												if (tmp && tmp.original && tmp.original.state && tmp.original.state.undetermined) {
+													tmp.original.state.undetermined = false;
+												}
+											}
+										}, this))
 								.on(
 										this.settings.checkbox.tie_selection ? 'deselect_node.jstree' : 'uncheck_node.jstree',
 										$
@@ -6323,40 +6335,48 @@
 														function(e, data) {
 															var obj = data.node, dom = this.get_node(obj, true), i, j, tmp, s = this.settings.checkbox.cascade, t = this.settings.checkbox.tie_selection, cur = this._data[t ? 'core'
 																	: 'checkbox'].selected, sel = {};
-															if (obj && obj.original && obj.original.state && obj.original.state.undetermined) {
+															if (obj && obj.original && obj.original.state
+																	&& obj.original.state.undetermined) {
 																obj.original.state.undetermined = false;
 															}
 
-															// apply down
+															// apply
+															// down
 															if (s.indexOf('down') !== -1) {
 																for (i = 0, j = obj.children_d.length; i < j; i++) {
 																	tmp = this._model.data[obj.children_d[i]];
 																	tmp.state[t ? 'selected' : 'checked'] = false;
-																	if (tmp && tmp.original && tmp.original.state && tmp.original.state.undetermined) {
+																	if (tmp && tmp.original && tmp.original.state
+																			&& tmp.original.state.undetermined) {
 																		tmp.original.state.undetermined = false;
 																	}
 																}
 															}
 
-															// apply up
+															// apply
+															// up
 															if (s.indexOf('up') !== -1) {
 																for (i = 0, j = obj.parents.length; i < j; i++) {
 																	tmp = this._model.data[obj.parents[i]];
 																	tmp.state[t ? 'selected' : 'checked'] = false;
-																	if (tmp && tmp.original && tmp.original.state && tmp.original.state.undetermined) {
+																	if (tmp && tmp.original && tmp.original.state
+																			&& tmp.original.state.undetermined) {
 																		tmp.original.state.undetermined = false;
 																	}
 																	tmp = this.get_node(obj.parents[i], true);
 																	if (tmp && tmp.length) {
-																		tmp.attr('aria-selected', false).children('.jstree-anchor').removeClass(
-																				t ? 'jstree-clicked' : 'jstree-checked');
+																		tmp.attr('aria-selected', false).children('.jstree-anchor')
+																				.removeClass(t ? 'jstree-clicked' : 'jstree-checked');
 																	}
 																}
 															}
 															sel = {};
 															for (i = 0, j = cur.length; i < j; i++) {
-																// apply down +
-																// apply up
+																// apply
+																// down
+																// +
+																// apply
+																// up
 																if ((s.indexOf('down') === -1 || $.inArray(cur[i], obj.children_d) === -1)
 																		&& (s.indexOf('up') === -1 || $.inArray(cur[i], obj.parents) === -1)) {
 																	sel[cur[i]] = true;
@@ -6370,13 +6390,15 @@
 															}
 															this._data[t ? 'core' : 'checkbox'].selected = cur;
 
-															// apply down
+															// apply
+															// down
 															// (process
 															// .children
 															// separately?)
 															if (s.indexOf('down') !== -1 && dom.length) {
-																dom.find('.jstree-anchor').removeClass(t ? 'jstree-clicked' : 'jstree-checked')
-																		.parent().attr('aria-selected', false);
+																dom.find('.jstree-anchor').removeClass(
+																		t ? 'jstree-clicked' : 'jstree-checked').parent().attr(
+																		'aria-selected', false);
 															}
 														}, this));
 					}
@@ -6400,8 +6422,8 @@
 																	this._data[t ? 'core' : 'checkbox'].selected.push(p.id);
 																	tmp = this.get_node(p, true);
 																	if (tmp && tmp.length) {
-																		tmp.attr('aria-selected', true).children('.jstree-anchor').addClass(
-																				t ? 'jstree-clicked' : 'jstree-checked');
+																		tmp.attr('aria-selected', true).children('.jstree-anchor')
+																				.addClass(t ? 'jstree-clicked' : 'jstree-checked');
 																	}
 																} else {
 																	break;
@@ -6430,8 +6452,8 @@
 																		this._data[t ? 'core' : 'checkbox'].selected.push(p.id);
 																		tmp = this.get_node(p, true);
 																		if (tmp && tmp.length) {
-																			tmp.attr('aria-selected', true).children('.jstree-anchor').addClass(
-																					t ? 'jstree-clicked' : 'jstree-checked');
+																			tmp.attr('aria-selected', true).children('.jstree-anchor')
+																					.addClass(t ? 'jstree-clicked' : 'jstree-checked');
 																		}
 																	} else {
 																		break;
@@ -6451,19 +6473,20 @@
 																		this._data[t ? 'core' : 'checkbox'].selected.push(p.id);
 																		tmp = this.get_node(p, true);
 																		if (tmp && tmp.length) {
-																			tmp.attr('aria-selected', true).children('.jstree-anchor').addClass(
-																					t ? 'jstree-clicked' : 'jstree-checked');
+																			tmp.attr('aria-selected', true).children('.jstree-anchor')
+																					.addClass(t ? 'jstree-clicked' : 'jstree-checked');
 																		}
 																	}
 																} else {
 																	if (p.state[t ? 'selected' : 'checked']) {
 																		p.state[t ? 'selected' : 'checked'] = false;
-																		this._data[t ? 'core' : 'checkbox'].selected = $.vakata.array_remove_item(
-																				this._data[t ? 'core' : 'checkbox'].selected, p.id);
+																		this._data[t ? 'core' : 'checkbox'].selected = $.vakata
+																				.array_remove_item(
+																						this._data[t ? 'core' : 'checkbox'].selected, p.id);
 																		tmp = this.get_node(p, true);
 																		if (tmp && tmp.length) {
-																			tmp.attr('aria-selected', false).children('.jstree-anchor').removeClass(
-																					t ? 'jstree-clicked' : 'jstree-checked');
+																			tmp.attr('aria-selected', false).children('.jstree-anchor')
+																					.removeClass(t ? 'jstree-clicked' : 'jstree-checked');
 																		}
 																	} else {
 																		break;
@@ -6486,7 +6509,8 @@
 					if (this.element === null) {
 						return;
 					}
-					var i, j, k, l, o = {}, m = this._model.data, t = this.settings.checkbox.tie_selection, s = this._data[t ? 'core' : 'checkbox'].selected, p = [], tt = this;
+					var i, j, k, l, o = {}, m = this._model.data, t = this.settings.checkbox.tie_selection, s = this._data[t ? 'core'
+							: 'checkbox'].selected, p = [], tt = this;
 					for (i = 0, j = s.length; i < j; i++) {
 						if (m[s[i]] && m[s[i]].parents) {
 							for (k = 0, l = m[s[i]].parents.length; k < l; k++) {
@@ -6553,7 +6577,8 @@
 					if (obj) {
 						var i, j, tmp = null, icon = null;
 						for (i = 0, j = obj.childNodes.length; i < j; i++) {
-							if (obj.childNodes[i] && obj.childNodes[i].className && obj.childNodes[i].className.indexOf("jstree-anchor") !== -1) {
+							if (obj.childNodes[i] && obj.childNodes[i].className
+									&& obj.childNodes[i].className.indexOf("jstree-anchor") !== -1) {
 								tmp = obj.childNodes[i];
 								break;
 							}
@@ -6620,7 +6645,8 @@
 				 */
 				this.is_undetermined = function(obj) {
 					obj = this.get_node(obj);
-					var s = this.settings.checkbox.cascade, i, j, t = this.settings.checkbox.tie_selection, d = this._data[t ? 'core' : 'checkbox'].selected, m = this._model.data;
+					var s = this.settings.checkbox.cascade, i, j, t = this.settings.checkbox.tie_selection, d = this._data[t ? 'core'
+							: 'checkbox'].selected, m = this._model.data;
 					if (!obj || obj.state[t ? 'selected' : 'checked'] === true || s.indexOf('undetermined') === -1
 							|| (s.indexOf('down') === -1 && s.indexOf('up') === -1)) {
 						return false;
@@ -6725,10 +6751,12 @@
 					if ($(e.target).hasClass('jstree-checkbox-disabled')) {
 						return false;
 					}
-					if (this.settings.checkbox.tie_selection && (this.settings.checkbox.whole_node || $(e.target).hasClass('jstree-checkbox'))) {
+					if (this.settings.checkbox.tie_selection
+							&& (this.settings.checkbox.whole_node || $(e.target).hasClass('jstree-checkbox'))) {
 						e.ctrlKey = true;
 					}
-					if (this.settings.checkbox.tie_selection || (!this.settings.checkbox.whole_node && !$(e.target).hasClass('jstree-checkbox'))) {
+					if (this.settings.checkbox.tie_selection
+							|| (!this.settings.checkbox.whole_node && !$(e.target).hasClass('jstree-checkbox'))) {
 						return parent.activate_node.call(this, obj, e);
 					}
 					if (this.is_disabled(obj)) {
@@ -7042,7 +7070,8 @@
 							for (k = 0, l = tmp.children_d.length; k < l; k++) {
 								if (this._model.data[tmp.children_d[k]].state.checked) {
 									c = true;
-									this._data.checkbox.selected = $.vakata.array_remove_item(this._data.checkbox.selected, tmp.children_d[k]);
+									this._data.checkbox.selected = $.vakata.array_remove_item(this._data.checkbox.selected,
+											tmp.children_d[k]);
 								}
 							}
 						}
@@ -7176,10 +7205,100 @@
 					this._data.geoserver.user = this.settings.geoserver.user;
 					this._data.geoserver.layerInfo = this.settings.geoserver.layerInfo;
 					this._data.geoserver.layerInfoURL = this.settings.geoserver.layerInfoURL;
+					this._data.geoserver.createLayer = this.settings.geoserver.createLayer;
 					this._data.geoserver.downloadNGIDXF = this.settings.geoserver.downloadNGIDXF;
 					this._data.geoserver.downloadGeoserver = this.settings.geoserver.downloadGeoserver;
-				}
+				};
+				this.import_fake_group_notload = function(obj) {
+					// // =======================================
+					var that = this;
+					var parentLayer;
+					var farr = {
+						"geoLayerList" : obj.arr
+					}
+					console.log(JSON.stringify(farr));
+					var parentParam;
+					$
+							.ajax({
+								url : "geoserver2/getGeoGroupLayerInfoList.ajax",
+								method : "POST",
+								contentType : "application/json; charset=UTF-8",
+								cache : false,
+								// async : false,
+								data : JSON.stringify(farr),
+								beforeSend : function() { // 호출전실행
+									$("body").css("cursor", "wait");
+								},
+								traditional : true,
+								success : function(data, textStatus, jqXHR) {
+									console.log(data);
+									if (Array.isArray(data)) {
+										for (var i = 0; i < data.length; i++) {
+											var wms = new ol.layer.Tile({
+												source : new ol.source.TileWMS({
+													url : "geoserver2/geoserverWMSLayerLoad.do",
+													params : {
+														'LAYERS' : obj.refer.get_node(data[i].name).children.toString(),
+														'TILED' : true,
+														'FORMAT' : 'image/png8',
+														'VERSION' : '1.1.0',
+														'CRS' : 'EPSG:5186',
+														'SRS' : 'EPSG:5186',
+														'BBOX' : data[i].bbox.minx.toString() + "," + data[i].bbox.miny.toString() + ","
+																+ data[i].bbox.maxx.toString() + "," + data[i].bbox.maxy.toString()
+													},
+													serverType : 'geoserver'
+												})
+											});
+											var layers = new ol.Collection();
+											for (var j = 0; j < data[i].publishedList.names.length; j++) {
+												var layer = new ol.layer.Base({
+													opacity : 1,
+													visible : true
+												});
+												var id = data[i].publishedList.names[j];
+												var name = id.substring((id.split("_", 3).join("_").length) + 1,
+														id.split("_", 4).join("_").length);
+												var gchild = {
+													"validation" : false,
+													"editable" : true,
+													"fake" : "child"
+												}
+												layer.set("git", gchild);
+												layer.set("id", id);
+												layer.set("name", name);
+												layers.push(layer);
+											}
+											var git = {
+												"validation" : false,
+												"geometry" : data[i].geomType,
+												"editable" : true,
+												"fake" : "parent",
+												"layers" : layers
+											}
 
+											wms.set("name", obj.refer.get_node(data[i].name).text);
+											wms.set("id", data[i].name);
+											wms.set("git", git);
+											var mapLayers = that._data.geoserver.map.getLayers();
+
+											for (var j = 0; j < mapLayers.getLength(); j++) {
+												if (mapLayers.item(j).get("id") === wms.get("id")
+														&& mapLayers.item(j) instanceof ol.layer.Tile
+														&& mapLayers.item(j).get("git").hasOwnProperty("fake")) {
+													that._data.geoserver.map.removeLayer(mapLayers.item(j));
+													break;
+												}
+											}
+											console.log(wms);
+											// wms.set("type", "ImageTile");
+											that._data.geoserver.map.addLayer(wms);
+											$("body").css("cursor", "default");
+										}
+									}
+								}
+							});
+				};
 				this.import_fake_image_notload = function(obj) {
 					// // =======================================
 					var that = this;
@@ -7188,69 +7307,140 @@
 						"geoLayerList" : [ obj.parent ]
 					}
 					console.log(JSON.stringify(farr));
-					$.ajax({
-						url : "geoserver2/getGeoGroupLayerInfoList.ajax",
-						method : "POST",
-						contentType : "application/json; charset=UTF-8",
-						cache : false,
-						// async : false,
-						data : JSON.stringify(farr),
-						beforeSend : function() { // 호출전실행
-							$("body").css("cursor", "wait");
-						},
-						traditional : true,
-						success : function(data, textStatus, jqXHR) {
-							console.log(data);
-							if (Array.isArray(data)) {
-								for (var i = 0; i < data.length; i++) {
-									var wms = new ol.layer.Tile({
-										source : new ol.source.TileWMS({
-											url : "geoserver2/geoserverWMSLayerLoad.do",
-											params : {
-												'LAYERS' : obj.arr.toString(),
-												// 'LAYERS' :
-												// that._data.geoserver.user +
-												// ":" + data[i].name,
-												'TILED' : true,
-												'FORMAT' : 'image/png8',
-												'VERSION' : '1.1.0',
-												'CRS' : 'EPSG:5186',
-												'SRS' : 'EPSG:5186',
-												'BBOX' : data[i].bbox.minx.toString() + "," + data[i].bbox.miny.toString() + ","
-														+ data[i].bbox.maxx.toString() + "," + data[i].bbox.maxy.toString()
-											},
-											serverType : 'geoserver'
-										})
-									});
-									wms.set("name", obj.refer.get_node(data[i].name).text);
-									wms.set("id", data[i].name);
-									for (var i = 0; i < data[i].publishedList.names.length; i++) {
-										var layer = new ol.layer.Base();
-										var id = data[i].publishedList.names[i];
-										// var name = id.
-										var gchild = {
-											"validation" : false,
-											"editable" : true,
-											"fake" : "child"
+					$
+							.ajax({
+								url : "geoserver2/getGeoGroupLayerInfoList.ajax",
+								method : "POST",
+								contentType : "application/json; charset=UTF-8",
+								cache : false,
+								// async : false,
+								data : JSON.stringify(farr),
+								beforeSend : function() { // 호출전실행
+									$("body").css("cursor", "wait");
+								},
+								traditional : true,
+								success : function(data, textStatus, jqXHR) {
+									console.log(data);
+									if (Array.isArray(data)) {
+										var arra = [];
+										for (var i = 0; i < data.length; i++) {
+											var wms = new ol.layer.Tile({
+												source : new ol.source.TileWMS({
+													url : "geoserver2/geoserverWMSLayerLoad.do",
+													params : {
+														'LAYERS' : obj.arr.toString(),
+														// 'LAYERS' :
+														// that._data.geoserver.user
+														// +
+														// ":" + data[i].name,
+														'TILED' : true,
+														'FORMAT' : 'image/png8',
+														'VERSION' : '1.1.0',
+														'CRS' : 'EPSG:5186',
+														'SRS' : 'EPSG:5186',
+														'BBOX' : data[i].bbox.minx.toString() + "," + data[i].bbox.miny.toString() + ","
+																+ data[i].bbox.maxx.toString() + "," + data[i].bbox.maxy.toString()
+													},
+													serverType : 'geoserver'
+												})
+											});
+
+											var layers = new ol.Collection();
+											for (var j = 0; j < obj.arr.length; j++) {
+												var layer = new ol.layer.Base({
+													opacity : 1,
+													visible : true
+												});
+												var id = obj.arr[j];
+												var name = id.substring((id.split("_", 3).join("_").length) + 1,
+														id.split("_", 4).join("_").length);
+												var gchild = {
+													"validation" : false,
+													"editable" : true,
+													"fake" : "child"
+												}
+												layer.set("git", gchild);
+												layer.set("id", id);
+												layer.set("name", name);
+												layers.push(layer);
+											}
+											var git = {
+												"validation" : false,
+												"geometry" : data[i].geomType,
+												"editable" : true,
+												"fake" : "parent",
+												"layers" : layers
+											}
+											wms.set("name", obj.refer.get_node(data[i].name).text);
+											wms.set("id", data[i].name);
+											wms.set("git", git);
+											// wms.set("type", "ImageTile");
+											var mapLayers = that._data.geoserver.map.getLayers();
+											var flag = true;
+											var newCollection = [];
+											for (var j = 0; j < mapLayers.getLength(); j++) {
+												if (mapLayers.item(j).get("id") === obj.parent
+														&& mapLayers.item(j) instanceof ol.layer.Tile
+														&& mapLayers.item(j).get("git").hasOwnProperty("fake")) {
+
+													var befParams = mapLayers.item(j).getSource().getParams();
+													var git = mapLayers.item(j).get("git");
+													var lid = mapLayers.item(j).get("id");
+													var lname = mapLayers.item(j).get("name");
+													// 있다면 구 그룹의 콜렉션과 신 그룹의 콜렉션을
+													// 비교
+													var befCollection = mapLayers.item(j).get("git").layers;
+													for (var l = 0; l < layers.getLength(); l++) {
+														var dupl = false;
+														for (var k = 0; k < befCollection.getLength(); k++) {
+															if (layers.item(l).get("id") === befCollection.item(k).get("id")) {
+																dupl = true;
+															}
+														}
+														if (!dupl) {
+															newCollection.push(layers.item(l));
+														}
+													}
+													befCollection.extend(newCollection);
+													var names = [];
+													for (var i = 0; i < befCollection.getLength(); i++) {
+														names.push(befCollection.item(i).get("id"));
+													}
+													befParams["LAYERS"] = names.toString();
+													// var group = new
+													// ol.layer.Group({
+													// layers : befCollection
+													// });
+													var wms2 = new ol.layer.Tile({
+														source : new ol.source.TileWMS({
+															url : "geoserver2/geoserverWMSLayerLoad.do",
+															params : befParams,
+															serverType : 'geoserver'
+														})
+													});
+													wms2.set("name", lname);
+													wms2.set("id", lid);
+													wms2.set("git", git);
+													// wms.set("type", "Group");
+													that._data.geoserver.map.removeLayer(mapLayers.item(j));
+													that._data.geoserver.map.addLayer(wms2);
+													flag = false;
+													console.log(wms2);
+													$("body").css("cursor", "default");
+													break;
+												}
+											}
+											if (flag) {
+												var info = wms.get("git");
+												info["layers"] = layers;
+												console.log(wms);
+												that._data.geoserver.map.addLayer(wms);
+												$("body").css("cursor", "default");
+											}
 										}
-										
-										layer.set("git", gchild);
 									}
-									var git = {
-										"validation" : false,
-										"geometry" : data[i].geomType,
-										"editable" : true,
-										"fake" : "parent"
-									}
-									wms.set("git", git);
-									parentLayer = wms;
-									console.log(wms);
-									// wms.set("type", "ImageTile");
-									// that._data.geoserver.map.addLayer(wms);
 								}
-							}
-						}
-					});
+							});
 				};
 
 				/**
@@ -7355,8 +7545,9 @@
 														'VERSION' : '1.1.0',
 														'CRS' : 'EPSG:5186',
 														'SRS' : 'EPSG:5186',
-														'BBOX' : data2[i].nbBox.minx.toString() + "," + data2[i].nbBox.miny.toString() + ","
-																+ data2[i].nbBox.maxx.toString() + "," + data2[i].nbBox.maxy.toString()
+														'BBOX' : data2[i].nbBox.minx.toString() + "," + data2[i].nbBox.miny.toString()
+																+ "," + data2[i].nbBox.maxx.toString() + ","
+																+ data2[i].nbBox.maxy.toString()
 													},
 													serverType : 'geoserver'
 												})
@@ -7655,8 +7846,9 @@
 															'VERSION' : '1.1.0',
 															'CRS' : 'EPSG:5186',
 															'SRS' : 'EPSG:5186',
-															'BBOX' : data2[i].nbBox.minx.toString() + "," + data2[i].nbBox.miny.toString() + ","
-																	+ data2[i].nbBox.maxx.toString() + "," + data2[i].nbBox.maxy.toString()
+															'BBOX' : data2[i].nbBox.minx.toString() + "," + data2[i].nbBox.miny.toString()
+																	+ "," + data2[i].nbBox.maxx.toString() + ","
+																	+ data2[i].nbBox.maxy.toString()
 														},
 														serverType : 'geoserver'
 													})
@@ -7682,7 +7874,8 @@
 											var newCollection = [];
 											// 현재 맵에 같은 아이디의 타일레이어가 있는지
 											for (var j = 0; j < mapLayers.getLength(); j++) {
-												if (mapLayers.item(j).get("id") === obj.parent && mapLayers.item(j) instanceof ol.layer.Tile) {
+												if (mapLayers.item(j).get("id") === obj.parent
+														&& mapLayers.item(j) instanceof ol.layer.Tile) {
 													var befParams = mapLayers.item(j).getSource().getParams();
 													var git = mapLayers.item(j).get("git");
 													var lid = mapLayers.item(j).get("id");
@@ -7906,6 +8099,75 @@
 				 */
 				items : function(o, cb) { // Could be an object directly
 					return {
+						"create" : {
+							"separator_before" : false,
+							"icon" : "fa fa-asterisk",
+							"separator_after" : false,
+							"_disabled" : false, // (this.check("rename_node",
+							// data.reference,
+							// this.get_parent(data.reference),
+							// "")),
+							"label" : "Create",
+							/*
+							 * ! "shortcut" : 113, "shortcut_label" : 'F2',
+							 * "icon" : "glyphicon glyphicon-leaf",
+							 */
+							"action" : false,
+							"submenu" : {
+								"mapsheet" : {
+									"separator_before" : false,
+									"_disabled" : function(data) {
+										return !($.jstree.reference(data.reference).get_node(data.reference).type === "n_ngi" || $.jstree
+												.reference(data.reference).get_node(data.reference).type === "n_dxf")
+									},
+									"icon" : "fa fa-file-image-o",
+									"separator_after" : false,
+									"label" : "Map sheet",
+									"action" : function(data) {
+										var inst = $.jstree.reference(data.reference), obj = inst.get_node(data.reference);
+										if (obj.type === "n_ngi") {
+											var arr = inst.get_selected();
+											// var arr2 = [];
+											// for (var i = 0; i < arr.length;
+											// i++) {
+											// arr2.push(inst.get_node(arr[i]).id);
+											// }
+											var obj = {
+												"refer" : inst,
+												"arr" : arr
+											};
+											// inst.import_fake_group(obj);
+											console.log("map sheet");
+											inst._data.geoserver.createLayer.setForm("ngi", "mapsheet");
+											inst._data.geoserver.createLayer.open();
+										} else if (obj.type === "n_dxf") {
+											inst._data.geoserver.createLayer.setForm("dxf", "mapsheet");
+											inst._data.geoserver.createLayer.open();
+										}
+									}
+								},
+								"layer" : {
+									"separator_before" : false,
+									"_disabled" : function(data) {
+										return !($.jstree.reference(data.reference).get_node(data.reference).type === "n_ngi_group" || $.jstree
+												.reference(data.reference).get_node(data.reference).type === "n_dxf_group")
+									},
+									"icon" : "fa fa-file-image-o",
+									"separator_after" : false,
+									"label" : "Layer",
+									"action" : function(data) {
+										var inst = $.jstree.reference(data.reference), obj = inst.get_node(data.reference);
+										if (obj.type === "n_ngi_group") {
+											inst._data.geoserver.createLayer.setForm("ngi", "layer", obj.text);
+											inst._data.geoserver.createLayer.open();
+										} else if (obj.type === "n_dxf_group") {
+											inst._data.geoserver.createLayer.setForm("dxf", "layer", obj.text);
+											inst._data.geoserver.createLayer.open();
+										}
+									}
+								}
+							}
+						},
 						"import" : {
 							"separator_before" : true,
 							"icon" : "fa fa-download",
@@ -7920,7 +8182,8 @@
 									"label" : "Image",
 									"action" : function(data) {
 										var inst = $.jstree.reference(data.reference), obj = inst.get_node(data.reference);
-										if (obj.type === "n_ngi_layer_pt" || obj.type === "n_ngi_layer_ln" || obj.type === "n_ngi_layer_pg") {
+										if (obj.type === "n_ngi_layer_pt" || obj.type === "n_ngi_layer_ln" || obj.type === "n_ngi_layer_pg"
+												|| obj.type === "n_ngi_layer_txt") {
 											var arr = inst.get_selected();
 											if (inst.get_node(inst.get_parent(obj)).type === "n_ngi_group") {
 												var wmsInfo = {
@@ -7928,10 +8191,12 @@
 													"arr" : arr,
 													"parent" : inst.get_parent(obj)
 												}
-												inst.import_fake_image(wmsInfo);
+												// inst.import_fake_image(wmsInfo);
+												inst.import_fake_image_notload(wmsInfo);
 											}
-										} else if (obj.type === "n_dxf_layer_arc" || obj.type === "n_dxf_layer_cir" || obj.type === "n_dxf_layer_ins"
-												|| obj.type === "n_dxf_layer_lpl" || obj.type === "n_dxf_layer_pl" || obj.type === "n_dxf_layer_txt") {
+										} else if (obj.type === "n_dxf_layer_arc" || obj.type === "n_dxf_layer_cir"
+												|| obj.type === "n_dxf_layer_ins" || obj.type === "n_dxf_layer_lpl"
+												|| obj.type === "n_dxf_layer_pl" || obj.type === "n_dxf_layer_txt") {
 											var arr = inst.get_selected();
 											if (inst.get_node(inst.get_parent(obj)).type === "n_dxf_group") {
 												var wmsInfo = {
@@ -7939,19 +8204,22 @@
 													"arr" : arr,
 													"parent" : inst.get_parent(obj)
 												}
-												inst.import_fake_image(wmsInfo);
+												// inst.import_fake_image(wmsInfo);
+												inst.import_fake_image_notload(wmsInfo);
 											}
 										} else if (obj.type === "n_ngi_group" || obj.type === "n_dxf_group") {
 											var arr = inst.get_selected();
-											var arr2 = [];
-											for (var i = 0; i < arr.length; i++) {
-												arr2.push(inst.get_node(arr[i]).id);
-											}
+											// var arr2 = [];
+											// for (var i = 0; i < arr.length;
+											// i++) {
+											// arr2.push(inst.get_node(arr[i]).id);
+											// }
 											var obj = {
 												"refer" : inst,
-												"parent" : arr2
+												"arr" : arr
 											};
-											inst.import_fake_group(obj);
+											// inst.import_fake_group(obj);
+											inst.import_fake_group_notload(obj);
 										}
 									}
 								},
@@ -8387,7 +8655,8 @@
 														"version" : "1.1.0",
 														"format" : "image/png",
 														"crs" : data[i].srs,
-														"bbox" : [ data[i].nbBox.minx, data[i].nbBox.miny, data[i].nbBox.maxx, data[i].nbBox.maxy ],
+														"bbox" : [ data[i].nbBox.minx, data[i].nbBox.miny, data[i].nbBox.maxx,
+																data[i].nbBox.maxy ],
 														"layers" : data[i].lName,
 														"width" : 1024,
 														"height" : 768
@@ -8678,7 +8947,8 @@
 							vakata_context.items.push(val);
 							if (!sep && val.separator_before) {
 								str += "<" + "li class='vakata-context-separator'><" + "a href='#' "
-										+ ($.vakata.context.settings.icons ? '' : 'style="margin-left:0px;"') + ">&#160;<" + "/a><" + "/li>";
+										+ ($.vakata.context.settings.icons ? '' : 'style="margin-left:0px;"') + ">&#160;<" + "/a><"
+										+ "/li>";
 							}
 							sep = false;
 							str += "<" + "li class='" + (val._class || "")
@@ -8706,8 +8976,8 @@
 								"reference" : vakata_context.reference,
 								"element" : vakata_context.element
 							}) : val.label)
-									+ (val.shortcut ? ' <span class="vakata-contextmenu-shortcut vakata-contextmenu-shortcut-' + val.shortcut + '">'
-											+ (val.shortcut_label || '') + '</span>' : '') + "<" + "/a>";
+									+ (val.shortcut ? ' <span class="vakata-contextmenu-shortcut vakata-contextmenu-shortcut-'
+											+ val.shortcut + '">' + (val.shortcut_label || '') + '</span>' : '') + "<" + "/a>";
 							if (val.submenu) {
 								tmp = $.vakata.context._parse(val.submenu, true);
 								if (tmp) {
@@ -8717,7 +8987,8 @@
 							str += "<" + "/li>";
 							if (val.separator_after) {
 								str += "<" + "li class='vakata-context-separator'><" + "a href='#' "
-										+ ($.vakata.context.settings.icons ? '' : 'style="margin-left:0px;"') + ">&#160;<" + "/a><" + "/li>";
+										+ ($.vakata.context.settings.icons ? '' : 'style="margin-left:0px;"') + ">&#160;<" + "/a><"
+										+ "/li>";
 								sep = true;
 							}
 						});
@@ -8751,9 +9022,8 @@
 						if (!o.length || !o.children("ul").length) {
 							return;
 						}
-						var e = o.children("ul"), xl = o.offset().left, x = xl + o.outerWidth(), y = o.offset().top, w = e.width(), h = e.height(), dw = $(
-								window).width()
-								+ $(window).scrollLeft(), dh = $(window).height() + $(window).scrollTop();
+						var e = o.children("ul"), xl = o.offset().left, x = xl + o.outerWidth(), y = o.offset().top, w = e.width(), h = e
+								.height(), dw = $(window).width() + $(window).scrollLeft(), dh = $(window).height() + $(window).scrollTop();
 						// може да се спести е една проверка - дали няма някой
 						// от класовете вече нагоре
 						if (right_to_left) {
@@ -8947,16 +9217,17 @@
 									break;
 								case 37:
 									if (vakata_context.is_visible) {
-										vakata_context.element.find(".vakata-context-hover").last().closest("li").first().find("ul").hide().find(
-												".vakata-context-hover").removeClass("vakata-context-hover").end().end().children('a').focus();
+										vakata_context.element.find(".vakata-context-hover").last().closest("li").first().find("ul").hide()
+												.find(".vakata-context-hover").removeClass("vakata-context-hover").end().end()
+												.children('a').focus();
 										e.stopImmediatePropagation();
 										e.preventDefault();
 									}
 									break;
 								case 38:
 									if (vakata_context.is_visible) {
-										o = vakata_context.element.find("ul:visible").addBack().last().children(".vakata-context-hover").removeClass(
-												"vakata-context-hover").prevAll("li:not(.vakata-context-separator)").first();
+										o = vakata_context.element.find("ul:visible").addBack().last().children(".vakata-context-hover")
+												.removeClass("vakata-context-hover").prevAll("li:not(.vakata-context-separator)").first();
 										if (!o.length) {
 											o = vakata_context.element.find("ul:visible").addBack().last().children(
 													"li:not(.vakata-context-separator)").last();
@@ -8977,8 +9248,8 @@
 									break;
 								case 40:
 									if (vakata_context.is_visible) {
-										o = vakata_context.element.find("ul:visible").addBack().last().children(".vakata-context-hover").removeClass(
-												"vakata-context-hover").nextAll("li:not(.vakata-context-separator)").first();
+										o = vakata_context.element.find("ul:visible").addBack().last().children(".vakata-context-hover")
+												.removeClass("vakata-context-hover").nextAll("li:not(.vakata-context-separator)").first();
 										if (!o.length) {
 											o = vakata_context.element.find("ul:visible").addBack().last().children(
 													"li:not(.vakata-context-separator)").first();
@@ -9167,8 +9438,8 @@
 														}
 														if (e.type === "touchstart"
 																&& (!this.settings.dnd.touch || (this.settings.dnd.touch === 'selected' && !$(
-																		e.currentTarget).closest('.jstree-node').children('.jstree-anchor').hasClass(
-																		'jstree-clicked')))) {
+																		e.currentTarget).closest('.jstree-node').children('.jstree-anchor')
+																		.hasClass('jstree-clicked')))) {
 															return true;
 														}
 														var obj = this.get_node(e.target), mlt = this.is_selected(obj)
@@ -9201,10 +9472,14 @@
 															} else {
 																this.element.trigger('mousedown.jstree');
 																return $.vakata.dnd.start(e, drg, '<div id="jstree-dnd" class="jstree-'
-																		+ this.get_theme() + ' jstree-' + this.get_theme() + '-'
-																		+ this.get_theme_variant() + ' '
-																		+ (this.settings.core.themes.responsive ? ' jstree-dnd-responsive' : '')
-																		+ '"><i class="jstree-icon jstree-er"></i>' + txt
+																		+ this.get_theme()
+																		+ ' jstree-'
+																		+ this.get_theme()
+																		+ '-'
+																		+ this.get_theme_variant()
+																		+ ' '
+																		+ (this.settings.core.themes.responsive ? ' jstree-dnd-responsive'
+																				: '') + '"><i class="jstree-icon jstree-er"></i>' + txt
 																		+ '<ins class="jstree-copy" style="display:none;">+</ins></div>');
 															}
 														}
@@ -9246,7 +9521,8 @@
 						} else {
 							var i, j, tmp = null;
 							for (i = 0, j = obj.childNodes.length; i < j; i++) {
-								if (obj.childNodes[i] && obj.childNodes[i].className && obj.childNodes[i].className.indexOf("jstree-anchor") !== -1) {
+								if (obj.childNodes[i] && obj.childNodes[i].className
+										&& obj.childNodes[i].className.indexOf("jstree-anchor") !== -1) {
 									tmp = obj.childNodes[i];
 									break;
 								}
@@ -9262,7 +9538,8 @@
 
 			$(function() {
 				// bind only once for all instances
-				var lastmv = false, laster = false, lastev = false, opento = false, marker = $('<div id="jstree-marker">&#160;</div>').hide(); // .appendTo('body');
+				var lastmv = false, laster = false, lastev = false, opento = false, marker = $('<div id="jstree-marker">&#160;</div>')
+						.hide(); // .appendTo('body');
 
 				$(document)
 						.on('dnd_start.vakata.jstree', function(e, data) {
@@ -9301,9 +9578,9 @@
 												&& (data.data.origin.settings.dnd.always_copy || (data.data.origin.settings.dnd.copy && (data.event.metaKey || data.event.ctrlKey)));
 										data.helper.children().attr(
 												'class',
-												'jstree-' + ins.get_theme() + ' jstree-' + ins.get_theme() + '-' + ins.get_theme_variant() + ' '
-														+ (ins.settings.core.themes.responsive ? ' jstree-dnd-responsive' : '')).find('.jstree-copy')
-												.first()[is_copy ? 'show' : 'hide']();
+												'jstree-' + ins.get_theme() + ' jstree-' + ins.get_theme() + '-' + ins.get_theme_variant()
+														+ ' ' + (ins.settings.core.themes.responsive ? ' jstree-dnd-responsive' : ''))
+												.find('.jstree-copy').first()[is_copy ? 'show' : 'hide']();
 
 										// if are hovering the container itself
 										// add a new root node
@@ -9317,10 +9594,10 @@
 																.check(
 																		(data.data.origin
 																				&& (data.data.origin.settings.dnd.always_copy || (data.data.origin.settings.dnd.copy && (data.event.metaKey || data.event.ctrlKey))) ? "copy_node"
-																				: "move_node"),
-																		(data.data.origin && data.data.origin !== ins ? data.data.origin
-																				.get_node(data.data.nodes[t1]) : data.data.nodes[t1]), $.jstree.root,
-																		'last', {
+																				: "move_node"), (data.data.origin
+																				&& data.data.origin !== ins ? data.data.origin
+																				.get_node(data.data.nodes[t1]) : data.data.nodes[t1]),
+																		$.jstree.root, 'last', {
 																			'dnd' : true,
 																			'ref' : ins.get_node($.jstree.root),
 																			'pos' : 'i',
@@ -9347,11 +9624,12 @@
 											}
 										} else {
 											// if we are hovering a tree node
-											ref = ins.settings.dnd.large_drop_target ? $(data.event.target).closest('.jstree-node').children(
-													'.jstree-anchor') : $(data.event.target).closest('.jstree-anchor');
+											ref = ins.settings.dnd.large_drop_target ? $(data.event.target).closest('.jstree-node')
+													.children('.jstree-anchor') : $(data.event.target).closest('.jstree-anchor');
 											if (ref && ref.length && ref.parent().is('.jstree-closed, .jstree-open, .jstree-leaf')) {
 												off = ref.offset();
-												rel = (data.event.pageY !== undefined ? data.event.pageY : data.event.originalEvent.pageY) - off.top;
+												rel = (data.event.pageY !== undefined ? data.event.pageY : data.event.originalEvent.pageY)
+														- off.top;
 												h = ref.outerHeight();
 												if (rel < h / 3) {
 													o = [ 'b', 'i', 'a' ];
@@ -9377,8 +9655,8 @@
 																		l = off.left - 2;
 																		t = off.top + h / 2 + 1;
 																		p = tm.id;
-																		i = ip === 'first' ? 0 : (ip === 'last' ? tm.children.length : Math.min(ip,
-																				tm.children.length));
+																		i = ip === 'first' ? 0 : (ip === 'last' ? tm.children.length : Math
+																				.min(ip, tm.children.length));
 																		break;
 																	case 'a':
 																		l = off.left - 6;
@@ -9405,7 +9683,8 @@
 																				&& ((ins && ins.settings && ins.settings.dnd && ins.settings.dnd.check_while_dragging === false) || ins
 																						.check(
 																								op,
-																								(data.data.origin && data.data.origin !== ins ? data.data.origin
+																								(data.data.origin
+																										&& data.data.origin !== ins ? data.data.origin
 																										.get_node(data.data.nodes[t1])
 																										: data.data.nodes[t1]),
 																								p,
@@ -9442,16 +9721,17 @@
 																		lastmv = {
 																			'ins' : ins,
 																			'par' : p,
-																			'pos' : v === 'i' && ip === 'last' && i === 0 && !ins.is_loaded(tm) ? 'last'
-																					: i
+																			'pos' : v === 'i' && ip === 'last' && i === 0
+																					&& !ins.is_loaded(tm) ? 'last' : i
 																		};
 																		marker.css({
 																			'left' : l + 'px',
 																			'top' : t + 'px'
 																		}).show();
-																		data.helper.find('.jstree-icon').first().removeClass('jstree-er').addClass(
-																				'jstree-ok');
-																		if (data.event.originalEvent && data.event.originalEvent.dataTransfer) {
+																		data.helper.find('.jstree-icon').first().removeClass('jstree-er')
+																				.addClass('jstree-ok');
+																		if (data.event.originalEvent
+																				&& data.event.originalEvent.dataTransfer) {
 																			data.event.originalEvent.dataTransfer.dropEffect = is_copy ? 'copy'
 																					: 'move';
 																		}
@@ -9497,7 +9777,8 @@
 									var i, j, nodes = [];
 									if (lastmv) {
 										for (i = 0, j = data.data.nodes.length; i < j; i++) {
-											nodes[i] = data.data.origin ? data.data.origin.get_node(data.data.nodes[i]) : data.data.nodes[i];
+											nodes[i] = data.data.origin ? data.data.origin.get_node(data.data.nodes[i])
+													: data.data.nodes[i];
 										}
 										lastmv.ins[data.data.origin
 												&& (data.data.origin.settings.dnd.always_copy || (data.data.origin.settings.dnd.copy && (data.event.metaKey || data.event.ctrlKey))) ? 'copy_node'
@@ -9663,7 +9944,8 @@
 						}
 					},
 					start : function(e, data, html) {
-						if (e.type === "touchstart" && e.originalEvent && e.originalEvent.changedTouches && e.originalEvent.changedTouches[0]) {
+						if (e.type === "touchstart" && e.originalEvent && e.originalEvent.changedTouches
+								&& e.originalEvent.changedTouches[0]) {
 							e.pageX = e.originalEvent.changedTouches[0].pageX;
 							e.pageY = e.originalEvent.changedTouches[0].pageY;
 							e.target = document.elementFromPoint(e.originalEvent.changedTouches[0].pageX - window.pageXOffset,
@@ -9707,7 +9989,8 @@
 						return false;
 					},
 					drag : function(e) {
-						if (e.type === "touchmove" && e.originalEvent && e.originalEvent.changedTouches && e.originalEvent.changedTouches[0]) {
+						if (e.type === "touchmove" && e.originalEvent && e.originalEvent.changedTouches
+								&& e.originalEvent.changedTouches[0]) {
 							e.pageX = e.originalEvent.changedTouches[0].pageX;
 							e.pageY = e.originalEvent.changedTouches[0].pageY;
 							e.target = document.elementFromPoint(e.originalEvent.changedTouches[0].pageX - window.pageXOffset,
@@ -10003,12 +10286,12 @@
 				this._load_node = function(obj, callback) {
 					var data = this._data.massload[obj.id], rslt = null, dom;
 					if (data) {
-						rslt = this[typeof data === 'string' ? '_append_html_data' : '_append_json_data'](obj, typeof data === 'string' ? $(
-								$.parseHTML(data)).filter(function() {
-							return this.nodeType !== 3;
-						}) : data, function(status) {
-							callback.call(this, status);
-						});
+						rslt = this[typeof data === 'string' ? '_append_html_data' : '_append_json_data'](obj,
+								typeof data === 'string' ? $($.parseHTML(data)).filter(function() {
+									return this.nodeType !== 3;
+								}) : data, function(status) {
+									callback.call(this, status);
+								});
 						dom = this.get_node(obj.id, true);
 						if (dom && dom.length) {
 							dom.removeClass("jstree-loading").attr('aria-busy', false);
@@ -10252,19 +10535,18 @@
 						caseSensitive : s.case_sensitive,
 						fuzzy : s.fuzzy
 					});
-					$
-							.each(m[inside ? inside : $.jstree.root].children_d,
-									function(ii, i) {
-										var v = m[i];
-										if (v.text
-												&& !v.state.hidden
-												&& (!s.search_leaves_only || (v.state.loaded && v.children.length === 0))
-												&& ((s.search_callback && s.search_callback.call(this, str, v)) || (!s.search_callback && f
-														.search(v.text).isMatch))) {
-											r.push(i);
-											p = p.concat(v.parents);
-										}
-									});
+					$.each(m[inside ? inside : $.jstree.root].children_d,
+							function(ii, i) {
+								var v = m[i];
+								if (v.text
+										&& !v.state.hidden
+										&& (!s.search_leaves_only || (v.state.loaded && v.children.length === 0))
+										&& ((s.search_callback && s.search_callback.call(this, str, v)) || (!s.search_callback && f
+												.search(v.text).isMatch))) {
+									r.push(i);
+									p = p.concat(v.parents);
+								}
+							});
 					if (r.length) {
 						p = $.vakata.array_unique(p);
 						for (i = 0, j = p.length; i < j; i++) {
@@ -10278,7 +10560,8 @@
 											r,
 											function(v) {
 												return "0123456789".indexOf(v[0]) !== -1 ? '\\3' + v[0] + ' '
-														+ v.substr(1).replace($.jstree.idregex, '\\$&') : v.replace($.jstree.idregex, '\\$&');
+														+ v.substr(1).replace($.jstree.idregex, '\\$&') : v.replace($.jstree.idregex,
+														'\\$&');
 											}).join(', #')));
 							this._data.search.res = r;
 						} else {
@@ -10287,7 +10570,8 @@
 											r,
 											function(v) {
 												return "0123456789".indexOf(v[0]) !== -1 ? '\\3' + v[0] + ' '
-														+ v.substr(1).replace($.jstree.idregex, '\\$&') : v.replace($.jstree.idregex, '\\$&');
+														+ v.substr(1).replace($.jstree.idregex, '\\$&') : v.replace($.jstree.idregex,
+														'\\$&');
 											}).join(', #'))));
 							this._data.search.res = $.vakata.array_unique(this._data.search.res.concat(r));
 						}
@@ -10369,7 +10653,8 @@
 						if ($.inArray(obj.id, this._data.search.res) !== -1) {
 							var i, j, tmp = null;
 							for (i = 0, j = obj.childNodes.length; i < j; i++) {
-								if (obj.childNodes[i] && obj.childNodes[i].className && obj.childNodes[i].className.indexOf("jstree-anchor") !== -1) {
+								if (obj.childNodes[i] && obj.childNodes[i].className
+										&& obj.childNodes[i].className.indexOf("jstree-anchor") !== -1) {
 									tmp = obj.childNodes[i];
 									break;
 								}
@@ -11530,8 +11815,8 @@
 								if (e.type === "hover_node" && this.is_disabled(data.node)) {
 									return;
 								}
-								this.get_node(data.node, true).children('.jstree-wholerow')[e.type === "hover_node" ? "addClass" : "removeClass"]
-										('jstree-wholerow-hovered');
+								this.get_node(data.node, true).children('.jstree-wholerow')[e.type === "hover_node" ? "addClass"
+										: "removeClass"]('jstree-wholerow-hovered');
 							}, this)).on("contextmenu.jstree", ".jstree-wholerow", $.proxy(function(e) {
 						if (this._data.contextmenu) {
 							e.preventDefault();

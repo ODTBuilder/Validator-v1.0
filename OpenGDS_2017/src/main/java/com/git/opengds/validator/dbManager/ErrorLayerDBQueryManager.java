@@ -63,8 +63,8 @@ public class ErrorLayerDBQueryManager {
 
 		String dafaultCreateQuery = "create table " + "\"" + errTableName + "\"" + "(" + "err_idx serial primary key"
 				+ "," + "collection_name varchar(100)" + "," + "layer_name varchar(100)" + ","
-				+ "feature_id varchar(100)" + "," + "err_type varchar(100)" + "," + "err_name varchar(100)" + ","
-				+ "geom geometry(point, 5186)" + ")";
+				+ "feature_idx varchar(100), feature_id varchar(100)" + "," + "err_type varchar(100)" + ","
+				+ "err_name varchar(100)" + "," + "geom geometry(point, 5186)" + ")";
 
 		HashMap<String, Object> createQuery = new HashMap<String, Object>();
 		createQuery.put("createQuery", dafaultCreateQuery);
@@ -90,13 +90,14 @@ public class ErrorLayerDBQueryManager {
 			String featureID = errFeature.getFeatureID();
 			String errType = errFeature.getErrType();
 			String errName = errFeature.getErrName();
+			String featureIdx = errFeature.getFeatureIdx();
 			Geometry errPt = (Point) errFeature.getErrPoint();
 
 			String insertQuery = "insert into " + "\"" + errTableName + "\"" + "("
-					+ "collection_name, layer_name, feature_id, err_type, err_name, geom) values" + "(" + "'"
-					+ collectionName + "'" + "," + "'" + layerName + "'" + "," + "'" + featureID + "'" + "," + "'"
-					+ errType + "'" + "," + "'" + errName + "'" + "," + "ST_GeomFromText('" + errPt.toString()
-					+ "', 5186)" + ")";
+					+ "collection_name, layer_name, feature_idx, feature_id, err_type, err_name, geom) values" + "("
+					+ "'" + collectionName + "'" + "," + "'" + layerName + "'" + "," + "'" + featureIdx + "', " + "'"
+					+ featureID + "'" + "," + "'" + errType + "'" + "," + "'" + errName + "'" + ","
+					+ "ST_GeomFromText('" + errPt.toString() + "', 5186)" + ")";
 
 			HashMap<String, Object> insertQueryMap = new HashMap<String, Object>();
 			insertQueryMap.put("insertQuery", insertQuery);
@@ -188,7 +189,7 @@ public class ErrorLayerDBQueryManager {
 	public HashMap<String, Object> selectQA20ErrorLayerTbNamesCountQuery(String fileType, String collectionName,
 			Integer cIdx) {
 		String tableName = "\"" + "qa20_layercollection_qa_progress" + "\"";
-		String countQueryStr = "select count (*) from " + tableName + "where c_idx = " + cIdx + "and state = " + 4 ;
+		String countQueryStr = "select count (*) from " + tableName + "where c_idx = " + cIdx + "and state = " + 4;
 		HashMap<String, Object> selectQueryMap = new HashMap<String, Object>();
 		selectQueryMap.put("selectQuery", countQueryStr);
 		return selectQueryMap;

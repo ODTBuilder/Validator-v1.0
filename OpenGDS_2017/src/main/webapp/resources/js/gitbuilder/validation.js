@@ -431,7 +431,7 @@ gitbuilder.ui.Validation = $.widget("gitbuilder.validation", {
 		} else {
 			$(this.windiw).find(".validation-btn-start").prop("disabled", false);
 		}
-		var lkeys = Object.keys(ldef);
+		var lkeys = Object.keys(odef);
 		var layers = [];
 
 		var typeValidate = [];
@@ -468,7 +468,9 @@ gitbuilder.ui.Validation = $.widget("gitbuilder.validation", {
 				tvObj["weight"] = wdef[lkeys[i]];
 			} 
 			if (odef.hasOwnProperty(lkeys[i])) {
-				tvObj["option"] = odef[lkeys[i]];
+				if (Object.keys(odef[lkeys[i]]).length > 0 ) {
+					tvObj["option"] = odef[lkeys[i]];	
+				}
 			}
 			typeValidate.push(tvObj);
 		}
@@ -482,14 +484,17 @@ gitbuilder.ui.Validation = $.widget("gitbuilder.validation", {
 			map[inner[i]] = 0;
 		}
 		var keys = Object.keys(map);
+		var notDupObj = {};
 		for (var i = 0; i < keys.length; i++) {
-			var type;
+			var type = "default";
 			if ($(this.tree).jstree("get_node", keys[i]).type === "n_ngi_layer_pt") {
 				type = "POINT";
 			} else if ($(this.tree).jstree("get_node", keys[i]).type === "n_ngi_layer_ln") {
 				type = "LINESTRING";
 			} else if ($(this.tree).jstree("get_node", keys[i]).type === "n_ngi_layer_pg") {
 				type = "POLYGON";
+			} else if ($(this.tree).jstree("get_node", keys[i]).type === "n_ngi_layer_txt") {
+				type = "TEXT";
 			} else if ($(this.tree).jstree("get_node", keys[i]).type === "n_dxf_layer_arc") {
 				type = "ARC";
 			} else if ($(this.tree).jstree("get_node", keys[i]).type === "n_dxf_layer_cir") {
@@ -503,7 +508,13 @@ gitbuilder.ui.Validation = $.widget("gitbuilder.validation", {
 			}  else if ($(this.tree).jstree("get_node", keys[i]).type === "n_dxf_layer_txt") {
 				type = "TEXT";
 			} 
-			layers.push($(this.tree).jstree("get_node", keys[i]).text+"_"+type);
+// layers.push($(this.tree).jstree("get_node", keys[i]).text+"_"+type);
+			notDupObj[$(this.tree).jstree("get_node", keys[i]).text+"_"+type] = 0;
+		}
+		var dkeys = Object.keys(notDupObj);
+		for (var i = 0; i < dkeys.length; i++) {
+// layers.push($(this.tree).jstree("get_node", dkeys[i]).text+"_"+type);
+			layers.push(dkeys[i]);
 		}
 
 		layerColl["layers"] = layers;

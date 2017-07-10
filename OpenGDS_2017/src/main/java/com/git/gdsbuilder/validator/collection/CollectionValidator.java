@@ -93,7 +93,8 @@ import com.git.gdsbuilder.validator.collection.rule.MapSystemRule;
 import com.git.gdsbuilder.validator.collection.rule.MapSystemRule.MapSystemRuleType;
 import com.git.gdsbuilder.validator.layer.LayerValidator;
 import com.git.gdsbuilder.validator.layer.LayerValidatorImpl;
-import com.sun.org.apache.xalan.internal.xsltc.compiler.sym;
+import com.vividsolutions.jts.algorithm.LineIntersector;
+import com.vividsolutions.jts.algorithm.NonRobustLineIntersector;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
@@ -211,28 +212,28 @@ public class CollectionValidator {
 
 			GeoLayerCollection collection = layerCollections.get(i);
 			String collectionName = collection.getCollectionName();
-			// try {
-			ErrorLayer errorLayer = new ErrorLayer();
-			errorLayer.setCollectionName(collectionName);
-			errorLayer.setCollectionType(this.collectionType);
+			try {
+				ErrorLayer errorLayer = new ErrorLayer();
+				errorLayer.setCollectionName(collectionName);
+				errorLayer.setCollectionType(this.collectionType);
 
-			// layerMiss 검수
-			// layerMissValidate(types, collection, errorLayer);
+				// layerMiss 검수
+				layerMissValidate(types, collection, errorLayer);
 
-			// geometric 검수
-			// geometricValidate(types, collection, errorLayer);
+				// geometric 검수
+				geometricValidate(types, collection, errorLayer);
 
-			// attribute 검수
-			attributeValidate(types, collection, errorLayer);
+				// attribute 검수
+				attributeValidate(types, collection, errorLayer);
 
-			// 인접도엽 검수
-			closeCollectionValidate(types, mapSystemRule, collection,"");
-
-			errLayerList.add(errorLayer);
-			progress.put(collection.getCollectionName(), 2);
-			// } catch (Exception e) {
-			// progress.put(collection.getCollectionName(), 3);
-			// }
+				// 인접도엽 검수
+				// closeCollectionValidate(types, mapSystemRule, collection,
+				// "");
+				errLayerList.add(errorLayer);
+				progress.put(collection.getCollectionName(), 2);
+			} catch (Exception e) {
+				progress.put(collection.getCollectionName(), 3);
+			}
 		}
 	}
 
@@ -249,7 +250,10 @@ public class CollectionValidator {
 			if (options != null) {
 				ErrorLayer typeErrorLayer = null;
 				for (int k = 0; k < options.size(); k++) {
+
 					ValidatorOption option = options.get(k);
+					// System.out.println("typeLayerSize: " +
+					// typeLayers.size());
 					for (int a = 0; a < typeLayers.size(); a++) {
 						GeoLayer typeLayer = typeLayers.get(a);
 						if (typeLayer == null) {
@@ -261,10 +265,16 @@ public class CollectionValidator {
 							for (int l = 0; l < relationNames.size(); l++) {
 								typeErrorLayer = layerValidator.validateBridgeName(validateLayerCollectionList
 										.getTypeLayers(relationNames.get(l), layerCollection));
+								if (typeErrorLayer != null) {
+									errorLayer.mergeErrorLayer(typeErrorLayer);
+								}
 							}
 						}
 						if (option instanceof Admin) {
 							typeErrorLayer = layerValidator.validateAdmin();
+							if (typeErrorLayer != null) {
+								errorLayer.mergeErrorLayer(typeErrorLayer);
+							}
 						}
 						if (option instanceof AttributeFix) {
 							HashMap<String, Object> attributeNames = ((AttributeFix) option).getRelationType();
@@ -274,19 +284,22 @@ public class CollectionValidator {
 							// index);
 							JSONObject attrJson = (JSONObject) attributeNames.get(typeLayerName);
 							typeErrorLayer = layerValidator.validateAttributeFix(attrJson);
+							if (typeErrorLayer != null) {
+								errorLayer.mergeErrorLayer(typeErrorLayer);
+							}
 						}
 						if (option instanceof ZValueAmbiguous) {
-							HashMap<String, String> hashMap = ((ZValueAmbiguous) option).getRelationType();
+							HashMap<String, Object> hashMap = ((ZValueAmbiguous) option).getRelationType();
 							String typeLayerName = typeLayer.getLayerName();
-							// int index = typeLayerName.indexOf("_");
-							// String layerCode = typeLayerName.substring(0,
-							// index);
-							String zValue = hashMap.get(typeLayerName);
+							JSONObject zValue = (JSONObject) hashMap.get(typeLayerName);
 							typeErrorLayer = layerValidator.validateZValueAmbiguous(zValue);
+							if (typeErrorLayer != null) {
+								errorLayer.mergeErrorLayer(typeErrorLayer);
+							}
 						}
-						if (typeErrorLayer != null) {
-							errorLayer.mergeErrorLayer(typeErrorLayer);
-						}
+						// if (typeErrorLayer != null) {
+						// errorLayer.mergeErrorLayer(typeErrorLayer);
+						// }
 					}
 				}
 			}
@@ -369,9 +382,9 @@ public class CollectionValidator {
 								typeErrorLayer = layerValidator.validateOutBoundary(validateLayerCollectionList
 										.getTypeLayers(relationNames.get(r), layerCollection),
 										spatialAccuracyTolorence);
-							}
-							if (typeErrorLayer != null) {
-								errorLayer.mergeErrorLayer(typeErrorLayer);
+								if (typeErrorLayer != null) {
+									errorLayer.mergeErrorLayer(typeErrorLayer);
+								}
 							}
 						}
 						if (option instanceof SmallArea) {
@@ -393,9 +406,9 @@ public class CollectionValidator {
 							for (int r = 0; r < relationNames.size(); r++) {
 								typeErrorLayer = layerValidator.validateSelfEntity(validateLayerCollectionList
 										.getTypeLayers(relationNames.get(r), layerCollection));
-							}
-							if (typeErrorLayer != null) {
-								errorLayer.mergeErrorLayer(typeErrorLayer);
+								if (typeErrorLayer != null) {
+									errorLayer.mergeErrorLayer(typeErrorLayer);
+								}
 							}
 						}
 						if (option instanceof OverShoot) {
@@ -425,7 +438,7 @@ public class CollectionValidator {
 							}
 						}
 						if (option instanceof WaterOpen) {
-							typeErrorLayer = layerValidator.validateWaterOpen();
+							typeErrorLayer = layerValidator.validateWaterOpen(neatLayer, spatialAccuracyTolorence);
 							if (typeErrorLayer != null) {
 								errorLayer.mergeErrorLayer(typeErrorLayer);
 							}
@@ -435,9 +448,9 @@ public class CollectionValidator {
 							for (int l = 0; l < relationNames.size(); l++) {
 								typeErrorLayer = layerValidator.vallidateB_SymbolOutSided(validateLayerCollectionList
 										.getTypeLayers(relationNames.get(l), layerCollection));
-							}
-							if (typeErrorLayer != null) {
-								errorLayer.mergeErrorLayer(typeErrorLayer);
+								if (typeErrorLayer != null) {
+									errorLayer.mergeErrorLayer(typeErrorLayer);
+								}
 							}
 						}
 						if (option instanceof CrossRoad) {
@@ -446,9 +459,9 @@ public class CollectionValidator {
 								typeErrorLayer = layerValidator.validateCrossRoad(validateLayerCollectionList
 										.getTypeLayers(relationNames.get(l), layerCollection), "",
 										spatialAccuracyTolorence);
-							}
-							if (typeErrorLayer != null) {
-								errorLayer.mergeErrorLayer(typeErrorLayer);
+								if (typeErrorLayer != null) {
+									errorLayer.mergeErrorLayer(typeErrorLayer);
+								}
 							}
 						}
 						if (option instanceof NodeMiss) {
@@ -457,12 +470,12 @@ public class CollectionValidator {
 								typeErrorLayer = layerValidator.validateNodeMiss(validateLayerCollectionList
 										.getTypeLayers(relationNames.get(l), layerCollection), "",
 										spatialAccuracyTolorence);
-							}
-							if (typeErrorLayer != null) {
-								errorLayer.mergeErrorLayer(typeErrorLayer);
+								if (typeErrorLayer != null) {
+									errorLayer.mergeErrorLayer(typeErrorLayer);
+								}
 							}
 						}
-						if(option instanceof PointDuplicated) {
+						if (option instanceof PointDuplicated) {
 							typeErrorLayer = layerValidator.validatePointDuplicated();
 							if (typeErrorLayer != null) {
 								errorLayer.mergeErrorLayer(typeErrorLayer);
@@ -636,19 +649,6 @@ public class CollectionValidator {
 			Coordinate[] rightCoords = new Coordinate[] { new Coordinate(secondPoint.x, secondPoint.y),
 					new Coordinate(secondPoint.x - spatialAccuracyTolorence, secondPoint.y), new Coordinate(secondPoint.x - spatialAccuracyTolorence, thirdPoint.y),
 					new Coordinate(thirdPoint.x, thirdPoint.y), new Coordinate(secondPoint.x, secondPoint.y) };
-			
-			/*Coordinate[] topCoords = new Coordinate[] { new Coordinate(minx, miny), new Coordinate(maxx, miny),
-					new Coordinate(maxx, maxy - spatialAccuracyTolorence), new Coordinate(minx, maxy - spatialAccuracyTolorence),
-					new Coordinate(minx, miny) };
-			Coordinate[] bottomCoords = new Coordinate[] { new Coordinate(minx, maxy), new Coordinate(maxx, maxy),
-					new Coordinate(maxx, maxy + spatialAccuracyTolorence), new Coordinate(minx, maxy + spatialAccuracyTolorence),
-					new Coordinate(minx, maxy) };
-			Coordinate[] leftCoords = new Coordinate[] { new Coordinate(minx, miny),
-					new Coordinate(minx + spatialAccuracyTolorence, miny), new Coordinate(minx + spatialAccuracyTolorence, maxy),
-					new Coordinate(minx, maxy), new Coordinate(minx, miny) };
-			Coordinate[] rightCoords = new Coordinate[] { new Coordinate(maxx, miny),
-					new Coordinate(maxx - spatialAccuracyTolorence, miny), new Coordinate(maxx - spatialAccuracyTolorence, maxy),
-					new Coordinate(maxx, maxy), new Coordinate(maxx, miny) };*/
 
 			LinearRing topRing = geometryFactory.createLinearRing(topCoords);
 			LinearRing bottomRing = geometryFactory.createLinearRing(bottomCoords);
@@ -712,8 +712,7 @@ public class CollectionValidator {
 
 					for (GeoLayer geoLayer : typeLayers) {
 						layerValidator.setValidatorLayer(geoLayer);
-						
-						
+
 						Map<MapSystemRuleType, GeoLayer> collctionMap = new HashMap<MapSystemRule.MapSystemRuleType, GeoLayer>();
 						GeoLayer topLayer = null;
 						GeoLayer bottomLayer = null;
@@ -722,15 +721,16 @@ public class CollectionValidator {
 
 						if (geoLayer != null) {
 							String layerName = geoLayer.getLayerName();
-							
-							//인접도엽 검수옵션 생성 - 레이어단위
+
+							// 인접도엽 검수옵션 생성 - 레이어단위
 							ValCollectionOption collectionOptions = new ValCollectionOption();
 							for (ValidatorOption option : options) {
 								if (option instanceof EntityNone) {
 									collectionOptions.putEntityNoneOption(true);
 								}
 								if (option instanceof RefAttributeMiss) {
-									List<String> colunms = (List<String>) ((RefAttributeMiss) option).getRefAttributeMaissOpt(layerName);
+									List<String> colunms = (List<String>) ((RefAttributeMiss) option)
+											.getRefAttributeMaissOpt(layerName);
 									collectionOptions.putRefAttributeMissOption(colunms);
 								}
 								if (option instanceof RefZValueMiss) {
@@ -741,17 +741,13 @@ public class CollectionValidator {
 									collectionOptions.putEdgeMatchMissOption(true);
 								}
 							}
-							
-							
-							
-							
+
 							if (topGeoCollection != null) {
 								topLayer = topGeoCollection.getLayer(layerName, topGeoCollection);
 								collctionMap.put(MapSystemRuleType.TOP, topLayer);
 							}
 							if (bottomGeoCollection != null) {
-								bottomLayer = bottomGeoCollection.getLayer(layerName,
-										bottomGeoCollection);
+								bottomLayer = bottomGeoCollection.getLayer(layerName, bottomGeoCollection);
 								collctionMap.put(MapSystemRuleType.BOTTOM, bottomLayer);
 							}
 							if (leftGeoCollection != null) {
@@ -764,8 +760,8 @@ public class CollectionValidator {
 							}
 
 							ValidateCloseCollectionLayer closeCollectionLayer = new ValidateCloseCollectionLayer(
-									geoLayer, collctionMap, spatialAccuracyTolorence, collectionOptions, collectionBoundary,
-									targetFeaturesGetBoundary, nearFeaturesGetBoundary);
+									geoLayer, collctionMap, spatialAccuracyTolorence, collectionOptions,
+									collectionBoundary, targetFeaturesGetBoundary, nearFeaturesGetBoundary);
 
 							typeErrorLayer = layerValidator.validateCloseCollection(closeCollectionLayer, geomCol);
 
@@ -782,45 +778,29 @@ public class CollectionValidator {
 				errLayerList.add(errLayer);
 			}
 		}
-
-		
-	/*	for (int i = 0; i < layerCollections.size(); i++) {
-			GeoLayerCollection collection = layerCollections.get(i);
-			List<GeoLayer> collectionList = collection.getLayers();
-			ErrorLayer errLayer = new ErrorLayer();
-			for (int j = 0; j < types.size(); j++) {
-				ValidateLayerType type = types.get(j);
-				GeoLayerList typeLayers = validateLayerCollectionList.getTypeLayers(type.getTypeName(), collection);
-				List<ValidatorOption> options = type.getOptionList();
-				if (options != null) {
-					ErrorLayer typeErrorLayer = null;
-					for (int k = 0; k < options.size(); k++) {
-						ValidatorOption option = options.get(k);
-						for (int l = 0; l < typeLayers.size(); l++) {
-							GeoLayer typeLayer = typeLayers.get(l);
-							if (typeLayer == null) {
-								continue;
-							}
-							if (option instanceof LayerMiss) {
-								List<String> typeNames = ((LayerMiss) option).getLayerType();
-								typeErrorLayer = layerValidator.validateLayerMiss(typeNames);
-								if (typeErrorLayer != null) {
-									errLayer.mergeErrorLayer(typeErrorLayer);
-								}
-								collectionList.remove(typeLayer);
-							}
-						}
-					}
-				}
-			}
-			if (errLayer != null) {
-				errLayer.setCollectionName(collection.getCollectionName());
-				errLayer.setCollectionType(collection.getLayerCollectionType());
-				errLayerList.add(errLayer);
-			}
-		}*/
-		 
 	}
+
+		/*
+		 * for (int i = 0; i < layerCollections.size(); i++) {
+		 * GeoLayerCollection collection = layerCollections.get(i);
+		 * List<GeoLayer> collectionList = collection.getLayers(); ErrorLayer
+		 * errLayer = new ErrorLayer(); for (int j = 0; j < types.size(); j++) {
+		 * ValidateLayerType type = types.get(j); GeoLayerList typeLayers =
+		 * validateLayerCollectionList.getTypeLayers(type.getTypeName(),
+		 * collection); List<ValidatorOption> options = type.getOptionList(); if
+		 * (options != null) { ErrorLayer typeErrorLayer = null; for (int k = 0;
+		 * k < options.size(); k++) { ValidatorOption option = options.get(k);
+		 * for (int l = 0; l < typeLayers.size(); l++) { GeoLayer typeLayer =
+		 * typeLayers.get(l); if (typeLayer == null) { continue; } if (option
+		 * instanceof LayerMiss) { List<String> typeNames = ((LayerMiss)
+		 * option).getLayerType(); typeErrorLayer =
+		 * layerValidator.validateLayerMiss(typeNames); if (typeErrorLayer !=
+		 * null) { errLayer.mergeErrorLayer(typeErrorLayer); }
+		 * collectionList.remove(typeLayer); } } } } } if (errLayer != null) {
+		 * errLayer.setCollectionName(collection.getCollectionName());
+		 * errLayer.setCollectionType(collection.getLayerCollectionType());
+		 * errLayerList.add(errLayer); } }
+		 */
 
 	
 	private Coordinate[] getSortCoordinate(Coordinate[] coordinates) {
