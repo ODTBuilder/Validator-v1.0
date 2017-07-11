@@ -315,6 +315,7 @@ html {
 			map : map,
 			user : "admin",
 			record : record,
+			treeInstance : $('#builderClientLayer').jstreeol3(true),
 			selected : function() {
 				return $('#builderClientLayer').jstreeol3("get_selected_layer");
 			}
@@ -391,6 +392,7 @@ html {
 		$("#qaedit").qaedit({
 			map : map,
 			editingTool : $("#edit").editingtool("instance"),
+			treeInstance : $('#builderClientLayer').jstreeol3(true),
 			linkKey : "feature_idx",
 			user : "admin",
 			layersURL : 'geoserver2/getGeolayerCollectionTree.ajax',

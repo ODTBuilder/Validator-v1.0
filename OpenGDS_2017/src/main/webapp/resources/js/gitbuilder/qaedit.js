@@ -525,6 +525,7 @@ gitbuilder.ui.QAEdit = $.widget("gitbuilder.qaedit",
 									layer.set("id", id);
 									layer.set("name", name);
 									layers.push(layer);
+									console.log(layer.get("id"));
 								}
 								var git = {
 									"validation" : false,
@@ -934,6 +935,87 @@ gitbuilder.ui.QAEdit = $.widget("gitbuilder.qaedit",
 						console.log(data);
 						var features = new ol.format.GeoJSON().readFeatures(JSON.stringify(data));
 						// that.options.editingTool.open();
+						var sourceLayer = that.options.treeInstance.get_LayerByOLId(layer);
+
+						var arr = {
+							"geoLayerList" : [ layer ]
+						}
+						$.ajax({
+							url : that.options.layerInfoURL,
+							method : "POST",
+							contentType : "application/json; charset=UTF-8",
+							cache : false,
+							async : false,
+							data : JSON.stringify(arr),
+							beforeSend : function() { // 호출전실행
+								// loadImageShow();
+							},
+							traditional : true,
+							success : function(data2, textStatus, jqXHR) {
+								console.log(data2);
+								if (Array.isArray(data2)) {
+									for (var i = 0; i < data2.length; i++) {
+										// var wms = new ol.layer.Tile({
+										// source : new ol.source.TileWMS({
+										// url : wmsURL,
+										// params : {
+										// 'LAYERS' : data2[i].lName,
+										// 'TILED' : true,
+										// 'FORMAT' : 'image/png8',
+										// 'VERSION' : '1.1.0',
+										// 'CRS' : 'EPSG:5186',
+										// 'SRS' : 'EPSG:5186',
+										// 'BBOX' :
+										// data2[i].nbBox.minx.toString() + ","
+										// + data2[i].nbBox.miny.toString() +
+										// ","
+										// + data2[i].nbBox.maxx.toString() +
+										// "," + data2[i].nbBox.maxy.toString()
+										// },
+										// serverType : 'geoserver'
+										// })
+										// });
+										var source = new ol.source.TileWMS({
+											url : that.options.featureWMSURL,
+											params : {
+												'LAYERS' : data2[i].lName,
+												'TILED' : true,
+												'FORMAT' : 'image/png8',
+												'VERSION' : '1.1.0',
+												'CRS' : 'EPSG:5186',
+												'SRS' : 'EPSG:5186',
+												'BBOX' : data2[i].nbBox.minx.toString() + "," + data2[i].nbBox.miny.toString() + ","
+														+ data2[i].nbBox.maxx.toString() + "," + data2[i].nbBox.maxy.toString()
+											},
+											serverType : 'geoserver'
+										});
+										sourceLayer.setSource(source);
+										var git = {
+											"validation" : true,
+											"geometry" : data2[i].geomType,
+											"editable" : true,
+											"attribute" : data2[i].attInfo,
+											"fake" : "child"
+										}
+										sourceLayer.set("git", git)
+										console.log(sourceLayer);
+										// wms.set("name",
+										// that.options.treeInstance.get_node(data2[i].lName).text);
+										// wms.set("id", data2[i].lName);
+										// wms.setVisible(false);
+										// console.log(wms.get("id"));
+										// wms.set("type", "ImageTile");
+										// wms.set("git", git);
+										// arra.push(wms);
+										// console.log(wms);
+									}
+								}
+							}
+						});
+
+						that.options.treeInstance.deselect_all();
+						that.options.treeInstance.select_node(sourceLayer.get("treeid"));
+						that.options.editingTool.setLayer(sourceLayer);
 						that.options.editingTool.setFeatures(features);
 					}
 				});
