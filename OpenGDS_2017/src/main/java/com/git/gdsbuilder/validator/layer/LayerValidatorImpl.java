@@ -1002,7 +1002,6 @@ public class LayerValidatorImpl implements LayerValidator {
 
 			// 인접도엽 레이어 GET
 			GeoLayer topGeoLayer = collectionMap.get(MapSystemRuleType.TOP);
-			;
 			GeoLayer bottomGeoLayer = collectionMap.get(MapSystemRuleType.BOTTOM);
 			GeoLayer leftGeoLayer = collectionMap.get(MapSystemRuleType.LEFT);
 			GeoLayer rightGeoLayer = collectionMap.get(MapSystemRuleType.RIGHT);

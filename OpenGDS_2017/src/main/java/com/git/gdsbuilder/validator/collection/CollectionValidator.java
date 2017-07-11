@@ -613,54 +613,26 @@ public class CollectionValidator {
 				return;
 			}
 
-			// 도곽 좌표 추출
-			double minx = 0.0;
-			double miny = 0.0;
-			double maxx = 0.0;
-			double maxy = 0.0;
+			
+			Coordinate firstPoint = null;
+			Coordinate secondPoint = null;
+			Coordinate thirdPoint = null;
+			Coordinate fourthPoint = null;
 
 			int i = 0;
 			while (featureIterator.hasNext()) {
 				if (i == 0) {
 					SimpleFeature feature = featureIterator.next();
 					Geometry geometry = (Geometry) feature.getDefaultGeometry();
+					
+					
+					Coordinate[] coordinateArray = this.getSortCoordinate(geometry.getCoordinates());
+					
+					firstPoint = coordinateArray[0];
+					secondPoint = coordinateArray[1];
+					thirdPoint = coordinateArray[2];
+					fourthPoint = coordinateArray[3];
 
-					Coordinate[] testCoordinateArray = geometry.getCoordinates();
-
-					Coordinate minxMiny;
-					Coordinate maxxMiny;
-					Coordinate maxxMaxy;
-					Coordinate minxMaxy;
-
-					double fPointX = 0.0;
-					double fPointY = 0.0;
-					double sPointX = 0.0;
-					double sPointY = 0.0;
-
-					for (int j = 0; j < testCoordinateArray.length; j++) {
-						fPointX = testCoordinateArray[j].x;
-						fPointY = testCoordinateArray[j].y;
-						for (int k = 1; k < testCoordinateArray.length - 1; k++) {
-							sPointX = testCoordinateArray[k].x;
-							sPointY = testCoordinateArray[k].y;
-						}
-					}
-
-					for (Coordinate test : testCoordinateArray) {
-
-					}
-
-					Coordinate[] coordinateArray = geometry.getEnvelope().getCoordinates();
-					Coordinate minCoordinate = new Coordinate();
-					Coordinate maxCoordinate = new Coordinate();
-
-					minCoordinate = coordinateArray[0];
-					maxCoordinate = coordinateArray[2];
-
-					minx = minCoordinate.x;
-					miny = minCoordinate.y;
-					maxx = maxCoordinate.x;
-					maxy = maxCoordinate.y;
 					i++;
 				} else {
 					LOGGER.info("도곽레이어 객체 1개이상");
@@ -671,10 +643,10 @@ public class CollectionValidator {
 			GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory();
 
 			// 도엽라인객체 생성
-			Coordinate[] topLineCoords = new Coordinate[] { new Coordinate(minx, miny), new Coordinate(maxx, miny) };
-			Coordinate[] bottomLineCoords = new Coordinate[] { new Coordinate(minx, maxy), new Coordinate(maxx, maxy) };
-			Coordinate[] leftLineCoords = new Coordinate[] { new Coordinate(minx, miny), new Coordinate(minx, maxy) };
-			Coordinate[] rightLineCoords = new Coordinate[] { new Coordinate(maxx, miny), new Coordinate(maxx, maxy) };
+			Coordinate[] topLineCoords = new Coordinate[] { firstPoint, secondPoint };
+			Coordinate[] bottomLineCoords = new Coordinate[] { thirdPoint, fourthPoint };
+			Coordinate[] leftLineCoords = new Coordinate[] { firstPoint, fourthPoint };
+			Coordinate[] rightLineCoords = new Coordinate[] { secondPoint, thirdPoint };
 
 			LineString topLineString = geometryFactory.createLineString(topLineCoords);
 			LineString bottomLineString = geometryFactory.createLineString(bottomLineCoords);
@@ -689,20 +661,18 @@ public class CollectionValidator {
 			collectionBoundary.put(MapSystemRuleType.RIGHT, rightLineString);
 
 			// 대상도엽 객체 GET 폴리곤 생성
-			Coordinate[] topCoords = new Coordinate[] { new Coordinate(minx, miny), new Coordinate(maxx, miny),
-					new Coordinate(maxx, maxy + spatialAccuracyTolorence),
-					new Coordinate(minx, maxy + spatialAccuracyTolorence), new Coordinate(minx, miny) };
-			Coordinate[] bottomCoords = new Coordinate[] { new Coordinate(minx, maxy), new Coordinate(maxx, maxy),
-					new Coordinate(maxx, maxy - spatialAccuracyTolorence),
-					new Coordinate(minx, maxy - spatialAccuracyTolorence), new Coordinate(minx, maxy) };
-			Coordinate[] leftCoords = new Coordinate[] { new Coordinate(minx, miny),
-					new Coordinate(minx + spatialAccuracyTolorence, miny),
-					new Coordinate(minx + spatialAccuracyTolorence, maxy), new Coordinate(minx, maxy),
-					new Coordinate(minx, miny) };
-			Coordinate[] rightCoords = new Coordinate[] { new Coordinate(maxx, miny),
-					new Coordinate(maxx - spatialAccuracyTolorence, miny),
-					new Coordinate(maxx - spatialAccuracyTolorence, maxy), new Coordinate(maxx, maxy),
-					new Coordinate(maxx, miny) };
+			Coordinate[] topCoords = new Coordinate[] { new Coordinate(firstPoint.x, firstPoint.y), new Coordinate(secondPoint.x, secondPoint.y),
+					new Coordinate(secondPoint.x, secondPoint.y - spatialAccuracyTolorence), new Coordinate(firstPoint.x, firstPoint.y - spatialAccuracyTolorence),
+					new Coordinate(firstPoint.x, firstPoint.y) };
+			Coordinate[] bottomCoords = new Coordinate[] { new Coordinate(fourthPoint.x, fourthPoint.y), new Coordinate(thirdPoint.x, thirdPoint.y),
+					new Coordinate(thirdPoint.x, thirdPoint.y + spatialAccuracyTolorence), new Coordinate(fourthPoint.x, fourthPoint.y + spatialAccuracyTolorence),
+					new Coordinate(fourthPoint.x, fourthPoint.y) };
+			Coordinate[] leftCoords = new Coordinate[] { new Coordinate(firstPoint.x, firstPoint.y),
+					new Coordinate(firstPoint.x + spatialAccuracyTolorence, firstPoint.y), new Coordinate(firstPoint.x + spatialAccuracyTolorence, fourthPoint.y),
+					new Coordinate(fourthPoint.x, fourthPoint.y), new Coordinate(firstPoint.x, firstPoint.y) };
+			Coordinate[] rightCoords = new Coordinate[] { new Coordinate(secondPoint.x, secondPoint.y),
+					new Coordinate(secondPoint.x - spatialAccuracyTolorence, secondPoint.y), new Coordinate(secondPoint.x - spatialAccuracyTolorence, thirdPoint.y),
+					new Coordinate(thirdPoint.x, thirdPoint.y), new Coordinate(secondPoint.x, secondPoint.y) };
 
 			LinearRing topRing = geometryFactory.createLinearRing(topCoords);
 			LinearRing bottomRing = geometryFactory.createLinearRing(bottomCoords);
@@ -723,20 +693,18 @@ public class CollectionValidator {
 			targetFeaturesGetBoundary.put(MapSystemRuleType.RIGHT, rightPolygon);
 
 			// 인접도엽 객체 GET 폴리곤생성
-			Coordinate[] nearTopCoords = new Coordinate[] { new Coordinate(minx, miny - spatialAccuracyTolorence),
-					new Coordinate(maxx, miny - spatialAccuracyTolorence), new Coordinate(maxx, maxy),
-					new Coordinate(minx, maxy), new Coordinate(minx, miny - spatialAccuracyTolorence) };
-			Coordinate[] nearBottomCoords = new Coordinate[] { new Coordinate(minx, maxy), new Coordinate(maxx, maxy),
-					new Coordinate(maxx, maxy + spatialAccuracyTolorence),
-					new Coordinate(minx, maxy + spatialAccuracyTolorence), new Coordinate(minx, maxy) };
-			Coordinate[] nearLeftCoords = new Coordinate[] { new Coordinate(minx - spatialAccuracyTolorence, miny),
-					new Coordinate(minx, miny), new Coordinate(minx, maxy),
-					new Coordinate(minx - spatialAccuracyTolorence, maxy),
-					new Coordinate(minx - spatialAccuracyTolorence, miny) };
-			Coordinate[] nearRightCoords = new Coordinate[] { new Coordinate(maxx, miny),
-					new Coordinate(maxx + spatialAccuracyTolorence, miny),
-					new Coordinate(maxx + spatialAccuracyTolorence, maxy), new Coordinate(maxx, maxy),
-					new Coordinate(maxx, miny) };
+			Coordinate[] nearTopCoords = new Coordinate[] { new Coordinate(firstPoint.x, firstPoint.y + spatialAccuracyTolorence),
+					new Coordinate(secondPoint.x, secondPoint.y + spatialAccuracyTolorence), new Coordinate(secondPoint.x, secondPoint.y), new Coordinate(firstPoint.x, firstPoint.y),
+					new Coordinate(firstPoint.x, firstPoint.y+ spatialAccuracyTolorence) };
+			Coordinate[] nearBottomCoords = new Coordinate[] { new Coordinate(fourthPoint.x, fourthPoint.y), new Coordinate(thirdPoint.x, thirdPoint.y),
+					new Coordinate(thirdPoint.x, thirdPoint.y - spatialAccuracyTolorence), new Coordinate(fourthPoint.x, fourthPoint.y - spatialAccuracyTolorence),
+					new Coordinate(fourthPoint.x, fourthPoint.y) };
+			Coordinate[] nearLeftCoords = new Coordinate[] { new Coordinate(firstPoint.x - spatialAccuracyTolorence, firstPoint.y),
+					new Coordinate(firstPoint.x, firstPoint.y), new Coordinate(fourthPoint.x, fourthPoint.y), new Coordinate(fourthPoint.x - spatialAccuracyTolorence, fourthPoint.y),
+					new Coordinate(firstPoint.x - spatialAccuracyTolorence, firstPoint.y) };
+			Coordinate[] nearRightCoords = new Coordinate[] { new Coordinate(secondPoint.x, secondPoint.y),
+					new Coordinate(secondPoint.x + spatialAccuracyTolorence, secondPoint.y), new Coordinate(thirdPoint.x + spatialAccuracyTolorence, thirdPoint.y),
+					new Coordinate(thirdPoint.x, thirdPoint.y), new Coordinate(secondPoint.x, secondPoint.y) };
 
 			LinearRing nearTopRing = geometryFactory.createLinearRing(nearTopCoords);
 			LinearRing nearBottomRing = geometryFactory.createLinearRing(nearBottomCoords);
@@ -834,6 +802,7 @@ public class CollectionValidator {
 				errLayerList.add(errLayer);
 			}
 		}
+	}
 
 		/*
 		 * for (int i = 0; i < layerCollections.size(); i++) {
@@ -857,6 +826,48 @@ public class CollectionValidator {
 		 * errLayerList.add(errLayer); } }
 		 */
 
+	
+	private Coordinate[] getSortCoordinate(Coordinate[] coordinates) {
+		Coordinate[] returncoordinate = coordinates;
+		if (coordinates.length == 5) {
+			double fPointY = 0.0;
+			double sPointY = 0.0;
+
+			for (int a = 0; a < returncoordinate.length - 2; a++) {
+				for (int j = 0; j < returncoordinate.length - 2; j++) {
+					fPointY = returncoordinate[j].y;
+					sPointY = returncoordinate[j + 1].y;
+
+					Coordinate jCoordinate = returncoordinate[j];
+					Coordinate kCoordinate = returncoordinate[j + 1];
+
+					if (fPointY < sPointY) {
+						returncoordinate[j + 1] = jCoordinate;
+						returncoordinate[j] = kCoordinate;
+					}
+				}
+			}
+
+			Coordinate firstPoint = returncoordinate[0];
+			Coordinate secondPoint = returncoordinate[1];
+			Coordinate thirdPoint = returncoordinate[2];
+			Coordinate fourthPoint = returncoordinate[3];
+
+			if (firstPoint.x > secondPoint.x) {
+				returncoordinate[0] = secondPoint;
+				returncoordinate[1] = firstPoint;
+			}
+
+			if (thirdPoint.x < fourthPoint.x) {
+				returncoordinate[2] = fourthPoint;
+				returncoordinate[3] = thirdPoint;
+			}
+
+			returncoordinate[4] = returncoordinate[0];
+		} else
+			return null;
+		
+		return returncoordinate;
 	}
 
 	private void errLayerMerge(ErrorLayerList geoErrorList) {

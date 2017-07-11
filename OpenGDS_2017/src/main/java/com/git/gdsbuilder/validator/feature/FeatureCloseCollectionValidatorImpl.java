@@ -121,6 +121,7 @@ public class FeatureCloseCollectionValidatorImpl implements FeatureCloseCollecti
 									EdgeMatchMiss.Type.EDGEMATCHMISS.errType(),
 									EdgeMatchMiss.Type.EDGEMATCHMISS.errName(), tPoint);
 							collectionErrors.add(MMErrFeature);
+							System.out.println("matchMiss");
 						}
 					}
 				}
@@ -144,6 +145,7 @@ public class FeatureCloseCollectionValidatorImpl implements FeatureCloseCollecti
 								RefZValueMiss.Type.REFZVALUEMISS.errType(), RefZValueMiss.Type.REFZVALUEMISS.errName(),
 								targetGeometry.getInteriorPoint());
 						collectionErrors.add(rZVErrFeature);
+						System.out.println("refZValueMiss");
 					}
 				}
 
@@ -168,6 +170,7 @@ public class FeatureCloseCollectionValidatorImpl implements FeatureCloseCollecti
 									RefAttributeMiss.Type.RefAttributeMiss.errName(),
 									targetGeometry.getInteriorPoint());
 							collectionErrors.add(rAttErrFeature);
+							System.out.println("refAttErr");
 							break;
 						}
 					}
@@ -179,6 +182,7 @@ public class FeatureCloseCollectionValidatorImpl implements FeatureCloseCollecti
 				ErrorFeature eNoneErr = new ErrorFeature(featureIdx, featureID, EntityNone.Type.ENTITYNONE.errType(),
 						EntityNone.Type.ENTITYNONE.errName(), nearLine.getCentroid());
 				collectionErrors.add(eNoneErr);
+				System.out.println("entityNone");
 			}
 		}
 		return collectionErrors;
