@@ -217,13 +217,13 @@ public class CollectionValidator {
 				errorLayer.setCollectionType(this.collectionType);
 
 				// layerMiss 검수
-//				layerMissValidate(types, collection, errorLayer);
-//
-//				// geometric 검수
-//				geometricValidate(types, collection, errorLayer);
-//
-//				// attribute 검수
-//				attributeValidate(types, collection, errorLayer);
+				layerMissValidate(types, collection, errorLayer);
+
+				// geometric 검수
+				geometricValidate(types, collection, errorLayer);
+
+				// attribute 검수
+				attributeValidate(types, collection, errorLayer);
 
 				// 인접도엽 검수
 				closeCollectionValidate(types, mapSystemRule, collection, "", errorLayer);
