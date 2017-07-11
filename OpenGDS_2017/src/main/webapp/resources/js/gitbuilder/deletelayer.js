@@ -17,7 +17,7 @@ gb.geoserver.DeleteLayer = function(obj) {
 	this.format = undefined;
 	this.type = undefined;
 	this.refer = undefined;
-	this.structure = [];
+	this.structure = {};
 };
 gb.geoserver.DeleteLayer.prototype.setReference = function(refer) {
 	this.refer = refer;
@@ -47,14 +47,30 @@ gb.geoserver.DeleteLayer.prototype.sendData = function(obj) {
 		}
 	});
 };
-gb.geoserver.DeleteLayer.prototype.addStructure = function(scope, layers) {
+gb.geoserver.DeleteLayer.prototype.addStructure = function(format, mapsheet, scope, layers) {
+	var strc = this.getStructure();
+	if (typeof strc === "object") {
+		if (!strc.hasOwnProperty("layer")) {
+			strc["layer"] = {};
+		}
+		if (!strc["layer"].hasOwnProperty(format)) {
+			strc["layer"][format] = {};
+		}
+		if (!strc["layer"][format].hasOwnProperty(mapsheet)) {
+			strc["layer"][format][mapsheet] = {};
+		}
+//		if (!strc["layer"][format][mapsheet].hasOwnProperty("remove")) {
+//			strc["layer"][format][mapsheet]["remove"] = {};
+//		}
+	}
 	var obj = {};
 	obj["scope"] = typeof scope === "string" ? scope : false;
 	obj["layer"] = Array.isArray(layers) ? layers : false;
 	if (!obj["layer"] || !obj["scope"]) {
 		return;
 	}
-	this.structure.push(obj);
+	strc["layer"][format][mapsheet]["remove"] = obj;
+//	this.structure.push(obj);
 };
 gb.geoserver.DeleteLayer.prototype.getStructure = function() {
 	return this.structure;
