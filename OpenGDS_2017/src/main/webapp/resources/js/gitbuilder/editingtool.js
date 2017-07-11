@@ -277,7 +277,7 @@ gitbuilder.ui.EditingTool = $.widget("gitbuilder.editingtool", {
 			var obj = {};
 			obj[$(this).parent().prev().text()] = $(this).val();
 			that.feature.setProperties(obj);
-			that.options.record.update(that.layer, that.feature);
+			that.options.record.update(that.getLayer(), that.feature);
 		});
 
 		this.map.on('postcompose', function(evt) {
@@ -293,6 +293,12 @@ gitbuilder.ui.EditingTool = $.widget("gitbuilder.editingtool", {
 	},
 	_init : function() {
 		var that = this;
+	},
+	setLayer : function(layer) {
+		this.layer = layer;
+	},
+	getLayer : function() {
+		return this.layer;
 	},
 	setFeatures : function(newFeature) {
 		var that = this;
@@ -368,8 +374,8 @@ gitbuilder.ui.EditingTool = $.widget("gitbuilder.editingtool", {
 			} else if (that.features.getLength() === 1) {
 				$(that.featurePop).hide();
 				$(that.attrTB).empty();
-				that.layer = that.updateSelected();
-				var attrInfo = that.layer.get("git").attribute;
+				that.setLayer(that.updateSelected());
+				var attrInfo = that.getLayer().get("git").attribute;
 				that.feature = that.features.item(0);
 				var attr = that.features.item(0).getProperties();
 				var keys = Object.keys(attrInfo);
@@ -435,6 +441,7 @@ gitbuilder.ui.EditingTool = $.widget("gitbuilder.editingtool", {
 		this.isOn.select = true;
 		this.activeBtn("selectBtn");
 		this.deactiveIntrct([ "move", "rotate" ]);
+		this.open();
 	},
 	getFeatures : function() {
 		return this.features;
@@ -596,20 +603,21 @@ gitbuilder.ui.EditingTool = $.widget("gitbuilder.editingtool", {
 									var ogit = sourceLayer.get("git");
 									ogit["attribute"] = data2[i].attInfo;
 									ogit["geometry"] = data2[i].geomType;
-//									var git = {
-//										"validation" : false,
-//										"geometry" : data2[i].geomType,
-//										"editable" : true,
-//										"attribute" : data2[i].attInfo,
-//										"fake" : "child"
-//									}
-//									wms.set("name", obj.refer.get_node(data2[i].lName).text);
-//									wms.set("id", data2[i].lName);
+									// var git = {
+									// "validation" : false,
+									// "geometry" : data2[i].geomType,
+									// "editable" : true,
+									// "attribute" : data2[i].attInfo,
+									// "fake" : "child"
+									// }
+									// wms.set("name",
+									// obj.refer.get_node(data2[i].lName).text);
+									// wms.set("id", data2[i].lName);
 									// wms.setVisible(false);
-//									console.log(wms.get("id"));
+									// console.log(wms.get("id"));
 									// wms.set("type", "ImageTile");
-//									wms.set("git", git);
-//									console.log(wms);
+									// wms.set("git", git);
+									// console.log(wms);
 								}
 
 								$("body").css("cursor", "default");
@@ -685,8 +693,8 @@ gitbuilder.ui.EditingTool = $.widget("gitbuilder.editingtool", {
 				} else if (that.features.getLength() === 1) {
 					$(that.featurePop).hide();
 					$(that.attrTB).empty();
-					that.layer = that.updateSelected();
-					var attrInfo = that.layer.get("git").attribute;
+					that.setLayer(that.updateSelected());
+					var attrInfo = that.getLayer().get("git").attribute;
 					that.feature = that.features.item(0);
 					var attr = that.features.item(0).getProperties();
 					var keys = Object.keys(attrInfo);
@@ -779,12 +787,12 @@ gitbuilder.ui.EditingTool = $.widget("gitbuilder.editingtool", {
 				if (layers.length !== 1) {
 					return;
 				}
-				if (that.layer.get("id") === layers[0].get("id")) {
+				if (that.getLayer().get("id") === layers[0].get("id")) {
 					var feature = evt.feature;
 					var c = that.options.record.getCreated();
-					var l = c[that.layer.get("id")];
+					var l = c[that.getLayer().get("id")];
 					if (!l) {
-						var fid = that.layer.get("id") + ".new0";
+						var fid = that.getLayer().get("id") + ".new0";
 						feature.setId(fid);
 						that.options.record.create(layers[0], feature);
 					} else {
@@ -797,7 +805,7 @@ gitbuilder.ui.EditingTool = $.widget("gitbuilder.editingtool", {
 							var nposit = (id.search(".new")) + 4;
 							count = (parseInt(id.substr(nposit, id.length)) + 1);
 						}
-						var fid = that.layer.get("id") + ".new" + count;
+						var fid = that.getLayer().get("id") + ".new" + count;
 						feature.setId(fid);
 						that.options.record.create(layers[0], feature);
 					}
@@ -840,7 +848,7 @@ gitbuilder.ui.EditingTool = $.widget("gitbuilder.editingtool", {
 				if (layers.length !== 1) {
 					return;
 				}
-				if (that.layer.get("id") === layers[0].get("id")) {
+				if (that.getLayer().get("id") === layers[0].get("id")) {
 					var features = evt.features;
 					for (var i = 0; i < features.getLength(); i++) {
 						that.options.record.update(layers[0], features.item(i));
@@ -886,7 +894,7 @@ gitbuilder.ui.EditingTool = $.widget("gitbuilder.editingtool", {
 				if (layers.length !== 1) {
 					return;
 				}
-				if (that.layer.get("id") === layers[0].get("id")) {
+				if (that.getLayer().get("id") === layers[0].get("id")) {
 					var feature = evt.feature;
 					that.options.record.update(layers[0], feature);
 				}
@@ -927,7 +935,7 @@ gitbuilder.ui.EditingTool = $.widget("gitbuilder.editingtool", {
 				if (layers.length !== 1) {
 					return;
 				}
-				if (that.layer.get("id") === layers[0].get("id")) {
+				if (that.getLayer().get("id") === layers[0].get("id")) {
 					var features = evt.features;
 					for (var i = 0; i < features.getLength(); i++) {
 						that.options.record.update(layers[0], features.item(i));
@@ -964,7 +972,7 @@ gitbuilder.ui.EditingTool = $.widget("gitbuilder.editingtool", {
 			if (layers.length !== 1) {
 				return;
 			}
-			if (that.layer.get("id") === layers[0].get("id")) {
+			if (that.getLayer().get("id") === layers[0].get("id")) {
 				var features = this.interaction.select.getFeatures();
 				var fill = new ol.style.Fill({
 					color : "rgba(255,0,0,0.5)"
@@ -1021,7 +1029,7 @@ gitbuilder.ui.EditingTool = $.widget("gitbuilder.editingtool", {
 		if (typeof this.options.selected === "function") {
 			var layers = this.options.selected();
 			if (layers.length === 1 && !(layers[0] instanceof ol.layer.Group)) {
-				this.layer = layers[0];
+				this.setLayer(layers[0]);
 				$(this.window).show();
 			} else {
 				console.error("select a layer");

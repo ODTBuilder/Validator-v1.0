@@ -37,7 +37,8 @@
 			 */
 
 			// internal variables
-			var instance_counter = 0, ccp_node = false, ccp_mode = false, ccp_inst = false, themes_loaded = [], src = $('script:last').attr('src'), document = window.document; // local
+			var instance_counter = 0, ccp_node = false, ccp_mode = false, ccp_inst = false, themes_loaded = [], src = $('script:last')
+					.attr('src'), document = window.document; // local
 			// variable
 			// is
 			// always
@@ -897,9 +898,10 @@
 				 */
 				teardown : function() {
 					this.unbind();
-					this.element.removeClass('jstreeol3').removeData('jstreeol3').find("[class^='jstreeol3']").addBack().attr("class", function() {
-						return this.className.replace(/jstreeol3[^ ]*|$/ig, '');
-					});
+					this.element.removeClass('jstreeol3').removeData('jstreeol3').find("[class^='jstreeol3']").addBack().attr("class",
+							function() {
+								return this.className.replace(/jstreeol3[^ ]*|$/ig, '');
+							});
 					this.element = null;
 				},
 				/**
@@ -1106,80 +1108,79 @@
 					// quick searching when the tree is focused
 					.on(
 							'keypress.jstreeol3',
-							$.proxy(
-									function(e) {
-										if (e.target.tagName && e.target.tagName.toLowerCase() === "input") {
-											return true;
-										}
-										if (tout) {
-											clearTimeout(tout);
-										}
-										tout = setTimeout(function() {
-											word = '';
-										}, 500);
+							$.proxy(function(e) {
+								if (e.target.tagName && e.target.tagName.toLowerCase() === "input") {
+									return true;
+								}
+								if (tout) {
+									clearTimeout(tout);
+								}
+								tout = setTimeout(function() {
+									word = '';
+								}, 500);
 
-										var chr = String.fromCharCode(e.which).toLowerCase(), col = this.element.find('.jstreeol3-anchor').filter(
-												':visible'), ind = col.index(document.activeElement) || 0, end = false;
-										word += chr;
+								var chr = String.fromCharCode(e.which).toLowerCase(), col = this.element.find('.jstreeol3-anchor').filter(
+										':visible'), ind = col.index(document.activeElement) || 0, end = false;
+								word += chr;
 
-										// match for whole word from current
-										// node down (including the current
-										// node)
-										if (word.length > 1) {
-											col.slice(ind).each($.proxy(function(i, v) {
-												if ($(v).text().toLowerCase().indexOf(word) === 0) {
-													$(v).focus();
-													end = true;
-													return false;
-												}
-											}, this));
-											if (end) {
-												return;
-											}
-
-											// match for whole word from the
-											// beginning of the tree
-											col.slice(0, ind).each($.proxy(function(i, v) {
-												if ($(v).text().toLowerCase().indexOf(word) === 0) {
-													$(v).focus();
-													end = true;
-													return false;
-												}
-											}, this));
-											if (end) {
-												return;
-											}
+								// match for whole word from current
+								// node down (including the current
+								// node)
+								if (word.length > 1) {
+									col.slice(ind).each($.proxy(function(i, v) {
+										if ($(v).text().toLowerCase().indexOf(word) === 0) {
+											$(v).focus();
+											end = true;
+											return false;
 										}
-										// list nodes that start with that
-										// letter (only if word consists of a
-										// single char)
-										if (new RegExp('^' + chr.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&') + '+$').test(word)) {
-											// search for the next node starting
-											// with that letter
-											col.slice(ind + 1).each($.proxy(function(i, v) {
-												if ($(v).text().toLowerCase().charAt(0) === chr) {
-													$(v).focus();
-													end = true;
-													return false;
-												}
-											}, this));
-											if (end) {
-												return;
-											}
+									}, this));
+									if (end) {
+										return;
+									}
 
-											// search from the beginning
-											col.slice(0, ind + 1).each($.proxy(function(i, v) {
-												if ($(v).text().toLowerCase().charAt(0) === chr) {
-													$(v).focus();
-													end = true;
-													return false;
-												}
-											}, this));
-											if (end) {
-												return;
-											}
+									// match for whole word from the
+									// beginning of the tree
+									col.slice(0, ind).each($.proxy(function(i, v) {
+										if ($(v).text().toLowerCase().indexOf(word) === 0) {
+											$(v).focus();
+											end = true;
+											return false;
 										}
-									}, this))
+									}, this));
+									if (end) {
+										return;
+									}
+								}
+								// list nodes that start with that
+								// letter (only if word consists of a
+								// single char)
+								if (new RegExp('^' + chr.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&') + '+$').test(word)) {
+									// search for the next node starting
+									// with that letter
+									col.slice(ind + 1).each($.proxy(function(i, v) {
+										if ($(v).text().toLowerCase().charAt(0) === chr) {
+											$(v).focus();
+											end = true;
+											return false;
+										}
+									}, this));
+									if (end) {
+										return;
+									}
+
+									// search from the beginning
+									col.slice(0, ind + 1).each($.proxy(function(i, v) {
+										if ($(v).text().toLowerCase().charAt(0) === chr) {
+											$(v).focus();
+											end = true;
+											return false;
+										}
+									}, this));
+									if (end) {
+										return;
+									}
+								}
+							}, this))
 					// THEME RELATED
 					.on("init.jstreeol3", $.proxy(function() {
 						var s = this.settings.core.themes;
@@ -1356,7 +1357,8 @@
 							obj = this._model.data[obj];
 						} else if (typeof obj === "string" && this._model.data[obj.replace(/^#/, '')]) {
 							obj = this._model.data[obj.replace(/^#/, '')];
-						} else if (typeof obj === "string" && (dom = $('#' + obj.replace($.jstreeol3.idregex, '\\$&'), this.element)).length
+						} else if (typeof obj === "string"
+								&& (dom = $('#' + obj.replace($.jstreeol3.idregex, '\\$&'), this.element)).length
 								&& this._model.data[dom.closest('.jstreeol3-node').attr('id')]) {
 							obj = this._model.data[dom.closest('.jstreeol3-node').attr('id')];
 						} else if ((dom = $(obj, this.element)).length && this._model.data[dom.closest('.jstreeol3-node').attr('id')]) {
@@ -1368,7 +1370,8 @@
 						}
 
 						if (as_dom) {
-							obj = obj.id === $.jstreeol3.root ? this.element : $('#' + obj.id.replace($.jstreeol3.idregex, '\\$&'), this.element);
+							obj = obj.id === $.jstreeol3.root ? this.element : $('#' + obj.id.replace($.jstreeol3.idregex, '\\$&'),
+									this.element);
 						}
 						return obj;
 					} catch (ex) {
@@ -1637,8 +1640,8 @@
 					if (obj.state.loaded) {
 						obj.state.loaded = false;
 						for (i = 0, j = obj.parents.length; i < j; i++) {
-							this._model.data[obj.parents[i]].children_d = $.vakata.array_filter(this._model.data[obj.parents[i]].children_d,
-									function(v) {
+							this._model.data[obj.parents[i]].children_d = $.vakata.array_filter(
+									this._model.data[obj.parents[i]].children_d, function(v) {
 										return $.inArray(v, obj.children_d) === -1;
 									});
 						}
@@ -2227,10 +2230,10 @@
 							if (d === false) {
 								callback.call(this, false);
 							} else {
-								this[typeof d === 'string' ? '_append_html_data' : '_append_json_data'](obj,
-										typeof d === 'string' ? $($.parseHTML(d)).filter(notTextOrCommentNode) : d, function(status) {
-											callback.call(this, status);
-										});
+								this[typeof d === 'string' ? '_append_html_data' : '_append_json_data'](obj, typeof d === 'string' ? $(
+										$.parseHTML(d)).filter(notTextOrCommentNode) : d, function(status) {
+									callback.call(this, status);
+								});
 							}
 							// return d === false ? callback.call(this, false) :
 							// callback.call(this, this[typeof d === 'string' ?
@@ -3211,8 +3214,8 @@
 				 * @trigger redraw.jstreeol3
 				 */
 				_redraw : function() {
-					var nodes = this._model.force_full_redraw ? this._model.data[$.jstreeol3.root].children.concat([]) : this._model.changed
-							.concat([]), f = document.createElement('UL'), tmp, i, j, fe = this._data.core.focused;
+					var nodes = this._model.force_full_redraw ? this._model.data[$.jstreeol3.root].children.concat([])
+							: this._model.changed.concat([]), f = document.createElement('UL'), tmp, i, j, fe = this._data.core.focused;
 					for (i = 0, j = nodes.length; i < j; i++) {
 						tmp = this.redraw_node(nodes[i], true, this._model.force_full_redraw);
 						if (tmp && this._model.force_full_redraw) {
@@ -3331,7 +3334,8 @@
 						deep = true;
 						// node = d.createElement('LI');
 						if (!is_callback) {
-							par = obj.parent !== $.jstreeol3.root ? $('#' + obj.parent.replace($.jstreeol3.idregex, '\\$&'), this.element)[0] : null;
+							par = obj.parent !== $.jstreeol3.root ? $('#' + obj.parent.replace($.jstreeol3.idregex, '\\$&'), this.element)[0]
+									: null;
 							if (par !== null && (!par || !m[obj.parent].state.opened)) {
 								return false;
 							}
@@ -3474,7 +3478,8 @@
 							par = this.element[0];
 						}
 						for (i = 0, j = par.childNodes.length; i < j; i++) {
-							if (par.childNodes[i] && par.childNodes[i].className && par.childNodes[i].className.indexOf('jstreeol3-children') !== -1) {
+							if (par.childNodes[i] && par.childNodes[i].className
+									&& par.childNodes[i].className.indexOf('jstreeol3-children') !== -1) {
 								tmp = par.childNodes[i];
 								break;
 							}
@@ -3577,8 +3582,8 @@
 									"node" : obj
 								});
 								d.children(".jstreeol3-children").css("display", "none").end().removeClass("jstreeol3-closed").addClass(
-										"jstreeol3-open").attr("aria-expanded", true).children(".jstreeol3-children").stop(true, true).slideDown(
-										animation, function() {
+										"jstreeol3-open").attr("aria-expanded", true).children(".jstreeol3-children").stop(true, true)
+										.slideDown(animation, function() {
 											this.style.display = "";
 											if (t.element) {
 												t.trigger("after_open", {
@@ -3724,9 +3729,9 @@
 								"node" : obj
 							});
 						} else {
-							d.children(".jstreeol3-children").attr("style", "display:block !important").end().removeClass("jstreeol3-open").addClass(
-									"jstreeol3-closed").attr("aria-expanded", false).children(".jstreeol3-children").stop(true, true).slideUp(
-									animation, function() {
+							d.children(".jstreeol3-children").attr("style", "display:block !important").end().removeClass("jstreeol3-open")
+									.addClass("jstreeol3-closed").attr("aria-expanded", false).children(".jstreeol3-children").stop(true,
+											true).slideUp(animation, function() {
 										this.style.display = "";
 										d.children('.jstreeol3-children').remove();
 										if (t.element) {
@@ -4970,6 +4975,64 @@
 					return result;
 				},
 				/**
+				 * 아이디를 조회한다.
+				 * 
+				 * @author 소이준
+				 * @name tour_Layers(layer, id)
+				 * @param {ol.layer.Base}
+				 *            layer - 조회할 레이어
+				 * @param {string}
+				 *            id - 비교할 아이디
+				 * @return {ol.layer.Base}
+				 */
+				tour_Layer_Id : function(layer, id) {
+					var result;
+					if (layer instanceof ol.layer.Group) {
+						if (layer.get("id") === id) {
+							result = layer;
+						} else {
+							var layers = layer.getLayers();
+							for (var i = 0; i < layers.getLength(); i++) {
+								var isExist = this.tour_Layer_Id(layers.item(i), id);
+								if (!!isExist) {
+									result = isExist;
+									break;
+								}
+							}
+						}
+					} else if (layer instanceof ol.layer.Base) {
+						var git = layer.get("git");
+						if (!!git) {
+							if (layer.get("git").hasOwnProperty("fake")) {
+								if (git.fake === "parent" && layer.get("id") === id) {
+									result = layer;
+								} else if (git.fake === "parent" && layer.get("id") !== id) {
+									var layers = layer.get("git").layers;
+									for (var i = 0; i < layers.getLength(); i++) {
+										var isExist = this.tour_Layer_Id(layers.item(i), id);
+										if (!!isExist) {
+											result = isExist;
+											break;
+										}
+									}
+								} else if (git.fake === "child" && layer.get("id") === id) {
+									result = layer;
+								}
+							}
+						} else {
+							if (layer.get("id") === id) {
+								result = layer;
+							}
+						}
+					}
+					// else {
+					// if (layer.get("treeid") === id) {
+					// result = layer;
+					// }
+					// }
+					return result;
+				},
+				/**
 				 * 그룹에 포함된 레이어의 합계를 구한다.
 				 * 
 				 * @author 소이준
@@ -5040,6 +5103,41 @@
 					if (typeof id === "string") {
 						for (var i = 0; i < layers.getLength(); i++) {
 							var isExist = this.tour_Layer(layers.item(i), id);
+							if (!!isExist) {
+								layer = isExist;
+								break;
+							}
+						}
+					}
+					return layer;
+				},
+				/**
+				 * get the layer by id
+				 * 
+				 * @name get_LayerById(id, [collection])
+				 * @param {String}
+				 *            id - layer id
+				 * @param {ol.Collection}
+				 *            collection - 레이어를 검색할 콜렉션
+				 * @return {ol.layer.Layer} layer
+				 * @author 소이준
+				 */
+				get_LayerByOLId : function(id, collection) {
+					var layers;
+					if (collection instanceof ol.Collection) {
+						layers = collection;
+					} else {
+						var map = this._data.core.map;
+						if (!map instanceof ol.Map) {
+							console.error("not ol.Map");
+							return;
+						}
+						layers = map.getLayers();
+					}
+					var layer;
+					if (typeof id === "string") {
+						for (var i = 0; i < layers.getLength(); i++) {
+							var isExist = this.tour_Layer_Id(layers.item(i), id);
 							if (!!isExist) {
 								layer = isExist;
 								break;
@@ -5667,9 +5765,10 @@
 					tmp = obj.children_d.concat([]);
 					tmp.push(obj.id);
 					for (i = 0, j = obj.parents.length; i < j; i++) {
-						this._model.data[obj.parents[i]].children_d = $.vakata.array_filter(this._model.data[obj.parents[i]].children_d, function(v) {
-							return $.inArray(v, tmp) === -1;
-						});
+						this._model.data[obj.parents[i]].children_d = $.vakata.array_filter(this._model.data[obj.parents[i]].children_d,
+								function(v) {
+									return $.inArray(v, tmp) === -1;
+								});
 					}
 					for (k = 0, l = tmp.length; k < l; k++) {
 						if (this._model.data[tmp[k]].state.selected) {
@@ -5784,9 +5883,10 @@
 					tmp = obj.children_d.concat([]);
 					tmp.push(obj.id);
 					for (i = 0, j = obj.parents.length; i < j; i++) {
-						this._model.data[obj.parents[i]].children_d = $.vakata.array_filter(this._model.data[obj.parents[i]].children_d, function(v) {
-							return $.inArray(v, tmp) === -1;
-						});
+						this._model.data[obj.parents[i]].children_d = $.vakata.array_filter(this._model.data[obj.parents[i]].children_d,
+								function(v) {
+									return $.inArray(v, tmp) === -1;
+								});
 					}
 					for (k = 0, l = tmp.length; k < l; k++) {
 						if (this._model.data[tmp[k]].state.selected) {
@@ -5870,8 +5970,8 @@
 					var tmp = chk.match(/^move_node|copy_node|create_node$/i) ? par : obj, chc = this.settings.core.check_callback;
 					if (chk === "move_node" || chk === "copy_node") {
 						if ((!more || !more.is_multi)
-								&& (obj.id === par.id || (chk === "move_node" && $.inArray(obj.id, par.children) === pos) || $.inArray(par.id,
-										obj.children_d) !== -1)) {
+								&& (obj.id === par.id || (chk === "move_node" && $.inArray(obj.id, par.children) === pos) || $.inArray(
+										par.id, obj.children_d) !== -1)) {
 							this._data.core.last_error = {
 								'error' : 'check',
 								'plugin' : 'core',
@@ -5907,7 +6007,8 @@
 						}
 						return tmp.functions[chk];
 					}
-					if (chc === false || ($.isFunction(chc) && chc.call(this, chk, obj, par, pos, more) === false) || (chc && chc[chk] === false)) {
+					if (chc === false || ($.isFunction(chc) && chc.call(this, chk, obj, par, pos, more) === false)
+							|| (chc && chc[chk] === false)) {
 						this._data.core.last_error = {
 							'error' : 'check',
 							'plugin' : 'core',
@@ -5999,8 +6100,9 @@
 					new_par = (!pos.toString().match(/^(before|after)$/) || par.id === $.jstreeol3.root) ? par : this.get_node(par.parent);
 					old_ins = origin ? origin : (this._model.data[obj.id] ? this : $.jstreeol3.reference(obj.id));
 					is_multi = !old_ins || !old_ins._id || (this._id !== old_ins._id);
-					old_pos = old_ins && old_ins._id && old_par && old_ins._model.data[old_par] && old_ins._model.data[old_par].children ? $.inArray(
-							obj.id, old_ins._model.data[old_par].children) : -1;
+					old_pos = old_ins && old_ins._id && old_par && old_ins._model.data[old_par] && old_ins._model.data[old_par].children ? $
+							.inArray(obj.id, old_ins._model.data[old_par].children)
+							: -1;
 					if (old_ins && old_ins._id) {
 						obj = old_ins._model.data[obj.id];
 					}
@@ -6533,20 +6635,19 @@
 					 * @param {jstreeol3}
 					 *            new_instance the instance of the new parent
 					 */
-					this.trigger('copy_node',
-							{
-								"node" : tmp,
-								"original" : obj,
-								"parent" : new_par.id,
-								"position" : pos,
-								"old_parent" : old_par,
-								"old_position" : old_ins && old_ins._id && old_par && old_ins._model.data[old_par]
-										&& old_ins._model.data[old_par].children ? $.inArray(obj.id, old_ins._model.data[old_par].children) : -1,
-								'is_multi' : (old_ins && old_ins._id && old_ins._id !== this._id),
-								'is_foreign' : (!old_ins || !old_ins._id),
-								'old_instance' : old_ins,
-								'new_instance' : this
-							});
+					this.trigger('copy_node', {
+						"node" : tmp,
+						"original" : obj,
+						"parent" : new_par.id,
+						"position" : pos,
+						"old_parent" : old_par,
+						"old_position" : old_ins && old_ins._id && old_par && old_ins._model.data[old_par]
+								&& old_ins._model.data[old_par].children ? $.inArray(obj.id, old_ins._model.data[old_par].children) : -1,
+						'is_multi' : (old_ins && old_ins._id && old_ins._id !== this._id),
+						'is_foreign' : (!old_ins || !old_ins._id),
+						'old_instance' : old_ins,
+						'new_instance' : this
+					});
 					return tmp.id;
 				},
 				/**
@@ -6859,7 +6960,8 @@
 							s.remove();
 							t = f ? t : $('<div></div>').append($.parseHTML(t)).html();
 							this.set_text(obj, t);
-							nv = !!this.rename_node(obj, f ? $('<div></div>').text(v).text() : $('<div></div>').append($.parseHTML(v)).html());
+							nv = !!this.rename_node(obj, f ? $('<div></div>').text(v).text() : $('<div></div>').append($.parseHTML(v))
+									.html());
 							if (!nv) {
 								this.set_text(obj, t); // move
 								// this
@@ -6964,7 +7066,8 @@
 					}
 					this._data.core.themes.name = theme_name;
 					this.element.addClass('jstreeol3-' + theme_name);
-					this.element[this.settings.core.themes.responsive ? 'addClass' : 'removeClass']('jstreeol3-' + theme_name + '-responsive');
+					this.element[this.settings.core.themes.responsive ? 'addClass' : 'removeClass']('jstreeol3-' + theme_name
+							+ '-responsive');
 					/**
 					 * triggered when a theme is set
 					 * 
@@ -7232,7 +7335,8 @@
 						}
 					} else {
 						dom.removeClass(old).css("background", "");
-						dom.addClass('jstreeol3-themeicon-custom').css("background", "url('" + icon + "') center center no-repeat").attr("rel", icon);
+						dom.addClass('jstreeol3-themeicon-custom').css("background", "url('" + icon + "') center center no-repeat").attr(
+								"rel", icon);
 						if (old === false) {
 							this.show_icon(obj);
 						}
@@ -7272,7 +7376,8 @@
 						return false;
 					}
 					obj.icon = false;
-					this.get_node(obj, true).children(".jstreeol3-anchor").children(".jstreeol3-themeicon").addClass('jstreeol3-themeicon-hidden');
+					this.get_node(obj, true).children(".jstreeol3-anchor").children(".jstreeol3-themeicon").addClass(
+							'jstreeol3-themeicon-hidden');
 					return true;
 				},
 				/**
@@ -7551,8 +7656,8 @@
 																					var psource = parent.getSource();
 																					var pparams = parent.getSource().getParams();
 																					var childrenNames = pparams["LAYERS"].split(",");
-																					childrenNames.splice(childrenNames.indexOf(this.get_LayerById(
-																							obj.id).get("id")), 1);
+																					childrenNames.splice(childrenNames.indexOf(this
+																							.get_LayerById(obj.id).get("id")), 1);
 																					pparams["LAYERS"] = childrenNames.toString();
 																					psource.updateParams(pparams);
 																					console.log(childrenNames);
@@ -7564,13 +7669,15 @@
 																			layer.setVisible(false);
 																		}
 																	}
-																	this._data['visibility'].vanished = this._data['visibility'].vanished.concat(dpc);
+																	this._data['visibility'].vanished = this._data['visibility'].vanished
+																			.concat(dpc);
 																} else {
 																	for (i = 0, j = dpc.length; i < j; i++) {
 																		if (m[dpc[i]].state['vanished']) {
 																			for (k = 0, l = m[dpc[i]].children_d.length; k < l; k++) {
 																				m[m[dpc[i]].children_d[k]].state['vanished'] = true;
-																				var layer = this.get_LayerById(m[m[dpc[i]].children_d[k]].id);
+																				var layer = this
+																						.get_LayerById(m[m[dpc[i]].children_d[k]].id);
 																				var git;
 																				if (layer) {
 																					git = layer.get("git");
@@ -7587,7 +7694,8 @@
 																						if (parent instanceof ol.layer.Tile && git) {
 																							var psource = parent.getSource();
 																							var pparams = parent.getSource().getParams();
-																							var childrenNames = pparams["LAYERS"].split(",");
+																							var childrenNames = pparams["LAYERS"]
+																									.split(",");
 																							childrenNames.splice(childrenNames.indexOf(this
 																									.get_LayerById(obj.id).get("id")), 1);
 																							pparams["LAYERS"] = childrenNames.toString();
@@ -7657,8 +7765,8 @@
 																			this._data['visibility'].vanished.push(p.id);
 																			tmp = this.get_node(p, true);
 																			if (tmp && tmp.length) {
-																				tmp.attr('aria-selected', true).children('.jstreeol3-anchor')
-																						.addClass('jstreeol3-checked');
+																				tmp.attr('aria-selected', true).children(
+																						'.jstreeol3-anchor').addClass('jstreeol3-checked');
 																			}
 																		} else {
 																			break;
@@ -7713,8 +7821,8 @@
 																				var psource = parent.getSource();
 																				var pparams = parent.getSource().getParams();
 																				var childrenNames = pparams["LAYERS"].split(",");
-																				childrenNames.splice(childrenNames.indexOf(this.get_LayerById(obj.id)
-																						.get("id")), 1);
+																				childrenNames.splice(childrenNames.indexOf(this
+																						.get_LayerById(obj.id).get("id")), 1);
 																				pparams["LAYERS"] = childrenNames.toString();
 																				psource.updateParams(pparams);
 																				console.log(childrenNames);
@@ -7758,8 +7866,8 @@
 																					var psource = parent.getSource();
 																					var pparams = parent.getSource().getParams();
 																					var childrenNames = pparams["LAYERS"].split(",");
-																					childrenNames.splice(childrenNames.indexOf(this.get_LayerById(
-																							obj.id).get("id")), 1);
+																					childrenNames.splice(childrenNames.indexOf(this
+																							.get_LayerById(obj.id).get("id")), 1);
 																					pparams["LAYERS"] = childrenNames.toString();
 																					psource.updateParams(pparams);
 																					console.log(childrenNames);
@@ -7779,8 +7887,8 @@
 																		// ].selected.push(par.id);
 																		tmp = this.get_node(par, true);
 																		if (tmp && tmp.length) {
-																			tmp.attr('aria-selected', true).children('.jstreeol3-anchor').addClass(
-																					'jstreeol3-checked');
+																			tmp.attr('aria-selected', true).children('.jstreeol3-anchor')
+																					.addClass('jstreeol3-checked');
 																		}
 																	} else {
 																		break;
@@ -7868,8 +7976,8 @@
 																				}
 
 																				children.sort(function(a, b) {
-																					return a.getZIndex() < b.getZIndex() ? -1 : a.getZIndex() > b
-																							.getZIndex() ? 1 : 0;
+																					return a.getZIndex() < b.getZIndex() ? -1 : a
+																							.getZIndex() > b.getZIndex() ? 1 : 0;
 																				});
 																				var childrenNamesAfter = [];
 																				for (var i = 0; i < children.length; i++) {
@@ -7934,8 +8042,8 @@
 																				}
 
 																				children.sort(function(a, b) {
-																					return a.getZIndex() < b.getZIndex() ? -1 : a.getZIndex() > b
-																							.getZIndex() ? 1 : 0;
+																					return a.getZIndex() < b.getZIndex() ? -1 : a
+																							.getZIndex() > b.getZIndex() ? 1 : 0;
 																				});
 																				var childrenNamesAfter = [];
 																				for (var i = 0; i < children.length; i++) {
@@ -7957,8 +8065,8 @@
 																	}
 																	tmp = this.get_node(obj.parents[i], true);
 																	if (tmp && tmp.length) {
-																		tmp.attr('aria-selected', false).children('.jstreeol3-anchor').removeClass(
-																				'jstreeol3-checked');
+																		tmp.attr('aria-selected', false).children('.jstreeol3-anchor')
+																				.removeClass('jstreeol3-checked');
 																	}
 																}
 															}
@@ -7984,62 +8092,67 @@
 															// .children
 															// separately?)
 															if (s.indexOf('down') !== -1 && dom.length) {
-																dom.find('.jstreeol3-anchor').removeClass('jstreeol3-checked').parent().attr(
-																		'aria-selected', false);
+																dom.find('.jstreeol3-anchor').removeClass('jstreeol3-checked').parent()
+																		.attr('aria-selected', false);
 															}
 														}, this));
 					}
 					if (this.settings.visibility.cascade.indexOf('up') !== -1) {
-						this.element.on('delete_node.jstreeol3', $.proxy(function(e, data) {
-							// apply up (whole
-							// handler)
-							var p = this.get_node(data.parent), m = this._model.data, i, j, c, tmp;
-							while (p && p.id !== $.jstreeol3.root && !p.state['vanished']) {
-								c = 0;
-								for (i = 0, j = p.children.length; i < j; i++) {
-									c += m[p.children[i]].state['vanished'];
-								}
-								if (j > 0 && c === j) {
-									p.state['vanished'] = true;
-									var layer = this.get_LayerById(p.id);
-									var git;
-									if (layer) {
-										git = layer.get("git");
-									}
-									if (layer instanceof ol.layer.Base && git) {
-										if (git["fake"] === "child") {
-											console.log(obj);
-											var parent = this.get_LayerById(p.parent);
-											var pgit;
-											if (parent) {
-												pgit = parent.get("git");
+						this.element
+								.on(
+										'delete_node.jstreeol3',
+										$.proxy(function(e, data) {
+											// apply up (whole
+											// handler)
+											var p = this.get_node(data.parent), m = this._model.data, i, j, c, tmp;
+											while (p && p.id !== $.jstreeol3.root && !p.state['vanished']) {
+												c = 0;
+												for (i = 0, j = p.children.length; i < j; i++) {
+													c += m[p.children[i]].state['vanished'];
+												}
+												if (j > 0 && c === j) {
+													p.state['vanished'] = true;
+													var layer = this.get_LayerById(p.id);
+													var git;
+													if (layer) {
+														git = layer.get("git");
+													}
+													if (layer instanceof ol.layer.Base && git) {
+														if (git["fake"] === "child") {
+															console.log(obj);
+															var parent = this.get_LayerById(p.parent);
+															var pgit;
+															if (parent) {
+																pgit = parent.get("git");
+															}
+															if (parent instanceof ol.layer.Tile && git) {
+																var psource = parent.getSource();
+																var pparams = parent.getSource().getParams();
+																var childrenNames = pparams["LAYERS"].split(",");
+																childrenNames.splice(childrenNames.indexOf(this.get_LayerById(obj.id).get(
+																		"id")), 1);
+																pparams["LAYERS"] = childrenNames.toString();
+																psource.updateParams(pparams);
+																console.log(childrenNames);
+															}
+														} else {
+															layer.setVisible(false);
+														}
+													} else if (layer instanceof ol.layer.Base) {
+														layer.setVisible(false);
+													}
+													this._data['visibility'].vanished.push(p.id);
+													tmp = this.get_node(p, true);
+													if (tmp && tmp.length) {
+														tmp.attr('aria-selected', true).children('.jstreeol3-anchor').addClass(
+																'jstreeol3-checked');
+													}
+												} else {
+													break;
+												}
+												p = this.get_node(p.parent);
 											}
-											if (parent instanceof ol.layer.Tile && git) {
-												var psource = parent.getSource();
-												var pparams = parent.getSource().getParams();
-												var childrenNames = pparams["LAYERS"].split(",");
-												childrenNames.splice(childrenNames.indexOf(this.get_LayerById(obj.id).get("id")), 1);
-												pparams["LAYERS"] = childrenNames.toString();
-												psource.updateParams(pparams);
-												console.log(childrenNames);
-											}
-										} else {
-											layer.setVisible(false);
-										}
-									} else if (layer instanceof ol.layer.Base) {
-										layer.setVisible(false);
-									}
-									this._data['visibility'].vanished.push(p.id);
-									tmp = this.get_node(p, true);
-									if (tmp && tmp.length) {
-										tmp.attr('aria-selected', true).children('.jstreeol3-anchor').addClass('jstreeol3-checked');
-									}
-								} else {
-									break;
-								}
-								p = this.get_node(p.parent);
-							}
-						}, this))
+										}, this))
 								.on(
 										'move_node.jstreeol3',
 										$
@@ -8075,8 +8188,8 @@
 																					var psource = parent.getSource();
 																					var pparams = parent.getSource().getParams();
 																					var childrenNames = pparams["LAYERS"].split(",");
-																					childrenNames.splice(childrenNames.indexOf(this.get_LayerById(
-																							obj.id).get("id")), 1);
+																					childrenNames.splice(childrenNames.indexOf(this
+																							.get_LayerById(obj.id).get("id")), 1);
 																					pparams["LAYERS"] = childrenNames.toString();
 																					psource.updateParams(pparams);
 																					console.log(childrenNames);
@@ -8090,8 +8203,8 @@
 																		this._data['visibility'].vanished.push(p.id);
 																		tmp = this.get_node(p, true);
 																		if (tmp && tmp.length) {
-																			tmp.attr('aria-selected', true).children('.jstreeol3-anchor').addClass(
-																					'jstreeol3-checked');
+																			tmp.attr('aria-selected', true).children('.jstreeol3-anchor')
+																					.addClass('jstreeol3-checked');
 																		}
 																	} else {
 																		break;
@@ -8125,8 +8238,8 @@
 																					var psource = parent.getSource();
 																					var pparams = parent.getSource().getParams();
 																					var childrenNames = pparams["LAYERS"].split(",");
-																					childrenNames.splice(childrenNames.indexOf(this.get_LayerById(
-																							obj.id).get("id")), 1);
+																					childrenNames.splice(childrenNames.indexOf(this
+																							.get_LayerById(obj.id).get("id")), 1);
 																					pparams["LAYERS"] = childrenNames.toString();
 																					psource.updateParams(pparams);
 																					console.log(childrenNames);
@@ -8140,8 +8253,8 @@
 																		this._data['visibility'].vanished.push(p.id);
 																		tmp = this.get_node(p, true);
 																		if (tmp && tmp.length) {
-																			tmp.attr('aria-selected', true).children('.jstreeol3-anchor').addClass(
-																					'jstreeol3-checked');
+																			tmp.attr('aria-selected', true).children('.jstreeol3-anchor')
+																					.addClass('jstreeol3-checked');
 																		}
 																	}
 																} else {
@@ -8184,8 +8297,8 @@
 																					}
 
 																					children.sort(function(a, b) {
-																						return a.getZIndex() < b.getZIndex() ? -1 : a.getZIndex() > b
-																								.getZIndex() ? 1 : 0;
+																						return a.getZIndex() < b.getZIndex() ? -1 : a
+																								.getZIndex() > b.getZIndex() ? 1 : 0;
 																					});
 																					var childrenNamesAfter = [];
 																					for (var i = 0; i < children.length; i++) {
@@ -8264,7 +8377,8 @@
 								} else {
 									for (i = 0, j = tmp.children_d.length; i < j; i++) {
 										tmp2 = m[tmp.children_d[i]];
-										if (!tmp2.state.loaded && tmp2.original && tmp2.original.state && tmp2.original.state.undeterminedVisibility
+										if (!tmp2.state.loaded && tmp2.original && tmp2.original.state
+												&& tmp2.original.state.undeterminedVisibility
 												&& tmp2.original.state.undeterminedVisibility === true) {
 											if (o[tmp2.id] === undefined && tmp2.id !== $.jstreeol3.root) {
 												o[tmp2.id] = true;
@@ -8296,7 +8410,8 @@
 					if (obj) {
 						var i, j, tmp = null, icon = null;
 						for (i = 0, j = obj.childNodes.length; i < j; i++) {
-							if (obj.childNodes[i] && obj.childNodes[i].className && obj.childNodes[i].className.indexOf("jstreeol3-anchor") !== -1) {
+							if (obj.childNodes[i] && obj.childNodes[i].className
+									&& obj.childNodes[i].className.indexOf("jstreeol3-anchor") !== -1) {
 								tmp = obj.childNodes[i];
 								break;
 							}
@@ -8447,7 +8562,8 @@
 					if (obj.state.visibility_disabled) {
 						obj.state.visibility_disabled = false;
 						if (dom && dom.length) {
-							dom.children('.jstreeol3-anchor').children('.jstreeol3-visibility').removeClass('jstreeol3-visibility-disabled');
+							dom.children('.jstreeol3-anchor').children('.jstreeol3-visibility')
+									.removeClass('jstreeol3-visibility-disabled');
 						}
 						/**
 						 * triggered when an node's visibility is enabled
@@ -8943,7 +9059,8 @@
 							for (k = 0, l = tmp.children_d.length; k < l; k++) {
 								if (this._model.data[tmp.children_d[k]].state.vanished) {
 									c = true;
-									this._data.visibility.vanished = $.vakata.array_remove_item(this._data.visibility.vanished, tmp.children_d[k]);
+									this._data.visibility.vanished = $.vakata.array_remove_item(this._data.visibility.vanished,
+											tmp.children_d[k]);
 								}
 							}
 						}
@@ -9113,8 +9230,8 @@
 																	for (i = 0, j = dpc.length; i < j; i++) {
 																		m[dpc[i]].state[t ? 'selected' : 'checked'] = true;
 																	}
-																	this._data[t ? 'core' : 'checkbox'].selected = this._data[t ? 'core' : 'checkbox'].selected
-																			.concat(dpc);
+																	this._data[t ? 'core' : 'checkbox'].selected = this._data[t ? 'core'
+																			: 'checkbox'].selected.concat(dpc);
 																} else {
 																	for (i = 0, j = dpc.length; i < j; i++) {
 																		if (m[dpc[i]].state[t ? 'selected' : 'checked']) {
@@ -9148,8 +9265,9 @@
 																			this._data[t ? 'core' : 'checkbox'].selected.push(p.id);
 																			tmp = this.get_node(p, true);
 																			if (tmp && tmp.length) {
-																				tmp.attr('aria-selected', true).children('.jstreeol3-anchor')
-																						.addClass(t ? 'jstreeol3-clicked' : 'jstreeol3-checked');
+																				tmp.attr('aria-selected', true).children(
+																						'.jstreeol3-anchor').addClass(
+																						t ? 'jstreeol3-clicked' : 'jstreeol3-checked');
 																			}
 																		} else {
 																			break;
@@ -9188,7 +9306,8 @@
 																	sel[obj.children_d[i]] = true;
 																	tmp = m[obj.children_d[i]];
 																	tmp.state[t ? 'selected' : 'checked'] = true;
-																	if (tmp && tmp.original && tmp.original.state && tmp.original.state.undetermined) {
+																	if (tmp && tmp.original && tmp.original.state
+																			&& tmp.original.state.undetermined) {
 																		tmp.original.state.undetermined = false;
 																	}
 																}
@@ -9212,8 +9331,10 @@
 																		// ].selected.push(par.id);
 																		tmp = this.get_node(par, true);
 																		if (tmp && tmp.length) {
-																			tmp.attr('aria-selected', true).children('.jstreeol3-anchor').addClass(
-																					t ? 'jstreeol3-clicked' : 'jstreeol3-checked');
+																			tmp
+																					.attr('aria-selected', true)
+																					.children('.jstreeol3-anchor')
+																					.addClass(t ? 'jstreeol3-clicked' : 'jstreeol3-checked');
 																		}
 																	} else {
 																		break;
@@ -9235,8 +9356,9 @@
 															// .children
 															// separately?)
 															if (s.indexOf('down') !== -1 && dom.length) {
-																dom.find('.jstreeol3-anchor').addClass(t ? 'jstreeol3-clicked' : 'jstreeol3-checked')
-																		.parent().attr('aria-selected', true);
+																dom.find('.jstreeol3-anchor').addClass(
+																		t ? 'jstreeol3-clicked' : 'jstreeol3-checked').parent().attr(
+																		'aria-selected', true);
 															}
 														}, this))
 								.on(this.settings.checkbox.tie_selection ? 'deselect_all.jstreeol3' : 'uncheck_all.jstreeol3',
@@ -9256,7 +9378,8 @@
 														function(e, data) {
 															var obj = data.node, dom = this.get_node(obj, true), i, j, tmp, s = this.settings.checkbox.cascade, t = this.settings.checkbox.tie_selection, cur = this._data[t ? 'core'
 																	: 'checkbox'].selected, sel = {};
-															if (obj && obj.original && obj.original.state && obj.original.state.undetermined) {
+															if (obj && obj.original && obj.original.state
+																	&& obj.original.state.undetermined) {
 																obj.original.state.undetermined = false;
 															}
 
@@ -9265,7 +9388,8 @@
 																for (i = 0, j = obj.children_d.length; i < j; i++) {
 																	tmp = this._model.data[obj.children_d[i]];
 																	tmp.state[t ? 'selected' : 'checked'] = false;
-																	if (tmp && tmp.original && tmp.original.state && tmp.original.state.undetermined) {
+																	if (tmp && tmp.original && tmp.original.state
+																			&& tmp.original.state.undetermined) {
 																		tmp.original.state.undetermined = false;
 																	}
 																}
@@ -9276,13 +9400,14 @@
 																for (i = 0, j = obj.parents.length; i < j; i++) {
 																	tmp = this._model.data[obj.parents[i]];
 																	tmp.state[t ? 'selected' : 'checked'] = false;
-																	if (tmp && tmp.original && tmp.original.state && tmp.original.state.undetermined) {
+																	if (tmp && tmp.original && tmp.original.state
+																			&& tmp.original.state.undetermined) {
 																		tmp.original.state.undetermined = false;
 																	}
 																	tmp = this.get_node(obj.parents[i], true);
 																	if (tmp && tmp.length) {
-																		tmp.attr('aria-selected', false).children('.jstreeol3-anchor').removeClass(
-																				t ? 'jstreeol3-clicked' : 'jstreeol3-checked');
+																		tmp.attr('aria-selected', false).children('.jstreeol3-anchor')
+																				.removeClass(t ? 'jstreeol3-clicked' : 'jstreeol3-checked');
 																	}
 																}
 															}
@@ -9309,8 +9434,8 @@
 															// separately?)
 															if (s.indexOf('down') !== -1 && dom.length) {
 																dom.find('.jstreeol3-anchor').removeClass(
-																		t ? 'jstreeol3-clicked' : 'jstreeol3-checked').parent().attr('aria-selected',
-																		false);
+																		t ? 'jstreeol3-clicked' : 'jstreeol3-checked').parent().attr(
+																		'aria-selected', false);
 															}
 														}, this));
 					}
@@ -9334,8 +9459,8 @@
 																	this._data[t ? 'core' : 'checkbox'].selected.push(p.id);
 																	tmp = this.get_node(p, true);
 																	if (tmp && tmp.length) {
-																		tmp.attr('aria-selected', true).children('.jstreeol3-anchor').addClass(
-																				t ? 'jstreeol3-clicked' : 'jstreeol3-checked');
+																		tmp.attr('aria-selected', true).children('.jstreeol3-anchor')
+																				.addClass(t ? 'jstreeol3-clicked' : 'jstreeol3-checked');
 																	}
 																} else {
 																	break;
@@ -9354,7 +9479,8 @@
 																	.get_node(data.parent), m = this._model.data, p, c, i, j, tmp, t = this.settings.checkbox.tie_selection;
 															if (!is_multi) {
 																p = this.get_node(old_par);
-																while (p && p.id !== $.jstreeol3.root && !p.state[t ? 'selected' : 'checked']) {
+																while (p && p.id !== $.jstreeol3.root
+																		&& !p.state[t ? 'selected' : 'checked']) {
 																	c = 0;
 																	for (i = 0, j = p.children.length; i < j; i++) {
 																		c += m[p.children[i]].state[t ? 'selected' : 'checked'];
@@ -9364,8 +9490,10 @@
 																		this._data[t ? 'core' : 'checkbox'].selected.push(p.id);
 																		tmp = this.get_node(p, true);
 																		if (tmp && tmp.length) {
-																			tmp.attr('aria-selected', true).children('.jstreeol3-anchor').addClass(
-																					t ? 'jstreeol3-clicked' : 'jstreeol3-checked');
+																			tmp
+																					.attr('aria-selected', true)
+																					.children('.jstreeol3-anchor')
+																					.addClass(t ? 'jstreeol3-clicked' : 'jstreeol3-checked');
 																		}
 																	} else {
 																		break;
@@ -9385,19 +9513,23 @@
 																		this._data[t ? 'core' : 'checkbox'].selected.push(p.id);
 																		tmp = this.get_node(p, true);
 																		if (tmp && tmp.length) {
-																			tmp.attr('aria-selected', true).children('.jstreeol3-anchor').addClass(
-																					t ? 'jstreeol3-clicked' : 'jstreeol3-checked');
+																			tmp
+																					.attr('aria-selected', true)
+																					.children('.jstreeol3-anchor')
+																					.addClass(t ? 'jstreeol3-clicked' : 'jstreeol3-checked');
 																		}
 																	}
 																} else {
 																	if (p.state[t ? 'selected' : 'checked']) {
 																		p.state[t ? 'selected' : 'checked'] = false;
-																		this._data[t ? 'core' : 'checkbox'].selected = $.vakata.array_remove_item(
-																				this._data[t ? 'core' : 'checkbox'].selected, p.id);
+																		this._data[t ? 'core' : 'checkbox'].selected = $.vakata
+																				.array_remove_item(
+																						this._data[t ? 'core' : 'checkbox'].selected, p.id);
 																		tmp = this.get_node(p, true);
 																		if (tmp && tmp.length) {
 																			tmp.attr('aria-selected', false).children('.jstreeol3-anchor')
-																					.removeClass(t ? 'jstreeol3-clicked' : 'jstreeol3-checked');
+																					.removeClass(
+																							t ? 'jstreeol3-clicked' : 'jstreeol3-checked');
 																		}
 																	} else {
 																		break;
@@ -9420,7 +9552,8 @@
 					if (this.element === null) {
 						return;
 					}
-					var i, j, k, l, o = {}, m = this._model.data, t = this.settings.checkbox.tie_selection, s = this._data[t ? 'core' : 'checkbox'].selected, p = [], tt = this;
+					var i, j, k, l, o = {}, m = this._model.data, t = this.settings.checkbox.tie_selection, s = this._data[t ? 'core'
+							: 'checkbox'].selected, p = [], tt = this;
 					for (i = 0, j = s.length; i < j; i++) {
 						if (m[s[i]] && m[s[i]].parents) {
 							for (k = 0, l = m[s[i]].parents.length; k < l; k++) {
@@ -9487,7 +9620,8 @@
 					if (obj) {
 						var i, j, tmp = null, icon = null;
 						for (i = 0, j = obj.childNodes.length; i < j; i++) {
-							if (obj.childNodes[i] && obj.childNodes[i].className && obj.childNodes[i].className.indexOf("jstreeol3-anchor") !== -1) {
+							if (obj.childNodes[i] && obj.childNodes[i].className
+									&& obj.childNodes[i].className.indexOf("jstreeol3-anchor") !== -1) {
 								tmp = obj.childNodes[i];
 								break;
 							}
@@ -9554,7 +9688,8 @@
 				 */
 				this.is_undetermined = function(obj) {
 					obj = this.get_node(obj);
-					var s = this.settings.checkbox.cascade, i, j, t = this.settings.checkbox.tie_selection, d = this._data[t ? 'core' : 'checkbox'].selected, m = this._model.data;
+					var s = this.settings.checkbox.cascade, i, j, t = this.settings.checkbox.tie_selection, d = this._data[t ? 'core'
+							: 'checkbox'].selected, m = this._model.data;
 					if (!obj || obj.state[t ? 'selected' : 'checked'] === true || s.indexOf('undetermined') === -1
 							|| (s.indexOf('down') === -1 && s.indexOf('up') === -1)) {
 						return false;
@@ -9659,10 +9794,12 @@
 					if ($(e.target).hasClass('jstreeol3-checkbox-disabled')) {
 						return false;
 					}
-					if (this.settings.checkbox.tie_selection && (this.settings.checkbox.whole_node || $(e.target).hasClass('jstreeol3-checkbox'))) {
+					if (this.settings.checkbox.tie_selection
+							&& (this.settings.checkbox.whole_node || $(e.target).hasClass('jstreeol3-checkbox'))) {
 						e.ctrlKey = true;
 					}
-					if (this.settings.checkbox.tie_selection || (!this.settings.checkbox.whole_node && !$(e.target).hasClass('jstreeol3-checkbox'))) {
+					if (this.settings.checkbox.tie_selection
+							|| (!this.settings.checkbox.whole_node && !$(e.target).hasClass('jstreeol3-checkbox'))) {
 						return parent.activate_node.call(this, obj, e);
 					}
 					if (this.is_disabled(obj)) {
@@ -9976,7 +10113,8 @@
 							for (k = 0, l = tmp.children_d.length; k < l; k++) {
 								if (this._model.data[tmp.children_d[k]].state.checked) {
 									c = true;
-									this._data.checkbox.selected = $.vakata.array_remove_item(this._data.checkbox.selected, tmp.children_d[k]);
+									this._data.checkbox.selected = $.vakata.array_remove_item(this._data.checkbox.selected,
+											tmp.children_d[k]);
 								}
 							}
 						}
@@ -10516,7 +10654,8 @@
 							vakata_context.items.push(val);
 							if (!sep && val.separator_before) {
 								str += "<" + "li class='vakata-context-separator'><" + "a href='#' "
-										+ ($.vakata.context.settings.icons ? '' : 'style="margin-left:0px;"') + ">&#160;<" + "/a><" + "/li>";
+										+ ($.vakata.context.settings.icons ? '' : 'style="margin-left:0px;"') + ">&#160;<" + "/a><"
+										+ "/li>";
 							}
 							sep = false;
 							str += "<" + "li class='" + (val._class || "")
@@ -10544,8 +10683,8 @@
 								"reference" : vakata_context.reference,
 								"element" : vakata_context.element
 							}) : val.label)
-									+ (val.shortcut ? ' <span class="vakata-contextmenu-shortcut vakata-contextmenu-shortcut-' + val.shortcut + '">'
-											+ (val.shortcut_label || '') + '</span>' : '') + "<" + "/a>";
+									+ (val.shortcut ? ' <span class="vakata-contextmenu-shortcut vakata-contextmenu-shortcut-'
+											+ val.shortcut + '">' + (val.shortcut_label || '') + '</span>' : '') + "<" + "/a>";
 							if (val.submenu) {
 								tmp = $.vakata.context._parse(val.submenu, true);
 								if (tmp) {
@@ -10555,7 +10694,8 @@
 							str += "<" + "/li>";
 							if (val.separator_after) {
 								str += "<" + "li class='vakata-context-separator'><" + "a href='#' "
-										+ ($.vakata.context.settings.icons ? '' : 'style="margin-left:0px;"') + ">&#160;<" + "/a><" + "/li>";
+										+ ($.vakata.context.settings.icons ? '' : 'style="margin-left:0px;"') + ">&#160;<" + "/a><"
+										+ "/li>";
 								sep = true;
 							}
 						});
@@ -10589,9 +10729,8 @@
 						if (!o.length || !o.children("ul").length) {
 							return;
 						}
-						var e = o.children("ul"), xl = o.offset().left, x = xl + o.outerWidth(), y = o.offset().top, w = e.width(), h = e.height(), dw = $(
-								window).width()
-								+ $(window).scrollLeft(), dh = $(window).height() + $(window).scrollTop();
+						var e = o.children("ul"), xl = o.offset().left, x = xl + o.outerWidth(), y = o.offset().top, w = e.width(), h = e
+								.height(), dw = $(window).width() + $(window).scrollLeft(), dh = $(window).height() + $(window).scrollTop();
 						// може да се спести е една проверка - дали няма някой
 						// от класовете вече нагоре
 						if (right_to_left) {
@@ -10785,16 +10924,17 @@
 									break;
 								case 37:
 									if (vakata_context.is_visible) {
-										vakata_context.element.find(".vakata-context-hover").last().closest("li").first().find("ul").hide().find(
-												".vakata-context-hover").removeClass("vakata-context-hover").end().end().children('a').focus();
+										vakata_context.element.find(".vakata-context-hover").last().closest("li").first().find("ul").hide()
+												.find(".vakata-context-hover").removeClass("vakata-context-hover").end().end()
+												.children('a').focus();
 										e.stopImmediatePropagation();
 										e.preventDefault();
 									}
 									break;
 								case 38:
 									if (vakata_context.is_visible) {
-										o = vakata_context.element.find("ul:visible").addBack().last().children(".vakata-context-hover").removeClass(
-												"vakata-context-hover").prevAll("li:not(.vakata-context-separator)").first();
+										o = vakata_context.element.find("ul:visible").addBack().last().children(".vakata-context-hover")
+												.removeClass("vakata-context-hover").prevAll("li:not(.vakata-context-separator)").first();
 										if (!o.length) {
 											o = vakata_context.element.find("ul:visible").addBack().last().children(
 													"li:not(.vakata-context-separator)").last();
@@ -10815,8 +10955,8 @@
 									break;
 								case 40:
 									if (vakata_context.is_visible) {
-										o = vakata_context.element.find("ul:visible").addBack().last().children(".vakata-context-hover").removeClass(
-												"vakata-context-hover").nextAll("li:not(.vakata-context-separator)").first();
+										o = vakata_context.element.find("ul:visible").addBack().last().children(".vakata-context-hover")
+												.removeClass("vakata-context-hover").nextAll("li:not(.vakata-context-separator)").first();
 										if (!o.length) {
 											o = vakata_context.element.find("ul:visible").addBack().last().children(
 													"li:not(.vakata-context-separator)").first();
@@ -11005,8 +11145,8 @@
 														}
 														if (e.type === "touchstart"
 																&& (!this.settings.dnd.touch || (this.settings.dnd.touch === 'selected' && !$(
-																		e.currentTarget).closest('.jstreeol3-node').children('.jstreeol3-anchor')
-																		.hasClass('jstreeol3-clicked')))) {
+																		e.currentTarget).closest('.jstreeol3-node').children(
+																		'.jstreeol3-anchor').hasClass('jstreeol3-clicked')))) {
 															return true;
 														}
 														var obj = this.get_node(e.target), mlt = this.is_selected(obj)
@@ -11038,12 +11178,22 @@
 																});
 															} else {
 																this.element.trigger('mousedown.jstreeol3');
-																return $.vakata.dnd.start(e, drg, '<div id="jstreeol3-dnd" class="jstreeol3-'
-																		+ this.get_theme() + ' jstreeol3-' + this.get_theme() + '-'
-																		+ this.get_theme_variant() + ' '
-																		+ (this.settings.core.themes.responsive ? ' jstreeol3-dnd-responsive' : '')
-																		+ '"><i class="jstreeol3-icon jstreeol3-er"></i>' + txt
-																		+ '<ins class="jstreeol3-copy" style="display:none;">+</ins></div>');
+																return $.vakata.dnd
+																		.start(
+																				e,
+																				drg,
+																				'<div id="jstreeol3-dnd" class="jstreeol3-'
+																						+ this.get_theme()
+																						+ ' jstreeol3-'
+																						+ this.get_theme()
+																						+ '-'
+																						+ this.get_theme_variant()
+																						+ ' '
+																						+ (this.settings.core.themes.responsive ? ' jstreeol3-dnd-responsive'
+																								: '')
+																						+ '"><i class="jstreeol3-icon jstreeol3-er"></i>'
+																						+ txt
+																						+ '<ins class="jstreeol3-copy" style="display:none;">+</ins></div>');
 															}
 														}
 													}, this));
@@ -11102,7 +11252,8 @@
 
 			$(function() {
 				// bind only once for all instances
-				var lastmv = false, laster = false, lastev = false, opento = false, marker = $('<div id="jstreeol3-marker">&#160;</div>').hide(); // .appendTo('body');
+				var lastmv = false, laster = false, lastev = false, opento = false, marker = $('<div id="jstreeol3-marker">&#160;</div>')
+						.hide(); // .appendTo('body');
 
 				$(document)
 						.on('dnd_start.vakata.jstreeol3', function(e, data) {
@@ -11141,8 +11292,9 @@
 												&& (data.data.origin.settings.dnd.always_copy || (data.data.origin.settings.dnd.copy && (data.event.metaKey || data.event.ctrlKey)));
 										data.helper.children().attr(
 												'class',
-												'jstreeol3-' + ins.get_theme() + ' jstreeol3-' + ins.get_theme() + '-' + ins.get_theme_variant()
-														+ ' ' + (ins.settings.core.themes.responsive ? ' jstreeol3-dnd-responsive' : '')).find(
+												'jstreeol3-' + ins.get_theme() + ' jstreeol3-' + ins.get_theme() + '-'
+														+ ins.get_theme_variant() + ' '
+														+ (ins.settings.core.themes.responsive ? ' jstreeol3-dnd-responsive' : '')).find(
 												'.jstreeol3-copy').first()[is_copy ? 'show' : 'hide']();
 
 										// if are hovering the container itself
@@ -11157,8 +11309,8 @@
 																.check(
 																		(data.data.origin
 																				&& (data.data.origin.settings.dnd.always_copy || (data.data.origin.settings.dnd.copy && (data.event.metaKey || data.event.ctrlKey))) ? "copy_node"
-																				: "move_node"),
-																		(data.data.origin && data.data.origin !== ins ? data.data.origin
+																				: "move_node"), (data.data.origin
+																				&& data.data.origin !== ins ? data.data.origin
 																				.get_node(data.data.nodes[t1]) : data.data.nodes[t1]),
 																		$.jstreeol3.root, 'last', {
 																			'dnd' : true,
@@ -11179,7 +11331,8 @@
 													'pos' : 'last'
 												};
 												marker.hide();
-												data.helper.find('.jstreeol3-icon').first().removeClass('jstreeol3-er').addClass('jstreeol3-ok');
+												data.helper.find('.jstreeol3-icon').first().removeClass('jstreeol3-er').addClass(
+														'jstreeol3-ok');
 												if (data.event.originalEvent && data.event.originalEvent.dataTransfer) {
 													data.event.originalEvent.dataTransfer.dropEffect = is_copy ? 'copy' : 'move';
 												}
@@ -11187,11 +11340,12 @@
 											}
 										} else {
 											// if we are hovering a tree node
-											ref = ins.settings.dnd.large_drop_target ? $(data.event.target).closest('.jstreeol3-node').children(
-													'.jstreeol3-anchor') : $(data.event.target).closest('.jstreeol3-anchor');
+											ref = ins.settings.dnd.large_drop_target ? $(data.event.target).closest('.jstreeol3-node')
+													.children('.jstreeol3-anchor') : $(data.event.target).closest('.jstreeol3-anchor');
 											if (ref && ref.length && ref.parent().is('.jstreeol3-closed, .jstreeol3-open, .jstreeol3-leaf')) {
 												off = ref.offset();
-												rel = (data.event.pageY !== undefined ? data.event.pageY : data.event.originalEvent.pageY) - off.top;
+												rel = (data.event.pageY !== undefined ? data.event.pageY : data.event.originalEvent.pageY)
+														- off.top;
 												h = ref.outerHeight();
 												if (rel < h / 3) {
 													o = [ 'b', 'i', 'a' ];
@@ -11217,8 +11371,8 @@
 																		l = off.left - 2;
 																		t = off.top + h / 2 + 1;
 																		p = tm.id;
-																		i = ip === 'first' ? 0 : (ip === 'last' ? tm.children.length : Math.min(ip,
-																				tm.children.length));
+																		i = ip === 'first' ? 0 : (ip === 'last' ? tm.children.length : Math
+																				.min(ip, tm.children.length));
 																		break;
 																	case 'a':
 																		l = off.left - 6;
@@ -11245,7 +11399,8 @@
 																				&& ((ins && ins.settings && ins.settings.dnd && ins.settings.dnd.check_while_dragging === false) || ins
 																						.check(
 																								op,
-																								(data.data.origin && data.data.origin !== ins ? data.data.origin
+																								(data.data.origin
+																										&& data.data.origin !== ins ? data.data.origin
 																										.get_node(data.data.nodes[t1])
 																										: data.data.nodes[t1]),
 																								p,
@@ -11282,16 +11437,17 @@
 																		lastmv = {
 																			'ins' : ins,
 																			'par' : p,
-																			'pos' : v === 'i' && ip === 'last' && i === 0 && !ins.is_loaded(tm) ? 'last'
-																					: i
+																			'pos' : v === 'i' && ip === 'last' && i === 0
+																					&& !ins.is_loaded(tm) ? 'last' : i
 																		};
 																		marker.css({
 																			'left' : l + 'px',
 																			'top' : t + 'px'
 																		}).show();
-																		data.helper.find('.jstreeol3-icon').first().removeClass('jstreeol3-er')
-																				.addClass('jstreeol3-ok');
-																		if (data.event.originalEvent && data.event.originalEvent.dataTransfer) {
+																		data.helper.find('.jstreeol3-icon').first().removeClass(
+																				'jstreeol3-er').addClass('jstreeol3-ok');
+																		if (data.event.originalEvent
+																				&& data.event.originalEvent.dataTransfer) {
 																			data.event.originalEvent.dataTransfer.dropEffect = is_copy ? 'copy'
 																					: 'move';
 																		}
@@ -11337,7 +11493,8 @@
 									var i, j, nodes = [];
 									if (lastmv) {
 										for (i = 0, j = data.data.nodes.length; i < j; i++) {
-											nodes[i] = data.data.origin ? data.data.origin.get_node(data.data.nodes[i]) : data.data.nodes[i];
+											nodes[i] = data.data.origin ? data.data.origin.get_node(data.data.nodes[i])
+													: data.data.nodes[i];
 										}
 										lastmv.ins[data.data.origin
 												&& (data.data.origin.settings.dnd.always_copy || (data.data.origin.settings.dnd.copy && (data.event.metaKey || data.event.ctrlKey))) ? 'copy_node'
@@ -11517,7 +11674,8 @@
 						}
 					},
 					start : function(e, data, html) {
-						if (e.type === "touchstart" && e.originalEvent && e.originalEvent.changedTouches && e.originalEvent.changedTouches[0]) {
+						if (e.type === "touchstart" && e.originalEvent && e.originalEvent.changedTouches
+								&& e.originalEvent.changedTouches[0]) {
 							e.pageX = e.originalEvent.changedTouches[0].pageX;
 							e.pageY = e.originalEvent.changedTouches[0].pageY;
 							e.target = document.elementFromPoint(e.originalEvent.changedTouches[0].pageX - window.pageXOffset,
@@ -11561,7 +11719,8 @@
 						return false;
 					},
 					drag : function(e) {
-						if (e.type === "touchmove" && e.originalEvent && e.originalEvent.changedTouches && e.originalEvent.changedTouches[0]) {
+						if (e.type === "touchmove" && e.originalEvent && e.originalEvent.changedTouches
+								&& e.originalEvent.changedTouches[0]) {
 							e.pageX = e.originalEvent.changedTouches[0].pageX;
 							e.pageY = e.originalEvent.changedTouches[0].pageY;
 							e.target = document.elementFromPoint(e.originalEvent.changedTouches[0].pageX - window.pageXOffset,
@@ -11858,12 +12017,12 @@
 				this._load_node = function(obj, callback) {
 					var data = this._data.massload[obj.id], rslt = null, dom;
 					if (data) {
-						rslt = this[typeof data === 'string' ? '_append_html_data' : '_append_json_data'](obj, typeof data === 'string' ? $(
-								$.parseHTML(data)).filter(function() {
-							return this.nodeType !== 3;
-						}) : data, function(status) {
-							callback.call(this, status);
-						});
+						rslt = this[typeof data === 'string' ? '_append_html_data' : '_append_json_data'](obj,
+								typeof data === 'string' ? $($.parseHTML(data)).filter(function() {
+									return this.nodeType !== 3;
+								}) : data, function(status) {
+									callback.call(this, status);
+								});
 						dom = this.get_node(obj.id, true);
 						if (dom && dom.length) {
 							dom.removeClass("jstreeol3-loading").attr('aria-busy', false);
@@ -12107,19 +12266,18 @@
 						caseSensitive : s.case_sensitive,
 						fuzzy : s.fuzzy
 					});
-					$
-							.each(m[inside ? inside : $.jstreeol3.root].children_d,
-									function(ii, i) {
-										var v = m[i];
-										if (v.text
-												&& !v.state.hidden
-												&& (!s.search_leaves_only || (v.state.loaded && v.children.length === 0))
-												&& ((s.search_callback && s.search_callback.call(this, str, v)) || (!s.search_callback && f
-														.search(v.text).isMatch))) {
-											r.push(i);
-											p = p.concat(v.parents);
-										}
-									});
+					$.each(m[inside ? inside : $.jstreeol3.root].children_d,
+							function(ii, i) {
+								var v = m[i];
+								if (v.text
+										&& !v.state.hidden
+										&& (!s.search_leaves_only || (v.state.loaded && v.children.length === 0))
+										&& ((s.search_callback && s.search_callback.call(this, str, v)) || (!s.search_callback && f
+												.search(v.text).isMatch))) {
+									r.push(i);
+									p = p.concat(v.parents);
+								}
+							});
 					if (r.length) {
 						p = $.vakata.array_unique(p);
 						for (i = 0, j = p.length; i < j; i++) {
@@ -12133,7 +12291,8 @@
 											r,
 											function(v) {
 												return "0123456789".indexOf(v[0]) !== -1 ? '\\3' + v[0] + ' '
-														+ v.substr(1).replace($.jstreeol3.idregex, '\\$&') : v.replace($.jstreeol3.idregex, '\\$&');
+														+ v.substr(1).replace($.jstreeol3.idregex, '\\$&') : v.replace($.jstreeol3.idregex,
+														'\\$&');
 											}).join(', #')));
 							this._data.search.res = r;
 						} else {
@@ -12142,7 +12301,8 @@
 											r,
 											function(v) {
 												return "0123456789".indexOf(v[0]) !== -1 ? '\\3' + v[0] + ' '
-														+ v.substr(1).replace($.jstreeol3.idregex, '\\$&') : v.replace($.jstreeol3.idregex, '\\$&');
+														+ v.substr(1).replace($.jstreeol3.idregex, '\\$&') : v.replace($.jstreeol3.idregex,
+														'\\$&');
 											}).join(', #'))));
 							this._data.search.res = $.vakata.array_unique(this._data.search.res.concat(r));
 						}
@@ -12208,7 +12368,8 @@
 										this._data.search.res,
 										function(v) {
 											return "0123456789".indexOf(v[0]) !== -1 ? '\\3' + v[0] + ' '
-													+ v.substr(1).replace($.jstreeol3.idregex, '\\$&') : v.replace($.jstreeol3.idregex, '\\$&');
+													+ v.substr(1).replace($.jstreeol3.idregex, '\\$&') : v.replace($.jstreeol3.idregex,
+													'\\$&');
 										}).join(', #')));
 						this._data.search.dom.children(".jstreeol3-anchor").removeClass("jstreeol3-search");
 					}
@@ -12715,7 +12876,8 @@
 							if (m[dpc[i]].original && m[dpc[i]].original.type && t[m[dpc[i]].original.type]) {
 								c = m[dpc[i]].original.type;
 							}
-							if (m[dpc[i]].data && m[dpc[i]].data.jstreeol3 && m[dpc[i]].data.jstreeol3.type && t[m[dpc[i]].data.jstreeol3.type]) {
+							if (m[dpc[i]].data && m[dpc[i]].data.jstreeol3 && m[dpc[i]].data.jstreeol3.type
+									&& t[m[dpc[i]].data.jstreeol3.type]) {
 								c = m[dpc[i]].data.jstreeol3.type;
 							}
 							m[dpc[i]].type = c;
@@ -13266,16 +13428,16 @@
 					}, this)).on(
 							"open_node.jstreeol3",
 							$.proxy(function(e, data) {
-								this.get_node(data.node, true).find('.jstreeol3-clicked').parent().children('.jstreeol3-wholerow').addClass(
-										'jstreeol3-wholerow-clicked');
+								this.get_node(data.node, true).find('.jstreeol3-clicked').parent().children('.jstreeol3-wholerow')
+										.addClass('jstreeol3-wholerow-clicked');
 							}, this)).on(
 							"hover_node.jstreeol3 dehover_node.jstreeol3",
 							$.proxy(function(e, data) {
 								if (e.type === "hover_node" && this.is_disabled(data.node)) {
 									return;
 								}
-								this.get_node(data.node, true).children('.jstreeol3-wholerow')[e.type === "hover_node" ? "addClass" : "removeClass"]
-										('jstreeol3-wholerow-hovered');
+								this.get_node(data.node, true).children('.jstreeol3-wholerow')[e.type === "hover_node" ? "addClass"
+										: "removeClass"]('jstreeol3-wholerow-hovered');
 							}, this)).on("contextmenu.jstreeol3", ".jstreeol3-wholerow", $.proxy(function(e) {
 						if (this._data.contextmenu) {
 							e.preventDefault();
