@@ -8254,22 +8254,33 @@
 							"action" : function(data) {
 								var inst = $.jstree.reference(data.reference), obj = inst.get_node(data.reference);
 								var arr = inst.get_selected();
-								var sameGroupParent = {};
+								var sameGroupParentDXF = {};
+								var sameGroupParentNGI = {};
 								var sameParent = [];
 								for (var i = 0; i < arr.length; i++) {
 									var node = inst.get_node(arr[i]);
 									var parent = inst.get_node(node.parent);
-									if (parent.type === "n_ngi_group" || parent.type === "n_dxf_group") {
-										if (!sameGroupParent.hasOwnProperty(parent.id)) {
-											sameGroupParent[parent.id] = {};
+									if (parent.type === "n_ngi_group") {
+										if (!sameGroupParentNGI.hasOwnProperty(parent.id)) {
+											sameGroupParentNGI[parent.id] = {};
 										}
-										sameGroupParent[parent.id][node.id] = node;
-									} else if (parent.type === "n_shp" || parent.type === "e_ngi" || parent.type === "e_dxf"
-											|| parent.type === "e_shp") {
-										sameParent.push(node);
-									} else if (parent.type === "n_ngi" || parent.type === "n_dxf") {
-										inst._data.geoserver.deleteLayer.addStructure("all", node.children);
+										sameGroupParentNGI[parent.id][node.id] = node;
+									} else if (parent.type === "n_dxf_group") {
+										if (!sameGroupParentDXF.hasOwnProperty(parent.id)) {
+											sameGroupParentDXF[parent.id] = {};
+										}
+										sameGroupParentDXF[parent.id][node.id] = node;
+									} else if (parent.type === "n_ngi") {
+										inst._data.geoserver.deleteLayer.addStructure("ngi", node.text, "all", node.children);
+									} else if (parent.type === "n_dxf") {
+										inst._data.geoserver.deleteLayer.addStructure("dxf", node.text, "all", node.children);
 									}
+									// else if (parent.type === "n_shp" ||
+									// parent.type === "e_ngi" || parent.type
+									// === "e_dxf"
+									// || parent.type === "e_shp") {
+									// sameParent.push(node);
+									// }
 								}
 								if (sameParent.length > 0) {
 									var part = [];
@@ -8278,17 +8289,33 @@
 									}
 									inst._data.geoserver.deleteLayer.addStructure("part", part);
 								}
-								var pkeys = Object.keys(sameGroupParent);
+								var pkeys = Object.keys(sameGroupParentNGI);
 								if (pkeys.length > 0) {
 									for (var i = 0; i < pkeys.length; i++) {
 										var parent = inst.get_node(pkeys[i]);
 										var group = [];
-										var ckeys = Object.keys(sameGroupParent[pkeys[i]]);
+										var ckeys = Object.keys(sameGroupParentNGI[pkeys[i]]);
 										for (var j = 0; j < ckeys.length; j++) {
 											group.push(ckeys[j]);
 										}
-										inst._data.geoserver.deleteLayer.addStructure(
-												Object.keys(sameGroupParent[pkeys[i]]).length === parent.children.length ? "all" : "part",
+
+										inst._data.geoserver.deleteLayer.addStructure("ngi", parent.text, Object
+												.keys(sameGroupParentNGI[pkeys[i]]).length === parent.children.length ? "all" : "part",
+												group);
+									}
+								}
+								pkeys = Object.keys(sameGroupParentDXF);
+								if (pkeys.length > 0) {
+									for (var i = 0; i < pkeys.length; i++) {
+										var parent = inst.get_node(pkeys[i]);
+										var group = [];
+										var ckeys = Object.keys(sameGroupParentDXF[pkeys[i]]);
+										for (var j = 0; j < ckeys.length; j++) {
+											group.push(ckeys[j]);
+										}
+
+										inst._data.geoserver.deleteLayer.addStructure("dxf", parent.text, Object
+												.keys(sameGroupParentDXF[pkeys[i]]).length === parent.children.length ? "all" : "part",
 												group);
 									}
 								}
