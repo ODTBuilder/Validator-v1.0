@@ -39,6 +39,9 @@ public class QA10DBQueryManager {
 		if (originLayerType.equals("LWPOLYLINE") || originLayerType.equals("POLYLINE")) {
 			defaultCreateQuery += ", elevation double precision";
 		}
+		if (originLayerType.equals("INSERT")) {
+			defaultCreateQuery += ", rotate double precision";
+		}
 		defaultCreateQuery += ")";
 		HashMap<String, Object> query = new HashMap<String, Object>();
 		query.put("createQuery", defaultCreateQuery);
@@ -68,6 +71,11 @@ public class QA10DBQueryManager {
 			if (originLayerType.equals("LWPOLYLINE") || originLayerType.equals("POLYLINE")) {
 				defaultInsertColumns += ", elevation";
 				values += "," + feature.getElevation();
+			}
+
+			if (originLayerType.equals("INSERT")) {
+				defaultInsertColumns += ", rotate";
+				values += "," + feature.getRotate();
 			}
 
 			defaultInsertColumns += ")";

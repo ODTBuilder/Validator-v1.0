@@ -36,7 +36,6 @@ package com.git.gdsbuilder.validator.layer;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
 import org.geotools.feature.SchemaException;
 import org.json.simple.JSONObject;
@@ -45,6 +44,7 @@ import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.operation.TransformException;
 
 import com.git.gdsbuilder.type.geoserver.layer.GeoLayer;
+import com.git.gdsbuilder.type.geoserver.layer.GeoLayerList;
 import com.git.gdsbuilder.type.validate.error.ErrorLayer;
 
 /**
@@ -193,5 +193,9 @@ public interface LayerValidator {
 			throws SchemaException, IOException;
 
 	public ErrorLayer validatePointDuplicated();
+
+	public ErrorLayer validateOneAcre(GeoLayerList typeLayers, double spatialAccuracyTolorence);
+
+	public ErrorLayer validateOneStage(GeoLayerList typeLayers, double spatialAccuracyTolorence);
 
 }

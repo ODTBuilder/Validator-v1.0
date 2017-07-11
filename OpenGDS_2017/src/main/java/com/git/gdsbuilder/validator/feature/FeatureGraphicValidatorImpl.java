@@ -43,6 +43,7 @@ import org.geotools.feature.SchemaException;
 import org.geotools.geometry.jts.JTS;
 import org.geotools.geometry.jts.JTSFactoryFinder;
 import org.geotools.referencing.CRS;
+import org.geotools.xml.xLink.XLinkSchema.Href;
 import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.referencing.FactoryException;
@@ -50,6 +51,7 @@ import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CRSAuthorityFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
+import org.w3.xlink.Simple;
 
 import com.git.gdsbuilder.type.validate.error.ErrorFeature;
 import com.git.gdsbuilder.type.validate.option.B_SymbolOutSided;
@@ -61,6 +63,8 @@ import com.git.gdsbuilder.type.validate.option.CrossRoad;
 import com.git.gdsbuilder.type.validate.option.EntityDuplicated;
 import com.git.gdsbuilder.type.validate.option.LayerMiss;
 import com.git.gdsbuilder.type.validate.option.NodeMiss;
+import com.git.gdsbuilder.type.validate.option.OneAcre;
+import com.git.gdsbuilder.type.validate.option.OneStage;
 import com.git.gdsbuilder.type.validate.option.OutBoundary;
 import com.git.gdsbuilder.type.validate.option.OverShoot;
 import com.git.gdsbuilder.type.validate.option.PointDuplicated;
@@ -937,13 +941,15 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 
 		if (!geometry.isSimple()) {
 			Coordinate[] coordinates = geometry.getCoordinates();
-			for (int i = 0; i < coordinates.length-1; i++) {
-				Coordinate[] coordI = new Coordinate[] {new Coordinate(coordinates[i]), new Coordinate(coordinates[i+1]) };
+			for (int i = 0; i < coordinates.length - 1; i++) {
+				Coordinate[] coordI = new Coordinate[] { new Coordinate(coordinates[i]),
+						new Coordinate(coordinates[i + 1]) };
 				LineString lineI = geometryFactory.createLineString(coordI);
-				for (int j = 0; j < coordinates.length-1; j++) {
-					Coordinate[] coordJ = new Coordinate[] {new Coordinate(coordinates[j]), new Coordinate(coordinates[j+1])};
+				for (int j = 0; j < coordinates.length - 1; j++) {
+					Coordinate[] coordJ = new Coordinate[] { new Coordinate(coordinates[j]),
+							new Coordinate(coordinates[j + 1]) };
 					LineString lineJ = geometryFactory.createLineString(coordJ);
-					if(lineI.intersects(lineJ)){
+					if (lineI.intersects(lineJ)) {
 						Geometry intersectGeom = lineI.intersection(lineJ);
 						Coordinate[] intersectCoors = intersectGeom.getCoordinates();
 						for (int k = 0; k < intersectCoors.length; k++) {
@@ -952,24 +958,97 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 							Boolean flag = false;
 							for (int l = 0; l < coordI.length; l++) {
 								Coordinate coordPoint = coordI[l];
-								if(interCoor.equals2D(coordPoint)){
+								if (interCoor.equals2D(coordPoint)) {
 									flag = true;
 									break;
 								}
 							}
-							if(flag == false){
+							if (flag == false) {
 								Property featuerIDPro = simpleFeature.getProperty("feature_id");
 								String featureID = (String) featuerIDPro.getValue();
 								String featureIdx = simpleFeature.getID();
 								ErrorFeature errFeature = new ErrorFeature(featureIdx, featureID,
-										ConIntersected.Type.CONINTERSECTED.errType(), ConIntersected.Type.CONINTERSECTED.errName(), errPoint);
+										ConIntersected.Type.CONINTERSECTED.errType(),
+										ConIntersected.Type.CONINTERSECTED.errName(), errPoint);
 								errFeatures.add(errFeature);
 							}
 						}
 					}
 				}
 			}
-		} 
+		}
 		return errFeatures;
+	}
+
+	@Override
+	public ErrorFeature validateOneAcre(SimpleFeature simpleFeature, SimpleFeatureCollection relationSfc) {
+
+		int withinCount = 0;
+		SimpleFeature returnSf = null;
+		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry(); // D002
+		SimpleFeatureIterator sfIterator = relationSfc.features();
+		while (sfIterator.hasNext()) {
+			SimpleFeature relationSf = sfIterator.next(); // D001
+			Geometry relationGeom = (Geometry) relationSf.getDefaultGeometry();
+			if (relationGeom.within(geometry)) {
+				withinCount++;
+				if (withinCount > 1) {
+					returnSf = null;
+					return null;
+				}
+				if (withinCount == 1) {
+					returnSf = relationSf;
+				}
+			}
+		}
+		if (withinCount == 1) {
+			Property featuerIDPro = returnSf.getProperty("feature_id");
+			String featureID = (String) featuerIDPro.getValue();
+			String featureIdx = returnSf.getID();
+			Geometry returnGeom = ((Geometry) returnSf.getDefaultGeometry()).getCentroid();
+			ErrorFeature errFeature = new ErrorFeature(featureIdx, featureID, OneAcre.Type.ONEACRE.errType(),
+					OneAcre.Type.ONEACRE.errName(), returnGeom);
+			return errFeature;
+		} else {
+			return null;
+		}
+	}
+
+	@Override
+	public List<ErrorFeature> validateOneStage(SimpleFeatureCollection simpleFeatureCollection,
+			SimpleFeatureCollection relaSimpleFeatureCollection) {
+
+		List<ErrorFeature> errFeatures = new ArrayList<ErrorFeature>();
+		SimpleFeatureIterator sfIter = simpleFeatureCollection.features();
+		while (sfIter.hasNext()) {
+			// D001
+			SimpleFeature simpleFeature = sfIter.next();
+			Geometry geom = (Geometry) simpleFeature.getDefaultGeometry();
+			boolean isTrue = false;
+			SimpleFeatureIterator reSfIter = relaSimpleFeatureCollection.features();
+			intterWhile: while (reSfIter.hasNext()) {
+				// D002
+				SimpleFeature reSimpleFeature = reSfIter.next();
+				Geometry reGeom = (Geometry) reSimpleFeature.getDefaultGeometry();
+				if (geom.within(reGeom) || geom.overlaps(reGeom)) {
+					isTrue = true;
+					break intterWhile;
+				}
+			}
+			if (!isTrue) {
+				Property featuerIDPro = simpleFeature.getProperty("feature_id");
+				String featureID = (String) featuerIDPro.getValue();
+				String featureIdx = simpleFeature.getID();
+				Geometry returnGeom = ((Geometry) simpleFeature.getDefaultGeometry()).getCentroid();
+				ErrorFeature errFeature = new ErrorFeature(featureIdx, featureID, OneStage.Type.ONESTAGE.errType(),
+						OneStage.Type.ONESTAGE.errName(), returnGeom);
+				errFeatures.add(errFeature);
+			}
+		}
+		if (errFeatures.size() > 0) {
+			return errFeatures;
+		} else {
+			return null;
+		}
 	}
 }

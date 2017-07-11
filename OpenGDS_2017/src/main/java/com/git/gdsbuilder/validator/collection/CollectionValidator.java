@@ -75,6 +75,8 @@ import com.git.gdsbuilder.type.validate.option.EntityDuplicated;
 import com.git.gdsbuilder.type.validate.option.EntityNone;
 import com.git.gdsbuilder.type.validate.option.LayerMiss;
 import com.git.gdsbuilder.type.validate.option.NodeMiss;
+import com.git.gdsbuilder.type.validate.option.OneAcre;
+import com.git.gdsbuilder.type.validate.option.OneStage;
 import com.git.gdsbuilder.type.validate.option.OutBoundary;
 import com.git.gdsbuilder.type.validate.option.OverShoot;
 import com.git.gdsbuilder.type.validate.option.PointDuplicated;
@@ -93,8 +95,6 @@ import com.git.gdsbuilder.validator.collection.rule.MapSystemRule;
 import com.git.gdsbuilder.validator.collection.rule.MapSystemRule.MapSystemRuleType;
 import com.git.gdsbuilder.validator.layer.LayerValidator;
 import com.git.gdsbuilder.validator.layer.LayerValidatorImpl;
-import com.vividsolutions.jts.algorithm.LineIntersector;
-import com.vividsolutions.jts.algorithm.NonRobustLineIntersector;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
@@ -342,6 +342,30 @@ public class CollectionValidator {
 							typeErrorLayer = layerValidator.validateTwistedPolygon();
 							if (typeErrorLayer != null) {
 								errorLayer.mergeErrorLayer(typeErrorLayer);
+							}
+						}
+
+						if (option instanceof OneAcre) {
+							List<String> relationNames = ((OneAcre) option).getRelationType();
+							for (int r = 0; r < relationNames.size(); r++) {
+								typeErrorLayer = layerValidator.validateOneAcre(validateLayerCollectionList
+										.getTypeLayers(relationNames.get(r), layerCollection),
+										spatialAccuracyTolorence);
+								if (typeErrorLayer != null) {
+									errorLayer.mergeErrorLayer(typeErrorLayer);
+								}
+							}
+						}
+
+						if (option instanceof OneStage) {
+							List<String> relationNames = ((OneStage) option).getRelationType();
+							for (int r = 0; r < relationNames.size(); r++) {
+								typeErrorLayer = layerValidator.validateOneStage(validateLayerCollectionList
+										.getTypeLayers(relationNames.get(r), layerCollection),
+										spatialAccuracyTolorence);
+								if (typeErrorLayer != null) {
+									errorLayer.mergeErrorLayer(typeErrorLayer);
+								}
 							}
 						}
 

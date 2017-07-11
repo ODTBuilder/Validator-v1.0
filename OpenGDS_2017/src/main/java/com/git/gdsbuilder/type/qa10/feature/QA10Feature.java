@@ -9,6 +9,7 @@ public class QA10Feature {
 	Geometry geom;
 	String textValue;
 	double elevation;
+	double rotate;
 
 	public QA10Feature(String featureID) {
 		super();
@@ -16,6 +17,7 @@ public class QA10Feature {
 		this.featureType = "";
 		this.textValue = "";
 		this.elevation = 0;
+		this.rotate = 0;
 	}
 
 	public QA10Feature(String featureID, String featureType, Geometry geom) {
@@ -65,6 +67,14 @@ public class QA10Feature {
 
 	public void setTextValue(String textValue) {
 		this.textValue = textValue;
+	}
+
+	public double getRotate() {
+		return rotate;
+	}
+
+	public void setRotate(double rotate) {
+		this.rotate = rotate;
 	}
 
 }

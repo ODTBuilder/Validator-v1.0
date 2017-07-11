@@ -44,7 +44,6 @@ import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.operation.TransformException;
 
 import com.git.gdsbuilder.type.validate.error.ErrorFeature;
-import com.git.gdsbuilder.type.validate.error.ErrorLayer;
 
 /**
  * SimpleFeatureCollection를 그래픽 검수하는 클래스
@@ -170,7 +169,8 @@ public interface FeatureGraphicValidator {
 	 * 11:40:18 @param simpleFeature @return ErrorFeature @throws
 	 * SchemaException ErrorFeature @throws
 	 */
-	public ErrorFeature validateWaterOpen(SimpleFeature simpleFeature, SimpleFeatureCollection aop, double tolerence) throws SchemaException;
+	public ErrorFeature validateWaterOpen(SimpleFeature simpleFeature, SimpleFeatureCollection aop, double tolerence)
+			throws SchemaException;
 
 	/**
 	 * 검수 항목 중 "계층 오류(LayerMiss)" 검수 @author JY.Kim @Date 2017. 6. 12. 오전
@@ -192,5 +192,8 @@ public interface FeatureGraphicValidator {
 
 	public List<ErrorFeature> validateConIntersected(SimpleFeature tmpSimpleFeatureI);
 
-	
+	public ErrorFeature validateOneAcre(SimpleFeature simpleFeature, SimpleFeatureCollection relationSfc);
+
+	public List<ErrorFeature> validateOneStage(SimpleFeatureCollection simpleFeatureCollection,
+			SimpleFeatureCollection relaSimpleFeatureCollection);
 }

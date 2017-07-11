@@ -35,6 +35,10 @@ public class QA10FileReader {
 			Iterator layerIterator = doc.getDXFLayerIterator();
 			while (layerIterator.hasNext()) {
 				DXFLayer dxfLayer = (DXFLayer) layerIterator.next();
+				String layerId = dxfLayer.getName();
+				if(layerId.equals("E0042326")) {
+					System.out.println("");
+				}
 				QA10LayerList dtLayers = QA10FileLayerParser.parseDTLayer(dxfLayer);
 				dtCollection.addAllQA10Layers(dtLayers);
 			}

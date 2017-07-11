@@ -55,6 +55,7 @@ import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.operation.TransformException;
 
 import com.git.gdsbuilder.type.geoserver.layer.GeoLayer;
+import com.git.gdsbuilder.type.geoserver.layer.GeoLayerList;
 import com.git.gdsbuilder.type.validate.collection.close.ValidateCloseCollectionLayer;
 import com.git.gdsbuilder.type.validate.error.ErrorFeature;
 import com.git.gdsbuilder.type.validate.error.ErrorLayer;
@@ -148,7 +149,7 @@ public class LayerValidatorImpl implements LayerValidator {
 					errFeature.setLayerName(validatorLayer.getLayerName());
 					errLayer.addErrorFeature(errFeature);
 				}
-			} 
+			}
 			for (int j = i + 1; j < tmpsSimpleFeaturesSize; j++) {
 				SimpleFeature tmpSimpleFeatureJ = tmpsSimpleFeatures.get(j);
 				List<ErrorFeature> errFeatures = graphicValidator.validateConIntersected(tmpSimpleFeatureI,
@@ -330,9 +331,9 @@ public class LayerValidatorImpl implements LayerValidator {
 			simpleFeatures.add(simpleFeature);
 		}
 		ErrorLayer selfErrorLayer = selfEntity(simpleFeatures);
-//		if (selfErrorLayer != null) {
-//			errLayer.mergeErrorLayer(selfErrorLayer);
-//		}
+		// if (selfErrorLayer != null) {
+		// errLayer.mergeErrorLayer(selfErrorLayer);
+		// }
 		for (int i = 0; i < relationLayers.size(); i++) {
 			GeoLayer relationLayer = relationLayers.get(i);
 			SimpleFeatureCollection relationSfc = relationLayer.getSimpleFeatureCollection();
@@ -890,6 +891,65 @@ public class LayerValidatorImpl implements LayerValidator {
 		}
 		if (errorLayer.getErrFeatureList().size() > 0) {
 			return errorLayer;
+		} else {
+			return null;
+		}
+	}
+
+	@Override
+	public ErrorLayer validateOneAcre(GeoLayerList relationLayers, double spatialAccuracyTolorence) {
+
+		ErrorLayer errLayer = new ErrorLayer();
+		SimpleFeatureCollection sfc = validatorLayer.getSimpleFeatureCollection();
+		List<SimpleFeature> simpleFeatures = new ArrayList<SimpleFeature>();
+		SimpleFeatureIterator simpleFeatureIterator = sfc.features();
+		while (simpleFeatureIterator.hasNext()) {
+			SimpleFeature simpleFeature = simpleFeatureIterator.next();
+			simpleFeatures.add(simpleFeature);
+		}
+
+		for (int i = 0; i < relationLayers.size(); i++) {
+			GeoLayer relationLayer = relationLayers.get(i);
+			SimpleFeatureCollection relationSfc = relationLayer.getSimpleFeatureCollection();
+			for (int j = 0; j < simpleFeatures.size(); j++) {
+				SimpleFeature simpleFeature = simpleFeatures.get(j);
+				// 단독지류계 검수
+				ErrorFeature errFeature = graphicValidator.validateOneAcre(simpleFeature, relationSfc);
+				if (errFeature != null) {
+					errFeature.setLayerName(validatorLayer.getLayerName());
+					errLayer.addErrorFeature(errFeature);
+				} else {
+					continue;
+				}
+			}
+		}
+		if (errLayer.getErrFeatureList().size() > 0) {
+			return errLayer;
+		} else {
+			return null;
+		}
+	}
+
+	@Override
+	public ErrorLayer validateOneStage(GeoLayerList relationLayers, double spatialAccuracyTolorence) {
+		
+		ErrorLayer errLayer = new ErrorLayer();
+		SimpleFeatureCollection sfc = validatorLayer.getSimpleFeatureCollection();
+		for (int i = 0; i < relationLayers.size(); i++) {
+			GeoLayer relationLayer = relationLayers.get(i);
+			SimpleFeatureCollection relationSfc = relationLayer.getSimpleFeatureCollection();
+			List<ErrorFeature> errFeatures = graphicValidator.validateOneStage(sfc, relationSfc);
+			if (errFeatures != null) {
+				for (ErrorFeature errFeature : errFeatures) {
+					errFeature.setLayerName(validatorLayer.getLayerName());
+					errLayer.addErrorFeature(errFeature);
+				}
+			} else {
+				continue;
+			}
+		}
+		if (errLayer.getErrFeatureList().size() > 0) {
+			return errLayer;
 		} else {
 			return null;
 		}
