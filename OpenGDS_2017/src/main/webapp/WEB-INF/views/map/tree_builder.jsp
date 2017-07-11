@@ -404,10 +404,10 @@ html {
 			url : "geoserver2/getGeoLayerInfoList.ajax"
 		});
 		var createLayer = new gb.geoserver.CreateLayer({
-			url : "editController/editLayerCollection.ajax"
+			url : "editLayerCollection/editLayerCollection.ajax"
 		});
 		var deleteLayer = new gb.geoserver.DeleteLayer({
-			url : "editController/editLayerCollection.ajax"
+			url : "editLayerCollection/editLayerCollection.ajax"
 		});
 		$("#builderServerLayer").jstree({
 			"core" : {
