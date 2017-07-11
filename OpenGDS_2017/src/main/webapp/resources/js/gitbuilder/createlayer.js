@@ -62,9 +62,15 @@ gb.geoserver.CreateLayer = function(obj) {
 		"margin-bottom" : "10px"
 	});
 
-	this.attrForm = $("<div>");
+	this.attrForm = $("<div>").css({
+		"margin-bottom" : "10px"
+	});
 
-	this.body = $("<div>").append(div1).append(this.layerNameForm).append(this.typeForm).append(this.attrForm);
+	this.expertForm = $("<div>").css({
+		"margin-bottom" : "10px"
+	});
+
+	this.body = $("<div>").append(div1).append(this.layerNameForm).append(this.typeForm).append(this.attrForm).append(this.expertForm);
 	$(this.body).addClass("modal-body");
 	/*
 	 * 
@@ -173,7 +179,7 @@ gb.geoserver.CreateLayer.prototype.setForm = function(format, type, sheetNum) {
 		$(this.layerNameForm).hide();
 		$(this.typeForm).hide();
 		$(this.attrForm).hide();
-
+		$(this.expertForm).hide();
 	} else if (type === "layer") {
 		$(this.htag).text("Create a layer");
 		$(this.sheetNumInput).val(sheetNum);
@@ -183,11 +189,14 @@ gb.geoserver.CreateLayer.prototype.setForm = function(format, type, sheetNum) {
 			this.initTypeForm("dxf");
 			$(this.typeForm).show();
 			$(this.attrForm).hide();
+			$(this.expertForm).hide();
 		} else if (format === "ngi") {
 			this.initTypeForm("ngi");
 			$(this.typeForm).show();
 			this.initAttrForm();
 			$(this.attrForm).show();
+			this.initExpertForm();
+			$(this.expertForm).show();
 		}
 	}
 };
@@ -279,6 +288,67 @@ gb.geoserver.CreateLayer.prototype.initAttrForm = function() {
 	var tp = $("<p>").text("Attribute");
 	$(this.attrForm).append(tp).append(table).append(addBtn);
 };
+gb.geoserver.CreateLayer.prototype.initExpertForm = function() {
+	var that = this;
+	var htd1 = $("<td>").text("Version");
+	var htd2 = $("<td>").text("Dimension");
+	var htd3 = $("<td>").text("Represent");
+	var thd = $("<thead>").append(htd1).append(htd2).append(htd3);
+
+	var veropt1 = $("<option>").text("1");
+	var veropt2 = $("<option>").text("2");
+	this.ver = $("<select>").addClass("form-control").append(veropt1).append(veropt2).val("2");
+	var td1 = $("<td>").append(this.ver);
+
+	var dimopt1 = $("<option>").text("2");
+	var dimopt2 = $("<option>").text("3");
+	this.dim = $("<select>").addClass("form-control").append(dimopt1).append(dimopt2).val("2");
+	var td2 = $("<td>").append(this.dim);
+
+	this.rep = $("<input>").addClass("form-control").attr({
+		"type" : "text"
+	}).val("255;0;102");
+	var td3 = $("<td>").append(this.rep);
+
+	var tr1 = $("<tr>").append(td1).append(td2).append(td3);
+
+	this.expertFormBody = $("<tbody>").append(tr1);
+
+	var table = $("<table>").addClass("table").addClass("text-center").append(thd).append(this.expertFormBody);
+
+	var htd12 = $("<td>").text("MinX");
+	var htd22 = $("<td>").text("MinY");
+	var htd32 = $("<td>").text("MaxX");
+	var htd42 = $("<td>").text("MaxY");
+	var thd2 = $("<thead>").append(htd12).append(htd22).append(htd32).append(htd42);
+
+	this.minx = $("<input>").addClass("form-control").attr({
+		"type" : "text"
+	}).val("-219825.99");
+	var td12 = $("<td>").append(this.minx);
+	this.miny = $("<input>").addClass("form-control").attr({
+		"type" : "text"
+	}).val("-435028.96");
+	var td22 = $("<td>").append(this.miny);
+	this.maxx = $("<input>").addClass("form-control").attr({
+		"type" : "text"
+	}).val("819486.07");
+	var td32 = $("<td>").append(this.maxx);
+	this.maxy = $("<input>").addClass("form-control").attr({
+		"type" : "text"
+	}).val("877525.22");
+	var td42 = $("<td>").append(this.maxy);
+
+	var tr12 = $("<tr>").append(td12).append(td22).append(td32).append(td42);
+
+	this.expertFormBodyUnder = $("<tbody>").append(tr12);
+
+	var table2 = $("<table>").addClass("table").addClass("text-center").append(thd2).append(this.expertFormBodyUnder);
+
+	$(this.expertForm).empty();
+	var tp = $("<p>").text("NGI Setting");
+	$(this.expertForm).append(tp).append(table).append(table2);
+};
 gb.geoserver.CreateLayer.prototype.getDefinitionForm = function() {
 	var opt = {
 		"layer" : {}
@@ -305,6 +375,10 @@ gb.geoserver.CreateLayer.prototype.getDefinitionForm = function() {
 				"isUnique" : true
 			}
 			layerObj["attr"] = [ attr ];
+			layerObj["version"] = 2;
+			layerObj["dim"] = 2;
+			layerObj["bound"] = [ [ 122.6019287109375, 49.73690656023088 ], [ 122.14874267578125, 49.40918616182351 ] ];
+			layerObj["represent"] = "255;0;102";
 		}
 	} else if (this.type === "layer") {
 		opt.layer[this.format] = {};
@@ -341,6 +415,10 @@ gb.geoserver.CreateLayer.prototype.getDefinitionForm = function() {
 				layerAttr.push(attr);
 			}
 			layerObj["attr"] = layerAttr;
+			layerObj["version"] = $(this.ver).val();
+			layerObj["dim"] = $(this.dim).val();
+			layerObj["bound"] = [ [ $(this.minx).val(), $(this.miny).val() ], [ $(this.maxx).val(), $(this.maxy).val() ] ];
+			layerObj["represent"] = "255;0;102";
 		}
 	}
 	console.log(opt);
