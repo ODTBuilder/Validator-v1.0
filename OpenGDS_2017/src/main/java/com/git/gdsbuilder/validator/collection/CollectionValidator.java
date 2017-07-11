@@ -209,7 +209,6 @@ public class CollectionValidator {
 		MapSystemRule mapSystemRule = new MapSystemRule(-10, 10, -1, 1);
 
 		for (int i = 0; i < layerCollections.size(); i++) {
-
 			GeoLayerCollection collection = layerCollections.get(i);
 			String collectionName = collection.getCollectionName();
 			try {
@@ -218,17 +217,16 @@ public class CollectionValidator {
 				errorLayer.setCollectionType(this.collectionType);
 
 				// layerMiss 검수
-				layerMissValidate(types, collection, errorLayer);
-
-				// geometric 검수
-				geometricValidate(types, collection, errorLayer);
-
-				// attribute 검수
-				attributeValidate(types, collection, errorLayer);
+//				layerMissValidate(types, collection, errorLayer);
+//
+//				// geometric 검수
+//				geometricValidate(types, collection, errorLayer);
+//
+//				// attribute 검수
+//				attributeValidate(types, collection, errorLayer);
 
 				// 인접도엽 검수
-				// closeCollectionValidate(types, mapSystemRule, collection,
-				// "");
+				closeCollectionValidate(types, mapSystemRule, collection, "", errorLayer);
 				errLayerList.add(errorLayer);
 				progress.put(collection.getCollectionName(), 2);
 			} catch (Exception e) {
@@ -240,9 +238,8 @@ public class CollectionValidator {
 	@SuppressWarnings("unused")
 	private void attributeValidate(ValidateLayerTypeList types, GeoLayerCollection layerCollection,
 			ErrorLayer errorLayer) throws SchemaException {
-		ErrorLayerList geoErrorList = new ErrorLayerList();
+
 		String collectionName = layerCollection.getCollectionName();
-		// ErrorLayer errLayer = new ErrorLayer();
 		for (int j = 0; j < types.size(); j++) {
 			ValidateLayerType type = types.get(j);
 			GeoLayerList typeLayers = validateLayerCollectionList.getTypeLayers(type.getTypeName(), layerCollection);
@@ -250,10 +247,7 @@ public class CollectionValidator {
 			if (options != null) {
 				ErrorLayer typeErrorLayer = null;
 				for (int k = 0; k < options.size(); k++) {
-
 					ValidatorOption option = options.get(k);
-					// System.out.println("typeLayerSize: " +
-					// typeLayers.size());
 					for (int a = 0; a < typeLayers.size(); a++) {
 						GeoLayer typeLayer = typeLayers.get(a);
 						if (typeLayer == null) {
@@ -279,9 +273,6 @@ public class CollectionValidator {
 						if (option instanceof AttributeFix) {
 							HashMap<String, Object> attributeNames = ((AttributeFix) option).getRelationType();
 							String typeLayerName = typeLayer.getLayerName();
-							// int index = typeLayerName.indexOf("_");
-							// String layerCode = typeLayerName.substring(0,
-							// index);
 							JSONObject attrJson = (JSONObject) attributeNames.get(typeLayerName);
 							typeErrorLayer = layerValidator.validateAttributeFix(attrJson);
 							if (typeErrorLayer != null) {
@@ -297,9 +288,6 @@ public class CollectionValidator {
 								errorLayer.mergeErrorLayer(typeErrorLayer);
 							}
 						}
-						// if (typeErrorLayer != null) {
-						// errorLayer.mergeErrorLayer(typeErrorLayer);
-						// }
 					}
 				}
 			}
@@ -310,10 +298,7 @@ public class CollectionValidator {
 			ErrorLayer errorLayer)
 			throws SchemaException, NoSuchAuthorityCodeException, FactoryException, TransformException, IOException {
 
-		ErrorLayerList geoErrorList = new ErrorLayerList();
 		GeoLayer neatLayer = layerCollection.getNeatLine();
-		// ErrorLayer errLayer = new ErrorLayer();
-
 		for (int i = 0; i < types.size(); i++) {
 			// getType
 			ValidateLayerType type = types.get(i);
@@ -552,7 +537,7 @@ public class CollectionValidator {
 	// closeValidate
 
 	private void closeCollectionValidate(ValidateLayerTypeList types, MapSystemRule mapSystemRule,
-			GeoLayerCollection layerCollection, String geomColumn) throws SchemaException {
+			GeoLayerCollection layerCollection, String geomColumn, ErrorLayer errorLayer) throws SchemaException {
 		// TODO Auto-generated method stub
 		String geomCol = "geom"; // 임시선언 geometry 컬럼
 
@@ -613,7 +598,6 @@ public class CollectionValidator {
 				return;
 			}
 
-			
 			Coordinate firstPoint = null;
 			Coordinate secondPoint = null;
 			Coordinate thirdPoint = null;
@@ -624,10 +608,9 @@ public class CollectionValidator {
 				if (i == 0) {
 					SimpleFeature feature = featureIterator.next();
 					Geometry geometry = (Geometry) feature.getDefaultGeometry();
-					
-					
+
 					Coordinate[] coordinateArray = this.getSortCoordinate(geometry.getCoordinates());
-					
+
 					firstPoint = coordinateArray[0];
 					secondPoint = coordinateArray[1];
 					thirdPoint = coordinateArray[2];
@@ -661,17 +644,23 @@ public class CollectionValidator {
 			collectionBoundary.put(MapSystemRuleType.RIGHT, rightLineString);
 
 			// 대상도엽 객체 GET 폴리곤 생성
-			Coordinate[] topCoords = new Coordinate[] { new Coordinate(firstPoint.x, firstPoint.y), new Coordinate(secondPoint.x, secondPoint.y),
-					new Coordinate(secondPoint.x, secondPoint.y - spatialAccuracyTolorence), new Coordinate(firstPoint.x, firstPoint.y - spatialAccuracyTolorence),
+			Coordinate[] topCoords = new Coordinate[] { new Coordinate(firstPoint.x, firstPoint.y),
+					new Coordinate(secondPoint.x, secondPoint.y),
+					new Coordinate(secondPoint.x, secondPoint.y - spatialAccuracyTolorence),
+					new Coordinate(firstPoint.x, firstPoint.y - spatialAccuracyTolorence),
 					new Coordinate(firstPoint.x, firstPoint.y) };
-			Coordinate[] bottomCoords = new Coordinate[] { new Coordinate(fourthPoint.x, fourthPoint.y), new Coordinate(thirdPoint.x, thirdPoint.y),
-					new Coordinate(thirdPoint.x, thirdPoint.y + spatialAccuracyTolorence), new Coordinate(fourthPoint.x, fourthPoint.y + spatialAccuracyTolorence),
+			Coordinate[] bottomCoords = new Coordinate[] { new Coordinate(fourthPoint.x, fourthPoint.y),
+					new Coordinate(thirdPoint.x, thirdPoint.y),
+					new Coordinate(thirdPoint.x, thirdPoint.y + spatialAccuracyTolorence),
+					new Coordinate(fourthPoint.x, fourthPoint.y + spatialAccuracyTolorence),
 					new Coordinate(fourthPoint.x, fourthPoint.y) };
 			Coordinate[] leftCoords = new Coordinate[] { new Coordinate(firstPoint.x, firstPoint.y),
-					new Coordinate(firstPoint.x + spatialAccuracyTolorence, firstPoint.y), new Coordinate(firstPoint.x + spatialAccuracyTolorence, fourthPoint.y),
+					new Coordinate(firstPoint.x + spatialAccuracyTolorence, firstPoint.y),
+					new Coordinate(firstPoint.x + spatialAccuracyTolorence, fourthPoint.y),
 					new Coordinate(fourthPoint.x, fourthPoint.y), new Coordinate(firstPoint.x, firstPoint.y) };
 			Coordinate[] rightCoords = new Coordinate[] { new Coordinate(secondPoint.x, secondPoint.y),
-					new Coordinate(secondPoint.x - spatialAccuracyTolorence, secondPoint.y), new Coordinate(secondPoint.x - spatialAccuracyTolorence, thirdPoint.y),
+					new Coordinate(secondPoint.x - spatialAccuracyTolorence, secondPoint.y),
+					new Coordinate(secondPoint.x - spatialAccuracyTolorence, thirdPoint.y),
 					new Coordinate(thirdPoint.x, thirdPoint.y), new Coordinate(secondPoint.x, secondPoint.y) };
 
 			LinearRing topRing = geometryFactory.createLinearRing(topCoords);
@@ -693,17 +682,24 @@ public class CollectionValidator {
 			targetFeaturesGetBoundary.put(MapSystemRuleType.RIGHT, rightPolygon);
 
 			// 인접도엽 객체 GET 폴리곤생성
-			Coordinate[] nearTopCoords = new Coordinate[] { new Coordinate(firstPoint.x, firstPoint.y + spatialAccuracyTolorence),
-					new Coordinate(secondPoint.x, secondPoint.y + spatialAccuracyTolorence), new Coordinate(secondPoint.x, secondPoint.y), new Coordinate(firstPoint.x, firstPoint.y),
-					new Coordinate(firstPoint.x, firstPoint.y+ spatialAccuracyTolorence) };
-			Coordinate[] nearBottomCoords = new Coordinate[] { new Coordinate(fourthPoint.x, fourthPoint.y), new Coordinate(thirdPoint.x, thirdPoint.y),
-					new Coordinate(thirdPoint.x, thirdPoint.y - spatialAccuracyTolorence), new Coordinate(fourthPoint.x, fourthPoint.y - spatialAccuracyTolorence),
+			Coordinate[] nearTopCoords = new Coordinate[] {
+					new Coordinate(firstPoint.x, firstPoint.y + spatialAccuracyTolorence),
+					new Coordinate(secondPoint.x, secondPoint.y + spatialAccuracyTolorence),
+					new Coordinate(secondPoint.x, secondPoint.y), new Coordinate(firstPoint.x, firstPoint.y),
+					new Coordinate(firstPoint.x, firstPoint.y + spatialAccuracyTolorence) };
+			Coordinate[] nearBottomCoords = new Coordinate[] { new Coordinate(fourthPoint.x, fourthPoint.y),
+					new Coordinate(thirdPoint.x, thirdPoint.y),
+					new Coordinate(thirdPoint.x, thirdPoint.y - spatialAccuracyTolorence),
+					new Coordinate(fourthPoint.x, fourthPoint.y - spatialAccuracyTolorence),
 					new Coordinate(fourthPoint.x, fourthPoint.y) };
-			Coordinate[] nearLeftCoords = new Coordinate[] { new Coordinate(firstPoint.x - spatialAccuracyTolorence, firstPoint.y),
-					new Coordinate(firstPoint.x, firstPoint.y), new Coordinate(fourthPoint.x, fourthPoint.y), new Coordinate(fourthPoint.x - spatialAccuracyTolorence, fourthPoint.y),
+			Coordinate[] nearLeftCoords = new Coordinate[] {
+					new Coordinate(firstPoint.x - spatialAccuracyTolorence, firstPoint.y),
+					new Coordinate(firstPoint.x, firstPoint.y), new Coordinate(fourthPoint.x, fourthPoint.y),
+					new Coordinate(fourthPoint.x - spatialAccuracyTolorence, fourthPoint.y),
 					new Coordinate(firstPoint.x - spatialAccuracyTolorence, firstPoint.y) };
 			Coordinate[] nearRightCoords = new Coordinate[] { new Coordinate(secondPoint.x, secondPoint.y),
-					new Coordinate(secondPoint.x + spatialAccuracyTolorence, secondPoint.y), new Coordinate(thirdPoint.x + spatialAccuracyTolorence, thirdPoint.y),
+					new Coordinate(secondPoint.x + spatialAccuracyTolorence, secondPoint.y),
+					new Coordinate(thirdPoint.x + spatialAccuracyTolorence, thirdPoint.y),
 					new Coordinate(thirdPoint.x, thirdPoint.y), new Coordinate(secondPoint.x, secondPoint.y) };
 
 			LinearRing nearTopRing = geometryFactory.createLinearRing(nearTopCoords);
@@ -725,15 +721,12 @@ public class CollectionValidator {
 			nearFeaturesGetBoundary.put(MapSystemRuleType.LEFT, nearLeftPolygon);
 			nearFeaturesGetBoundary.put(MapSystemRuleType.RIGHT, nearRightPolygon);
 
-			ErrorLayer errLayer = new ErrorLayer();
-
 			for (ValidateLayerType layerType : types) {
 				GeoLayerList typeLayers = validateLayerCollectionList.getTypeLayers(layerType.getTypeName(),
 						layerCollection);
 				List<ValidatorOption> options = layerType.getOptionList();
 				if (options != null) {
 					ErrorLayer typeErrorLayer = null;
-
 					for (GeoLayer geoLayer : typeLayers) {
 						layerValidator.setValidatorLayer(geoLayer);
 
@@ -788,45 +781,16 @@ public class CollectionValidator {
 									collectionBoundary, targetFeaturesGetBoundary, nearFeaturesGetBoundary);
 
 							typeErrorLayer = layerValidator.validateCloseCollection(closeCollectionLayer, geomCol);
-
 							if (typeErrorLayer != null) {
-								errLayer.mergeErrorLayer(typeErrorLayer);
+								errorLayer.mergeErrorLayer(typeErrorLayer);
 							}
 						}
 					}
 				}
 			}
-			if (errLayer != null) {
-				errLayer.setCollectionName(layerCollection.getCollectionName());
-				errLayer.setCollectionType(layerCollection.getLayerCollectionType());
-				errLayerList.add(errLayer);
-			}
 		}
 	}
 
-		/*
-		 * for (int i = 0; i < layerCollections.size(); i++) {
-		 * GeoLayerCollection collection = layerCollections.get(i);
-		 * List<GeoLayer> collectionList = collection.getLayers(); ErrorLayer
-		 * errLayer = new ErrorLayer(); for (int j = 0; j < types.size(); j++) {
-		 * ValidateLayerType type = types.get(j); GeoLayerList typeLayers =
-		 * validateLayerCollectionList.getTypeLayers(type.getTypeName(),
-		 * collection); List<ValidatorOption> options = type.getOptionList(); if
-		 * (options != null) { ErrorLayer typeErrorLayer = null; for (int k = 0;
-		 * k < options.size(); k++) { ValidatorOption option = options.get(k);
-		 * for (int l = 0; l < typeLayers.size(); l++) { GeoLayer typeLayer =
-		 * typeLayers.get(l); if (typeLayer == null) { continue; } if (option
-		 * instanceof LayerMiss) { List<String> typeNames = ((LayerMiss)
-		 * option).getLayerType(); typeErrorLayer =
-		 * layerValidator.validateLayerMiss(typeNames); if (typeErrorLayer !=
-		 * null) { errLayer.mergeErrorLayer(typeErrorLayer); }
-		 * collectionList.remove(typeLayer); } } } } } if (errLayer != null) {
-		 * errLayer.setCollectionName(collection.getCollectionName());
-		 * errLayer.setCollectionType(collection.getLayerCollectionType());
-		 * errLayerList.add(errLayer); } }
-		 */
-
-	
 	private Coordinate[] getSortCoordinate(Coordinate[] coordinates) {
 		Coordinate[] returncoordinate = coordinates;
 		if (coordinates.length == 5) {
@@ -866,7 +830,7 @@ public class CollectionValidator {
 			returncoordinate[4] = returncoordinate[0];
 		} else
 			return null;
-		
+
 		return returncoordinate;
 	}
 
