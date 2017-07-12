@@ -102,19 +102,23 @@ public class FeatureCloseCollectionValidatorImpl implements FeatureCloseCollecti
 					for (Coordinate tCoordinate : etargetCoordinates) {
 						boolean matchFeatureFlag = false;
 						Geometry tPoint = geometryFactory.createPoint(tCoordinate);
+//						System.out.println(tPoint.distance(nearLine));
 						for (Coordinate rCoordinate : relCoordinates) {
 							Geometry rPoint = geometryFactory.createPoint(rCoordinate);
+							
+							
 							if (Math.abs(tPoint.distance(rPoint)) < tolerence * 2) {// 대상
 																					// 포인트
 																					// 관계포인트
 																					// 비교
-								if (Math.abs(rPoint.distance(nearLine)) < tolerence) { // 관계포인트랑
+//								if (Math.abs(rPoint.distance(nearLine)) < tolerence) { // 관계포인트랑
 																						// 도곽이랑
 																						// 비교
 									matchFeatureFlag = true;
 									break;
-								}
+//								}
 							}
+							
 						}
 						if (!matchFeatureFlag) {
 							ErrorFeature MMErrFeature = new ErrorFeature(featureIdx, featureID,
@@ -177,10 +181,11 @@ public class FeatureCloseCollectionValidatorImpl implements FeatureCloseCollecti
 				}
 			}
 		}
+//		Geometry geom = (Geometry) simpleFeature.getDefaultGeometry();
 		if (!existFlag) {
 			if (entityNone) {
 				ErrorFeature eNoneErr = new ErrorFeature(featureIdx, featureID, EntityNone.Type.ENTITYNONE.errType(),
-						EntityNone.Type.ENTITYNONE.errName(), nearLine.getCentroid());
+						EntityNone.Type.ENTITYNONE.errName(), targetGeometry.getCentroid());
 				collectionErrors.add(eNoneErr);
 				System.out.println("entityNone");
 			}
