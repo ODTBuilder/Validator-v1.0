@@ -8,11 +8,12 @@
 var gb;
 if (!gb)
 	gb = {};
-if (!gb.edit)
-	gb.edit = {};
-gb.edit.LayerInformation = function(obj) {
+if (!gb.geoserver)
+	gb.geoserver = {};
+gb.geoserver.ModifyLayer = function(obj) {
 	var options = obj;
-	this.url = options.url ? options.url : null;
+	this.url = options.infoURL ? options.infoURL : null;
+	this.editUrl = options.URL ? options.URL : null;
 	this.layer;
 	this.window;
 	this.originInfo;
@@ -164,6 +165,8 @@ gb.edit.LayerInformation = function(obj) {
 
 	var okBtn = $("<button>").attr({
 		"type" : "button"
+	}).on("click", function() {
+console.log("save");
 	});
 	$(okBtn).addClass("btn");
 	$(okBtn).addClass("btn-primary");
@@ -202,16 +205,16 @@ gb.edit.LayerInformation = function(obj) {
 		show : false,
 	});
 }
-gb.edit.LayerInformation.prototype.open = function() {
+gb.geoserver.ModifyLayer.prototype.open = function() {
 	this.window.modal('show');
 };
-gb.edit.LayerInformation.prototype.close = function() {
+gb.geoserver.ModifyLayer.prototype.close = function() {
 	this.window.modal('hide');
 };
-gb.edit.LayerInformation.prototype.save = function(obj) {
+gb.geoserver.ModifyLayer.prototype.save = function(obj) {
 
 };
-gb.edit.LayerInformation.prototype.load = function(name, code) {
+gb.geoserver.ModifyLayer.prototype.load = function(name, code) {
 	var that = this;
 	var arr = {
 		"geoLayerList" : [ name ]
@@ -378,24 +381,24 @@ gb.edit.LayerInformation.prototype.load = function(name, code) {
 		}
 	});
 };
-gb.edit.LayerInformation.prototype.setUrl = function(url) {
+gb.geoserver.ModifyLayer.prototype.setUrl = function(url) {
 	if (typeof url === "string") {
 		this.url = url;
 	}
 };
-gb.edit.LayerInformation.prototype.getUrl = function() {
+gb.geoserver.ModifyLayer.prototype.getUrl = function() {
 	return this.url;
 };
-gb.edit.LayerInformation.prototype.setName = function(name) {
+gb.geoserver.ModifyLayer.prototype.setName = function(name) {
 	return;
 };
-gb.edit.LayerInformation.prototype.setTitle = function(title) {
+gb.geoserver.ModifyLayer.prototype.setTitle = function(title) {
 	return;
 };
-gb.edit.LayerInformation.prototype.setAttributeType = function() {
+gb.geoserver.ModifyLayer.prototype.setAttributeType = function() {
 	return;
 };
-gb.edit.LayerInformation.prototype.getInformationForm = function() {
+gb.geoserver.ModifyLayer.prototype.getInformationForm = function() {
 	this.body
 	return;
 };

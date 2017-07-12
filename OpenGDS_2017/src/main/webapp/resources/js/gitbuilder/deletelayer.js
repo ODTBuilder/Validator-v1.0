@@ -13,7 +13,7 @@ if (!gb.geoserver)
 gb.geoserver.DeleteLayer = function(obj) {
 	var that = this;
 	var options = obj;
-	this.url = options.url ? options.url : null;
+	this.url = options.URL ? options.URL : null;
 	this.format = undefined;
 	this.type = undefined;
 	this.refer = undefined;
@@ -59,9 +59,9 @@ gb.geoserver.DeleteLayer.prototype.addStructure = function(format, mapsheet, sco
 		if (!strc["layer"][format].hasOwnProperty(mapsheet)) {
 			strc["layer"][format][mapsheet] = {};
 		}
-//		if (!strc["layer"][format][mapsheet].hasOwnProperty("remove")) {
-//			strc["layer"][format][mapsheet]["remove"] = {};
-//		}
+		// if (!strc["layer"][format][mapsheet].hasOwnProperty("remove")) {
+		// strc["layer"][format][mapsheet]["remove"] = {};
+		// }
 	}
 	var obj = {};
 	obj["scope"] = typeof scope === "string" ? scope : false;
@@ -70,7 +70,7 @@ gb.geoserver.DeleteLayer.prototype.addStructure = function(format, mapsheet, sco
 		return;
 	}
 	strc["layer"][format][mapsheet]["remove"] = obj;
-//	this.structure.push(obj);
+	// this.structure.push(obj);
 };
 gb.geoserver.DeleteLayer.prototype.getStructure = function() {
 	return this.structure;

@@ -403,13 +403,14 @@ html {
 		});
 
 		var createLayer = new gb.geoserver.CreateLayer({
-			url : "editLayerCollection/editLayerCollection.ajax"
+			URL : "editLayerCollection/editLayerCollection.ajax"
 		});
 		var deleteLayer = new gb.geoserver.DeleteLayer({
-			url : "editLayerCollection/editLayerCollection.ajax"
+			URL : "editLayerCollection/editLayerCollection.ajax"
 		});
-		var layerInfo = new gb.edit.LayerInformation({
-			url : "geoserver2/getGeoLayerInfoList.ajax"
+		var layerInfo = new gb.geoserver.ModifyLayer({
+			infoURL : "geoserver2/getGeoLayerInfoList.ajax",
+			URL : "editLayerCollection/editLayerCollection.ajax"
 		});
 		$("#builderServerLayer").jstree({
 			"core" : {
