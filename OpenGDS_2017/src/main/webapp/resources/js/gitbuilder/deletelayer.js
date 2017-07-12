@@ -25,7 +25,7 @@ gb.geoserver.DeleteLayer.prototype.setReference = function(refer) {
 gb.geoserver.DeleteLayer.prototype.getReference = function() {
 	return this.refer;
 };
-gb.geoserver.DeleteLayer.prototype.sendData = function(obj) {
+gb.geoserver.DeleteLayer.prototype.save = function(obj) {
 	var that = this;
 	$.ajax({
 		url : this.getUrl(),

@@ -92,7 +92,7 @@ gb.geoserver.CreateLayer = function(obj) {
 		"type" : "button"
 	}).on("click", function() {
 		var opt = that.getDefinitionForm();
-		that.sendData(opt);
+		that.save(opt);
 		that.close();
 	});
 	$(okBtn).addClass("btn");
@@ -144,7 +144,7 @@ gb.geoserver.CreateLayer.prototype.setReference = function(refer) {
 gb.geoserver.CreateLayer.prototype.getReference = function() {
 	return this.refer;
 };
-gb.geoserver.CreateLayer.prototype.sendData = function(obj) {
+gb.geoserver.CreateLayer.prototype.save = function(obj) {
 	var that = this;
 	$.ajax({
 		url : this.getUrl(),

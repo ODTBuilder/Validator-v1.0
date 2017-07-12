@@ -11,14 +11,15 @@ if (!gb)
 if (!gb.geoserver)
 	gb.geoserver = {};
 gb.geoserver.ModifyLayer = function(obj) {
+	var that = this;
 	var options = obj;
 	this.url = options.infoURL ? options.infoURL : null;
 	this.editUrl = options.URL ? options.URL : null;
 	this.layer;
 	this.window;
-	this.originInfo;
-	this.currentInfo;
-
+	this.originInfo = {};
+	this.currentInfo = {};
+	this.sendObj = {};
 	var xSpan = $("<span>").attr({
 		"aria-hidden" : true
 	}).html("&times;");
@@ -166,7 +167,8 @@ gb.geoserver.ModifyLayer = function(obj) {
 	var okBtn = $("<button>").attr({
 		"type" : "button"
 	}).on("click", function() {
-console.log("save");
+		console.log("save");
+		that.getStructure();
 	});
 	$(okBtn).addClass("btn");
 	$(okBtn).addClass("btn-primary");
@@ -212,10 +214,53 @@ gb.geoserver.ModifyLayer.prototype.close = function() {
 	this.window.modal('hide');
 };
 gb.geoserver.ModifyLayer.prototype.save = function(obj) {
-
+	var that = this;
+	$.ajax({
+		url : this.getUrl(),
+		method : "POST",
+		contentType : "application/json; charset=UTF-8",
+		cache : false,
+		// async : false,
+		data : JSON.stringify(obj),
+		beforeSend : function() {
+			$("body").css("cursor", "wait");
+		},
+		complete : function() {
+			$("body").css("cursor", "default");
+		},
+		traditional : true,
+		success : function(data, textStatus, jqXHR) {
+			console.log(data);
+			that.that.getReference().refresh();
+		}
+	});
+};
+gb.geoserver.ModifyLayer.prototype.setReference = function(refer) {
+	this.refer = refer;
+};
+gb.geoserver.ModifyLayer.prototype.getReference = function() {
+	return this.refer;
+};
+gb.geoserver.ModifyLayer.prototype.getStructure = function() {
+	return this.structure;
+};
+gb.geoserver.ModifyLayer.prototype.getPosition = function(str, subString, index) {
+	return str.split(subString, index).join(subString).length;
 };
 gb.geoserver.ModifyLayer.prototype.load = function(name, code) {
 	var that = this;
+	this.structure = {};
+	var format = name.substring(this.getPosition(name, "_", 1) + 1, this.getPosition(name, "_", 2));
+	var sheetNum = name.substring(this.getPosition(name, "_", 2) + 1, this.getPosition(name, "_", 3));
+	this.structure["layer"] = {};
+	this.structure["layer"][format] = {};
+	this.structure["layer"][format][sheetNum] = {};
+	this.structure["layer"][format][sheetNum]["modify"] = this.sendObj;
+
+	this.originInfo["nativeName"] = name;
+	this.originInfo["originLayerName"] = name.substring(this.getPosition(name, "_", 3) + 1);
+	this.originInfo["geoserver"] = {};
+	this.originInfo["attr"] = [];
 	var arr = {
 		"geoLayerList" : [ name ]
 	}
@@ -242,19 +287,33 @@ gb.geoserver.ModifyLayer.prototype.load = function(name, code) {
 			var name = $("<p>").text("Name");
 			var nameInput = $("<input>").addClass("form-control").attr({
 				"type" : "text"
-			}).val(code);
+			}).val(code).on("input", function() {
+				that.sendObj["currentLayerName"] = this.value;
+			});
 			var div1 = $("<div>").css("margin-bottom", "10px").append(name).append(nameInput);
 
 			var title = $("<p>").text("Title");
 			var titleInput = $("<input>").addClass("form-control").attr({
 				"type" : "text"
-			}).val(data[0].title);
+			}).val(data[0].title).on("input", function() {
+				if (!that.sendObj.hasOwnProperty("geoserver")) {
+					that.sendObj["geoserver"] = {};
+				}
+				that.sendObj["geoserver"]["title"] = this.value;
+			});
+			that.originInfo["geoserver"]["title"] = data[0].title;
 			var div2 = $("<div>").css("margin-bottom", "10px").append(title).append(titleInput);
 
 			var summary = $("<p>").text("Summary");
 			var summaryInput = $("<textarea>").addClass("form-control").attr({
 				"rows" : "3"
-			}).text(data[0].abstractContent);
+			}).text(data[0].abstractContent).on("input", function() {
+				if (!that.sendObj.hasOwnProperty("geoserver")) {
+					that.sendObj["geoserver"] = {};
+				}
+				that.sendObj["geoserver"]["summary"] = $(this).val();
+			});
+			that.originInfo["geoserver"]["summary"] = data[0].abstractContent;
 			var div3 = $("<div>").css("margin-bottom", "10px").append(summary).append(summaryInput);
 
 			var minBound = $("<p>").text("Minimum Boundary of Original Data");
@@ -314,6 +373,7 @@ gb.geoserver.ModifyLayer.prototype.load = function(name, code) {
 				"type" : "text",
 				"disabled" : true
 			}).val(data[0].llbBox.minx);
+
 			var td1111 = $("<td>").append(bminx3);
 
 			var bminy3 = $("<input>").addClass("form-control").attr({
@@ -332,6 +392,9 @@ gb.geoserver.ModifyLayer.prototype.load = function(name, code) {
 				"type" : "text",
 				"disabled" : true
 			}).val(data[0].llbBox.maxy);
+			that.originInfo["bound"] = [ [ data[0].llbBox.minx, data[0].llbBox.miny ], [ data[0].llbBox.maxx, data[0].llbBox.maxy ] ];
+			that.originInfo["geoserver"]["lbound"] = [ [ data[0].llbBox.minx, data[0].llbBox.miny ],
+					[ data[0].llbBox.maxx, data[0].llbBox.maxy ] ];
 			var td4444 = $("<td>").append(bmaxy3);
 
 			var tr1111 = $("<tr>").append(td1111).append(td2222).append(td3333).append(td4444);
@@ -346,11 +409,56 @@ gb.geoserver.ModifyLayer.prototype.load = function(name, code) {
 			var thead = $("<thead>").append(thtd1).append(thtd2).append(thtd3);
 			var tbody = $("<tbody>");
 			var fttb = $("<table>").addClass("table").addClass("text-center").append(thead).append(tbody);
-			var keys = Object.keys(data[0].attInfo);
+			var keys = Object.keys(data[0].attInfo).sort();
 			for (var i = 0; i < keys.length; i++) {
 				var input = $("<input>").addClass("form-control").attr({
 					"type" : "text"
-				}).val(keys[i]);
+				}).val(keys[i]).on("input", function() {
+					if (!that.sendObj.hasOwnProperty("updateAttr")) {
+						that.sendObj["updateAttr"] = [];
+					}
+					var trs = $(this).parent().parent().parent().find("tr");
+					var idx = $(trs).index($(this).parent().parent());
+					var oattr = that.originInfo["attr"][idx];
+
+					console.log(idx);
+					if (that.sendObj["updateAttr"].length === 0) {
+						var obj = {
+							"originFieldName" : oattr.originFieldName,
+							"fieldName" : $(this).val(),
+							"type" : oattr.type,
+							"nullable" : oattr.nullable
+						};
+						that.sendObj["updateAttr"].push(obj);
+					} else if (that.sendObj["updateAttr"].length > 0) {
+						var isExist = true;
+						for (var j = 0; j < that.sendObj["updateAttr"].length; j++) {
+							var attr = that.sendObj["updateAttr"][j];
+							if (attr.originFieldName === oattr.originFieldName) {
+								var obj = {
+									"originFieldName" : oattr.originFieldName,
+									"fieldName" : $(this).val(),
+									"type" : oattr.type,
+									"nullable" : oattr.nullable
+								};
+								that.sendObj["updateAttr"][j] = obj;
+								isExist = false;
+								break;
+							}
+						}
+						if (isExist) {
+							var obj = {
+								"originFieldName" : oattr.originFieldName,
+								"fieldName" : $(this).val(),
+								"type" : oattr.type,
+								"nullable" : oattr.nullable
+							};
+							that.sendObj["updateAttr"].push(obj);
+						}
+					}
+					console.log(that.sendObj);
+					// that.sendObj["geoserver"]["title"] = this.value;
+				});
 				var td1 = $("<td>").append(input);
 
 				var stritem = $("<option>").text("String");
@@ -371,12 +479,18 @@ gb.geoserver.ModifyLayer.prototype.load = function(name, code) {
 				var td3 = $("<td>").append(check);
 				var tr = $("<tr>").append(td1).append(td2).append(td3);
 				$(tbody).append(tr);
+				var attrObj = {
+					"originFieldName" : keys[i],
+					"type" : data[0].attInfo[keys[i]]["type"],
+					"nullable" : data[0].attInfo[keys[i]]["nillable"]
+				};
+				that.originInfo["attr"].push(attrObj);
 			}
 			var div6 = $("<div>").css("margin-bottom", "10px").append(attrkey).append(fttb);
 			$(that.body).empty();
 			$(that.body).append(div1).append(div2).append(div3).append(div4).append(div5).append(div6);
 			// $(body).addClass("modal-body");
-
+			console.log(that.originInfo);
 			that.open();
 		}
 	});

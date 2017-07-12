@@ -8253,8 +8253,8 @@
 							 */
 							"action" : function(data) {
 								var inst = $.jstree.reference(data.reference), obj = inst.get_node(data.reference);
-								var getPosition = function(string, subString, index) {
-									return string.split(subString, index).join(subString).length;
+								var getPosition = function(str, subString, index) {
+									return str.split(subString, index).join(subString).length;
 								}
 								var arr = inst.get_selected();
 								var sameGroupParentDXF = {};
@@ -8336,7 +8336,7 @@
 									}
 								}
 								console.log(inst._data.geoserver.deleteLayer.getStructure());
-								inst._data.geoserver.deleteLayer.sendData(inst._data.geoserver.deleteLayer.getStructure());
+								inst._data.geoserver.deleteLayer.save(inst._data.geoserver.deleteLayer.getStructure());
 							}
 						},
 						"download" : {
