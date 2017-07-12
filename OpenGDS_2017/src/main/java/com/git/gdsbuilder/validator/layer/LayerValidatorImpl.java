@@ -47,6 +47,7 @@ import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.feature.DefaultFeatureCollection;
 import org.geotools.feature.SchemaException;
 import org.json.simple.JSONObject;
+import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory2;
@@ -932,7 +933,7 @@ public class LayerValidatorImpl implements LayerValidator {
 
 	@Override
 	public ErrorLayer validateOneStage(GeoLayerList relationLayers, double spatialAccuracyTolorence) {
-		
+
 		ErrorLayer errLayer = new ErrorLayer();
 		SimpleFeatureCollection sfc = validatorLayer.getSimpleFeatureCollection();
 		for (int i = 0; i < relationLayers.size(); i++) {
@@ -961,196 +962,201 @@ public class LayerValidatorImpl implements LayerValidator {
 		ErrorLayer errorLayer = new ErrorLayer();
 
 		if (closeCollectionLayer != null) {
-			GeoLayer targetLayer = validatorLayer;
-			Map<MapSystemRuleType, GeoLayer> collectionMap = closeCollectionLayer.getCollectionMap();
-			Map<MapSystemRuleType, LineString> collectionBoundary = closeCollectionLayer.getCollectionBoundary();
-			double tolorence = closeCollectionLayer.getTolorence();
-			ValCollectionOption closeValidateOptions = closeCollectionLayer.getCloseValidateOptions();
-			Map<MapSystemRuleType, Polygon> targetFeaturesGetBoundary = closeCollectionLayer
-					.getTargetFeaturesGetBoundary();
-			Map<MapSystemRuleType, Polygon> nearFeaturesGetBoundary = closeCollectionLayer.getNearFeaturesGetBoundary();
+			String layerID = validatorLayer.getLayerName();
+			if (!layerID.equals("H0017334_LWPOLYLINE")) {
+				GeoLayer targetLayer = validatorLayer;
+				Map<MapSystemRuleType, GeoLayer> collectionMap = closeCollectionLayer.getCollectionMap();
+				Map<MapSystemRuleType, LineString> collectionBoundary = closeCollectionLayer.getCollectionBoundary();
+				double tolorence = closeCollectionLayer.getTolorence();
+				ValCollectionOption closeValidateOptions = closeCollectionLayer.getCloseValidateOptions();
+				Map<MapSystemRuleType, Polygon> targetFeaturesGetBoundary = closeCollectionLayer
+						.getTargetFeaturesGetBoundary();
+				Map<MapSystemRuleType, Polygon> nearFeaturesGetBoundary = closeCollectionLayer
+						.getNearFeaturesGetBoundary();
 
-			// 인접도엽 옵션객체 선언
-			/*
-			 * EntityNone entityNone = null; EdgeMatchMiss matchMiss = null;
-			 * RefZValueMiss refZValueMiss = null; RefLayerMiss refLayerMiss =
-			 * null; RefAttributeMiss refAttributeMiss = null;
-			 * 
-			 * for(ValidatorOption validatorOption : closeValidateOptions){ if
-			 * (validatorOption instanceof EntityNone) { entityNone =
-			 * (EntityNone) validatorOption; } if (validatorOption instanceof
-			 * EdgeMatchMiss) { matchMiss = (EdgeMatchMiss) validatorOption; }
-			 * if (validatorOption instanceof RefZValueMiss) { refZValueMiss =
-			 * (RefZValueMiss) validatorOption; } if (validatorOption instanceof
-			 * EntityNone) { refLayerMiss = (RefLayerMiss) validatorOption; } if
-			 * (validatorOption instanceof EntityNone) { refAttributeMiss =
-			 * (RefAttributeMiss) validatorOption; } }
-			 */
+				// 인접도엽 옵션객체 선언
+				/*
+				 * EntityNone entityNone = null; EdgeMatchMiss matchMiss = null;
+				 * RefZValueMiss refZValueMiss = null; RefLayerMiss refLayerMiss
+				 * = null; RefAttributeMiss refAttributeMiss = null;
+				 * 
+				 * for(ValidatorOption validatorOption : closeValidateOptions){
+				 * if (validatorOption instanceof EntityNone) { entityNone =
+				 * (EntityNone) validatorOption; } if (validatorOption
+				 * instanceof EdgeMatchMiss) { matchMiss = (EdgeMatchMiss)
+				 * validatorOption; } if (validatorOption instanceof
+				 * RefZValueMiss) { refZValueMiss = (RefZValueMiss)
+				 * validatorOption; } if (validatorOption instanceof EntityNone)
+				 * { refLayerMiss = (RefLayerMiss) validatorOption; } if
+				 * (validatorOption instanceof EntityNone) { refAttributeMiss =
+				 * (RefAttributeMiss) validatorOption; } }
+				 */
 
-			// 도엽 라인 선언
-			LineString topLineString = null;
-			LineString bottomLineString = null;
-			LineString leftLineString = null;
-			LineString rightLineString = null;
-			if (collectionBoundary != null) {
-				topLineString = collectionBoundary.get(MapSystemRuleType.TOP);
-				bottomLineString = collectionBoundary.get(MapSystemRuleType.BOTTOM);
-				leftLineString = collectionBoundary.get(MapSystemRuleType.LEFT);
-				rightLineString = collectionBoundary.get(MapSystemRuleType.RIGHT);
-			} else
-				return null;
+				// 도엽 라인 선언
+				LineString topLineString = null;
+				LineString bottomLineString = null;
+				LineString leftLineString = null;
+				LineString rightLineString = null;
+				if (collectionBoundary != null) {
+					topLineString = collectionBoundary.get(MapSystemRuleType.TOP);
+					bottomLineString = collectionBoundary.get(MapSystemRuleType.BOTTOM);
+					leftLineString = collectionBoundary.get(MapSystemRuleType.LEFT);
+					rightLineString = collectionBoundary.get(MapSystemRuleType.RIGHT);
+				} else
+					return null;
 
-			// 인접도엽 레이어 GET
-			GeoLayer topGeoLayer = collectionMap.get(MapSystemRuleType.TOP);
-			GeoLayer bottomGeoLayer = collectionMap.get(MapSystemRuleType.BOTTOM);
-			GeoLayer leftGeoLayer = collectionMap.get(MapSystemRuleType.LEFT);
-			GeoLayer rightGeoLayer = collectionMap.get(MapSystemRuleType.RIGHT);
+				// 인접도엽 레이어 GET
+				GeoLayer topGeoLayer = collectionMap.get(MapSystemRuleType.TOP);
+				GeoLayer bottomGeoLayer = collectionMap.get(MapSystemRuleType.BOTTOM);
+				GeoLayer leftGeoLayer = collectionMap.get(MapSystemRuleType.LEFT);
+				GeoLayer rightGeoLayer = collectionMap.get(MapSystemRuleType.RIGHT);
 
-			// 대상도엽 Boundary GET
-			Polygon topPolygon = targetFeaturesGetBoundary.get(MapSystemRuleType.TOP);
-			Polygon bottomPolygon = targetFeaturesGetBoundary.get(MapSystemRuleType.BOTTOM);
-			Polygon leftPolygon = targetFeaturesGetBoundary.get(MapSystemRuleType.LEFT);
-			Polygon rightPolygon = targetFeaturesGetBoundary.get(MapSystemRuleType.RIGHT);
+				// 대상도엽 Boundary GET
+				Polygon topPolygon = targetFeaturesGetBoundary.get(MapSystemRuleType.TOP);
+				Polygon bottomPolygon = targetFeaturesGetBoundary.get(MapSystemRuleType.BOTTOM);
+				Polygon leftPolygon = targetFeaturesGetBoundary.get(MapSystemRuleType.LEFT);
+				Polygon rightPolygon = targetFeaturesGetBoundary.get(MapSystemRuleType.RIGHT);
 
-			// 인접도엽 Boundary GET
-			Polygon nearTopPolygon = nearFeaturesGetBoundary.get(MapSystemRuleType.TOP);
-			Polygon nearBottomPolygon = nearFeaturesGetBoundary.get(MapSystemRuleType.BOTTOM);
-			Polygon nearLeftPolygon = nearFeaturesGetBoundary.get(MapSystemRuleType.LEFT);
-			Polygon nearRightPolygon = nearFeaturesGetBoundary.get(MapSystemRuleType.RIGHT);
+				// 인접도엽 Boundary GET
+				Polygon nearTopPolygon = nearFeaturesGetBoundary.get(MapSystemRuleType.TOP);
+				Polygon nearBottomPolygon = nearFeaturesGetBoundary.get(MapSystemRuleType.BOTTOM);
+				Polygon nearLeftPolygon = nearFeaturesGetBoundary.get(MapSystemRuleType.LEFT);
+				Polygon nearRightPolygon = nearFeaturesGetBoundary.get(MapSystemRuleType.RIGHT);
 
-			// 대상도엽 Feature 리스트
-			List<SimpleFeature> topFeatureList = new ArrayList<SimpleFeature>();
-			List<SimpleFeature> bottomFeatureList = new ArrayList<SimpleFeature>();
-			List<SimpleFeature> leftFeatureList = new ArrayList<SimpleFeature>();
-			List<SimpleFeature> rightFeatureList = new ArrayList<SimpleFeature>();
+				// 대상도엽 Feature 리스트
+				List<SimpleFeature> topFeatureList = new ArrayList<SimpleFeature>();
+				List<SimpleFeature> bottomFeatureList = new ArrayList<SimpleFeature>();
+				List<SimpleFeature> leftFeatureList = new ArrayList<SimpleFeature>();
+				List<SimpleFeature> rightFeatureList = new ArrayList<SimpleFeature>();
 
-			// 인접도엽 Feature 리스트
-			List<SimpleFeature> nearTopFeatureList = new ArrayList<SimpleFeature>();
-			List<SimpleFeature> nearBottomFeatureList = new ArrayList<SimpleFeature>();
-			List<SimpleFeature> nearLeftFeatureList = new ArrayList<SimpleFeature>();
-			List<SimpleFeature> nearRightFeatureList = new ArrayList<SimpleFeature>();
+				// 인접도엽 Feature 리스트
+				List<SimpleFeature> nearTopFeatureList = new ArrayList<SimpleFeature>();
+				List<SimpleFeature> nearBottomFeatureList = new ArrayList<SimpleFeature>();
+				List<SimpleFeature> nearLeftFeatureList = new ArrayList<SimpleFeature>();
+				List<SimpleFeature> nearRightFeatureList = new ArrayList<SimpleFeature>();
 
-			// 대상도엽, 인접도엽 Tolorence 영역내 FeatureList GET
-			if (topGeoLayer != null) {
-				Filter topFilter = ff.intersects(ff.property(geomColunm), ff.literal(topPolygon));
-				Filter nearTopFilter = ff.intersects(ff.property(geomColunm), ff.literal(nearTopPolygon));
+				// 대상도엽, 인접도엽 Tolorence 영역내 FeatureList GET
+				if (topGeoLayer != null) {
+					Filter topFilter = ff.intersects(ff.property(geomColunm), ff.literal(topPolygon));
+					Filter nearTopFilter = ff.intersects(ff.property(geomColunm), ff.literal(nearTopPolygon));
 
-				SimpleFeatureCollection topCollection = targetLayer.getSimpleFeatureCollection()
-						.subCollection(topFilter);
-				SimpleFeatureCollection nearTopCollection = topGeoLayer.getSimpleFeatureCollection()
-						.subCollection(nearTopFilter);
+					SimpleFeatureCollection topCollection = targetLayer.getSimpleFeatureCollection()
+							.subCollection(topFilter);
+					SimpleFeatureCollection nearTopCollection = topGeoLayer.getSimpleFeatureCollection()
+							.subCollection(nearTopFilter);
 
-				SimpleFeatureIterator topFeatureIterator = topCollection.features();
-				SimpleFeatureIterator nearTopFeatureIterator = nearTopCollection.features();
+					SimpleFeatureIterator topFeatureIterator = topCollection.features();
+					SimpleFeatureIterator nearTopFeatureIterator = nearTopCollection.features();
 
-				while (topFeatureIterator.hasNext()) {
-					topFeatureList.add(topFeatureIterator.next());
-				}
+					while (topFeatureIterator.hasNext()) {
+						topFeatureList.add(topFeatureIterator.next());
+					}
 
-				while (nearTopFeatureIterator.hasNext()) {
-					nearTopFeatureList.add(nearTopFeatureIterator.next());
-				}
+					while (nearTopFeatureIterator.hasNext()) {
+						nearTopFeatureList.add(nearTopFeatureIterator.next());
+					}
 
-				List<ErrorFeature> errorFeatures = new ArrayList<ErrorFeature>();
-				for (SimpleFeature targetFeature : topFeatureList) {
-					errorFeatures = closeCollectionValidator.ValidateCloseCollection(targetFeature, nearTopFeatureList,
-							closeValidateOptions, topLineString, tolorence);
-					for (ErrorFeature errorFeature : errorFeatures) {
-						errorFeature.setLayerName(validatorLayer.getLayerName());
-						errorLayer.addErrorFeature(errorFeature);
+					List<ErrorFeature> errorFeatures = new ArrayList<ErrorFeature>();
+					for (SimpleFeature targetFeature : topFeatureList) {
+						errorFeatures = closeCollectionValidator.ValidateCloseCollection(targetFeature,
+								nearTopFeatureList, closeValidateOptions, topLineString, tolorence);
+						for (ErrorFeature errorFeature : errorFeatures) {
+							errorFeature.setLayerName(validatorLayer.getLayerName());
+							errorLayer.addErrorFeature(errorFeature);
+						}
 					}
 				}
-			}
 
-			if (bottomGeoLayer != null) {
-				Filter bottomFilter = ff.intersects(ff.property(geomColunm), ff.literal(bottomPolygon));
-				Filter bottomTopFilter = ff.intersects(ff.property(geomColunm), ff.literal(nearBottomPolygon));
+				if (bottomGeoLayer != null) {
+					Filter bottomFilter = ff.intersects(ff.property(geomColunm), ff.literal(bottomPolygon));
+					Filter bottomTopFilter = ff.intersects(ff.property(geomColunm), ff.literal(nearBottomPolygon));
 
-				SimpleFeatureCollection bottomCollection = targetLayer.getSimpleFeatureCollection()
-						.subCollection(bottomFilter);
-				SimpleFeatureCollection nearBottomCollection = bottomGeoLayer.getSimpleFeatureCollection()
-						.subCollection(bottomTopFilter);
+					SimpleFeatureCollection bottomCollection = targetLayer.getSimpleFeatureCollection()
+							.subCollection(bottomFilter);
+					SimpleFeatureCollection nearBottomCollection = bottomGeoLayer.getSimpleFeatureCollection()
+							.subCollection(bottomTopFilter);
 
-				SimpleFeatureIterator bottomFeatureIterator = bottomCollection.features();
-				SimpleFeatureIterator nearBottomFeatureIterator = nearBottomCollection.features();
+					SimpleFeatureIterator bottomFeatureIterator = bottomCollection.features();
+					SimpleFeatureIterator nearBottomFeatureIterator = nearBottomCollection.features();
 
-				while (bottomFeatureIterator.hasNext()) {
-					bottomFeatureList.add(bottomFeatureIterator.next());
-				}
+					while (bottomFeatureIterator.hasNext()) {
+						bottomFeatureList.add(bottomFeatureIterator.next());
+					}
 
-				while (nearBottomFeatureIterator.hasNext()) {
-					nearBottomFeatureList.add(nearBottomFeatureIterator.next());
-				}
+					while (nearBottomFeatureIterator.hasNext()) {
+						nearBottomFeatureList.add(nearBottomFeatureIterator.next());
+					}
 
-				List<ErrorFeature> errorFeatures = new ArrayList<ErrorFeature>();
-				for (SimpleFeature targetFeature : bottomFeatureList) {
-					errorFeatures = closeCollectionValidator.ValidateCloseCollection(targetFeature,
-							nearBottomFeatureList, closeValidateOptions, bottomLineString, tolorence);
-					for (ErrorFeature errorFeature : errorFeatures) {
-						errorFeature.setLayerName(validatorLayer.getLayerName());
-						errorLayer.addErrorFeature(errorFeature);
+					List<ErrorFeature> errorFeatures = new ArrayList<ErrorFeature>();
+					for (SimpleFeature targetFeature : bottomFeatureList) {
+						errorFeatures = closeCollectionValidator.ValidateCloseCollection(targetFeature,
+								nearBottomFeatureList, closeValidateOptions, bottomLineString, tolorence);
+						for (ErrorFeature errorFeature : errorFeatures) {
+							errorFeature.setLayerName(validatorLayer.getLayerName());
+							errorLayer.addErrorFeature(errorFeature);
+						}
 					}
 				}
-			}
 
-			if (leftGeoLayer != null) {
-				Filter leftFilter = ff.intersects(ff.property(geomColunm), ff.literal(leftPolygon));
-				Filter nearLeftFilter = ff.intersects(ff.property(geomColunm), ff.literal(nearLeftPolygon));
+				if (leftGeoLayer != null) {
+					Filter leftFilter = ff.intersects(ff.property(geomColunm), ff.literal(leftPolygon));
+					Filter nearLeftFilter = ff.intersects(ff.property(geomColunm), ff.literal(nearLeftPolygon));
 
-				SimpleFeatureCollection leftCollection = targetLayer.getSimpleFeatureCollection()
-						.subCollection(leftFilter);
-				SimpleFeatureCollection nearLeftCollection = leftGeoLayer.getSimpleFeatureCollection()
-						.subCollection(nearLeftFilter);
+					SimpleFeatureCollection leftCollection = targetLayer.getSimpleFeatureCollection()
+							.subCollection(leftFilter);
+					SimpleFeatureCollection nearLeftCollection = leftGeoLayer.getSimpleFeatureCollection()
+							.subCollection(nearLeftFilter);
 
-				SimpleFeatureIterator leftFeatureIterator = leftCollection.features();
-				SimpleFeatureIterator nearLeftFeatureIterator = nearLeftCollection.features();
+					SimpleFeatureIterator leftFeatureIterator = leftCollection.features();
+					SimpleFeatureIterator nearLeftFeatureIterator = nearLeftCollection.features();
 
-				while (leftFeatureIterator.hasNext()) {
-					leftFeatureList.add(leftFeatureIterator.next());
-				}
+					while (leftFeatureIterator.hasNext()) {
+						leftFeatureList.add(leftFeatureIterator.next());
+					}
 
-				while (nearLeftFeatureIterator.hasNext()) {
-					nearLeftFeatureList.add(nearLeftFeatureIterator.next());
-				}
+					while (nearLeftFeatureIterator.hasNext()) {
+						nearLeftFeatureList.add(nearLeftFeatureIterator.next());
+					}
 
-				List<ErrorFeature> errorFeatures = new ArrayList<ErrorFeature>();
-				for (SimpleFeature targetFeature : leftFeatureList) {
-					errorFeatures = closeCollectionValidator.ValidateCloseCollection(targetFeature, nearLeftFeatureList,
-							closeValidateOptions, leftLineString, tolorence);
-					for (ErrorFeature errorFeature : errorFeatures) {
-						errorFeature.setLayerName(validatorLayer.getLayerName());
-						errorLayer.addErrorFeature(errorFeature);
+					List<ErrorFeature> errorFeatures = new ArrayList<ErrorFeature>();
+					for (SimpleFeature targetFeature : leftFeatureList) {
+						errorFeatures = closeCollectionValidator.ValidateCloseCollection(targetFeature,
+								nearLeftFeatureList, closeValidateOptions, leftLineString, tolorence);
+						for (ErrorFeature errorFeature : errorFeatures) {
+							errorFeature.setLayerName(validatorLayer.getLayerName());
+							errorLayer.addErrorFeature(errorFeature);
+						}
 					}
 				}
-			}
 
-			if (rightGeoLayer != null) {
-				Filter rightFilter = ff.intersects(ff.property(geomColunm), ff.literal(rightPolygon));
-				Filter nearRightFilter = ff.intersects(ff.property(geomColunm), ff.literal(nearRightPolygon));
+				if (rightGeoLayer != null) {
+					Filter rightFilter = ff.intersects(ff.property(geomColunm), ff.literal(rightPolygon));
+					Filter nearRightFilter = ff.intersects(ff.property(geomColunm), ff.literal(nearRightPolygon));
 
-				SimpleFeatureCollection rightCollection = targetLayer.getSimpleFeatureCollection()
-						.subCollection(rightFilter);
-				SimpleFeatureCollection nearRightCollection = rightGeoLayer.getSimpleFeatureCollection()
-						.subCollection(nearRightFilter);
+					SimpleFeatureCollection rightCollection = targetLayer.getSimpleFeatureCollection()
+							.subCollection(rightFilter);
+					SimpleFeatureCollection nearRightCollection = rightGeoLayer.getSimpleFeatureCollection()
+							.subCollection(nearRightFilter);
 
-				SimpleFeatureIterator rightFeatureIterator = rightCollection.features();
-				SimpleFeatureIterator nearRightFeatureIterator = nearRightCollection.features();
+					SimpleFeatureIterator rightFeatureIterator = rightCollection.features();
+					SimpleFeatureIterator nearRightFeatureIterator = nearRightCollection.features();
 
-				while (rightFeatureIterator.hasNext()) {
-					rightFeatureList.add(rightFeatureIterator.next());
-				}
+					while (rightFeatureIterator.hasNext()) {
+						rightFeatureList.add(rightFeatureIterator.next());
+					}
 
-				while (nearRightFeatureIterator.hasNext()) {
-					nearRightFeatureList.add(nearRightFeatureIterator.next());
-				}
+					while (nearRightFeatureIterator.hasNext()) {
+						nearRightFeatureList.add(nearRightFeatureIterator.next());
+					}
 
-				List<ErrorFeature> errorFeatures = new ArrayList<ErrorFeature>();
-				for (SimpleFeature targetFeature : rightFeatureList) {
-					errorFeatures = closeCollectionValidator.ValidateCloseCollection(targetFeature,
-							nearRightFeatureList, closeValidateOptions, rightLineString, tolorence);
-					for (ErrorFeature errorFeature : errorFeatures) {
-						errorFeature.setLayerName(validatorLayer.getLayerName());
-						errorLayer.addErrorFeature(errorFeature);
+					List<ErrorFeature> errorFeatures = new ArrayList<ErrorFeature>();
+					for (SimpleFeature targetFeature : rightFeatureList) {
+						errorFeatures = closeCollectionValidator.ValidateCloseCollection(targetFeature,
+								nearRightFeatureList, closeValidateOptions, rightLineString, tolorence);
+						for (ErrorFeature errorFeature : errorFeatures) {
+							errorFeature.setLayerName(validatorLayer.getLayerName());
+							errorLayer.addErrorFeature(errorFeature);
+						}
 					}
 				}
 			}

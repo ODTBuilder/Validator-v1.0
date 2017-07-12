@@ -217,13 +217,13 @@ public class CollectionValidator {
 				errorLayer.setCollectionType(this.collectionType);
 
 				// layerMiss 검수
-				layerMissValidate(types, collection, errorLayer);
+		//		layerMissValidate(types, collection, errorLayer);
 
 				// geometric 검수
-				geometricValidate(types, collection, errorLayer);
+		//		geometricValidate(types, collection, errorLayer);
 
 				// attribute 검수
-				attributeValidate(types, collection, errorLayer);
+		//		attributeValidate(types, collection, errorLayer);
 
 				// 인접도엽 검수
 				closeCollectionValidate(types, mapSystemRule, collection, "", errorLayer);
@@ -631,10 +631,24 @@ public class CollectionValidator {
 			Coordinate[] leftLineCoords = new Coordinate[] { firstPoint, fourthPoint };
 			Coordinate[] rightLineCoords = new Coordinate[] { secondPoint, thirdPoint };
 
+			// System.out.println("대상도엽라인buffer");
 			LineString topLineString = geometryFactory.createLineString(topLineCoords);
+			// System.out.println("top: " +
+			// topLineString.buffer(0.01).getArea());
 			LineString bottomLineString = geometryFactory.createLineString(bottomLineCoords);
+			// System.out.println("bottom: " +
+			// bottomLineString.buffer(0.01).getArea());
 			LineString leftLineString = geometryFactory.createLineString(leftLineCoords);
+			// System.out.println("left: " +
+			// leftLineString.buffer(0.01).getArea());
 			LineString rightLineString = geometryFactory.createLineString(rightLineCoords);
+			// System.out.println("right: " +
+			// rightLineString.buffer(0.01).getArea());
+
+			Polygon topBuffer = (Polygon) topLineString.buffer(0.01);
+			Polygon bottomBuffer = (Polygon) bottomLineString.buffer(0.01);
+			Polygon leftBuffer = (Polygon) leftLineString.buffer(0.01);
+			Polygon rightBuffer = (Polygon) rightLineString.buffer(0.01);
 
 			Map<MapSystemRuleType, LineString> collectionBoundary = new HashMap<MapSystemRule.MapSystemRuleType, LineString>();
 
@@ -676,10 +690,10 @@ public class CollectionValidator {
 
 			// 인접도엽 top, bottom, left, right 객체로드를 위한 Map 생성
 			Map<MapSystemRuleType, Polygon> targetFeaturesGetBoundary = new HashMap<MapSystemRuleType, Polygon>();
-			targetFeaturesGetBoundary.put(MapSystemRuleType.TOP, topPolygon);
-			targetFeaturesGetBoundary.put(MapSystemRuleType.BOTTOM, bottomPolygon);
-			targetFeaturesGetBoundary.put(MapSystemRuleType.LEFT, leftPolygon);
-			targetFeaturesGetBoundary.put(MapSystemRuleType.RIGHT, rightPolygon);
+			targetFeaturesGetBoundary.put(MapSystemRuleType.TOP, topBuffer);
+			targetFeaturesGetBoundary.put(MapSystemRuleType.BOTTOM, bottomBuffer);
+			targetFeaturesGetBoundary.put(MapSystemRuleType.LEFT, leftBuffer);
+			targetFeaturesGetBoundary.put(MapSystemRuleType.RIGHT, rightBuffer);
 
 			// 인접도엽 객체 GET 폴리곤생성
 			Coordinate[] nearTopCoords = new Coordinate[] {
@@ -708,7 +722,16 @@ public class CollectionValidator {
 			LinearRing nearRightRing = geometryFactory.createLinearRing(nearRightCoords);
 
 			LinearRing nearHoles[] = null; // use LinearRing[] to represent
-											// holes
+
+			// Polygon topPolygon = geometryFactory.createPolygon(topRing,
+			// holes);
+			// Polygon bottomPolygon = geometryFactory.createPolygon(bottomRing,
+			// holes);
+			// Polygon leftPolygon = geometryFactory.createPolygon(leftRing,
+			// holes);
+			// Polygon rightPolygon = geometryFactory.createPolygon(rightRing,
+			// holes);
+			// holes
 			Polygon nearTopPolygon = geometryFactory.createPolygon(nearTopRing, nearHoles);
 			Polygon nearBottomPolygon = geometryFactory.createPolygon(nearBottomRing, nearHoles);
 			Polygon nearLeftPolygon = geometryFactory.createPolygon(nearLeftRing, nearHoles);
@@ -716,11 +739,11 @@ public class CollectionValidator {
 
 			// 인접도엽 top, bottom, left, right 객체로드를 위한 Map 생성
 			Map<MapSystemRuleType, Polygon> nearFeaturesGetBoundary = new HashMap<MapSystemRuleType, Polygon>();
-			nearFeaturesGetBoundary.put(MapSystemRuleType.TOP, nearTopPolygon);
-			nearFeaturesGetBoundary.put(MapSystemRuleType.BOTTOM, nearBottomPolygon);
-			nearFeaturesGetBoundary.put(MapSystemRuleType.LEFT, nearLeftPolygon);
-			nearFeaturesGetBoundary.put(MapSystemRuleType.RIGHT, nearRightPolygon);
-
+			nearFeaturesGetBoundary.put(MapSystemRuleType.TOP, topBuffer);
+			nearFeaturesGetBoundary.put(MapSystemRuleType.BOTTOM, bottomBuffer);
+			nearFeaturesGetBoundary.put(MapSystemRuleType.LEFT, leftBuffer);
+			nearFeaturesGetBoundary.put(MapSystemRuleType.RIGHT, rightBuffer);
+			
 			for (ValidateLayerType layerType : types) {
 				GeoLayerList typeLayers = validateLayerCollectionList.getTypeLayers(layerType.getTypeName(),
 						layerCollection);

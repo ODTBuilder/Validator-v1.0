@@ -9,15 +9,13 @@ import org.opengis.feature.simple.SimpleFeature;
 
 import com.git.gdsbuilder.type.validate.error.ErrorFeature;
 import com.git.gdsbuilder.type.validate.option.EdgeMatchMiss;
-import com.git.gdsbuilder.type.validate.option.EntityNone;
-import com.git.gdsbuilder.type.validate.option.RefAttributeMiss;
-import com.git.gdsbuilder.type.validate.option.RefZValueMiss;
 import com.git.gdsbuilder.validator.collection.opt.ValCollectionOption;
 import com.git.gdsbuilder.validator.collection.opt.ValCollectionOption.ValCollectionOptionType;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jts.geom.Point;
 
 public class FeatureCloseCollectionValidatorImpl implements FeatureCloseCollectionValidator {
 
@@ -37,157 +35,50 @@ public class FeatureCloseCollectionValidatorImpl implements FeatureCloseCollecti
 		Property featuerIDPro = simpleFeature.getProperty("feature_id");
 		String featureID = (String) featuerIDPro.getValue();
 
-		// 인접도엽 옵션객체 선언
-		boolean entityNone = false;
-		boolean matchMiss = false;
-		String refZValueMiss = "";
-		List<String> refAttributeMiss = null;
+		if (featureID.equals("70910")) {
+			System.out.println("");
+		}
 
+		// 인접도엽 옵션객체 선언
+		boolean matchMiss = false;
 		if (closeValidateOptions != null) {
 			Iterator<ValCollectionOptionType> typeItr = closeValidateOptions.keySet().iterator();
 
 			while (typeItr.hasNext()) {
 				String iteratorVal = typeItr.next().getTypeName();
-				if (iteratorVal.equals(ValCollectionOptionType.ENTITYNONE.getTypeName())) {
-					entityNone = (Boolean) closeValidateOptions.get(ValCollectionOptionType.ENTITYNONE);
-				}
 				if (iteratorVal.equals(ValCollectionOptionType.EDGEMATCHMISS.getTypeName())) {
 					matchMiss = (Boolean) closeValidateOptions.get(ValCollectionOptionType.EDGEMATCHMISS);
-				}
-				if (iteratorVal.equals(ValCollectionOptionType.REFZVALUEMISS.getTypeName())) {
-					refZValueMiss = (String) closeValidateOptions.get(ValCollectionOptionType.REFZVALUEMISS);
-				}
-				if (iteratorVal.equals(ValCollectionOptionType.REFATTRIBUTEMISS.getTypeName())) {
-					refAttributeMiss = (List<String>) closeValidateOptions
-							.get(ValCollectionOptionType.REFATTRIBUTEMISS);
 				}
 			}
 		} else
 			return null;
 
 		Geometry targetGeometry = (Geometry) simpleFeature.getDefaultGeometry();
-
-		boolean existFlag = false; // 인접도엽 객체존재여부
-
-		for (SimpleFeature relationSimpleFeature : relationSimpleFeatures) {
-			Geometry relationGeometry = (Geometry) relationSimpleFeature.getDefaultGeometry();
-			if (Math.abs(targetGeometry.distance(relationGeometry)) < tolerence * 2) {
-				existFlag = true;
-
-				if (matchMiss) {
-					Coordinate[] targetCoordinates = targetGeometry.getCoordinates();// 대상
-																						// 객체
-																						// 포인트들
-
-					// 대상 객체 포인트에서 도엽 근처에 있는 포인트 추출
-					List<Geometry> etargetList = new ArrayList<Geometry>();
-					for (Coordinate tCoordinate : targetCoordinates) {
-						Geometry tGeometry = geometryFactory.createPoint(tCoordinate);
-						if (Math.abs(tGeometry.distance(nearLine)) < tolerence) {
-							etargetList.add(tGeometry);
-						}
-					}
-
-					Coordinate[] etargetCoordinates = new Coordinate[etargetList.size()];
-					for (int i = 0; i < etargetList.size(); i++) {
-						etargetCoordinates[i] = etargetList.get(i).getCoordinate();
-					}
-
-					Coordinate[] relCoordinates = relationGeometry.getCoordinates(); // 관계
-																						// 피처
-																						// 포인트
-																						// 추출
-
-					// 포인트끼리 비교
-					for (Coordinate tCoordinate : etargetCoordinates) {
-						boolean matchFeatureFlag = false;
-						Geometry tPoint = geometryFactory.createPoint(tCoordinate);
-//						System.out.println(tPoint.distance(nearLine));
-						for (Coordinate rCoordinate : relCoordinates) {
-							Geometry rPoint = geometryFactory.createPoint(rCoordinate);
-							
-							
-							if (Math.abs(tPoint.distance(rPoint)) < tolerence * 2) {// 대상
-																					// 포인트
-																					// 관계포인트
-																					// 비교
-//								if (Math.abs(rPoint.distance(nearLine)) < tolerence) { // 관계포인트랑
-																						// 도곽이랑
-																						// 비교
-									matchFeatureFlag = true;
-									break;
-//								}
-							}
-							
-						}
-						if (!matchFeatureFlag) {
-							ErrorFeature MMErrFeature = new ErrorFeature(featureIdx, featureID,
-									EdgeMatchMiss.Type.EDGEMATCHMISS.errType(),
-									EdgeMatchMiss.Type.EDGEMATCHMISS.errName(), tPoint);
-							collectionErrors.add(MMErrFeature);
-							System.out.println("matchMiss");
+		Coordinate[] tarCoors = targetGeometry.getCoordinates();
+		for (int i = 0; i < tarCoors.length; i++) {
+			Point tmpPt = geometryFactory.createPoint(tarCoors[i]);
+			double tarDist = nearLine.distance(tmpPt);
+			if (tarDist < tolerence || tarDist == tolerence) {
+				Geometry tarBuffer = tmpPt.buffer(tolerence * 2);
+				boolean isTrue = false;
+				innerFor: for (SimpleFeature relationSimpleFeature : relationSimpleFeatures) {
+					Geometry relationGeometry = (Geometry) relationSimpleFeature.getDefaultGeometry();
+					if (relationGeometry.intersects(tarBuffer)) {
+						Coordinate[] relationCoors = relationGeometry.getCoordinates();
+						Point firPt = geometryFactory.createPoint(relationCoors[0]);
+						Point lastPt = geometryFactory.createPoint(relationCoors[relationCoors.length - 1]);
+						if (firPt.distance(tmpPt) <= tolerence || lastPt.distance(tmpPt) <= tolerence) {
+							isTrue = true;
+							break innerFor;
 						}
 					}
 				}
-
-				if (!refZValueMiss.equals("")) {
-					Object tValue = simpleFeature.getAttribute(refZValueMiss); // 대상
-																				// 피쳐
-					Object rValue = relationSimpleFeature.getAttribute(refZValueMiss); // 인접
-																						// 피쳐
-
-					String tValueString = "";
-					String rValueString = "";
-
-					if (tValue != null && rValue != null) {
-						tValueString = tValue.toString().trim();
-						rValueString = rValue.toString().trim();
-					}
-
-					if (!tValueString.equals(rValueString)) {
-						ErrorFeature rZVErrFeature = new ErrorFeature(featureIdx, featureID,
-								RefZValueMiss.Type.REFZVALUEMISS.errType(), RefZValueMiss.Type.REFZVALUEMISS.errName(),
-								targetGeometry.getInteriorPoint());
-						collectionErrors.add(rZVErrFeature);
-						System.out.println("refZValueMiss");
-					}
+				if (!isTrue) {
+					ErrorFeature errFeature = new ErrorFeature(featureIdx, featureID,
+							EdgeMatchMiss.Type.EDGEMATCHMISS.errType(), EdgeMatchMiss.Type.EDGEMATCHMISS.errName(),
+							tmpPt);
+					collectionErrors.add(errFeature);
 				}
-
-				if (refAttributeMiss != null) {
-					List<String> colunms = refAttributeMiss;
-
-					for (String colunm : colunms) {
-						Object tValue = simpleFeature.getAttribute(colunm);
-						Object rValue = relationSimpleFeature.getAttribute(colunm);
-
-						String tValueString = "";
-						String rValueString = "";
-
-						if (tValue != null && rValue != null) {
-							tValueString = tValue.toString().trim();
-							rValueString = rValue.toString().trim();
-						}
-
-						if (!tValueString.equals(rValueString)) {
-							ErrorFeature rAttErrFeature = new ErrorFeature(featureIdx, featureID,
-									RefAttributeMiss.Type.RefAttributeMiss.errType(),
-									RefAttributeMiss.Type.RefAttributeMiss.errName(),
-									targetGeometry.getInteriorPoint());
-							collectionErrors.add(rAttErrFeature);
-							System.out.println("refAttErr");
-							break;
-						}
-					}
-				}
-			}
-		}
-//		Geometry geom = (Geometry) simpleFeature.getDefaultGeometry();
-		if (!existFlag) {
-			if (entityNone) {
-				ErrorFeature eNoneErr = new ErrorFeature(featureIdx, featureID, EntityNone.Type.ENTITYNONE.errType(),
-						EntityNone.Type.ENTITYNONE.errName(), targetGeometry.getCentroid());
-				collectionErrors.add(eNoneErr);
-				System.out.println("entityNone");
 			}
 		}
 		return collectionErrors;
