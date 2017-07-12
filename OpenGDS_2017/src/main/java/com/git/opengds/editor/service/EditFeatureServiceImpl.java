@@ -15,7 +15,7 @@ import com.git.gdsbuilder.type.qa10.feature.QA10FeatureList;
 import com.git.gdsbuilder.type.qa20.feature.QA20Feature;
 import com.git.gdsbuilder.type.qa20.feature.QA20FeatureList;
 import com.git.opengds.geoserver.service.GeoserverService;
-import com.git.opengds.parser.json.BuilderJSONQA20Parser;
+import com.git.opengds.parser.json.BuilderJSONParser;
 import com.vividsolutions.jts.io.ParseException;
 
 @Service
@@ -41,13 +41,12 @@ public class EditFeatureServiceImpl implements EditFeatureService {
 	@Override
 	public void editFeature(JSONObject featureEditObj) throws ParseException, org.json.simple.parser.ParseException {
 
-		Map<String, Object> edtFeatureListObj = BuilderJSONQA20Parser.parseEditFeatureObj(featureEditObj);
+		Map<String, Object> edtFeatureListObj = BuilderJSONParser.parseEditFeatureObj(featureEditObj);
 		Iterator edtFeatureIterator = edtFeatureListObj.keySet().iterator();
 		while (edtFeatureIterator.hasNext()) {
 			String tableName = (String) edtFeatureIterator.next();
 			HashMap<String, Object> editMap = (HashMap<String, Object>) edtFeatureListObj.get(tableName);
-			String collectionType = BuilderJSONQA20Parser.getCollectionType(tableName);
-
+			String collectionType = BuilderJSONParser.getCollectionType(tableName);
 			if (collectionType.equals(isDxf)) {
 				editDxfFeature(tableName, editMap);
 			}

@@ -370,27 +370,38 @@ gitbuilder.ui.OptionDefinition = $
 							};
 							that._printDetailedOption(mix);
 						});
-						$(document).on("change", this.eventNamespace + " .optiondefinition-item-check", function() {
-							if ($(this).prop("checked")) {
-								if (that.optItem[$(this).val()].type === "none") {
-									if (!that.getOptDefCopy().hasOwnProperty(that.selectedLayerNow)) {
-										that.getOptDefCopy()[that.selectedLayerNow] = {};
-									}
-									that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow] = true;
-								}
-							} else if (that.optItem[$(this).val()].type === "relation") {
-
-								var relation = that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow].relation;
-								that.updateRelation(relation, "down");
-								delete that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow];
-								var keys = Object.keys(that.getOptDefCopy()[that.selectedLayerNow]);
-								if (keys.length === 0) {
-									delete that.getOptDefCopy()[that.selectedLayerNow];
-								}
-							} else {
-								delete that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow];
-							}
-						});
+						$(document)
+								.on(
+										"change",
+										this.eventNamespace + " .optiondefinition-item-check",
+										function() {
+											if ($(this).prop("checked")) {
+												if (that.optItem[$(this).val()].type === "none") {
+													if (!that.getOptDefCopy().hasOwnProperty(that.selectedLayerNow)) {
+														that.getOptDefCopy()[that.selectedLayerNow] = {};
+													}
+													that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow] = true;
+												}
+											} else if (that.optItem[$(this).val()].type === "relation") {
+												if (that.getOptDefCopy().hasOwnProperty(that.selectedLayerNow)) {
+													if (that.getOptDefCopy()[that.selectedLayerNow]
+															.hasOwnProperty(that.selectedValidationNow)) {
+														if (that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]
+																.hasOwnProperty("relation")) {
+															var relation = that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow].relation;
+															that.updateRelation(relation, "down");
+															delete that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow];
+														}
+													}
+													var keys = Object.keys(that.getOptDefCopy()[that.selectedLayerNow]);
+													if (keys.length === 0) {
+														delete that.getOptDefCopy()[that.selectedLayerNow];
+													}
+												}
+											} else {
+												delete that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow];
+											}
+										});
 
 						$(document).on(
 								"input",

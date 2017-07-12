@@ -3,7 +3,9 @@ package com.git.opengds.parser.json;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import org.geotools.feature.SchemaException;
@@ -12,12 +14,18 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 
 import com.git.gdsbuilder.FileRead.en.EnFileFormat;
+import com.git.gdsbuilder.edit.qa10.EditQA10LayerCollectionList;
+import com.git.gdsbuilder.edit.qa20.EditQA20LayerCollectionList;
 import com.git.gdsbuilder.type.geoserver.collection.GeoLayerCollectionList;
 import com.git.gdsbuilder.type.geoserver.parser.GeoLayerCollectionParser;
 import com.git.gdsbuilder.type.validate.layer.ValidateLayerTypeList;
 import com.git.opengds.parser.validate.ValidateTypeParser;
 
 public class BuilderJSONParser {
+
+	protected static final String isNgi = "ngi";
+	protected static final String isDxf = "dxf";
+	protected static final String isShp = "shp";
 
 	private static final String URL;
 	private static final String ID;
@@ -78,5 +86,62 @@ public class BuilderJSONParser {
 			validateMap.put("collectionList", collectionList);
 			return validateMap;
 		}
+	}
+
+//	public static void parseEditLayerObj(JSONObject editLayerObj)
+//			throws FileNotFoundException, IOException, com.vividsolutions.jts.io.ParseException, SchemaException {
+//
+//		Iterator layerIterator = editLayerObj.keySet().iterator();
+//		while (layerIterator.hasNext()) {
+//			String type = (String) layerIterator.next();
+//			if (type.equals(isNgi)) {
+//				EditQA20LayerCollectionList edtQA20CollectionListObj = BuilderJSONQA20Parser
+//						.parseEditLayerObj(editLayerObj, type);
+//			} else if (type.equals(isDxf)) {
+//				EditQA10LayerCollectionList edtCollectionList = BuilderJSONQA10Parser.parseEditLayerObj(editLayerObj,
+//						type);
+//			}
+//		}
+//	}
+
+	public static Map<String, Object> parseEditFeatureObj(JSONObject editFeatureObj)
+			throws com.vividsolutions.jts.io.ParseException, ParseException {
+
+		// feature 편집
+		Map<String, Object> editFeatureListMap = new HashMap<String, Object>();
+		Iterator featureIterator = editFeatureObj.keySet().iterator();
+		while (featureIterator.hasNext()) {
+			String tableName = (String) featureIterator.next();
+			String collectionType = getCollectionType(tableName);
+			String layerType = getLayerType(tableName);
+			JSONObject stateObj = (JSONObject) editFeatureObj.get(tableName);
+			Map<String, Object> editFeatureMap = new HashMap<String, Object>();
+			if (collectionType.equals(isNgi)) {
+				editFeatureMap = BuilderJSONQA20Parser.parseNGIFeature(stateObj, layerType);
+			}
+			if (collectionType.equals(isDxf)) {
+				editFeatureMap = BuilderJSONQA10Parser.parseDXFFeature(stateObj, layerType);
+			}
+			editFeatureListMap.put(tableName, editFeatureMap);
+		}
+		return editFeatureListMap;
+	}
+
+	public static String getCollectionType(String layerName) {
+
+		int firstIndex = layerName.indexOf("_");
+		String tempStr = layerName.substring(firstIndex + 1);
+		int lastIndex = tempStr.indexOf("_");
+		String layerType = tempStr.substring(0, lastIndex);
+
+		return layerType;
+	}
+
+	public static String getLayerType(String layerName) {
+
+		int firstIndex = layerName.lastIndexOf("_");
+		String layerType = layerName.substring(firstIndex + 1, layerName.length() - 1);
+
+		return layerType;
 	}
 }
