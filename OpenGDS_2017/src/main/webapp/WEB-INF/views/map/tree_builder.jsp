@@ -402,14 +402,14 @@ html {
 			layerInfoURL : "geoserver2/getGeoLayerInfoList.ajax"
 		});
 
-		var layerInfo = new gb.edit.LayerInformation({
-			url : "geoserver2/getGeoLayerInfoList.ajax"
-		});
 		var createLayer = new gb.geoserver.CreateLayer({
 			url : "editLayerCollection/editLayerCollection.ajax"
 		});
 		var deleteLayer = new gb.geoserver.DeleteLayer({
 			url : "editLayerCollection/editLayerCollection.ajax"
+		});
+		var layerInfo = new gb.edit.LayerInformation({
+			url : "geoserver2/getGeoLayerInfoList.ajax"
 		});
 		$("#builderServerLayer").jstree({
 			"core" : {

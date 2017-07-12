@@ -10,7 +10,7 @@ if (!gb)
 	gb = {};
 if (!gb.geoserver)
 	gb.geoserver = {};
-gb.geoserver.CreateLayer = function(obj) {
+gb.geoserver.ModifyLayer = function(obj) {
 	var that = this;
 	var options = obj;
 	this.window;
@@ -132,19 +132,19 @@ gb.geoserver.CreateLayer = function(obj) {
 		show : false,
 	});
 }
-gb.geoserver.CreateLayer.prototype.open = function() {
+gb.geoserver.ModifyLayer.prototype.open = function() {
 	this.window.modal('show');
 };
-gb.geoserver.CreateLayer.prototype.close = function() {
+gb.geoserver.ModifyLayer.prototype.close = function() {
 	this.window.modal('hide');
 };
-gb.geoserver.CreateLayer.prototype.setReference = function(refer) {
+gb.geoserver.ModifyLayer.prototype.setReference = function(refer) {
 	this.refer = refer;
 };
-gb.geoserver.CreateLayer.prototype.getReference = function() {
+gb.geoserver.ModifyLayer.prototype.getReference = function() {
 	return this.refer;
 };
-gb.geoserver.CreateLayer.prototype.sendData = function(obj) {
+gb.geoserver.ModifyLayer.prototype.sendData = function(obj) {
 	var that = this;
 	$.ajax({
 		url : this.getUrl(),
@@ -166,7 +166,7 @@ gb.geoserver.CreateLayer.prototype.sendData = function(obj) {
 		}
 	});
 };
-gb.geoserver.CreateLayer.prototype.setForm = function(format, type, sheetNum) {
+gb.geoserver.ModifyLayer.prototype.setForm = function(format, type, sheetNum) {
 	this.format = format;
 	this.type = type;
 	if (type === "mapsheet") {
@@ -200,7 +200,7 @@ gb.geoserver.CreateLayer.prototype.setForm = function(format, type, sheetNum) {
 		}
 	}
 };
-gb.geoserver.CreateLayer.prototype.initTypeForm = function(type) {
+gb.geoserver.ModifyLayer.prototype.initTypeForm = function(type) {
 	var select = $("<select>").addClass("form-control");
 	if (type === "dxf") {
 		var option1 = $("<option>").text("LWPolyline");
@@ -219,7 +219,7 @@ gb.geoserver.CreateLayer.prototype.initTypeForm = function(type) {
 	var tp = $("<p>").text("Type");
 	$(this.typeForm).append(tp).append(select);
 };
-gb.geoserver.CreateLayer.prototype.initAttrForm = function() {
+gb.geoserver.ModifyLayer.prototype.initAttrForm = function() {
 	var that = this;
 	var htd1 = $("<td>").text("Name");
 	var htd2 = $("<td>").text("Type");
