@@ -525,7 +525,6 @@ gitbuilder.ui.QAEdit = $.widget("gitbuilder.qaedit",
 									layer.set("id", id);
 									layer.set("name", name);
 									layers.push(layer);
-									console.log(layer.get("id"));
 								}
 								var git = {
 									"validation" : false,

@@ -8789,8 +8789,14 @@
 							 */
 							"action" : function(data) {
 								var inst = $.jstree.reference(data.reference), obj = inst.get_node(data.reference);
-								inst._data.geoserver.layerInfo.load(obj.id, obj.text);
-								// console.log("Not yet(layer info)");
+								if (obj.type === "n_ngi_layer_pt" || obj.type === "n_ngi_layer_ln" || obj.type === "n_ngi_layer_pg"
+										|| obj.type === "n_ngi_layer_txt" || obj.type === "n_dxf_layer_arc"
+										|| obj.type === "n_dxf_layer_cir" || obj.type === "n_dxf_layer_ins"
+										|| obj.type === "n_dxf_layer_lpl" || obj.type === "n_dxf_layer_pl"
+										|| obj.type === "n_dxf_layer_txt" || obj.type === "e_dxf_layer" || obj.type === "e_ngi_layer"
+										|| obj.type === "e_shp_layer") {
+									inst._data.geoserver.layerInfo.load(obj.id, obj.text);
+								}
 							}
 						}
 					};
