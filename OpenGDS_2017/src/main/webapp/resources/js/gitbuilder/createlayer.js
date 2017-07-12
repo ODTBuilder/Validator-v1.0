@@ -14,7 +14,7 @@ gb.geoserver.CreateLayer = function(obj) {
 	var that = this;
 	var options = obj;
 	this.window;
-	this.url = options.url ? options.url : null;
+	this.url = options.URL ? options.URL : null;
 	this.format = undefined;
 	this.type = undefined;
 	this.refer = undefined;

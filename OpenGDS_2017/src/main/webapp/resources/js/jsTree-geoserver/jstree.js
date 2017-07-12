@@ -8253,6 +8253,9 @@
 							 */
 							"action" : function(data) {
 								var inst = $.jstree.reference(data.reference), obj = inst.get_node(data.reference);
+								var getPosition = function(string, subString, index) {
+									return string.split(subString, index).join(subString).length;
+								}
 								var arr = inst.get_selected();
 								var sameGroupParentDXF = {};
 								var sameGroupParentNGI = {};
@@ -8271,9 +8274,21 @@
 										}
 										sameGroupParentDXF[parent.id][node.id] = node;
 									} else if (parent.type === "n_ngi") {
-										inst._data.geoserver.deleteLayer.addStructure("ngi", node.text, "all", node.children);
+										var children = node.children;
+										var substr = [];
+										for (var i = 0; i < children.length; i++) {
+											var position = getPosition(children[i], "_", 3);
+											substr.push(node.children[i].substring(position + 1));
+										}
+										inst._data.geoserver.deleteLayer.addStructure("ngi", node.text, "all", substr);
 									} else if (parent.type === "n_dxf") {
-										inst._data.geoserver.deleteLayer.addStructure("dxf", node.text, "all", node.children);
+										var children = node.children;
+										var substr = [];
+										for (var i = 0; i < children.length; i++) {
+											var position = getPosition(children[i], "_", 3);
+											substr.push(node.children[i].substring(position + 1));
+										}
+										inst._data.geoserver.deleteLayer.addStructure("dxf", node.text, "all", substr);
 									}
 									// else if (parent.type === "n_shp" ||
 									// parent.type === "e_ngi" || parent.type
@@ -8282,6 +8297,7 @@
 									// sameParent.push(node);
 									// }
 								}
+
 								if (sameParent.length > 0) {
 									var part = [];
 									for (var j = 0; j < sameParent.length; j++) {
@@ -8296,9 +8312,9 @@
 										var group = [];
 										var ckeys = Object.keys(sameGroupParentNGI[pkeys[i]]);
 										for (var j = 0; j < ckeys.length; j++) {
-											group.push(ckeys[j]);
+											var position = getPosition(ckeys[j], "_", 3);
+											group.push(ckeys[j].substring(position + 1));
 										}
-
 										inst._data.geoserver.deleteLayer.addStructure("ngi", parent.text, Object
 												.keys(sameGroupParentNGI[pkeys[i]]).length === parent.children.length ? "all" : "part",
 												group);
@@ -8311,9 +8327,9 @@
 										var group = [];
 										var ckeys = Object.keys(sameGroupParentDXF[pkeys[i]]);
 										for (var j = 0; j < ckeys.length; j++) {
-											group.push(ckeys[j]);
+											var position = getPosition(ckeys[j], "_", 3);
+											group.push(ckeys[j].substring(position + 1));
 										}
-
 										inst._data.geoserver.deleteLayer.addStructure("dxf", parent.text, Object
 												.keys(sameGroupParentDXF[pkeys[i]]).length === parent.children.length ? "all" : "part",
 												group);
@@ -8321,10 +8337,6 @@
 								}
 								console.log(inst._data.geoserver.deleteLayer.getStructure());
 								inst._data.geoserver.deleteLayer.sendData(inst._data.geoserver.deleteLayer.getStructure());
-								// inst._data.geoserver.deleteLayer
-								// inst._data.geoserver.layerInfo.load(obj.id,
-								// obj.text);
-								// console.log("Not yet(layer info)");
 							}
 						},
 						"download" : {

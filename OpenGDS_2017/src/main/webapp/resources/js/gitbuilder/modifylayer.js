@@ -11,13 +11,13 @@ if (!gb)
 if (!gb.geoserver)
 	gb.geoserver = {};
 gb.geoserver.ModifyLayer = function(obj) {
-	var that = this;
 	var options = obj;
+	this.url = options.infoURL ? options.infoURL : null;
+	this.editUrl = options.URL ? options.URL : null;
+	this.layer;
 	this.window;
-	this.url = options.url ? options.url : null;
-	this.format = undefined;
-	this.type = undefined;
-	this.refer = undefined;
+	this.originInfo;
+	this.currentInfo;
 
 	var xSpan = $("<span>").attr({
 		"aria-hidden" : true
@@ -29,11 +29,11 @@ gb.geoserver.ModifyLayer = function(obj) {
 	}).html(xSpan);
 	$(xButton).addClass("close");
 
-	this.htag = $("<h4>");
-	this.htag.text("Create layer");
-	$(this.htag).addClass("modal-title");
+	var htag = $("<h4>");
+	htag.text("Layer Information");
+	$(htag).addClass("modal-title");
 
-	var header = $("<div>").append(xButton).append(this.htag);
+	var header = $("<div>").append(xButton).append(htag);
 	$(header).addClass("modal-header");
 	/*
 	 * 
@@ -42,35 +42,110 @@ gb.geoserver.ModifyLayer = function(obj) {
 	 * 
 	 * 
 	 */
-	var sheetNum = $("<p>").text("Map Sheet Number");
-	this.sheetNumInput = $("<input>").addClass("form-control").attr({
-		"type" : "text"
-	});
-	var div1 = $("<div>").css({
-		"margin-bottom" : "10px"
-	}).append(sheetNum).append(this.sheetNumInput);
 
-	var layerName = $("<p>").text("Layer Name");
-	this.layerNameInput = $("<input>").addClass("form-control").attr({
-		"type" : "text"
-	});
-	this.layerNameForm = $("<div>").css({
-		"margin-bottom" : "15px"
-	}).append(layerName).append(this.layerNameInput);
-
-	this.typeForm = $("<div>").css({
-		"margin-bottom" : "10px"
-	});
-
-	this.attrForm = $("<div>").css({
-		"margin-bottom" : "10px"
-	});
-
-	this.expertForm = $("<div>").css({
-		"margin-bottom" : "10px"
-	});
-
-	this.body = $("<div>").append(div1).append(this.layerNameForm).append(this.typeForm).append(this.attrForm).append(this.expertForm);
+	// var name = $("<p>").text("Name");
+	// var nameInput = $("<input>").addClass("form-control").attr({
+	// "type" : "text"
+	// });
+	//
+	// var title = $("<p>").text("Title");
+	// var titleInput = $("<input>").addClass("form-control").attr({
+	// "type" : "text"
+	// });
+	//
+	// var summary = $("<p>").text("Summary");
+	// var summaryInput = $("<textarea>").addClass("form-control").attr({
+	// "rows" : "3"
+	// });
+	//
+	// var minBound = $("<p>").text("Minimum Boundary of Original Data");
+	//
+	// var bminx = $("<p>").text("Min X");
+	// var td1 = $("<td>").append(bminx);
+	//
+	// var bminy = $("<p>").text("Min Y");
+	// var td2 = $("<td>").append(bminy);
+	//
+	// var bmaxx = $("<p>").text("Max X");
+	// var td3 = $("<td>").append(bmaxx);
+	//
+	// var bmaxy = $("<p>").text("Max Y");
+	// var td4 = $("<td>").append(bmaxy);
+	//
+	// var tr1 = $("<tr>").append(td1).append(td2).append(td3).append(td4);
+	//
+	// var bminx2 = $("<input>").addClass("form-control").attr({
+	// "type" : "text"
+	// });
+	// var td11 = $("<td>").append(bminx2);
+	//
+	// var bminy2 = $("<input>").addClass("form-control").attr({
+	// "type" : "text"
+	// });
+	// var td22 = $("<td>").append(bminy2);
+	//
+	// var bmaxx2 = $("<input>").addClass("form-control").attr({
+	// "type" : "text"
+	// });
+	// var td33 = $("<td>").append(bmaxx2);
+	//
+	// var bmaxy2 = $("<input>").addClass("form-control").attr({
+	// "type" : "text"
+	// });
+	// var td44 = $("<td>").append(bmaxy2);
+	//
+	// var tr11 = $("<tr>").append(td11).append(td22).append(td33).append(td44);
+	//
+	// var tb1 = $("<table>").addClass("table").append(tr1).append(tr11);
+	//
+	// var lonlatBound = $("<p>").text("Latitude / Longitude Area");
+	//
+	// var bminx1 = $("<p>").text("Min X");
+	// var td111 = $("<td>").append(bminx1);
+	//
+	// var bminy1 = $("<p>").text("Min Y");
+	// var td222 = $("<td>").append(bminy1);
+	//
+	// var bmaxx1 = $("<p>").text("Max X");
+	// var td333 = $("<td>").append(bmaxx1);
+	//
+	// var bmaxy1 = $("<p>").text("Max Y");
+	// var td444 = $("<td>").append(bmaxy1);
+	//
+	// var tr111 =
+	// $("<tr>").append(td111).append(td222).append(td333).append(td444);
+	//
+	// var bminx3 = $("<input>").addClass("form-control").attr({
+	// "type" : "text"
+	// });
+	// var td1111 = $("<td>").append(bminx3);
+	//
+	// var bminy3 = $("<input>").addClass("form-control").attr({
+	// "type" : "text"
+	// });
+	// var td2222 = $("<td>").append(bminy3);
+	//
+	// var bmaxx3 = $("<input>").addClass("form-control").attr({
+	// "type" : "text"
+	// });
+	// var td3333 = $("<td>").append(bmaxx3);
+	//
+	// var bmaxy3 = $("<input>").addClass("form-control").attr({
+	// "type" : "text"
+	// });
+	// var td4444 = $("<td>").append(bmaxy3);
+	//
+	// var tr1111 =
+	// $("<tr>").append(td1111).append(td2222).append(td3333).append(td4444);
+	//
+	// var tb2 = $("<table>").addClass("table").append(tr111).append(tr1111);
+	//
+	// var ftb = $("<table>");
+	//
+	// this.body =
+	// $("<div>").append(name).append(nameInput).append(title).append(titleInput).append(summary).append(summaryInput).append(minBound).append(tb1).append(
+	// lonlatBound).append(tb2);
+	this.body = $("<div>");
 	$(this.body).addClass("modal-body");
 	/*
 	 * 
@@ -91,13 +166,11 @@ gb.geoserver.ModifyLayer = function(obj) {
 	var okBtn = $("<button>").attr({
 		"type" : "button"
 	}).on("click", function() {
-		var opt = that.getDefinitionForm();
-		that.sendData(opt);
-		that.close();
+console.log("save");
 	});
 	$(okBtn).addClass("btn");
 	$(okBtn).addClass("btn-primary");
-	$(okBtn).text("Create");
+	$(okBtn).text("Save");
 
 	var pright = $("<span>").css("float", "right");
 	$(pright).append(closeBtn).append(okBtn);
@@ -138,21 +211,22 @@ gb.geoserver.ModifyLayer.prototype.open = function() {
 gb.geoserver.ModifyLayer.prototype.close = function() {
 	this.window.modal('hide');
 };
-gb.geoserver.ModifyLayer.prototype.setReference = function(refer) {
-	this.refer = refer;
+gb.geoserver.ModifyLayer.prototype.save = function(obj) {
+
 };
-gb.geoserver.ModifyLayer.prototype.getReference = function() {
-	return this.refer;
-};
-gb.geoserver.ModifyLayer.prototype.sendData = function(obj) {
+gb.geoserver.ModifyLayer.prototype.load = function(name, code) {
 	var that = this;
+	var arr = {
+		"geoLayerList" : [ name ]
+	}
+	console.log(JSON.stringify(arr));
 	$.ajax({
-		url : this.getUrl(),
+		url : that.getUrl(),
 		method : "POST",
 		contentType : "application/json; charset=UTF-8",
 		cache : false,
 		// async : false,
-		data : JSON.stringify(obj),
+		data : JSON.stringify(arr),
 		beforeSend : function() {
 			$("body").css("cursor", "wait");
 		},
@@ -162,273 +236,169 @@ gb.geoserver.ModifyLayer.prototype.sendData = function(obj) {
 		traditional : true,
 		success : function(data, textStatus, jqXHR) {
 			console.log(data);
-			that.getReference().refresh();
-		}
-	});
-};
-gb.geoserver.ModifyLayer.prototype.setForm = function(format, type, sheetNum) {
-	this.format = format;
-	this.type = type;
-	if (type === "mapsheet") {
-		if (format === "dxf") {
-			$(this.htag).text("Create a map sheet (DXF)");
-		} else if (format === "ngi") {
-			$(this.htag).text("Create a map sheet (NGI)");
-		}
-		$(this.sheetNumInput).val("");
-		$(this.layerNameForm).hide();
-		$(this.typeForm).hide();
-		$(this.attrForm).hide();
-		$(this.expertForm).hide();
-	} else if (type === "layer") {
-		$(this.htag).text("Create a layer");
-		$(this.sheetNumInput).val(sheetNum);
-		$(this.layerNameInput).val("");
-		$(this.layerNameForm).show();
-		if (format === "dxf") {
-			this.initTypeForm("dxf");
-			$(this.typeForm).show();
-			$(this.attrForm).hide();
-			$(this.expertForm).hide();
-		} else if (format === "ngi") {
-			this.initTypeForm("ngi");
-			$(this.typeForm).show();
-			this.initAttrForm();
-			$(this.attrForm).show();
-			this.initExpertForm();
-			$(this.expertForm).show();
-		}
-	}
-};
-gb.geoserver.ModifyLayer.prototype.initTypeForm = function(type) {
-	var select = $("<select>").addClass("form-control");
-	if (type === "dxf") {
-		var option1 = $("<option>").text("LWPolyline");
-		var option2 = $("<option>").text("Polyline");
-		var option3 = $("<option>").text("Insert");
-		var option4 = $("<option>").text("Text");
-		$(select).append(option1).append(option2).append(option3).append(option4);
-	} else if (type === "ngi") {
-		var option1 = $("<option>").text("Point");
-		var option2 = $("<option>").text("LineString");
-		var option3 = $("<option>").text("Polygon");
-		var option4 = $("<option>").text("Text");
-		$(select).append(option1).append(option2).append(option3).append(option4);
-	}
-	$(this.typeForm).empty();
-	var tp = $("<p>").text("Type");
-	$(this.typeForm).append(tp).append(select);
-};
-gb.geoserver.ModifyLayer.prototype.initAttrForm = function() {
-	var that = this;
-	var htd1 = $("<td>").text("Name");
-	var htd2 = $("<td>").text("Type");
-	var htd3 = $("<td>").text("Not Null");
-	var htd4 = $("<td>").text("Unique");
-	var thd = $("<thead>").append(htd1).append(htd2).append(htd3).append(htd4);
-
-	var key = $("<input>").addClass("form-control").attr({
-		"type" : "text"
-	});
-	var td1 = $("<td>").append(key);
-
-	var opt1 = $("<option>").text("Integer");
-	var opt2 = $("<option>").text("Double");
-	var opt3 = $("<option>").text("String");
-	var opt4 = $("<option>").text("Date");
-	var opt5 = $("<option>").text("Boolean");
-	var type = $("<select>").addClass("form-control").append(opt1).append(opt2).append(opt3).append(opt4).append(opt5);
-	var td2 = $("<td>").append(type);
-
-	var nullable = $("<input>").attr({
-		"type" : "checkbox"
-	});
-	var td3 = $("<td>").append(nullable);
-
-	var unique = $("<input>").attr({
-		"type" : "checkbox"
-	});
-	var td4 = $("<td>").append(unique);
-
-	var tr1 = $("<tr>").append(td1).append(td2).append(td3).append(td4);
-	this.typeFormBody = $("<tbody>").append(tr1);
-
-	var table = $("<table>").addClass("table").addClass("text-center").append(thd).append(this.typeFormBody);
-	var addBtn = $("<input>").addClass("gitbuilder-createlayer-addattr").addClass("btn").addClass("btn-default").attr({
-		"type" : "button",
-		"value" : "Add Attribute"
-	}).on("click", function() {
-		console.log("attr");
-		var key = $("<input>").addClass("form-control").attr({
-			"type" : "text"
-		});
-		var td1 = $("<td>").append(key);
-
-		var opt1 = $("<option>").text("Integer");
-		var opt2 = $("<option>").text("Double");
-		var opt3 = $("<option>").text("String");
-		var opt4 = $("<option>").text("Date");
-		var opt5 = $("<option>").text("Boolean");
-		var type = $("<select>").addClass("form-control").append(opt1).append(opt2).append(opt3).append(opt4).append(opt5);
-		var td2 = $("<td>").append(type);
-
-		var nullable = $("<input>").attr({
-			"type" : "checkbox"
-		});
-		var td3 = $("<td>").append(nullable);
-
-		var unique = $("<input>").attr({
-			"type" : "checkbox"
-		});
-		var td4 = $("<td>").append(unique);
-		var tr1 = $("<tr>").append(td1).append(td2).append(td3).append(td4);
-		$(that.typeFormBody).append(tr1);
-	});
-	$(this.attrForm).empty();
-	var tp = $("<p>").text("Attribute");
-	$(this.attrForm).append(tp).append(table).append(addBtn);
-};
-gb.geoserver.CreateLayer.prototype.initExpertForm = function() {
-	var that = this;
-	var htd1 = $("<td>").text("Version");
-	var htd2 = $("<td>").text("Dimension");
-	var htd3 = $("<td>").text("Represent");
-	var thd = $("<thead>").append(htd1).append(htd2).append(htd3);
-
-	var veropt1 = $("<option>").text("1");
-	var veropt2 = $("<option>").text("2");
-	this.ver = $("<select>").addClass("form-control").append(veropt1).append(veropt2).val("2");
-	var td1 = $("<td>").append(this.ver);
-
-	var dimopt1 = $("<option>").text("2");
-	var dimopt2 = $("<option>").text("3");
-	this.dim = $("<select>").addClass("form-control").append(dimopt1).append(dimopt2).val("2");
-	var td2 = $("<td>").append(this.dim);
-
-	this.rep = $("<input>").addClass("form-control").attr({
-		"type" : "text"
-	}).val("255;0;102");
-	var td3 = $("<td>").append(this.rep);
-
-	var tr1 = $("<tr>").append(td1).append(td2).append(td3);
-
-	this.expertFormBody = $("<tbody>").append(tr1);
-
-	var table = $("<table>").addClass("table").addClass("text-center").append(thd).append(this.expertFormBody);
-
-	var htd12 = $("<td>").text("MinX");
-	var htd22 = $("<td>").text("MinY");
-	var htd32 = $("<td>").text("MaxX");
-	var htd42 = $("<td>").text("MaxY");
-	var thd2 = $("<thead>").append(htd12).append(htd22).append(htd32).append(htd42);
-
-	this.minx = $("<input>").addClass("form-control").attr({
-		"type" : "text"
-	}).val("-219825.99");
-	var td12 = $("<td>").append(this.minx);
-	this.miny = $("<input>").addClass("form-control").attr({
-		"type" : "text"
-	}).val("-435028.96");
-	var td22 = $("<td>").append(this.miny);
-	this.maxx = $("<input>").addClass("form-control").attr({
-		"type" : "text"
-	}).val("819486.07");
-	var td32 = $("<td>").append(this.maxx);
-	this.maxy = $("<input>").addClass("form-control").attr({
-		"type" : "text"
-	}).val("877525.22");
-	var td42 = $("<td>").append(this.maxy);
-
-	var tr12 = $("<tr>").append(td12).append(td22).append(td32).append(td42);
-
-	this.expertFormBodyUnder = $("<tbody>").append(tr12);
-
-	var table2 = $("<table>").addClass("table").addClass("text-center").append(thd2).append(this.expertFormBodyUnder);
-
-	$(this.expertForm).empty();
-	var tp = $("<p>").text("NGI Setting");
-	$(this.expertForm).append(tp).append(table).append(table2);
-};
-gb.geoserver.CreateLayer.prototype.getDefinitionForm = function() {
-	var opt = {
-		"layer" : {}
-	};
-	if (this.type === "mapsheet") {
-		opt.layer[this.format] = {};
-		opt.layer[this.format][$(this.sheetNumInput).val()] = {};
-		if ($(this.sheetNumInput).val().replace(/(\s*)/g, '') === "") {
-			console.error("no mapsheet number");
-			return;
-		}
-		opt.layer[this.format][$(this.sheetNumInput).val()]["create"] = [];
-		var layerObj = {
-			"layerName" : "default",
-			"layerType" : "Point"
-		};
-		opt.layer[this.format][$(this.sheetNumInput).val()]["create"].push(layerObj);
-		if (this.format === "ngi") {
-			var attr = {
-				"fieldName" : "UFID",
-				"type" : "String",
-				"decimal" : null,
-				"size" : 256,
-				"isUnique" : true
+			if (data.length !== 1) {
+				return;
 			}
-			layerObj["attr"] = [ attr ];
-			layerObj["version"] = 2;
-			layerObj["dim"] = 2;
-			layerObj["bound"] = [ [ 122.6019287109375, 49.73690656023088 ], [ 122.14874267578125, 49.40918616182351 ] ];
-			layerObj["represent"] = "255;0;102";
-		}
-	} else if (this.type === "layer") {
-		opt.layer[this.format] = {};
-		if ($(this.sheetNumInput).val().replace(/(\s*)/g, '') === "") {
-			console.error("no mapsheet number");
-			return;
-		}
-		opt.layer[this.format][$(this.sheetNumInput).val()] = {};
-		opt.layer[this.format][$(this.sheetNumInput).val()]["create"] = [];
-		if ($(this.layerNameInput).val().replace(/(\s*)/g, '') === "") {
-			console.error("no layer name");
-			return;
-		}
-		var layerObj = {
-			"layerName" : $(this.layerNameInput).val(),
-			"layerType" : $(this.typeForm).find("select").val()
-		};
-		opt.layer[this.format][$(this.sheetNumInput).val()]["create"].push(layerObj);
-		var layerAttr = [];
-		if (this.format === "ngi") {
-			var attrs = $(this.attrForm).find("tr");
-			for (var i = 0; i < attrs.length; i++) {
-				if ($(attrs[i]).children().eq(0).find("input:text").val().replace(/(\s*)/g, '') === "") {
-					break;
+			var name = $("<p>").text("Name");
+			var nameInput = $("<input>").addClass("form-control").attr({
+				"type" : "text"
+			}).val(code);
+			var div1 = $("<div>").css("margin-bottom", "10px").append(name).append(nameInput);
+
+			var title = $("<p>").text("Title");
+			var titleInput = $("<input>").addClass("form-control").attr({
+				"type" : "text"
+			}).val(data[0].title);
+			var div2 = $("<div>").css("margin-bottom", "10px").append(title).append(titleInput);
+
+			var summary = $("<p>").text("Summary");
+			var summaryInput = $("<textarea>").addClass("form-control").attr({
+				"rows" : "3"
+			}).text(data[0].abstractContent);
+			var div3 = $("<div>").css("margin-bottom", "10px").append(summary).append(summaryInput);
+
+			var minBound = $("<p>").text("Minimum Boundary of Original Data");
+
+			var td1 = $("<td>").text("Min X");
+
+			var td2 = $("<td>").text("Min Y");
+
+			var td3 = $("<td>").text("Max X");
+
+			var td4 = $("<td>").text("Max Y");
+
+			var tr1 = $("<thead>").append(td1).append(td2).append(td3).append(td4);
+
+			var bminx2 = $("<input>").addClass("form-control").attr({
+				"type" : "text",
+				"disabled" : true
+			}).val(data[0].nbBox.minx);
+			var td11 = $("<td>").append(bminx2);
+
+			var bminy2 = $("<input>").addClass("form-control").attr({
+				"type" : "text",
+				"disabled" : true
+			}).val(data[0].nbBox.miny);
+			var td22 = $("<td>").append(bminy2);
+
+			var bmaxx2 = $("<input>").addClass("form-control").attr({
+				"type" : "text",
+				"disabled" : true
+			}).val(data[0].nbBox.maxx);
+			var td33 = $("<td>").append(bmaxx2);
+
+			var bmaxy2 = $("<input>").addClass("form-control").attr({
+				"type" : "text",
+				"disabled" : true
+			}).val(data[0].nbBox.maxy);
+			var td44 = $("<td>").append(bmaxy2);
+
+			var tr11 = $("<tr>").append(td11).append(td22).append(td33).append(td44);
+			var tbd = $("<tbody>").append(tr11);
+			var tb1 = $("<table>").addClass("table").addClass("text-center").append(tr1).append(tbd);
+			var div4 = $("<div>").css("margin-bottom", "10px").append(minBound).append(tb1);
+
+			var lonlatBound = $("<p>").text("Latitude / Longitude Area");
+
+			var td111 = $("<td>").text("Min X");
+
+			var td222 = $("<td>").text("Min Y");
+
+			var td333 = $("<td>").text("Max X");
+
+			var td444 = $("<td>").text("Max Y");
+
+			var tr111 = $("<thead>").append(td111).append(td222).append(td333).append(td444);
+
+			var bminx3 = $("<input>").addClass("form-control").attr({
+				"type" : "text",
+				"disabled" : true
+			}).val(data[0].llbBox.minx);
+			var td1111 = $("<td>").append(bminx3);
+
+			var bminy3 = $("<input>").addClass("form-control").attr({
+				"type" : "text",
+				"disabled" : true
+			}).val(data[0].llbBox.miny);
+			var td2222 = $("<td>").append(bminy3);
+
+			var bmaxx3 = $("<input>").addClass("form-control").attr({
+				"type" : "text",
+				"disabled" : true
+			}).val(data[0].llbBox.maxx);
+			var td3333 = $("<td>").append(bmaxx3);
+
+			var bmaxy3 = $("<input>").addClass("form-control").attr({
+				"type" : "text",
+				"disabled" : true
+			}).val(data[0].llbBox.maxy);
+			var td4444 = $("<td>").append(bmaxy3);
+
+			var tr1111 = $("<tr>").append(td1111).append(td2222).append(td3333).append(td4444);
+			var tbd2 = $("<tbody>").append(tr1111);
+			var tb2 = $("<table>").addClass("table").addClass("text-center").append(tr111).append(tbd2);
+			var div5 = $("<div>").css("margin-bottom", "10px").append(lonlatBound).append(tb2);
+
+			var attrkey = $("<p>").text("Attribute");
+			var thtd1 = $("<td>").text("Name");
+			var thtd2 = $("<td>").text("Type");
+			var thtd3 = $("<td>").text("Nullable");
+			var thead = $("<thead>").append(thtd1).append(thtd2).append(thtd3);
+			var tbody = $("<tbody>");
+			var fttb = $("<table>").addClass("table").addClass("text-center").append(thead).append(tbody);
+			var keys = Object.keys(data[0].attInfo);
+			for (var i = 0; i < keys.length; i++) {
+				var input = $("<input>").addClass("form-control").attr({
+					"type" : "text"
+				}).val(keys[i]);
+				var td1 = $("<td>").append(input);
+
+				var stritem = $("<option>").text("String");
+				var dblitem = $("<option>").text("Double");
+				var intitem = $("<option>").text("Integer");
+				var select = $("<select>").attr({
+					"disabled" : true
+				}).addClass("form-control").append(stritem).append(dblitem).append(intitem).val(data[0].attInfo[keys[i]]["type"]);
+				var td2 = $("<td>").append(select);
+
+				var check = $("<input>").attr({
+					"type" : "checkbox",
+					"disabled" : true
+				});
+				if (data[0].attInfo[keys[i]]["nillable"] === "true") {
+					$(check).prop("checked", true);
 				}
-				var attr = {
-					"fieldName" : $(attrs[i]).children().eq(0).find("input:text").val().replace(/(\s*)/g, ''),
-					"type" : $(attrs[i]).children().eq(1).find("select").val(),
-					"nullable" : $(attrs[i]).children().eq(2).find("input:checkbox").prop("checked") ? false : true,
-					"isUnique" : $(attrs[i]).children().eq(3).find("input:checkbox").prop("checked") ? true : false,
-					"decimal" : $(attrs[i]).children().eq(1).find("select").val() === "Double" ? 30 : null,
-					"size" : 256
-				};
-				layerAttr.push(attr);
+				var td3 = $("<td>").append(check);
+				var tr = $("<tr>").append(td1).append(td2).append(td3);
+				$(tbody).append(tr);
 			}
-			layerObj["attr"] = layerAttr;
-			layerObj["version"] = $(this.ver).val();
-			layerObj["dim"] = $(this.dim).val();
-			layerObj["bound"] = [ [ $(this.minx).val(), $(this.miny).val() ], [ $(this.maxx).val(), $(this.maxy).val() ] ];
-			layerObj["represent"] = $(this.rep).val();
+			var div6 = $("<div>").css("margin-bottom", "10px").append(attrkey).append(fttb);
+			$(that.body).empty();
+			$(that.body).append(div1).append(div2).append(div3).append(div4).append(div5).append(div6);
+			// $(body).addClass("modal-body");
+
+			that.open();
 		}
-	}
-	console.log(opt);
-	return opt;
+	});
 };
-gb.geoserver.CreateLayer.prototype.setUrl = function(url) {
+gb.geoserver.ModifyLayer.prototype.setUrl = function(url) {
 	if (typeof url === "string") {
 		this.url = url;
 	}
 };
-gb.geoserver.CreateLayer.prototype.getUrl = function() {
+gb.geoserver.ModifyLayer.prototype.getUrl = function() {
 	return this.url;
+};
+gb.geoserver.ModifyLayer.prototype.setName = function(name) {
+	return;
+};
+gb.geoserver.ModifyLayer.prototype.setTitle = function(title) {
+	return;
+};
+gb.geoserver.ModifyLayer.prototype.setAttributeType = function() {
+	return;
+};
+gb.geoserver.ModifyLayer.prototype.getInformationForm = function() {
+	this.body
+	return;
 };

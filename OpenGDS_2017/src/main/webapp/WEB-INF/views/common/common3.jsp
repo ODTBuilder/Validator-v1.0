@@ -118,7 +118,7 @@
 
 <%-- 레이어 정보 --%>
 <script
-	src="${pageContext.request.contextPath}/resources/js/gitbuilder/layerinformation.js"></script>
+	src="${pageContext.request.contextPath}/resources/js/gitbuilder/modifylayer.js"></script>
 
 <%-- 레이어 정보 객체--%>
 <script
