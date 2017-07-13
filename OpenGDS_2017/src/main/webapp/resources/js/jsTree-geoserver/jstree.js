@@ -8807,6 +8807,7 @@
 										|| obj.type === "n_dxf_layer_lpl" || obj.type === "n_dxf_layer_pl"
 										|| obj.type === "n_dxf_layer_txt" || obj.type === "e_dxf_layer" || obj.type === "e_ngi_layer"
 										|| obj.type === "e_shp_layer") {
+									inst._data.geoserver.layerInfo.setReference(inst);
 									inst._data.geoserver.layerInfo.load(obj.id, obj.text);
 								}
 							}
