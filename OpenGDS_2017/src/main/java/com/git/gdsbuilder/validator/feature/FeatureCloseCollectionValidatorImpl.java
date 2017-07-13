@@ -24,7 +24,7 @@ public class FeatureCloseCollectionValidatorImpl implements FeatureCloseCollecti
 	}
 
 	@Override
-	public List<ErrorFeature> ValidateCloseCollectionMatchMiss(SimpleFeature simpleFeature,
+	public List<ErrorFeature> ValidateCloseCollectionTarget(SimpleFeature simpleFeature,
 			List<SimpleFeature> relationSimpleFeatures, ValCollectionOption closeValidateOptions, LineString nearLine,
 			double tolerence) {
 
@@ -35,42 +35,74 @@ public class FeatureCloseCollectionValidatorImpl implements FeatureCloseCollecti
 		Property featuerIDPro = simpleFeature.getProperty("feature_id");
 		String featureID = (String) featuerIDPro.getValue();
 
+		if (featureID.equals("70910")) {
+			System.out.println("");
+		}
+
+		// 인접도엽 옵션객체 선언
+		boolean matchMiss = false;
+		boolean entityNone = false;
+		if (closeValidateOptions != null) {
+			Iterator<ValCollectionOptionType> typeItr = closeValidateOptions.keySet().iterator();
+
+			while (typeItr.hasNext()) {
+				String iteratorVal = typeItr.next().getTypeName();
+				if (iteratorVal.equals(ValCollectionOptionType.ENTITYNONE.getTypeName())) {
+					entityNone = (Boolean) closeValidateOptions.get(ValCollectionOptionType.ENTITYNONE);
+				}
+				if (iteratorVal.equals(ValCollectionOptionType.EDGEMATCHMISS.getTypeName())) {
+					matchMiss = (Boolean) closeValidateOptions.get(ValCollectionOptionType.EDGEMATCHMISS);
+				}
+			}
+		} else
+			return null;
+
 		Geometry targetGeometry = (Geometry) simpleFeature.getDefaultGeometry();
-		Coordinate[] tarCoors = targetGeometry.getCoordinates();
-		for (int i = 0; i < tarCoors.length; i++) {
-			Point tmpPt = geometryFactory.createPoint(tarCoors[i]);
-			double tarDist = nearLine.distance(tmpPt);
-			if (tarDist < tolerence || tarDist == tolerence) {
-				Geometry tarBuffer = tmpPt.buffer(tolerence * 2);
-				boolean isTrue = false;
-				innerFor: for (SimpleFeature relationSimpleFeature : relationSimpleFeatures) {
-					Geometry relationGeometry = (Geometry) relationSimpleFeature.getDefaultGeometry();
-					if (relationGeometry.intersects(tarBuffer)) {
-						Coordinate[] relationCoors = relationGeometry.getCoordinates();
-						Point firPt = geometryFactory.createPoint(relationCoors[0]);
-						Point lastPt = geometryFactory.createPoint(relationCoors[relationCoors.length - 1]);
-						if (firPt.distance(tmpPt) <= tolerence || lastPt.distance(tmpPt) <= tolerence) {
-							isTrue = true;
-							break innerFor;
+		if (matchMiss) {
+			Coordinate[] tarCoors = targetGeometry.getCoordinates();
+			for (int i = 0; i < tarCoors.length; i++) {
+				Point tmpPt = geometryFactory.createPoint(tarCoors[i]);
+				double tarDist = nearLine.distance(tmpPt);
+				if (tarDist < tolerence || tarDist == tolerence) {
+					Geometry tarBuffer = tmpPt.buffer(tolerence * 2);
+					boolean isTrue = false;
+					innerFor: for (SimpleFeature relationSimpleFeature : relationSimpleFeatures) {
+						Geometry relationGeometry = (Geometry) relationSimpleFeature.getDefaultGeometry();
+						if (relationGeometry.intersects(tarBuffer)) {
+							Coordinate[] relationCoors = relationGeometry.getCoordinates();
+							Point firPt = geometryFactory.createPoint(relationCoors[0]);
+							Point lastPt = geometryFactory.createPoint(relationCoors[relationCoors.length - 1]);
+							if (firPt.distance(tmpPt) <= tolerence || lastPt.distance(tmpPt) <= tolerence) {
+								isTrue = true;
+								break innerFor;
+							}
 						}
 					}
-				}
-				if (!isTrue) {
-					ErrorFeature errFeature = new ErrorFeature(featureIdx, featureID,
-							EdgeMatchMiss.Type.EDGEMATCHMISS.errType(), EdgeMatchMiss.Type.EDGEMATCHMISS.errName(),
-							tmpPt);
-					collectionErrors.add(errFeature);
+					if (!isTrue) {
+						ErrorFeature errFeature = new ErrorFeature(featureIdx, featureID,
+								EdgeMatchMiss.Type.EDGEMATCHMISS.errType(), EdgeMatchMiss.Type.EDGEMATCHMISS.errName(),
+								tmpPt);
+						collectionErrors.add(errFeature);
+					}
 				}
 			}
 		}
-
 		return collectionErrors;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.git.gdsbuilder.validator.feature.FeatureCloseCollectionValidator#
+	 * ValidateCloseCollectionRelation(org.opengis.feature.simple.SimpleFeature,
+	 * java.util.List,
+	 * com.git.gdsbuilder.validator.collection.opt.ValCollectionOption,
+	 * com.vividsolutions.jts.geom.LineString, double)
+	 */
 	@Override
-	public List<ErrorFeature> ValidateCloseCollectionEntityNone(SimpleFeature targetFeature,
-			List<SimpleFeature> topFeatureList, ValCollectionOption closeValidateOptions, LineString topLineString,
-			double tolorence) {
+	public List<ErrorFeature> ValidateCloseCollectionRelation(SimpleFeature nearFeature,
+			List<SimpleFeature> targetFeatureList, LineString nearLine, double tolorence) {
 		// TODO Auto-generated method stub
 		return null;
 	}
