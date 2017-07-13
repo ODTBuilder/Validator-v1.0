@@ -211,7 +211,7 @@ public class CollectionValidator {
 		for (int i = 0; i < layerCollections.size(); i++) {
 			GeoLayerCollection collection = layerCollections.get(i);
 			String collectionName = collection.getCollectionName();
-			try {
+//			try {
 				ErrorLayer errorLayer = new ErrorLayer();
 				errorLayer.setCollectionName(collectionName);
 				errorLayer.setCollectionType(this.collectionType);
@@ -229,9 +229,9 @@ public class CollectionValidator {
 				closeCollectionValidate(types, mapSystemRule, collection, "", errorLayer);
 				errLayerList.add(errorLayer);
 				progress.put(collection.getCollectionName(), 2);
-			} catch (Exception e) {
-				progress.put(collection.getCollectionName(), 3);
-			}
+//			} catch (Exception e) {
+//				progress.put(collection.getCollectionName(), 3);
+//			}
 		}
 	}
 
@@ -774,8 +774,9 @@ public class CollectionValidator {
 									collectionOptions.putRefAttributeMissOption(colunms);
 								}
 								if (option instanceof RefZValueMiss) {
-									String colunm = ((RefZValueMiss) option).getRefZValueMissOpt(layerName);
-									collectionOptions.putRefZValueMissOption(colunm);
+									HashMap<String, List<String>> opts = ((RefZValueMiss) option).getRefZValueMissOpts();
+									List<String> colunms = opts.get(layerName);
+									collectionOptions.putRefZValueMissOption(colunms);
 								}
 								if (option instanceof EdgeMatchMiss) {
 									collectionOptions.putEdgeMatchMissOption(true);

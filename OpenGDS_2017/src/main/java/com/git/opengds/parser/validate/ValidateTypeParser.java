@@ -47,6 +47,7 @@ import com.git.gdsbuilder.type.validate.option.OutBoundary;
 import com.git.gdsbuilder.type.validate.option.OverShoot;
 import com.git.gdsbuilder.type.validate.option.PointDuplicated;
 import com.git.gdsbuilder.type.validate.option.RefAttributeMiss;
+import com.git.gdsbuilder.type.validate.option.RefZValueMiss;
 import com.git.gdsbuilder.type.validate.option.SelfEntity;
 import com.git.gdsbuilder.type.validate.option.SmallArea;
 import com.git.gdsbuilder.type.validate.option.SmallLength;
@@ -185,7 +186,7 @@ public class ValidateTypeParser {
 					optionList.add(oneAcre);
 				}
 			}
-			
+
 			if (optionName.equals(OneStage.Type.ONESTAGE.errName())) {
 				Object oneAcreObj = qaOptions.get("OneStage");
 				if (oneAcreObj == null) {
@@ -531,6 +532,24 @@ public class ValidateTypeParser {
 					}
 					ValidatorOption refAttributeMiss = new RefAttributeMiss(optMap);
 					optionList.add(refAttributeMiss);
+				}
+			}
+			if (optionName.equalsIgnoreCase(RefZValueMiss.Type.REFZVALUEMISS.errName())) {
+				Object refZvalueMissObj = qaOptions.get("RefZValueMiss");
+				if (refZvalueMissObj == null) {
+					continue;
+				} else {
+					HashMap<String, List<String>> optMap = new HashMap<String, List<String>>();
+					JSONObject refZvalueMissJSON = (JSONObject) refZvalueMissObj;
+					Iterator<String> iterator = refZvalueMissJSON.keySet().iterator();
+					while (iterator.hasNext()) {
+						String layerName = (String) iterator.next();
+						List<String> attLists = new ArrayList<String>();
+						attLists = (List<String>) refZvalueMissJSON.get(layerName);
+						optMap.put(layerName, attLists);
+					}
+					ValidatorOption refZvalueMiss = new RefZValueMiss(optMap);
+					optionList.add(refZvalueMiss);
 				}
 			}
 		}

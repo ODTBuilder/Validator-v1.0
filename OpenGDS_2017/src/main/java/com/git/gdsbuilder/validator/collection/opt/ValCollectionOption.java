@@ -38,7 +38,7 @@ public class ValCollectionOption extends HashMap<ValCollectionOptionType,Object>
 		super.put(ValCollectionOptionType.EDGEMATCHMISS, flag);
 	}
 	
-	public void putRefZValueMissOption(String colunm){
+	public void putRefZValueMissOption(List<String>  colunm){
 		super.put(ValCollectionOptionType.REFZVALUEMISS, colunm);
 	}
 	

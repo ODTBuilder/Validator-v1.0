@@ -353,9 +353,9 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 			HashMap<String, Object> dropQuery = queryManager.getQA20DropLayerQuery(type, collectionName, layerName);
 			qa20DAO.dropLayer(dropQuery);
 
-			HashMap<String, Object> metadataIdxMap = queryManager.getSelectQA20LayerMetaDataIdxQuery(collectionIdx,
+			HashMap<String, Object> metadataIdxQuery = queryManager.getSelectQA20LayerMetaDataIdxQuery(collectionIdx,
 					layerName);
-			Integer mIdx = (Integer) metadataIdxMap.get("lm_idx");
+			Integer mIdx = qa20DAO.selectQA20LayerMetadataIdx(metadataIdxQuery);
 
 			// ngi_text_represent 삭제
 			HashMap<String, Object> deleteTextRepQuery = queryManager.getDeleteTextRepresentQuery(mIdx);
