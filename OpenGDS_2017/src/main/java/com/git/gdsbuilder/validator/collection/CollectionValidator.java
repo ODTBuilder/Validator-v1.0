@@ -93,8 +93,6 @@ import com.git.gdsbuilder.validator.collection.rule.MapSystemRule;
 import com.git.gdsbuilder.validator.collection.rule.MapSystemRule.MapSystemRuleType;
 import com.git.gdsbuilder.validator.layer.LayerValidator;
 import com.git.gdsbuilder.validator.layer.LayerValidatorImpl;
-import com.vividsolutions.jts.algorithm.LineIntersector;
-import com.vividsolutions.jts.algorithm.NonRobustLineIntersector;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
@@ -218,17 +216,16 @@ public class CollectionValidator {
 				errorLayer.setCollectionType(this.collectionType);
 
 				// layerMiss 검수
-				layerMissValidate(types, collection, errorLayer);
+				/*layerMissValidate(types, collection, errorLayer);
 
 				// geometric 검수
 				geometricValidate(types, collection, errorLayer);
 
 				// attribute 검수
-				attributeValidate(types, collection, errorLayer);
+				attributeValidate(types, collection, errorLayer);*/
 
 				// 인접도엽 검수
-				// closeCollectionValidate(types, mapSystemRule, collection,
-				// "");
+				 closeCollectionValidate(types, mapSystemRule, collection,"");
 				errLayerList.add(errorLayer);
 				progress.put(collection.getCollectionName(), 2);
 			} catch (Exception e) {
