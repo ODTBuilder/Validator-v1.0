@@ -111,11 +111,12 @@ public class QA10FileFeatureParser {
 			// style = QA10FileStyleParser.parseInsertStyle(dxfEntity);
 			// gemo
 			geom = QA10FileGeomParser.parseDTPoint(dxfInsert.getPoint());
-
+			double rotate = dxfInsert.getRotate();
 			String entityID = dxfInsert.getID();
 			QA10Feature dxfFeature = new QA10Feature(entityID);
 			dxfFeature.setFeatureType(entityType);
 			dxfFeature.setGeom(geom);
+			dxfFeature.setRotate(rotate);
 			// dxfFeature.setProperties(EnDXFInsert.getProperties(style));
 			return dxfFeature;
 		} else {

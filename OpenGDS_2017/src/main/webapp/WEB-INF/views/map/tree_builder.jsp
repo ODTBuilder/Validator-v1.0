@@ -315,6 +315,7 @@ html {
 			map : map,
 			user : "admin",
 			record : record,
+			treeInstance : $('#builderClientLayer').jstreeol3(true),
 			selected : function() {
 				return $('#builderClientLayer').jstreeol3("get_selected_layer");
 			}
@@ -356,7 +357,7 @@ html {
 		});
 
 		$("#layerDefinition").layerdefinition20({
-			
+
 		});
 
 		$("#validDefinition").optiondefinition({
@@ -391,6 +392,7 @@ html {
 		$("#qaedit").qaedit({
 			map : map,
 			editingTool : $("#edit").editingtool("instance"),
+			treeInstance : $('#builderClientLayer').jstreeol3(true),
 			linkKey : "feature_idx",
 			user : "admin",
 			layersURL : 'geoserver2/getGeolayerCollectionTree.ajax',
@@ -400,12 +402,15 @@ html {
 			layerInfoURL : "geoserver2/getGeoLayerInfoList.ajax"
 		});
 
-		var layerInfo = new gb.edit.LayerInformation({
-			url : "geoserver2/getGeoLayerInfoList.ajax"
-		});
-
 		var createLayer = new gb.geoserver.CreateLayer({
-			url : undefined
+			URL : "editLayerCollection/editLayerCollection.ajax"
+		});
+		var deleteLayer = new gb.geoserver.DeleteLayer({
+			URL : "editLayerCollection/editLayerCollection.ajax"
+		});
+		var layerInfo = new gb.geoserver.ModifyLayer({
+			infoURL : "geoserver2/getGeoLayerInfoList.ajax",
+			URL : "editLayerCollection/editLayerCollection.ajax"
 		});
 		$("#builderServerLayer").jstree({
 			"core" : {
@@ -426,6 +431,7 @@ html {
 				"layerInfo" : layerInfo,
 				"layerInfoURL" : "geoserver2/getGeoLayerInfoList.ajax",
 				"createLayer" : createLayer,
+				"deleteLayer" : deleteLayer,
 				"downloadNGIDXF" : "fileExport/fileExport.ajax",
 				"downloadGeoserver" : "geoserver2/downloadRequest.do"
 			},

@@ -63,95 +63,17 @@ import com.git.opengds.parser.edit.layer.EditLayerCollectionListParser;
  * @Date 2017. 4. 18. 오후 4:08:24
  */
 public class BuilderJSONQA20Parser {
-	
-	public static Map<String, Object> parseEditLayerObj(JSONObject editLayerObj)
+
+	public static EditQA20LayerCollectionList parseEditLayerObj(JSONObject editLayerObj, String type)
 			throws FileNotFoundException, IOException, com.vividsolutions.jts.io.ParseException, SchemaException {
 
 		// layer 편집
-		Map<String, Object> editLayerListMap = new HashMap<String, Object>();
-		Iterator layerIterator = editLayerObj.keySet().iterator();
-		while (layerIterator.hasNext()) {
-			String type = (String) layerIterator.next();
-			JSONObject collectionListObj = (JSONObject) editLayerObj.get(type);
-			EditLayerCollectionListParser editLayerCollectionListParser = new EditLayerCollectionListParser(type,
-					collectionListObj);
-			EditQA20LayerCollectionList edtCollectionList = editLayerCollectionListParser.getEdtQA20CollectionList();
-			editLayerListMap.put(type, edtCollectionList);
-		}
-		return editLayerListMap;
+		JSONObject collectionListObj = (JSONObject) editLayerObj.get(type);
+		EditLayerCollectionListParser editLayerCollectionListParser = new EditLayerCollectionListParser(type,
+				collectionListObj);
+		EditQA20LayerCollectionList edtCollectionList = editLayerCollectionListParser.getEdtQA20CollectionList();
+		return edtCollectionList;
 	}
-
-	public static Map<String, Object> parseEditFeatureObj(JSONObject editFeatureObj)
-			throws com.vividsolutions.jts.io.ParseException, ParseException {
-
-		// feature 편집
-		Map<String, Object> editFeatureListMap = new HashMap<String, Object>();
-		Iterator featureIterator = editFeatureObj.keySet().iterator();
-		while (featureIterator.hasNext()) {
-			String tableName = (String) featureIterator.next();
-			String collectionType = getCollectionType(tableName);
-			String layerType = getLayerType(tableName);
-			JSONObject stateObj = (JSONObject) editFeatureObj.get(tableName);
-			Map<String, Object> editFeatureMap = new HashMap<String, Object>();
-			if (collectionType.equals("ngi")) {
-				editFeatureMap = parseNGIFeature(stateObj, layerType);
-			}
-			if (collectionType.equals("dxf")) {
-				editFeatureMap = parseDXFFeature(stateObj, layerType);
-			}
-			editFeatureListMap.put(tableName, editFeatureMap);
-		}
-		return editFeatureListMap;
-	}
-
-	public static Map<String, Object> parseDXFFeature(JSONObject stateObj, String layerType)
-			throws ParseException, com.vividsolutions.jts.io.ParseException {
-
-		JSONParser jsonParser = new JSONParser();
-
-		Map<String, Object> editFeatureMap = new HashMap<String, Object>();
-		Iterator stateIterator = stateObj.keySet().iterator();
-		while (stateIterator.hasNext()) {
-			String state = (String) stateIterator.next();
-			if (state.equals("created")) {
-				QA10FeatureList featureList = new QA10FeatureList();
-				JSONObject featuresObj = (JSONObject) stateObj.get(state);
-				JSONArray featuresArry = (JSONArray) featuresObj.get("features");
-				for (int i = 0; i < featuresArry.size(); i++) {
-					String geoStr = (String) featuresArry.get(i);
-					JSONObject featureObj = (JSONObject) jsonParser.parse(geoStr);
-					EditFeatureParser featureParser = new EditFeatureParser("dxf", featureObj, state);
-					QA10Feature feature = featureParser.getQa10Feature();
-					feature.setFeatureType(layerType);
-					featureList.add(feature);
-				}
-				editFeatureMap.put("created", featureList);
-			} else if (state.equals("modified")) {
-				QA10FeatureList featureList = new QA10FeatureList();
-				JSONObject featuresObj = (JSONObject) stateObj.get(state);
-				JSONArray featuresArry = (JSONArray) featuresObj.get("features");
-				for (int i = 0; i < featuresArry.size(); i++) {
-					String geoStr = (String) featuresArry.get(i);
-					JSONObject featureObj = (JSONObject) jsonParser.parse(geoStr);
-					EditFeatureParser featureParser = new EditFeatureParser("dxf", featureObj, state);
-					QA10Feature feature = featureParser.getQa10Feature();
-					feature.setFeatureType(layerType);
-					featureList.add(feature);
-				}
-				editFeatureMap.put("modified", featureList);
-			} else if (state.equals("removed")) {
-				List<String> featureIdList = new ArrayList<String>();
-				JSONArray featuresArr = (JSONArray) stateObj.get(state);
-				for (int i = 0; i < featuresArr.size(); i++) {
-					String featureId = (String) featuresArr.get(i);
-					featureIdList.add(featureId);
-				}
-				editFeatureMap.put("removed", featureIdList);
-			}
-		}
-		return editFeatureMap;
-	}
-
 	public static Map<String, Object> parseNGIFeature(JSONObject stateObj, String layerType)
 			throws ParseException, com.vividsolutions.jts.io.ParseException {
 
@@ -198,23 +120,5 @@ public class BuilderJSONQA20Parser {
 			}
 		}
 		return editFeatureMap;
-	}
-
-	public static String getCollectionType(String layerName) {
-
-		int firstIndex = layerName.indexOf("_");
-		String tempStr = layerName.substring(firstIndex + 1);
-		int lastIndex = tempStr.indexOf("_");
-		String layerType = tempStr.substring(0, lastIndex);
-
-		return layerType;
-	}
-
-	public static String getLayerType(String layerName) {
-
-		int firstIndex = layerName.lastIndexOf("_");
-		String layerType = layerName.substring(firstIndex + 1, layerName.length() - 1);
-
-		return layerType;
 	}
 }

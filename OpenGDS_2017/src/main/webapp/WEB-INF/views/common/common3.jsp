@@ -118,7 +118,7 @@
 
 <%-- 레이어 정보 --%>
 <script
-	src="${pageContext.request.contextPath}/resources/js/gitbuilder/layerinformation.js"></script>
+	src="${pageContext.request.contextPath}/resources/js/gitbuilder/modifylayer.js"></script>
 
 <%-- 레이어 정보 객체--%>
 <script
@@ -131,6 +131,10 @@
 <%-- 지오서버 레이어 생성--%>
 <script
 	src="${pageContext.request.contextPath}/resources/js/gitbuilder/createlayer.js"></script>
+
+<%-- 지오서버 레이어 삭제--%>
+<script
+	src="${pageContext.request.contextPath}/resources/js/gitbuilder/deletelayer.js"></script>
 
 <%-- 파일업로드 --%>
 <script src="${ctx}/resources/js/dropzone/dropzone.js"></script>

@@ -17,7 +17,6 @@
 
 package com.git.opengds.editor.service;
 
-import java.io.FileReader;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,21 +43,22 @@ public class EditServiceImpl implements EditService {
 	@Override
 	public void editLayerCollection(String editJSONStr) throws Exception {
 
-		// 옵션 넘겨 받음
-		// JSONParser jsonParser = new JSONParser();
-		// Object obj = jsonParser.parse(new FileReader("D:\\editDXFTest.txt"));
-		// JSONObject editJSONObject = (JSONObject) obj;
-
 		JSONParser jsonParser = new JSONParser();
 		JSONObject editJSONObject = (JSONObject) jsonParser.parse(editJSONStr);
 
 		// layerEdit
-//		JSONObject layerEditObj = (JSONObject) editJSONObject.get("layer");
-//		editLayerService.editLayer(layerEditObj);
+		Object layerEditObj = editJSONObject.get("layer");
+		if (layerEditObj != null) {
+			JSONObject layerEdit = (JSONObject) layerEditObj;
+			editLayerService.editLayer(layerEdit);
+		}
 
 		// featureEdit
-		JSONObject featureEditObj = (JSONObject) editJSONObject.get("feature");
-		editFeatureService.editFeature(featureEditObj);
+		Object featureEditObj = editJSONObject.get("feature");
+		if (featureEditObj != null) {
+			JSONObject featureEdit = (JSONObject) featureEditObj;
+			editFeatureService.editFeature(featureEdit);
+		}
 	}
 
 }

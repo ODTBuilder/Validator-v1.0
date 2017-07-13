@@ -7206,6 +7206,7 @@
 					this._data.geoserver.layerInfo = this.settings.geoserver.layerInfo;
 					this._data.geoserver.layerInfoURL = this.settings.geoserver.layerInfoURL;
 					this._data.geoserver.createLayer = this.settings.geoserver.createLayer;
+					this._data.geoserver.deleteLayer = this.settings.geoserver.deleteLayer;
 					this._data.geoserver.downloadNGIDXF = this.settings.geoserver.downloadNGIDXF;
 					this._data.geoserver.downloadGeoserver = this.settings.geoserver.downloadGeoserver;
 				};
@@ -8099,75 +8100,6 @@
 				 */
 				items : function(o, cb) { // Could be an object directly
 					return {
-						"create" : {
-							"separator_before" : false,
-							"icon" : "fa fa-asterisk",
-							"separator_after" : false,
-							"_disabled" : false, // (this.check("rename_node",
-							// data.reference,
-							// this.get_parent(data.reference),
-							// "")),
-							"label" : "Create",
-							/*
-							 * ! "shortcut" : 113, "shortcut_label" : 'F2',
-							 * "icon" : "glyphicon glyphicon-leaf",
-							 */
-							"action" : false,
-							"submenu" : {
-								"mapsheet" : {
-									"separator_before" : false,
-									"_disabled" : function(data) {
-										return !($.jstree.reference(data.reference).get_node(data.reference).type === "n_ngi" || $.jstree
-												.reference(data.reference).get_node(data.reference).type === "n_dxf")
-									},
-									"icon" : "fa fa-file-image-o",
-									"separator_after" : false,
-									"label" : "Map sheet",
-									"action" : function(data) {
-										var inst = $.jstree.reference(data.reference), obj = inst.get_node(data.reference);
-										if (obj.type === "n_ngi") {
-											var arr = inst.get_selected();
-											// var arr2 = [];
-											// for (var i = 0; i < arr.length;
-											// i++) {
-											// arr2.push(inst.get_node(arr[i]).id);
-											// }
-											var obj = {
-												"refer" : inst,
-												"arr" : arr
-											};
-											// inst.import_fake_group(obj);
-											console.log("map sheet");
-											inst._data.geoserver.createLayer.setForm("ngi", "mapsheet");
-											inst._data.geoserver.createLayer.open();
-										} else if (obj.type === "n_dxf") {
-											inst._data.geoserver.createLayer.setForm("dxf", "mapsheet");
-											inst._data.geoserver.createLayer.open();
-										}
-									}
-								},
-								"layer" : {
-									"separator_before" : false,
-									"_disabled" : function(data) {
-										return !($.jstree.reference(data.reference).get_node(data.reference).type === "n_ngi_group" || $.jstree
-												.reference(data.reference).get_node(data.reference).type === "n_dxf_group")
-									},
-									"icon" : "fa fa-file-image-o",
-									"separator_after" : false,
-									"label" : "Layer",
-									"action" : function(data) {
-										var inst = $.jstree.reference(data.reference), obj = inst.get_node(data.reference);
-										if (obj.type === "n_ngi_group") {
-											inst._data.geoserver.createLayer.setForm("ngi", "layer", obj.text);
-											inst._data.geoserver.createLayer.open();
-										} else if (obj.type === "n_dxf_group") {
-											inst._data.geoserver.createLayer.setForm("dxf", "layer", obj.text);
-											inst._data.geoserver.createLayer.open();
-										}
-									}
-								}
-							}
-						},
 						"import" : {
 							"separator_before" : true,
 							"icon" : "fa fa-download",
@@ -8233,6 +8165,178 @@
 										inst.import_vector();
 									}
 								}
+							}
+						},
+						"create" : {
+							"separator_before" : false,
+							"icon" : "fa fa-asterisk",
+							"separator_after" : false,
+							"_disabled" : false, // (this.check("rename_node",
+							// data.reference,
+							// this.get_parent(data.reference),
+							// "")),
+							"label" : "Create",
+							/*
+							 * ! "shortcut" : 113, "shortcut_label" : 'F2',
+							 * "icon" : "glyphicon glyphicon-leaf",
+							 */
+							"action" : false,
+							"submenu" : {
+								"mapsheet" : {
+									"separator_before" : false,
+									"_disabled" : function(data) {
+										return !($.jstree.reference(data.reference).get_node(data.reference).type === "n_ngi" || $.jstree
+												.reference(data.reference).get_node(data.reference).type === "n_dxf")
+									},
+									"icon" : "fa fa-file-image-o",
+									"separator_after" : false,
+									"label" : "Map sheet",
+									"action" : function(data) {
+										var inst = $.jstree.reference(data.reference), obj = inst.get_node(data.reference);
+										inst._data.geoserver.createLayer.setReference(inst);
+										if (obj.type === "n_ngi") {
+											var arr = inst.get_selected();
+											// var arr2 = [];
+											// for (var i = 0; i < arr.length;
+											// i++) {
+											// arr2.push(inst.get_node(arr[i]).id);
+											// }
+											var obj = {
+												"refer" : inst,
+												"arr" : arr
+											};
+											// inst.import_fake_group(obj);
+											console.log("map sheet");
+											inst._data.geoserver.createLayer.setForm("ngi", "mapsheet");
+											inst._data.geoserver.createLayer.open();
+										} else if (obj.type === "n_dxf") {
+											inst._data.geoserver.createLayer.setForm("dxf", "mapsheet");
+											inst._data.geoserver.createLayer.open();
+										}
+									}
+								},
+								"layer" : {
+									"separator_before" : false,
+									"_disabled" : function(data) {
+										return !($.jstree.reference(data.reference).get_node(data.reference).type === "n_ngi_group" || $.jstree
+												.reference(data.reference).get_node(data.reference).type === "n_dxf_group")
+									},
+									"icon" : "fa fa-file-image-o",
+									"separator_after" : false,
+									"label" : "Layer",
+									"action" : function(data) {
+										var inst = $.jstree.reference(data.reference), obj = inst.get_node(data.reference);
+										inst._data.geoserver.createLayer.setReference(inst);
+										if (obj.type === "n_ngi_group") {
+											inst._data.geoserver.createLayer.setForm("ngi", "layer", obj.text);
+											inst._data.geoserver.createLayer.open();
+										} else if (obj.type === "n_dxf_group") {
+											inst._data.geoserver.createLayer.setForm("dxf", "layer", obj.text);
+											inst._data.geoserver.createLayer.open();
+										}
+									}
+								}
+							}
+						},
+						"delete" : {
+							"separator_before" : false,
+							"icon" : "fa fa-trash",
+							"separator_after" : false,
+							"_disabled" : false, // (this.check("rename_node",
+							// data.reference,
+							// this.get_parent(data.reference),
+							// "")),
+							"label" : "Delete",
+							/*
+							 * ! "shortcut" : 113, "shortcut_label" : 'F2',
+							 * "icon" : "glyphicon glyphicon-leaf",
+							 */
+							"action" : function(data) {
+								var inst = $.jstree.reference(data.reference), obj = inst.get_node(data.reference);
+								var getPosition = function(str, subString, index) {
+									return str.split(subString, index).join(subString).length;
+								}
+								var arr = inst.get_selected();
+								var sameGroupParentDXF = {};
+								var sameGroupParentNGI = {};
+								var sameParent = [];
+								for (var i = 0; i < arr.length; i++) {
+									var node = inst.get_node(arr[i]);
+									var parent = inst.get_node(node.parent);
+									if (parent.type === "n_ngi_group") {
+										if (!sameGroupParentNGI.hasOwnProperty(parent.id)) {
+											sameGroupParentNGI[parent.id] = {};
+										}
+										sameGroupParentNGI[parent.id][node.id] = node;
+									} else if (parent.type === "n_dxf_group") {
+										if (!sameGroupParentDXF.hasOwnProperty(parent.id)) {
+											sameGroupParentDXF[parent.id] = {};
+										}
+										sameGroupParentDXF[parent.id][node.id] = node;
+									} else if (parent.type === "n_ngi") {
+										var children = node.children;
+										var substr = [];
+										for (var i = 0; i < children.length; i++) {
+											var position = getPosition(children[i], "_", 3);
+											substr.push(node.children[i].substring(position + 1));
+										}
+										inst._data.geoserver.deleteLayer.addStructure("ngi", node.text, "all", substr);
+									} else if (parent.type === "n_dxf") {
+										var children = node.children;
+										var substr = [];
+										for (var i = 0; i < children.length; i++) {
+											var position = getPosition(children[i], "_", 3);
+											substr.push(node.children[i].substring(position + 1));
+										}
+										inst._data.geoserver.deleteLayer.addStructure("dxf", node.text, "all", substr);
+									}
+									// else if (parent.type === "n_shp" ||
+									// parent.type === "e_ngi" || parent.type
+									// === "e_dxf"
+									// || parent.type === "e_shp") {
+									// sameParent.push(node);
+									// }
+								}
+
+								if (sameParent.length > 0) {
+									var part = [];
+									for (var j = 0; j < sameParent.length; j++) {
+										part.push(sameParent[j].id);
+									}
+									inst._data.geoserver.deleteLayer.addStructure("part", part);
+								}
+								var pkeys = Object.keys(sameGroupParentNGI);
+								if (pkeys.length > 0) {
+									for (var i = 0; i < pkeys.length; i++) {
+										var parent = inst.get_node(pkeys[i]);
+										var group = [];
+										var ckeys = Object.keys(sameGroupParentNGI[pkeys[i]]);
+										for (var j = 0; j < ckeys.length; j++) {
+											var position = getPosition(ckeys[j], "_", 3);
+											group.push(ckeys[j].substring(position + 1));
+										}
+										inst._data.geoserver.deleteLayer.addStructure("ngi", parent.text, Object
+												.keys(sameGroupParentNGI[pkeys[i]]).length === parent.children.length ? "all" : "part",
+												group);
+									}
+								}
+								pkeys = Object.keys(sameGroupParentDXF);
+								if (pkeys.length > 0) {
+									for (var i = 0; i < pkeys.length; i++) {
+										var parent = inst.get_node(pkeys[i]);
+										var group = [];
+										var ckeys = Object.keys(sameGroupParentDXF[pkeys[i]]);
+										for (var j = 0; j < ckeys.length; j++) {
+											var position = getPosition(ckeys[j], "_", 3);
+											group.push(ckeys[j].substring(position + 1));
+										}
+										inst._data.geoserver.deleteLayer.addStructure("dxf", parent.text, Object
+												.keys(sameGroupParentDXF[pkeys[i]]).length === parent.children.length ? "all" : "part",
+												group);
+									}
+								}
+								console.log(inst._data.geoserver.deleteLayer.getStructure());
+								inst._data.geoserver.deleteLayer.save(inst._data.geoserver.deleteLayer.getStructure());
 							}
 						},
 						"download" : {
@@ -8697,8 +8801,15 @@
 							 */
 							"action" : function(data) {
 								var inst = $.jstree.reference(data.reference), obj = inst.get_node(data.reference);
-								inst._data.geoserver.layerInfo.load(obj.id, obj.text);
-								// console.log("Not yet(layer info)");
+								if (obj.type === "n_ngi_layer_pt" || obj.type === "n_ngi_layer_ln" || obj.type === "n_ngi_layer_pg"
+										|| obj.type === "n_ngi_layer_txt" || obj.type === "n_dxf_layer_arc"
+										|| obj.type === "n_dxf_layer_cir" || obj.type === "n_dxf_layer_ins"
+										|| obj.type === "n_dxf_layer_lpl" || obj.type === "n_dxf_layer_pl"
+										|| obj.type === "n_dxf_layer_txt" || obj.type === "e_dxf_layer" || obj.type === "e_ngi_layer"
+										|| obj.type === "e_shp_layer") {
+									inst._data.geoserver.layerInfo.setReference(inst);
+									inst._data.geoserver.layerInfo.load(obj.id, obj.text);
+								}
 							}
 						}
 					};

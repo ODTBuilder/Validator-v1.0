@@ -41,6 +41,8 @@ import com.git.gdsbuilder.type.validate.option.EntityDuplicated;
 import com.git.gdsbuilder.type.validate.option.EntityNone;
 import com.git.gdsbuilder.type.validate.option.LayerMiss;
 import com.git.gdsbuilder.type.validate.option.NodeMiss;
+import com.git.gdsbuilder.type.validate.option.OneAcre;
+import com.git.gdsbuilder.type.validate.option.OneStage;
 import com.git.gdsbuilder.type.validate.option.OutBoundary;
 import com.git.gdsbuilder.type.validate.option.OverShoot;
 import com.git.gdsbuilder.type.validate.option.PointDuplicated;
@@ -163,10 +165,46 @@ public class ValidateTypeParser {
 
 		Iterator optionNames = qaOptions.keySet().iterator();
 
-		//TwistedPolygon twistedPolygon = new TwistedPolygon();
+		// TwistedPolygon twistedPolygon = new TwistedPolygon();
 
 		while (optionNames.hasNext()) {
 			String optionName = (String) optionNames.next();
+			if (optionName.equals(OneAcre.Type.ONEACRE.errName())) {
+				Object oneAcreObj = qaOptions.get("OneAcre");
+				if (oneAcreObj == null) {
+					continue;
+				} else {
+					List<String> relations = new ArrayList<String>();
+					JSONObject oneAcreValue = (JSONObject) oneAcreObj;
+					JSONArray relationValues = (JSONArray) oneAcreValue.get("relation");
+					int valueSize = relationValues.size();
+					for (int i = 0; i < valueSize; i++) {
+						String relationID = (String) relationValues.get(i);
+						relations.add(relationID);
+					}
+					ValidatorOption oneAcre = new OneAcre(relations);
+					optionList.add(oneAcre);
+				}
+			}
+
+			if (optionName.equals(OneStage.Type.ONESTAGE.errName())) {
+				Object oneAcreObj = qaOptions.get("OneStage");
+				if (oneAcreObj == null) {
+					continue;
+				} else {
+					List<String> relations = new ArrayList<String>();
+					JSONObject oneAcreValue = (JSONObject) oneAcreObj;
+					JSONArray relationValues = (JSONArray) oneAcreValue.get("relation");
+					int valueSize = relationValues.size();
+					for (int i = 0; i < valueSize; i++) {
+						String relationID = (String) relationValues.get(i);
+						relations.add(relationID);
+					}
+					ValidatorOption oneStage = new OneStage(relations);
+					optionList.add(oneStage);
+				}
+			}
+
 			if (optionName.equalsIgnoreCase(ConBreak.Type.CONBREAK.errName())) {
 				Boolean isTrue = (Boolean) qaOptions.get("ConBreak");
 				if (isTrue) {
@@ -193,15 +231,15 @@ public class ValidateTypeParser {
 					optionList.add(conOverDegree);
 				}
 			}
-			if(optionName.equalsIgnoreCase(ZValueAmbiguous.Type.ZVALUEAMBIGUOUS.errName())){
+			if (optionName.equalsIgnoreCase(ZValueAmbiguous.Type.ZVALUEAMBIGUOUS.errName())) {
 				Object z_Value = qaOptions.get("ZValueAmbiguous");
-				if(z_Value == null){
+				if (z_Value == null) {
 					continue;
-				}else{
+				} else {
 					HashMap<String, Object> hashMap = new HashMap<String, Object>();
 					JSONObject zvalueJsonObj = (JSONObject) z_Value;
 					Iterator iterator = zvalueJsonObj.keySet().iterator();
-					while(iterator.hasNext()){
+					while (iterator.hasNext()) {
 						String layerName = (String) iterator.next();
 						JSONObject zValueObj = (JSONObject) zvalueJsonObj.get(layerName);
 						hashMap.put(layerName, zValueObj);
@@ -307,11 +345,11 @@ public class ValidateTypeParser {
 				}
 
 			}
-			if(optionName.equalsIgnoreCase(LayerMiss.Type.LAYERMISS.errName())){
+			if (optionName.equalsIgnoreCase(LayerMiss.Type.LAYERMISS.errName())) {
 				Object layerMissObj = qaOptions.get("LayerMiss");
-				if(layerMissObj == null){
+				if (layerMissObj == null) {
 					continue;
-				}else{
+				} else {
 					List<String> layerType = new ArrayList<String>();
 					JSONArray layerMissValue = (JSONArray) layerMissObj;
 					int valueSize = layerMissValue.size();
@@ -324,33 +362,33 @@ public class ValidateTypeParser {
 
 				}
 			}
-			if(optionName.equalsIgnoreCase(UselessEntity.Type.USELESSENTITY.errName())){
+			if (optionName.equalsIgnoreCase(UselessEntity.Type.USELESSENTITY.errName())) {
 				Boolean isTrue = (Boolean) qaOptions.get("UselessEntity");
-				if(isTrue){
+				if (isTrue) {
 					UselessEntity uselessEntity = new UselessEntity();
 					optionList.add(uselessEntity);
 				}
 			}
-			if(optionName.equalsIgnoreCase(BuildingOpen.Type.BUILDINGOPEN.errName())){
+			if (optionName.equalsIgnoreCase(BuildingOpen.Type.BUILDINGOPEN.errName())) {
 				Boolean isTrue = (Boolean) qaOptions.get("BuildingOpen");
-				if(isTrue){
+				if (isTrue) {
 					BuildingOpen buildingOpen = new BuildingOpen();
-					optionList.add(buildingOpen);				
+					optionList.add(buildingOpen);
 				}
 			}
-			if(optionName.equalsIgnoreCase(WaterOpen.Type.WATEROPEN.errName())){
+			if (optionName.equalsIgnoreCase(WaterOpen.Type.WATEROPEN.errName())) {
 				Boolean isTrue = (Boolean) qaOptions.get("WaterOpen");
-				if(isTrue){
+				if (isTrue) {
 					WaterOpen waterOpen = new WaterOpen();
 					optionList.add(waterOpen);
 				}
 			}
 
-			if(optionName.equalsIgnoreCase(B_SymbolOutSided.Type.B_SYMBOLOUTSIDED.errName())){
+			if (optionName.equalsIgnoreCase(B_SymbolOutSided.Type.B_SYMBOLOUTSIDED.errName())) {
 				Object b_SymbolOutSidedObj = qaOptions.get("B_SymbolOutSided");
-				if(b_SymbolOutSidedObj == null){
+				if (b_SymbolOutSidedObj == null) {
 					continue;
-				}else{
+				} else {
 					List<String> relations = new ArrayList<String>();
 					JSONObject b_SymbolOutSidedValue = (JSONObject) b_SymbolOutSidedObj;
 					JSONArray relationValues = (JSONArray) b_SymbolOutSidedValue.get("relation");
@@ -372,11 +410,11 @@ public class ValidateTypeParser {
 				}
 			}
 
-			if(optionName.equalsIgnoreCase(CrossRoad.Type.CROSSROAD.errName())){
+			if (optionName.equalsIgnoreCase(CrossRoad.Type.CROSSROAD.errName())) {
 				Object crossRoadObj = qaOptions.get("CrossRoad");
-				if(crossRoadObj == null){
+				if (crossRoadObj == null) {
 					continue;
-				}else{
+				} else {
 					List<String> relations = new ArrayList<String>();
 					JSONObject crossRoadValue = (JSONObject) crossRoadObj;
 					JSONArray relationValues = (JSONArray) crossRoadValue.get("relation");
@@ -389,11 +427,11 @@ public class ValidateTypeParser {
 					optionList.add(crossRoad);
 				}
 			}
-			if(optionName.equalsIgnoreCase(BridgeName.Type.BRIDGENAME.errName())){
+			if (optionName.equalsIgnoreCase(BridgeName.Type.BRIDGENAME.errName())) {
 				Object bridgeNameObj = qaOptions.get("BridgeName");
-				if(bridgeNameObj == null){
+				if (bridgeNameObj == null) {
 					continue;
-				}else{
+				} else {
 					List<String> relations = new ArrayList<String>();
 					JSONObject bridgeNameValue = (JSONObject) bridgeNameObj;
 					JSONArray relationValues = (JSONArray) bridgeNameValue.get("relation");
@@ -413,11 +451,11 @@ public class ValidateTypeParser {
 					optionList.add(admin);
 				}
 			}
-			if (optionName.equalsIgnoreCase(AttributeFix.Type.ATTRIBUTEFIX.errName())){
+			if (optionName.equalsIgnoreCase(AttributeFix.Type.ATTRIBUTEFIX.errName())) {
 				Object attributeFixObj = qaOptions.get("AttributeFix");
-				if(attributeFixObj == null){
+				if (attributeFixObj == null) {
 					continue;
-				}else{
+				} else {
 					HashMap<String, Object> hashMap = new HashMap<String, Object>();
 					JSONObject attributeFixValue = (JSONObject) attributeFixObj;
 					Iterator iterator = attributeFixValue.keySet().iterator();
@@ -431,11 +469,11 @@ public class ValidateTypeParser {
 				}
 			}
 
-			if(optionName.equalsIgnoreCase(NodeMiss.Type.NODEMISS.errName())){
+			if (optionName.equalsIgnoreCase(NodeMiss.Type.NODEMISS.errName())) {
 				Object nodeMissObj = qaOptions.get("NodeMiss");
-				if(nodeMissObj == null){
+				if (nodeMissObj == null) {
 					continue;
-				}else{
+				} else {
 					List<String> relations = new ArrayList<String>();
 					JSONObject nodeMissValue = (JSONObject) nodeMissObj;
 					JSONArray relationValues = (JSONArray) nodeMissValue.get("relation");
@@ -448,14 +486,14 @@ public class ValidateTypeParser {
 					optionList.add(nodeMiss);
 				}
 			}
-			if(optionName.equalsIgnoreCase(EntityNone.Type.ENTITYNONE.errName())){
+			if (optionName.equalsIgnoreCase(EntityNone.Type.ENTITYNONE.errName())) {
 				Boolean isTrue = (Boolean) qaOptions.get("EntityNone");
 				if (isTrue) {
 					EntityNone entityNone = new EntityNone();
 					optionList.add(entityNone);
 				}
 			}
-			
+
 			if (optionName.equalsIgnoreCase(EdgeMatchMiss.Type.EDGEMATCHMISS.errName())) {
 				Boolean isTrue = (Boolean) qaOptions.get("EdgeMatchMiss");
 				if (isTrue) {
@@ -463,27 +501,22 @@ public class ValidateTypeParser {
 					optionList.add(edgeMatchMiss);
 				}
 			}
-			
-			/*if(optionName.equalsIgnoreCase(RefZValueMiss.Type.REFZVALUEMISS.errName())){
-				Object refZValueMissObj = qaOptions.get("RefZValueMiss");
-				if (refZValueMissObj == null) {
-					continue;
-				} else {
-					HashMap<String, String> optMap = new HashMap<String, String>();
-					JSONObject refZValueMissJSON = (JSONObject) refZValueMissObj;
-					Iterator iterator = refZValueMissJSON.keySet().iterator();
-					while(iterator.hasNext()){
-						String layerName = (String) iterator.next();
-						String attValue = "";
-						attValue = (String) refZValueMissJSON.get(layerName);
-						optMap.put(layerName, attValue);
-					}
-					ValidatorOption refZValueMiss = new RefZValueMiss(optMap);
-					optionList.add(refZValueMiss);
-				}
-			}*/
 
-			if(optionName.equalsIgnoreCase(RefAttributeMiss.Type.RefAttributeMiss.errName())){
+			/*
+			 * if(optionName.equalsIgnoreCase(RefZValueMiss.Type.REFZVALUEMISS.
+			 * errName())){ Object refZValueMissObj =
+			 * qaOptions.get("RefZValueMiss"); if (refZValueMissObj == null) {
+			 * continue; } else { HashMap<String, String> optMap = new
+			 * HashMap<String, String>(); JSONObject refZValueMissJSON =
+			 * (JSONObject) refZValueMissObj; Iterator iterator =
+			 * refZValueMissJSON.keySet().iterator(); while(iterator.hasNext()){
+			 * String layerName = (String) iterator.next(); String attValue =
+			 * ""; attValue = (String) refZValueMissJSON.get(layerName);
+			 * optMap.put(layerName, attValue); } ValidatorOption refZValueMiss
+			 * = new RefZValueMiss(optMap); optionList.add(refZValueMiss); } }
+			 */
+
+			if (optionName.equalsIgnoreCase(RefAttributeMiss.Type.RefAttributeMiss.errName())) {
 				Object refAttributeMissObj = qaOptions.get("RefAttributeMiss");
 				if (refAttributeMissObj == null) {
 					continue;
@@ -491,7 +524,7 @@ public class ValidateTypeParser {
 					HashMap<String, List<String>> optMap = new HashMap<String, List<String>>();
 					JSONObject refAttributeMissJSON = (JSONObject) refAttributeMissObj;
 					Iterator<String> iterator = refAttributeMissJSON.keySet().iterator();
-					while(iterator.hasNext()){
+					while (iterator.hasNext()) {
 						String layerName = (String) iterator.next();
 						List<String> attLists = new ArrayList<String>();
 						attLists = (List<String>) refAttributeMissJSON.get(layerName);
@@ -499,6 +532,24 @@ public class ValidateTypeParser {
 					}
 					ValidatorOption refAttributeMiss = new RefAttributeMiss(optMap);
 					optionList.add(refAttributeMiss);
+				}
+			}
+			if (optionName.equalsIgnoreCase(RefZValueMiss.Type.REFZVALUEMISS.errName())) {
+				Object refZvalueMissObj = qaOptions.get("RefZValueMiss");
+				if (refZvalueMissObj == null) {
+					continue;
+				} else {
+					HashMap<String, List<String>> optMap = new HashMap<String, List<String>>();
+					JSONObject refZvalueMissJSON = (JSONObject) refZvalueMissObj;
+					Iterator<String> iterator = refZvalueMissJSON.keySet().iterator();
+					while (iterator.hasNext()) {
+						String layerName = (String) iterator.next();
+						List<String> attLists = new ArrayList<String>();
+						attLists = (List<String>) refZvalueMissJSON.get(layerName);
+						optMap.put(layerName, attLists);
+					}
+					ValidatorOption refZvalueMiss = new RefZValueMiss(optMap);
+					optionList.add(refZvalueMiss);
 				}
 			}
 		}
