@@ -24,7 +24,7 @@ public class FeatureCloseCollectionValidatorImpl implements FeatureCloseCollecti
 	}
 
 	@Override
-	public List<ErrorFeature> ValidateCloseCollection(SimpleFeature simpleFeature,
+	public List<ErrorFeature> ValidateCloseCollectionMatchMiss(SimpleFeature simpleFeature,
 			List<SimpleFeature> relationSimpleFeatures, ValCollectionOption closeValidateOptions, LineString nearLine,
 			double tolerence) {
 
@@ -34,24 +34,6 @@ public class FeatureCloseCollectionValidatorImpl implements FeatureCloseCollecti
 		String featureIdx = simpleFeature.getID();
 		Property featuerIDPro = simpleFeature.getProperty("feature_id");
 		String featureID = (String) featuerIDPro.getValue();
-
-		if (featureID.equals("70910")) {
-			System.out.println("");
-		}
-
-		// 인접도엽 옵션객체 선언
-		boolean matchMiss = false;
-		if (closeValidateOptions != null) {
-			Iterator<ValCollectionOptionType> typeItr = closeValidateOptions.keySet().iterator();
-
-			while (typeItr.hasNext()) {
-				String iteratorVal = typeItr.next().getTypeName();
-				if (iteratorVal.equals(ValCollectionOptionType.EDGEMATCHMISS.getTypeName())) {
-					matchMiss = (Boolean) closeValidateOptions.get(ValCollectionOptionType.EDGEMATCHMISS);
-				}
-			}
-		} else
-			return null;
 
 		Geometry targetGeometry = (Geometry) simpleFeature.getDefaultGeometry();
 		Coordinate[] tarCoors = targetGeometry.getCoordinates();
@@ -81,6 +63,15 @@ public class FeatureCloseCollectionValidatorImpl implements FeatureCloseCollecti
 				}
 			}
 		}
+
 		return collectionErrors;
+	}
+
+	@Override
+	public List<ErrorFeature> ValidateCloseCollectionEntityNone(SimpleFeature targetFeature,
+			List<SimpleFeature> topFeatureList, ValCollectionOption closeValidateOptions, LineString topLineString,
+			double tolorence) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

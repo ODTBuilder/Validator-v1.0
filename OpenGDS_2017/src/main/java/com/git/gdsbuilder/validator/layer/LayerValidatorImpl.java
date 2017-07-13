@@ -36,6 +36,7 @@ package com.git.gdsbuilder.validator.layer;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -61,6 +62,7 @@ import com.git.gdsbuilder.type.validate.collection.close.ValidateCloseCollection
 import com.git.gdsbuilder.type.validate.error.ErrorFeature;
 import com.git.gdsbuilder.type.validate.error.ErrorLayer;
 import com.git.gdsbuilder.validator.collection.opt.ValCollectionOption;
+import com.git.gdsbuilder.validator.collection.opt.ValCollectionOption.ValCollectionOptionType;
 import com.git.gdsbuilder.validator.collection.rule.MapSystemRule.MapSystemRuleType;
 import com.git.gdsbuilder.validator.feature.FeatureAttributeValidator;
 import com.git.gdsbuilder.validator.feature.FeatureAttributeValidatorImpl;
@@ -1035,6 +1037,34 @@ public class LayerValidatorImpl implements LayerValidator {
 				List<SimpleFeature> nearLeftFeatureList = new ArrayList<SimpleFeature>();
 				List<SimpleFeature> nearRightFeatureList = new ArrayList<SimpleFeature>();
 
+				// 인접도엽 옵션객체 선언
+				boolean matchMiss = false;
+				boolean entityNone = false;
+				String refZValueMiss = "";
+				List<String> refAttributeMiss = null;
+				if (closeValidateOptions != null) {
+					Iterator<ValCollectionOptionType> typeItr = closeValidateOptions.keySet().iterator();
+
+					while (typeItr.hasNext()) {
+						String iteratorVal = typeItr.next().getTypeName();
+						if (iteratorVal.equals(ValCollectionOptionType.ENTITYNONE.getTypeName())) {
+							entityNone = (Boolean) closeValidateOptions.get(ValCollectionOptionType.ENTITYNONE);
+						}
+						if (iteratorVal.equals(ValCollectionOptionType.EDGEMATCHMISS.getTypeName())) {
+							matchMiss = (Boolean) closeValidateOptions.get(ValCollectionOptionType.EDGEMATCHMISS);
+						}
+						if(iteratorVal.equals(ValCollectionOptionType.REFZVALUEMISS.getTypeName())){
+							refZValueMiss = (String)
+									closeValidateOptions.get(ValCollectionOptionType.REFZVALUEMISS);
+						}
+						if(iteratorVal.equals(ValCollectionOptionType.REFATTRIBUTEMISS.getTypeName())){
+							refAttributeMiss = (List<String>) closeValidateOptions
+									.get(ValCollectionOptionType.REFATTRIBUTEMISS);
+						}
+					}
+				} else
+					return null;
+
 				// 대상도엽, 인접도엽 Tolorence 영역내 FeatureList GET
 				if (topGeoLayer != null) {
 					Filter topFilter = ff.intersects(ff.property(geomColunm), ff.literal(topPolygon));
@@ -1056,15 +1086,54 @@ public class LayerValidatorImpl implements LayerValidator {
 						nearTopFeatureList.add(nearTopFeatureIterator.next());
 					}
 
-					List<ErrorFeature> errorFeatures = new ArrayList<ErrorFeature>();
-					for (SimpleFeature targetFeature : topFeatureList) {
-						errorFeatures = closeCollectionValidator.ValidateCloseCollection(targetFeature,
-								nearTopFeatureList, closeValidateOptions, topLineString, tolorence);
-						for (ErrorFeature errorFeature : errorFeatures) {
-							errorFeature.setLayerName(validatorLayer.getLayerName());
-							errorLayer.addErrorFeature(errorFeature);
+					if (matchMiss) {
+						List<ErrorFeature> errorFeatures = new ArrayList<ErrorFeature>();
+						for (SimpleFeature targetFeature : topFeatureList) {
+							errorFeatures = closeCollectionValidator.ValidateCloseCollectionMatchMiss(targetFeature,
+									nearTopFeatureList, closeValidateOptions, topLineString, tolorence);
+							for (ErrorFeature errorFeature : errorFeatures) {
+								errorFeature.setLayerName(validatorLayer.getLayerName());
+								errorLayer.addErrorFeature(errorFeature);
+							}
 						}
 					}
+					if (entityNone) {
+						List<ErrorFeature> errorFeatures = new ArrayList<ErrorFeature>();
+						for (SimpleFeature targetFeature : nearTopFeatureList) {
+							errorFeatures = closeCollectionValidator.ValidateCloseCollectionEntityNone(targetFeature,
+									topFeatureList, closeValidateOptions, topLineString, tolorence);
+							for (ErrorFeature errorFeature : errorFeatures) {
+								errorFeature.setLayerName(validatorLayer.getLayerName());
+								errorLayer.addErrorFeature(errorFeature);
+							}
+						}
+
+					}
+					
+					if (!refZValueMiss.equals("")) {
+						List<ErrorFeature> errorFeatures = new ArrayList<ErrorFeature>();
+						for (SimpleFeature targetFeature : topFeatureList) {
+							errorFeatures = closeCollectionValidator.ValidateCloseCollectionMatchMiss(targetFeature,
+									nearTopFeatureList, closeValidateOptions, topLineString, tolorence);
+							for (ErrorFeature errorFeature : errorFeatures) {
+								errorFeature.setLayerName(validatorLayer.getLayerName());
+								errorLayer.addErrorFeature(errorFeature);
+							}
+						}
+					}
+					
+					if(refAttributeMiss != null){
+						List<ErrorFeature> errorFeatures = new ArrayList<ErrorFeature>();
+						for (SimpleFeature targetFeature : topFeatureList) {
+							errorFeatures = closeCollectionValidator.ValidateCloseCollectionMatchMiss(targetFeature,
+									nearTopFeatureList, closeValidateOptions, topLineString, tolorence);
+							for (ErrorFeature errorFeature : errorFeatures) {
+								errorFeature.setLayerName(validatorLayer.getLayerName());
+								errorLayer.addErrorFeature(errorFeature);
+							}
+						}
+					}
+					
 				}
 
 				if (bottomGeoLayer != null) {
@@ -1087,13 +1156,51 @@ public class LayerValidatorImpl implements LayerValidator {
 						nearBottomFeatureList.add(nearBottomFeatureIterator.next());
 					}
 
-					List<ErrorFeature> errorFeatures = new ArrayList<ErrorFeature>();
-					for (SimpleFeature targetFeature : bottomFeatureList) {
-						errorFeatures = closeCollectionValidator.ValidateCloseCollection(targetFeature,
-								nearBottomFeatureList, closeValidateOptions, bottomLineString, tolorence);
-						for (ErrorFeature errorFeature : errorFeatures) {
-							errorFeature.setLayerName(validatorLayer.getLayerName());
-							errorLayer.addErrorFeature(errorFeature);
+					if (matchMiss) {
+						List<ErrorFeature> errorFeatures = new ArrayList<ErrorFeature>();
+						for (SimpleFeature targetFeature : topFeatureList) {
+							errorFeatures = closeCollectionValidator.ValidateCloseCollectionMatchMiss(targetFeature,
+									nearTopFeatureList, closeValidateOptions, topLineString, tolorence);
+							for (ErrorFeature errorFeature : errorFeatures) {
+								errorFeature.setLayerName(validatorLayer.getLayerName());
+								errorLayer.addErrorFeature(errorFeature);
+							}
+						}
+					}
+					if (entityNone) {
+						List<ErrorFeature> errorFeatures = new ArrayList<ErrorFeature>();
+						for (SimpleFeature targetFeature : nearTopFeatureList) {
+							errorFeatures = closeCollectionValidator.ValidateCloseCollectionEntityNone(targetFeature,
+									topFeatureList, closeValidateOptions, topLineString, tolorence);
+							for (ErrorFeature errorFeature : errorFeatures) {
+								errorFeature.setLayerName(validatorLayer.getLayerName());
+								errorLayer.addErrorFeature(errorFeature);
+							}
+						}
+
+					}
+					
+					if (!refZValueMiss.equals("")) {
+						List<ErrorFeature> errorFeatures = new ArrayList<ErrorFeature>();
+						for (SimpleFeature targetFeature : topFeatureList) {
+							errorFeatures = closeCollectionValidator.ValidateCloseCollectionMatchMiss(targetFeature,
+									nearTopFeatureList, closeValidateOptions, topLineString, tolorence);
+							for (ErrorFeature errorFeature : errorFeatures) {
+								errorFeature.setLayerName(validatorLayer.getLayerName());
+								errorLayer.addErrorFeature(errorFeature);
+							}
+						}
+					}
+					
+					if(refAttributeMiss != null){
+						List<ErrorFeature> errorFeatures = new ArrayList<ErrorFeature>();
+						for (SimpleFeature targetFeature : topFeatureList) {
+							errorFeatures = closeCollectionValidator.ValidateCloseCollectionMatchMiss(targetFeature,
+									nearTopFeatureList, closeValidateOptions, topLineString, tolorence);
+							for (ErrorFeature errorFeature : errorFeatures) {
+								errorFeature.setLayerName(validatorLayer.getLayerName());
+								errorLayer.addErrorFeature(errorFeature);
+							}
 						}
 					}
 				}
@@ -1118,13 +1225,51 @@ public class LayerValidatorImpl implements LayerValidator {
 						nearLeftFeatureList.add(nearLeftFeatureIterator.next());
 					}
 
-					List<ErrorFeature> errorFeatures = new ArrayList<ErrorFeature>();
-					for (SimpleFeature targetFeature : leftFeatureList) {
-						errorFeatures = closeCollectionValidator.ValidateCloseCollection(targetFeature,
-								nearLeftFeatureList, closeValidateOptions, leftLineString, tolorence);
-						for (ErrorFeature errorFeature : errorFeatures) {
-							errorFeature.setLayerName(validatorLayer.getLayerName());
-							errorLayer.addErrorFeature(errorFeature);
+					if (matchMiss) {
+						List<ErrorFeature> errorFeatures = new ArrayList<ErrorFeature>();
+						for (SimpleFeature targetFeature : topFeatureList) {
+							errorFeatures = closeCollectionValidator.ValidateCloseCollectionMatchMiss(targetFeature,
+									nearTopFeatureList, closeValidateOptions, topLineString, tolorence);
+							for (ErrorFeature errorFeature : errorFeatures) {
+								errorFeature.setLayerName(validatorLayer.getLayerName());
+								errorLayer.addErrorFeature(errorFeature);
+							}
+						}
+					}
+					if (entityNone) {
+						List<ErrorFeature> errorFeatures = new ArrayList<ErrorFeature>();
+						for (SimpleFeature targetFeature : nearTopFeatureList) {
+							errorFeatures = closeCollectionValidator.ValidateCloseCollectionEntityNone(targetFeature,
+									topFeatureList, closeValidateOptions, topLineString, tolorence);
+							for (ErrorFeature errorFeature : errorFeatures) {
+								errorFeature.setLayerName(validatorLayer.getLayerName());
+								errorLayer.addErrorFeature(errorFeature);
+							}
+						}
+
+					}
+					
+					if (!refZValueMiss.equals("")) {
+						List<ErrorFeature> errorFeatures = new ArrayList<ErrorFeature>();
+						for (SimpleFeature targetFeature : topFeatureList) {
+							errorFeatures = closeCollectionValidator.ValidateCloseCollectionMatchMiss(targetFeature,
+									nearTopFeatureList, closeValidateOptions, topLineString, tolorence);
+							for (ErrorFeature errorFeature : errorFeatures) {
+								errorFeature.setLayerName(validatorLayer.getLayerName());
+								errorLayer.addErrorFeature(errorFeature);
+							}
+						}
+					}
+					
+					if(refAttributeMiss != null){
+						List<ErrorFeature> errorFeatures = new ArrayList<ErrorFeature>();
+						for (SimpleFeature targetFeature : topFeatureList) {
+							errorFeatures = closeCollectionValidator.ValidateCloseCollectionMatchMiss(targetFeature,
+									nearTopFeatureList, closeValidateOptions, topLineString, tolorence);
+							for (ErrorFeature errorFeature : errorFeatures) {
+								errorFeature.setLayerName(validatorLayer.getLayerName());
+								errorLayer.addErrorFeature(errorFeature);
+							}
 						}
 					}
 				}
@@ -1149,13 +1294,51 @@ public class LayerValidatorImpl implements LayerValidator {
 						nearRightFeatureList.add(nearRightFeatureIterator.next());
 					}
 
-					List<ErrorFeature> errorFeatures = new ArrayList<ErrorFeature>();
-					for (SimpleFeature targetFeature : rightFeatureList) {
-						errorFeatures = closeCollectionValidator.ValidateCloseCollection(targetFeature,
-								nearRightFeatureList, closeValidateOptions, rightLineString, tolorence);
-						for (ErrorFeature errorFeature : errorFeatures) {
-							errorFeature.setLayerName(validatorLayer.getLayerName());
-							errorLayer.addErrorFeature(errorFeature);
+					if (matchMiss) {
+						List<ErrorFeature> errorFeatures = new ArrayList<ErrorFeature>();
+						for (SimpleFeature targetFeature : topFeatureList) {
+							errorFeatures = closeCollectionValidator.ValidateCloseCollectionMatchMiss(targetFeature,
+									nearTopFeatureList, closeValidateOptions, topLineString, tolorence);
+							for (ErrorFeature errorFeature : errorFeatures) {
+								errorFeature.setLayerName(validatorLayer.getLayerName());
+								errorLayer.addErrorFeature(errorFeature);
+							}
+						}
+					}
+					if (entityNone) {
+						List<ErrorFeature> errorFeatures = new ArrayList<ErrorFeature>();
+						for (SimpleFeature targetFeature : nearTopFeatureList) {
+							errorFeatures = closeCollectionValidator.ValidateCloseCollectionEntityNone(targetFeature,
+									topFeatureList, closeValidateOptions, topLineString, tolorence);
+							for (ErrorFeature errorFeature : errorFeatures) {
+								errorFeature.setLayerName(validatorLayer.getLayerName());
+								errorLayer.addErrorFeature(errorFeature);
+							}
+						}
+
+					}
+					
+					if (!refZValueMiss.equals("")) {
+						List<ErrorFeature> errorFeatures = new ArrayList<ErrorFeature>();
+						for (SimpleFeature targetFeature : topFeatureList) {
+							errorFeatures = closeCollectionValidator.ValidateCloseCollectionMatchMiss(targetFeature,
+									nearTopFeatureList, closeValidateOptions, topLineString, tolorence);
+							for (ErrorFeature errorFeature : errorFeatures) {
+								errorFeature.setLayerName(validatorLayer.getLayerName());
+								errorLayer.addErrorFeature(errorFeature);
+							}
+						}
+					}
+					
+					if(refAttributeMiss != null){
+						List<ErrorFeature> errorFeatures = new ArrayList<ErrorFeature>();
+						for (SimpleFeature targetFeature : topFeatureList) {
+							errorFeatures = closeCollectionValidator.ValidateCloseCollectionMatchMiss(targetFeature,
+									nearTopFeatureList, closeValidateOptions, topLineString, tolorence);
+							for (ErrorFeature errorFeature : errorFeatures) {
+								errorFeature.setLayerName(validatorLayer.getLayerName());
+								errorLayer.addErrorFeature(errorFeature);
+							}
 						}
 					}
 				}
