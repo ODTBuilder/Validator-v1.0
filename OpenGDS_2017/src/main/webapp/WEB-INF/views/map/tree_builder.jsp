@@ -60,88 +60,76 @@ html {
 	padding: 0;
 	overflow-y: auto;
 }
+
+.gitbuilder-clearbtn {
+	border: 0;
+	background-color: transparent;
+}
 </style>
 
 </head>
 <body>
 
-	<nav id="builderHeader"
-		class="navbar navbar-toggleable-md navbar-default fixed-top">
+	<nav id="builderHeader" class="navbar navbar-toggleable-md navbar-default fixed-top">
+
+		<div class="navbar-header">
+			<a class="navbar-brand" href="#"> <img alt="Geospatial Information Technology"
+				src="${pageContext.request.contextPath}/resources/img/gitcism.png">
+			</a>
+		</div>
 
 		<ul class="nav navbar-nav">
 
-			<li class="dropdown"><a href="#" class="dropdown-toggle"
-				data-toggle="dropdown" role="button" aria-expanded="false"
-				title="New layer"><i class="fa fa-file-o fa-lg"
-					aria-hidden="true"></i> New</a>
+			<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
+				aria-expanded="false" title="New layer"><i class="fa fa-file-o fa-lg" aria-hidden="true"></i> New</a>
 				<ul class="dropdown-menu" role="menu">
 					<li><a href="#" id="newVector" title="Vector">New</a></li>
-					<li><a href="#" id="uploadFile" title="Upload File"
-						onclick="gitbuilder.ui.NewFileWindow()">File</a></li>
+					<li><a href="#" id="uploadFile" title="Upload File" onclick="gitbuilder.ui.NewFileWindow()">File</a></li>
 				</ul></li>
-			<li class="dropdown"><a href="#" class="dropdown-toggle"
-				data-toggle="dropdown" role="button" aria-expanded="false"
-				title="Save"><i class="fa fa-floppy-o fa-lg" aria-hidden="true"></i>
-					Save</a>
+			<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
+				aria-expanded="false" title="Save"><i class="fa fa-floppy-o fa-lg" aria-hidden="true"></i> Save</a>
 				<ul class="dropdown-menu" role="menu">
 					<li><a href="#">as a SHP</a></li>
 					<li><a href="#" id="save">to Server</a></li>
 				</ul></li>
 
-			<li><a href="#" title="Edit" id="edit"><i
-					class="fa fa-pencil-square-o fa-lg" aria-hidden="true"></i> Edit</a></li>
-			<li><a href="#" title="Base map" id="changeBase"><i
-					class="fa fa-map-o fa-lg" aria-hidden="true"></i> Base Map</a></li>
-			<li class="dropdown"><a href="#" class="dropdown-toggle"
-				data-toggle="dropdown" role="button" aria-expanded="false"
-				title="Validation"><i class="fa fa-search fa-lg fa-lg"
-					aria-hidden="true"></i> QA 1.0</a>
+			<li><a href="#" title="Edit" id="edit"><i class="fa fa-pencil-square-o fa-lg" aria-hidden="true"></i> Edit</a></li>
+			<li><a href="#" title="Base map" id="changeBase"><i class="fa fa-map-o fa-lg" aria-hidden="true"></i> Base
+					Map</a></li>
+			<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
+				aria-expanded="false" title="Validation"><i class="fa fa-search fa-lg fa-lg" aria-hidden="true"></i> QA 1.0</a>
 				<ul class="dropdown-menu" role="menu">
-					<li><a href="#" title="Layer Definition" id="layerDefinition1">Layer
-							Definition</a></li>
-					<li><a href="#" title="Validating Option"
-						id="validDefinition1">Validating Option</a></li>
-					<li><a href="#" title="Layer Weight" id="weight1">Layer
-							Weight</a></li>
+					<li><a href="#" title="Layer Definition" id="layerDefinition1">Layer Definition</a></li>
+					<li><a href="#" title="Validating Option" id="validDefinition1">Validating Option</a></li>
+					<li><a href="#" title="Layer Weight" id="weight1">Layer Weight</a></li>
 					<li><a href="#" title="Validation" id="validation1">Validation</a></li>
 				</ul></li>
-			<li class="dropdown"><a href="#" class="dropdown-toggle"
-				data-toggle="dropdown" role="button" aria-expanded="false"
-				title="Validation"><i class="fa fa-search fa-lg fa-lg"
-					aria-hidden="true"></i> QA 2.0</a>
+			<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
+				aria-expanded="false" title="Validation"><i class="fa fa-search fa-lg fa-lg" aria-hidden="true"></i> QA 2.0</a>
 				<ul class="dropdown-menu" role="menu">
-					<li><a href="#" title="Layer Definition" id="layerDefinition">Layer
-							Definition</a></li>
-					<li><a href="#" title="Validating Option" id="validDefinition">Validating
-							Option</a></li>
-					<li><a href="#" title="Layer Weight" id="weight">Layer
-							Weight</a></li>
+					<li><a href="#" title="Layer Definition" id="layerDefinition">Layer Definition</a></li>
+					<li><a href="#" title="Validating Option" id="validDefinition">Validating Option</a></li>
+					<li><a href="#" title="Layer Weight" id="weight">Layer Weight</a></li>
 					<li><a href="#" title="Validation" id="validation">Validation</a></li>
 				</ul></li>
-			<li><a href="#" title="QA Edit" id="qaedit"><i
-					class="fa fa-object-group fa-lg" aria-hidden="true"></i> QA Edit</a></li>
-			<li class="dropdown"><a href="#" class="dropdown-toggle"
-				data-toggle="dropdown" role="button" aria-expanded="false"
-				title="Validation Result"><i class="fa fa-list-alt fa-lg"
-					aria-hidden="true"></i> Result</a>
+			<li><a href="#" title="QA Edit" id="qaedit"><i class="fa fa-object-group fa-lg" aria-hidden="true"></i> QA
+					Edit</a></li>
+			<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
+				aria-expanded="false" title="Validation Result"><i class="fa fa-list-alt fa-lg" aria-hidden="true"></i> Result</a>
 				<ul class="dropdown-menu" role="menu">
 					<li><a href="#">Error Navigator</a></li>
 					<li><a href="#">Error Report</a></li>
 				</ul></li>
 
-			<li class="dropdown"><a href="#" class="dropdown-toggle"
-				data-toggle="dropdown" role="button" aria-expanded="false"
-				title="ToolBox"><i class="fa fa-calculator fa-lg"
-					aria-hidden="true"></i> ToolBox</a>
+			<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
+				aria-expanded="false" title="ToolBox"><i class="fa fa-calculator fa-lg" aria-hidden="true"></i> ToolBox</a>
 				<ul class="dropdown-menu" role="menu">
 					<li><a href="#">CRS Transformation</a></li>
 					<li><a href="#">Spatial Operation</a></li>
 				</ul></li>
 
-			<li class="dropdown"><a href="#" class="dropdown-toggle"
-				data-toggle="dropdown" role="button" aria-expanded="false"
-				title="History"><i class="fa fa-history fa-lg"
-					aria-hidden="true"></i> History</a>
+			<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
+				aria-expanded="false" title="History"><i class="fa fa-history fa-lg" aria-hidden="true"></i> History</a>
 				<ul class="dropdown-menu" role="menu">
 					<li><a href="#">History</a></li>
 					<li role="presentation" class="divider"></li>
@@ -149,16 +137,28 @@ html {
 					<li><a href="#">Upload History</a></li>
 				</ul></li>
 
-			<li><a href="#" title="Information"><i
-					class="fa fa-info-circle fa-lg" aria-hidden="true"></i> Information</a></li>
+			<li><a href="#" title="Information"><i class="fa fa-info-circle fa-lg" aria-hidden="true"></i> Information</a></li>
 		</ul>
+
+		<form class="navbar-form navbar-right" role="login" style="margin-right: 0;">
+			<div class="form-group">
+				<input type="text" class="form-control" placeholder="ID" style="width: 150px;">
+			</div>
+			<div class="form-group">
+				<input type="password" class="form-control" placeholder="Password" style="width: 150px;">
+			</div>
+			<button type="submit" class="btn btn-default">Login</button>
+		</form>
 	</nav>
 
 	<div id="builderContent" class="container-fluid">
 		<div id="builderLayer">
 			<div id="builderLayerGeoServerPanel" class="panel panel-default">
 				<div class="panel-heading">
-					<h3 class="panel-title">GeoServer</h3>
+					<h3 class="panel-title" style="display: inline-block;">GeoServer</h3>
+					<button id="srefresh" class="pull-right gitbuilder-clearbtn">
+						<i class="fa fa-refresh" aria-hidden="true"></i>
+					</button>
 				</div>
 				<div class="panel-body gitbuilder-layer-panel">
 					<div id="builderServerLayer"></div>
@@ -166,7 +166,10 @@ html {
 			</div>
 			<div id="builderLayerClientPanel" class="panel panel-default">
 				<div class="panel-heading">
-					<h3 class="panel-title">Layer</h3>
+					<h3 class="panel-title" style="display: inline-block;">Layer</h3>
+					<button id="crefresh" class="pull-right gitbuilder-clearbtn">
+						<i class="fa fa-refresh" aria-hidden="true"></i>
+					</button>
 				</div>
 				<div class="panel-body gitbuilder-layer-panel">
 					<div id="builderClientLayer"></div>
@@ -436,6 +439,13 @@ html {
 				"downloadGeoserver" : "geoserver2/downloadRequest.do"
 			},
 			"plugins" : [ "contextmenu", "search", "state", "types", "geoserver" ]
+		});
+
+		$("#crefresh").click(function() {
+			$('#builderClientLayer').jstreeol3(true).refresh();
+		});
+		$("#srefresh").click(function() {
+			$("#builderServerLayer").jstree(true).refresh();
 		});
 	</script>
 

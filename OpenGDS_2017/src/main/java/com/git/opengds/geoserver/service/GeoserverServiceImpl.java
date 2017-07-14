@@ -29,6 +29,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.stereotype.Service;
 
+import com.git.gdsbuilder.geolayer.data.DTGeoGroupLayer;
 import com.git.gdsbuilder.geolayer.data.DTGeoGroupLayerList;
 import com.git.gdsbuilder.geolayer.data.DTGeoLayerList;
 import com.git.gdsbuilder.geoserver.data.GeoserverLayerCollectionTree;
@@ -36,6 +37,7 @@ import com.git.gdsbuilder.geoserver.factory.DTGeoserverPublisher;
 import com.git.gdsbuilder.geoserver.factory.DTGeoserverReader;
 import com.git.gdsbuilder.geosolutions.geoserver.rest.decoder.RESTFeatureType;
 import com.git.gdsbuilder.geosolutions.geoserver.rest.decoder.RESTLayer;
+import com.git.gdsbuilder.geosolutions.geoserver.rest.decoder.RESTLayerList;
 import com.git.gdsbuilder.geosolutions.geoserver.rest.encoder.GSLayerEncoder;
 import com.git.gdsbuilder.geosolutions.geoserver.rest.encoder.GSLayerGroupEncoder;
 import com.git.gdsbuilder.geosolutions.geoserver.rest.encoder.GSResourceEncoder.ProjectionPolicy;
@@ -338,8 +340,34 @@ public class GeoserverServiceImpl implements GeoserverService {
 	 * @see com.git.opengds.geoserver.service.GeoserverService#removeGeoserverLayer(java.lang.String)
 	 */
 	@Override
-	public boolean removeGeoserverLayer(String layerName) {
-		return dtPublisher.removeLayer(ID, layerName);
+	public boolean removeGeoserverLayer(String groupLayerName,String layerName) {
+		boolean isConfigureGroup = false;
+		boolean isRemoveLayer = false;
+		DTGeoGroupLayer dtGeoGroupLayer = dtReader.getDTGeoGroupLayer(ID, layerName);
+		
+		if(dtGeoGroupLayer!=null){
+		List<String> layerList = dtGeoGroupLayer.getLayerList().getNames();
+		
+		layerList.remove(layerName);
+		
+		GSLayerGroupEncoder groupEncoder = new GSLayerGroupEncoder();
+		groupEncoder.setName(dtGeoGroupLayer.getName());
+		groupEncoder.setWorkspace(dtGeoGroupLayer.getWorkspace());
+		groupEncoder.setBounds(dtGeoGroupLayer.getCRS(), dtGeoGroupLayer.getMinX(), dtGeoGroupLayer.getMaxY(), dtGeoGroupLayer.getMinY(), dtGeoGroupLayer.getMaxY());
+		for(String name : layerList){
+			groupEncoder.addLayer(name);;
+		}
+		
+		isConfigureGroup = dtPublisher.configureLayerGroup(ID, groupLayerName, groupEncoder);
+		isRemoveLayer = dtPublisher.removeLayer(ID, layerName);
+		}
+		else
+			return false;
+		
+		if(!isConfigureGroup&&!isRemoveLayer){
+			return false;
+		}
+		return true;
 	}
 
 	/**
