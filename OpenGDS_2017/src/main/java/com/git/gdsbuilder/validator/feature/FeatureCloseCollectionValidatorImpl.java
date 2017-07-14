@@ -13,6 +13,7 @@ import com.git.gdsbuilder.type.validate.option.EdgeMatchMiss;
 import com.git.gdsbuilder.type.validate.option.EntityNone;
 import com.git.gdsbuilder.type.validate.option.RefAttributeMiss;
 import com.git.gdsbuilder.type.validate.option.RefZValueMiss;
+import com.git.gdsbuilder.type.validate.option.SelfEntity;
 import com.git.gdsbuilder.validator.collection.opt.ValCollectionOption;
 import com.git.gdsbuilder.validator.collection.opt.ValCollectionOption.ValCollectionOptionType;
 import com.vividsolutions.jts.geom.Coordinate;
@@ -38,10 +39,6 @@ public class FeatureCloseCollectionValidatorImpl implements FeatureCloseCollecti
 		String featureIdx = simpleFeature.getID();
 		Property featuerIDPro = simpleFeature.getProperty("feature_id");
 		String featureID = (String) featuerIDPro.getValue();
-
-		// if (featureID.equals("RECORD 2394")) {
-		// System.out.println("");
-		// }
 
 		// 인접도엽 옵션객체 선언
 		boolean matchMiss = false;
@@ -70,27 +67,28 @@ public class FeatureCloseCollectionValidatorImpl implements FeatureCloseCollecti
 
 		Geometry targetGeometry = (Geometry) simpleFeature.getDefaultGeometry();
 		if (entityNon) {
-			List<SimpleFeature> validRelationSimpleFeatures = new ArrayList<SimpleFeature>();
+			boolean isTrue = false;
 			Geometry targetGeomBuuer = targetGeometry.buffer(tolerence * 2);
 			for (SimpleFeature relationSimpleFeature : relationSimpleFeatures) {
 				Geometry relationGeometry = (Geometry) relationSimpleFeature.getDefaultGeometry();
-				if (!relationGeometry.intersects(targetGeomBuuer)) {
-					Coordinate[] targetCoors = targetGeometry.getCoordinates();
-					innerFor: for (int j = 0; j < targetCoors.length; j++) {
-						Point tmpPt = geometryFactory.createPoint(targetCoors[j]);
-						double reDist = nearLine.distance(tmpPt);
-						if (reDist >= 0 && reDist <= tolerence) {
-							ErrorFeature errFeature = new ErrorFeature(featureIdx, featureID,
-									EntityNone.Type.ENTITYNONE.errType(), EntityNone.Type.ENTITYNONE.errName(), tmpPt);
-							collectionErrors.add(errFeature);
-							break innerFor;
-						}
-					}
-				} else {
-					validRelationSimpleFeatures.add(relationSimpleFeature);
+				if (relationGeometry.intersects(targetGeomBuuer)) {
+					isTrue = true;
+					break;
 				}
 			}
-			relationSimpleFeatures = validRelationSimpleFeatures;
+			if (!isTrue) {
+				Coordinate[] targetCoors = targetGeometry.getCoordinates();
+				innerFor: for (int j = 0; j < targetCoors.length; j++) {
+					Point tmpPt = geometryFactory.createPoint(targetCoors[j]);
+					double reDist = nearLine.distance(tmpPt);
+					if (reDist >= 0 && reDist <= tolerence * 2) {
+						ErrorFeature errFeature = new ErrorFeature(featureIdx, featureID,
+								EntityNone.Type.ENTITYNONE.errType(), EntityNone.Type.ENTITYNONE.errName(), tmpPt);
+						collectionErrors.add(errFeature);
+						break innerFor;
+					}
+				}
+			}
 		}
 
 		Coordinate[] tarCoors = targetGeometry.getCoordinates();
@@ -118,7 +116,7 @@ public class FeatureCloseCollectionValidatorImpl implements FeatureCloseCollecti
 							Point tmpRePt = geometryFactory.createPoint(relationCoors[j]);
 							double reDist = nearLine.distance(tmpRePt);
 							if (reDist >= 0 && reDist <= tolerence) {
-								if (tmpRePt.distance(tmpPt) <= tolerence * 2) {
+								if (tmpRePt.distance(tmpPt) <= tolerence) {
 									isError = false;
 									reSimpleFeatures.add(relationSimpleFeature);
 									break innerFor;
@@ -242,61 +240,40 @@ public class FeatureCloseCollectionValidatorImpl implements FeatureCloseCollecti
 	@Override
 	public List<ErrorFeature> ValidateCloseCollectionRelation(SimpleFeature nearFeature,
 			List<SimpleFeature> targetFeatureList, LineString nearLine, double tolorence) {
-		// TODO Auto-generated method stub
-
-		// Coordinate[] coords = new Coordinate[] {new Coordinate(273915.020 ,
-		// 542057.470 ), new Coordinate(273914.130,542055.780), new
-		// Coordinate(8, 6) };
 
 		List<ErrorFeature> collectionErrs = new ArrayList<ErrorFeature>();
 		GeometryFactory geometryFactory = new GeometryFactory();
 		String featureIdx = nearFeature.getID();
 		Property featureIDPro = nearFeature.getProperty("feature_id");
 		String featureID = (String) featureIDPro.getValue();
-		if (featureID.equals("6C310")) {
-			System.out.println();
-		}
-
 		Geometry nearGeometry = (Geometry) nearFeature.getDefaultGeometry();
 		Coordinate[] nearCoors = nearGeometry.getCoordinates();
+		Point start = geometryFactory.createPoint(nearCoors[0]);
+		Point end = geometryFactory.createPoint(nearCoors[nearCoors.length - 1]);
 		for (int i = 0; i < nearCoors.length; i++) {
 			Point nearPoint = geometryFactory.createPoint(nearCoors[i]);
 			double nearDist = nearLine.distance(nearPoint);
 			if (nearDist < tolorence || nearDist == tolorence) {
-				Geometry nearBuffer = nearPoint.buffer(tolorence * 2);
-				boolean isTrue = false;
-				innerFor: for (SimpleFeature targetSimpleFeature : targetFeatureList) {
-
-					Property featureIDPro2 = targetSimpleFeature.getProperty("feature_id");
-					String featureID2 = (String) featureIDPro2.getValue();
-					if (featureID2.equals("6E9EF")) {
-						System.out.println();
-					}
-
-					Geometry targetGeometry = (Geometry) targetSimpleFeature.getDefaultGeometry();
-					if (targetGeometry.intersects(nearBuffer)) {
-						Coordinate[] targetCoors = targetGeometry.getCoordinates();
-						int tarCoorSize = targetCoors.length;
-						if (targetGeometry.getGeometryType().equals("Polygon")) {
-							tarCoorSize = tarCoorSize - 1;
-						}
-						for (int j = 0; j < tarCoorSize; j++) {
-							Point tmpRePt = geometryFactory.createPoint(targetCoors[j]);
-							double reDist = nearLine.distance(tmpRePt);
-							if (reDist >= 0 && reDist <= tolorence) {
-								if (tmpRePt.distance(nearPoint) <= tolorence * 2) {
-									isTrue = true;
-									break innerFor;
-								}
+				if (start.equals(nearPoint) || end.equals(nearPoint)) {
+					Geometry nearBuffer = nearPoint.buffer(tolorence * 2);
+					boolean isTrue = false;
+					innerFor: for (SimpleFeature targetSimpleFeature : targetFeatureList) {
+						Geometry targetGeometry = (Geometry) targetSimpleFeature.getDefaultGeometry();
+						if (targetGeometry.intersects(nearBuffer) || targetGeometry.intersects(nearGeometry)) {
+							Coordinate[] targetCoors = targetGeometry.getCoordinates();
+							Point firPt = geometryFactory.createPoint(targetCoors[0]);
+							Point lastPt = geometryFactory.createPoint(targetCoors[targetCoors.length - 1]);
+							if (firPt.distance(nearPoint) <= tolorence || lastPt.distance(nearPoint) <= tolorence) {
+								isTrue = true;
+								break innerFor;
 							}
 						}
 					}
-				}
-
-				if (!isTrue) {
-					ErrorFeature errFeature = new ErrorFeature(featureIdx, featureID,
-							EntityNone.Type.ENTITYNONE.errType(), EntityNone.Type.ENTITYNONE.errName(), nearPoint);
-					collectionErrs.add(errFeature);
+					if (!isTrue) {
+						ErrorFeature errFeature = new ErrorFeature(featureIdx, featureID,
+								EntityNone.Type.ENTITYNONE.errType(), EntityNone.Type.ENTITYNONE.errName(), nearPoint);
+						collectionErrs.add(errFeature);
+					}
 				}
 			}
 		}
