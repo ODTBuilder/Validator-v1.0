@@ -96,8 +96,7 @@ public class GeoserverServiceImpl implements GeoserverService {
 	 * @see com.git.opengds.geoserver.service.GeoserverService#dbLayerPublishGeoserver(com.git.gdsbuilder.type.geoserver.layer.GeoLayerInfo)
 	 */
 	@SuppressWarnings("unused")
-	public FileMeta dbLayerPublishGeoserver(GeoLayerInfo layerInfo)
-			throws IllegalArgumentException, MalformedURLException {
+	public FileMeta dbLayerPublishGeoserver(GeoLayerInfo layerInfo){
 		String wsName = ID;
 		String dsName = ID;
 

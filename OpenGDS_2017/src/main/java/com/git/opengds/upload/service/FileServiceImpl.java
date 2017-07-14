@@ -122,6 +122,7 @@ public class FileServiceImpl implements FileService {
 				// D:/temp/files" exists)
 				FileCopyUtils.copy(mpf.getBytes(), new FileOutputStream(saveFilePath));
 				fileMeta.setFilePath(saveFilePath);
+				fileMeta.setUploadFlag(true);
 				files.add(fileMeta);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
