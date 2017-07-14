@@ -38,6 +38,7 @@ import com.git.gdsbuilder.geoserver.factory.DTGeoserverReader;
 import com.git.gdsbuilder.geosolutions.geoserver.rest.decoder.RESTFeatureType;
 import com.git.gdsbuilder.geosolutions.geoserver.rest.decoder.RESTLayer;
 import com.git.gdsbuilder.geosolutions.geoserver.rest.decoder.RESTLayerList;
+import com.git.gdsbuilder.geosolutions.geoserver.rest.decoder.RESTPublishedList;
 import com.git.gdsbuilder.geosolutions.geoserver.rest.encoder.GSLayerEncoder;
 import com.git.gdsbuilder.geosolutions.geoserver.rest.encoder.GSLayerGroupEncoder;
 import com.git.gdsbuilder.geosolutions.geoserver.rest.encoder.GSResourceEncoder.ProjectionPolicy;
@@ -346,23 +347,19 @@ public class GeoserverServiceImpl implements GeoserverService {
 		DTGeoGroupLayer dtGeoGroupLayer = dtReader.getDTGeoGroupLayer(ID, groupLayerName);
 		
 		if(dtGeoGroupLayer!=null){
-		List<String> layerList = new ArrayList<String>();
-		RESTLayerList list = dtGeoGroupLayer.getLayerList();
-		int a = list.size();
-		layerList = dtGeoGroupLayer.getLayerList().getNames();
-		layerList.remove(layerName);
-		
-		GSLayerGroupEncoder groupEncoder = new GSLayerGroupEncoder();
-		String string = dtGeoGroupLayer.getName();
-		groupEncoder.setName(dtGeoGroupLayer.getName());
-		groupEncoder.setWorkspace(dtGeoGroupLayer.getWorkspace());
-		groupEncoder.setBounds(dtGeoGroupLayer.getCRS(), dtGeoGroupLayer.getMinX(), dtGeoGroupLayer.getMaxY(), dtGeoGroupLayer.getMinY(), dtGeoGroupLayer.getMaxY());
-		for(String name : layerList){
-			groupEncoder.addLayer(name);
-		}
-		
-		isConfigureGroup = dtPublisher.configureLayerGroup(ID, groupLayerName, groupEncoder);
-		isRemoveLayer = dtPublisher.removeLayer(ID, layerName);
+			List<String> layerList = dtGeoGroupLayer.getPublishedList().getNames();
+			layerList.remove(layerName);
+			
+			GSLayerGroupEncoder groupEncoder = new GSLayerGroupEncoder();
+			groupEncoder.setName(dtGeoGroupLayer.getName());
+			groupEncoder.setWorkspace(dtGeoGroupLayer.getWorkspace());
+			groupEncoder.setBounds(dtGeoGroupLayer.getCRS(), dtGeoGroupLayer.getMinX(), dtGeoGroupLayer.getMaxY(), dtGeoGroupLayer.getMinY(), dtGeoGroupLayer.getMaxY());
+			for(String name : layerList){
+				groupEncoder.addLayer(name);
+			}
+			
+			isConfigureGroup = dtPublisher.configureLayerGroup(ID, groupLayerName, groupEncoder);
+			isRemoveLayer = dtPublisher.removeLayer(ID, layerName);
 		}
 		else
 			return false;
