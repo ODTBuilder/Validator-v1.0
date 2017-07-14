@@ -116,6 +116,7 @@ public class DTGeoserverPublisher extends GeoServerRESTPublisher
     }
     return (updated) && (configured);
   }
+  
 
   public boolean recalculate(String workspace, String storename, String layername, EnLayerBboxRecalculate type)
   {
