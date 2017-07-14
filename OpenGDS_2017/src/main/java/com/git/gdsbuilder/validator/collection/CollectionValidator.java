@@ -85,6 +85,7 @@ import com.git.gdsbuilder.type.validate.option.RefZValueMiss;
 import com.git.gdsbuilder.type.validate.option.SelfEntity;
 import com.git.gdsbuilder.type.validate.option.SmallArea;
 import com.git.gdsbuilder.type.validate.option.SmallLength;
+import com.git.gdsbuilder.type.validate.option.UnderShoot;
 import com.git.gdsbuilder.type.validate.option.UselessEntity;
 import com.git.gdsbuilder.type.validate.option.UselessPoint;
 import com.git.gdsbuilder.type.validate.option.ValidatorOption;
@@ -211,27 +212,27 @@ public class CollectionValidator {
 		for (int i = 0; i < layerCollections.size(); i++) {
 			GeoLayerCollection collection = layerCollections.get(i);
 			String collectionName = collection.getCollectionName();
-//			try {
+			try {
 				ErrorLayer errorLayer = new ErrorLayer();
 				errorLayer.setCollectionName(collectionName);
 				errorLayer.setCollectionType(this.collectionType);
 
 				// layerMiss 검수
-		//		layerMissValidate(types, collection, errorLayer);
+			//	layerMissValidate(types, collection, errorLayer);
 
 				// geometric 검수
-		//		geometricValidate(types, collection, errorLayer);
+				geometricValidate(types, collection, errorLayer);
 
 				// attribute 검수
-		//		attributeValidate(types, collection, errorLayer);
+			//	attributeValidate(types, collection, errorLayer);
 
 				// 인접도엽 검수
-				closeCollectionValidate(types, mapSystemRule, collection, "", errorLayer);
+			//	closeCollectionValidate(types, mapSystemRule, collection, "", errorLayer);
 				errLayerList.add(errorLayer);
 				progress.put(collection.getCollectionName(), 2);
-//			} catch (Exception e) {
-//				progress.put(collection.getCollectionName(), 3);
-//			}
+			} catch (Exception e) {
+				progress.put(collection.getCollectionName(), 3);
+			}
 		}
 	}
 
@@ -427,13 +428,10 @@ public class CollectionValidator {
 								errorLayer.mergeErrorLayer(typeErrorLayer);
 							}
 						}
-						/*
-						 * if (option instanceof UnderShoot) { double tolerence
-						 * = ((UnderShoot) option).getTolerence();
-						 * typeErrorLayer =
-						 * layerValidator.validateUnderShoot(neatLayer,
-						 * tolerence); }
-						 */
+						if (option instanceof UnderShoot) {
+							double tolerence = ((UnderShoot) option).getTolerence();
+							typeErrorLayer = layerValidator.validateUnderShoot(neatLayer, tolerence);
+						}
 						if (option instanceof UselessEntity) {
 							typeErrorLayer = layerValidator.validateUselessEntity();
 							if (typeErrorLayer != null) {
@@ -743,7 +741,7 @@ public class CollectionValidator {
 			nearFeaturesGetBoundary.put(MapSystemRuleType.BOTTOM, bottomBuffer);
 			nearFeaturesGetBoundary.put(MapSystemRuleType.LEFT, leftBuffer);
 			nearFeaturesGetBoundary.put(MapSystemRuleType.RIGHT, rightBuffer);
-			
+
 			for (ValidateLayerType layerType : types) {
 				GeoLayerList typeLayers = validateLayerCollectionList.getTypeLayers(layerType.getTypeName(),
 						layerCollection);
@@ -774,7 +772,8 @@ public class CollectionValidator {
 									collectionOptions.putRefAttributeMissOption(colunms);
 								}
 								if (option instanceof RefZValueMiss) {
-									HashMap<String, List<String>> opts = ((RefZValueMiss) option).getRefZValueMissOpts();
+									HashMap<String, List<String>> opts = ((RefZValueMiss) option)
+											.getRefZValueMissOpts();
 									List<String> colunms = opts.get(layerName);
 									collectionOptions.putRefZValueMissOption(colunms);
 								}

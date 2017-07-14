@@ -13,7 +13,7 @@ package com.git.gdsbuilder.type.validate.option;
 public class EntityNone extends ValidatorOption{
 	public enum Type{
 
-		ENTITYNONE("EntityNone", "GeometricError");
+		ENTITYNONE("EntityNONE", "GeometricError");
 
 		String errName;
 		String errType;
