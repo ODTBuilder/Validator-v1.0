@@ -71,4 +71,15 @@ public interface QA20LayerCollectionDAO {
 
 	public void updateNdaAspatialField(HashMap<String, Object> updateFieldQuery);
 
+	public HashMap<String, Object> selectQA20LayerMeataAll(HashMap<String, Object> selectAllMetaIdxQuery);
+
+	public List<HashMap<String, Object>> selectTextRepresent(HashMap<String, Object> selectTextRepresentQuery);
+
+	public List<HashMap<String, Object>> selectResionRepresent(HashMap<String, Object> selectResionRepresentQuery);
+
+	public List<HashMap<String, Object>> selectPointRepresent(HashMap<String, Object> selectPointRepresentQuery);
+
+	public List<HashMap<String, Object>> selectLineStringRepresent(
+			HashMap<String, Object> selectLineStringRepresentQuery);
+
 }

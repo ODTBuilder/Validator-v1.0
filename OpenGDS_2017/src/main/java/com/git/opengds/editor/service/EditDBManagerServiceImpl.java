@@ -350,9 +350,6 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 		QA20DBQueryManager queryManager = new QA20DBQueryManager();
 
 		try {
-			HashMap<String, Object> dropQuery = queryManager.getQA20DropLayerQuery(type, collectionName, layerName);
-			qa20DAO.dropLayer(dropQuery);
-
 			HashMap<String, Object> metadataIdxQuery = queryManager.getSelectQA20LayerMetaDataIdxQuery(collectionIdx,
 					layerName);
 			Integer mIdx = qa20DAO.selectQA20LayerMetadataIdx(metadataIdxQuery);
@@ -373,16 +370,21 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 			HashMap<String, Object> deleteAspatialFieldQuery = queryManager.getDeleteAsptialFieldQuery(mIdx);
 			qa20DAO.deleteField(deleteAspatialFieldQuery);
 			// layerMetadata 삭제
-			HashMap<String, Object> deleteLayerMetaQuery = queryManager.getDeleteQA20LayerMetaQuery(collectionIdx);
+			HashMap<String, Object> deleteLayerMetaQuery = queryManager.getDeleteQA20LayerMetaQuery(mIdx);
 			qa20DAO.deleteField(deleteLayerMetaQuery);
-			HashMap<String, Object> deleteLayerCollectionQuery = queryManager
-					.getDeleteQA20LayerCollectionQuery(collectionIdx);
-			qa20DAO.deleteField(deleteLayerCollectionQuery);
+			
+			HashMap<String, Object> dropQuery = queryManager.getQA20DropLayerQuery(type, collectionName, layerName);
+			qa20DAO.dropLayer(dropQuery);
+			
+//			HashMap<String, Object> deleteLayerCollectionQuery = queryManager
+//					.getDeleteQA20LayerCollectionQuery(collectionIdx);
+//			qa20DAO.deleteField(deleteLayerCollectionQuery);
 		} catch (Exception e) {
 			txManager.rollback(status);
 			return false;
 		}
-		String layerTableName = "\"geo" + "_" + type + "_" + collectionName + "_" + layerName + "\"";
+		String layerTableName = "geo" + "_" + type + "_" + collectionName + "_" + layerName;
+		String groupName = "gro" + "_" + type + "_" + collectionName;
 		boolean isSuccessed = geoserverService.removeGeoserverLayer(layerTableName);
 		if (isSuccessed) {
 			txManager.commit(status);

@@ -476,6 +476,15 @@ public class QA20DBQueryManager {
 		selectQuery.put("selectAllQuery", selectQueryStr);
 		return selectQuery;
 	}
+	
+	public HashMap<String, Object> getSelectAllQA20LayerMetaDataQuery(int lmIdx) {
+		HashMap<String, Object> selectQuery = new HashMap<String, Object>();
+		String tableName = "\"" + "qa20_layer_metadata" + "\"";
+		String selectQueryStr = "select * from " + tableName + " where lm_idx = " + lmIdx;
+		selectQuery.put("selectAllQuery", selectQueryStr);
+		return selectQuery;
+	}
+	
 
 	public HashMap<String, Object> getSelectQA20LayerTableNameQuery(Integer mIdx) {
 		HashMap<String, Object> selectQuery = new HashMap<String, Object>();
@@ -525,10 +534,10 @@ public class QA20DBQueryManager {
 		return deleteQuery;
 	}
 
-	public HashMap<String, Object> getDeleteQA20LayerMetaQuery(Integer cIdx) {
+	public HashMap<String, Object> getDeleteQA20LayerMetaQuery(Integer mIdx) {
 		HashMap<String, Object> deleteQuery = new HashMap<String, Object>();
 		String tableName = "\"" + "qa20_layer_metadata" + "\"";
-		String deleteQueryStr = "delete from " + tableName + " where c_idx = " + cIdx;
+		String deleteQueryStr = "delete from " + tableName + " where lm_idx = " + mIdx;
 		deleteQuery.put("deleteQuery", deleteQueryStr);
 		return deleteQuery;
 	}
@@ -600,5 +609,22 @@ public class QA20DBQueryManager {
 		updateQuery.put("updateQuery", updateQueryStr);
 
 		return updateQuery;
+	}
+
+
+	public HashMap<String, Object> getSelectTextRepresentQuery(int lmIdx) {
+		HashMap<String, Object> selectQuery = new HashMap<String, Object>();
+		String tableName = "\"" + "ngi_text_represent" + "\"";
+		String selectQueryStr = "select * from " + tableName + " where lm_idx = " + lmIdx;
+		selectQuery.put("selectAllQuery", selectQueryStr);
+		return selectQuery;
+	}
+
+	public HashMap<String, Object> getSelectResionRepresentQuery(int lmIdx) {
+		HashMap<String, Object> selectQuery = new HashMap<String, Object>();
+		String tableName = "\"" + "ngi_region_represent" + "\"";
+		String selectQueryStr = "select * from " + tableName + " where lm_idx = " + lmIdx;
+		selectQuery.put("selectAllQuery", selectQueryStr);
+		return selectQuery;
 	}
 }

@@ -68,6 +68,12 @@
 		${selectQuery}
 	</select>
 
+	<select id="selectAllLayerMeata" parameterType="hashMap"
+		resultType="hashMap">
+		${selectAllQuery}
+	</select>
+
+
 	<select id="updateQA20LayerMetadataLayerName" parameterType="hashMap"
 		resultType="hashMap">
 		${updateQuery}
@@ -115,6 +121,11 @@
 	<insert id="insertTextRepresent" parameterType="hashmap">
 		${insertQuery}
 	</insert>
+
+	<select id="selectTextRepresent" parameterType="hashMap"
+		resultType="hashMap">
+		${selectAllQuery}
+	</select>
 
 	<select id="deleteHeader" parameterType="hashMap">
 		${deleteQuery}
