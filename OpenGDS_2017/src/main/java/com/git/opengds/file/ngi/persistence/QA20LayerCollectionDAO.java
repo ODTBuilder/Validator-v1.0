@@ -24,7 +24,6 @@ import java.util.Map;
 import org.postgresql.util.PSQLException;
 
 public interface QA20LayerCollectionDAO {
-	
 
 	public int insertQA20LayerCollection(Map<String, Object> collection);
 
@@ -82,5 +81,9 @@ public interface QA20LayerCollectionDAO {
 
 	public List<HashMap<String, Object>> selectLineStringRepresent(
 			HashMap<String, Object> selectLineStringRepresentQuery);
+
+	public List<HashMap<String, Object>> selectNdaAspatialField(HashMap<String, Object> selectNdaAspatialFieldQuery);
+
+	public List<HashMap<String, Object>> selectAllQA20Features(HashMap<String, Object> selectAllFeaturesQuery);
 
 }

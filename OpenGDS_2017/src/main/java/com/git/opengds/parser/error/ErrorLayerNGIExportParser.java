@@ -68,7 +68,7 @@ public class ErrorLayerNGIExportParser {
 		return ndaHeader;
 	}
 
-	public static QA20Layer parseQA20Layer(String tableName, List<HashMap<String, Object>> errFeatureList) {
+	public static QA20Layer parseQA20ErrorLayer(String tableName, List<HashMap<String, Object>> errFeatureList) {
 
 		QA20Layer qa20Layer = new QA20Layer();
 		qa20Layer.setLayerID(layerID);

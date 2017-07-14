@@ -189,4 +189,14 @@ public class QA20LayerCollectionDAOImpl implements QA20LayerCollectionDAO {
 			HashMap<String, Object> selectLineStringRepresentQuery) {
 		return sqlSession.selectList(namespace + ".selectLineStringRepresent", selectLineStringRepresentQuery);
 	}
+
+	@Override
+	public List<HashMap<String, Object>> selectNdaAspatialField(HashMap<String, Object> selectNdaAspatialFieldQuery) {
+		return sqlSession.selectList(namespace + ".selectNdaAspatialField", selectNdaAspatialFieldQuery);
+	}
+
+	@Override
+	public List<HashMap<String, Object>> selectAllQA20Features(HashMap<String, Object> selectAllFeaturesQuery) {
+		return sqlSession.selectList(namespace + ".selectAllfeatures", selectAllFeaturesQuery);
+	}
 }

@@ -55,7 +55,7 @@ public class ErrorLayerExportServiceImpl implements ErrorLayerExportService {
 				QA20LayerCollection qa20LayerCollection = new QA20LayerCollection();
 
 				// errlayer 합쳐합쳐
-				QA20Layer errQA20Layer = ErrorLayerNGIExportParser.parseQA20Layer(name, errAllFeatures);
+				QA20Layer errQA20Layer = ErrorLayerNGIExportParser.parseQA20ErrorLayer(name, errAllFeatures);
 				qa20LayerCollection.addQA20Layer(errQA20Layer);
 
 				// 기존 파일 layer 합쳐합쳐
@@ -80,6 +80,13 @@ public class ErrorLayerExportServiceImpl implements ErrorLayerExportService {
 					HashMap<String, Object> metaMap = qa20LayerCollectionDAO
 							.selectQA20LayerMeataAll(selectAllMetaQuery);
 
+					String layerTbName = (String) metaMap.get("layer_t_name");
+					
+					// layerTB
+					HashMap<String, Object> selectAllFeaturesQuery = qa20dbManager.getSelectAllFeaturesQuery(layerTbName);
+					List<HashMap<String, Object>> featuresMapList = qa20LayerCollectionDAO.selectAllQA20Features(selectAllFeaturesQuery);
+					
+					
 					// tRepresent
 					if ((Boolean) metaMap.get("ngi_mask_text")) {
 						HashMap<String, Object> selectTextRepresentQuery = qa20dbManager
@@ -98,20 +105,27 @@ public class ErrorLayerExportServiceImpl implements ErrorLayerExportService {
 
 					// pRepresent
 					if ((Boolean) metaMap.get("ngi_mask_point")) {
-						HashMap<String, Object> selectTextRepresentQuery = qa20dbManager
-								.getSelectTextRepresentQuery(lmIdx);
-						List<HashMap<String, Object>> textRepresenets = qa20LayerCollectionDAO
-								.selectTextRepresent(selectTextRepresentQuery);
+						HashMap<String, Object> selectPointRepresentQuery = qa20dbManager
+								.getSelectPointRepresentQuery(lmIdx);
+						List<HashMap<String, Object>> pointRepresenets = qa20LayerCollectionDAO
+								.selectPointRepresent(selectPointRepresentQuery);
 					}
 
 					// lRepresent
 					if ((Boolean) metaMap.get("ngi_mask_linestring")) {
-						HashMap<String, Object> selectTextRepresentQuery = qa20dbManager
-								.getSelectTextRepresentQuery(lmIdx);
-						List<HashMap<String, Object>> textRepresenets = qa20LayerCollectionDAO
-								.selectTextRepresent(selectTextRepresentQuery);
+						HashMap<String, Object> selectLineRepresentQuery = qa20dbManager
+								.getSelectLineRepresentQuery(lmIdx);
+						List<HashMap<String, Object>> lineRepresenets = qa20LayerCollectionDAO
+								.selectLineStringRepresent(selectLineRepresentQuery);
 					}
 
+					// nda
+					HashMap<String, Object> selectNdaAspatialFieldQuery = qa20dbManager
+							.getSelectNadAspatialFieldQuery(lmIdx);
+					List<HashMap<String, Object>> aspatialField = qa20LayerCollectionDAO
+							.selectNdaAspatialField(selectNdaAspatialFieldQuery);
+
+					
 					// 합쳐합쳐
 
 				}

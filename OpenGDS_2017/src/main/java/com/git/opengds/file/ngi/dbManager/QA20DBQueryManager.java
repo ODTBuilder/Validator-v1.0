@@ -476,7 +476,7 @@ public class QA20DBQueryManager {
 		selectQuery.put("selectAllQuery", selectQueryStr);
 		return selectQuery;
 	}
-	
+
 	public HashMap<String, Object> getSelectAllQA20LayerMetaDataQuery(int lmIdx) {
 		HashMap<String, Object> selectQuery = new HashMap<String, Object>();
 		String tableName = "\"" + "qa20_layer_metadata" + "\"";
@@ -484,7 +484,6 @@ public class QA20DBQueryManager {
 		selectQuery.put("selectAllQuery", selectQueryStr);
 		return selectQuery;
 	}
-	
 
 	public HashMap<String, Object> getSelectQA20LayerTableNameQuery(Integer mIdx) {
 		HashMap<String, Object> selectQuery = new HashMap<String, Object>();
@@ -611,7 +610,6 @@ public class QA20DBQueryManager {
 		return updateQuery;
 	}
 
-
 	public HashMap<String, Object> getSelectTextRepresentQuery(int lmIdx) {
 		HashMap<String, Object> selectQuery = new HashMap<String, Object>();
 		String tableName = "\"" + "ngi_text_represent" + "\"";
@@ -624,6 +622,38 @@ public class QA20DBQueryManager {
 		HashMap<String, Object> selectQuery = new HashMap<String, Object>();
 		String tableName = "\"" + "ngi_region_represent" + "\"";
 		String selectQueryStr = "select * from " + tableName + " where lm_idx = " + lmIdx;
+		selectQuery.put("selectAllQuery", selectQueryStr);
+		return selectQuery;
+	}
+
+	public HashMap<String, Object> getSelectPointRepresentQuery(int lmIdx) {
+		HashMap<String, Object> selectQuery = new HashMap<String, Object>();
+		String tableName = "\"" + "ngi_region_represent" + "\"";
+		String selectQueryStr = "select * from " + tableName + " where lm_idx = " + lmIdx;
+		selectQuery.put("selectAllQuery", selectQueryStr);
+		return selectQuery;
+	}
+
+	public HashMap<String, Object> getSelectLineRepresentQuery(int lmIdx) {
+		HashMap<String, Object> selectQuery = new HashMap<String, Object>();
+		String tableName = "\"" + "ngi_region_represent" + "\"";
+		String selectQueryStr = "select * from " + tableName + " where lm_idx = " + lmIdx;
+		selectQuery.put("selectAllQuery", selectQueryStr);
+		return selectQuery;
+	}
+
+	public HashMap<String, Object> getSelectNadAspatialFieldQuery(int lmIdx) {
+		HashMap<String, Object> selectQuery = new HashMap<String, Object>();
+		String tableName = "\"" + "nda_aspatial_field_def" + "\"";
+		String selectQueryStr = "select * from " + tableName + " where lm_idx = " + lmIdx;
+		selectQuery.put("selectAllQuery", selectQueryStr);
+		return selectQuery;
+	}
+
+	public HashMap<String, Object> getSelectAllFeaturesQuery(String layerTbName) {
+		HashMap<String, Object> selectQuery = new HashMap<String, Object>();
+		String tableName = "\"" + layerTbName + "\"";
+		String selectQueryStr = "select * from " + tableName;
 		selectQuery.put("selectAllQuery", selectQueryStr);
 		return selectQuery;
 	}
