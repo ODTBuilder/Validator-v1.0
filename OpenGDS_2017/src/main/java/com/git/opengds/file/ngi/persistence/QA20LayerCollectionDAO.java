@@ -24,6 +24,7 @@ import java.util.Map;
 import org.postgresql.util.PSQLException;
 
 public interface QA20LayerCollectionDAO {
+	
 
 	public int insertQA20LayerCollection(Map<String, Object> collection);
 

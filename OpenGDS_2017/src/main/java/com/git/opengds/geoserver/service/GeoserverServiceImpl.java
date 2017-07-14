@@ -343,19 +343,22 @@ public class GeoserverServiceImpl implements GeoserverService {
 	public boolean removeGeoserverLayer(String groupLayerName,String layerName) {
 		boolean isConfigureGroup = false;
 		boolean isRemoveLayer = false;
-		DTGeoGroupLayer dtGeoGroupLayer = dtReader.getDTGeoGroupLayer(ID, layerName);
+		DTGeoGroupLayer dtGeoGroupLayer = dtReader.getDTGeoGroupLayer(ID, groupLayerName);
 		
 		if(dtGeoGroupLayer!=null){
-		List<String> layerList = dtGeoGroupLayer.getLayerList().getNames();
-		
+		List<String> layerList = new ArrayList<String>();
+		RESTLayerList list = dtGeoGroupLayer.getLayerList();
+		int a = list.size();
+		layerList = dtGeoGroupLayer.getLayerList().getNames();
 		layerList.remove(layerName);
 		
 		GSLayerGroupEncoder groupEncoder = new GSLayerGroupEncoder();
+		String string = dtGeoGroupLayer.getName();
 		groupEncoder.setName(dtGeoGroupLayer.getName());
 		groupEncoder.setWorkspace(dtGeoGroupLayer.getWorkspace());
 		groupEncoder.setBounds(dtGeoGroupLayer.getCRS(), dtGeoGroupLayer.getMinX(), dtGeoGroupLayer.getMaxY(), dtGeoGroupLayer.getMinY(), dtGeoGroupLayer.getMaxY());
 		for(String name : layerList){
-			groupEncoder.addLayer(name);;
+			groupEncoder.addLayer(name);
 		}
 		
 		isConfigureGroup = dtPublisher.configureLayerGroup(ID, groupLayerName, groupEncoder);

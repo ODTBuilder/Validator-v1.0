@@ -385,7 +385,7 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 		}
 		String layerTableName = "geo" + "_" + type + "_" + collectionName + "_" + layerName;
 		String groupName = "gro" + "_" + type + "_" + collectionName;
-		boolean isSuccessed = geoserverService.removeGeoserverLayer(layerTableName);
+		boolean isSuccessed = geoserverService.removeGeoserverLayer(groupName, layerTableName);
 		if (isSuccessed) {
 			txManager.commit(status);
 			return true;
