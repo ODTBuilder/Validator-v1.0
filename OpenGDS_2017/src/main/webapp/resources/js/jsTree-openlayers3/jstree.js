@@ -5678,6 +5678,7 @@
 				 */
 				delete_node_layer : function(obj) {
 					var t1, t2, par, pos, tmp, i, j, k, l, c, top, lft;
+					var that = this;
 					if ($.isArray(obj)) {
 						obj = obj.slice();
 						for (t1 = 0, t2 = obj.length; t1 < t2; t1++) {
@@ -5691,7 +5692,19 @@
 						return false;
 					}
 					par = this.get_node(obj.parent);
-
+					var hide_child_layer = function(parent, id) {
+						if (parent instanceof ol.layer.Tile) {
+							var source = parent.getSource();
+							var params = source.getParams();
+							var layers = params["LAYERS"].split(",");
+							layers.splice(layers.indexOf(id), 1);
+							params["LAYERS"] = layers.toString();
+							source.updateParams(params);
+							if (layers.length === 0) {
+								parent.setVisible(false);
+							}
+						}
+					};
 					/**
 					 * 삭제한 노드의 아이디에 맞는 레이어를 검색
 					 */
@@ -5704,7 +5717,7 @@
 						subVal = this.sum_Layers(layer, subVal);
 						group.remove(layer);
 						this.git.lastPointer -= subVal;
-					} else if (layer instanceof ol.layer.Base) {
+					} else if (pLayer instanceof ol.layer.Base) {
 						var git = pLayer.get("git");
 						if (!!git) {
 							if (pLayer.get("git").hasOwnProperty("fake")) {
@@ -5715,6 +5728,7 @@
 									subVal = this.sum_Layers(layer, subVal);
 									group.remove(layer);
 									this.git.lastPointer -= subVal;
+									hide_child_layer(pLayer, layer.get("id"));
 								} else if (git.fake === "child") {
 									layer = this.get_LayerById(obj.id);
 									var subVal = 0;
@@ -10389,15 +10403,15 @@
 						// }
 						// }
 						// },
-						"setting" : {
+						"style" : {
 							"separator_before" : false,
-							"icon" : "fa fa-cog",
+							"icon" : "fa fa-paint-brush",
 							"separator_after" : false,
 							"_disabled" : false, // (this.check("delete_node",
 							// data.reference,
 							// this.get_parent(data.reference),
 							// "")),
-							"label" : "Setting",
+							"label" : "Style",
 							"action" : function(data) {
 								var inst = $.jstreeol3.reference(data.reference), obj = inst.get_node(data.reference);
 								if (inst.is_selected(obj)) {
@@ -10408,6 +10422,25 @@
 								console.log("Not yet");
 							}
 						},
+						"properties" : {
+							"separator_before" : false,
+							"icon" : "fa fa-info-circle",
+							"separator_after" : false,
+							"_disabled" : false, // (this.check("delete_node",
+							// data.reference,
+							// this.get_parent(data.reference),
+							// "")),
+							"label" : "Properties",
+							"action" : function(data) {
+								var inst = $.jstreeol3.reference(data.reference), obj = inst.get_node(data.reference);
+								if (inst.is_selected(obj)) {
+									// inst.delete_node_layer(inst.get_selected());
+								} else {
+									// inst.delete_node_layer(obj);
+								}
+								console.log("Not yet");
+							}
+						}
 					};
 				}
 			};

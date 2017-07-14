@@ -43,7 +43,7 @@ gb.geoserver.DeleteLayer.prototype.save = function(obj) {
 		traditional : true,
 		success : function(data, textStatus, jqXHR) {
 			console.log(data);
-			that.that.getReference().refresh();
+			that.getReference().refresh();
 		}
 	});
 };
