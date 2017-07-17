@@ -15,6 +15,7 @@ html {
 #builderHeader {
 	border-radius: 0;
 	margin-bottom: 0;
+	min-height: 30px;
 }
 
 #builderContent {
@@ -65,39 +66,35 @@ html {
 	border: 0;
 	background-color: transparent;
 }
+
+#builderHeader .navbar-nav>li>a {
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
 </style>
 
 </head>
 <body>
-
+	<jsp:include page="/WEB-INF/views/common/header.jsp" />
 	<nav id="builderHeader" class="navbar navbar-toggleable-md navbar-default fixed-top">
-
-		<!-- 		<div class="navbar-header"> -->
-		<!-- 			<a class="navbar-brand" href="#"> <img alt="Geospatial Information Technology" -->
-		<%-- 				src="${pageContext.request.contextPath}/resources/img/gitcism.png"> --%>
-		<!-- 			</a> -->
-		<!-- 		</div> -->
-
 		<ul class="nav navbar-nav">
-
 			<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
-				aria-expanded="false" title="New layer"><i class="fa fa-file-o fa-lg" aria-hidden="true"></i> New</a>
+				aria-expanded="false" title="New layer">New</a>
 				<ul class="dropdown-menu" role="menu">
-					<li><a href="#" id="newVector" title="Vector">New</a></li>
+					<li><a href="#" id="newVector" title="Vector">Layer</a></li>
 					<li><a href="#" id="uploadFile" title="Upload File" onclick="gitbuilder.ui.NewFileWindow()">File</a></li>
 				</ul></li>
 			<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
-				aria-expanded="false" title="Save"><i class="fa fa-floppy-o fa-lg" aria-hidden="true"></i> Save</a>
+				aria-expanded="false" title="Save">Save</a>
 				<ul class="dropdown-menu" role="menu">
 					<li><a href="#">as a SHP</a></li>
 					<li><a href="#" id="save">to Server</a></li>
 				</ul></li>
 
-			<li><a href="#" title="Edit" id="edit"><i class="fa fa-pencil-square-o fa-lg" aria-hidden="true"></i> Edit</a></li>
-			<li><a href="#" title="Base map" id="changeBase"><i class="fa fa-map-o fa-lg" aria-hidden="true"></i> Base
-					Map</a></li>
+			<li><a href="#" title="Edit" id="edit">Edit</a></li>
+			<li><a href="#" title="Base map" id="changeBase">Base Map</a></li>
 			<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
-				aria-expanded="false" title="Validation"><i class="fa fa-search fa-lg fa-lg" aria-hidden="true"></i> QA 1.0</a>
+				aria-expanded="false" title="Validation">QA 1.0</a>
 				<ul class="dropdown-menu" role="menu">
 					<li><a href="#" title="Layer Definition" id="layerDefinition1">Layer Definition</a></li>
 					<li><a href="#" title="Validating Option" id="validDefinition1">Validating Option</a></li>
@@ -105,31 +102,30 @@ html {
 					<li><a href="#" title="Validation" id="validation1">Validation</a></li>
 				</ul></li>
 			<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
-				aria-expanded="false" title="Validation"><i class="fa fa-search fa-lg fa-lg" aria-hidden="true"></i> QA 2.0</a>
+				aria-expanded="false" title="Validation">QA 2.0</a>
 				<ul class="dropdown-menu" role="menu">
 					<li><a href="#" title="Layer Definition" id="layerDefinition">Layer Definition</a></li>
 					<li><a href="#" title="Validating Option" id="validDefinition">Validating Option</a></li>
 					<li><a href="#" title="Layer Weight" id="weight">Layer Weight</a></li>
 					<li><a href="#" title="Validation" id="validation">Validation</a></li>
 				</ul></li>
-			<li><a href="#" title="QA Edit" id="qaedit"><i class="fa fa-object-group fa-lg" aria-hidden="true"></i> QA
-					Edit</a></li>
+			<li><a href="#" title="QA Edit" id="qaedit">QA Edit</a></li>
 			<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
-				aria-expanded="false" title="Validation Result"><i class="fa fa-list-alt fa-lg" aria-hidden="true"></i> Result</a>
+				aria-expanded="false" title="Validation Result">Result</a>
 				<ul class="dropdown-menu" role="menu">
 					<li><a href="#">Error Navigator</a></li>
 					<li><a href="#">Error Report</a></li>
 				</ul></li>
 
 			<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
-				aria-expanded="false" title="ToolBox"><i class="fa fa-calculator fa-lg" aria-hidden="true"></i> ToolBox</a>
+				aria-expanded="false" title="ToolBox">ToolBox</a>
 				<ul class="dropdown-menu" role="menu">
 					<li><a href="#">CRS Transformation</a></li>
 					<li><a href="#">Spatial Operation</a></li>
 				</ul></li>
 
 			<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
-				aria-expanded="false" title="History"><i class="fa fa-history fa-lg" aria-hidden="true"></i> History</a>
+				aria-expanded="false" title="History">History</a>
 				<ul class="dropdown-menu" role="menu">
 					<li><a href="#">History</a></li>
 					<li role="presentation" class="divider"></li>
@@ -137,7 +133,7 @@ html {
 					<li><a href="#">Upload History</a></li>
 				</ul></li>
 
-			<li><a href="#" title="Information"><i class="fa fa-info-circle fa-lg" aria-hidden="true"></i> Information</a></li>
+			<li><a href="#" title="Information">Information</a></li>
 		</ul>
 	</nav>
 
@@ -202,7 +198,9 @@ html {
 		var gitrnd = {
 			resize : function() {
 				var winHeight = $(window).innerHeight();
-				var conHeight = winHeight - ($("#builderHeader").outerHeight(true) + $("#builderFooter").outerHeight(true));
+				var conHeight = winHeight
+						- ($("#mainHeader").outerHeight(true) + $("#builderHeader").outerHeight(true) + $("#builderFooter").outerHeight(
+								true));
 				var winWidth = $(window).innerWidth();
 				var mapWidth = winWidth - ($("#builderLayer").outerWidth(true));
 				$("#builderLayer").outerHeight(conHeight);
