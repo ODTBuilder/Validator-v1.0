@@ -68,7 +68,7 @@ public class QA20DBManagerServiceImpl implements QA20DBManagerService {
 			int cIdx = dao.insertQA20LayerCollection(insertCollectionQuery);
 
 			Map<String, Boolean> isFeaturesMap = new HashMap<String, Boolean>();
-			
+
 			String src = layerInfo.getOriginSrc();
 			QA20LayerList createLayerList = dtCollection.getQa20LayerList();
 			for (int i = 0; i < createLayerList.size(); i++) {
@@ -78,77 +78,79 @@ public class QA20DBManagerServiceImpl implements QA20DBManagerService {
 				// isFeature
 				if (qa20Layer.getFeatures().size() == 0) {
 					isFeaturesMap.put(layerName, false);
+					continue;
 				} else {
 					isFeaturesMap.put(layerName, true);
-				}
 
-				// createQA20Layer
-				HashMap<String, Object> createQuery = dbManager.getQA20LayerTbCreateQuery(type, collectionName,
-						qa20Layer, src);
-				dao.createQA20LayerTb(createQuery);
+					// createQA20Layer
+					HashMap<String, Object> createQuery = dbManager.getQA20LayerTbCreateQuery(type, collectionName,
+							qa20Layer, src);
+					dao.createQA20LayerTb(createQuery);
 
-				// insertQA20Layer
-				List<HashMap<String, Object>> inertLayerQuerys = dbManager.getQA20LayerInsertQuery(type, collectionName,
-						qa20Layer, src);
-				for (int j = 0; j < inertLayerQuerys.size(); j++) {
-					HashMap<String, Object> insertLayerQuery = inertLayerQuerys.get(j);
-					dao.insertQA20Layer(insertLayerQuery);
-				}
+					// insertQA20Layer
+					List<HashMap<String, Object>> inertLayerQuerys = dbManager.getQA20LayerInsertQuery(type,
+							collectionName, qa20Layer, src);
+					for (int j = 0; j < inertLayerQuerys.size(); j++) {
+						HashMap<String, Object> insertLayerQuery = inertLayerQuerys.get(j);
+						dao.insertQA20Layer(insertLayerQuery);
+					}
 
-				// insertLayerMedata
-				HashMap<String, Object> insertQueryMap = dbManager.getInsertQA20LayerMeataData(type, collectionName,
-						cIdx, qa20Layer);
-				int lmIdx = dao.insertQA20LayerMetadata(insertQueryMap);
+					// insertLayerMedata
+					HashMap<String, Object> insertQueryMap = dbManager.getInsertQA20LayerMeataData(type, collectionName,
+							cIdx, qa20Layer);
+					int lmIdx = dao.insertQA20LayerMetadata(insertQueryMap);
 
-				NDAHeader ndaHeader = qa20Layer.getNdaHeader();
-				// aspatial_field_def
-				List<HashMap<String, Object>> fieldDefs = dbManager.getAspatialFieldDefsInsertQuery(lmIdx, ndaHeader);
-				if (fieldDefs != null) {
-					for (int j = 0; j < fieldDefs.size(); j++) {
-						dao.insertNdaAspatialFieldDefs(fieldDefs.get(j));
+					NDAHeader ndaHeader = qa20Layer.getNdaHeader();
+					// aspatial_field_def
+					List<HashMap<String, Object>> fieldDefs = dbManager.getAspatialFieldDefsInsertQuery(lmIdx,
+							ndaHeader);
+					if (fieldDefs != null) {
+						for (int j = 0; j < fieldDefs.size(); j++) {
+							dao.insertNdaAspatialFieldDefs(fieldDefs.get(j));
+						}
 					}
-				}
-				NGIHeader ngiHeader = qa20Layer.getNgiHeader();
-				// point_represent
-				List<HashMap<String, Object>> ptReps = dbManager.getPtRepresentInsertQuery(lmIdx,
-						ngiHeader.getPoint_represent());
-				if (ptReps != null) {
-					for (int j = 0; j < ptReps.size(); j++) {
-						dao.insertPointRepresent(ptReps.get(j));
+					NGIHeader ngiHeader = qa20Layer.getNgiHeader();
+					// point_represent
+					List<HashMap<String, Object>> ptReps = dbManager.getPtRepresentInsertQuery(lmIdx,
+							ngiHeader.getPoint_represent());
+					if (ptReps != null) {
+						for (int j = 0; j < ptReps.size(); j++) {
+							dao.insertPointRepresent(ptReps.get(j));
+						}
 					}
-				}
-				// lineString_represent
-				List<HashMap<String, Object>> lnReps = dbManager.getLnRepresentInsertQuery(lmIdx,
-						ngiHeader.getLine_represent());
-				if (lnReps != null) {
-					for (int j = 0; j < lnReps.size(); j++) {
-						dao.insertLineStringRepresent(lnReps.get(j));
+					// lineString_represent
+					List<HashMap<String, Object>> lnReps = dbManager.getLnRepresentInsertQuery(lmIdx,
+							ngiHeader.getLine_represent());
+					if (lnReps != null) {
+						for (int j = 0; j < lnReps.size(); j++) {
+							dao.insertLineStringRepresent(lnReps.get(j));
+						}
 					}
-				}
-				// region_represent
-				List<HashMap<String, Object>> rgReps = dbManager.getRgRepresentInsertQuery(lmIdx,
-						ngiHeader.getRegion_represent());
-				if (rgReps != null) {
-					for (int j = 0; j < rgReps.size(); j++) {
-						dao.insertRegionRepresent(rgReps.get(j));
+					// region_represent
+					List<HashMap<String, Object>> rgReps = dbManager.getRgRepresentInsertQuery(lmIdx,
+							ngiHeader.getRegion_represent());
+					if (rgReps != null) {
+						for (int j = 0; j < rgReps.size(); j++) {
+							dao.insertRegionRepresent(rgReps.get(j));
+						}
 					}
-				}
-				// text_represent
-				List<HashMap<String, Object>> txtReps = dbManager.getTxtRepresentInsertQuery(lmIdx,
-						ngiHeader.getText_represent());
-				if (txtReps != null) {
-					for (int j = 0; j < txtReps.size(); j++) {
-						dao.insertTextRepresent(txtReps.get(j));
+					// text_represent
+					List<HashMap<String, Object>> txtReps = dbManager.getTxtRepresentInsertQuery(lmIdx,
+							ngiHeader.getText_represent());
+					if (txtReps != null) {
+						for (int j = 0; j < txtReps.size(); j++) {
+							dao.insertTextRepresent(txtReps.get(j));
+						}
 					}
+					// geoLayerInfo
+					layerInfo.putLayerName(layerName);
+					String layerTypeStr = qa20Layer.getLayerType();
+					String layerType = dbManager.getLayerType(layerTypeStr);
+					layerInfo.putLayerType(layerName, layerType);
+					List<String> columns = dbManager.getLayerCoulmns(qa20Layer);
+					layerInfo.putLayerColumns(layerName, columns);
+					// layerInfo.putLayerBoundary(layerName, boundryMap);
 				}
-				// geoLayerInfo
-				layerInfo.putLayerName(layerName);
-				String layerTypeStr = qa20Layer.getLayerType();
-				String layerType = dbManager.getLayerType(layerTypeStr);
-				layerInfo.putLayerType(layerName, layerType);
-				List<String> columns = dbManager.getLayerCoulmns(qa20Layer);
-				layerInfo.putLayerColumns(layerName, columns);
-				// layerInfo.putLayerBoundary(layerName, boundryMap);
 			}
 			layerInfo.setIsFeatureMap(isFeaturesMap);
 		} catch (Exception e) {

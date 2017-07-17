@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.git.opengds.validator.service.ErrorLayerExportService;
+import com.vividsolutions.jts.io.ParseException;
 
 @Controller("layerFileExportController")
 @RequestMapping("/fileExport")
@@ -23,7 +24,7 @@ public class LayerFileExportController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/fileExport.ajax")
 	@ResponseBody
-	public boolean exportLayerToFile(HttpServletRequest request, HttpServletResponse response) throws IOException {
+	public boolean exportLayerToFile(HttpServletRequest request, HttpServletResponse response) throws IOException, ParseException {
 
 		String format = null;
 		String type = null;

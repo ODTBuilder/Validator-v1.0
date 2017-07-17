@@ -2,10 +2,11 @@ package com.git.opengds.parser.error;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
-import com.git.gdsbuilder.type.qa20.collection.QA20LayerCollection;
 import com.git.gdsbuilder.type.qa20.feature.QA20Feature;
+import com.git.gdsbuilder.type.qa20.feature.QA20FeatureList;
 import com.git.gdsbuilder.type.qa20.header.NDAField;
 import com.git.gdsbuilder.type.qa20.header.NDAHeader;
 import com.git.gdsbuilder.type.qa20.header.NGIHeader;
@@ -13,6 +14,8 @@ import com.git.gdsbuilder.type.qa20.layer.QA20Layer;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.io.ParseException;
+import com.vividsolutions.jts.io.WKTReader;
 
 public class ErrorLayerNGIExportParser {
 
@@ -96,5 +99,188 @@ public class ErrorLayerNGIExportParser {
 			qa20Layer.add(qa20Feature);
 		}
 		return qa20Layer;
+	}
+
+	public static QA20Layer parseQA20Layer(HashMap<String, Object> metaMap,
+			List<HashMap<String, Object>> featuresMapList, List<HashMap<String, Object>> pointRepresenets,
+			List<HashMap<String, Object>> lineRepresenets, List<HashMap<String, Object>> regionRepresenets,
+			List<HashMap<String, Object>> textRepresenets, List<HashMap<String, Object>> aspatialField)
+			throws ParseException {
+
+		if (featuresMapList.size() > 0) {
+
+			QA20Layer qa20Layer = new QA20Layer();
+
+			// layerID
+			String layerID = (String) metaMap.get("layer_id");
+			qa20Layer.setLayerID(layerID);
+
+			// layerName
+			String layerName = (String) metaMap.get("current_layer_name");
+			qa20Layer.setLayerName(layerName);
+
+			// ngiHeader
+			NGIHeader ngiHeader = parserQA20NGIHeader(metaMap, pointRepresenets, lineRepresenets, regionRepresenets,
+					textRepresenets);
+			qa20Layer.setNgiHeader(ngiHeader);
+
+			// ndaHeader
+			String fileVerseion = (String) metaMap.get("file_version");
+			NDAHeader ndaHeader = parseQA20NDAHeader(fileVerseion, aspatialField);
+			qa20Layer.setNdaHeader(ndaHeader);
+
+			// featureList
+			QA20FeatureList featureList = new QA20FeatureList();
+			for (int i = 0; i < featuresMapList.size(); i++) {
+				HashMap<String, Object> featureMap = featuresMapList.get(i);
+				QA20Feature qa20Feature = parserQA20Feature(featureMap);
+				featureList.add(qa20Feature);
+			}
+			qa20Layer.setFeatures(featureList);
+			return qa20Layer;
+		} else {
+			return null;
+		}
+	}
+
+	private static QA20Feature parserQA20Feature(HashMap<String, Object> featureMap) throws ParseException {
+
+		String featureID = null;
+		String featureType = null;
+		String numparts = null;
+		String coordinateSize = null;
+		Geometry geom = null;
+		String styleId = null;
+		HashMap<String, Object> properties = new HashMap<String, Object>();
+
+		Iterator featureIt = featureMap.keySet().iterator();
+		while (featureIt.hasNext()) {
+			String featureKey = (String) featureIt.next();
+			Object value = featureMap.get(featureKey);
+			if (featureKey.equals("feature_id")) {
+				featureID = (String) value;
+			} else if (featureKey.equals("feature_type")) {
+				featureType = (String) value;
+			} else if (featureKey.equals("num_rings")) {
+				numparts = String.valueOf(value);
+			} else if (featureKey.equals("num_vertexes")) {
+				coordinateSize = String.valueOf(value);
+			} else if (featureKey.equals("geom")) {
+				WKTReader reader = new WKTReader();
+				geom = reader.read(String.valueOf(value));
+			} else if(featureKey.equals("style_id")) {
+				styleId = (String) value;
+			}else {
+				properties.put(featureKey, value);
+			}
+		}
+		QA20Feature qa20Feature = new QA20Feature(featureID, featureType, numparts, coordinateSize, geom, styleId,
+				properties);
+
+		return qa20Feature;
+	}
+
+	private static NGIHeader parserQA20NGIHeader(HashMap<String, Object> metaMap,
+			List<HashMap<String, Object>> pointRepresenets, List<HashMap<String, Object>> lineRepresenets,
+			List<HashMap<String, Object>> regionRepresenets, List<HashMap<String, Object>> textRepresenets) {
+
+		NGIHeader ngiHeader = new NGIHeader();
+		String fileVerseion = (String) metaMap.get("file_version");
+		ngiHeader.setVersion(fileVerseion);
+		String dim = (String) metaMap.get("ngi_dim");
+		ngiHeader.setDim(dim);
+		String bound = (String) metaMap.get("ngi_bound");
+		ngiHeader.setBound(bound);
+
+		List<String> typeList = new ArrayList<String>();
+		if (pointRepresenets != null) {
+			List<String> pointReps = new ArrayList<String>();
+			for (int i = 0; i < pointRepresenets.size(); i++) {
+				HashMap<String, Object> pointRepMap = pointRepresenets.get(i);
+				String pointRep = (String) pointRepMap.get("p_rep_value");
+				pointReps.add(pointRep);
+			}
+			if (pointReps.size() > 0) {
+				ngiHeader.setPoint_represent(pointReps);
+				typeList.add("POINT");
+			}
+		}
+		if (lineRepresenets != null) {
+			List<String> lineReps = new ArrayList<String>();
+			for (int i = 0; i < lineRepresenets.size(); i++) {
+				HashMap<String, Object> lineRepMap = lineRepresenets.get(i);
+				String pointRep = (String) lineRepMap.get("l_rep_value");
+				lineReps.add(pointRep);
+			}
+			if (lineReps.size() > 0) {
+				ngiHeader.setLine_represent(lineReps);
+				typeList.add("LINESTRING");
+			}
+		}
+		if (regionRepresenets != null) {
+			List<String> regionReps = new ArrayList<String>();
+			for (int i = 0; i < regionRepresenets.size(); i++) {
+				HashMap<String, Object> regionRepMap = regionRepresenets.get(i);
+				String regionRep = (String) regionRepMap.get("r_rep_value");
+				regionReps.add(regionRep);
+			}
+			if (regionReps.size() > 0) {
+				ngiHeader.setRegion_represent(regionReps);
+				typeList.add("POLYGON");
+			}
+		}
+
+		if (textRepresenets != null) {
+			List<String> textReps = new ArrayList<String>();
+			for (int i = 0; i < textRepresenets.size(); i++) {
+				HashMap<String, Object> textRepMap = textRepresenets.get(i);
+				String textRep = (String) textRepMap.get("t_rep_value");
+				textReps.add(textRep);
+			}
+			if (textReps.size() > 0) {
+				ngiHeader.setText_represent(textReps);
+				typeList.add("TEXT");
+			}
+
+		}
+
+		int size = typeList.size();
+		if (size > 0) {
+			String geometricMetadata = "MASK(";
+			for (int i = 0; i < typeList.size(); i++) {
+				String type = typeList.get(i);
+				geometricMetadata += type;
+				if (i == size - 1) {
+					geometricMetadata += ")";
+				} else {
+					geometricMetadata += ",";
+				}
+			}
+			ngiHeader.setGeometric_metadata(geometricMetadata);
+		}
+		return ngiHeader;
+	}
+
+	public static NDAHeader parseQA20NDAHeader(String version, List<HashMap<String, Object>> aspatialField) {
+
+		if (aspatialField != null) {
+			List<NDAField> fields = new ArrayList<NDAField>();
+			for (int i = 0; i < aspatialField.size(); i++) {
+				HashMap<String, Object> fieldMap = aspatialField.get(i);
+				NDAField field = new NDAField();
+				field.setFieldName((String) fieldMap.get("f_name"));
+				field.setType((String) fieldMap.get("f_type"));
+				field.setSize(String.valueOf(fieldMap.get("f_size")));
+				field.setDecimal((String) fieldMap.get("f_decimal"));
+				field.setUnique((Boolean) fieldMap.get("f_isunique"));
+				fields.add(field);
+			}
+			NDAHeader ndaHeader = new NDAHeader();
+			ndaHeader.setVersion(version);
+			ndaHeader.setAspatial_field_def(fields);
+			return ndaHeader;
+		} else {
+			return null;
+		}
 	}
 }

@@ -343,7 +343,8 @@ public class GeoserverServiceImpl implements GeoserverService {
 	@Override
 	public boolean removeGeoserverLayer(String groupLayerName,String layerName) {
 		boolean isConfigureGroup = false;
-		boolean isRemoveLayer = false;
+//		boolean isRemoveLayer = false;
+		boolean isRemoveFeatureType = false;
 		DTGeoGroupLayer dtGeoGroupLayer = dtReader.getDTGeoGroupLayer(ID, groupLayerName);
 		
 		if(dtGeoGroupLayer!=null){
@@ -359,12 +360,13 @@ public class GeoserverServiceImpl implements GeoserverService {
 			}
 			
 			isConfigureGroup = dtPublisher.configureLayerGroup(ID, groupLayerName, groupEncoder);
-			isRemoveLayer = dtPublisher.removeLayer(ID, layerName);
+//			isRemoveLayer = dtPublisher.removeLayer(ID, layerName);
+			isRemoveFeatureType = dtPublisher.unpublishFeatureType(ID, ID, layerName);
 		}
 		else
 			return false;
 		
-		if(!isConfigureGroup&&!isRemoveLayer){
+		if(!isConfigureGroup&&!isRemoveFeatureType){
 			return false;
 		}
 		return true;

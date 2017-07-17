@@ -32,7 +32,10 @@ public class QA20FileWriter {
 	BufferedWriter ngiWriter;
 	BufferedWriter ndaWriter;
 
-	public Map<String, Object> writeNGIFile(QA20LayerCollection qa20LayerCollection) throws IOException {
+	int recordCount;
+
+	public Map<String, Object> writeNGIFile(QA20LayerCollection qa20LayerCollection, QA20Layer errLayer)
+			throws IOException {
 
 		String collectionName = qa20LayerCollection.getFileName();
 		String ngiFileRoot = "D:\\" + collectionName + ngiExe;
@@ -46,8 +49,10 @@ public class QA20FileWriter {
 		this.ngiWriter = new BufferedWriter(new FileWriter(ngiFileRoot, true));
 		this.ndaWriter = new BufferedWriter(new FileWriter(ndaFileRoot, true));
 
+		// fileLayer
 		QA20LayerList layerList = qa20LayerCollection.getQa20LayerList();
-		for (int i = 0; i < layerList.size(); i++) {
+		int size = layerList.size();
+		for (int i = 0; i < size; i++) {
 			QA20Layer layer = layerList.get(i);
 			writeNgiFile(i, layer);
 			NDAHeader ndaHeader = layer.getNdaHeader();
@@ -55,6 +60,15 @@ public class QA20FileWriter {
 				writeNdaFile(i, layer, ndaHeader);
 			}
 		}
+		
+		// errLayer
+		writeNgiFile(size, errLayer);
+		NDAHeader ndaHeader = errLayer.getNdaHeader();
+		if (ndaHeader != null) {
+			writeNdaFile(size, errLayer, ndaHeader);
+		}
+		ngiWriter.close();
+		ndaWriter.close();
 		return ngiFileMap;
 	}
 
@@ -64,8 +78,7 @@ public class QA20FileWriter {
 		ndaWriter.newLine();
 		writeNdaLayer(i, layer, ndaHeader);
 		ndaWriter.write(layerEndTg);
-		ndaWriter.flush();
-		ndaWriter.close();
+		ndaWriter.newLine();
 	}
 
 	private void writeNdaLayer(int i, QA20Layer layer, NDAHeader ndaHeader) throws IOException {
@@ -95,9 +108,8 @@ public class QA20FileWriter {
 		for (int i = 0; i < features.size(); i++) {
 			QA20Feature feature = features.get(i);
 			String featureID = feature.getFeatureID();
-			ndaWriter.write("$RECORD " + featureID);
+			ndaWriter.write("$" + featureID);
 			ndaWriter.newLine();
-
 			String fieldStr = "";
 			HashMap<String, Object> properties = feature.getProperties();
 			for (int j = 0; j < fields.size(); j++) {
@@ -169,9 +181,7 @@ public class QA20FileWriter {
 		ngiWriter.newLine();
 		writeNgiLayer(i, layer);
 		ngiWriter.write(layerEndTg);
-
-		ngiWriter.flush();
-		ngiWriter.close();
+		ngiWriter.newLine();
 	}
 
 	private void writeNgiLayer(int i, QA20Layer layer) throws IOException {
@@ -201,15 +211,65 @@ public class QA20FileWriter {
 		ngiWriter.newLine();
 		ngiWriter.write("$END");
 		ngiWriter.newLine();
-		ngiWriter.write("$POINT_REPRESENT");
+		ngiWriter.write("$GEOMETRIC_METADATA");
 		ngiWriter.newLine();
-		List<String> styles = ngiHeader.getPoint_represent();
-		for (int i = 0; i < styles.size(); i++) {
-			ngiWriter.write(styles.get(i));
-			ngiWriter.newLine();
-		}
+		ngiWriter.write(ngiHeader.getGeometric_metadata());
+		ngiWriter.newLine();
+		ngiWriter.write(ngiHeader.getDim());
+		ngiWriter.newLine();
+		ngiWriter.write(ngiHeader.getBound());
+		ngiWriter.newLine();
 		ngiWriter.write("$END");
 		ngiWriter.newLine();
+
+		List<String> ptStyles = ngiHeader.getPoint_represent();
+		if (ptStyles != null) {
+			ngiWriter.write("$POINT_REPRESENT");
+			ngiWriter.newLine();
+			for (int i = 0; i < ptStyles.size(); i++) {
+				int tmp = i + 1;
+				ngiWriter.write(tmp + " " + ptStyles.get(i));
+				ngiWriter.newLine();
+			}
+			ngiWriter.write("$END");
+			ngiWriter.newLine();
+		}
+		List<String> lnStyles = ngiHeader.getLine_represent();
+		if (lnStyles != null) {
+			ngiWriter.write("$LINE_REPRESENT");
+			ngiWriter.newLine();
+			for (int i = 0; i < lnStyles.size(); i++) {
+				int tmp = i + 1;
+				ngiWriter.write(tmp + " " + lnStyles.get(i));
+				ngiWriter.newLine();
+			}
+			ngiWriter.write("$END");
+			ngiWriter.newLine();
+		}
+		List<String> pgStyles = ngiHeader.getRegion_represent();
+		if (pgStyles != null) {
+			ngiWriter.write("$REGION_REPRESENT");
+			ngiWriter.newLine();
+			for (int i = 0; i < pgStyles.size(); i++) {
+				int tmp = i + 1;
+				ngiWriter.write(tmp + " " + pgStyles.get(i));
+				ngiWriter.newLine();
+			}
+			ngiWriter.write("$END");
+			ngiWriter.newLine();
+		}
+		List<String> txtStyles = ngiHeader.getText_represent();
+		if (txtStyles != null) {
+			ngiWriter.write("$TEXT_REPRESENT");
+			ngiWriter.newLine();
+			for (int i = 0; i < txtStyles.size(); i++) {
+				int tmp = i + 1;
+				ngiWriter.write(tmp + " " + txtStyles.get(i));
+				ngiWriter.newLine();
+			}
+			ngiWriter.write("$END");
+			ngiWriter.newLine();
+		}
 		ngiWriter.write(endTg);
 		ngiWriter.newLine();
 	}
@@ -220,14 +280,32 @@ public class QA20FileWriter {
 		ngiWriter.newLine();
 		for (int i = 0; i < qa20FeatureList.size(); i++) {
 			QA20Feature feature = qa20FeatureList.get(i);
-			ngiWriter.write("$RECORD " + i);
+			String featureID = feature.getFeatureID();
+			ngiWriter.write("$" + featureID);
 			ngiWriter.newLine();
 			ngiWriter.write(feature.getFeatureType());
 			ngiWriter.newLine();
+			String numparts = feature.getNumparts();
+			if (numparts != null) {
+				ngiWriter.write("NUMPARTS " + numparts);
+				ngiWriter.newLine();
+			}
+			String coorSize = feature.getCoordinateSize();
+			if (coorSize != null) {
+				ngiWriter.write(coorSize);
+				ngiWriter.newLine();
+			}
 			Geometry geom = feature.getGeom();
-			Coordinate coor = geom.getCoordinate();
-			ngiWriter.write(coor.x + " " + coor.y);
-			ngiWriter.newLine();
+			Coordinate[] coors = geom.getCoordinates();
+			int coorsLenth = coors.length;
+			if (geom.getGeometryType().equals("Polygon")) {
+				coorsLenth = coors.length - 1;
+			}
+			for (int j = 0; j < coorsLenth; j++) {
+				Coordinate coor = coors[j];
+				ngiWriter.write(coor.x + " " + coor.y);
+				ngiWriter.newLine();
+			}
 			ngiWriter.write(feature.getStyleID());
 			ngiWriter.newLine();
 		}
