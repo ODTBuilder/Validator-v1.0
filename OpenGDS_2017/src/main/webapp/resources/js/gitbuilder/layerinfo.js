@@ -8,124 +8,135 @@
 var gb;
 if (!gb)
 	gb = {};
-if (!gb.inform)
-	gb.inform = {};
-gb.inform.LayerInformation = function(opt) {
+if (!gb.layer)
+	gb.layer = {};
+gb.layer.LayerInfo = function(opt) {
 	var options = opt ? opt : null;
 	this.name = options.name ? options.name : null;
 	this.id = options.id ? options.id : null;
 	this.type = options.type ? options.type : null;
-	this.attributes = options.attributes ? options.attributes : [];
-	this.updateAttributes = [];
+
+	this.storedAttributes = undefined;
+	if (Array.isArray(options.attributes)) {
+		var arr = options.attributes;
+		for (var i = 0; i < arr.length; i++) {
+			this.storedAttributes[arr[i].getOriginFieldName()] = arr[i];
+		}
+	}
+
 	this.format = options.format ? options.format : null;
 	this.epsg = options.epsg ? options.epsg : null;
 	this.ngi = {
 		"version" : options.version ? options.version : 2,
 		"dim" : options.dim ? options.dim : 2
-	}
+	};
 	this.mbound = options.mbound ? options.mbound : null;
 	this.lbound = options.lbound ? options.lbound : null;
 	this.represent = options.represent ? options.represent : null;
-	this.attributes = options.attributes ? options.attributes : null;
+	this.isNew = options.isNew ? options.isNew : true;
 }
-gb.inform.LayerInformation.prototype.setAttributes = function(attrs) {
-	this.attributes = attrs;
+gb.layer.LayerInfo.prototype.setAttributes = function(attrs) {
+	this.storedAttributes = attrs;
 };
-gb.inform.LayerInformation.prototype.getAttributes = function() {
-	return this.attributes;
-};
-gb.inform.LayerInformation.prototype.updateAttribute = function(attr) {
-	
+gb.layer.LayerInfo.prototype.getAttributes = function() {
+	return this.storedAttributes;
 };
 
-gb.inform.LayerInformation.prototype.getName = function() {
+gb.layer.LayerInfo.prototype.setAttribute = function(key, attr) {
+	this.storedAttributes[key] = attr;
+};
+gb.layer.LayerInfo.prototype.getAttribute = function(key) {
+	this.storedAttributes[key];
+};
+
+gb.layer.LayerInfo.prototype.getName = function() {
 	return this.name;
 };
 
-gb.inform.LayerInformation.prototype.setName = function(name) {
+gb.layer.LayerInfo.prototype.setName = function(name) {
 	this.name = name;
 };
-gb.inform.LayerInformation.prototype.getName = function() {
+gb.layer.LayerInfo.prototype.getName = function() {
 	return this.name;
 };
 
-gb.inform.LayerInformation.prototype.setId = function(id) {
+gb.layer.LayerInfo.prototype.setId = function(id) {
 	this.id = id;
 };
-gb.inform.LayerInformation.prototype.getId = function() {
+gb.layer.LayerInfo.prototype.getId = function() {
 	return this.id;
 };
 
-gb.inform.LayerInformation.prototype.setType = function(type) {
+gb.layer.LayerInfo.prototype.setType = function(type) {
 	this.type = type;
 };
-gb.inform.LayerInformation.prototype.getType = function() {
+gb.layer.LayerInfo.prototype.getType = function() {
 	return this.type;
 };
 
-gb.inform.LayerInformation.prototype.setFormat = function(format) {
+gb.layer.LayerInfo.prototype.setFormat = function(format) {
 	this.format = format;
 };
-gb.inform.LayerInformation.prototype.getFormat = function() {
+gb.layer.LayerInfo.prototype.getFormat = function() {
 	return this.format;
 };
 
-gb.inform.LayerInformation.prototype.setEPSG = function(epsg) {
+gb.layer.LayerInfo.prototype.setEPSG = function(epsg) {
 	this.epsg = epsg;
 };
-gb.inform.LayerInformation.prototype.getEPSG = function() {
+gb.layer.LayerInfo.prototype.getEPSG = function() {
 	return this.epsg;
 };
 
-gb.inform.LayerInformation.prototype.setNGIVersion = function(ver) {
+gb.layer.LayerInfo.prototype.setNGIVersion = function(ver) {
 	this.ngi.version = ver;
 };
-gb.inform.LayerInformation.prototype.getNGIVersion = function() {
+gb.layer.LayerInfo.prototype.getNGIVersion = function() {
 	return this.ngi.version;
 };
 
-gb.inform.LayerInformation.prototype.setNGIDim = function(dim) {
+gb.layer.LayerInfo.prototype.setNGIDim = function(dim) {
 	this.ngi.dim = dim;
 };
-gb.inform.LayerInformation.prototype.getNGIDim = function() {
+gb.layer.LayerInfo.prototype.getNGIDim = function() {
 	return this.ngi.dim;
 };
 
-gb.inform.LayerInformation.prototype.setMbound = function(mb) {
+gb.layer.LayerInfo.prototype.setMbound = function(mb) {
 	this.mbound = mb;
 };
-gb.inform.LayerInformation.prototype.getMbound = function() {
+gb.layer.LayerInfo.prototype.getMbound = function() {
 	return this.mbound;
 };
 
-gb.inform.LayerInformation.prototype.setLbound = function(lb) {
+gb.layer.LayerInfo.prototype.setLbound = function(lb) {
 	this.lbound = lb;
 };
-gb.inform.LayerInformation.prototype.getLbound = function() {
+gb.layer.LayerInfo.prototype.getLbound = function() {
 	return this.lbound;
 };
 
-gb.inform.LayerInformation.prototype.setRepresent = function(rp) {
+gb.layer.LayerInfo.prototype.setRepresent = function(rp) {
 	this.represent = rp;
 };
-gb.inform.LayerInformation.prototype.getRepresent = function() {
+gb.layer.LayerInfo.prototype.getRepresent = function() {
 	return this.represent;
 };
 
-gb.inform.LayerInformation.prototype.setAttributes = function(attrs) {
+gb.layer.LayerInfo.prototype.setAttributes = function(attrs) {
 	this.attributes = attrs;
 };
-gb.inform.LayerInformation.prototype.getAttributes = function() {
+gb.layer.LayerInfo.prototype.getAttributes = function() {
 	return this.attributes;
 };
 
-gb.inform.LayerInformation.prototype.clone = function() {
+gb.layer.LayerInfo.prototype.clone = function() {
 	var that = this;
 	var arr = [];
 	for (var i = 0; i < this.getAttributes().length; i++) {
 		arr.push(this.getAttributes()[i].clone());
 	}
-	var obj = new gb.inform.LayerInformation({
+	var obj = new gb.layer.LayerInfo({
 		name : this.getName().toString(),
 		id : this.getId().toString(),
 		type : this.getType().toString(),
@@ -141,6 +152,6 @@ gb.inform.LayerInformation.prototype.clone = function() {
 	});
 	return obj;
 };
-gb.inform.LayerInformation.prototype.toString = function() {
+gb.layer.LayerInfo.prototype.toString = function() {
 
 }

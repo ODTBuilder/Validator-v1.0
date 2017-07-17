@@ -76,13 +76,13 @@ html {
 </head>
 <body>
 	<jsp:include page="/WEB-INF/views/common/header.jsp" />
-	<nav id="builderHeader" class="navbar navbar-toggleable-md navbar-default fixed-top">
+	<nav id="builderHeader" class="navbar navbar-default fixed-top">
 		<ul class="nav navbar-nav">
 			<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
 				aria-expanded="false" title="New layer">New</a>
 				<ul class="dropdown-menu" role="menu">
-					<li><a href="#" id="newVector" title="Vector">Layer</a></li>
 					<li><a href="#" id="uploadFile" title="Upload File" onclick="gitbuilder.ui.NewFileWindow()">File</a></li>
+					<li><a href="#" id="newVector" title="Vector">Layer</a></li>
 				</ul></li>
 			<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
 				aria-expanded="false" title="Save">Save</a>
@@ -211,9 +211,10 @@ html {
 				$("#builderBaseMap").css("top", str);
 				$("#builderBaseMap").find(".ol-viewport").css("z-index", 1);
 				$("#builderMap").find(".ol-viewport").css("z-index", 2);
-				var listHeight = $("#builderLayer").innerHeight() / 2 - 16;
-				// 				38은 패널 헤더의 높이
-				var treeHeight = listHeight - 38;
+				//16은 아래 마진, 1은 위 아래 보더 
+				var listHeight = $("#builderLayer").innerHeight() / 2 - (16 + 1 + 1);
+				// 				41은 패널 헤더의 높이
+				var treeHeight = listHeight - (41);
 				$(".gitbuilder-layer-panel").outerHeight(treeHeight);
 				$("#builderLayerGeoServerPanel").outerHeight(listHeight);
 				$("#builderLayerClientPanel").outerHeight(listHeight);
@@ -435,6 +436,13 @@ html {
 		});
 		$("#srefresh").click(function() {
 			$("#builderServerLayer").jstree(true).refresh();
+		});
+
+		var nlayer = new gb.edit.CreateVectorLayer({
+			refer : $('#builderClientLayer').jstreeol3(true)
+		});
+		$("#newVector").click(function() {
+			nlayer.open();
 		});
 	</script>
 

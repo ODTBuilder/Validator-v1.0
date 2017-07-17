@@ -1,9 +1,6 @@
 <nav id="mainHeader" class="navbar" style="margin-bottom: 0; border-radius: 0;">
 	<div class="container-fluid">
 		<div class="navbar-default">
-			<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
-				<span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span>
-			</button>
 			<a class="navbar-brand" href="#"> <img src="${pageContext.request.contextPath}/resources/img/logo379.png"
 				style="height: 22px; width: auto;">
 			</a>
