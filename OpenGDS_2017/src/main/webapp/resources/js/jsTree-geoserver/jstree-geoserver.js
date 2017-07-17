@@ -46,6 +46,7 @@ $.jstree.plugins.geoserver = function(options, parent) {
 		this._data.geoserver.deleteLayer = this.settings.geoserver.deleteLayer;
 		this._data.geoserver.downloadNGIDXF = this.settings.geoserver.downloadNGIDXF;
 		this._data.geoserver.downloadGeoserver = this.settings.geoserver.downloadGeoserver;
+		this._data.geoserver.clientRefer = this.settings.geoserver.clientRefer;
 	};
 	this.import_fake_group_notload = function(obj) {
 		// // =======================================

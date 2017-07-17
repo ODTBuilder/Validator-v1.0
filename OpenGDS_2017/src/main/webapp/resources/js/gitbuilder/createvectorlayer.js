@@ -8,9 +8,9 @@
 var gb;
 if (!gb)
 	gb = {};
-if (!gb.geoserver)
-	gb.geoserver = {};
-gb.geoserver.CreateLayer = function(obj) {
+if (!gb.edit)
+	gb.edit = {};
+gb.edit.CreateVectorLayer = function(obj) {
 	var that = this;
 	var options = obj;
 	this.window;
@@ -71,12 +71,7 @@ gb.geoserver.CreateLayer = function(obj) {
 		"margin-bottom" : "10px"
 	});
 
-	this.message = $("<div>").addClass("text-danger").css({
-		"margin-bottom" : "10px",
-		"display" : "none"
-	});
-	this.body = $("<div>").append(div1).append(this.layerNameForm).append(this.typeForm).append(this.attrForm).append(this.expertForm)
-			.append(this.message);
+	this.body = $("<div>").append(div1).append(this.layerNameForm).append(this.typeForm).append(this.attrForm).append(this.expertForm);
 	$(this.body).addClass("modal-body");
 	/*
 	 * 
@@ -98,17 +93,8 @@ gb.geoserver.CreateLayer = function(obj) {
 		"type" : "button"
 	}).on("click", function() {
 		var opt = that.getDefinitionForm();
-		var isExisting = that.isExisting([ that.futureId ]);
-		if (isExisting) {
-			$(that.message).empty();
-			$(that.message).show();
-			$(that.message).text("Layer name is duplicated.");
-		} else {
-			$(that.message).hide();
-			$(that.message).text("Layer name is duplicated.");
-			that.save(opt);
-			that.close();
-		}
+		that.save(opt);
+		that.close();
 	});
 	$(okBtn).addClass("btn");
 	$(okBtn).addClass("btn-primary");
@@ -146,43 +132,26 @@ gb.geoserver.CreateLayer = function(obj) {
 		keyboard : true,
 		show : false,
 	});
-};
-
-gb.geoserver.CreateLayer.prototype.isExisting = function(ids) {
-	var result = false;
-	var refer = this.getReference();
-	if (!Array.isArray(ids)) {
-		return;
-	}
-	for (var i = 0; i < ids.length; i++) {
-		var layer = refer.get_node(ids[i]);
-		if (!!layer) {
-			result = true;
-			break;
-		}
-	}
-
-	return result;
-};
-gb.geoserver.CreateLayer.prototype.open = function() {
+}
+gb.edit.CreateVectorLayer.prototype.open = function() {
 	this.window.modal('show');
 };
-gb.geoserver.CreateLayer.prototype.close = function() {
+gb.edit.CreateVectorLayer.prototype.close = function() {
 	this.window.modal('hide');
 };
-gb.geoserver.CreateLayer.prototype.setClientReference = function(refer) {
+gb.edit.CreateVectorLayer.prototype.setClientReference = function(refer) {
 	this.clientRefer = refer;
 };
-gb.geoserver.CreateLayer.prototype.getClientReference = function() {
+gb.edit.CreateVectorLayer.prototype.getClientReference = function() {
 	return this.clientRefer;
 };
-gb.geoserver.CreateLayer.prototype.setReference = function(refer) {
+gb.edit.CreateVectorLayer.prototype.setReference = function(refer) {
 	this.refer = refer;
 };
-gb.geoserver.CreateLayer.prototype.getReference = function() {
+gb.edit.CreateVectorLayer.prototype.getReference = function() {
 	return this.refer;
 };
-gb.geoserver.CreateLayer.prototype.save = function(obj) {
+gb.edit.CreateVectorLayer.prototype.save = function(obj) {
 	var that = this;
 	$.ajax({
 		url : this.getUrl(),
@@ -204,7 +173,7 @@ gb.geoserver.CreateLayer.prototype.save = function(obj) {
 		}
 	});
 };
-gb.geoserver.CreateLayer.prototype.setForm = function(format, type, sheetNum) {
+gb.edit.CreateVectorLayer.prototype.setForm = function(format, type, sheetNum) {
 	this.format = format;
 	this.type = type;
 	if (type === "mapsheet") {
@@ -238,7 +207,7 @@ gb.geoserver.CreateLayer.prototype.setForm = function(format, type, sheetNum) {
 		}
 	}
 };
-gb.geoserver.CreateLayer.prototype.initTypeForm = function(type) {
+gb.edit.CreateVectorLayer.prototype.initTypeForm = function(type) {
 	var select = $("<select>").addClass("form-control");
 	if (type === "dxf") {
 		var option1 = $("<option>").text("LWPolyline");
@@ -257,7 +226,7 @@ gb.geoserver.CreateLayer.prototype.initTypeForm = function(type) {
 	var tp = $("<p>").text("Type");
 	$(this.typeForm).append(tp).append(select);
 };
-gb.geoserver.CreateLayer.prototype.initAttrForm = function() {
+gb.edit.CreateVectorLayer.prototype.initAttrForm = function() {
 	var that = this;
 	var htd1 = $("<td>").text("Name");
 	var htd2 = $("<td>").text("Type");
@@ -326,7 +295,7 @@ gb.geoserver.CreateLayer.prototype.initAttrForm = function() {
 	var tp = $("<p>").text("Attribute");
 	$(this.attrForm).append(tp).append(table).append(addBtn);
 };
-gb.geoserver.CreateLayer.prototype.initExpertForm = function() {
+gb.edit.CreateVectorLayer.prototype.initExpertForm = function() {
 	var that = this;
 	var htd1 = $("<td>").text("Version");
 	var htd2 = $("<td>").text("Dimension");
@@ -387,7 +356,7 @@ gb.geoserver.CreateLayer.prototype.initExpertForm = function() {
 	var tp = $("<p>").text("NGI Setting");
 	$(this.expertForm).append(tp).append(table).append(table2);
 };
-gb.geoserver.CreateLayer.prototype.getDefinitionForm = function() {
+gb.edit.CreateVectorLayer.prototype.getDefinitionForm = function() {
 	var opt = {
 		"layer" : {}
 	};
@@ -418,7 +387,6 @@ gb.geoserver.CreateLayer.prototype.getDefinitionForm = function() {
 			layerObj["bound"] = [ [ 122.6019287109375, 49.73690656023088 ], [ 122.14874267578125, 49.40918616182351 ] ];
 			layerObj["represent"] = "255;0;102";
 		}
-		this.futureId = "gro_" + this.format + "_" + $(this.sheetNumInput).val().replace(/(\s*)/g, '');
 	} else if (this.type === "layer") {
 		opt.layer[this.format] = {};
 		if ($(this.sheetNumInput).val().replace(/(\s*)/g, '') === "") {
@@ -459,17 +427,15 @@ gb.geoserver.CreateLayer.prototype.getDefinitionForm = function() {
 			layerObj["bound"] = [ [ $(this.minx).val(), $(this.miny).val() ], [ $(this.maxx).val(), $(this.maxy).val() ] ];
 			layerObj["represent"] = $(this.rep).val();
 		}
-		this.futureId = "geo_" + this.format + "_" + $(this.sheetNumInput).val().replace(/(\s*)/g, '') + "_" + $(this.layerNameInput).val()
-				+ "_" + ($(this.typeForm).find("select").val().toUpperCase());
 	}
 	console.log(opt);
 	return opt;
 };
-gb.geoserver.CreateLayer.prototype.setUrl = function(url) {
+gb.edit.CreateVectorLayer.prototype.setUrl = function(url) {
 	if (typeof url === "string") {
 		this.url = url;
 	}
 };
-gb.geoserver.CreateLayer.prototype.getUrl = function() {
+gb.edit.CreateVectorLayer.prototype.getUrl = function() {
 	return this.url;
 };

@@ -10327,24 +10327,25 @@
 								inst.zoom_to_fit(obj);
 							}
 						},
-						"rename" : {
-							"separator_before" : false,
-							"icon" : "fa fa-pencil",
-							"separator_after" : false,
-							"_disabled" : false, // (this.check("rename_node",
-							// data.reference,
-							// this.get_parent(data.reference),
-							// "")),
-							"label" : "Rename",
-							/*
-							 * ! "shortcut" : 113, "shortcut_label" : 'F2',
-							 * "icon" : "glyphicon glyphicon-leaf",
-							 */
-							"action" : function(data) {
-								var inst = $.jstreeol3.reference(data.reference), obj = inst.get_node(data.reference);
-								inst.edit(obj);
-							}
-						},
+						// "rename" : {
+						// "separator_before" : false,
+						// "icon" : "fa fa-pencil",
+						// "separator_after" : false,
+						// "_disabled" : false, // (this.check("rename_node",
+						// // data.reference,
+						// // this.get_parent(data.reference),
+						// // "")),
+						// "label" : "Rename",
+						// /*
+						// * ! "shortcut" : 113, "shortcut_label" : 'F2',
+						// * "icon" : "glyphicon glyphicon-leaf",
+						// */
+						// "action" : function(data) {
+						// var inst = $.jstreeol3.reference(data.reference), obj
+						// = inst.get_node(data.reference);
+						// inst.edit(obj);
+						// }
+						// },
 						"remove" : {
 							"separator_before" : false,
 							"icon" : "fa fa-trash",
@@ -10403,15 +10404,15 @@
 						// }
 						// }
 						// },
-						"style" : {
+						"properties" : {
 							"separator_before" : false,
-							"icon" : "fa fa-paint-brush",
+							"icon" : "fa fa-info-circle",
 							"separator_after" : false,
 							"_disabled" : false, // (this.check("delete_node",
 							// data.reference,
 							// this.get_parent(data.reference),
 							// "")),
-							"label" : "Style",
+							"label" : "Properties",
 							"action" : function(data) {
 								var inst = $.jstreeol3.reference(data.reference), obj = inst.get_node(data.reference);
 								if (inst.is_selected(obj)) {
@@ -10422,15 +10423,15 @@
 								console.log("Not yet");
 							}
 						},
-						"properties" : {
+						"style" : {
 							"separator_before" : false,
-							"icon" : "fa fa-info-circle",
+							"icon" : "fa fa-paint-brush",
 							"separator_after" : false,
 							"_disabled" : false, // (this.check("delete_node",
 							// data.reference,
 							// this.get_parent(data.reference),
 							// "")),
-							"label" : "Properties",
+							"label" : "Style",
 							"action" : function(data) {
 								var inst = $.jstreeol3.reference(data.reference), obj = inst.get_node(data.reference);
 								if (inst.is_selected(obj)) {

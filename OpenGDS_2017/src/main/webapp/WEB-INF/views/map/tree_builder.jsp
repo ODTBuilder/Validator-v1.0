@@ -72,11 +72,11 @@ html {
 
 	<nav id="builderHeader" class="navbar navbar-toggleable-md navbar-default fixed-top">
 
-		<div class="navbar-header">
-			<a class="navbar-brand" href="#"> <img alt="Geospatial Information Technology"
-				src="${pageContext.request.contextPath}/resources/img/gitcism.png">
-			</a>
-		</div>
+		<!-- 		<div class="navbar-header"> -->
+		<!-- 			<a class="navbar-brand" href="#"> <img alt="Geospatial Information Technology" -->
+		<%-- 				src="${pageContext.request.contextPath}/resources/img/gitcism.png"> --%>
+		<!-- 			</a> -->
+		<!-- 		</div> -->
 
 		<ul class="nav navbar-nav">
 
@@ -139,16 +139,6 @@ html {
 
 			<li><a href="#" title="Information"><i class="fa fa-info-circle fa-lg" aria-hidden="true"></i> Information</a></li>
 		</ul>
-
-		<form class="navbar-form navbar-right" role="login" style="margin-right: 0;">
-			<div class="form-group">
-				<input type="text" class="form-control" placeholder="ID" style="width: 150px;">
-			</div>
-			<div class="form-group">
-				<input type="password" class="form-control" placeholder="Password" style="width: 150px;">
-			</div>
-			<button type="submit" class="btn btn-default">Login</button>
-		</form>
 	</nav>
 
 	<div id="builderContent" class="container-fluid">
@@ -436,7 +426,8 @@ html {
 				"createLayer" : createLayer,
 				"deleteLayer" : deleteLayer,
 				"downloadNGIDXF" : "fileExport/fileExport.ajax",
-				"downloadGeoserver" : "geoserver2/downloadRequest.do"
+				"downloadGeoserver" : "geoserver2/downloadRequest.do",
+				"clientRefer" : $('#builderClientLayer').jstreeol3(true)
 			},
 			"plugins" : [ "contextmenu", "search", "state", "types", "geoserver" ]
 		});
