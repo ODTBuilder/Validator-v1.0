@@ -102,10 +102,8 @@ gb.geoserver.CreateLayer = function(obj) {
 		if (isExisting) {
 			$(that.message).empty();
 			$(that.message).show();
-			$(that.message).text("Layer name is duplicated.");
+			$(that.message).text("Layer name or Map sheet number is duplicated.");
 		} else {
-			$(that.message).hide();
-			$(that.message).text("Layer name is duplicated.");
 			that.save(opt);
 			that.close();
 		}
@@ -165,6 +163,7 @@ gb.geoserver.CreateLayer.prototype.isExisting = function(ids) {
 	return result;
 };
 gb.geoserver.CreateLayer.prototype.open = function() {
+	$(this.message).hide();
 	this.window.modal('show');
 };
 gb.geoserver.CreateLayer.prototype.close = function() {
