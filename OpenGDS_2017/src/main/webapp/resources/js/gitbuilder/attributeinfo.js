@@ -8,62 +8,72 @@
 var gb;
 if (!gb)
 	gb = {};
-if (!gb.inform)
-	gb.inform = {};
-gb.inform.AttributeInformation = function(obj) {
+if (!gb.layer)
+	gb.layer = {};
+gb.layer.Attribute = function(obj) {
 	var options = obj;
+	this.originFieldName = options.fieldName ? options.fieldName : null;
 	this.fieldName = options.fieldName ? options.fieldName : null;
 	this.type = options.type ? options.type : null;
 	this.decimal = options.decimal ? options.decimal : null;
 	this.size = options.size ? options.size : null;
 	this.isUnique = options.isUnique ? options.isUnique : null;
-	this.nullable = options.nullable ? options.nullable : null; 
+	this.nullable = options.nullable ? options.nullable : null;
+	this.isNew = options.isNew ? options.isNew : true;
 }
-gb.inform.AttributeInformation.prototype.setFieldName = function(fname) {
+gb.layer.Attribute.prototype.setOriginFieldName = function(fname) {
 	this.fieldName = fname;
 };
-gb.inform.AttributeInformation.prototype.getFieldName = function() {
+gb.layer.Attribute.prototype.getOriginFieldName = function() {
 	return this.fieldName;
 };
 
-gb.inform.AttributeInformation.prototype.setType = function(type) {
+gb.layer.Attribute.prototype.setFieldName = function(fname) {
+	this.fieldName = fname;
+};
+gb.layer.Attribute.prototype.getFieldName = function() {
+	return this.fieldName;
+};
+
+gb.layer.Attribute.prototype.setType = function(type) {
 	this.type = type;
 };
-gb.inform.AttributeInformation.prototype.getType = function() {
+gb.layer.Attribute.prototype.getType = function() {
 	return this.type;
 };
 
-gb.inform.AttributeInformation.prototype.setDecimal = function(dcm) {
+gb.layer.Attribute.prototype.setDecimal = function(dcm) {
 	this.decimal = dcm;
 };
-gb.inform.AttributeInformation.prototype.getDecimal = function() {
+gb.layer.Attribute.prototype.getDecimal = function() {
 	return this.decimal;
 };
 
-gb.inform.AttributeInformation.prototype.setSize = function(size) {
+gb.layer.Attribute.prototype.setSize = function(size) {
 	this.size = size;
 };
-gb.inform.AttributeInformation.prototype.getSize = function() {
+gb.layer.Attribute.prototype.getSize = function() {
 	return this.size;
 };
 
-gb.inform.AttributeInformation.prototype.setUnique = function(unq) {
+gb.layer.Attribute.prototype.setUnique = function(unq) {
 	this.isUnique = unq;
 };
-gb.inform.AttributeInformation.prototype.getUnique = function() {
+gb.layer.Attribute.prototype.getUnique = function() {
 	return this.isUnique;
 };
 
-gb.inform.AttributeInformation.prototype.setNull = function(nll) {
+gb.layer.Attribute.prototype.setNull = function(nll) {
 	this.nullable = nll;
 };
-gb.inform.AttributeInformation.prototype.getNull = function() {
+gb.layer.Attribute.prototype.getNull = function() {
 	return this.nullable;
 };
 
-gb.inform.AttributeInformation.prototype.clone = function() {
+gb.layer.Attribute.prototype.clone = function() {
 	var that = this;
-	var obj = new gb.inform.AttributeInformation({
+	var obj = new gb.layer.Attribute({
+		originFieldName : this.getOriginFieldName(),
 		fieldName : this.getFieldName(),
 		type : this.getType(),
 		decimal : this.getDecimal(),
@@ -74,16 +84,28 @@ gb.inform.AttributeInformation.prototype.clone = function() {
 	return obj;
 };
 
-gb.inform.AttributeInformation.prototype.toString = function() {
+gb.layer.Attribute.prototype.toString = function() {
 	var that = this;
-	var obj = {
-		fieldName : this.getFieldName(),
-		type : this.getType(),
-		decimal : this.getDecimal(),
-		size : this.getSize(),
-		isUnique : this.getUnique(),
-		nullable : this.getNull()
-	};
+	if (this.isNew === true) {
+		var obj = {
+			fieldName : this.getFieldName(),
+			type : this.getType(),
+			decimal : this.getDecimal(),
+			size : this.getSize(),
+			isUnique : this.getUnique(),
+			nullable : this.getNull()
+		};
+	} else {
+		var obj = {
+			originFieldName : this.getOriginFieldName(),
+			fieldName : this.getFieldName(),
+			type : this.getType(),
+			decimal : this.getDecimal(),
+			size : this.getSize(),
+			isUnique : this.getUnique(),
+			nullable : this.getNull()
+		};
+	}
 	var str = JSON.stringify(obj);
 	return str;
 };
