@@ -9,7 +9,6 @@ import com.git.gdsbuilder.geoserver.service.en.EnLayerBboxRecalculate;
 import com.git.gdsbuilder.geosolutions.geoserver.rest.GeoServerRESTPublisher;
 import com.git.gdsbuilder.geosolutions.geoserver.rest.HTTPUtils;
 import com.git.gdsbuilder.geosolutions.geoserver.rest.encoder.GSLayerEncoder;
-import com.git.gdsbuilder.geosolutions.geoserver.rest.encoder.GSLayerGroupEncoder;
 import com.git.gdsbuilder.geosolutions.geoserver.rest.encoder.GSResourceEncoder;
 import com.git.gdsbuilder.geosolutions.geoserver.rest.encoder.feature.GSFeatureTypeEncoder;
 import com.git.gdsbuilder.type.geoserver.layer.GeoLayerInfo;
