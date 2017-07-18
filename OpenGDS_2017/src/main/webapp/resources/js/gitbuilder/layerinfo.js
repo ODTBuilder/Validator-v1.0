@@ -14,10 +14,11 @@ gb.layer.LayerInfo = function(opt) {
 	var options = opt ? opt : null;
 	this.name = options.name ? options.name : null;
 	this.id = options.id ? options.id : null;
-	this.type = options.type ? options.type : null;
-
 	this.storedAttributes = undefined;
 	if (Array.isArray(options.attributes)) {
+		if (this.storedAttributes === undefined) {
+			this.storedAttributes = {};
+		}
 		var arr = options.attributes;
 		for (var i = 0; i < arr.length; i++) {
 			this.storedAttributes[arr[i].getOriginFieldName()] = arr[i];
@@ -27,23 +28,61 @@ gb.layer.LayerInfo = function(opt) {
 	this.format = options.format ? options.format : null;
 	this.epsg = options.epsg ? options.epsg : null;
 	this.ngi = {
-		"version" : options.version ? options.version : 2,
-		"dim" : options.dim ? options.dim : 2
+		"version" : options.NGIVer ? options.NGIVer : 2,
+		"dim" : options.NGIDim ? options.NGIDim : 2,
+		"represent" : options.NGIRep ? options.NGIRep : null
 	};
 	this.mbound = options.mbound ? options.mbound : null;
 	this.lbound = options.lbound ? options.lbound : null;
-	this.represent = options.represent ? options.represent : null;
-	this.isNew = options.isNew ? options.isNew : true;
-}
+	this.isNew = options.isNew !== undefined ? options.isNew : true;
+	this.geometry = options.geometry ? options.geometry : "Point";
+};
+gb.layer.LayerInfo.prototype.getIsNew = function() {
+	return this.isNew;
+};
+gb.layer.LayerInfo.prototype.setIsNew = function(bool) {
+	this.isNew = bool;
+};
+gb.layer.LayerInfo.prototype.getAttributesJSON = function() {
+	var obj = {};
+	var attrs = this.storedAttributes;
+	var keys = Object.keys(attrs);
+	for (var i = 0; i < keys.length; i++) {
+		obj[keys[i]] = {
+			"type" : attrs[keys[i]].getType(),
+			"nillable" : attrs[keys[i]].getNull()
+		};
+	}
+	return obj;
+};
+gb.layer.LayerInfo.prototype.setGeometry = function(geom) {
+	this.geometry = geom;
+};
+gb.layer.LayerInfo.prototype.getGeometry = function() {
+	return this.geometry;
+};
 gb.layer.LayerInfo.prototype.setAttributes = function(attrs) {
-	this.storedAttributes = attrs;
+	if (this.storedAttributes === undefined) {
+		this.storedAttributes = {};
+	}
+	if (Array.isArray(attrs)) {
+		var arr = attrs;
+		for (var i = 0; i < arr.length; i++) {
+			this.storedAttributes[arr[i].getOriginFieldName()] = arr[i];
+		}
+	}
 };
 gb.layer.LayerInfo.prototype.getAttributes = function() {
-	return this.storedAttributes;
+	var keys = Object.keys(this.storedAttributes);
+	var attrs = [];
+	for (var i = 0; i < keys.length; i++) {
+		attrs.push(this.storedAttributes[keys[i]]);
+	}
+	return attrs;
 };
 
-gb.layer.LayerInfo.prototype.setAttribute = function(key, attr) {
-	this.storedAttributes[key] = attr;
+gb.layer.LayerInfo.prototype.setAttribute = function(attr) {
+	this.storedAttributes[attr.getFieldName()] = attr;
 };
 gb.layer.LayerInfo.prototype.getAttribute = function(key) {
 	this.storedAttributes[key];
@@ -65,13 +104,6 @@ gb.layer.LayerInfo.prototype.setId = function(id) {
 };
 gb.layer.LayerInfo.prototype.getId = function() {
 	return this.id;
-};
-
-gb.layer.LayerInfo.prototype.setType = function(type) {
-	this.type = type;
-};
-gb.layer.LayerInfo.prototype.getType = function() {
-	return this.type;
 };
 
 gb.layer.LayerInfo.prototype.setFormat = function(format) {
@@ -116,18 +148,11 @@ gb.layer.LayerInfo.prototype.getLbound = function() {
 	return this.lbound;
 };
 
-gb.layer.LayerInfo.prototype.setRepresent = function(rp) {
-	this.represent = rp;
+gb.layer.LayerInfo.prototype.setNGIRep = function(rp) {
+	this.ngi.represent = rp;
 };
-gb.layer.LayerInfo.prototype.getRepresent = function() {
-	return this.represent;
-};
-
-gb.layer.LayerInfo.prototype.setAttributes = function(attrs) {
-	this.attributes = attrs;
-};
-gb.layer.LayerInfo.prototype.getAttributes = function() {
-	return this.attributes;
+gb.layer.LayerInfo.prototype.getNGIRep = function() {
+	return this.ngi.represent;
 };
 
 gb.layer.LayerInfo.prototype.clone = function() {
@@ -139,16 +164,16 @@ gb.layer.LayerInfo.prototype.clone = function() {
 	var obj = new gb.layer.LayerInfo({
 		name : this.getName().toString(),
 		id : this.getId().toString(),
-		type : this.getType().toString(),
 		format : this.getFormat().toString(),
 		epsg : this.getEPSG().toString(),
-		version : this.getNGIVersion().toString(),
-		dim : this.getNGIDim().toString(),
+		NGIVer : this.getNGIVersion().toString(),
+		NGIDim : this.getNGIDim().toString(),
 		mbound : this.getMbound().slice(),
 		lbound : this.getLbound().slice(),
-		represent : this.getRepresent().toString(),
-		// 나중에 애트리뷰트 각각 객체도 클론해야함
-		attributes : arr
+		NGIRep : this.getRepresent().toString(),
+		attributes : arr,
+		isNew : this.getIsNew(),
+		geometry : this.getGeometry()
 	});
 	return obj;
 };

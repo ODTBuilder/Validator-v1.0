@@ -15,7 +15,7 @@ gb.mapsheet.Mapsheet = function(opt) {
 	this.number = options.number ? options.number : null;
 	this.id = options.id ? options.id : null;
 	this.format = options.format ? options.format : null;
-	this.layers = options.layers ? options.layers : [];
+	this.layers = options.layers ? options.layers : undefined;
 }
 
 gb.mapsheet.Mapsheet.prototype.getLayers = function() {
