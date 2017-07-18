@@ -598,6 +598,9 @@
 									layer.setZIndex(zidx);
 									lastZidx++;
 								}
+							} else {
+								layer.setZIndex(zidx);
+								lastZidx++;
 							}
 						} else {
 							layer.setZIndex(zidx);

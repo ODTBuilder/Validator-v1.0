@@ -439,7 +439,8 @@ html {
 		});
 
 		var nlayer = new gb.edit.CreateVectorLayer({
-			refer : $('#builderClientLayer').jstreeol3(true)
+			refer : $('#builderClientLayer').jstreeol3(true),
+			map : map
 		});
 		$("#newVector").click(function() {
 			nlayer.open();

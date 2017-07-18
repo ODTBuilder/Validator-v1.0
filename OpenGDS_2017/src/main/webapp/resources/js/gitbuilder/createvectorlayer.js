@@ -18,6 +18,7 @@ gb.edit.CreateVectorLayer = function(obj) {
 	this.format = undefined;
 	this.type = undefined;
 	this.refer = options.refer ? options.refer : undefined;
+	this.map = options.map ? options.map : undefined;
 	// this.clientRefer = options.clientRefer ? options.clientRefer : undefined;
 
 	var xSpan = $("<span>").attr({
@@ -430,6 +431,13 @@ gb.edit.CreateVectorLayer.prototype.getDefinitionForm = function() {
 			id : "gro_" + this.format + "_" + $(this.sheetNumInput).val().replace(/(\s*)/g, ''),
 			format : this.format
 		});
+		var groupLayer = new ol.layer.Group();
+		groupLayer.set("id", mapsheet.getId());
+		groupLayer.set("name", mapsheet.getNumber());
+		var gitGroup = {
+			"information" : mapsheet
+		};
+		groupLayer.set("git", gitGroup);
 		// opt.layer[this.format][$(this.sheetNumInput).val()] = {};
 		// opt.layer[this.format][$(this.sheetNumInput).val()]["create"] = [];
 		if ($(this.layerNameInput).val().replace(/(\s*)/g, '') === "") {
@@ -440,13 +448,35 @@ gb.edit.CreateVectorLayer.prototype.getDefinitionForm = function() {
 			name : $(this.layerNameInput).val().replace(/(\s*)/g, ''),
 			id : "geo_" + this.format + "_" + $(this.sheetNumInput).val().replace(/(\s*)/g, '') + "_"
 					+ $(this.layerNameInput).val().replace(/(\s*)/g, '') + "_" + ($(this.typeForm).find("select").val().toUpperCase()),
-			type : $(this.typeForm).find("select").val()
+			format : this.format,
+			epsg : "5186",
+			NGIVer : parseInt($(this.ver).val()),
+			NGIDim : parseInt($(this.dim).val()),
+			NGIRep : $(this.rep).val(),
+			mbound : [ [ $(this.minx).val(), $(this.miny).val() ], [ $(this.maxx).val(), $(this.maxy).val() ] ],
+			lbound : [ [ 122.71, 28.6 ], [ 134.28, 40.27 ] ],
+			isNew : true,
+			geometry : $(this.typeForm).find("select").val()
 		});
+		var vectorLayer = new ol.layer.Vector({
+			source : new ol.source.Vector()
+		});
+		vectorLayer.set("id", layer.getId());
+		vectorLayer.set("name", layer.getName());
+		var gitLayer = {
+			"editable" : true,
+			"geometry" : layer.getGeometry(),
+			"validation" : false,
+			"information" : layer
+		};
+		// layerObj["bound"] = [ [ $(this.minx).val(), $(this.miny).val() ], [
+		// $(this.maxx).val(), $(this.maxy).val() ] ];
+		// layerObj["represent"] = $(this.rep).val();
 		// var layerObj = {
 		// "layerName" : $(this.layerNameInput).val(),
 		// "layerType" : $(this.typeForm).find("select").val()
 		// };
-//		opt.layer[this.format][$(this.sheetNumInput).val()]["create"].push(layerObj);
+		// opt.layer[this.format][$(this.sheetNumInput).val()]["create"].push(layerObj);
 		var layerAttr = [];
 		if (this.format === "ngi") {
 			var attrs = $(this.attrForm).find("tr");
@@ -454,25 +484,43 @@ gb.edit.CreateVectorLayer.prototype.getDefinitionForm = function() {
 				if ($(attrs[i]).children().eq(0).find("input:text").val().replace(/(\s*)/g, '') === "") {
 					break;
 				}
-				var attr = {
-					"fieldName" : $(attrs[i]).children().eq(0).find("input:text").val().replace(/(\s*)/g, ''),
-					"type" : $(attrs[i]).children().eq(1).find("select").val(),
-					"nullable" : $(attrs[i]).children().eq(2).find("input:checkbox").prop("checked") ? false : true,
-					"isUnique" : $(attrs[i]).children().eq(3).find("input:checkbox").prop("checked") ? true : false,
-					"decimal" : $(attrs[i]).children().eq(1).find("select").val() === "Double" ? 30 : null,
-					"size" : 256
-				};
-				layerAttr.push(attr);
+				var attribute = new gb.layer.Attribute({
+					originFieldName : $(attrs[i]).children().eq(0).find("input:text").val().replace(/(\s*)/g, ''),
+					fieldName : $(attrs[i]).children().eq(0).find("input:text").val().replace(/(\s*)/g, ''),
+					type : $(attrs[i]).children().eq(1).find("select").val(),
+					decimal : $(attrs[i]).children().eq(1).find("select").val() === "Double" ? 30 : null,
+					size : 256,
+					isUnique : $(attrs[i]).children().eq(3).find("input:checkbox").prop("checked") ? true : false,
+					nullable : $(attrs[i]).children().eq(2).find("input:checkbox").prop("checked") ? false : true,
+					isNew : true
+				});
+				// var attr = {
+				// "fieldName" :
+				// $(attrs[i]).children().eq(0).find("input:text").val().replace(/(\s*)/g,
+				// ''),
+				// "type" : $(attrs[i]).children().eq(1).find("select").val(),
+				// "nullable" :
+				// $(attrs[i]).children().eq(2).find("input:checkbox").prop("checked")
+				// ? false : true,
+				// "isUnique" :
+				// $(attrs[i]).children().eq(3).find("input:checkbox").prop("checked")
+				// ? true : false,
+				// "decimal" : $(attrs[i]).children().eq(1).find("select").val()
+				// === "Double" ? 30 : null,
+				// "size" : 256
+				// };
+				layerAttr.push(attribute);
 			}
-			layerObj["attr"] = layerAttr;
-			layerObj["version"] = $(this.ver).val();
-			layerObj["dim"] = $(this.dim).val();
-			layerObj["bound"] = [ [ $(this.minx).val(), $(this.miny).val() ], [ $(this.maxx).val(), $(this.maxy).val() ] ];
-			layerObj["represent"] = $(this.rep).val();
+			// layerObj["attr"] = layerAttr;
+			layer.setAttributes(layerAttr);
+			gitLayer["attribute"] = layer.getAttributesJSON();
 		}
+		vectorLayer.set("git", gitLayer);
+		var col = new ol.Collection();
+		col.push(vectorLayer);
+		groupLayer.setLayers(col);
+		this.map.addLayer(groupLayer);
 	}
-	console.log(opt);
-	return opt;
 };
 gb.edit.CreateVectorLayer.prototype.setUrl = function(url) {
 	if (typeof url === "string") {
