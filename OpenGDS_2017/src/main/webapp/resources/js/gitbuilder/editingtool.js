@@ -764,15 +764,16 @@ gitbuilder.ui.EditingTool = $.widget("gitbuilder.editingtool", {
 			return;
 		}
 
-		if (!this.managed) {
-			this.managed = new ol.layer.Vector({
-				source : this.tempSource
-			});
-			this.managed.set("name", "temp_vector");
-			this.managed.set("id", "temp_vector");
-		}
 		var git = sourceLayer.get("git");
 		if (git.editable === true || sourceLayer instanceof ol.layer.Tile) {
+
+			if (!this.managed) {
+				this.managed = new ol.layer.Vector({
+					source : this.tempSource
+				});
+				this.managed.set("name", "temp_vector");
+				this.managed.set("id", "temp_vector");
+			}
 
 			this.interaction.draw = new ol.interaction.Draw({
 				source : this.tempSource,
@@ -816,7 +817,47 @@ gitbuilder.ui.EditingTool = $.widget("gitbuilder.editingtool", {
 			this.activeIntrct("draw");
 			this.activeBtn("drawBtn");
 		} else if (git.editable === true || sourceLayer instanceof ol.layer.Vector) {
-			console.log("vector not yet");
+			this.interaction.draw = new ol.interaction.Draw({
+				source : sourceLayer.getSource(),
+				type : git.geometry
+			});
+			this.interaction.draw.selectedType = function() {
+				return that.updateSelected().get("git").geometry;
+			};
+			this.interaction.draw.on("drawend", function(evt) {
+				console.log(evt);
+				var layers = that.options.selected();
+				if (layers.length !== 1) {
+					return;
+				}
+				if (that.getLayer().get("id") === layers[0].get("id")) {
+					var feature = evt.feature;
+					var c = that.options.record.getCreated();
+					var l = c[that.getLayer().get("id")];
+					if (!l) {
+						var fid = that.getLayer().get("id") + ".new0";
+						feature.setId(fid);
+						that.options.record.create(layers[0], feature);
+					} else {
+						var keys = Object.keys(l);
+						var count;
+						if (keys.length === 0) {
+							count = 0;
+						} else {
+							var id = keys[keys.length - 1];
+							var nposit = (id.search(".new")) + 4;
+							count = (parseInt(id.substr(nposit, id.length)) + 1);
+						}
+						var fid = that.getLayer().get("id") + ".new" + count;
+						feature.setId(fid);
+						that.options.record.create(layers[0], feature);
+					}
+				}
+			});
+			this.map.addInteraction(this.interaction.draw);
+			this.deactiveIntrct([ "select", "selectWMS", "move", "modify", "rotate" ]);
+			this.activeIntrct("draw");
+			this.activeBtn("drawBtn");
 		}
 
 	},

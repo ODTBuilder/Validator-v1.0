@@ -654,6 +654,8 @@
 									} else if (git.fake === "child") {
 										layer.set("treeid", id);
 									}
+								} else {
+									layer.set("treeid", id);
 								}
 							} else {
 								layer.set("treeid", id);
@@ -1786,6 +1788,10 @@
 									if (layer.get("treeid") === id) {
 										isUnique = false;
 									}
+								}
+							} else {
+								if (layer.get("treeid") === id) {
+									isUnique = false;
 								}
 							}
 						} else {
@@ -4963,6 +4969,10 @@
 								} else if (git.fake === "child" && layer.get("treeid") === id) {
 									result = layer;
 								}
+							} else {
+								if (layer.get("treeid") === id) {
+									result = layer;
+								}
 							}
 						} else {
 							if (layer.get("treeid") === id) {
@@ -5021,6 +5031,10 @@
 								} else if (git.fake === "child" && layer.get("id") === id) {
 									result = layer;
 								}
+							} else {
+								if (layer.get("id") === id) {
+									result = layer;
+								}
 							}
 						} else {
 							if (layer.get("id") === id) {
@@ -5069,6 +5083,8 @@
 								} else if (git.fake === "child") {
 									num += 1;
 								}
+							} else {
+								num += 1;
 							}
 						} else {
 							num += 1;
