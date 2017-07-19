@@ -279,6 +279,8 @@ html {
 			gitrnd.resize();
 		});
 
+		var lprop = new gb.edit.ModifyLayerProperties({});
+
 		$('#builderClientLayer').jstreeol3({
 			"core" : {
 				"map" : map,
@@ -286,7 +288,11 @@ html {
 				"themes" : {
 					"stripes" : true
 				},
-			}
+			},
+			"layerproperties" : {
+				"properties" : lprop,
+			},
+			plugins : [ "contextmenu", "dnd", "search", "state", "types", "sort", "visibility", "layerproperties" ]
 		});
 
 		var record = new gb.edit.FeatureRecord({
@@ -422,6 +428,8 @@ html {
 				"user" : "admin",
 				"layerInfo" : layerInfo,
 				"layerInfoURL" : "geoserver2/getGeoLayerInfoList.ajax",
+				"groupLayerInfoURL" : "geoserver2/getGeoGroupLayerInfoList.ajax",
+				"WMSLayerURL" : "geoserver2/geoserverWMSLayerLoad.do",
 				"createLayer" : createLayer,
 				"deleteLayer" : deleteLayer,
 				"downloadNGIDXF" : "fileExport/fileExport.ajax",

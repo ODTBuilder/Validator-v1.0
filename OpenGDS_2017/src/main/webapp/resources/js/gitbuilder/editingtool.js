@@ -459,7 +459,6 @@ gitbuilder.ui.EditingTool = $.widget("gitbuilder.editingtool", {
 					this.isOn["select"] = true;
 				} else {
 					this.isOn[intrct[j]] = true;
-					this.map.addLayer(this.managed);
 				}
 			}
 		} else if (typeof intrct === "string") {
@@ -468,7 +467,6 @@ gitbuilder.ui.EditingTool = $.widget("gitbuilder.editingtool", {
 				this.isOn["select"] = true;
 			} else {
 				this.isOn[intrct] = true;
-				this.map.addLayer(this.managed);
 			}
 		}
 	},
@@ -549,9 +547,101 @@ gitbuilder.ui.EditingTool = $.widget("gitbuilder.editingtool", {
 
 		if (sourceLayer instanceof ol.layer.Vector) {
 			console.log("vector-select");
-			if (!!this.interaction.select) {
-				this.activeIntrct("select");
+			if (!this.tempSelectSource) {
+				this.tempSelectSource = new ol.source.Vector();
+			} else {
+				this.tempSelectSource.clear();
 			}
+			if (this.interaction.select instanceof ol.interaction.Select) {
+				this.interaction.select.getFeatures().clear();
+			}
+			this.map.removeInteraction(this.interaction.select);
+			this.interaction.select = new ol.interaction.Select({
+				layers : [ sourceLayer ],
+				toggleCondition : ol.events.condition.platformModifierKeyOnly
+			});
+			this.map.addInteraction(this.interaction.select);
+			this.map.removeInteraction(this.interaction.dragbox);
+			this.interaction.dragbox = new ol.interaction.DragBox({
+				condition : ol.events.condition.shiftKeyOnly
+			});
+			this.map.addInteraction(this.interaction.dragbox);
+			this.interaction.dragbox.on('boxend', function() {
+				that.interaction.select.getFeatures().clear();
+				sourceLayer.getSource().forEachFeatureIntersectingExtent(this.getGeometry().getExtent(), function(feature) {
+					that.interaction.select.getFeatures().push(feature);
+				});
+				// that.interaction.selectWMS.setExtent(this.getGeometry().getExtent());
+			});
+			this.interaction.select.getFeatures().on("change:length", function(evt) {
+				that.features = that.interaction.select.getFeatures();
+				$(that.featureTB).empty();
+				that.tempSelectSource.clear();
+				that.tempSelectSource.addFeatures(that.features.getArray());
+				if (that.features.getLength() > 1) {
+					$(that.featurePop).hide();
+					for (var i = 0; i < that.features.getLength(); i++) {
+						var anc = $("<a>").addClass("gb-edit-sel-flist").css("cursor", "pointer").attr({
+							"title" : that.features.item(i).getId()
+						}).text(that.features.item(i).getId());
+						var td = $("<td>").css({
+							"text-overflow" : "ellipsis",
+							"overflow" : "hidden",
+							"text-align" : "right"
+						}).append(anc);
+						var tr = $("<tr>").append(td);
+						$(that.featureTB).append(tr);
+					}
+
+					$(that.featurePop).show();
+					$(that.featurePop).position({
+						"my" : "right center",
+						"at" : "right center",
+						"of" : document,
+						"collision" : "fit"
+					});
+					$(that.attrPop).hide();
+				} else if (that.features.getLength() === 1) {
+					$(that.featurePop).hide();
+					$(that.attrTB).empty();
+					that.setLayer(that.updateSelected());
+					var attrInfo = that.getLayer().get("git").attribute;
+					that.feature = that.features.item(0);
+					var attr = that.features.item(0).getProperties();
+					var keys = Object.keys(attrInfo);
+					for (var i = 0; i < keys.length; i++) {
+						if (keys[i] === "geometry") {
+							continue;
+						}
+						var td1 = $("<td>").text(keys[i]);
+						var tform = $("<input>").addClass("gb-edit-sel-alist").attr({
+							"type" : "text"
+						}).css({
+							"width" : "100%",
+							"border" : "none"
+						}).val(attr[keys[i]]);
+						var td2 = $("<td>").append(tform);
+						var tr = $("<tr>").append(td1).append(td2);
+						that.attrTB.append(tr);
+					}
+					$(that.attrPop).show();
+					$(that.attrPop).position({
+						"my" : "right bottom",
+						"at" : "right bottom+100",
+						"of" : document,
+						"collision" : "fit"
+					});
+				} else {
+					$(that.featurePop).hide();
+					$(that.attrPop).hide();
+				}
+
+			});
+			// this.map.addInteraction(this.interaction.selectWMS);
+			this.activeIntrct([ "select", "dragbox" ]);
+			this.isOn.select = true;
+			this.activeBtn("selectBtn");
+			this.deactiveIntrct([ "move", "rotate" ]);
 		} else if (sourceLayer instanceof ol.layer.Base) {
 			// && (sourceLayer.get("git").geometry === "Point" ||
 			// sourceLayer.get("git").geometry === "LineString"
@@ -765,7 +855,7 @@ gitbuilder.ui.EditingTool = $.widget("gitbuilder.editingtool", {
 		}
 
 		var git = sourceLayer.get("git");
-		if (git.editable === true || sourceLayer instanceof ol.layer.Tile) {
+		if (git.editable === true && sourceLayer instanceof ol.layer.Tile) {
 
 			if (!this.managed) {
 				this.managed = new ol.layer.Vector({
@@ -773,6 +863,7 @@ gitbuilder.ui.EditingTool = $.widget("gitbuilder.editingtool", {
 				});
 				this.managed.set("name", "temp_vector");
 				this.managed.set("id", "temp_vector");
+				this.map.addLayer(this.managed);
 			}
 
 			this.interaction.draw = new ol.interaction.Draw({
@@ -816,7 +907,7 @@ gitbuilder.ui.EditingTool = $.widget("gitbuilder.editingtool", {
 			this.deactiveIntrct([ "select", "selectWMS", "move", "modify", "rotate" ]);
 			this.activeIntrct("draw");
 			this.activeBtn("drawBtn");
-		} else if (git.editable === true || sourceLayer instanceof ol.layer.Vector) {
+		} else if (git.editable === true && sourceLayer instanceof ol.layer.Vector) {
 			this.interaction.draw = new ol.interaction.Draw({
 				source : sourceLayer.getSource(),
 				type : git.geometry
@@ -879,6 +970,7 @@ gitbuilder.ui.EditingTool = $.widget("gitbuilder.editingtool", {
 				});
 				this.managed.set("name", "temp_vector");
 				this.managed.set("id", "temp_vector");
+				this.map.addLayer(this.managed);
 			}
 			this.interaction.move = new ol.interaction.Translate({
 				features : this.interaction.select.getFeatures()
@@ -925,6 +1017,7 @@ gitbuilder.ui.EditingTool = $.widget("gitbuilder.editingtool", {
 				});
 				this.managed.set("name", "temp_vector");
 				this.managed.set("id", "temp_vector");
+				this.map.addLayer(this.managed);
 			}
 			this.interaction.rotate = new gb.interaction.MultiTransform({
 				features : this.interaction.select.getFeatures()
@@ -966,6 +1059,7 @@ gitbuilder.ui.EditingTool = $.widget("gitbuilder.editingtool", {
 				});
 				this.managed.set("name", "temp_vector");
 				this.managed.set("id", "temp_vector");
+				this.map.addLayer(this.managed);
 			}
 			this.interaction.modify = new ol.interaction.Modify({
 				features : this.interaction.select.getFeatures()
@@ -1008,6 +1102,7 @@ gitbuilder.ui.EditingTool = $.widget("gitbuilder.editingtool", {
 				});
 				this.managed.set("name", "temp_vector");
 				this.managed.set("id", "temp_vector");
+				this.map.addLayer(this.managed);
 			}
 			var layers = that.options.selected();
 			if (layers.length !== 1) {
@@ -1016,7 +1111,7 @@ gitbuilder.ui.EditingTool = $.widget("gitbuilder.editingtool", {
 			if (that.getLayer().get("id") === layers[0].get("id")) {
 				var features = this.interaction.select.getFeatures();
 				var fill = new ol.style.Fill({
-					color : "rgba(255,0,0,0.5)"
+					color : "rgba(255,0,0,0.01)"
 				});
 
 				var stroke = new ol.style.Stroke({
