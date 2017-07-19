@@ -10,6 +10,15 @@ public class QA10Feature {
 	String textValue;
 	double elevation;
 	double rotate;
+	
+	public QA10Feature() {
+		super();
+		this.featureID = "";
+		this.featureType = "";
+		this.textValue = "";
+		this.elevation = 0;
+		this.rotate = 0;
+	}
 
 	public QA10Feature(String featureID) {
 		super();

@@ -294,4 +294,28 @@ public class QA10Tables {
 
 	}
 
+	public void setLayerValues(HashMap<String, Object> tablesCommonMap,
+			List<HashMap<String, Object>> tablesLayerMapList) {
+
+		Map<String, Object> variabliesMap = new LinkedHashMap<String, Object>();
+
+		LinkedHashMap<String, Object> commons = new LinkedHashMap<String, Object>();
+		commons.put("2", tablesCommonMap.get("2"));
+		commons.put("70", tablesCommonMap.get("70"));
+		variabliesMap.put("common", commons);
+
+		List<LinkedHashMap<String, Object>> layers = new ArrayList<LinkedHashMap<String, Object>>();
+		for (int i = 0; i < tablesLayerMapList.size(); i++) {
+			HashMap<String, Object> tableLayerMap = tablesLayerMapList.get(i);
+			LinkedHashMap<String, Object> layer = new LinkedHashMap<String, Object>();
+			layer.put("0", tableLayerMap.get("0"));
+			layer.put("2", tableLayerMap.get("2"));
+			layer.put("70", tableLayerMap.get("70"));
+			layer.put("62", tableLayerMap.get("62"));
+			layer.put("6", tableLayerMap.get("6"));
+			layers.add(layer);
+		}
+		variabliesMap.put("layers", layers);
+		this.layers = variabliesMap;
+	}
 }

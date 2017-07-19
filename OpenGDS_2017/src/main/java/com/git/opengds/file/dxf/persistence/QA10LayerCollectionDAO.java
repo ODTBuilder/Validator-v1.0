@@ -21,7 +21,7 @@ public interface QA10LayerCollectionDAO {
 
 	public int deleteQA10Feature(HashMap<String, Object> deleteFeatureMap);
 
-	public int insertQA10LayerCollectionBlocks(HashMap<String, Object> blocksQuery);
+	public int insertQA10LayerCollectionBlocksCommon(HashMap<String, Object> blocksQuery);
 
 	public void insertQA10LayercollectionBlockEntity(HashMap<String, Object> entitiesQuery);
 
@@ -34,7 +34,7 @@ public interface QA10LayerCollectionDAO {
 	public List<HashMap<String, Object>> selectQA10LayerMetadataIdxs(HashMap<String, Object> metadataIdxQuery);
 
 	public int selectQA10LayerMetadataIdx(HashMap<String, Object> metadataIdxQuery);
-	
+
 	public HashMap<String, Object> selectQA10LayerTableName(HashMap<String, Object> layerTbNameQuery);
 
 	public int dropLayer(HashMap<String, Object> dropLayerTbQuery);
@@ -50,5 +50,17 @@ public interface QA10LayerCollectionDAO {
 	public int selectTableLayerIdx(HashMap<String, Object> selectTlIdxQuery);
 
 	public void updateTableLayerId(HashMap<String, Object> updateTlIdQuery);
+
+	public HashMap<String, Object> selectQA10LayerMeata(HashMap<String, Object> selectAllMetaQuery);
+
+	public List<HashMap<String, Object>> selectQA10Features(HashMap<String, Object> selectFeaturesQuery);
+
+	public HashMap<String, Object> selectTablesCommon(HashMap<String, Object> selectTablesCommonsQuery);
+
+	public List<HashMap<String, Object>> selectTablesLayer(HashMap<String, Object> selectTablesLayerQuery);
+
+	public int insertQA10LayercollectionBlockPolyline(HashMap<String, Object> polylineQuery);
+
+	public void insertQA10LayercollectionBlockVertex(HashMap<String, Object> vertextInsertQuery);
 
 }

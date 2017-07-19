@@ -33,6 +33,7 @@ public class QA10DBManagerServiceImpl implements QA10DBManagerService {
 	@Inject
 	private QA10LayerCollectionDAO dao;
 
+	@SuppressWarnings("unchecked")
 	public GeoLayerInfo insertQA10LayerCollection(QA10LayerCollection layerCollection, GeoLayerInfo layerInfo) {
 
 		DefaultTransactionDefinition def = new DefaultTransactionDefinition();
@@ -60,21 +61,45 @@ public class QA10DBManagerServiceImpl implements QA10DBManagerService {
 					dao.insertQA10LayerCollectionTableLayers(layersQuery.get(i));
 				}
 			}
-
 			// insertBlocks
 			QA10Blocks qa10Blocks = layerCollection.getBlocks();
 			List<LinkedHashMap<String, Object>> blocks = qa10Blocks.getBlocks();
-			List<HashMap<String, Object>> blocksQuerys = dbManager.getInsertBlocks(cIdx, blocks);
+			List<HashMap<String, Object>> blocksCommonQuerys = dbManager.getInsertBlocksCommon(cIdx, blocks);
 			for (int i = 0; i < blocks.size(); i++) {
-				HashMap<String, Object> blocksQuery = blocksQuerys.get(i);
-				int bIdx = dao.insertQA10LayerCollectionBlocks(blocksQuery);
+				HashMap<String, Object> blocksQuery = blocksCommonQuerys.get(i);
+				int bIdx = dao.insertQA10LayerCollectionBlocksCommon(blocksQuery);
 
 				// insertBlockEntities
 				LinkedHashMap<String, Object> block = blocks.get(i);
-				List<HashMap<String, Object>> entitiesQuerys = dbManager.getInsertBlockEntityQuery(bIdx, block);
-				for (int j = 0; j < entitiesQuerys.size(); j++) {
-					HashMap<String, Object> entitiesQuery = entitiesQuerys.get(j);
-					dao.insertQA10LayercollectionBlockEntity(entitiesQuery);
+				List<LinkedHashMap<String, Object>> entities = (List<LinkedHashMap<String, Object>>) block
+						.get("entities");
+				for (int j = 0; j < entities.size(); j++) {
+					LinkedHashMap<String, Object> entity = entities.get(j);
+					String entityType = (String) entity.get("0");
+					if (entityType.equals("POLYLINE")) {
+						HashMap<String, Object> polylineQuery = dbManager.getInsertBlockPolylineQuery(bIdx, entity);
+						int dpIdx = dao.insertQA10LayercollectionBlockPolyline(polylineQuery);
+						List<LinkedHashMap<String, Object>> vertexMaps = (List<LinkedHashMap<String, Object>>) entity
+								.get("vertexs");
+						for (int k = 0; k < vertexMaps.size(); k++) {
+							LinkedHashMap<String, Object> vertexMap = vertexMaps.get(k);
+							HashMap<String, Object> vertextInsertQuery = dbManager.getInsertBlockVertexQuery(bIdx,
+									dpIdx, vertexMap);
+							dao.insertQA10LayercollectionBlockVertex(vertextInsertQuery);
+						}
+					} else if (entityType.equals("ARC")) {
+						HashMap<String, Object> arcQuery = dbManager.getInsertBlockArcQuery(bIdx, entity);
+						dao.insertQA10LayercollectionBlockEntity(arcQuery);
+					} else if (entityType.equals("VERTEX")) {
+						HashMap<String, Object> vertexQuery = dbManager.getInsertBlockVertexQuery(bIdx, entity);
+						dao.insertQA10LayercollectionBlockEntity(vertexQuery);
+					} else if (entityType.equals("CIRCLE")) {
+						HashMap<String, Object> circleQuery = dbManager.getInsertBlockCircleQuery(bIdx, entity);
+						dao.insertQA10LayercollectionBlockEntity(circleQuery);
+					} else if (entityType.equals("TEXT")) {
+						HashMap<String, Object> textQuery = dbManager.getInsertBlockTextQuery(bIdx, entity);
+						dao.insertQA10LayercollectionBlockEntity(textQuery);
+					}
 				}
 			}
 

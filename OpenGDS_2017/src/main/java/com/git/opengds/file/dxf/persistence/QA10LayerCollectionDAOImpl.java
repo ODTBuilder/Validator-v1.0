@@ -54,7 +54,7 @@ public class QA10LayerCollectionDAOImpl implements QA10LayerCollectionDAO {
 	}
 
 	@Override
-	public int insertQA10LayerCollectionBlocks(HashMap<String, Object> blocksQuery) {
+	public int insertQA10LayerCollectionBlocksCommon(HashMap<String, Object> blocksQuery) {
 		sqlSession.insert(namespace + ".insertQA10LayerCollectionBlockCommon", blocksQuery);
 		return (Integer) blocksQuery.get("bc_idx");
 	}
@@ -115,7 +115,8 @@ public class QA10LayerCollectionDAOImpl implements QA10LayerCollectionDAO {
 
 	@Override
 	public int selectQA10LayerMetadataIdx(HashMap<String, Object> metadataIdxQuery) {
-		HashMap<String, Object> idxMap = sqlSession.selectOne(namespace + ".selectQA10LayerMetadataIdx", metadataIdxQuery);
+		HashMap<String, Object> idxMap = sqlSession.selectOne(namespace + ".selectQA10LayerMetadataIdx",
+				metadataIdxQuery);
 		return (Integer) idxMap.get("lm_idx");
 	}
 
@@ -133,5 +134,36 @@ public class QA10LayerCollectionDAOImpl implements QA10LayerCollectionDAO {
 	@Override
 	public void updateTableLayerId(HashMap<String, Object> updateTlIdQuery) {
 		sqlSession.update(namespace + ".updateTableLayerID", updateTlIdQuery);
+	}
+
+	@Override
+	public HashMap<String, Object> selectQA10LayerMeata(HashMap<String, Object> selectMetaQuery) {
+		return sqlSession.selectOne(namespace + ".selectQA10LayerMeata", selectMetaQuery);
+	}
+
+	@Override
+	public List<HashMap<String, Object>> selectQA10Features(HashMap<String, Object> selectFeaturesQuery) {
+		return sqlSession.selectList(namespace + ".selectQA10Features", selectFeaturesQuery);
+	}
+
+	@Override
+	public HashMap<String, Object> selectTablesCommon(HashMap<String, Object> selectTablesCommonsQuery) {
+		return sqlSession.selectOne(namespace + ".selectTablesCommon", selectTablesCommonsQuery);
+	}
+
+	@Override
+	public List<HashMap<String, Object>> selectTablesLayer(HashMap<String, Object> selectTablesLayerQuery) {
+		return sqlSession.selectList(namespace + ".selectTablesLayer", selectTablesLayerQuery);
+	}
+
+	@Override
+	public int insertQA10LayercollectionBlockPolyline(HashMap<String, Object> polylineQuery) {
+		sqlSession.insert(namespace + ".insertQA10LayercollectionBlockPolyline", polylineQuery);
+		return (Integer) polylineQuery.get("bp_idx");
+	}
+
+	@Override
+	public void insertQA10LayercollectionBlockVertex(HashMap<String, Object> vertextInsertQuery) {
+		sqlSession.insert(namespace + ".insertQA10LayercollectionBlockVertex", vertextInsertQuery);
 	}
 }

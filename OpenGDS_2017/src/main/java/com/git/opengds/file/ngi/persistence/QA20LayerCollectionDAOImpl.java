@@ -165,7 +165,7 @@ public class QA20LayerCollectionDAOImpl implements QA20LayerCollectionDAO {
 	}
 
 	@Override
-	public HashMap<String, Object> selectQA20LayerMeataAll(HashMap<String, Object> selectAllMetaIdxQuery) {
+	public HashMap<String, Object> selectQA20LayerMeata(HashMap<String, Object> selectAllMetaIdxQuery) {
 		return sqlSession.selectOne(namespace + ".selectAllLayerMeata", selectAllMetaIdxQuery);
 	}
 
