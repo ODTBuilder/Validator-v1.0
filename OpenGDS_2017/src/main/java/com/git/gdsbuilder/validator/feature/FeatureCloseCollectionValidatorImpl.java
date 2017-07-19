@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.lang.model.type.ErrorType;
+
+import org.geotools.geometry.jts.GeometryCoordinateSequenceTransformer;
+import org.geotools.xml.gml.GMLComplexTypes.GeometryAssociationType;
 import org.json.simple.JSONArray;
 import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
@@ -14,6 +18,7 @@ import com.git.gdsbuilder.type.validate.option.EntityNone;
 import com.git.gdsbuilder.type.validate.option.RefAttributeMiss;
 import com.git.gdsbuilder.type.validate.option.RefZValueMiss;
 import com.git.gdsbuilder.type.validate.option.SelfEntity;
+import com.git.gdsbuilder.type.validate.option.UnderShoot;
 import com.git.gdsbuilder.validator.collection.opt.ValCollectionOption;
 import com.git.gdsbuilder.validator.collection.opt.ValCollectionOption.ValCollectionOptionType;
 import com.vividsolutions.jts.geom.Coordinate;
@@ -21,6 +26,8 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.Point;
+
+import sun.security.x509.DistributionPointName;
 
 public class FeatureCloseCollectionValidatorImpl implements FeatureCloseCollectionValidator {
 
@@ -31,7 +38,7 @@ public class FeatureCloseCollectionValidatorImpl implements FeatureCloseCollecti
 	@Override
 	public List<ErrorFeature> ValidateCloseCollectionTarget(SimpleFeature simpleFeature,
 			List<SimpleFeature> relationSimpleFeatures, ValCollectionOption closeValidateOptions, LineString nearLine,
-			double tolerence) {
+			double tolerence, String direction) {
 
 		List<ErrorFeature> collectionErrors = new ArrayList<ErrorFeature>();
 		GeometryFactory geometryFactory = new GeometryFactory();
@@ -39,12 +46,19 @@ public class FeatureCloseCollectionValidatorImpl implements FeatureCloseCollecti
 		String featureIdx = simpleFeature.getID();
 		Property featuerIDPro = simpleFeature.getProperty("feature_id");
 		String featureID = (String) featuerIDPro.getValue();
+		if(featureID.equals("69B3D")){
+			System.out.println();	
+		}
+		if(featureID.equals("RECORD 2314")){
+			System.out.println();	
+		}
 
 		// 인접도엽 옵션객체 선언
 		boolean matchMiss = false;
 		boolean refAttributeMiss = false;
 		boolean refZvalueMiss = false;
 		boolean entityNon = false;
+		boolean underShoot = false;
 		if (closeValidateOptions != null) {
 			Iterator<ValCollectionOptionType> typeItr = closeValidateOptions.keySet().iterator();
 			while (typeItr.hasNext()) {
@@ -60,6 +74,9 @@ public class FeatureCloseCollectionValidatorImpl implements FeatureCloseCollecti
 				}
 				if (iteratorVal.equals(ValCollectionOptionType.ENTITYNONE.getTypeName())) {
 					entityNon = true;
+				}
+				if(iteratorVal.equals(ValCollectionOptionType.UNDERSHOOT.getTypeName())){
+					underShoot = true;
 				}
 			}
 		} else
@@ -88,6 +105,7 @@ public class FeatureCloseCollectionValidatorImpl implements FeatureCloseCollecti
 						break innerFor;
 					}
 				}
+				return collectionErrors;
 			}
 		}
 
@@ -133,6 +151,499 @@ public class FeatureCloseCollectionValidatorImpl implements FeatureCloseCollecti
 				}
 			}
 		}
+
+
+		if(underShoot){
+
+			double underShootTolerance = (Double) closeValidateOptions.get(ValCollectionOptionType.UNDERSHOOT);
+
+			Coordinate[] nearLineCoors = nearLine.getCoordinates();
+			Coordinate nearLineCoor = nearLineCoors[0];
+
+			// target객체 좌표 LIST 생성하기
+			List<Coordinate> targetList = new ArrayList<Coordinate>();
+
+			for (int i = 0; i < tarCoors.length; i++) {
+				Coordinate targetCoor = tarCoors[i];
+				targetList.add(targetCoor);
+			}
+
+			// target객체와 인접해있는 객체가 있는지 확인하기
+			List<SimpleFeature> relationList = new ArrayList<SimpleFeature>();
+			for (SimpleFeature relationSimpleFeature : relationSimpleFeatures) {
+				Geometry relationGeometry = (Geometry) relationSimpleFeature.getDefaultGeometry();
+				if(Math.abs(targetGeometry.distance(relationGeometry)) <= underShootTolerance){
+					relationList.add(relationSimpleFeature);
+				}
+			}
+
+			// target객체의 도엽근처의 좌표 뽑기
+			/*		Coordinate[] targetCoors = targetGeometry.getCoordinates();
+			List<Point> coorList = new ArrayList<Point>();
+			for (int i = 0; i < targetCoors.length; i++) {
+				Coordinate targetCoor = targetCoors[i];
+				Point targetPoint = geometryFactory.createPoint(targetCoor);
+				double targetPointDist = nearLine.distance(targetPoint);
+				if(targetPointDist < tolerence || targetPointDist == tolerence){
+					coorList.add(targetPoint);
+				}
+			}*/
+			//
+
+
+
+			String upperType = simpleFeature.getAttribute("feature_type").toString().toUpperCase();
+
+			if(upperType.equals("POLYGON")){
+				if(relationList.size() > 0){
+					if(direction.equals("TOP")){
+
+						Coordinate coordinateFir = targetList.get(0);
+						Coordinate coordinateSec = targetList.get(1);
+						for (int i = 2; i < targetList.size(); i++) {
+							Coordinate targetCoor = targetList.get(i);
+							if(targetCoor.y > coordinateSec.y){
+								coordinateSec = targetCoor;
+								if(coordinateSec.y > coordinateFir.y){
+									Coordinate temp = coordinateFir;
+									coordinateFir = coordinateSec;
+									coordinateSec = temp;
+								}
+							}
+						}
+
+						for (int i = 0; i < targetList.size(); i++) {
+							Coordinate targetCoor = targetList.get(i);
+							if(!targetCoor.equals(coordinateFir) && !targetCoor.equals(coordinateSec) ){
+								Point targetPoint = geometryFactory.createPoint(targetCoor);
+								if(coordinateFir.y - targetCoor.y < underShootTolerance){
+									ErrorFeature errFeature = new ErrorFeature(featureIdx, featureID,
+											UnderShoot.Type.UNDERSHOOT.errType(), 
+
+											UnderShoot.Type.UNDERSHOOT.errName(), targetPoint);
+									collectionErrors.add(errFeature);
+								}
+							}
+						}
+					}
+					if(direction.equals("BOTTOM")){
+
+						Coordinate coordinateFir = targetList.get(0);
+						Coordinate coordinateSec = targetList.get(1);
+						for (int i = 2; i < targetList.size(); i++) {
+							Coordinate targetCoor = targetList.get(i);
+							if(targetCoor.y < coordinateSec.y){
+								coordinateSec = targetCoor;
+								if(coordinateSec.y < coordinateFir.y){
+									Coordinate temp = coordinateFir;
+									coordinateFir = coordinateSec;
+									coordinateSec = temp;
+								}
+							}
+						}
+
+						for (int i = 0; i < targetList.size(); i++) {
+							Coordinate targetCoor = targetList.get(i);
+							if(!targetCoor.equals(coordinateFir) && !targetCoor.equals(coordinateSec) ){
+								Point targetPoint = geometryFactory.createPoint(targetCoor);
+								if(targetCoor.y - coordinateFir.y < underShootTolerance ){
+									ErrorFeature errFeature = new ErrorFeature(featureIdx, featureID,
+											UnderShoot.Type.UNDERSHOOT.errType(), 
+
+											UnderShoot.Type.UNDERSHOOT.errName(), targetPoint);
+									collectionErrors.add(errFeature);
+								}
+							}
+						}
+
+					}
+					if(direction.equals("RIGHT")){
+						Coordinate coordinateFir = targetList.get(0);
+						Coordinate coordinateSec = targetList.get(1);
+						for (int i = 2; i < targetList.size(); i++) {
+							Coordinate targetCoor = targetList.get(i);
+							if(targetCoor.x > coordinateSec.x){
+								coordinateSec = targetCoor;
+								if(coordinateSec.x > coordinateFir.x){
+									Coordinate temp = coordinateFir;
+									coordinateFir = coordinateSec;
+									coordinateSec = temp;
+								}
+							}
+						}
+
+						for (int i = 0; i < targetList.size(); i++) {
+							Coordinate targetCoor = targetList.get(i);
+							if(!targetCoor.equals(coordinateFir) && !targetCoor.equals(coordinateSec) ){
+								Point targetPoint = geometryFactory.createPoint(targetCoor);
+								if(coordinateFir.x - targetCoor.x < underShootTolerance ){
+									ErrorFeature errFeature = new ErrorFeature(featureIdx, featureID,
+											UnderShoot.Type.UNDERSHOOT.errType(), 
+
+											UnderShoot.Type.UNDERSHOOT.errName(), targetPoint);
+									collectionErrors.add(errFeature);
+								}
+							}
+						}
+
+					}
+					if(direction.equals("LEFT")){
+						Coordinate coordinateFir = targetList.get(0);
+						Coordinate coordinateSec = targetList.get(1);
+						for (int i = 2; i < targetList.size(); i++) {
+							Coordinate targetCoor = targetList.get(i);
+							if(targetCoor.x < coordinateSec.x){
+								coordinateSec = targetCoor;
+								if(coordinateSec.x < coordinateFir.x){
+									Coordinate temp = coordinateFir;
+									coordinateFir = coordinateSec;
+									coordinateSec = temp;
+								}
+							}
+						}
+
+						for (int i = 0; i < targetList.size(); i++) {
+							Coordinate targetCoor = targetList.get(i);
+							if(!targetCoor.equals(coordinateFir) && !targetCoor.equals(coordinateSec) ){
+								Point targetPoint = geometryFactory.createPoint(targetCoor);
+								if(targetCoor.x - coordinateFir.x < underShootTolerance ){
+									ErrorFeature errFeature = new ErrorFeature(featureIdx, featureID,
+											UnderShoot.Type.UNDERSHOOT.errType(), 
+
+											UnderShoot.Type.UNDERSHOOT.errName(), targetPoint);
+									collectionErrors.add(errFeature);
+								}
+							}
+						}
+					}
+				}else{
+					for (int i = 0; i < targetList.size(); i++) {
+						Coordinate targetCoor = targetList.get(i);
+						Point targetPoint = geometryFactory.createPoint(targetCoor);
+
+						if(targetPoint.distance(nearLine) < underShootTolerance){
+							ErrorFeature errFeature = new ErrorFeature(featureIdx, featureID,
+									UnderShoot.Type.UNDERSHOOT.errType(), UnderShoot.Type.UNDERSHOOT.errName(), 
+
+									targetPoint);
+							collectionErrors.add(errFeature);
+						}
+					}
+				}
+			}else{
+				Coordinate firstCoors = tarCoors[0];
+				Coordinate lastCoors = tarCoors[tarCoors.length - 1];
+				Point firstPoint = geometryFactory.createPoint(firstCoors);
+				Point lastPoint = geometryFactory.createPoint(lastCoors);
+
+
+				if(tarCoors.length > 2){
+					if(firstPoint.distance(nearLine) <= underShootTolerance && lastPoint.distance(nearLine) <= underShootTolerance){
+						if(direction.equals("TOP")){
+							for (int i = 0; i < tarCoors.length; i++) {
+								Coordinate targetCor = tarCoors[i];
+								Point tarPoint = geometryFactory.createPoint(targetCor);
+								if(!firstCoors.equals(targetCor) && !lastCoors.equals(targetCor)){
+									double firDistance = tarPoint.distance(firstPoint);
+									double lastDistance = tarPoint.distance(lastPoint);
+									if(firDistance < lastDistance){
+										if(firstCoors.y - targetCor.y < underShootTolerance){
+											ErrorFeature errFeature = new ErrorFeature(featureIdx, featureID,
+													UnderShoot.Type.UNDERSHOOT.errType(), UnderShoot.Type.UNDERSHOOT.errName(), tarPoint);
+											collectionErrors.add(errFeature);
+										}
+									}else{
+										if(lastCoors.y - targetCor.y < underShootTolerance){
+											ErrorFeature errFeature = new ErrorFeature(featureIdx, featureID,
+													UnderShoot.Type.UNDERSHOOT.errType(), UnderShoot.Type.UNDERSHOOT.errName(), tarPoint);
+											collectionErrors.add(errFeature);
+										}
+									}
+								}
+							}
+						}
+						if(direction.equals("BOTTOM")){
+							for (int i = 0; i < tarCoors.length; i++) {
+								Coordinate targetCor = tarCoors[i];
+								Point tarPoint = geometryFactory.createPoint(targetCor);
+								if(!firstCoors.equals(targetCor) && !lastCoors.equals(targetCor)){
+									double firDistance = tarPoint.distance(firstPoint);
+									double lastDistance = tarPoint.distance(lastPoint);
+									if(firDistance < lastDistance){
+										if(targetCor.y - firstCoors.y < underShootTolerance){
+											ErrorFeature errFeature = new ErrorFeature(featureIdx, featureID,
+													UnderShoot.Type.UNDERSHOOT.errType(), UnderShoot.Type.UNDERSHOOT.errName(), tarPoint);
+											collectionErrors.add(errFeature);
+										}
+									}else{
+										if(targetCor.y - lastCoors.y < underShootTolerance){
+											ErrorFeature errFeature = new ErrorFeature(featureIdx, featureID,
+													UnderShoot.Type.UNDERSHOOT.errType(), UnderShoot.Type.UNDERSHOOT.errName(), tarPoint);
+											collectionErrors.add(errFeature);
+										}
+									}
+								}
+							}
+						}
+						if(direction.equals("LEFT")){
+							for (int i = 0; i < tarCoors.length; i++) {
+								Coordinate targetCor = tarCoors[i];
+								Point tarPoint = geometryFactory.createPoint(targetCor);
+								if(!firstCoors.equals(targetCor) && !lastCoors.equals(targetCor)){
+									double firDistance = tarPoint.distance(firstPoint);
+									double lastDistance = tarPoint.distance(lastPoint);
+									if(firDistance < lastDistance){
+										if(targetCor.x - firstCoors.x < underShootTolerance){
+											ErrorFeature errFeature = new ErrorFeature(featureIdx, featureID,
+													UnderShoot.Type.UNDERSHOOT.errType(), UnderShoot.Type.UNDERSHOOT.errName(), tarPoint);
+											collectionErrors.add(errFeature);
+										}
+									}else{
+										if(targetCor.x - lastCoors.x < underShootTolerance){
+											ErrorFeature errFeature = new ErrorFeature(featureIdx, featureID,
+													UnderShoot.Type.UNDERSHOOT.errType(), UnderShoot.Type.UNDERSHOOT.errName(), tarPoint);
+											collectionErrors.add(errFeature);
+										}
+									}
+								}
+							}
+						}
+						if(direction.equals("RIGHT")){
+							for (int i = 0; i < tarCoors.length; i++) {
+								Coordinate targetCor = tarCoors[i];
+								Point tarPoint = geometryFactory.createPoint(targetCor);
+								if(!firstCoors.equals(targetCor) && !lastCoors.equals(targetCor)){
+									double firDistance = tarPoint.distance(firstPoint);
+									double lastDistance = tarPoint.distance(lastPoint);
+									if(firDistance < lastDistance){
+										if(firstCoors.x - targetCor.x < underShootTolerance){
+											ErrorFeature errFeature = new ErrorFeature(featureIdx, featureID,
+													UnderShoot.Type.UNDERSHOOT.errType(), UnderShoot.Type.UNDERSHOOT.errName(), tarPoint);
+											collectionErrors.add(errFeature);
+										}
+									}else{
+										if(lastCoors.x - targetCor.x < underShootTolerance){
+											ErrorFeature errFeature = new ErrorFeature(featureIdx, featureID,
+													UnderShoot.Type.UNDERSHOOT.errType(), UnderShoot.Type.UNDERSHOOT.errName(), tarPoint);
+											collectionErrors.add(errFeature);
+										}
+									}
+								}
+							}
+						}
+
+					}else{
+
+						if(direction.equals("TOP")){
+							if(firstCoors.y < lastCoors.y){
+								for (int i = 0; i < tarCoors.length; i++) {
+									Coordinate targetCor = tarCoors[i];
+									Point tarPoint = geometryFactory.createPoint(targetCor);
+									if(!targetCor.equals(firstCoors) && !targetCor.equals(lastCoors)){
+										if(lastCoors.y - targetCor.y < underShootTolerance){
+											ErrorFeature errFeature = new ErrorFeature(featureIdx, featureID,
+													UnderShoot.Type.UNDERSHOOT.errType(), 
+
+													UnderShoot.Type.UNDERSHOOT.errName(), tarPoint);
+											collectionErrors.add(errFeature);
+										}
+									}
+								}
+							}else{
+								for (int i = 0; i < tarCoors.length; i++) {
+									Coordinate targetCor = tarCoors[i];
+									Point tarPoint = geometryFactory.createPoint(targetCor);
+									if(!targetCor.equals(firstCoors) && !targetCor.equals(lastCoors)){
+										if(firstCoors.y - targetCor.y < underShootTolerance){
+											ErrorFeature errFeature = new ErrorFeature(featureIdx, featureID,
+													UnderShoot.Type.UNDERSHOOT.errType(), 
+
+													UnderShoot.Type.UNDERSHOOT.errName(), tarPoint);
+											collectionErrors.add(errFeature);
+										}
+									}
+								}
+							}
+						}
+						if(direction.equals("BOTTOM")){
+							if(firstCoors.y < lastCoors.y){
+								for (int i = 0; i < tarCoors.length; i++) {
+									Coordinate targetCor = tarCoors[i];
+									Point tarPoint = geometryFactory.createPoint(targetCor);
+									if(!targetCor.equals(firstCoors) && !targetCor.equals(lastCoors)){
+										if(targetCor.y - firstCoors.y < underShootTolerance){
+											ErrorFeature errFeature = new ErrorFeature(featureIdx, featureID,
+													UnderShoot.Type.UNDERSHOOT.errType(), 
+
+													UnderShoot.Type.UNDERSHOOT.errName(), tarPoint);
+											collectionErrors.add(errFeature);
+										}
+									}
+								}
+							}else{
+								for (int i = 0; i < tarCoors.length; i++) {
+									Coordinate targetCor = tarCoors[i];
+									Point tarPoint = geometryFactory.createPoint(targetCor);
+									if(!targetCor.equals(firstCoors) && !targetCor.equals(lastCoors)){
+										if(targetCor.y - lastCoors.y < underShootTolerance){
+											ErrorFeature errFeature = new ErrorFeature(featureIdx, featureID,
+													UnderShoot.Type.UNDERSHOOT.errType(), 
+
+													UnderShoot.Type.UNDERSHOOT.errName(), tarPoint);
+											collectionErrors.add(errFeature);
+										}
+									}
+								}
+							}
+
+						}
+						if(direction.equals("LEFT")){
+							if(firstCoors.x < lastCoors.x){
+								for (int i = 0; i < tarCoors.length; i++) {
+									Coordinate targetCor = tarCoors[i];
+									Point tarPoint = geometryFactory.createPoint(targetCor);
+									if(!targetCor.equals(firstCoors) && !targetCor.equals(lastCoors)){
+										if(targetCor.x - firstCoors.x < underShootTolerance){
+											ErrorFeature errFeature = new ErrorFeature(featureIdx, featureID,
+													UnderShoot.Type.UNDERSHOOT.errType(), 
+
+													UnderShoot.Type.UNDERSHOOT.errName(), tarPoint);
+											collectionErrors.add(errFeature);
+										}
+									}
+								}
+							}else{
+								for (int i = 0; i < tarCoors.length; i++) {
+									Coordinate targetCor = tarCoors[i];
+									Point tarPoint = geometryFactory.createPoint(targetCor);
+									if(!targetCor.equals(firstCoors) && !targetCor.equals(lastCoors)){
+										if(targetCor.x - lastCoors.x < underShootTolerance){
+											ErrorFeature errFeature = new ErrorFeature(featureIdx, featureID,
+													UnderShoot.Type.UNDERSHOOT.errType(), 
+
+													UnderShoot.Type.UNDERSHOOT.errName(), tarPoint);
+											collectionErrors.add(errFeature);
+										}
+									}
+								}
+							}
+						}
+						if(direction.equals("RIGHT")){
+							if(firstCoors.x < lastCoors.x){
+								for (int i = 0; i < tarCoors.length; i++) {
+									Coordinate targetCor = tarCoors[i];
+									Point tarPoint = geometryFactory.createPoint(targetCor);
+									if(!targetCor.equals(firstCoors) && !targetCor.equals(lastCoors)){
+										if(lastCoors.x - targetCor.x < underShootTolerance){
+											ErrorFeature errFeature = new ErrorFeature(featureIdx, featureID,
+													UnderShoot.Type.UNDERSHOOT.errType(), 
+
+													UnderShoot.Type.UNDERSHOOT.errName(), tarPoint);
+											collectionErrors.add(errFeature);
+										}
+									}
+								}
+							}else{
+								for (int i = 0; i < tarCoors.length; i++) {
+									Coordinate targetCor = tarCoors[i];
+									Point tarPoint = geometryFactory.createPoint(targetCor);
+									if(!targetCor.equals(firstCoors) && !targetCor.equals(lastCoors)){
+										if(firstCoors.x - targetCor.x < underShootTolerance){
+											ErrorFeature errFeature = new ErrorFeature(featureIdx, featureID,
+													UnderShoot.Type.UNDERSHOOT.errType(), 
+
+													UnderShoot.Type.UNDERSHOOT.errName(), tarPoint);
+											collectionErrors.add(errFeature);
+										}
+									}
+								}
+							}
+						}
+
+
+					}
+
+				}else{
+					if(direction.equals("TOP")){
+						if(firstCoors.y < lastCoors.y){
+							if(lastCoors.y - firstCoors.y < underShootTolerance){
+								ErrorFeature errFeature = new ErrorFeature(featureIdx, featureID,
+										UnderShoot.Type.UNDERSHOOT.errType(), 
+
+										UnderShoot.Type.UNDERSHOOT.errName(), firstPoint);
+								collectionErrors.add(errFeature);
+							}
+						}else{
+							if(firstCoors.y - lastCoors.y  < underShootTolerance){
+								ErrorFeature errFeature = new ErrorFeature(featureIdx, featureID,
+										UnderShoot.Type.UNDERSHOOT.errType(), 
+
+										UnderShoot.Type.UNDERSHOOT.errName(), lastPoint);
+								collectionErrors.add(errFeature);
+							}
+						}
+					}
+					if(direction.equals("BOTTOM")){
+						if(firstCoors.y < lastCoors.y){
+							if(lastCoors.y - firstCoors.y < underShootTolerance){
+								ErrorFeature errFeature = new ErrorFeature(featureIdx, featureID,
+										UnderShoot.Type.UNDERSHOOT.errType(), 
+
+										UnderShoot.Type.UNDERSHOOT.errName(), lastPoint);
+								collectionErrors.add(errFeature);
+							}
+						}else{
+							if(firstCoors.y - lastCoors.y  < underShootTolerance){
+								ErrorFeature errFeature = new ErrorFeature(featureIdx, featureID,
+										UnderShoot.Type.UNDERSHOOT.errType(), 
+
+										UnderShoot.Type.UNDERSHOOT.errName(), firstPoint);
+								collectionErrors.add(errFeature);
+							}
+						}
+					}
+					if(direction.equals("LEFT")){
+						if(firstCoors.x < lastCoors.x){
+							if(lastCoors.x - firstCoors.x < underShootTolerance){
+								ErrorFeature errFeature = new ErrorFeature(featureIdx, featureID,
+										UnderShoot.Type.UNDERSHOOT.errType(), 
+
+										UnderShoot.Type.UNDERSHOOT.errName(), lastPoint);
+								collectionErrors.add(errFeature);
+							}
+						}else{
+							if(firstCoors.x - lastCoors.x < underShootTolerance){
+								ErrorFeature errFeature = new ErrorFeature(featureIdx, featureID,
+										UnderShoot.Type.UNDERSHOOT.errType(), 
+
+										UnderShoot.Type.UNDERSHOOT.errName(), firstPoint);
+								collectionErrors.add(errFeature);
+							}
+						}
+					}
+					if(direction.equals("RIGHT")){
+						if(firstCoors.x < lastCoors.x){
+							if(lastCoors.x - firstCoors.x < underShootTolerance){
+								ErrorFeature errFeature = new ErrorFeature(featureIdx, featureID,
+										UnderShoot.Type.UNDERSHOOT.errType(), 
+
+										UnderShoot.Type.UNDERSHOOT.errName(), firstPoint);
+								collectionErrors.add(errFeature);
+							}
+						}else{
+							if(firstCoors.x - lastCoors.x < underShootTolerance){
+								ErrorFeature errFeature = new ErrorFeature(featureIdx, featureID,
+										UnderShoot.Type.UNDERSHOOT.errType(), 
+
+										UnderShoot.Type.UNDERSHOOT.errName(), lastPoint);
+								collectionErrors.add(errFeature);
+							}
+						}
+					}
+				}
+			}
+		}
+
 
 		if (reSimpleFeatures.size() > 0) {
 			if (refAttributeMiss) {

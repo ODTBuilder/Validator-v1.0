@@ -3,6 +3,7 @@ package com.git.gdsbuilder.validator.collection.opt;
 import java.util.HashMap;
 import java.util.List;
 
+import com.git.gdsbuilder.type.validate.option.UnderShoot;
 import com.git.gdsbuilder.validator.collection.opt.ValCollectionOption.ValCollectionOptionType;
 
 public class ValCollectionOption extends HashMap<ValCollectionOptionType,Object>{
@@ -17,7 +18,8 @@ public class ValCollectionOption extends HashMap<ValCollectionOptionType,Object>
 		ENTITYNONE("EntityNONE"),
 		EDGEMATCHMISS("EdgeMatchMiss"),
 		REFZVALUEMISS("RefZValueMiss"),
-		REFATTRIBUTEMISS("RefAttributeMiss");
+		REFATTRIBUTEMISS("RefAttributeMiss"),
+		UNDERSHOOT("UnderShoot");
 	
 			private String typeName;
 	
@@ -45,4 +47,9 @@ public class ValCollectionOption extends HashMap<ValCollectionOptionType,Object>
 	public void putRefAttributeMissOption(List<String> colunms){
 		super.put(ValCollectionOptionType.REFATTRIBUTEMISS, colunms);
 	}
+	
+	public void putUnderShootOption(double tolerence){
+		super.put(ValCollectionOptionType.UNDERSHOOT, tolerence);
+	}
+	
 }
