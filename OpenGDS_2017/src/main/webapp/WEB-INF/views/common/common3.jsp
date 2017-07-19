@@ -84,6 +84,9 @@
 <%-- wms편집이력 --%>
 <script src="${pageContext.request.contextPath}/resources/js/gitbuilder/edithistory.js"></script>
 
+<%-- 레이어 편집이력 --%>
+<script src="${pageContext.request.contextPath}/resources/js/gitbuilder/layerhistory.js"></script>
+
 <%-- 편집이력 전송 --%>
 <script src="${pageContext.request.contextPath}/resources/js/gitbuilder/recordtransfer.js"></script>
 
