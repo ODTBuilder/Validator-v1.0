@@ -25,6 +25,20 @@ gb.edit.FeatureRecord.prototype.getModified = function() {
 gb.edit.FeatureRecord.prototype.getRemoved = function() {
 	return this.removed;
 };
+gb.edit.FeatureRecord.prototype.clearAll = function() {
+	this.created = {};
+	this.modified = {};
+	this.removed = {};
+};
+gb.edit.FeatureRecord.prototype.clearCreated = function() {
+	this.created = {};
+};
+gb.edit.FeatureRecord.prototype.clearModified = function() {
+	this.modified = {};
+};
+gb.edit.FeatureRecord.prototype.clearRemoved = function() {
+	this.removed = {};
+};
 gb.edit.FeatureRecord.prototype.isRemoved = function(layer, feature) {
 	var isRemoved = false;
 	var lid;

@@ -10440,8 +10440,7 @@
 									console.log(layer);
 									var git = layer.get("git");
 									if (git) {
-										inst._data.layerproperties.properties.setInformation(git.information);
-										inst._data.layerproperties.properties.setForm(git.information);
+										inst._data.layerproperties.properties.setLayer(layer);
 										inst._data.layerproperties.properties.open();
 									}
 								} else {

@@ -17,7 +17,8 @@ gb.edit.ModifyLayerProperties = function(obj) {
 	this.format = undefined;
 	this.type = undefined;
 	this.info = undefined;
-
+	this.layer = undefined;
+	this.layerRecord = options.layerRecord ? options.layerRecord : undefined;
 	var xSpan = $("<span>").attr({
 		"aria-hidden" : true
 	}).html("&times;");
@@ -123,7 +124,7 @@ gb.edit.ModifyLayerProperties = function(obj) {
 	var okBtn = $("<button>").attr({
 		"type" : "button"
 	}).on("click", function() {
-		// var opt = that.getDefinitionForm();
+		var opt = that.getDefinitionForm();
 		// that.save(opt);
 		that.close();
 	});
@@ -169,6 +170,14 @@ gb.edit.ModifyLayerProperties.prototype.open = function() {
 };
 gb.edit.ModifyLayerProperties.prototype.close = function() {
 	this.window.modal('hide');
+};
+gb.edit.ModifyLayerProperties.prototype.setLayer = function(layer) {
+	this.layer = layer;
+	this.setInformation(layer.get("git").information);
+	this.setForm(layer.get("git").information);
+};
+gb.edit.ModifyLayerProperties.prototype.getLayer = function() {
+	return this.layer;
 };
 gb.edit.ModifyLayerProperties.prototype.setInformation = function(info) {
 	this.information = info;
@@ -387,6 +396,7 @@ gb.edit.ModifyLayerProperties.prototype.initExpertForm = function() {
 	$(this.expertForm).append(tp).append(table).append(table2);
 };
 gb.edit.ModifyLayerProperties.prototype.getDefinitionForm = function() {
+	var info = this.getInformation();
 	var opt = {
 		"layer" : {}
 	};
@@ -419,17 +429,11 @@ gb.edit.ModifyLayerProperties.prototype.getDefinitionForm = function() {
 		}
 		this.futureId = "gro_" + this.format + "_" + $(this.sheetNumInput).val().replace(/(\s*)/g, '');
 	} else if (this.type === "layer") {
-		opt.layer[this.format] = {};
-		if ($(this.sheetNumInput).val().replace(/(\s*)/g, '') === "") {
-			console.error("no mapsheet number");
-			return;
-		}
-		opt.layer[this.format][$(this.sheetNumInput).val()] = {};
-		opt.layer[this.format][$(this.sheetNumInput).val()]["create"] = [];
 		if ($(this.layerNameInput).val().replace(/(\s*)/g, '') === "") {
 			console.error("no layer name");
 			return;
 		}
+		this.layerRecord.update(format, mapsheet, layer, oldLayerId);
 		var layerObj = {
 			"layerName" : $(this.layerNameInput).val(),
 			"layerType" : $(this.typeForm).find("select").val()

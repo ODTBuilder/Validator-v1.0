@@ -25,6 +25,20 @@ gb.edit.LayerRecord.prototype.getModified = function() {
 gb.edit.LayerRecord.prototype.getRemoved = function() {
 	return this.removed;
 };
+gb.edit.LayerRecord.prototype.clearAll = function() {
+	this.created = {};
+	this.modified = {};
+	this.removed = {};
+};
+gb.edit.LayerRecord.prototype.clearCreated = function() {
+	this.created = {};
+};
+gb.edit.LayerRecord.prototype.clearModified = function() {
+	this.modified = {};
+};
+gb.edit.LayerRecord.prototype.clearRemoved = function() {
+	this.removed = {};
+};
 gb.edit.LayerRecord.prototype.isRemoved = function(layer) {
 	var isRemoved = false;
 	if (this.removed.hasOwnProperty(layer.get("id"))) {
@@ -32,6 +46,38 @@ gb.edit.LayerRecord.prototype.isRemoved = function(layer) {
 	}
 	return isRemoved;
 };
+gb.edit.LayerRecord.prototype.createByMapsheet = function(mapsheetLayer) {
+	if (mapsheetLayer instanceof ol.layer.Base) {
+		if (!mapsheetLayer.get("git")) {
+			console.error("no git property");
+			return;
+		}
+	}
+	var git = mapsheetLayer.get("git");
+	var info = git.information;
+	if (!info) {
+		console.error("no information");
+		return;
+	}
+	var format = info.getFormat();
+	var mapsheet = info.getNumber();
+	var layers;
+	if (mapsheetLayer instanceof ol.layer.Group) {
+		layers = mapsheetLayer.getLayers();
+	} else if (mapsheetLayer instanceof ol.layer.Tile) {
+		layers = git.layers;
+	}
+	if (!this.created.hasOwnProperty(format)) {
+		this.created[format] = {};
+	}
+	if (!this.created[format].hasOwnProperty(mapsheet)) {
+		this.created[format][mapsheet] = {};
+	}
+	for (var i = 0; i < layers.getLength(); i++) {
+		this.created[format][mapsheet][layers.item(i).get("id")] = layers.item(i);
+	}
+	console.log(this.created);
+}
 gb.edit.LayerRecord.prototype.create = function(format, mapsheet, layer) {
 	if (!this.created.hasOwnProperty(format)) {
 		this.created[format] = {};
@@ -53,45 +99,46 @@ gb.edit.LayerRecord.prototype.remove = function(format, mapsheet, layer) {
 		console.error("no information");
 		return;
 	}
-	if (!this.removed.hasOwnProperty(format)) {
-		this.removed[format] = {};
-	}
-	this.removed[format][mapsheet] = {};
 
-	if (feature.getId().search(".new") !== -1) {
-		var keys = Object.keys(this.created[layer.get("id")]);
-		for (var i = 0; i < keys.length; i++) {
-			if (this.created[layer.get("id")][keys[i]].getId() === feature.getId()) {
-				delete this.created[layer.get("id")][keys[i]];
-				break;
-			}
-		}
+	if (info.getIsNew() === true) {
+		delete this.created[format][mapsheet][layer.get("id")];
 	} else {
-		this.removed[layer.get("id")][this.id ? feature.get(this.id) : feature.getId()] = feature;
-		if (this.modified.hasOwnProperty(layer.get("id"))) {
-			if (this.modified[layer.get("id")].hasOwnProperty(this.id ? feature.get(this.id) : feature.getId())) {
-				delete this.modified[layer.get("id")][this.id ? feature.get(this.id) : feature.getId()];
+		if (!this.removed.hasOwnProperty(format)) {
+			this.removed[format] = {};
+		}
+		if (!this.removed[format].hasOwnProperty(mapsheet)) {
+			this.removed[format][mapsheet] = {};
+		}
+		this.removed[format][mapsheet][layer.get("id")] = layer;
+		if (this.modified.hasOwnProperty(format)) {
+			if (this.modified[format].hasOwnProperty(mapsheet)) {
+				if (this.modified[format][mapsheet].hasOwnProperty(layer.get("id"))) {
+					delete this.modified[format][mapsheet][layer.get("id")];
+				}
 			}
 		}
 	}
 	console.log(this.removed);
 }
-gb.edit.LayerRecord.prototype.update = function(layer, feature) {
+gb.edit.LayerRecord.prototype.update = function(format, mapsheet, layer, oldLayerId) {
 	if (!this.modified) {
 		this.modified = {};
 	}
-	if (feature.getId().search(".new") !== -1) {
-		this.created[layer.get("id")][feature.getId()] = feature;
+	if (info.getIsNew() === true) {
+		delete this.created[format][mapsheet][oldLayerId];
+		this.created[format][mapsheet][layer.get("id")] = layer;
 	} else {
-		if (!this.modified[layer.get("id")]) {
-			this.modified[layer.get("id")] = {};
+		if (this.modified.hasOwnProperty(format)) {
+			if (this.modified[format].hasOwnProperty(mapsheet)) {
+				delete this.modified[format][mapsheet][oldLayerId];
+				this.modified[format][mapsheet][layer.get("id")] = layer;
+			}
 		}
-		this.modified[layer.get("id")][this.id ? feature.get(this.id) : feature.getId()] = feature;
 	}
 	console.log(this.modified);
 }
 gb.edit.LayerRecord.prototype.getStructure = function() {
-	var format = new ol.format.GeoJSON();
+	// var format = new ol.format.GeoJSON();
 	var obj = {};
 	var cLayers = Object.keys(this.created);
 	for (var i = 0; i < cLayers.length; i++) {

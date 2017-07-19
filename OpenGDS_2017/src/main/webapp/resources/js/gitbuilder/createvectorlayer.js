@@ -19,6 +19,7 @@ gb.edit.CreateVectorLayer = function(obj) {
 	this.type = undefined;
 	this.refer = options.refer ? options.refer : undefined;
 	this.map = options.map ? options.map : undefined;
+	this.layerRecord = options.layerRecord ? options.layerRecord : undefined;
 	// this.clientRefer = options.clientRefer ? options.clientRefer : undefined;
 
 	var xSpan = $("<span>").attr({
@@ -519,6 +520,7 @@ gb.edit.CreateVectorLayer.prototype.getDefinitionForm = function() {
 		var col = new ol.Collection();
 		col.push(vectorLayer);
 		groupLayer.setLayers(col);
+		this.layerRecord.createByMapsheet(groupLayer);
 		this.map.addLayer(groupLayer);
 	}
 };
