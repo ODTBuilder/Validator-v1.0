@@ -241,7 +241,7 @@ gitbuilder.ui.QAEdit = $.widget("gitbuilder.qaedit",
 							};
 						}
 					},
-					"plugins" : [ "contextmenu", "search", "state", "types" ]
+					"plugins" : [ "contextmenu", "search", "types" ]
 				});
 
 				$("body").on("contextmenu", function() {

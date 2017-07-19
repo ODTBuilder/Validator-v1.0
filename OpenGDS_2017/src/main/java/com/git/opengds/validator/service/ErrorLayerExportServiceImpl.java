@@ -15,9 +15,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.test.context.ContextConfiguration;
 
 import com.git.gdsbuilder.FileRead.dxf.writer.QA10FileWriter;
-import com.git.gdsbuilder.FileRead.ngi.writer.QA20FileWriter;
 import com.git.gdsbuilder.type.qa10.collection.QA10LayerCollection;
 import com.git.gdsbuilder.type.qa20.collection.QA20LayerCollection;
+import com.git.gdsbuilder.type.qa20.layer.QA20Layer;
+import com.git.opengds.file.dxf.persistence.QA10LayerCollectionDAO;
+import com.git.opengds.file.ngi.dbManager.QA20DBQueryManager;
+import com.git.opengds.file.ngi.persistence.QA20LayerCollectionDAO;
 import com.git.opengds.parser.error.ErrorLayerDXFExportParser;
 import com.git.opengds.parser.error.ErrorLayerNGIExportParser;
 import com.git.opengds.validator.dbManager.ErrorLayerDBQueryManager;
@@ -29,6 +32,12 @@ public class ErrorLayerExportServiceImpl implements ErrorLayerExportService {
 
 	@Inject
 	private ErrorLayerDAO errLayerDAO;
+
+	@Inject
+	private QA20LayerCollectionDAO qa20LayerCollectionDAO;
+
+	@Inject
+	private QA10LayerCollectionDAO qa10LayerCollectionDAO;
 
 	@Override
 	public boolean exportErrorLayer(String format, String type, String name, HttpServletRequest request,
@@ -42,17 +51,80 @@ public class ErrorLayerExportServiceImpl implements ErrorLayerExportService {
 			HashMap<String, Object> selectQuery = dbManager.selectAllErrorFeaturesQuery(name);
 			List<HashMap<String, Object>> errAllFeatures = errLayerDAO.selectAllErrorFeatures(selectQuery);
 			if (format.equals("ngi")) {
-				QA20LayerCollection qa20LayerCollection = ErrorLayerNGIExportParser.parseQA20LayerCollection(name,
-						errAllFeatures);
-				QA20FileWriter qa20Writer = new QA20FileWriter();
-				fileMap = qa20Writer.writeNGIFile(qa20LayerCollection);
-				String fileName = (String) fileMap.get("fileName");
-				// ngi
-				String ngiFileDir = (String) fileMap.get("NgifileDir");
-				layerFileOutputStream(fileName, ngiFileDir, response);
-				// nda
-				String ndaFileDir = (String) fileMap.get("NdafileDir");
-				layerFileOutputStream(fileName, ndaFileDir, response);
+
+				QA20LayerCollection qa20LayerCollection = new QA20LayerCollection();
+
+				// errlayer 합쳐합쳐
+				QA20Layer errQA20Layer = ErrorLayerNGIExportParser.parseQA20Layer(name, errAllFeatures);
+				qa20LayerCollection.addQA20Layer(errQA20Layer);
+
+				// 기존 파일 layer 합쳐합쳐
+				QA20DBQueryManager qa20dbManager = new QA20DBQueryManager();
+
+				// 기존 도엽 Collection 가져오기
+				String[] nameSplit = name.split("_");
+				String collectionName = nameSplit[2];
+				HashMap<String, Object> selectLayerCollectionIdxQuery = qa20dbManager
+						.getSelectQA20LayerCollectionIdx(collectionName);
+				int cIdx = qa20LayerCollectionDAO.selectQA20LayerCollectionIdx(selectLayerCollectionIdxQuery);
+				HashMap<String, Object> selectAllMetaIdxQuery = qa20dbManager.getSelectQA20LayerMetaDataIdxQuery(cIdx);
+				List<HashMap<String, Object>> mIdxMapList = qa20LayerCollectionDAO
+						.selectQA20LayerMetadataIdxs(selectAllMetaIdxQuery);
+				for (int i = 0; i < mIdxMapList.size(); i++) {
+					HashMap<String, Object> mIdxMap = mIdxMapList.get(i);
+					int lmIdx = (Integer) mIdxMap.get("lm_idx");
+
+					// layerMeata
+					HashMap<String, Object> selectAllMetaQuery = qa20dbManager
+							.getSelectAllQA20LayerMetaDataQuery(lmIdx);
+					HashMap<String, Object> metaMap = qa20LayerCollectionDAO
+							.selectQA20LayerMeataAll(selectAllMetaQuery);
+
+					// tRepresent
+					if ((Boolean) metaMap.get("ngi_mask_text")) {
+						HashMap<String, Object> selectTextRepresentQuery = qa20dbManager
+								.getSelectTextRepresentQuery(lmIdx);
+						List<HashMap<String, Object>> textRepresenets = qa20LayerCollectionDAO
+								.selectTextRepresent(selectTextRepresentQuery);
+					}
+
+					// rRepresent
+					if ((Boolean) metaMap.get("ngi_mask_region")) {
+						HashMap<String, Object> selectRegionRepresentQuery = qa20dbManager
+								.getSelectResionRepresentQuery(lmIdx);
+						List<HashMap<String, Object>> regionRepresenets = qa20LayerCollectionDAO
+								.selectResionRepresent(selectRegionRepresentQuery);
+					}
+
+					// pRepresent
+					if ((Boolean) metaMap.get("ngi_mask_point")) {
+						HashMap<String, Object> selectTextRepresentQuery = qa20dbManager
+								.getSelectTextRepresentQuery(lmIdx);
+						List<HashMap<String, Object>> textRepresenets = qa20LayerCollectionDAO
+								.selectTextRepresent(selectTextRepresentQuery);
+					}
+
+					// lRepresent
+					if ((Boolean) metaMap.get("ngi_mask_linestring")) {
+						HashMap<String, Object> selectTextRepresentQuery = qa20dbManager
+								.getSelectTextRepresentQuery(lmIdx);
+						List<HashMap<String, Object>> textRepresenets = qa20LayerCollectionDAO
+								.selectTextRepresent(selectTextRepresentQuery);
+					}
+
+					// 합쳐합쳐
+
+				}
+
+				// QA20FileWriter qa20Writer = new QA20FileWriter();
+				// fileMap = qa20Writer.writeNGIFile(qa20LayerCollection);
+				// String fileName = (String) fileMap.get("fileName");
+				// // ngi
+				// String ngiFileDir = (String) fileMap.get("NgifileDir");
+				// layerFileOutputStream(fileName, ngiFileDir, response);
+				// // nda
+				// String ndaFileDir = (String) fileMap.get("NdafileDir");
+				// layerFileOutputStream(fileName, ndaFileDir, response);
 			} else if (format.equals("dxf")) {
 				QA10LayerCollection qa10LayerCollection = ErrorLayerDXFExportParser.parseQA10LayerCollection(name,
 						errAllFeatures);
@@ -67,6 +139,7 @@ public class ErrorLayerExportServiceImpl implements ErrorLayerExportService {
 		}
 		return true;
 	}
+
 	private boolean layerFileOutputStream(String fileName, String fileDir, HttpServletResponse response) {
 
 		try {

@@ -73,4 +73,7 @@ public class DTGeoGroupLayer extends RESTLayerGroup{
 		bbox.put("maxy", super.getMaxY());
 		return bbox;
 	}
+	
+	
+	
 }

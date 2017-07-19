@@ -32,7 +32,7 @@ gb.geoserver.ModifyLayer = function(obj) {
 	$(xButton).addClass("close");
 
 	var htag = $("<h4>");
-	htag.text("Layer Information");
+	htag.text("Layer Properties");
 	$(htag).addClass("modal-title");
 
 	var header = $("<div>").append(xButton).append(htag);
@@ -415,11 +415,12 @@ gb.geoserver.ModifyLayer.prototype.load = function(name, code) {
 			var tb2 = $("<table>").addClass("table").addClass("text-center").append(tr111).append(tbd2);
 			var div5 = $("<div>").css("margin-bottom", "10px").append(lonlatBound).append(tb2);
 
-			var attrkey = $("<p>").text("Attribute");
+			var attrkey = $("<p>").text("Attributes");
 			var thtd1 = $("<td>").text("Name");
 			var thtd2 = $("<td>").text("Type");
 			var thtd3 = $("<td>").text("Nullable");
-			var thead = $("<thead>").append(thtd1).append(thtd2).append(thtd3);
+			var thtd4 = $("<td>").text("Unique");
+			var thead = $("<thead>").append(thtd1).append(thtd2).append(thtd3).append(thtd4);
 			var tbody = $("<tbody>");
 			var fttb = $("<table>").addClass("table").addClass("text-center").append(thead).append(tbody);
 			var keys = Object.keys(data[0].attInfo).sort();
@@ -490,7 +491,14 @@ gb.geoserver.ModifyLayer.prototype.load = function(name, code) {
 					$(check).prop("checked", true);
 				}
 				var td3 = $("<td>").append(check);
-				var tr = $("<tr>").append(td1).append(td2).append(td3);
+
+				var ucheck = $("<input>").attr({
+					"type" : "checkbox",
+					"disabled" : true
+				});
+				var td4 = $("<td>").append(ucheck);
+
+				var tr = $("<tr>").append(td1).append(td2).append(td3).append(td4);
 				$(tbody).append(tr);
 				var attrObj = {
 					"originFieldName" : keys[i],

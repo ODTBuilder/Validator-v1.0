@@ -103,7 +103,7 @@ public interface GeoserverService {
 	 * @param layerName 삭제할 레이어 이름
 	 * @return boolean - 삭제여부
 	 * */
-	public boolean removeGeoserverLayer(final String layerName);
+	public boolean removeGeoserverLayer(final String groupLayerName,final String layerName);
 	
 	/**
 	 * 다중 레이어를 삭제한다.

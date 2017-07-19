@@ -163,4 +163,30 @@ public class QA20LayerCollectionDAOImpl implements QA20LayerCollectionDAO {
 	public void updateNdaAspatialField(HashMap<String, Object> updateFieldQuery) {
 		sqlSession.update(namespace + ".updateNdaAspatialField", updateFieldQuery);
 	}
+
+	@Override
+	public HashMap<String, Object> selectQA20LayerMeataAll(HashMap<String, Object> selectAllMetaIdxQuery) {
+		return sqlSession.selectOne(namespace + ".selectAllLayerMeata", selectAllMetaIdxQuery);
+	}
+
+	@Override
+	public List<HashMap<String, Object>> selectTextRepresent(HashMap<String, Object> selectTextRepresentQuery) {
+		return sqlSession.selectList(namespace + ".selectTextRepresent", selectTextRepresentQuery);
+	}
+
+	@Override
+	public List<HashMap<String, Object>> selectResionRepresent(HashMap<String, Object> selectResionRepresentQuery) {
+		return sqlSession.selectList(namespace + ".selectResionRepresent", selectResionRepresentQuery);
+	}
+
+	@Override
+	public List<HashMap<String, Object>> selectPointRepresent(HashMap<String, Object> selectPointRepresentQuery) {
+		return sqlSession.selectList(namespace + ".selectPointRepresent", selectPointRepresentQuery);
+	}
+
+	@Override
+	public List<HashMap<String, Object>> selectLineStringRepresent(
+			HashMap<String, Object> selectLineStringRepresentQuery) {
+		return sqlSession.selectList(namespace + ".selectLineStringRepresent", selectLineStringRepresentQuery);
+	}
 }
