@@ -44,11 +44,13 @@
 <%-- jsTree openlayers3--%>
 <script type="text/javascript" src="${ctx}/resources/js/jsTree-openlayers3/jstree.js"></script>
 <link rel="stylesheet" type="text/css" href="${ctx}/resources/js/jsTree-openlayers3/themes/default/style.css" />
+<script type="text/javascript" src="${ctx}/resources/js/jsTree-openlayers3/jstree-layerproperties.js"></script>
 
 <%-- jsTree geoserver--%>
 <script type="text/javascript" src="${ctx}/resources/js/jsTree-geoserver/jstree.js"></script>
 <link rel="stylesheet" type="text/css" href="${ctx}/resources/js/jsTree-geoserver/themes/default/style.css" />
 <script type="text/javascript" src="${ctx}/resources/js/jsTree-geoserver/jstree-geoserver.js"></script>
+
 <%-- 베이스맵 변경 --%>
 <script src="${pageContext.request.contextPath}/resources/js/gitbuilder/changebase.js"></script>
 <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/js/gitbuilder/gitbuilder2017.css">
@@ -82,6 +84,9 @@
 <%-- wms편집이력 --%>
 <script src="${pageContext.request.contextPath}/resources/js/gitbuilder/edithistory.js"></script>
 
+<%-- 레이어 편집이력 --%>
+<script src="${pageContext.request.contextPath}/resources/js/gitbuilder/layerhistory.js"></script>
+
 <%-- 편집이력 전송 --%>
 <script src="${pageContext.request.contextPath}/resources/js/gitbuilder/recordtransfer.js"></script>
 
@@ -105,6 +110,9 @@
 
 <%-- 클라이언트 레이어 생성--%>
 <script src="${pageContext.request.contextPath}/resources/js/gitbuilder/createvectorlayer.js"></script>
+
+<%-- 클라이언트 레이어 수정--%>
+<script src="${pageContext.request.contextPath}/resources/js/gitbuilder/modifylayerprop.js"></script>
 
 <%-- 지오서버 레이어 생성--%>
 <script src="${pageContext.request.contextPath}/resources/js/gitbuilder/createlayer.js"></script>
