@@ -279,6 +279,8 @@ html {
 			gitrnd.resize();
 		});
 
+		var lprop = new gb.edit.ModifyLayerProperties({});
+
 		$('#builderClientLayer').jstreeol3({
 			"core" : {
 				"map" : map,
@@ -286,16 +288,23 @@ html {
 				"themes" : {
 					"stripes" : true
 				},
-			}
+			},
+			"layerproperties" : {
+				"properties" : lprop,
+			},
+			plugins : [ "contextmenu", "dnd", "search", "state", "types", "sort", "visibility", "layerproperties" ]
 		});
 
-		var record = new gb.edit.FeatureRecord({
+		var frecord = new gb.edit.FeatureRecord({
 			id : "feature_id"
 		});
 
+		var lrecord = new gb.edit.LayerRecord({});
+
 		var transfer = new gb.edit.RecordTransfer({
 			url : "editLayerCollection/editLayerCollection.ajax",
-			feature : record
+			layer : lrecord,
+			feature : frecord
 		});
 
 		$("#save").click(function() {
@@ -306,7 +315,7 @@ html {
 			url : "geoserver2/geoserverWFSGetFeature.ajax",
 			map : map,
 			user : "admin",
-			record : record,
+			record : frecord,
 			treeInstance : $('#builderClientLayer').jstreeol3(true),
 			selected : function() {
 				return $('#builderClientLayer').jstreeol3("get_selected_layer");
@@ -422,6 +431,8 @@ html {
 				"user" : "admin",
 				"layerInfo" : layerInfo,
 				"layerInfoURL" : "geoserver2/getGeoLayerInfoList.ajax",
+				"groupLayerInfoURL" : "geoserver2/getGeoGroupLayerInfoList.ajax",
+				"WMSLayerURL" : "geoserver2/geoserverWMSLayerLoad.do",
 				"createLayer" : createLayer,
 				"deleteLayer" : deleteLayer,
 				"downloadNGIDXF" : "fileExport/fileExport.ajax",
