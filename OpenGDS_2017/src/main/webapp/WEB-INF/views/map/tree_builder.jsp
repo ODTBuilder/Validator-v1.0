@@ -281,8 +281,13 @@ html {
 
 		var lrecord = new gb.edit.LayerRecord({});
 
+		var frecord = new gb.edit.FeatureRecord({
+			id : "feature_id"
+		});
+
 		var lprop = new gb.edit.ModifyLayerProperties({
-			layerRecord : lrecord
+			layerRecord : lrecord,
+			featureRecord : frecord
 		});
 
 		var nlayer = new gb.edit.CreateVectorLayer({
@@ -307,10 +312,6 @@ html {
 				"layerRecord" : lrecord
 			},
 			plugins : [ "contextmenu", "dnd", "search", "state", "types", "sort", "visibility", "layerproperties" ]
-		});
-
-		var frecord = new gb.edit.FeatureRecord({
-			id : "feature_id"
 		});
 
 		var transfer = new gb.edit.RecordTransfer({

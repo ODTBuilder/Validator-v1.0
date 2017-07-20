@@ -65,7 +65,7 @@ gb.edit.CreateVectorLayer = function(obj) {
 		"margin-bottom" : "15px"
 	}).append(layerName).append(this.layerNameInput);
 
-	this.typeForm = $("<div>").css({
+	this.geomForm = $("<div>").css({
 		"margin-bottom" : "10px"
 	});
 
@@ -108,7 +108,7 @@ gb.edit.CreateVectorLayer = function(obj) {
 	var label3 = $("<label>").addClass("radio-inline").append(this.formatRadio3).append("SHP");
 	$(formatArea).append(label1).append(label2).append(label3);
 
-	this.body = $("<div>").append(formatArea).append(div1).append(this.layerNameForm).append(this.typeForm).append(this.attrForm).append(
+	this.body = $("<div>").append(formatArea).append(div1).append(this.layerNameForm).append(this.geomForm).append(this.attrForm).append(
 			this.expertForm);
 	that.setForm("ngi", "layer");
 	$(this.body).addClass("modal-body");
@@ -205,7 +205,7 @@ gb.edit.CreateVectorLayer.prototype.setForm = function(format, type) {
 		}
 		$(this.sheetNumInput).val("");
 		$(this.layerNameForm).hide();
-		$(this.typeForm).hide();
+		$(this.geomForm).hide();
 		$(this.attrForm).hide();
 		$(this.expertForm).hide();
 	} else if (type === "layer") {
@@ -214,27 +214,27 @@ gb.edit.CreateVectorLayer.prototype.setForm = function(format, type) {
 		$(this.layerNameInput).val("");
 		$(this.layerNameForm).show();
 		if (format === "dxf") {
-			this.initTypeForm("dxf");
-			$(this.typeForm).show();
+			this.initGeomForm("dxf");
+			$(this.geomForm).show();
 			$(this.attrForm).hide();
 			$(this.expertForm).hide();
 		} else if (format === "ngi") {
-			this.initTypeForm("ngi");
-			$(this.typeForm).show();
+			this.initGeomForm("ngi");
+			$(this.geomForm).show();
 			this.initAttrForm();
 			$(this.attrForm).show();
 			this.initExpertForm();
 			$(this.expertForm).show();
 		} else if (format === "shp") {
-			this.initTypeForm("shp");
-			$(this.typeForm).show();
+			this.initGeomForm("shp");
+			$(this.geomForm).show();
 			this.initAttrForm();
 			$(this.attrForm).show();
 			$(this.expertForm).hide();
 		}
 	}
 };
-gb.edit.CreateVectorLayer.prototype.initTypeForm = function(type) {
+gb.edit.CreateVectorLayer.prototype.initGeomForm = function(type) {
 	var select = $("<select>").addClass("form-control");
 	if (type === "dxf") {
 		var option1 = $("<option>").text("LWPolyline");
@@ -254,9 +254,9 @@ gb.edit.CreateVectorLayer.prototype.initTypeForm = function(type) {
 		var option3 = $("<option>").text("Polygon");
 		$(select).append(option1).append(option2).append(option3);
 	}
-	$(this.typeForm).empty();
+	$(this.geomForm).empty();
 	var tp = $("<p>").text("Type");
-	$(this.typeForm).append(tp).append(select);
+	$(this.geomForm).append(tp).append(select);
 };
 gb.edit.CreateVectorLayer.prototype.initAttrForm = function() {
 	var that = this;
@@ -290,9 +290,9 @@ gb.edit.CreateVectorLayer.prototype.initAttrForm = function() {
 	var td4 = $("<td>").append(unique);
 
 	var tr1 = $("<tr>").append(td1).append(td2).append(td3).append(td4);
-	this.typeFormBody = $("<tbody>").append(tr1);
+	this.geomFormBody = $("<tbody>").append(tr1);
 
-	var table = $("<table>").addClass("table").addClass("text-center").append(thd).append(this.typeFormBody);
+	var table = $("<table>").addClass("table").addClass("text-center").append(thd).append(this.geomFormBody);
 	var addBtn = $("<input>").addClass("gitbuilder-createlayer-addattr").addClass("btn").addClass("btn-default").attr({
 		"type" : "button",
 		"value" : "Add Attribute"
@@ -321,7 +321,7 @@ gb.edit.CreateVectorLayer.prototype.initAttrForm = function() {
 		});
 		var td4 = $("<td>").append(unique);
 		var tr1 = $("<tr>").append(td1).append(td2).append(td3).append(td4);
-		$(that.typeFormBody).append(tr1);
+		$(that.geomFormBody).append(tr1);
 	});
 	$(this.attrForm).empty();
 	var tp = $("<p>").text("Attribute");
@@ -448,7 +448,7 @@ gb.edit.CreateVectorLayer.prototype.getDefinitionForm = function() {
 		var layer = new gb.layer.LayerInfo({
 			name : $(this.layerNameInput).val().replace(/(\s*)/g, ''),
 			id : "geo_" + this.format + "_" + $(this.sheetNumInput).val().replace(/(\s*)/g, '') + "_"
-					+ $(this.layerNameInput).val().replace(/(\s*)/g, '') + "_" + ($(this.typeForm).find("select").val().toUpperCase()),
+					+ $(this.layerNameInput).val().replace(/(\s*)/g, '') + "_" + ($(this.geomForm).find("select").val().toUpperCase()),
 			format : this.format,
 			epsg : "5186",
 			NGIVer : parseInt($(this.ver).val()),
@@ -457,7 +457,8 @@ gb.edit.CreateVectorLayer.prototype.getDefinitionForm = function() {
 			mbound : [ [ $(this.minx).val(), $(this.miny).val() ], [ $(this.maxx).val(), $(this.maxy).val() ] ],
 			lbound : [ [ 122.71, 28.6 ], [ 134.28, 40.27 ] ],
 			isNew : true,
-			geometry : $(this.typeForm).find("select").val()
+			geometry : $(this.geomForm).find("select").val(),
+			sheetNum : $(this.sheetNumInput).val().replace(/(\s*)/g, '')
 		});
 		var vectorLayer = new ol.layer.Vector({
 			source : new ol.source.Vector()
@@ -475,7 +476,7 @@ gb.edit.CreateVectorLayer.prototype.getDefinitionForm = function() {
 		// layerObj["represent"] = $(this.rep).val();
 		// var layerObj = {
 		// "layerName" : $(this.layerNameInput).val(),
-		// "layerType" : $(this.typeForm).find("select").val()
+		// "layerType" : $(this.geomForm).find("select").val()
 		// };
 		// opt.layer[this.format][$(this.sheetNumInput).val()]["create"].push(layerObj);
 		var layerAttr = [];

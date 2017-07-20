@@ -14,17 +14,8 @@ gb.layer.LayerInfo = function(opt) {
 	var options = opt ? opt : null;
 	this.name = options.name ? options.name : null;
 	this.id = options.id ? options.id : null;
-	this.storedAttributes = undefined;
-	if (Array.isArray(options.attributes)) {
-		if (this.storedAttributes === undefined) {
-			this.storedAttributes = {};
-		}
-		var arr = options.attributes;
-		for (var i = 0; i < arr.length; i++) {
-			this.storedAttributes[arr[i].getOriginFieldName()] = arr[i];
-		}
-	}
-
+	this.sheetNum = options.sheetNum ? options.sheetNum : undefined;
+	this.attributes = options.attributes ? options.attributes : undefined;
 	this.format = options.format ? options.format : null;
 	this.epsg = options.epsg ? options.epsg : null;
 	this.ngi = {
@@ -37,6 +28,17 @@ gb.layer.LayerInfo = function(opt) {
 	this.isNew = options.isNew !== undefined ? options.isNew : true;
 	this.geometry = options.geometry ? options.geometry : "Point";
 };
+gb.layer.LayerInfo.prototype.updateId = function() {
+	var id = "geo_" + this.getFormat() + "_" + this.getSheetNumber() + "_" + this.getName() + "_" + this.getGeometry();
+	this.setId(id);
+	return id;
+};
+gb.layer.LayerInfo.prototype.getSheetNumber = function() {
+	return this.sheetNum;
+};
+gb.layer.LayerInfo.prototype.setSheetNumber = function(num) {
+	this.sheetNum = num;
+};
 gb.layer.LayerInfo.prototype.getIsNew = function() {
 	return this.isNew;
 };
@@ -45,12 +47,11 @@ gb.layer.LayerInfo.prototype.setIsNew = function(bool) {
 };
 gb.layer.LayerInfo.prototype.getAttributesJSON = function() {
 	var obj = {};
-	var attrs = this.storedAttributes;
-	var keys = Object.keys(attrs);
-	for (var i = 0; i < keys.length; i++) {
-		obj[keys[i]] = {
-			"type" : attrs[keys[i]].getType(),
-			"nillable" : attrs[keys[i]].getNull()
+	var attrs = this.attributes;
+	for (var i = 0; i < attrs.length; i++) {
+		obj[attrs[i].getOriginFieldName()] = {
+			"type" : attrs[i].getType(),
+			"nillable" : attrs[i].getNull()
 		};
 	}
 	return obj;
@@ -62,30 +63,24 @@ gb.layer.LayerInfo.prototype.getGeometry = function() {
 	return this.geometry;
 };
 gb.layer.LayerInfo.prototype.setAttributes = function(attrs) {
-	if (this.storedAttributes === undefined) {
-		this.storedAttributes = {};
-	}
-	if (Array.isArray(attrs)) {
-		var arr = attrs;
-		for (var i = 0; i < arr.length; i++) {
-			this.storedAttributes[arr[i].getOriginFieldName()] = arr[i];
-		}
-	}
+	this.attributes = attrs;
 };
 gb.layer.LayerInfo.prototype.getAttributes = function() {
-	var keys = Object.keys(this.storedAttributes);
-	var attrs = [];
-	for (var i = 0; i < keys.length; i++) {
-		attrs.push(this.storedAttributes[keys[i]]);
-	}
-	return attrs;
+	return this.attributes;
 };
 
 gb.layer.LayerInfo.prototype.setAttribute = function(attr) {
-	this.storedAttributes[attr.getFieldName()] = attr;
+	this.attributes.push(attr);
 };
 gb.layer.LayerInfo.prototype.getAttribute = function(key) {
-	this.storedAttributes[key];
+	var attrs = this.attributes;
+	var result;
+	for (var i = 0; i < attrs.length; i++) {
+		if (attrs[i].getOriginFieldName() === key) {
+			result = attrs[i];
+		}
+	}
+	return result;
 };
 
 gb.layer.LayerInfo.prototype.getName = function() {

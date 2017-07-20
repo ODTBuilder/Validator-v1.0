@@ -10440,8 +10440,13 @@
 									console.log(layer);
 									var git = layer.get("git");
 									if (git) {
-										inst._data.layerproperties.properties.setLayer(layer);
-										inst._data.layerproperties.properties.open();
+										if (inst._data.layerproperties.properties.getFeatureRecord().isEditing(layer)) {
+											console.error("Please save before set properties.");
+										} else {
+											inst._data.layerproperties.properties.setLayer(layer);
+											inst._data.layerproperties.properties.setRefer(inst);
+											inst._data.layerproperties.properties.open();
+										}
 									}
 								} else {
 									// inst.delete_node_layer(obj);
