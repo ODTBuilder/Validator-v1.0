@@ -25,23 +25,25 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.git.opengds.common.AbstractController;
 import com.git.opengds.editor.service.EditService;
+import com.git.opengds.editor.service.EditServiceImpl;
+import com.git.opengds.user.domain.UserVO;
+import com.git.opengds.user.domain.UserVO.EnUserType;
 
 @Controller("editController")
 @RequestMapping("/editLayerCollection")
-public class EditController {
+public class EditController extends AbstractController{
 
 	@Autowired
-	EditService editService;
+	private EditService editService;
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/editLayerCollection.ajax")
 	@ResponseBody
 	public void editLayerCollection(HttpServletRequest request, @RequestBody String geo) throws Exception {
-
-		editService.editLayerCollection(geo);
-		
-		System.out.println("완료");
+		UserVO generalUser  = (UserVO) getSession(request,EnUserType.GENERAL.getTypeName());
+		editService.editLayerCollection(generalUser, geo);
 	}
 }
 

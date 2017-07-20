@@ -67,7 +67,8 @@
 	    <servlet-name>appServlet</servlet-name>
 	    <url-pattern>*.ajax</url-pattern>
   	</servlet-mapping>
+  	
 	<session-config> 
-	    <session-timeout>0</session-timeout> 
+	    <session-timeout>60</session-timeout> 
 	</session-config>
 </web-app>

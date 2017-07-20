@@ -385,7 +385,7 @@ body.stop-scrolling {
   top: -7px;
   left: -33px;
   transform: rotate(-45deg);
-  transform-origin: 60px 60px;
+  transform-origin: 50px 60px;
 }
 .sweet-alert .sa-icon.sa-success::after {
   border-radius: 0 120px 120px 0;

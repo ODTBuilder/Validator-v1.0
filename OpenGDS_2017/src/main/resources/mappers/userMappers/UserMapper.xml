@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.git.mappers.userMappers.UserMapper">
+
+	<select id="loginUserByInfo" parameterType="hashmap" resultType="com.git.opengds.user.domain.UserVO" statementType="PREPARED">
+		select * from public.user
+		where id = #{id}
+		and pw = #{pw}
+	</select>
+</mapper>

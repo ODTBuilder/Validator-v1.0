@@ -3,6 +3,7 @@
 <html>
 <head>
 <jsp:include page="/WEB-INF/views/common/common3.jsp" />
+<script src='${pageContext.request.contextPath}/resources/js/login/login.js'></script>
 <title>Builder Test 2017</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
@@ -75,6 +76,14 @@ html {
 
 </head>
 <body>
+<script>
+    var checkUnload = true;
+    $(window).on("beforeunload", function(){
+        if(checkUnload) return "이 페이지를 벗어나면 작성된 내용은 저장되지 않습니다.";
+    });
+</script>
+
+
 	<jsp:include page="/WEB-INF/views/common/header.jsp" />
 	<nav id="builderHeader" class="navbar navbar-default fixed-top">
 		<ul class="nav navbar-nav">
@@ -303,7 +312,7 @@ html {
 		});
 
 		$("#edit").editingtool({
-			url : "geoserver2/geoserverWFSGetFeature.ajax",
+			url : "geoserver/geoserverWFSGetFeature.ajax",
 			map : map,
 			user : "admin",
 			record : record,
@@ -336,7 +345,7 @@ html {
 
 		$("#validation1").validation({
 			validatorURL : "validator/validate.ajax",
-			layersURL : "geoserver2/getGeolayerCollectionTree.ajax",
+			layersURL : "geoserver/getGeolayerCollectionTree.ajax",
 			layerDefinition : function() {
 				return $("#layerDefinition1").layerdefinition10("getDefinition");
 			},
@@ -369,7 +378,7 @@ html {
 
 		$("#validation").validation({
 			validatorURL : "validator/validate.ajax",
-			layersURL : "geoserver2/getGeolayerCollectionTree.ajax",
+			layersURL : "geoserver/getGeolayerCollectionTree.ajax",
 			layerDefinition : function() {
 				return $("#layerDefinition").layerdefinition20("getDefinition");
 			},
@@ -387,11 +396,11 @@ html {
 			treeInstance : $('#builderClientLayer').jstreeol3(true),
 			linkKey : "feature_idx",
 			user : "admin",
-			layersURL : 'geoserver2/getGeolayerCollectionTree.ajax',
-			featureWMSURL : "geoserver2/geoserverWMSLayerLoad.do",
-			featureWFSURL : "geoserver2/geoserverWFSGetFeature.ajax",
-			groupInfoURL : "geoserver2/getGeoGroupLayerInfoList.ajax",
-			layerInfoURL : "geoserver2/getGeoLayerInfoList.ajax"
+			layersURL : 'geoserver/getGeolayerCollectionTree.ajax',
+			featureWMSURL : "geoserver/geoserverWMSLayerLoad.do",
+			featureWFSURL : "geoserver/geoserverWFSGetFeature.ajax",
+			groupInfoURL : "geoserver/getGeoGroupLayerInfoList.ajax",
+			layerInfoURL : "geoserver/getGeoLayerInfoList.ajax"
 		});
 
 		var createLayer = new gb.geoserver.CreateLayer({
@@ -401,7 +410,7 @@ html {
 			URL : "editLayerCollection/editLayerCollection.ajax"
 		});
 		var layerInfo = new gb.geoserver.ModifyLayer({
-			infoURL : "geoserver2/getGeoLayerInfoList.ajax",
+			infoURL : "geoserver/getGeoLayerInfoList.ajax",
 			URL : "editLayerCollection/editLayerCollection.ajax"
 		});
 		$("#builderServerLayer").jstree({
@@ -413,7 +422,7 @@ html {
 				},
 				'data' : {
 					'url' : function() {
-						return 'geoserver2/getGeolayerCollectionTree.ajax';
+						return 'geoserver/getGeolayerCollectionTree.ajax';
 					}
 				}
 			},
@@ -421,11 +430,11 @@ html {
 				"map" : map,
 				"user" : "admin",
 				"layerInfo" : layerInfo,
-				"layerInfoURL" : "geoserver2/getGeoLayerInfoList.ajax",
+				"layerInfoURL" : "geoserver/getGeoLayerInfoList.ajax",
 				"createLayer" : createLayer,
 				"deleteLayer" : deleteLayer,
 				"downloadNGIDXF" : "fileExport/fileExport.ajax",
-				"downloadGeoserver" : "geoserver2/downloadRequest.do",
+				"downloadGeoserver" : "geoserver/downloadRequest.do",
 				"clientRefer" : $('#builderClientLayer').jstreeol3(true)
 			},
 			"plugins" : [ "contextmenu", "search", "state", "types", "geoserver" ]

@@ -17,6 +17,8 @@
 
 package com.git.opengds.upload.persistence;
 
+import com.git.opengds.user.domain.UserVO;
+
 public interface FileDAO {
 
 	/**
@@ -27,7 +29,7 @@ public interface FileDAO {
 	 * @return boolean
 	 * @throws
 	 * */
-	public boolean selectNGIDuplicateCheck(String fileName);
+	public boolean selectNGIDuplicateCheck(UserVO userVO, String fileName);
 	
-	public boolean selectDXFDuplicateCheck(String fileName);
+	public boolean selectDXFDuplicateCheck(UserVO userVO, String fileName);
 }

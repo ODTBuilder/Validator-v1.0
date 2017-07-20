@@ -7,12 +7,9 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.stereotype.Service;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.transaction.TransactionDefinition;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.git.gdsbuilder.type.geoserver.layer.GeoLayerInfo;
 import com.git.gdsbuilder.type.qa10.collection.QA10LayerCollection;
@@ -22,22 +19,28 @@ import com.git.gdsbuilder.type.qa10.structure.QA10Blocks;
 import com.git.gdsbuilder.type.qa10.structure.QA10Tables;
 import com.git.opengds.file.dxf.dbManager.QA10DBQueryManager;
 import com.git.opengds.file.dxf.persistence.QA10LayerCollectionDAO;
+import com.git.opengds.user.domain.UserVO;
 
 @Service
 @ContextConfiguration(locations = { "file:src/main/webapp/WEB-INF/spring/**/*.xml" })
 public class QA10DBManagerServiceImpl implements QA10DBManagerService {
 
-	@Inject
-	private DataSourceTransactionManager txManager;
+	/*@Inject
+	private DataSourceTransactionManager txManager;*/
 
 	@Inject
 	private QA10LayerCollectionDAO dao;
+	
+/*	public QA10DBManagerServiceImpl(UserVO userVO){
+		dao = new QA10LayerCollectionDAOImpl(userVO);
+	}*/
+	@Override
+//	@Transactional
+	public GeoLayerInfo insertQA10LayerCollection(UserVO userVO, QA10LayerCollection layerCollection, GeoLayerInfo layerInfo) throws RuntimeException {
 
-	public GeoLayerInfo insertQA10LayerCollection(QA10LayerCollection layerCollection, GeoLayerInfo layerInfo) {
-
-		DefaultTransactionDefinition def = new DefaultTransactionDefinition();
+		/*DefaultTransactionDefinition def = new DefaultTransactionDefinition();
 		def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
-		TransactionStatus status = txManager.getTransaction(def);
+		TransactionStatus status = txManager.getTransaction(def);*/
 
 		try {
 			QA10DBQueryManager dbManager = new QA10DBQueryManager();
@@ -47,17 +50,17 @@ public class QA10DBManagerServiceImpl implements QA10DBManagerService {
 
 			// collection
 			HashMap<String, Object> insertCollectionQuery = dbManager.getInsertLayerCollection(collectionName);
-			int cIdx = dao.insertQA10LayerCollection(insertCollectionQuery);
+			int cIdx = dao.insertQA10LayerCollection(userVO,insertCollectionQuery);
 
 			// insertTables
 			QA10Tables tables = layerCollection.getTables();
 			Map<String, Object> tbLayers = tables.getLayers();
 			HashMap<String, Object> tablesQuery = dbManager.getInsertTables(cIdx, tbLayers);
-			int tbIdx = dao.insertQA10LayerCollectionTableCommon(tablesQuery);
+			int tbIdx = dao.insertQA10LayerCollectionTableCommon(userVO,tablesQuery);
 			if (tables.isLayers()) {
 				List<HashMap<String, Object>> layersQuery = dbManager.getInsertTablesLayers(tbIdx, tbLayers);
 				for (int i = 0; i < layersQuery.size(); i++) {
-					dao.insertQA10LayerCollectionTableLayers(layersQuery.get(i));
+					dao.insertQA10LayerCollectionTableLayers(userVO,layersQuery.get(i));
 				}
 			}
 
@@ -67,14 +70,14 @@ public class QA10DBManagerServiceImpl implements QA10DBManagerService {
 			List<HashMap<String, Object>> blocksQuerys = dbManager.getInsertBlocks(cIdx, blocks);
 			for (int i = 0; i < blocks.size(); i++) {
 				HashMap<String, Object> blocksQuery = blocksQuerys.get(i);
-				int bIdx = dao.insertQA10LayerCollectionBlocks(blocksQuery);
+				int bIdx = dao.insertQA10LayerCollectionBlocks(userVO,blocksQuery);
 
 				// insertBlockEntities
 				LinkedHashMap<String, Object> block = blocks.get(i);
 				List<HashMap<String, Object>> entitiesQuerys = dbManager.getInsertBlockEntityQuery(bIdx, block);
 				for (int j = 0; j < entitiesQuerys.size(); j++) {
 					HashMap<String, Object> entitiesQuery = entitiesQuerys.get(j);
-					dao.insertQA10LayercollectionBlockEntity(entitiesQuery);
+					dao.insertQA10LayercollectionBlockEntity(userVO,entitiesQuery);
 				}
 			}
 
@@ -96,20 +99,20 @@ public class QA10DBManagerServiceImpl implements QA10DBManagerService {
 				// create QA10Layer
 				HashMap<String, Object> createQuery = dbManager.qa10LayerTbCreateQuery(type, collectionName, qa10Layer,
 						src);
-				dao.createQA10LayerTb(createQuery);
+				dao.createQA10LayerTb(userVO,createQuery);
 
 				// insertQA10Layer
 				List<HashMap<String, Object>> inertLayerQuerys = dbManager.qa10LayerTbInsertQuery(type, collectionName,
 						qa10Layer, src);
 				for (int j = 0; j < inertLayerQuerys.size(); j++) {
 					HashMap<String, Object> insertLayerQuery = inertLayerQuerys.get(j);
-					dao.insertQA10Layer(insertLayerQuery);
+					dao.insertQA10Layer(userVO,insertLayerQuery);
 				}
 
 				// insertLayerMetadata
 				HashMap<String, Object> insertQueryMap = dbManager.getInsertLayerMeataData(type, collectionName, cIdx,
 						qa10Layer);
-				dao.insertQA10LayerMetadata(insertQueryMap);
+				dao.insertQA10LayerMetadata(userVO,insertQueryMap);
 
 				// geoLayerInfo
 				layerInfo.putLayerName(layerId);
@@ -119,67 +122,64 @@ public class QA10DBManagerServiceImpl implements QA10DBManagerService {
 				layerInfo.putLayerColumns(layerId, columns);
 			}
 			layerInfo.setIsFeatureMap(isFeaturesMap);
-		} catch (Exception e) {
-			txManager.rollback(status);
-			layerInfo.setDbInsertFlag(false);
-			return layerInfo;
+			layerInfo.setDbInsertFlag(true);
+		} catch (RuntimeException e) {
+			throw new RuntimeException();
 		}
-		txManager.commit(status);
-		layerInfo.setDbInsertFlag(true);
 		return layerInfo;
 	}
 
 	@Override
-	public GeoLayerInfo dropQA10LayerCollection(QA10LayerCollection collection, GeoLayerInfo layerInfo) {
+//	@Transactional(rollbackFor=RuntimeException.class)
+	public GeoLayerInfo dropQA10LayerCollection(UserVO userVO, QA10LayerCollection collection, GeoLayerInfo layerInfo) throws RuntimeException {
 
-		DefaultTransactionDefinition def = new DefaultTransactionDefinition();
+	/*	DefaultTransactionDefinition def = new DefaultTransactionDefinition();
 		def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
-		TransactionStatus status = txManager.getTransaction(def);
+		TransactionStatus status = txManager.getTransaction(def);*/
 
 		try {
 			QA10DBQueryManager dbManager = new QA10DBQueryManager();
 			String collectionName = collection.getCollectionName();
 
-			HashMap<String, Object> selectLayerCollectionIdxQuery = dbManager
-					.getSelectLayerCollectionIdx(collectionName);
-			Integer cIdx = dao.selectQA10LayerCollectionIdx(selectLayerCollectionIdxQuery);
+			HashMap<String, Object> selectLayerCollectionIdxQuery = dbManager.getSelectLayerCollectionIdx(collectionName);
+			Integer cIdx = dao.selectQA10LayerCollectionIdx(userVO,selectLayerCollectionIdxQuery);
 			if (cIdx != null) {
 				HashMap<String, Object> metadataIdxQuery = dbManager.getSelectLayerMetaDataIdx(cIdx);
-				List<HashMap<String, Object>> metadataIdxMapList = dao.selectQA10LayerMetadataIdxs(metadataIdxQuery);
+				List<HashMap<String, Object>> metadataIdxMapList = dao.selectQA10LayerMetadataIdxs(userVO,metadataIdxQuery);
 				for (int i = 0; i < metadataIdxMapList.size(); i++) {
 					HashMap<String, Object> metadataIdxMap = metadataIdxMapList.get(i);
 					Integer mIdx = (Integer) metadataIdxMap.get("lm_idx");
 
 					// get layerTb name
 					HashMap<String, Object> layerTbNameQuery = dbManager.getSelectLayerTableNameQuery(mIdx);
-					HashMap<String, Object> layerTbNameMap = dao.selectQA10LayerTableName(layerTbNameQuery);
+					HashMap<String, Object> layerTbNameMap = dao.selectQA10LayerTableName(userVO,layerTbNameQuery);
 
 					// layerTb drop
 					String layerTbName = (String) layerTbNameMap.get("layer_t_name");
 					HashMap<String, Object> dropLayerTbQuery = dbManager.getDropLayer(layerTbName);
-					dao.dropLayer(dropLayerTbQuery);
+					dao.dropLayer(userVO,dropLayerTbQuery);
 				}
 			}
 			// layerMetadata 삭제
 			HashMap<String, Object> deleteLayerMetaQuery = dbManager.getDeleteLayerMeta(cIdx);
-			dao.deleteField(deleteLayerMetaQuery);
+			dao.deleteField(userVO,deleteLayerMetaQuery);
 
 			// tables
 			HashMap<String, Object> tableIdxQuery = dbManager.getSelectTableCommonIdx(cIdx);
-			Integer tcIdx = dao.selectTableCommonIdx(tableIdxQuery);
+			Integer tcIdx = dao.selectTableCommonIdx(userVO,tableIdxQuery);
 			if (tcIdx != null) {
 				// tables - layer
 				HashMap<String, Object> deleteTableLayersQuery = dbManager.getDeleteTableLayers(tcIdx);
-				dao.deleteField(deleteTableLayersQuery);
+				dao.deleteField(userVO,deleteTableLayersQuery);
 
 				// tables - common
 				HashMap<String, Object> deleteTablesQuery = dbManager.getDeleteTables(cIdx);
-				dao.deleteField(deleteTablesQuery);
+				dao.deleteField(userVO,deleteTablesQuery);
 			}
 
 			// blocks
 			HashMap<String, Object> blockIdxQuery = dbManager.getSelectBlockCommonIdx(cIdx);
-			List<HashMap<String, Object>> bcIdxMapList = dao.selectBlockCommonIdx(blockIdxQuery);
+			List<HashMap<String, Object>> bcIdxMapList = dao.selectBlockCommonIdx(userVO,blockIdxQuery);
 			for (int i = 0; i < bcIdxMapList.size(); i++) {
 				HashMap<String, Object> bcIdxMap = bcIdxMapList.get(i);
 				Integer bcIdx = (Integer) bcIdxMap.get("bc_idx");
@@ -187,38 +187,36 @@ public class QA10DBManagerServiceImpl implements QA10DBManagerService {
 				if (bcIdx != null) {
 					// blocks - arc
 					HashMap<String, Object> deleteBlockArcQuery = dbManager.getDeleteBlockArc(bcIdx);
-					dao.deleteField(deleteBlockArcQuery);
+					dao.deleteField(userVO,deleteBlockArcQuery);
 
 					// blocks - circle
 					HashMap<String, Object> deleteBlockCircleQuery = dbManager.getDeleteBlockCircle(bcIdx);
-					dao.deleteField(deleteBlockCircleQuery);
+					dao.deleteField(userVO,deleteBlockCircleQuery);
 
 					// blocks - polyline
 					HashMap<String, Object> deleteBlockPolylineQuery = dbManager.getDeleteBlockPolyline(bcIdx);
-					dao.deleteField(deleteBlockPolylineQuery);
+					dao.deleteField(userVO,deleteBlockPolylineQuery);
 
 					// blocks - text
 					HashMap<String, Object> deleteBlockTextQuery = dbManager.getDeleteBlockText(bcIdx);
-					dao.deleteField(deleteBlockTextQuery);
+					dao.deleteField(userVO,deleteBlockTextQuery);
 
 					// blocks - vertex
 					HashMap<String, Object> deleteBlockVertexQuery = dbManager.getDeleteBlockVertex(bcIdx);
-					dao.deleteField(deleteBlockVertexQuery);
+					dao.deleteField(userVO,deleteBlockVertexQuery);
 				}
 			}
 			// blocks - common
 			HashMap<String, Object> deleteBlockQuery = dbManager.getDeleteBlocks(cIdx);
-			dao.deleteField(deleteBlockQuery);
+			dao.deleteField(userVO,deleteBlockQuery);
 
 			// collection
 			HashMap<String, Object> deleteLayerCollectionQuery = dbManager.getDeleteLayerCollection(cIdx);
-			dao.deleteField(deleteLayerCollectionQuery);
-		} catch (Exception e) {
-			txManager.rollback(status);
-			layerInfo.setDbInsertFlag(false);
-			return layerInfo;
+			dao.deleteField(userVO,deleteLayerCollectionQuery);
+		} catch (RuntimeException e) {
+			throw new RuntimeException();
 		}
-		txManager.commit(status);
+//		txManager.commit(status);
 		layerInfo.setDbInsertFlag(true);
 		return layerInfo;
 	}

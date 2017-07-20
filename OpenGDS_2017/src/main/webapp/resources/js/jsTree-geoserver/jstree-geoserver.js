@@ -58,7 +58,7 @@ $.jstree.plugins.geoserver = function(options, parent) {
 		console.log(JSON.stringify(farr));
 		var parentParam;
 		$.ajax({
-			url : "geoserver2/getGeoGroupLayerInfoList.ajax",
+			url : "geoserver/getGeoGroupLayerInfoList.ajax",
 			method : "POST",
 			contentType : "application/json; charset=UTF-8",
 			cache : false,
@@ -74,7 +74,7 @@ $.jstree.plugins.geoserver = function(options, parent) {
 					for (var i = 0; i < data.length; i++) {
 						var wms = new ol.layer.Tile({
 							source : new ol.source.TileWMS({
-								url : "geoserver2/geoserverWMSLayerLoad.do",
+								url : "geoserver/geoserverWMSLayerLoad.do",
 								params : {
 									'LAYERS' : obj.refer.get_node(data[i].name).children.toString(),
 									'TILED' : true,
@@ -144,7 +144,7 @@ $.jstree.plugins.geoserver = function(options, parent) {
 		}
 		console.log(JSON.stringify(farr));
 		$.ajax({
-			url : "geoserver2/getGeoGroupLayerInfoList.ajax",
+			url : "geoserver/getGeoGroupLayerInfoList.ajax",
 			method : "POST",
 			contentType : "application/json; charset=UTF-8",
 			cache : false,
@@ -161,7 +161,7 @@ $.jstree.plugins.geoserver = function(options, parent) {
 					for (var i = 0; i < data.length; i++) {
 						var wms = new ol.layer.Tile({
 							source : new ol.source.TileWMS({
-								url : "geoserver2/geoserverWMSLayerLoad.do",
+								url : "geoserver/geoserverWMSLayerLoad.do",
 								params : {
 									'LAYERS' : obj.arr.toString(),
 									// 'LAYERS' :
@@ -246,7 +246,7 @@ $.jstree.plugins.geoserver = function(options, parent) {
 								// });
 								var wms2 = new ol.layer.Tile({
 									source : new ol.source.TileWMS({
-										url : "geoserver2/geoserverWMSLayerLoad.do",
+										url : "geoserver/geoserverWMSLayerLoad.do",
 										params : befParams,
 										serverType : 'geoserver'
 									})
@@ -293,7 +293,7 @@ $.jstree.plugins.geoserver = function(options, parent) {
 		console.log(JSON.stringify(farr));
 		var parentParam;
 		$.ajax({
-			url : "geoserver2/getGeoGroupLayerInfoList.ajax",
+			url : "geoserver/getGeoGroupLayerInfoList.ajax",
 			method : "POST",
 			contentType : "application/json; charset=UTF-8",
 			cache : false,
@@ -311,10 +311,10 @@ $.jstree.plugins.geoserver = function(options, parent) {
 						var wms = new ol.layer.Tile({
 							source : new ol.source.TileWMS({
 								// url : CONTEXT +
-								// "/geoserver2/geoserverWMSLayerLoad.do",
+								// "/geoserver/geoserverWMSLayerLoad.do",
 								// url :
-								// "http://175.116.181.34:8080/opengds/geoserver2/geoserverWMSLayerLoad.do",
-								url : "geoserver2/geoserverWMSLayerLoad.do",
+								// "http://175.116.181.34:8080/opengds/geoserver/geoserverWMSLayerLoad.do",
+								url : "geoserver/geoserverWMSLayerLoad.do",
 								params : {
 									'LAYERS' : obj.arr.toString(),
 									// 'LAYERS' :
@@ -353,7 +353,7 @@ $.jstree.plugins.geoserver = function(options, parent) {
 				var names = [];
 				console.log(JSON.stringify(arr));
 				$.ajax({
-					url : "geoserver2/getGeoLayerInfoList.ajax",
+					url : "geoserver/getGeoLayerInfoList.ajax",
 					method : "POST",
 					contentType : "application/json; charset=UTF-8",
 					cache : false,
@@ -370,7 +370,7 @@ $.jstree.plugins.geoserver = function(options, parent) {
 							for (var i = 0; i < data2.length; i++) {
 								var wms = new ol.layer.Tile({
 									source : new ol.source.TileWMS({
-										url : "geoserver2/geoserverWMSLayerLoad.do",
+										url : "geoserver/geoserverWMSLayerLoad.do",
 										params : {
 											'LAYERS' : data2[i].lName,
 											'TILED' : true,
@@ -435,7 +435,7 @@ $.jstree.plugins.geoserver = function(options, parent) {
 									// });
 									var wms2 = new ol.layer.Tile({
 										source : new ol.source.TileWMS({
-											url : "geoserver2/geoserverWMSLayerLoad.do",
+											url : "geoserver/geoserverWMSLayerLoad.do",
 											params : befParams,
 											serverType : 'geoserver'
 										})
@@ -486,7 +486,7 @@ $.jstree.plugins.geoserver = function(options, parent) {
 		}
 		console.log(JSON.stringify(arr));
 		$.ajax({
-			url : "geoserver2/getGeoLayerInfoList.ajax",
+			url : "geoserver/getGeoLayerInfoList.ajax",
 			method : "POST",
 			contentType : "application/json; charset=UTF-8",
 			cache : false,
@@ -503,7 +503,7 @@ $.jstree.plugins.geoserver = function(options, parent) {
 					for (var i = 0; i < data.length; i++) {
 						var wms = new ol.layer.Tile({
 							source : new ol.source.TileWMS({
-								url : "geoserver2/geoserverWMSLayerLoad.do",
+								url : "geoserver/geoserverWMSLayerLoad.do",
 								params : {
 									'LAYERS' : data[i].lName,
 									'TILED' : true,
@@ -592,7 +592,7 @@ $.jstree.plugins.geoserver = function(options, parent) {
 		console.log(JSON.stringify(farr));
 		var parentParam;
 		$.ajax({
-			url : "geoserver2/getGeoGroupLayerInfoList.ajax",
+			url : "geoserver/getGeoGroupLayerInfoList.ajax",
 			method : "POST",
 			contentType : "application/json; charset=UTF-8",
 			cache : false,
@@ -610,10 +610,10 @@ $.jstree.plugins.geoserver = function(options, parent) {
 						var wms = new ol.layer.Tile({
 							source : new ol.source.TileWMS({
 								// url : CONTEXT +
-								// "/geoserver2/geoserverWMSLayerLoad.do",
+								// "/geoserver/geoserverWMSLayerLoad.do",
 								// url :
-								// "http://175.116.181.34:8080/opengds/geoserver2/geoserverWMSLayerLoad.do",
-								url : "geoserver2/geoserverWMSLayerLoad.do",
+								// "http://175.116.181.34:8080/opengds/geoserver/geoserverWMSLayerLoad.do",
+								url : "geoserver/geoserverWMSLayerLoad.do",
 								params : {
 									'LAYERS' : obj.refer.get_node(data[i].name).children.toString(),
 									// 'LAYERS' :
@@ -653,7 +653,7 @@ $.jstree.plugins.geoserver = function(options, parent) {
 					var names = [];
 					// console.log(JSON.stringify(arr));
 					$.ajax({
-						url : "geoserver2/getGeoLayerInfoList.ajax",
+						url : "geoserver/getGeoLayerInfoList.ajax",
 						method : "POST",
 						contentType : "application/json; charset=UTF-8",
 						cache : false,
@@ -670,7 +670,7 @@ $.jstree.plugins.geoserver = function(options, parent) {
 								for (var i = 0; i < data2.length; i++) {
 									var wms = new ol.layer.Tile({
 										source : new ol.source.TileWMS({
-											url : "geoserver2/geoserverWMSLayerLoad.do",
+											url : "geoserver/geoserverWMSLayerLoad.do",
 											params : {
 												'LAYERS' : data2[i].lName,
 												'TILED' : true,
@@ -736,7 +736,7 @@ $.jstree.plugins.geoserver = function(options, parent) {
 										// });
 										var wms2 = new ol.layer.Tile({
 											source : new ol.source.TileWMS({
-												url : "geoserver2/geoserverWMSLayerLoad.do",
+												url : "geoserver/geoserverWMSLayerLoad.do",
 												params : befParams,
 												serverType : 'geoserver'
 											})
@@ -789,7 +789,7 @@ $.jstree.plugins.geoserver = function(options, parent) {
 		}
 		console.log(JSON.stringify(arr));
 		$.ajax({
-			url : "geoserver2/getGeoGroupLayerInfoList.ajax",
+			url : "geoserver/getGeoGroupLayerInfoList.ajax",
 			method : "POST",
 			contentType : "application/json; charset=UTF-8",
 			cache : false,
@@ -807,10 +807,10 @@ $.jstree.plugins.geoserver = function(options, parent) {
 						var wms = new ol.layer.Tile({
 							source : new ol.source.TileWMS({
 								// url : CONTEXT +
-								// "/geoserver2/geoserverWMSLayerLoad.do",
+								// "/geoserver/geoserverWMSLayerLoad.do",
 								// url :
-								// "http://175.116.181.34:8080/opengds/geoserver2/geoserverWMSLayerLoad.do",
-								url : "geoserver2/geoserverWMSLayerLoad.do",
+								// "http://175.116.181.34:8080/opengds/geoserver/geoserverWMSLayerLoad.do",
+								url : "geoserver/geoserverWMSLayerLoad.do",
 								params : {
 									'LAYERS' : data[i].name,
 									// 'LAYERS' :

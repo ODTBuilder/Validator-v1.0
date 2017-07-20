@@ -571,7 +571,7 @@ gitbuilder.ui.EditingTool = $.widget("gitbuilder.editingtool", {
 					// console.log(JSON.stringify(arr));
 
 					$.ajax({
-						url : "geoserver2/getGeoLayerInfoList.ajax",
+						url : "geoserver/getGeoLayerInfoList.ajax",
 						method : "POST",
 						contentType : "application/json; charset=UTF-8",
 						cache : false,
@@ -586,7 +586,7 @@ gitbuilder.ui.EditingTool = $.widget("gitbuilder.editingtool", {
 							if (Array.isArray(data2)) {
 								for (var i = 0; i < data2.length; i++) {
 									var source = new ol.source.TileWMS({
-										url : "geoserver2/geoserverWMSLayerLoad.do",
+										url : "geoserver/geoserverWMSLayerLoad.do",
 										params : {
 											'LAYERS' : data2[i].lName,
 											'TILED' : true,

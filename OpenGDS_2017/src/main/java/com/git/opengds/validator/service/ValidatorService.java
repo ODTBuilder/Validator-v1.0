@@ -19,6 +19,8 @@ package com.git.opengds.validator.service;
 
 import org.json.simple.JSONObject;
 
+import com.git.opengds.user.domain.UserVO;
+
 /**
  * 
  * @author DY.Oh
@@ -35,5 +37,5 @@ public interface ValidatorService {
 	 * @throws Exception JSONObject
 	 * @throws
 	 * */
-	public JSONObject validate(String jsonObject) throws Exception;
+	public JSONObject validate(UserVO userVO, String jsonObject) throws Exception;
 }

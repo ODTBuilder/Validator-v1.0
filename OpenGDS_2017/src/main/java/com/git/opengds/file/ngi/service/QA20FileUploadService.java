@@ -18,8 +18,8 @@
 package com.git.opengds.file.ngi.service;
 
 import com.git.opengds.upload.domain.FileMeta;
+import com.git.opengds.user.domain.UserVO;
 
 public interface QA20FileUploadService {
-
-	public FileMeta ngiUpload(FileMeta fileMeta) throws Exception;
+	public FileMeta ngiUpload(UserVO userVO, FileMeta fileMeta) throws Exception;
 }

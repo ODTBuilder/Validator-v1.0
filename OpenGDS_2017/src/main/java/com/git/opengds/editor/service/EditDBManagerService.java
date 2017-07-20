@@ -29,45 +29,46 @@ import com.git.gdsbuilder.type.qa10.feature.QA10Feature;
 import com.git.gdsbuilder.type.qa10.layer.QA10Layer;
 import com.git.gdsbuilder.type.qa20.feature.QA20Feature;
 import com.git.gdsbuilder.type.qa20.layer.QA20Layer;
+import com.git.opengds.user.domain.UserVO;
 
 public interface EditDBManagerService {
 
-	public Integer checkQA20LayerCollectionName(String collectionName);
+	public Integer checkQA20LayerCollectionName(UserVO userVO, String collectionName);
 
-	public Integer createQA20LayerCollection(String type, EditQA20Collection editCollection) throws Exception;
+	public Integer createQA20LayerCollection(UserVO userVO, String type, EditQA20Collection editCollection) throws Exception;
 
-	public Integer createQA10LayerCollection(String type, EditQA10Collection editCollection) throws Exception;
+	public Integer createQA10LayerCollection(UserVO userVO, String type, EditQA10Collection editCollection) throws Exception;
 
-	public void insertQA20CreateFeature(String layerName, QA20Feature createFeature, String src);
+	public void insertQA20CreateFeature(UserVO userVO, String layerName, QA20Feature createFeature, String src);
 
-	public void updateQA20ModifyFeature(String layerName, QA20Feature modifyFeature, String src);
+	public void updateQA20ModifyFeature(UserVO userVO, String layerName, QA20Feature modifyFeature, String src);
 
-	public void deleteQA20RemovedFeature(String layerName, String featureId);
+	public void deleteQA20RemovedFeature(UserVO userVO, String layerName, String featureId);
 
-	public Integer checkQA10LayerCollectionName(String collectionName);
+	public Integer checkQA10LayerCollectionName(UserVO userVO, String collectionName);
 
-	public void insertQA10CreateFeature(String layerName, QA10Feature createFeature);
+	public void insertQA10CreateFeature(UserVO userVO, String layerName, QA10Feature createFeature);
 
-	public void updateQA10ModifyFeature(String layerName, QA10Feature modifyFeature);
+	public void updateQA10ModifyFeature(UserVO userVO, String layerName, QA10Feature modifyFeature);
 
-	public void deleteQA10RemovedFeature(String layerName, String featureId);
+	public void deleteQA10RemovedFeature(UserVO userVO, String layerName, String featureId);
 
-	public boolean modifyQA20Layer(String type, Integer collectionIdx, String collectionName, QA20Layer qa20Laye,
+	public boolean modifyQA20Layer(UserVO userVO, String type, Integer collectionIdx, String collectionName, QA20Layer qa20Laye,
 			Map<String, Object> geoLayer) throws PSQLException;
 
-	public List<HashMap<String, Object>> getQA20LayerMetadataIdx(Integer collectionIdx);
+	public List<HashMap<String, Object>> getQA20LayerMetadataIdx(UserVO userVO, Integer collectionIdx);
 
-	public boolean createQA20Layer(String type, Integer collectionIdx, String collectionName, QA20Layer layer,
+	public boolean createQA20Layer(UserVO userVO, String type, Integer collectionIdx, String collectionName, QA20Layer layer,
 			String src) throws PSQLException;
 
-	public boolean dropQA20Layer(String type, Integer collectionIdx, String collectionName, QA20Layer layer);
+	public boolean dropQA20Layer(UserVO userVO, String type, Integer collectionIdx, String collectionName, QA20Layer layer);
 
-	public boolean createQA10Layer(String type, Integer collectionIdx, String collectionName, QA10Layer createLayer,
+	public boolean createQA10Layer(UserVO userVO, String type, Integer collectionIdx, String collectionName, QA10Layer createLayer,
 			String src) throws PSQLException;
 
-	public boolean dropQA10Layer(String type, Integer collectionIdx, String collectionName, QA10Layer layer);
+	public boolean dropQA10Layer(UserVO userVO, String type, Integer collectionIdx, String collectionName, QA10Layer layer);
 
-	public boolean modifyQA10Layer(String type, Integer collectionIdx, String collectionName, QA10Layer modifiedLayer,
+	public boolean modifyQA10Layer(UserVO userVO, String type, Integer collectionIdx, String collectionName, QA10Layer modifiedLayer,
 			Map<String, Object> geoLayer);
 
 }

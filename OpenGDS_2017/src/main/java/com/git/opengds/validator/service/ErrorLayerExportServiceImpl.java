@@ -19,12 +19,16 @@ import com.git.gdsbuilder.type.qa10.collection.QA10LayerCollection;
 import com.git.gdsbuilder.type.qa20.collection.QA20LayerCollection;
 import com.git.gdsbuilder.type.qa20.layer.QA20Layer;
 import com.git.opengds.file.dxf.persistence.QA10LayerCollectionDAO;
+import com.git.opengds.file.dxf.persistence.QA10LayerCollectionDAOImpl;
 import com.git.opengds.file.ngi.dbManager.QA20DBQueryManager;
 import com.git.opengds.file.ngi.persistence.QA20LayerCollectionDAO;
+import com.git.opengds.file.ngi.persistence.QA20LayerCollectionDAOImpl;
 import com.git.opengds.parser.error.ErrorLayerDXFExportParser;
 import com.git.opengds.parser.error.ErrorLayerNGIExportParser;
+import com.git.opengds.user.domain.UserVO;
 import com.git.opengds.validator.dbManager.ErrorLayerDBQueryManager;
 import com.git.opengds.validator.persistence.ErrorLayerDAO;
+import com.git.opengds.validator.persistence.ErrorLayerDAOImpl;
 
 @Service
 @ContextConfiguration(locations = { "file:src/main/webapp/WEB-INF/spring/**/*.xml" })
@@ -38,9 +42,16 @@ public class ErrorLayerExportServiceImpl implements ErrorLayerExportService {
 
 	@Inject
 	private QA10LayerCollectionDAO qa10LayerCollectionDAO;
-
+	
+	/*public ErrorLayerExportServiceImpl(UserVO userVO) {
+		// TODO Auto-generated constructor stub
+		errLayerDAO = new ErrorLayerDAOImpl(userVO);
+		qa20LayerCollectionDAO = new QA20LayerCollectionDAOImpl(userVO);
+		qa10LayerCollectionDAO = new QA10LayerCollectionDAOImpl(userVO);
+	}
+*/
 	@Override
-	public boolean exportErrorLayer(String format, String type, String name, HttpServletRequest request,
+	public boolean exportErrorLayer(UserVO userVO, String format, String type, String name, HttpServletRequest request,
 			HttpServletResponse response) {
 
 		Map<String, Object> fileMap = null;
@@ -49,7 +60,7 @@ public class ErrorLayerExportServiceImpl implements ErrorLayerExportService {
 		try {
 			// fileWrite
 			HashMap<String, Object> selectQuery = dbManager.selectAllErrorFeaturesQuery(name);
-			List<HashMap<String, Object>> errAllFeatures = errLayerDAO.selectAllErrorFeatures(selectQuery);
+			List<HashMap<String, Object>> errAllFeatures = errLayerDAO.selectAllErrorFeatures(userVO, selectQuery);
 			if (format.equals("ngi")) {
 
 				QA20LayerCollection qa20LayerCollection = new QA20LayerCollection();
@@ -66,10 +77,10 @@ public class ErrorLayerExportServiceImpl implements ErrorLayerExportService {
 				String collectionName = nameSplit[2];
 				HashMap<String, Object> selectLayerCollectionIdxQuery = qa20dbManager
 						.getSelectQA20LayerCollectionIdx(collectionName);
-				int cIdx = qa20LayerCollectionDAO.selectQA20LayerCollectionIdx(selectLayerCollectionIdxQuery);
+				int cIdx = qa20LayerCollectionDAO.selectQA20LayerCollectionIdx(userVO, selectLayerCollectionIdxQuery);
 				HashMap<String, Object> selectAllMetaIdxQuery = qa20dbManager.getSelectQA20LayerMetaDataIdxQuery(cIdx);
 				List<HashMap<String, Object>> mIdxMapList = qa20LayerCollectionDAO
-						.selectQA20LayerMetadataIdxs(selectAllMetaIdxQuery);
+						.selectQA20LayerMetadataIdxs(userVO, selectAllMetaIdxQuery);
 				for (int i = 0; i < mIdxMapList.size(); i++) {
 					HashMap<String, Object> mIdxMap = mIdxMapList.get(i);
 					int lmIdx = (Integer) mIdxMap.get("lm_idx");
@@ -78,14 +89,14 @@ public class ErrorLayerExportServiceImpl implements ErrorLayerExportService {
 					HashMap<String, Object> selectAllMetaQuery = qa20dbManager
 							.getSelectAllQA20LayerMetaDataQuery(lmIdx);
 					HashMap<String, Object> metaMap = qa20LayerCollectionDAO
-							.selectQA20LayerMeataAll(selectAllMetaQuery);
+							.selectQA20LayerMeataAll(userVO, selectAllMetaQuery);
 
 					// tRepresent
 					if ((Boolean) metaMap.get("ngi_mask_text")) {
 						HashMap<String, Object> selectTextRepresentQuery = qa20dbManager
 								.getSelectTextRepresentQuery(lmIdx);
 						List<HashMap<String, Object>> textRepresenets = qa20LayerCollectionDAO
-								.selectTextRepresent(selectTextRepresentQuery);
+								.selectTextRepresent(userVO, selectTextRepresentQuery);
 					}
 
 					// rRepresent
@@ -93,7 +104,7 @@ public class ErrorLayerExportServiceImpl implements ErrorLayerExportService {
 						HashMap<String, Object> selectRegionRepresentQuery = qa20dbManager
 								.getSelectResionRepresentQuery(lmIdx);
 						List<HashMap<String, Object>> regionRepresenets = qa20LayerCollectionDAO
-								.selectResionRepresent(selectRegionRepresentQuery);
+								.selectResionRepresent(userVO, selectRegionRepresentQuery);
 					}
 
 					// pRepresent
@@ -101,7 +112,7 @@ public class ErrorLayerExportServiceImpl implements ErrorLayerExportService {
 						HashMap<String, Object> selectTextRepresentQuery = qa20dbManager
 								.getSelectTextRepresentQuery(lmIdx);
 						List<HashMap<String, Object>> textRepresenets = qa20LayerCollectionDAO
-								.selectTextRepresent(selectTextRepresentQuery);
+								.selectTextRepresent(userVO, selectTextRepresentQuery);
 					}
 
 					// lRepresent
@@ -109,7 +120,7 @@ public class ErrorLayerExportServiceImpl implements ErrorLayerExportService {
 						HashMap<String, Object> selectTextRepresentQuery = qa20dbManager
 								.getSelectTextRepresentQuery(lmIdx);
 						List<HashMap<String, Object>> textRepresenets = qa20LayerCollectionDAO
-								.selectTextRepresent(selectTextRepresentQuery);
+								.selectTextRepresent(userVO, selectTextRepresentQuery);
 					}
 
 					// 합쳐합쳐

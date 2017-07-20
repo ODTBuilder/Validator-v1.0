@@ -24,10 +24,11 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.git.opengds.upload.domain.FileMeta;
+import com.git.opengds.user.domain.UserVO;
 
 public interface FileService {
 
-	public LinkedList<FileMeta> filesUpload(MultipartHttpServletRequest request, HttpServletResponse response);
+	public LinkedList<FileMeta> filesUpload(UserVO userVO, MultipartHttpServletRequest request, HttpServletResponse response);
 
-	public boolean fileNameDupCheck(String fileName);
+	public boolean fileNameDupCheck(UserVO userVO, String fileName);
 }

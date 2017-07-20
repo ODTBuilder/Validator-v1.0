@@ -27,23 +27,32 @@ import org.apache.ibatis.session.SqlSession;
 import org.postgresql.util.PSQLException;
 import org.springframework.stereotype.Repository;
 
+import com.git.opengds.common.DataSourceFactory;
+import com.git.opengds.user.domain.UserVO;
+
 @Repository
-public class QA20LayerCollectionDAOImpl implements QA20LayerCollectionDAO {
+public class QA20LayerCollectionDAOImpl extends DataSourceFactory implements QA20LayerCollectionDAO  {
 
-	@Inject
 	private SqlSession sqlSession;
-
+	
+	/*public QA20LayerCollectionDAOImpl(UserVO user) {
+		// TODO Auto-generated constructor stub
+		sqlSession = super.getSqlSession(user.getId());
+	}*/
+	
 	private static final String namespace = "com.git.mappers.qa20Mappers.QA20LayerCollectionMapper";
 
 	// qa20_LayerCollection
 	@Override
-	public int insertQA20LayerCollection(Map<String, Object> collection) {
+	public int insertQA20LayerCollection(UserVO userVO, Map<String, Object> collection) throws RuntimeException{
+		sqlSession = super.getSqlSession(userVO.getId());
 		sqlSession.insert(namespace + ".insertQA20LayerCollection", collection);
 		return (Integer) collection.get("c_idx");
 	}
 
 	@Override
-	public int selectQA20LayerCollectionIdx(HashMap<String, Object> selectLayerCollectionIdxQuery) {
+	public int selectQA20LayerCollectionIdx(UserVO userVO, HashMap<String, Object> selectLayerCollectionIdxQuery) throws RuntimeException{
+		sqlSession = super.getSqlSession(userVO.getId());
 		HashMap<String, Object> idxMap = sqlSession.selectOne(namespace + ".selectLayerCollectionIdx",
 				selectLayerCollectionIdxQuery);
 		return (Integer) idxMap.get("c_idx");
@@ -51,142 +60,168 @@ public class QA20LayerCollectionDAOImpl implements QA20LayerCollectionDAO {
 
 	// qa20_Layer
 	@Override
-	public void createQA20LayerTb(HashMap<String, Object> hashMap) throws PSQLException {
+	public void createQA20LayerTb(UserVO userVO, HashMap<String, Object> hashMap) throws RuntimeException {
+		sqlSession = super.getSqlSession(userVO.getId());
 		sqlSession.update(namespace + ".createQA20LayerTb", hashMap);
 	}
 
 	@Override
-	public void insertQA20Layer(HashMap<String, Object> layer) throws PSQLException {
+	public void insertQA20Layer(UserVO userVO, HashMap<String, Object> layer) throws RuntimeException {
+		sqlSession = super.getSqlSession(userVO.getId());
 		sqlSession.insert(namespace + ".insertQA20Layer", layer);
 	}
 
 	@Override
-	public int dropLayer(HashMap<String, Object> dropQuery) {
+	public int dropLayer(UserVO userVO, HashMap<String, Object> dropQuery) throws RuntimeException{
+		sqlSession = super.getSqlSession(userVO.getId());
 		return sqlSession.update(namespace + ".dropQA20Layer", dropQuery);
 	}
 
 	// qa20_layer_metadata
 	@Override
-	public int insertQA20LayerMetadata(HashMap<String, Object> metadata) throws PSQLException {
+	public int insertQA20LayerMetadata(UserVO userVO, HashMap<String, Object> metadata) throws RuntimeException {
+		sqlSession = super.getSqlSession(userVO.getId());
 		sqlSession.insert(namespace + ".insertQA20LayerMetadata", metadata);
 		return (Integer) metadata.get("lm_idx");
 	}
 
 	// nda_aspatial_field_def
 	@Override
-	public void insertNdaAspatialFieldDefs(HashMap<String, Object> fieldDef) throws PSQLException {
+	public void insertNdaAspatialFieldDefs(UserVO userVO, HashMap<String, Object> fieldDef) throws RuntimeException {
+		sqlSession = super.getSqlSession(userVO.getId());
 		sqlSession.insert(namespace + ".insertNdaAspatialFieldDefs", fieldDef);
 	}
 
 	// ngi_point_represent
 	@Override
-	public void insertPointRepresent(HashMap<String, Object> hashMap) throws PSQLException {
+	public void insertPointRepresent(UserVO userVO, HashMap<String, Object> hashMap) throws RuntimeException {
+		sqlSession = super.getSqlSession(userVO.getId());
 		sqlSession.insert(namespace + ".insertPointRepresent", hashMap);
 	}
 
 	// ngi_linestring_represent
 	@Override
-	public void insertLineStringRepresent(HashMap<String, Object> hashMap) throws PSQLException {
+	public void insertLineStringRepresent(UserVO userVO, HashMap<String, Object> hashMap) throws RuntimeException {
+		sqlSession = super.getSqlSession(userVO.getId());
 		sqlSession.insert(namespace + ".insertLineStringRepresent", hashMap);
 	}
 
 	// ngi_region_represents
 	@Override
-	public void insertRegionRepresent(HashMap<String, Object> hashMap) throws PSQLException {
+	public void insertRegionRepresent(UserVO userVO, HashMap<String, Object> hashMap) throws RuntimeException {
+		sqlSession = super.getSqlSession(userVO.getId());
 		sqlSession.insert(namespace + ".insertRegionRepresent", hashMap);
 	}
 
 	// ngi_text_represent
 	@Override
-	public void insertTextRepresent(HashMap<String, Object> hashMap) throws PSQLException {
+	public void insertTextRepresent(UserVO userVO, HashMap<String, Object> hashMap) throws RuntimeException {
+		sqlSession = super.getSqlSession(userVO.getId());
 		sqlSession.insert(namespace + ".insertTextRepresent", hashMap);
 	}
 
 	@Override
-	public HashMap<String, Object> selectCountAllQA20Features(HashMap<String, Object> countquery) {
+	public HashMap<String, Object> selectCountAllQA20Features(UserVO userVO, HashMap<String, Object> countquery) throws RuntimeException{
+		sqlSession = super.getSqlSession(userVO.getId());
 		return sqlSession.selectOne(namespace + ".selectCountAllFeatures", countquery);
 	}
 
 	@Override
-	public HashMap<String, Object> selectQA20FeatureIdx(HashMap<String, Object> selectQuery) {
+	public HashMap<String, Object> selectQA20FeatureIdx(UserVO userVO, HashMap<String, Object> selectQuery) throws RuntimeException{
+		sqlSession = super.getSqlSession(userVO.getId());
 		return sqlSession.selectOne(namespace + ".selectFeatureIdx", selectQuery);
 	}
 
 	@Override
-	public int deleteQA20Feature(HashMap<String, Object> deleteQuery) {
+	public int deleteQA20Feature(UserVO userVO, HashMap<String, Object> deleteQuery) throws RuntimeException{
+		sqlSession = super.getSqlSession(userVO.getId());
 		return sqlSession.delete(namespace + ".deleteFeature", deleteQuery);
 	}
 
 	@Override
-	public void insertQA20Feature(HashMap<String, Object> insertQuery) {
+	public void insertQA20Feature(UserVO userVO, HashMap<String, Object> insertQuery) throws RuntimeException{
+		sqlSession = super.getSqlSession(userVO.getId());
 		sqlSession.insert(namespace + ".insertFeature", insertQuery);
 	}
 
 	@Override
-	public List<HashMap<String, Object>> selectQA20LayerMetadataIdxs(HashMap<String, Object> metadataIdxQuery) {
+	public List<HashMap<String, Object>> selectQA20LayerMetadataIdxs(UserVO userVO, HashMap<String, Object> metadataIdxQuery) throws RuntimeException{
+		sqlSession = super.getSqlSession(userVO.getId());
 		return sqlSession.selectList(namespace + ".selectQA20LayerMetadataIdxs", metadataIdxQuery);
 	}
 
 	@Override
-	public HashMap<String, Object> selectQA20LayerTableName(HashMap<String, Object> layerTbNameQuery) {
+	public HashMap<String, Object> selectQA20LayerTableName(UserVO userVO, HashMap<String, Object> layerTbNameQuery) throws RuntimeException{
+		sqlSession = super.getSqlSession(userVO.getId());
 		return sqlSession.selectOne(namespace + ".selectQA20LayerTableName", layerTbNameQuery);
 	}
 
 	@Override
-	public void deleteField(HashMap<String, Object> deleteHeaderQuery) {
+	public void deleteField(UserVO userVO, HashMap<String, Object> deleteHeaderQuery) throws RuntimeException{
+		sqlSession = super.getSqlSession(userVO.getId());
 		sqlSession.delete(namespace + ".deleteHeader", deleteHeaderQuery);
 	}
 
 	@Override
-	public int selectQA20LayerMetadataIdx(HashMap<String, Object> metadataIdxQuery) {
+	public int selectQA20LayerMetadataIdx(UserVO userVO, HashMap<String, Object> metadataIdxQuery) throws RuntimeException{
+		sqlSession = super.getSqlSession(userVO.getId());
 		HashMap<String, Object> idxMap = sqlSession.selectOne(namespace + ".selectQA20LayerMetadataIdx",
 				metadataIdxQuery);
 		return (Integer) idxMap.get("lm_idx");
 	}
 
 	@Override
-	public void updateQA20LayerMetadataLayerName(HashMap<String, Object> updateLayerNameQuery) {
+	public void updateQA20LayerMetadataLayerName(UserVO userVO, HashMap<String, Object> updateLayerNameQuery) throws RuntimeException{
+		sqlSession = super.getSqlSession(userVO.getId());
 		sqlSession.update(namespace + ".updateQA20LayerMetadataLayerName", updateLayerNameQuery);
 	}
 
 	@Override
-	public void updateQA20LayerMetadataBoundary(HashMap<String, Object> updateBoundaryQuery) {
+	public void updateQA20LayerMetadataBoundary(UserVO userVO, HashMap<String, Object> updateBoundaryQuery) throws RuntimeException{
+		sqlSession = super.getSqlSession(userVO.getId());
 		sqlSession.update(namespace + ".updateQA20LayerMetadataBoundary", updateBoundaryQuery);
 	}
 
 	@Override
-	public HashMap<String, Object> selectNdaAspatialFieldFidxs(HashMap<String, Object> selectNadFieldsQuery) {
+	public HashMap<String, Object> selectNdaAspatialFieldFidxs(UserVO userVO, HashMap<String, Object> selectNadFieldsQuery) throws RuntimeException{
+		sqlSession = super.getSqlSession(userVO.getId());
 		return sqlSession.selectOne(namespace + ".selectNadField", selectNadFieldsQuery);
 	}
 
 	@Override
-	public void updateNdaAspatialField(HashMap<String, Object> updateFieldQuery) {
+	public void updateNdaAspatialField(UserVO userVO, HashMap<String, Object> updateFieldQuery) throws RuntimeException{
+		sqlSession = super.getSqlSession(userVO.getId());
 		sqlSession.update(namespace + ".updateNdaAspatialField", updateFieldQuery);
 	}
 
 	@Override
-	public HashMap<String, Object> selectQA20LayerMeataAll(HashMap<String, Object> selectAllMetaIdxQuery) {
+	public HashMap<String, Object> selectQA20LayerMeataAll(UserVO userVO, HashMap<String, Object> selectAllMetaIdxQuery) throws RuntimeException{
+		sqlSession = super.getSqlSession(userVO.getId());
 		return sqlSession.selectOne(namespace + ".selectAllLayerMeata", selectAllMetaIdxQuery);
 	}
 
 	@Override
-	public List<HashMap<String, Object>> selectTextRepresent(HashMap<String, Object> selectTextRepresentQuery) {
+	public List<HashMap<String, Object>> selectTextRepresent(UserVO userVO, HashMap<String, Object> selectTextRepresentQuery) throws RuntimeException{
+		sqlSession = super.getSqlSession(userVO.getId());
 		return sqlSession.selectList(namespace + ".selectTextRepresent", selectTextRepresentQuery);
 	}
 
 	@Override
-	public List<HashMap<String, Object>> selectResionRepresent(HashMap<String, Object> selectResionRepresentQuery) {
+	public List<HashMap<String, Object>> selectResionRepresent(UserVO userVO, HashMap<String, Object> selectResionRepresentQuery) throws RuntimeException{
+		sqlSession = super.getSqlSession(userVO.getId());
 		return sqlSession.selectList(namespace + ".selectResionRepresent", selectResionRepresentQuery);
 	}
 
 	@Override
-	public List<HashMap<String, Object>> selectPointRepresent(HashMap<String, Object> selectPointRepresentQuery) {
+	public List<HashMap<String, Object>> selectPointRepresent(UserVO userVO, HashMap<String, Object> selectPointRepresentQuery) throws RuntimeException{
+		sqlSession = super.getSqlSession(userVO.getId());
 		return sqlSession.selectList(namespace + ".selectPointRepresent", selectPointRepresentQuery);
 	}
 
 	@Override
 	public List<HashMap<String, Object>> selectLineStringRepresent(
-			HashMap<String, Object> selectLineStringRepresentQuery) {
+			UserVO userVO, HashMap<String, Object> selectLineStringRepresentQuery) throws RuntimeException{
+		sqlSession = super.getSqlSession(userVO.getId());
 		return sqlSession.selectList(namespace + ".selectLineStringRepresent", selectLineStringRepresentQuery);
 	}
 }

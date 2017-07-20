@@ -59,7 +59,7 @@ public class QA10DBQueryManager {
 		QA10FeatureList features = qa10Layer.getQa10FeatureList();
 		for (int i = 0; i < features.size(); i++) {
 			QA10Feature feature = features.get(i);
-			String defaultInsertColumns = "insert into " + tableName + "(feature_id, geom, feature_type ";
+			String defaultInsertColumns = "insert into " + tableName + "(feature_idas, geom, feature_type ";
 			String values = "values ('" + feature.getFeatureID() + "', " + "ST_GeomFromText('"
 					+ feature.getGeom().toString() + "'," + src + "), '" + feature.getFeatureType() + "'";
 

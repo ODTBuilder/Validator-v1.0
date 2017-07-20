@@ -17,10 +17,11 @@
 
 package com.git.opengds.upload.persistence;
 
-import javax.inject.Inject;
-
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Repository;
+
+import com.git.opengds.common.DataSourceFactory;
+import com.git.opengds.user.domain.UserVO;
 
 /**
  * 파일에 대한 DB처리를 하는 클래스
@@ -28,13 +29,16 @@ import org.springframework.stereotype.Repository;
  * @Date 2017. 5. 12. 오전 2:24:03
  * */
 @Repository
-
-public class FileDAOImpl implements FileDAO {
-	@Inject
+public class FileDAOImpl extends DataSourceFactory implements FileDAO {
 	private SqlSession sqlSession;
 
 	private static final String namespace = "com.git.mappers.fileMappers.FileMapper";
 
+/*	public FileDAOImpl(UserVO user) {
+		// TODO Auto-generated constructor stub
+		sqlSession = super.getSqlSession(user.getId());
+	}*/
+	
 	/**
 	 * @since 2017. 4
 	 * @author SG.Lee
@@ -43,7 +47,8 @@ public class FileDAOImpl implements FileDAO {
 	 * @see com.git.opengds.upload.persistence.FileDAO#selectDuplicateCheck(java.lang.String)
 	 */
 	@Override
-	public boolean selectNGIDuplicateCheck(String fileName){
+	public boolean selectNGIDuplicateCheck(UserVO userVO, String fileName){
+		sqlSession = super.getSqlSession(userVO.getId());
 		int duplicateNums = 0;
 		try{
 			duplicateNums = sqlSession.selectOne(namespace + ".selectNGIDuplicateCheck", fileName);
@@ -63,7 +68,8 @@ public class FileDAOImpl implements FileDAO {
 	}
 	
 	@Override
-	public boolean selectDXFDuplicateCheck(String fileName){
+	public boolean selectDXFDuplicateCheck(UserVO userVO, String fileName){
+		sqlSession = super.getSqlSession(userVO.getId());
 		int duplicateNums = 0;
 		try{
 			duplicateNums = sqlSession.selectOne(namespace + ".selectDXFDuplicateCheck", fileName);
