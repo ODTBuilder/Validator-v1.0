@@ -67,9 +67,24 @@
 		</selectKey>
 	</insert>
 
+	<select id="selectBlockCommonIdxs" parameterType="hashMap"
+		resultType="hashMap">
+		${selectQuery}
+	</select>
+
 	<select id="selectBlockCommonIdx" parameterType="hashMap"
 		resultType="hashMap">
 		${selectQuery}
+	</select>
+
+	<select id="selectQA10layerBlocksCommon" parameterType="hashMap"
+		resultType="hashMap">
+		${selectQuery}
+	</select>
+
+	<select id="selectBlockEntities" parameterType="hashMap"
+		resultType="hashMap">
+		${selectAllQuery}
 	</select>
 
 	<insert id="insertQA10LayercollectionBlockPolyline"
@@ -77,6 +92,14 @@
 		${insertQuery}
 		<selectKey keyProperty="bp_idx" resultType="int" order="AFTER">
 			select currval('qa10_layercollection_block_polyline_bp_idx_seq')
+		</selectKey>
+	</insert>
+
+	<insert id="insertQA10LayercollectionBlockLWPolyline"
+		parameterType="hashmap">
+		${insertQuery}
+		<selectKey keyProperty="blp_idx" resultType="int" order="AFTER">
+			select currval('qa10_layercollection_block_lwpolyline_blp_idx_seq')
 		</selectKey>
 	</insert>
 

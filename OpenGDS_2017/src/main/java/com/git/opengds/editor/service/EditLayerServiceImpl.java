@@ -161,33 +161,35 @@ public class EditLayerServiceImpl implements EditLayerService {
 								}
 							}
 						}
-						if (editCollection.isModified()) {
-							// 1. 수정할 레이어
-							QA10LayerList modifiedLayerList = editCollection.getModifiedLayerList();
-							for (int j = 0; j < modifiedLayerList.size(); j++) {
-								QA10Layer modifiedLayer = modifiedLayerList.get(j);
-								String layerId = modifiedLayer.getLayerID();
-								String originID = modifiedLayer.getOriginLayerID();
-								Map<String, Object> geoLayerList = editCollection.getGeoLayerList();
-								Map<String, Object> geoLayer = (Map<String, Object>) geoLayerList.get(originID);
-								boolean isSuccessed = editDBManager.modifyQA10Layer(isDxf, collectionIdx,
-										collectionName, modifiedLayer, geoLayer);
-								if (isSuccessed) {
-									condition.putSuccessedLayers(collectionName, layerId);
-								} else {
-									condition.putFailedLayers(collectionName, layerId);
-								}
+					}
+					if (editCollection.isModified()) {
+						// 1. 수정할 레이어
+						QA10LayerList modifiedLayerList = editCollection.getModifiedLayerList();
+						for (int j = 0; j < modifiedLayerList.size(); j++) {
+							QA10Layer modifiedLayer = modifiedLayerList.get(j);
+							String layerId = modifiedLayer.getLayerID();
+							String originID = modifiedLayer.getOriginLayerID();
+							Map<String, Object> geoLayerList = editCollection.getGeoLayerList();
+							Map<String, Object> geoLayer = (Map<String, Object>) geoLayerList.get(originID);
+							boolean isSuccessed = editDBManager.modifyQA10Layer(isDxf, collectionIdx, collectionName,
+									modifiedLayer, geoLayer);
+							if (isSuccessed) {
+								condition.putSuccessedLayers(collectionName, layerId);
+							} else {
+								condition.putFailedLayers(collectionName, layerId);
 							}
 						}
-						if (editCollection.isDeleted()) {
-							QA10LayerList layerList = editCollection.getDeletedLayerList();
-							for (int j = 0; j < layerList.size(); j++) {
-								QA10Layer layer = layerList.get(j);
-								editDBManager.dropQA10Layer(isDxf, collectionIdx, collectionName, layer);
-							}
-							if (editCollection.isDeleteAll()) {
-								geoserver.removeGeoserverGroupLayer(editCollection.getCollectionName());
-							}
+					}
+					if (editCollection.isDeleted()) {
+						QA10LayerList layerList = editCollection.getDeletedLayerList();
+						for (int j = 0; j < layerList.size(); j++) {
+							QA10Layer layer = layerList.get(j);
+							editDBManager.dropQA10Layer(isDxf, collectionIdx, collectionName, layer);
+						}
+						if (editCollection.isDeleteAll()) {
+							editDBManager.deleteQA10LayerCollectionTablesCommon(collectionIdx);
+							editDBManager.deleteQA10LayerCollection(collectionIdx);
+							geoserver.removeGeoserverGroupLayer(editCollection.getCollectionName());
 						}
 					}
 				}

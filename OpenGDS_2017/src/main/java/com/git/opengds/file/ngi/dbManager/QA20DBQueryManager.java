@@ -672,4 +672,20 @@ public class QA20DBQueryManager {
 		selectQuery.put("selectAllQuery", selectQueryStr);
 		return selectQuery;
 	}
+
+	public HashMap<String, Object> getDeleteQA10ProgressQuery(int cIdx) {
+		HashMap<String, Object> deleteQuery = new HashMap<String, Object>();
+		String tableName = "qa20_layercollection_qa_progress";
+		String deleteQueryStr = "delete from " + tableName + " where c_idx = " + cIdx;
+		deleteQuery.put("deleteQuery", deleteQueryStr);
+		return deleteQuery;
+	}
+
+	public HashMap<String, Object> getDeleteLayerCollection(int cIdx) {
+		HashMap<String, Object> deleteQuery = new HashMap<String, Object>();
+		String tableName = "\"" + "qa20_layercollection" + "\"";
+		String deleteQueryStr = "delete from " + tableName + " where c_idx = " + cIdx;
+		deleteQuery.put("deleteQuery", deleteQueryStr);
+		return deleteQuery;
+	}
 }

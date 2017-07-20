@@ -65,4 +65,8 @@
 		${selectAllQuery}
 	</select>
 
+	<delete id="deleteQA10Progress" parameterType="hashMap">
+		${deleteQuery}
+	</delete>
+
 </mapper>

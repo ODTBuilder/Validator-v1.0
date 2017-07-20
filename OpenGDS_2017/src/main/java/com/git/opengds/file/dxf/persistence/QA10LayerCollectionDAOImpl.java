@@ -84,7 +84,7 @@ public class QA10LayerCollectionDAOImpl implements QA10LayerCollectionDAO {
 
 	@Override
 	public List<HashMap<String, Object>> selectQA10LayerMetadataIdxs(HashMap<String, Object> metadataIdxQuery) {
-		return sqlSession.selectList(namespace + ".selectQA10LayerMetadataIdx", metadataIdxQuery);
+		return sqlSession.selectList(namespace + ".selectQA10LayerMetadataIdxs", metadataIdxQuery);
 	}
 
 	@Override
@@ -109,8 +109,18 @@ public class QA10LayerCollectionDAOImpl implements QA10LayerCollectionDAO {
 	}
 
 	@Override
-	public List<HashMap<String, Object>> selectBlockCommonIdx(HashMap<String, Object> blockIdxQuery) {
-		return sqlSession.selectList(namespace + ".selectBlockCommonIdx", blockIdxQuery);
+	public Integer selectBlockCommonIdx(HashMap<String, Object> blockIdxQuery) {
+		HashMap<String, Object> idxMap = sqlSession.selectOne(namespace + ".selectBlockCommonIdx", blockIdxQuery);
+		if (idxMap != null) {
+			return (Integer) idxMap.get("bc_idx");
+		} else {
+			return null;
+		}
+	}
+
+	@Override
+	public List<HashMap<String, Object>> selectBlockCommonIdxs(HashMap<String, Object> blockIdxQuery) {
+		return sqlSession.selectList(namespace + ".selectBlockCommonIdxs", blockIdxQuery);
 	}
 
 	@Override
@@ -165,5 +175,27 @@ public class QA10LayerCollectionDAOImpl implements QA10LayerCollectionDAO {
 	@Override
 	public void insertQA10LayercollectionBlockVertex(HashMap<String, Object> vertextInsertQuery) {
 		sqlSession.insert(namespace + ".insertQA10LayercollectionBlockVertex", vertextInsertQuery);
+	}
+
+	@Override
+	public HashMap<String, Object> selectQA10layerBlocksCommon(HashMap<String, Object> selectBlockCommonQuery) {
+		return sqlSession.selectOne(namespace + ".selectQA10layerBlocksCommon", selectBlockCommonQuery);
+	}
+
+	@Override
+	public List<HashMap<String, Object>> selectBlockEntities(HashMap<String, Object> selectBlockArcList) {
+		List<HashMap<String, Object>> selectList = sqlSession.selectList(namespace + ".selectBlockEntities",
+				selectBlockArcList);
+		if (selectList.size() > 0) {
+			return selectList;
+		} else {
+			return null;
+		}
+	}
+
+	@Override
+	public int insertQA10LayercollectionBlockLWPolyline(HashMap<String, Object> polylineQuery) {
+		sqlSession.insert(namespace + ".insertQA10LayercollectionBlockLWPolyline", polylineQuery);
+		return (Integer) polylineQuery.get("blp_idx");
 	}
 }

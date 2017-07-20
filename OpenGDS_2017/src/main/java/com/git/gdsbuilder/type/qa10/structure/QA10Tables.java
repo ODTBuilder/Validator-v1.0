@@ -130,6 +130,9 @@ public class QA10Tables {
 		while (layerIterator.hasNext()) {
 			DXFLayer dxfLayer = (DXFLayer) layerIterator.next();
 			String layerName = dxfLayer.getName();
+			if(layerName.equals("0")) {
+				continue;
+			}
 			LinkedHashMap<String, Object> layer = new LinkedHashMap<String, Object>();
 			layer.put("0", "LAYER");
 			layer.put("2", layerName);

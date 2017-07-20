@@ -3,7 +3,9 @@ package com.git.opengds.validator.service;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -19,6 +21,7 @@ import com.git.gdsbuilder.FileRead.dxf.writer.QA10FileWriter;
 import com.git.gdsbuilder.FileRead.ngi.writer.QA20FileWriter;
 import com.git.gdsbuilder.type.qa10.collection.QA10LayerCollection;
 import com.git.gdsbuilder.type.qa10.layer.QA10Layer;
+import com.git.gdsbuilder.type.qa10.structure.QA10Blocks;
 import com.git.gdsbuilder.type.qa10.structure.QA10Header;
 import com.git.gdsbuilder.type.qa10.structure.QA10Tables;
 import com.git.gdsbuilder.type.qa20.collection.QA20LayerCollection;
@@ -147,6 +150,8 @@ public class ErrorLayerExportServiceImpl implements ErrorLayerExportService {
 				HashMap<String, Object> selectAllMetaIdxQuery = qa10dbQueryManager.getSelectLayerMetaDataIdx(cIdx);
 				List<HashMap<String, Object>> mIdxMapList = qa10LayerCollectionDAO
 						.selectQA10LayerMetadataIdxs(selectAllMetaIdxQuery);
+
+				List<LinkedHashMap<String, Object>> blocks = new ArrayList<LinkedHashMap<String, Object>>();
 				for (int i = 0; i < mIdxMapList.size(); i++) {
 					HashMap<String, Object> mIdxMap = mIdxMapList.get(i);
 					int lmIdx = (Integer) mIdxMap.get("lm_idx");
@@ -156,15 +161,96 @@ public class ErrorLayerExportServiceImpl implements ErrorLayerExportService {
 
 					String layerId = (String) metaMap.get("layer_id");
 					String[] typeSplit = layerId.split("_");
-					String layerType = typeSplit[2];
+					String layerType = typeSplit[1];
 					String layerTbName = (String) metaMap.get("layer_t_name");
 
+					// blockCommons
+					String id = typeSplit[0];
+					HashMap<String, Object> selectBlockCommonQuery = qa10dbQueryManager.getSelectBlockCommon(cIdx, id);
+					HashMap<String, Object> blockCommonMap = qa10LayerCollectionDAO
+							.selectQA10layerBlocksCommon(selectBlockCommonQuery);
+					if (blockCommonMap != null) {
+						LinkedHashMap<String, Object> block = new LinkedHashMap<String, Object>();
+						LinkedHashMap<String, Object> blockCommons = new LinkedHashMap<String, Object>(blockCommonMap);
+						block.put("block", blockCommons);
+
+						int bcIdx = (Integer) blockCommonMap.get("bc_idx");
+						// blockEntities
+						List<LinkedHashMap<String, Object>> entities = new ArrayList<LinkedHashMap<String, Object>>();
+
+						// arc
+						HashMap<String, Object> selectBlockArcList = qa10dbQueryManager.getSelectBlockArc(bcIdx);
+						List<HashMap<String, Object>> blockArcMapList = qa10LayerCollectionDAO
+								.selectBlockEntities(selectBlockArcList);
+						if (blockArcMapList != null) {
+							for (int j = 0; j < blockArcMapList.size(); j++) {
+								HashMap<String, Object> blockArcMap = blockArcMapList.get(j);
+								LinkedHashMap<String, Object> entity = new LinkedHashMap<String, Object>(blockArcMap);
+								entities.add(entity);
+							}
+						}
+						// circle
+						HashMap<String, Object> selectBlockCircleList = qa10dbQueryManager.getSelectBlockCircle(bcIdx);
+						List<HashMap<String, Object>> blockCircleMapList = qa10LayerCollectionDAO
+								.selectBlockEntities(selectBlockCircleList);
+						if (blockCircleMapList != null) {
+							for (int j = 0; j < blockCircleMapList.size(); j++) {
+								HashMap<String, Object> blockCircleMap = blockCircleMapList.get(j);
+								LinkedHashMap<String, Object> entity = new LinkedHashMap<String, Object>(
+										blockCircleMap);
+								entities.add(entity);
+							}
+						}
+						// polyline
+						HashMap<String, Object> selectBlockPolylineList = qa10dbQueryManager
+								.getSelectBlockPolyline(bcIdx);
+						List<HashMap<String, Object>> blockPolylineMapList = qa10LayerCollectionDAO
+								.selectBlockEntities(selectBlockPolylineList);
+						if (blockPolylineMapList != null) {
+							for (int j = 0; j < blockPolylineMapList.size(); j++) {
+								HashMap<String, Object> blockPolylineMap = blockPolylineMapList.get(j);
+								LinkedHashMap<String, Object> polylineEntity = new LinkedHashMap<String, Object>(
+										blockPolylineMap);
+								int bpIdx = (Integer) blockPolylineMap.get("bp_idx");
+								// vertext
+								HashMap<String, Object> selectBlockVertexList = qa10dbQueryManager
+										.getSelectBlockVertex(bpIdx);
+								List<HashMap<String, Object>> blockVertexMapList = qa10LayerCollectionDAO
+										.selectBlockEntities(selectBlockVertexList);
+								if (blockVertexMapList != null) {
+									List<LinkedHashMap<String, Object>> vertexEntityList = new ArrayList<LinkedHashMap<String, Object>>();
+									for (int k = 0; k < blockVertexMapList.size(); k++) {
+										LinkedHashMap<String, Object> vertextEntity = new LinkedHashMap<String, Object>(
+												blockVertexMapList.get(k));
+										vertexEntityList.add(vertextEntity);
+									}
+									polylineEntity.put("vertexs", vertexEntityList);
+								}
+							}
+						}
+						// text
+						HashMap<String, Object> selectBlockTextList = qa10dbQueryManager.getSelectBlockText(bcIdx);
+						List<HashMap<String, Object>> blockTextMapList = qa10LayerCollectionDAO
+								.selectBlockEntities(selectBlockTextList);
+						if (blockTextMapList != null) {
+							for (int j = 0; j < blockTextMapList.size(); j++) {
+								HashMap<String, Object> blockTextMap = blockTextMapList.get(j);
+								LinkedHashMap<String, Object> entity = new LinkedHashMap<String, Object>(blockTextMap);
+								entities.add(entity);
+							}
+						}
+						block.put("entities", entities);
+						blocks.add(block);
+					}
+
+					// Entities
 					HashMap<String, Object> selectFeaturesQuery = qa10dbQueryManager.getSelectFeatureQuery(layerTbName,
 							layerType);
 					List<HashMap<String, Object>> featuresMapList = qa10LayerCollectionDAO
 							.selectQA10Features(selectFeaturesQuery);
 
 					QA10Layer qa10Layer = ErrorLayerDXFExportParser.parseQA10Layer(layerId, featuresMapList);
+					qa10Layer.setLayerType(layerType);
 					qa10LayerCollection.addQA10Layer(qa10Layer);
 				}
 
@@ -187,9 +273,12 @@ public class ErrorLayerExportServiceImpl implements ErrorLayerExportService {
 				// setDefaultTableLtype
 				QA10Tables tables = new QA10Tables();
 				tables.setDefaultLineTypeValues();
+				tables.setLineTypes(true);
 				tables.setDefaultStyleValues();
+				tables.setStyles(true);
 				tables.setLayerValues(tablesCommonMap, tablesLayerMap);
-				
+				tables.setLayers(true);
+
 				QA10FileWriter qa10Writer = new QA10FileWriter();
 				fileMap = qa10Writer.writeDxfFile(qa10LayerCollection);
 				String fileName = (String) fileMap.get("fileName");

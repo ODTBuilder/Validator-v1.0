@@ -43,7 +43,9 @@ public interface QA10LayerCollectionDAO {
 
 	public Integer selectTableCommonIdx(HashMap<String, Object> tableIdxQuery);
 
-	public List<HashMap<String, Object>> selectBlockCommonIdx(HashMap<String, Object> tableIdxQuery);
+	public Integer selectBlockCommonIdx(HashMap<String, Object> tableIdxQuery);
+
+	public List<HashMap<String, Object>> selectBlockCommonIdxs(HashMap<String, Object> tableIdxQuery);
 
 	public void updateQA10LayerMetadataLayerID(HashMap<String, Object> updateLayerNameQuery);
 
@@ -62,5 +64,11 @@ public interface QA10LayerCollectionDAO {
 	public int insertQA10LayercollectionBlockPolyline(HashMap<String, Object> polylineQuery);
 
 	public void insertQA10LayercollectionBlockVertex(HashMap<String, Object> vertextInsertQuery);
+
+	public HashMap<String, Object> selectQA10layerBlocksCommon(HashMap<String, Object> selectBlockCommonQuery);
+
+	public List<HashMap<String, Object>> selectBlockEntities(HashMap<String, Object> selectBlockArcList);
+
+	public int insertQA10LayercollectionBlockLWPolyline(HashMap<String, Object> polylineQuery);
 
 }

@@ -40,12 +40,13 @@ public class QA10FileUploadServiceImpl implements QA10FileUploadService {
 		GeoLayerInfo returnInfo = dbmanagerService.insertQA10LayerCollection(collection, layerInfo);
 		fileMeta.setDbInsertFlag(returnInfo.isDbInsertFlag());
 		// publish Layer
-		if (returnInfo != null) {
+		if (fileMeta.isDbInsertFlag()) {
+			fileMeta.setUploadFlag(true);
 			FileMeta geoserverFileMeta = geoserverService.dbLayerPublishGeoserver(returnInfo);
 			boolean isPublished = geoserverFileMeta.isServerPublishFlag();
 			fileMeta.setServerPublishFlag(isPublished);
 			if (!isPublished) {
-				GeoLayerInfo returnDropInfo  = dbmanagerService.dropQA10LayerCollection(collection, layerInfo);
+				GeoLayerInfo returnDropInfo = dbmanagerService.dropQA10LayerCollection(collection, layerInfo);
 				fileMeta.setUploadFlag(returnDropInfo.isUploadFlag());
 			}
 		}

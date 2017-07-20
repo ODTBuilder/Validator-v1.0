@@ -51,4 +51,8 @@ public interface ValidateProgressDAO {
 	public List<HashMap<String, Object>> selectAllQA20ValidateProgress(
 			HashMap<String, Object> selectAllQA20ValidateProgress);
 
+	public void deleteQA10Progress(HashMap<String, Object> deleteValidateProgressQuery);
+
+	public void deleteQA20Progress(HashMap<String, Object> deleteValidateProgressQuery);
+
 }

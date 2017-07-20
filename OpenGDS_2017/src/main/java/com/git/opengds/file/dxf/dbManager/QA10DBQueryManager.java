@@ -403,7 +403,7 @@ public class QA10DBQueryManager {
 	public HashMap<String, Object> getDeleteLayerMeta(Integer cIdx) {
 		HashMap<String, Object> deleteQuery = new HashMap<String, Object>();
 		String tableName = "\"" + "qa10_layer_metadata" + "\"";
-		String deleteQueryStr = "delete from " + tableName + " where c_idx = " + cIdx;
+		String deleteQueryStr = "delete from " + tableName + " where lm_idx = " + cIdx;
 		deleteQuery.put("deleteQuery", deleteQueryStr);
 		return deleteQuery;
 	}
@@ -422,6 +422,15 @@ public class QA10DBQueryManager {
 		String selectQueryStr = "select tc_idx from " + tableName + " where c_idx = " + cIdx;
 		selectIdxQuery.put("selectQuery", selectQueryStr);
 		return selectIdxQuery;
+	}
+
+	public HashMap<String, Object> getDeleteTableLayers(Integer tcIdx, String layerId) {
+		HashMap<String, Object> deleteQuery = new HashMap<String, Object>();
+		String tableName = "qa10_layercollection_table_layer";
+		String deleteQueryStr = "delete from " + tableName + " where tc_idx = " + tcIdx + " AND " + "\"" + 2 + "\""
+				+ "= '" + layerId + "'";
+		deleteQuery.put("deleteQuery", deleteQueryStr);
+		return deleteQuery;
 	}
 
 	public HashMap<String, Object> getDeleteTableLayers(Integer tcIdx) {
@@ -444,6 +453,15 @@ public class QA10DBQueryManager {
 		HashMap<String, Object> selectIdxQuery = new HashMap<String, Object>();
 		String tableName = "qa10_layercollection_block_common";
 		String selectQueryStr = "select bc_idx from " + tableName + " where c_idx = " + cIdx;
+		selectIdxQuery.put("selectQuery", selectQueryStr);
+		return selectIdxQuery;
+	}
+
+	public HashMap<String, Object> getSelectBlockCommonIdx(Integer cIdx, String id) {
+		HashMap<String, Object> selectIdxQuery = new HashMap<String, Object>();
+		String tableName = "qa10_layercollection_block_common";
+		String selectQueryStr = "select bc_idx from " + tableName + " where c_idx = " + cIdx + " AND " + "\"" + 2 + "\""
+				+ "= '" + id + "'";
 		selectIdxQuery.put("selectQuery", selectQueryStr);
 		return selectIdxQuery;
 	}
@@ -488,10 +506,10 @@ public class QA10DBQueryManager {
 		return deleteQuery;
 	}
 
-	public HashMap<String, Object> getDeleteBlocks(Integer cIdx) {
+	public HashMap<String, Object> getDeleteBlocks(int bcIdx) {
 		HashMap<String, Object> deleteQuery = new HashMap<String, Object>();
 		String tableName = "qa10_layercollection_block_common";
-		String deleteQueryStr = "delete from " + tableName + " where c_idx = " + cIdx;
+		String deleteQueryStr = "delete from " + tableName + " where bc_idx = " + bcIdx;
 		deleteQuery.put("deleteQuery", deleteQueryStr);
 		return deleteQuery;
 	}
@@ -557,7 +575,7 @@ public class QA10DBQueryManager {
 		if (layerType.equals("INSERT")) {
 			selectQueryStr += ", rotate ";
 		}
-		selectQueryStr += "from " + layerTbName;
+		selectQueryStr += "from " + "\"" + layerTbName + "\"";
 		HashMap<String, Object> selectQueryMap = new HashMap<String, Object>();
 		selectQueryMap.put("selectQuery", selectQueryStr);
 		return selectQueryMap;
@@ -565,7 +583,7 @@ public class QA10DBQueryManager {
 
 	public HashMap<String, Object> getSelectTableCommon(int cIdx) {
 		HashMap<String, Object> selectQueryMap = new HashMap<String, Object>();
-		String selectQueryStr = "select * from qa10_layercollection_table_common where c_idx = " + cIdx;
+		String selectQueryStr = "select \"2\", \"70\" from qa10_layercollection_table_common where c_idx = " + cIdx;
 		selectQueryMap.put("selectQuery", selectQueryStr);
 		return selectQueryMap;
 	}
@@ -573,9 +591,141 @@ public class QA10DBQueryManager {
 	public HashMap<String, Object> getSelectTableLayer(int tcIdx) {
 		HashMap<String, Object> selectQuery = new HashMap<String, Object>();
 		String tableName = "\"" + "qa10_layercollection_table_layer" + "\"";
-		String selectQueryStr = "select * from " + tableName + " where tc_idx = " + tcIdx;
+		String selectQueryStr = "select \"0\", \"2\", \"70\", \"62\", \"6\" from " + tableName + " where tc_idx = "
+				+ tcIdx;
 		selectQuery.put("selectAllQuery", selectQueryStr);
 		return selectQuery;
 	}
 
+	public HashMap<String, Object> getDeleteQA10ProgressQuery(int cIdx) {
+		HashMap<String, Object> deleteQuery = new HashMap<String, Object>();
+		String tableName = "qa10_layercollection_qa_progress";
+		String deleteQueryStr = "delete from " + tableName + " where c_idx = " + cIdx;
+		deleteQuery.put("deleteQuery", deleteQueryStr);
+		return deleteQuery;
+	}
+
+	public HashMap<String, Object> getSelectBlockCommon(Integer cIdx, String id) {
+		HashMap<String, Object> selectIdxQuery = new HashMap<String, Object>();
+		String tableName = "qa10_layercollection_block_common";
+		String selectQueryStr = "select bc_idx, \"8\", \"330\", \"2\", \"70\", \"10\", \"20\", \"30\", \"3\" from " + tableName
+				+ " where c_idx = " + cIdx + " AND " + "\"2\"" + " = '" + id + "'";
+		selectIdxQuery.put("selectQuery", selectQueryStr);
+		return selectIdxQuery;
+	}
+
+	public HashMap<String, Object> getSelectBlockArc(int bcIdx) {
+		HashMap<String, Object> selectQuery = new HashMap<String, Object>();
+		String tableName = "\"" + "qa10_layercollection_block_arc" + "\"";
+		String selectQueryStr = "select \"0\", \"8\", \"330\", \"10\", \"20\", \"30\", \"40\", \"50\", \"51\" from " + tableName
+				+ " where bc_idx = " + bcIdx;
+		selectQuery.put("selectAllQuery", selectQueryStr);
+		return selectQuery;
+	}
+
+	public HashMap<String, Object> getSelectBlockCircle(int bcIdx) {
+		HashMap<String, Object> selectQuery = new HashMap<String, Object>();
+		String tableName = "\"" + "qa10_layercollection_block_circle" + "\"";
+		String selectQueryStr = "select \"0\", \"8\", \"330\", \"10\", \"20\", \"30\", \"40\" from " + tableName
+				+ " where bc_idx = " + bcIdx;
+		selectQuery.put("selectAllQuery", selectQueryStr);
+		return selectQuery;
+	}
+
+	public HashMap<String, Object> getSelectBlockPolyline(int bcIdx) {
+		HashMap<String, Object> selectQuery = new HashMap<String, Object>();
+		String tableName = "\"" + "qa10_layercollection_block_polyline" + "\"";
+		String selectQueryStr = "select bp_idx, \"0\", \"8\", \"330\", \"66\", \"10\", \"20\", \"30\", \"70\" from " + tableName
+				+ " where bc_idx = " + bcIdx;
+		selectQuery.put("selectAllQuery", selectQueryStr);
+		return selectQuery;
+	}
+
+	public HashMap<String, Object> getSelectBlockText(int bcIdx) {
+		HashMap<String, Object> selectQuery = new HashMap<String, Object>();
+		String tableName = "\"" + "qa10_layercollection_block_text" + "\"";
+		String selectQueryStr = "select \"0\", \"8\", \"330\", \"10\", \"20\", \"30\", \"40\", \"1\", \"7\" from " + tableName
+				+ " where bc_idx = " + bcIdx;
+		selectQuery.put("selectAllQuery", selectQueryStr);
+		return selectQuery;
+	}
+
+	public HashMap<String, Object> getSelectBlockVertex(int bpIdx) {
+		HashMap<String, Object> selectQuery = new HashMap<String, Object>();
+		String tableName = "\"" + "qa10_layercollection_block_vertex" + "\"";
+		String selectQueryStr = "select \"0\", \"8\", \"330\",\"10\", \"20\", \"30\" from " + tableName + " where bp_idx = "
+				+ bpIdx;
+		selectQuery.put("selectAllQuery", selectQueryStr);
+		return selectQuery;
+	}
+
+	public HashMap<String, Object> getInsertBlockLWPolylineQuery(int bIdx, LinkedHashMap<String, Object> entity) {
+
+		String tableName = "\"" + "qa10_layercollection_block_lwpolyline" + "\"";
+		String insertColumnQuery = "insert into " + tableName + "(";
+		String insertValueQuery = "values(";
+		Iterator entityIt = entity.keySet().iterator();
+		while (entityIt.hasNext()) {
+			String code = (String) entityIt.next();
+			Object value = entity.get(code);
+			if (code.equals("vertexs")) {
+				continue;
+			}
+			insertColumnQuery += "\"" + code + "\", ";
+			insertValueQuery += "'" + value + "', ";
+		}
+		insertColumnQuery += "bc_idx" + ")";
+		insertValueQuery += bIdx + ")";
+
+		String returnQuery = insertColumnQuery + insertValueQuery;
+		HashMap<String, Object> query = new HashMap<String, Object>();
+		query.put("insertQuery", returnQuery);
+		query.put("blp_idx", 0);
+		return query;
+	}
+
+	public HashMap<String, Object> getInsertBlockLWVertexQuery(int dcIdx, int dlpIdx,
+			LinkedHashMap<String, Object> vertexObj) {
+
+		String tableName = "\"" + "qa10_layercollection_block_vertex" + "\"";
+		String insertColumnQuery = "insert into " + tableName + "(";
+		String insertValueQuery = "values(";
+		Iterator entityIt = vertexObj.keySet().iterator();
+		while (entityIt.hasNext()) {
+			String code = (String) entityIt.next();
+			Object value = vertexObj.get(code);
+			insertColumnQuery += "\"" + code + "\", ";
+			insertValueQuery += "'" + value + "', ";
+		}
+		insertColumnQuery += "bc_idx, blp_idx" + ")";
+		insertValueQuery += dcIdx + ", " + dlpIdx + ")";
+
+		String returnQuery = insertColumnQuery + insertValueQuery;
+		HashMap<String, Object> query = new HashMap<String, Object>();
+		query.put("insertQuery", returnQuery);
+
+		return query;
+	}
+
+	public HashMap<String, Object> getInsertBlockLineQuery(int bIdx, LinkedHashMap<String, Object> lineObj) {
+
+		String tableName = "\"" + "qa10_layercollection_block_line" + "\"";
+		String insertColumnQuery = "insert into " + tableName + "(";
+		String insertValueQuery = "values(";
+		Iterator entityIt = lineObj.keySet().iterator();
+		while (entityIt.hasNext()) {
+			String code = (String) entityIt.next();
+			Object value = lineObj.get(code);
+			insertColumnQuery += "\"" + code + "\", ";
+			insertValueQuery += "'" + value + "', ";
+		}
+		insertColumnQuery += "bc_idx)";
+		insertValueQuery += bIdx + ")";
+
+		String returnQuery = insertColumnQuery + insertValueQuery;
+		HashMap<String, Object> query = new HashMap<String, Object>();
+		query.put("insertQuery", returnQuery);
+
+		return query;
+	}
 }

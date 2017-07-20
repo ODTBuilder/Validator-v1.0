@@ -38,6 +38,8 @@ public interface EditDBManagerService {
 
 	public Integer createQA10LayerCollection(String type, EditQA10Collection editCollection) throws Exception;
 
+	public void deleteQA10LayerCollection(int cIdx);
+	
 	public void insertQA20CreateFeature(String layerName, QA20Feature createFeature, String src);
 
 	public void updateQA20ModifyFeature(String layerName, QA20Feature modifyFeature, String src);
@@ -69,5 +71,7 @@ public interface EditDBManagerService {
 
 	public boolean modifyQA10Layer(String type, Integer collectionIdx, String collectionName, QA10Layer modifiedLayer,
 			Map<String, Object> geoLayer);
+
+	public void deleteQA10LayerCollectionTablesCommon(Integer collectionIdx);
 
 }

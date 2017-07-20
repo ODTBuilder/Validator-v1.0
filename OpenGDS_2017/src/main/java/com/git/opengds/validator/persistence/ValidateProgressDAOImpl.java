@@ -141,4 +141,14 @@ public class ValidateProgressDAOImpl implements ValidateProgressDAO {
 		// TODO Auto-generated method stub
 		return sqlSession.selectList(qa20Namespace + ".selectAllQA20ValidateProgress", selectAllQA20ValidateProgress);
 	}
+
+	@Override
+	public void deleteQA10Progress(HashMap<String, Object> deleteValidateProgressQuery) {
+		sqlSession.delete(qa10Namespace + ".deleteQA10Progress", deleteValidateProgressQuery);
+	}
+
+	@Override
+	public void deleteQA20Progress(HashMap<String, Object> deleteValidateProgressQuery) {
+		sqlSession.delete(qa10Namespace + ".deleteQA20Progress", deleteValidateProgressQuery);
+	}
 }
