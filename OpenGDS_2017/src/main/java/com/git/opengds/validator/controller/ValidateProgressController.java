@@ -31,8 +31,7 @@ public class ValidateProgressController extends AbstractController {
 			return null;
 		}
 		String type = "ngi";
-		String collectionName = "35811033";
 
-		return progressService.selectProgressOfCollection(generalUser, type, collectionName);
+		return progressService.selectProgressOfCollection(generalUser, type);
 	}
 }

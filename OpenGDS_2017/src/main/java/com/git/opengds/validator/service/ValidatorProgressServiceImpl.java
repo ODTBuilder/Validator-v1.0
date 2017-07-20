@@ -135,7 +135,7 @@ public class ValidatorProgressServiceImpl implements ValidatorProgressService {
 		}
 	}
 
-	public ValidateProgressList selectProgressOfCollection(UserVO userVO, String type, String collectionName) {
+	public ValidateProgressList selectProgressOfCollection(UserVO userVO, String type) {
 
 		ValidateProgressDBQueryManager queryManager = new ValidateProgressDBQueryManager();
 		List<HashMap<String, Object>> progressListMap = null;
