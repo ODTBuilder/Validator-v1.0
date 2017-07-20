@@ -1023,6 +1023,7 @@ gitbuilder.ui.QAEdit = $.widget("gitbuilder.qaedit",
 				return this.error;
 			},
 			open : function() {
+				$(this.list).jstree(true).refresh();
 				this.window.modal('show');
 			},
 			openNavigator : function() {

@@ -78,6 +78,9 @@
 <%-- 검수 편집 --%>
 <script src="${pageContext.request.contextPath}/resources/js/gitbuilder/qaedit.js"></script>
 
+<%-- 검수 현황 --%>
+<script src="${pageContext.request.contextPath}/resources/js/gitbuilder/qastatus.js"></script>
+
 <%-- 편집툴 --%>
 <script src="${pageContext.request.contextPath}/resources/js/gitbuilder/editingtool.js"></script>
 
