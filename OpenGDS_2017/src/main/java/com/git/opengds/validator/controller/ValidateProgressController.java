@@ -2,7 +2,7 @@ package com.git.opengds.validator.controller;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.json.JSONObject;
+import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,7 +25,7 @@ public class ValidateProgressController extends AbstractController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/validateProgress.ajax")
 	@ResponseBody
-	public JSONObject getValidateProgressList(HttpServletRequest request, @RequestBody String atest) throws Exception {
+	public JSONObject getValidateProgressList(HttpServletRequest request, @RequestBody  String atest) throws Exception {
 		UserVO generalUser = (UserVO) getSession(request, EnUserType.GENERAL.getTypeName());
 		if (generalUser == null) {
 			return null;
