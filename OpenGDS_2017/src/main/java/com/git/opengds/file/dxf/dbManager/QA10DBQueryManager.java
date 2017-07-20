@@ -583,7 +583,7 @@ public class QA10DBQueryManager {
 
 	public HashMap<String, Object> getSelectTableCommon(int cIdx) {
 		HashMap<String, Object> selectQueryMap = new HashMap<String, Object>();
-		String selectQueryStr = "select \"2\", \"70\" from qa10_layercollection_table_common where c_idx = " + cIdx;
+		String selectQueryStr = "select * from qa10_layercollection_table_common where c_idx = " + cIdx;
 		selectQueryMap.put("selectQuery", selectQueryStr);
 		return selectQueryMap;
 	}
@@ -608,8 +608,8 @@ public class QA10DBQueryManager {
 	public HashMap<String, Object> getSelectBlockCommon(Integer cIdx, String id) {
 		HashMap<String, Object> selectIdxQuery = new HashMap<String, Object>();
 		String tableName = "qa10_layercollection_block_common";
-		String selectQueryStr = "select bc_idx, \"8\", \"330\", \"2\", \"70\", \"10\", \"20\", \"30\", \"3\" from " + tableName
-				+ " where c_idx = " + cIdx + " AND " + "\"2\"" + " = '" + id + "'";
+		String selectQueryStr = "select * from "
+				+ tableName + " where c_idx = " + cIdx + " AND " + "\"2\"" + " = '" + id + "'";
 		selectIdxQuery.put("selectQuery", selectQueryStr);
 		return selectIdxQuery;
 	}
@@ -617,8 +617,8 @@ public class QA10DBQueryManager {
 	public HashMap<String, Object> getSelectBlockArc(int bcIdx) {
 		HashMap<String, Object> selectQuery = new HashMap<String, Object>();
 		String tableName = "\"" + "qa10_layercollection_block_arc" + "\"";
-		String selectQueryStr = "select \"0\", \"8\", \"330\", \"10\", \"20\", \"30\", \"40\", \"50\", \"51\" from " + tableName
-				+ " where bc_idx = " + bcIdx;
+		String selectQueryStr = "select \"0\", \"8\", \"330\", \"10\", \"20\", \"30\", \"40\", \"50\", \"51\" from "
+				+ tableName + " where bc_idx = " + bcIdx;
 		selectQuery.put("selectAllQuery", selectQueryStr);
 		return selectQuery;
 	}
@@ -635,8 +635,8 @@ public class QA10DBQueryManager {
 	public HashMap<String, Object> getSelectBlockPolyline(int bcIdx) {
 		HashMap<String, Object> selectQuery = new HashMap<String, Object>();
 		String tableName = "\"" + "qa10_layercollection_block_polyline" + "\"";
-		String selectQueryStr = "select bp_idx, \"0\", \"8\", \"330\", \"66\", \"10\", \"20\", \"30\", \"70\" from " + tableName
-				+ " where bc_idx = " + bcIdx;
+		String selectQueryStr = "select bp_idx, \"0\", \"8\", \"330\", \"66\", \"10\", \"20\", \"30\", \"70\" from "
+				+ tableName + " where bc_idx = " + bcIdx;
 		selectQuery.put("selectAllQuery", selectQueryStr);
 		return selectQuery;
 	}
@@ -644,17 +644,17 @@ public class QA10DBQueryManager {
 	public HashMap<String, Object> getSelectBlockText(int bcIdx) {
 		HashMap<String, Object> selectQuery = new HashMap<String, Object>();
 		String tableName = "\"" + "qa10_layercollection_block_text" + "\"";
-		String selectQueryStr = "select \"0\", \"8\", \"330\", \"10\", \"20\", \"30\", \"40\", \"1\", \"7\" from " + tableName
-				+ " where bc_idx = " + bcIdx;
+		String selectQueryStr = "select \"0\", \"8\", \"330\", \"10\", \"20\", \"30\", \"40\", \"1\", \"7\" from "
+				+ tableName + " where bc_idx = " + bcIdx;
 		selectQuery.put("selectAllQuery", selectQueryStr);
 		return selectQuery;
 	}
 
-	public HashMap<String, Object> getSelectBlockVertex(int bpIdx) {
+	public HashMap<String, Object> getSelectBlockPolylineVertex(int bpIdx) {
 		HashMap<String, Object> selectQuery = new HashMap<String, Object>();
 		String tableName = "\"" + "qa10_layercollection_block_vertex" + "\"";
-		String selectQueryStr = "select \"0\", \"8\", \"330\",\"10\", \"20\", \"30\" from " + tableName + " where bp_idx = "
-				+ bpIdx;
+		String selectQueryStr = "select \"0\", \"8\", \"330\",\"10\", \"20\", \"30\" from " + tableName
+				+ " where bp_idx = " + bpIdx;
 		selectQuery.put("selectAllQuery", selectQueryStr);
 		return selectQuery;
 	}
@@ -727,5 +727,32 @@ public class QA10DBQueryManager {
 		query.put("insertQuery", returnQuery);
 
 		return query;
+	}
+
+	public HashMap<String, Object> getSelectBlockLine(int bcIdx) {
+		HashMap<String, Object> selectQuery = new HashMap<String, Object>();
+		String tableName = "\"" + "qa10_layercollection_block_line" + "\"";
+		String selectQueryStr = "select \"0\", \"8\", \"330\", \"10\", \"20\", \"30\", \"11\", \"21\", \"31\" from "
+				+ tableName + " where bc_idx = " + bcIdx;
+		selectQuery.put("selectAllQuery", selectQueryStr);
+		return selectQuery;
+	}
+
+	public HashMap<String, Object> getSelectBlockLWPolyline(int bcIdx) {
+		HashMap<String, Object> selectQuery = new HashMap<String, Object>();
+		String tableName = "\"" + "qa10_layercollection_block_lwpolyline" + "\"";
+		String selectQueryStr = "select blp_idx, \"0\", \"8\", \"330\", \"90\", \"70\", \"43\" from " + tableName
+				+ " where bc_idx = " + bcIdx;
+		selectQuery.put("selectAllQuery", selectQueryStr);
+		return selectQuery;
+	}
+
+	public HashMap<String, Object> getSelectBlockLWPolylineVertex(int blpIdx) {
+		HashMap<String, Object> selectQuery = new HashMap<String, Object>();
+		String tableName = "\"" + "qa10_layercollection_block_vertex" + "\"";
+		String selectQueryStr = "select \"0\", \"8\", \"330\",\"10\", \"20\", \"30\" from " + tableName
+				+ " where blp_idx = " + blpIdx;
+		selectQuery.put("selectAllQuery", selectQueryStr);
+		return selectQuery;
 	}
 }

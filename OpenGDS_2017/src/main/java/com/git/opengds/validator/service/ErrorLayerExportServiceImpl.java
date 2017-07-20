@@ -21,7 +21,9 @@ import com.git.gdsbuilder.FileRead.dxf.writer.QA10FileWriter;
 import com.git.gdsbuilder.FileRead.ngi.writer.QA20FileWriter;
 import com.git.gdsbuilder.type.qa10.collection.QA10LayerCollection;
 import com.git.gdsbuilder.type.qa10.layer.QA10Layer;
+import com.git.gdsbuilder.type.qa10.layer.QA10LayerList;
 import com.git.gdsbuilder.type.qa10.structure.QA10Blocks;
+import com.git.gdsbuilder.type.qa10.structure.QA10Entities;
 import com.git.gdsbuilder.type.qa10.structure.QA10Header;
 import com.git.gdsbuilder.type.qa10.structure.QA10Tables;
 import com.git.gdsbuilder.type.qa20.collection.QA20LayerCollection;
@@ -137,11 +139,9 @@ public class ErrorLayerExportServiceImpl implements ErrorLayerExportService {
 				String ndaFileDir = (String) fileMap.get("NdafileDir");
 				layerFileOutputStream(fileName, ndaFileDir, response);
 			} else if (format.equals("dxf")) {
-				QA10LayerCollection qa10LayerCollection = new QA10LayerCollection();
-				qa10LayerCollection.setCollectionName(collectionName);
 
+				QA10LayerList layerList = new QA10LayerList();
 				QA10DBQueryManager qa10dbQueryManager = new QA10DBQueryManager();
-
 				// collectionIdx
 				HashMap<String, Object> selectLayerCollectionIdxQuery = qa10dbQueryManager
 						.getSelectLayerCollectionIdx(collectionName);
@@ -171,7 +171,7 @@ public class ErrorLayerExportServiceImpl implements ErrorLayerExportService {
 							.selectQA10layerBlocksCommon(selectBlockCommonQuery);
 					if (blockCommonMap != null) {
 						LinkedHashMap<String, Object> block = new LinkedHashMap<String, Object>();
-						LinkedHashMap<String, Object> blockCommons = new LinkedHashMap<String, Object>(blockCommonMap);
+						LinkedHashMap<String, Object> blockCommons = QA10Blocks.getCommonsValue(blockCommonMap);
 						block.put("block", blockCommons);
 
 						int bcIdx = (Integer) blockCommonMap.get("bc_idx");
@@ -179,64 +179,116 @@ public class ErrorLayerExportServiceImpl implements ErrorLayerExportService {
 						List<LinkedHashMap<String, Object>> entities = new ArrayList<LinkedHashMap<String, Object>>();
 
 						// arc
-						HashMap<String, Object> selectBlockArcList = qa10dbQueryManager.getSelectBlockArc(bcIdx);
-						List<HashMap<String, Object>> blockArcMapList = qa10LayerCollectionDAO
-								.selectBlockEntities(selectBlockArcList);
-						if (blockArcMapList != null) {
-							for (int j = 0; j < blockArcMapList.size(); j++) {
-								HashMap<String, Object> blockArcMap = blockArcMapList.get(j);
-								LinkedHashMap<String, Object> entity = new LinkedHashMap<String, Object>(blockArcMap);
-								entities.add(entity);
+						if ((Boolean) blockCommonMap.get("is_arc")) {
+							HashMap<String, Object> selectBlockArcList = qa10dbQueryManager.getSelectBlockArc(bcIdx);
+							List<HashMap<String, Object>> blockArcMapList = qa10LayerCollectionDAO
+									.selectBlockEntities(selectBlockArcList);
+							if (blockArcMapList != null) {
+								for (int j = 0; j < blockArcMapList.size(); j++) {
+									HashMap<String, Object> blockArcMap = blockArcMapList.get(j);
+									LinkedHashMap<String, Object> entity = QA10Blocks.getArcValues(blockArcMap);
+									entities.add(entity);
+								}
 							}
 						}
 						// circle
-						HashMap<String, Object> selectBlockCircleList = qa10dbQueryManager.getSelectBlockCircle(bcIdx);
-						List<HashMap<String, Object>> blockCircleMapList = qa10LayerCollectionDAO
-								.selectBlockEntities(selectBlockCircleList);
-						if (blockCircleMapList != null) {
-							for (int j = 0; j < blockCircleMapList.size(); j++) {
-								HashMap<String, Object> blockCircleMap = blockCircleMapList.get(j);
-								LinkedHashMap<String, Object> entity = new LinkedHashMap<String, Object>(
-										blockCircleMap);
-								entities.add(entity);
+						if ((Boolean) blockCommonMap.get("is_circle")) {
+							HashMap<String, Object> selectBlockCircleList = qa10dbQueryManager
+									.getSelectBlockCircle(bcIdx);
+							List<HashMap<String, Object>> blockCircleMapList = qa10LayerCollectionDAO
+									.selectBlockEntities(selectBlockCircleList);
+							if (blockCircleMapList != null) {
+								for (int j = 0; j < blockCircleMapList.size(); j++) {
+									HashMap<String, Object> blockCircleMap = blockCircleMapList.get(j);
+									LinkedHashMap<String, Object> entity = QA10Blocks.getCircleValues(blockCircleMap);
+									entities.add(entity);
+								}
 							}
 						}
 						// polyline
-						HashMap<String, Object> selectBlockPolylineList = qa10dbQueryManager
-								.getSelectBlockPolyline(bcIdx);
-						List<HashMap<String, Object>> blockPolylineMapList = qa10LayerCollectionDAO
-								.selectBlockEntities(selectBlockPolylineList);
-						if (blockPolylineMapList != null) {
-							for (int j = 0; j < blockPolylineMapList.size(); j++) {
-								HashMap<String, Object> blockPolylineMap = blockPolylineMapList.get(j);
-								LinkedHashMap<String, Object> polylineEntity = new LinkedHashMap<String, Object>(
-										blockPolylineMap);
-								int bpIdx = (Integer) blockPolylineMap.get("bp_idx");
-								// vertext
-								HashMap<String, Object> selectBlockVertexList = qa10dbQueryManager
-										.getSelectBlockVertex(bpIdx);
-								List<HashMap<String, Object>> blockVertexMapList = qa10LayerCollectionDAO
-										.selectBlockEntities(selectBlockVertexList);
-								if (blockVertexMapList != null) {
-									List<LinkedHashMap<String, Object>> vertexEntityList = new ArrayList<LinkedHashMap<String, Object>>();
-									for (int k = 0; k < blockVertexMapList.size(); k++) {
-										LinkedHashMap<String, Object> vertextEntity = new LinkedHashMap<String, Object>(
-												blockVertexMapList.get(k));
-										vertexEntityList.add(vertextEntity);
+						if ((Boolean) blockCommonMap.get("is_polyoine")) {
+							HashMap<String, Object> selectBlockPolylineList = qa10dbQueryManager
+									.getSelectBlockPolyline(bcIdx);
+							List<HashMap<String, Object>> blockPolylineMapList = qa10LayerCollectionDAO
+									.selectBlockEntities(selectBlockPolylineList);
+							if (blockPolylineMapList != null) {
+								for (int j = 0; j < blockPolylineMapList.size(); j++) {
+									HashMap<String, Object> blockPolylineMap = blockPolylineMapList.get(j);
+									LinkedHashMap<String, Object> polylineEntity = QA10Blocks
+											.getPolylineValue(blockPolylineMap);
+									int bpIdx = (Integer) blockPolylineMap.get("bp_idx");
+									// vertext
+									HashMap<String, Object> selectBlockVertexList = qa10dbQueryManager
+											.getSelectBlockPolylineVertex(bpIdx);
+									List<HashMap<String, Object>> blockVertexMapList = qa10LayerCollectionDAO
+											.selectBlockEntities(selectBlockVertexList);
+									if (blockVertexMapList != null) {
+										List<LinkedHashMap<String, Object>> vertexEntityList = new ArrayList<LinkedHashMap<String, Object>>();
+										for (int k = 0; k < blockVertexMapList.size(); k++) {
+											LinkedHashMap<String, Object> vertextEntity = QA10Blocks
+													.getVertexValue(blockVertexMapList.get(k));
+											vertexEntityList.add(vertextEntity);
+										}
+										polylineEntity.put("vertexs", vertexEntityList);
 									}
-									polylineEntity.put("vertexs", vertexEntityList);
 								}
 							}
 						}
 						// text
-						HashMap<String, Object> selectBlockTextList = qa10dbQueryManager.getSelectBlockText(bcIdx);
-						List<HashMap<String, Object>> blockTextMapList = qa10LayerCollectionDAO
-								.selectBlockEntities(selectBlockTextList);
-						if (blockTextMapList != null) {
-							for (int j = 0; j < blockTextMapList.size(); j++) {
-								HashMap<String, Object> blockTextMap = blockTextMapList.get(j);
-								LinkedHashMap<String, Object> entity = new LinkedHashMap<String, Object>(blockTextMap);
-								entities.add(entity);
+						if ((Boolean) blockCommonMap.get("is_text")) {
+							HashMap<String, Object> selectBlockTextList = qa10dbQueryManager.getSelectBlockText(bcIdx);
+							List<HashMap<String, Object>> blockTextMapList = qa10LayerCollectionDAO
+									.selectBlockEntities(selectBlockTextList);
+							if (blockTextMapList != null) {
+								for (int j = 0; j < blockTextMapList.size(); j++) {
+									HashMap<String, Object> blockTextMap = blockTextMapList.get(j);
+									LinkedHashMap<String, Object> entity = QA10Blocks.getTextValue(blockTextMap);
+									entities.add(entity);
+								}
+							}
+						}
+
+						// line
+						if ((Boolean) blockCommonMap.get("is_line")) {
+							HashMap<String, Object> selectBlockLineList = qa10dbQueryManager.getSelectBlockLine(bcIdx);
+							List<HashMap<String, Object>> blockLineMapList = qa10LayerCollectionDAO
+									.selectBlockEntities(selectBlockLineList);
+							if (blockLineMapList != null) {
+								for (int j = 0; j < blockLineMapList.size(); j++) {
+									HashMap<String, Object> blockLineMap = blockLineMapList.get(j);
+									LinkedHashMap<String, Object> entity = QA10Blocks.getLineValue(blockLineMap);
+									entities.add(entity);
+								}
+							}
+						}
+						// lwpolyline
+						if ((Boolean) blockCommonMap.get("is_lwpolyoine")) {
+							HashMap<String, Object> selectBlockLWPolylineList = qa10dbQueryManager
+									.getSelectBlockLWPolyline(bcIdx);
+							List<HashMap<String, Object>> blockLWPolylineMapList = qa10LayerCollectionDAO
+									.selectBlockEntities(selectBlockLWPolylineList);
+							if (blockLWPolylineMapList != null) {
+								for (int j = 0; j < blockLWPolylineMapList.size(); j++) {
+									HashMap<String, Object> blockLWPolylineMap = blockLWPolylineMapList.get(j);
+									LinkedHashMap<String, Object> entity = QA10Blocks
+											.getLWPolylineValue(blockLWPolylineMap);
+									int blpIdx = (Integer) blockLWPolylineMap.get("blp_idx");
+									// vertext
+									HashMap<String, Object> selectBlockLWPolylineVertexList = qa10dbQueryManager
+											.getSelectBlockLWPolylineVertex(blpIdx);
+									List<HashMap<String, Object>> blockLWPolylineVertexMapList = qa10LayerCollectionDAO
+											.selectBlockEntities(selectBlockLWPolylineVertexList);
+									if (blockLWPolylineVertexMapList != null) {
+										List<LinkedHashMap<String, Object>> vertexEntityList = new ArrayList<LinkedHashMap<String, Object>>();
+										for (int k = 0; k < blockLWPolylineVertexMapList.size(); k++) {
+											LinkedHashMap<String, Object> vertextEntity = QA10Blocks
+													.getVertexValue(blockLWPolylineVertexMapList.get(k));
+											vertexEntityList.add(vertextEntity);
+										}
+										entity.put("vertexs", vertexEntityList);
+									}
+									entities.add(entity);
+								}
 							}
 						}
 						block.put("entities", entities);
@@ -251,8 +303,21 @@ public class ErrorLayerExportServiceImpl implements ErrorLayerExportService {
 
 					QA10Layer qa10Layer = ErrorLayerDXFExportParser.parseQA10Layer(layerId, featuresMapList);
 					qa10Layer.setLayerType(layerType);
-					qa10LayerCollection.addQA10Layer(qa10Layer);
+
+					layerList.add(qa10Layer);
 				}
+				QA10LayerCollection qa10LayerCollection = new QA10LayerCollection();
+				qa10LayerCollection.setCollectionName(collectionName);
+
+				// setEntitise
+				QA10Entities qa10Entities = new QA10Entities();
+				qa10Entities.setEntitiesValue(layerList);
+				qa10LayerCollection.setEntities(qa10Entities);
+
+				// setBlock
+				QA10Blocks qa10Blocks = new QA10Blocks();
+				qa10Blocks.setBlocks(blocks);
+				qa10LayerCollection.setBlocks(qa10Blocks);
 
 				// setDefaultHeaderValues
 				QA10Header header = new QA10Header();
@@ -278,7 +343,9 @@ public class ErrorLayerExportServiceImpl implements ErrorLayerExportService {
 				tables.setStyles(true);
 				tables.setLayerValues(tablesCommonMap, tablesLayerMap);
 				tables.setLayers(true);
+				qa10LayerCollection.setTables(tables);
 
+				// setEntities
 				QA10FileWriter qa10Writer = new QA10FileWriter();
 				fileMap = qa10Writer.writeDxfFile(qa10LayerCollection);
 				String fileName = (String) fileMap.get("fileName");
