@@ -47,7 +47,7 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
 	<aop:config proxy-target-class="true">
 <!-- 	    <aop:pointcut id="serviceOperation" expression="execution(* com.git.opengds..*.*(..))" /> -->
 <!-- 		<aop:pointcut id="serviceOperation" expression="execution(* com.git.opengds.file.*.service.*Service.*(a..))"/> -->
-		<aop:pointcut id="serviceOperation" expression="execution(* com.git.opengds.file.*.service.*ServiceImpl.*(..))"/>
+		<aop:pointcut id="serviceOperation" expression="execution(* com.git.opengds.file.*.service.*DBManagerServiceImpl.*(..))"/>
 <!-- 			<aop:pointcut id="serviceOperation" expression="excution(* com.project.service.service..*.*(..))"/> -->
 
 
