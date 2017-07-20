@@ -49,7 +49,7 @@ public class FeatureCloseCollectionValidatorImpl implements FeatureCloseCollecti
 		if(featureID.equals("69B3D")){
 			System.out.println();	
 		}
-		if(featureID.equals("RECORD 2314")){
+		if(featureID.equals("RECORD 947")){
 			System.out.println();	
 		}
 
@@ -199,18 +199,23 @@ public class FeatureCloseCollectionValidatorImpl implements FeatureCloseCollecti
 					if(direction.equals("TOP")){
 
 						Coordinate coordinateFir = targetList.get(0);
-						Coordinate coordinateSec = targetList.get(1);
-						for (int i = 2; i < targetList.size(); i++) {
+						for (int i = 0; i < targetList.size()-1; i++) {
 							Coordinate targetCoor = targetList.get(i);
-							if(targetCoor.y > coordinateSec.y){
-								coordinateSec = targetCoor;
-								if(coordinateSec.y > coordinateFir.y){
-									Coordinate temp = coordinateFir;
-									coordinateFir = coordinateSec;
-									coordinateSec = temp;
-								}
+							if(coordinateFir.y < targetCoor.y){
+								coordinateFir = targetCoor;
 							}
 						}
+
+						targetList.remove(coordinateFir);
+
+						Coordinate coordinateSec = targetList.get(0);
+						for (int i = 0; i < targetList.size()-1; i++) {
+							Coordinate targetCoor = targetList.get(i);
+							if(coordinateSec.y < targetCoor.y){
+								coordinateSec = targetCoor;
+							}
+						}
+						targetList.remove(coordinateSec);
 
 						for (int i = 0; i < targetList.size(); i++) {
 							Coordinate targetCoor = targetList.get(i);
@@ -219,7 +224,6 @@ public class FeatureCloseCollectionValidatorImpl implements FeatureCloseCollecti
 								if(coordinateFir.y - targetCoor.y < underShootTolerance){
 									ErrorFeature errFeature = new ErrorFeature(featureIdx, featureID,
 											UnderShoot.Type.UNDERSHOOT.errType(), 
-
 											UnderShoot.Type.UNDERSHOOT.errName(), targetPoint);
 									collectionErrors.add(errFeature);
 								}
@@ -229,18 +233,23 @@ public class FeatureCloseCollectionValidatorImpl implements FeatureCloseCollecti
 					if(direction.equals("BOTTOM")){
 
 						Coordinate coordinateFir = targetList.get(0);
-						Coordinate coordinateSec = targetList.get(1);
-						for (int i = 2; i < targetList.size(); i++) {
+						for (int i = 0; i < targetList.size()-1; i++) {
 							Coordinate targetCoor = targetList.get(i);
-							if(targetCoor.y < coordinateSec.y){
-								coordinateSec = targetCoor;
-								if(coordinateSec.y < coordinateFir.y){
-									Coordinate temp = coordinateFir;
-									coordinateFir = coordinateSec;
-									coordinateSec = temp;
-								}
+							if(coordinateFir.y > targetCoor.y){
+								coordinateFir = targetCoor;
 							}
 						}
+
+						targetList.remove(coordinateFir);
+
+						Coordinate coordinateSec = targetList.get(0);
+						for (int i = 0; i < targetList.size()-1; i++) {
+							Coordinate targetCoor = targetList.get(i);
+							if(coordinateSec.y > targetCoor.y){
+								coordinateSec = targetCoor;
+							}
+						}
+						targetList.remove(coordinateSec);
 
 						for (int i = 0; i < targetList.size(); i++) {
 							Coordinate targetCoor = targetList.get(i);
@@ -249,7 +258,6 @@ public class FeatureCloseCollectionValidatorImpl implements FeatureCloseCollecti
 								if(targetCoor.y - coordinateFir.y < underShootTolerance ){
 									ErrorFeature errFeature = new ErrorFeature(featureIdx, featureID,
 											UnderShoot.Type.UNDERSHOOT.errType(), 
-
 											UnderShoot.Type.UNDERSHOOT.errName(), targetPoint);
 									collectionErrors.add(errFeature);
 								}
@@ -259,18 +267,23 @@ public class FeatureCloseCollectionValidatorImpl implements FeatureCloseCollecti
 					}
 					if(direction.equals("RIGHT")){
 						Coordinate coordinateFir = targetList.get(0);
-						Coordinate coordinateSec = targetList.get(1);
-						for (int i = 2; i < targetList.size(); i++) {
+						for (int i = 0; i < targetList.size()-1; i++) {
 							Coordinate targetCoor = targetList.get(i);
-							if(targetCoor.x > coordinateSec.x){
-								coordinateSec = targetCoor;
-								if(coordinateSec.x > coordinateFir.x){
-									Coordinate temp = coordinateFir;
-									coordinateFir = coordinateSec;
-									coordinateSec = temp;
-								}
+							if(coordinateFir.x < targetCoor.x){
+								coordinateFir = targetCoor;
 							}
 						}
+
+						targetList.remove(coordinateFir);
+
+						Coordinate coordinateSec = targetList.get(0);
+						for (int i = 0; i < targetList.size()-1; i++) {
+							Coordinate targetCoor = targetList.get(i);
+							if(coordinateSec.x < targetCoor.x){
+								coordinateSec = targetCoor;
+							}
+						}
+						targetList.remove(coordinateSec);
 
 						for (int i = 0; i < targetList.size(); i++) {
 							Coordinate targetCoor = targetList.get(i);
@@ -279,7 +292,6 @@ public class FeatureCloseCollectionValidatorImpl implements FeatureCloseCollecti
 								if(coordinateFir.x - targetCoor.x < underShootTolerance ){
 									ErrorFeature errFeature = new ErrorFeature(featureIdx, featureID,
 											UnderShoot.Type.UNDERSHOOT.errType(), 
-
 											UnderShoot.Type.UNDERSHOOT.errName(), targetPoint);
 									collectionErrors.add(errFeature);
 								}
@@ -289,19 +301,23 @@ public class FeatureCloseCollectionValidatorImpl implements FeatureCloseCollecti
 					}
 					if(direction.equals("LEFT")){
 						Coordinate coordinateFir = targetList.get(0);
-						Coordinate coordinateSec = targetList.get(1);
-						for (int i = 2; i < targetList.size(); i++) {
+						for (int i = 0; i < targetList.size()-1; i++) {
 							Coordinate targetCoor = targetList.get(i);
-							if(targetCoor.x < coordinateSec.x){
-								coordinateSec = targetCoor;
-								if(coordinateSec.x < coordinateFir.x){
-									Coordinate temp = coordinateFir;
-									coordinateFir = coordinateSec;
-									coordinateSec = temp;
-								}
+							if(coordinateFir.x > targetCoor.x){
+								coordinateFir = targetCoor;
 							}
 						}
 
+						targetList.remove(coordinateFir);
+
+						Coordinate coordinateSec = targetList.get(0);
+						for (int i = 0; i < targetList.size()-1; i++) {
+							Coordinate targetCoor = targetList.get(i);
+							if(coordinateSec.x > targetCoor.x){
+								coordinateSec = targetCoor;
+							}
+						}
+						targetList.remove(coordinateSec);
 						for (int i = 0; i < targetList.size(); i++) {
 							Coordinate targetCoor = targetList.get(i);
 							if(!targetCoor.equals(coordinateFir) && !targetCoor.equals(coordinateSec) ){
@@ -309,7 +325,6 @@ public class FeatureCloseCollectionValidatorImpl implements FeatureCloseCollecti
 								if(targetCoor.x - coordinateFir.x < underShootTolerance ){
 									ErrorFeature errFeature = new ErrorFeature(featureIdx, featureID,
 											UnderShoot.Type.UNDERSHOOT.errType(), 
-
 											UnderShoot.Type.UNDERSHOOT.errName(), targetPoint);
 									collectionErrors.add(errFeature);
 								}
