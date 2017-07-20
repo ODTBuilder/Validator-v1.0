@@ -195,7 +195,7 @@ public class QA20LayerCollectionDAOImpl extends DataSourceFactory implements QA2
 	}
 
 	@Override
-	public HashMap<String, Object> selectQA20LayerMeataAll(UserVO userVO, HashMap<String, Object> selectAllMetaIdxQuery) throws RuntimeException{
+	public HashMap<String, Object> selectQA20LayerMeata(UserVO userVO, HashMap<String, Object> selectAllMetaIdxQuery) throws RuntimeException{
 		sqlSession = super.getSqlSession(userVO.getId());
 		return sqlSession.selectOne(namespace + ".selectAllLayerMeata", selectAllMetaIdxQuery);
 	}
@@ -223,5 +223,17 @@ public class QA20LayerCollectionDAOImpl extends DataSourceFactory implements QA2
 			UserVO userVO, HashMap<String, Object> selectLineStringRepresentQuery) throws RuntimeException{
 		sqlSession = super.getSqlSession(userVO.getId());
 		return sqlSession.selectList(namespace + ".selectLineStringRepresent", selectLineStringRepresentQuery);
+	}
+
+	@Override
+	public List<HashMap<String, Object>> selectNdaAspatialField(UserVO userVO, HashMap<String, Object> selectNdaAspatialFieldQuery) throws RuntimeException{
+		sqlSession = super.getSqlSession(userVO.getId());
+		return sqlSession.selectList(namespace + ".selectNdaAspatialField", selectNdaAspatialFieldQuery);
+	}
+
+	@Override
+	public List<HashMap<String, Object>> selectAllQA20Features(UserVO userVO, HashMap<String, Object> selectAllFeaturesQuery) throws RuntimeException{
+		sqlSession = super.getSqlSession(userVO.getId());
+		return sqlSession.selectList(namespace + ".selectAllfeatures", selectAllFeaturesQuery);
 	}
 }

@@ -12,7 +12,7 @@ public interface FeatureCloseCollectionValidator {
 
 	public List<ErrorFeature> ValidateCloseCollectionTarget(SimpleFeature simpleFeature,
 			List<SimpleFeature> relationSimpleFeatures, ValCollectionOption closeValidateOptions, LineString nearLine,
-			double tolerence);
+			double tolerence, String direction);
 
 	/**
 	 *

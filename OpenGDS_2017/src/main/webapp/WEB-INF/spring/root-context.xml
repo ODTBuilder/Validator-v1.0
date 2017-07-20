@@ -91,15 +91,13 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
 	</bean>
 	
 	<aop:config proxy-target-class="true">
-	    <aop:pointcut id="serviceOperation2" expression="execution(public * com.spring..service.*Service.*(..))" />
+	    <aop:pointcut id="serviceOperation2" expression="execution(* com.git.opengds.file.*.service.*DBManagerServiceImpl.*(..))" />
 	    <aop:advisor id="transactionAdvisor2" pointcut-ref="serviceOperation2" advice-ref="txAdvice2"/>
 	</aop:config>
 
 	<tx:advice id="txAdvice2" transaction-manager="admin2TransactionManager">
 		<tx:attributes>
-			<tx:method name="insert*" rollback-for="Exception" />
-			<tx:method name="update*" rollback-for="Exception" />
-			<tx:method name="drop*" rollback-for="Exception" />
+			<tx:method name="*" rollback-for="Exception" />
 		</tx:attributes>
 	</tx:advice>
 
@@ -134,15 +132,13 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
 	</bean>
 
 	<aop:config proxy-target-class="true">
-	    <aop:pointcut id="serviceOperation3" expression="execution(public * com.spring..service.*Service.*(..))" />
+	    <aop:pointcut id="serviceOperation3" expression="execution(* com.git.opengds.file.*.service.*DBManagerServiceImpl.*(..))" />
 	    <aop:advisor id="transactionAdvisor3" pointcut-ref="serviceOperation3" advice-ref="txAdvice3"/>
 	</aop:config>
 
 	<tx:advice id="txAdvice3" transaction-manager="admin3TransactionManager">
 		<tx:attributes>
-			<tx:method name="insert*" rollback-for="Exception" />
-			<tx:method name="update*" rollback-for="Exception" />
-			<tx:method name="drop*" rollback-for="Exception" />
+			<tx:method name="*" rollback-for="Exception" />
 		</tx:attributes>
 	</tx:advice>
 
@@ -176,15 +172,13 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
 	</bean>
 	
 	<aop:config proxy-target-class="true">
-	    <aop:pointcut id="userServiceOperation" expression="execution(public * com.spring..service.*Service.*(..))" />
+	    <aop:pointcut id="userServiceOperation" expression="execution(* com.git.opengds.file.*.service.*DBManagerServiceImpl.*(..))" />
 	    <aop:advisor id="userTransactionAdvisor" pointcut-ref="userServiceOperation" advice-ref="txAdviceUser"/>
 	</aop:config>
 
 	<tx:advice id="txAdviceUser" transaction-manager="userTransactionManager">
 		<tx:attributes>
-			<tx:method name="insert*" rollback-for="Exception" />
-			<tx:method name="update*" rollback-for="Exception" />
-			<tx:method name="drop*" rollback-for="Exception" />
+			<tx:method name="*" rollback-for="Exception" />
 		</tx:attributes>
 	</tx:advice>
 

@@ -35,6 +35,16 @@
 		${selectQuery}
 	</select>
 
+	<select id="selectTablesCommon" parameterType="hashMap"
+		resultType="hashMap">
+		${selectQuery}
+	</select>
+
+	<select id="selectTablesLayer" parameterType="hashMap"
+		resultType="hashMap">
+		${selectAllQuery}
+	</select>
+
 	<select id="selectTableLayerIdx" parameterType="hashMap"
 		resultType="hashMap">
 		${selectQuery}
@@ -57,10 +67,45 @@
 		</selectKey>
 	</insert>
 
+	<select id="selectBlockCommonIdxs" parameterType="hashMap"
+		resultType="hashMap">
+		${selectQuery}
+	</select>
+
 	<select id="selectBlockCommonIdx" parameterType="hashMap"
 		resultType="hashMap">
 		${selectQuery}
 	</select>
+
+	<select id="selectQA10layerBlocksCommon" parameterType="hashMap"
+		resultType="hashMap">
+		${selectQuery}
+	</select>
+
+	<select id="selectBlockEntities" parameterType="hashMap"
+		resultType="hashMap">
+		${selectAllQuery}
+	</select>
+
+	<insert id="insertQA10LayercollectionBlockPolyline"
+		parameterType="hashmap">
+		${insertQuery}
+		<selectKey keyProperty="bp_idx" resultType="int" order="AFTER">
+			select currval('qa10_layercollection_block_polyline_bp_idx_seq')
+		</selectKey>
+	</insert>
+
+	<insert id="insertQA10LayercollectionBlockLWPolyline"
+		parameterType="hashmap">
+		${insertQuery}
+		<selectKey keyProperty="blp_idx" resultType="int" order="AFTER">
+			select currval('qa10_layercollection_block_lwpolyline_blp_idx_seq')
+		</selectKey>
+	</insert>
+
+	<insert id="insertQA10LayercollectionBlockVertex" parameterType="hashmap">
+		${insertQuery}
+	</insert>
 
 	<insert id="insertQA10LayerCollectionBlockEntity" parameterType="hashmap">
 		${insertQuery}
@@ -105,10 +150,20 @@
 		${selectQuery}
 	</select>
 
+	<select id="selectQA10LayerMeata" parameterType="hashMap"
+		resultType="hashMap">
+		${selectQuery}
+	</select>
+
 	<!-- qa10_layer_feature -->
 	<insert id="insertQA10Feature" parameterType="hashmap">
 		${insertQuery}
 	</insert>
+
+	<select id="selectQA10Features" parameterType="hashMap"
+		resultType="hashMap">
+		${selectQuery}
+	</select>
 
 	<select id="selectFeatureIdx" parameterType="hashMap"
 		resultType="hashMap">

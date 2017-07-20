@@ -221,7 +221,7 @@ public class GeoserverServiceImpl implements GeoserverService {
 			flag = dtPublisher.publishDBLayer(wsName, dsName, fte, layerEncoder);
 
 			if (flag == true) {
-				RESTLayer layer = dtReader.getLayer(ID, layerFullName);
+				RESTLayer layer = dtReader.getLayer(userVO.getId(), layerFullName);
 				RESTFeatureType featureType = dtReader.getFeatureType(layer);
 
 				double minx = featureType.getNativeBoundingBox().getMinX();
@@ -252,29 +252,32 @@ public class GeoserverServiceImpl implements GeoserverService {
 			successLayerList.add(layerFullName);
 		}
 
-		GeometryCollection collection = (GeometryCollection) geometryFactory.buildGeometry(geometryCollection);
-		Geometry geometry = collection.union();
-		GSLayerGroupEncoder group = new GSLayerGroupEncoder();
-		for (int i = 0; i < successLayerList.size(); i++) {
-			String Layer = (String) successLayerList.get(i);
-			group.addLayer(Layer);
+		
+		if(layerNameList.size()!=0){
+			GeometryCollection collection = (GeometryCollection) geometryFactory.buildGeometry(geometryCollection);
+			Geometry geometry = collection.union();
+			GSLayerGroupEncoder group = new GSLayerGroupEncoder();
+			for (int i = 0; i < successLayerList.size(); i++) {
+				String Layer = (String) successLayerList.get(i);
+				group.addLayer(Layer);
+			}
+	
+			Coordinate[] coordinateArray = geometry.getEnvelope().getCoordinates();
+			Coordinate minCoordinate = new Coordinate();
+			Coordinate maxCoordinate = new Coordinate();
+	
+			minCoordinate = coordinateArray[0];
+			maxCoordinate = coordinateArray[2];
+	
+			double minx = minCoordinate.x;
+			double miny = minCoordinate.y;
+			double maxx = maxCoordinate.x;
+			double maxy = maxCoordinate.y;
+	
+			group.setBounds(originSrc, minx, maxx, miny, maxy);
+	
+			dtPublisher.createLayerGroup(wsName, "gro_" + fileType + "_" + fileName, group);
 		}
-
-		Coordinate[] coordinateArray = geometry.getEnvelope().getCoordinates();
-		Coordinate minCoordinate = new Coordinate();
-		Coordinate maxCoordinate = new Coordinate();
-
-		minCoordinate = coordinateArray[0];
-		maxCoordinate = coordinateArray[2];
-
-		double minx = minCoordinate.x;
-		double miny = minCoordinate.y;
-		double maxx = maxCoordinate.x;
-		double maxy = maxCoordinate.y;
-
-		group.setBounds(originSrc, minx, maxx, miny, maxy);
-
-		dtPublisher.createLayerGroup(wsName, "gro_" + fileType + "_" + fileName, group);
 		layerInfo.setServerPublishFlag(flag);
 
 		return layerInfo;
@@ -351,8 +354,9 @@ public class GeoserverServiceImpl implements GeoserverService {
 	@Override
 	public boolean removeGeoserverLayer(UserVO userVO, String groupLayerName,String layerName) {
 		boolean isConfigureGroup = false;
-		boolean isRemoveLayer = false;
-		DTGeoGroupLayer dtGeoGroupLayer = dtReader.getDTGeoGroupLayer(ID, groupLayerName);
+//		boolean isRemoveLayer = false;
+		boolean isRemoveFeatureType = false;
+		DTGeoGroupLayer dtGeoGroupLayer = dtReader.getDTGeoGroupLayer(userVO.getId(), groupLayerName);
 		
 		if(dtGeoGroupLayer!=null){
 			List<String> layerList = dtGeoGroupLayer.getPublishedList().getNames();
@@ -367,12 +371,13 @@ public class GeoserverServiceImpl implements GeoserverService {
 			}
 			
 			isConfigureGroup = dtPublisher.configureLayerGroup(userVO.getId(), groupLayerName, groupEncoder);
-			isRemoveLayer = dtPublisher.removeLayer(userVO.getId(), layerName);
+//			isRemoveLayer = dtPublisher.removeLayer(ID, layerName);
+			isRemoveFeatureType = dtPublisher.unpublishFeatureType(userVO.getId(), userVO.getId(), layerName);
 		}
 		else
 			return false;
 		
-		if(!isConfigureGroup&&!isRemoveLayer){
+		if(!isConfigureGroup&&!isRemoveFeatureType){
 			return false;
 		}
 		return true;

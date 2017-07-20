@@ -15,7 +15,7 @@ import com.git.opengds.common.AbstractController;
 import com.git.opengds.user.domain.UserVO;
 import com.git.opengds.user.domain.UserVO.EnUserType;
 import com.git.opengds.validator.service.ErrorLayerExportService;
-import com.git.opengds.validator.service.ErrorLayerExportServiceImpl;
+import com.vividsolutions.jts.io.ParseException;
 
 @Controller("layerFileExportController")
 @RequestMapping("/fileExport")
@@ -27,7 +27,7 @@ public class LayerFileExportController extends AbstractController{
 	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/fileExport.ajax")
 	@ResponseBody
-	public boolean exportLayerToFile(HttpServletRequest request, HttpServletResponse response) throws IOException {
+	public boolean exportLayerToFile(HttpServletRequest request, HttpServletResponse response) throws IOException, ParseException {
 
 		UserVO generalUser  = (UserVO) getSession(request,EnUserType.GENERAL.getTypeName());
 		if(generalUser==null){

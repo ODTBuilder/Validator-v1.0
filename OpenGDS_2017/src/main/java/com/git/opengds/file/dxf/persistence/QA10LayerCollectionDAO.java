@@ -21,7 +21,7 @@ public interface QA10LayerCollectionDAO {
 
 	public int deleteQA10Feature(UserVO userVO, HashMap<String, Object> deleteFeatureMap) throws RuntimeException;
 
-	public int insertQA10LayerCollectionBlocks(UserVO userVO, HashMap<String, Object> blocksQuery) throws RuntimeException;
+	public int insertQA10LayerCollectionBlocksCommon(UserVO userVO, HashMap<String, Object> blocksQuery) throws RuntimeException;
 
 	public void insertQA10LayercollectionBlockEntity(UserVO userVO, HashMap<String, Object> entitiesQuery) throws RuntimeException;
 
@@ -34,7 +34,7 @@ public interface QA10LayerCollectionDAO {
 	public List<HashMap<String, Object>> selectQA10LayerMetadataIdxs(UserVO userVO, HashMap<String, Object> metadataIdxQuery) throws RuntimeException;
 
 	public int selectQA10LayerMetadataIdx(UserVO userVO, HashMap<String, Object> metadataIdxQuery) throws RuntimeException;
-	
+
 	public HashMap<String, Object> selectQA10LayerTableName(UserVO userVO, HashMap<String, Object> layerTbNameQuery) throws RuntimeException;
 
 	public int dropLayer(UserVO userVO, HashMap<String, Object> dropLayerTbQuery) throws RuntimeException;
@@ -43,12 +43,32 @@ public interface QA10LayerCollectionDAO {
 
 	public Integer selectTableCommonIdx(UserVO userVO, HashMap<String, Object> tableIdxQuery) throws RuntimeException;
 
-	public List<HashMap<String, Object>> selectBlockCommonIdx(UserVO userVO, HashMap<String, Object> tableIdxQuery) throws RuntimeException;
+	public Integer selectBlockCommonIdx(UserVO userVO, HashMap<String, Object> tableIdxQuery) throws RuntimeException;
+
+	public List<HashMap<String, Object>> selectBlockCommonIdxs(UserVO userVO, HashMap<String, Object> tableIdxQuery) throws RuntimeException;
 
 	public void updateQA10LayerMetadataLayerID(UserVO userVO, HashMap<String, Object> updateLayerNameQuery) throws RuntimeException;
 
 	public int selectTableLayerIdx(UserVO userVO, HashMap<String, Object> selectTlIdxQuery) throws RuntimeException;
 
 	public void updateTableLayerId(UserVO userVO, HashMap<String, Object> updateTlIdQuery) throws RuntimeException;
+
+	public HashMap<String, Object> selectQA10LayerMeata(UserVO userVO, HashMap<String, Object> selectAllMetaQuery) throws RuntimeException;
+
+	public List<HashMap<String, Object>> selectQA10Features(UserVO userVO, HashMap<String, Object> selectFeaturesQuery) throws RuntimeException;
+
+	public HashMap<String, Object> selectTablesCommon(UserVO userVO, HashMap<String, Object> selectTablesCommonsQuery) throws RuntimeException;
+
+	public List<HashMap<String, Object>> selectTablesLayer(UserVO userVO, HashMap<String, Object> selectTablesLayerQuery) throws RuntimeException;
+
+	public int insertQA10LayercollectionBlockPolyline(UserVO userVO, HashMap<String, Object> polylineQuery) throws RuntimeException;
+
+	public void insertQA10LayercollectionBlockVertex(UserVO userVO, HashMap<String, Object> vertextInsertQuery) throws RuntimeException;
+
+	public HashMap<String, Object> selectQA10layerBlocksCommon(UserVO userVO, HashMap<String, Object> selectBlockCommonQuery) throws RuntimeException;
+
+	public List<HashMap<String, Object>> selectBlockEntities(UserVO userVO, HashMap<String, Object> selectBlockArcList) throws RuntimeException;
+
+	public int insertQA10LayercollectionBlockLWPolyline(UserVO userVO, HashMap<String, Object> polylineQuery) throws RuntimeException;
 
 }

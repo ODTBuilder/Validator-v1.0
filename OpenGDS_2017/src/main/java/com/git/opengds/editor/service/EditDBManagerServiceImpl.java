@@ -46,17 +46,11 @@ import com.git.gdsbuilder.type.qa20.layer.QA20Layer;
 import com.git.gdsbuilder.type.qa20.layer.QA20LayerList;
 import com.git.opengds.file.dxf.dbManager.QA10DBQueryManager;
 import com.git.opengds.file.dxf.persistence.QA10LayerCollectionDAO;
-import com.git.opengds.file.dxf.persistence.QA10LayerCollectionDAOImpl;
-import com.git.opengds.file.dxf.service.QA10DBManagerService;
-import com.git.opengds.file.dxf.service.QA10DBManagerServiceImpl;
 import com.git.opengds.file.ngi.dbManager.QA20DBQueryManager;
 import com.git.opengds.file.ngi.persistence.QA20LayerCollectionDAO;
-import com.git.opengds.file.ngi.persistence.QA20LayerCollectionDAOImpl;
-import com.git.opengds.file.ngi.service.QA20DBManagerService;
-import com.git.opengds.file.ngi.service.QA20DBManagerServiceImpl;
 import com.git.opengds.geoserver.service.GeoserverService;
-import com.git.opengds.geoserver.service.GeoserverServiceImpl;
 import com.git.opengds.user.domain.UserVO;
+import com.git.opengds.validator.persistence.ValidateProgressDAO;
 
 @Service
 @ContextConfiguration(locations = { "file:src/main/webapp/WEB-INF/spring/**/*.xml" })
@@ -71,11 +65,8 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 	@Inject
 	private QA10LayerCollectionDAO qa10DAO;
 
-	@Autowired
-	private QA20DBManagerService qa20DBManager;
-
-	@Autowired
-	private QA10DBManagerService qa10DBManager;
+	@Inject
+	private ValidateProgressDAO progressDAO;
 
 	@Autowired
 	private GeoserverService geoserverService;
@@ -89,7 +80,7 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 		geoserverService = new GeoserverServiceImpl(userVO);
 	}*/
 
-	public Integer checkQA20LayerCollectionName(UserVO userVO, String collectionName) {
+	public Integer checkQA20LayerCollectionName(UserVO userVO, String collectionName) throws RuntimeException{
 
 		QA20DBQueryManager queryManager = new QA20DBQueryManager();
 		HashMap<String, Object> queryMap = queryManager.getSelectQA20LayerCollectionIdx(collectionName);
@@ -102,7 +93,7 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 	}
 
 	@Override
-	public Integer createQA20LayerCollection(UserVO userVO, String type, EditQA20Collection editCollection) throws Exception {
+	public Integer createQA20LayerCollection(UserVO userVO, String type, EditQA20Collection editCollection) throws RuntimeException {
 
 		String collectionName = editCollection.getCollectionName();
 
@@ -119,7 +110,7 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 	}
 
 	@Override
-	public Integer createQA10LayerCollection(UserVO userVO, String type, EditQA10Collection editCollection) throws Exception {
+	public Integer createQA10LayerCollection(UserVO userVO, String type, EditQA10Collection editCollection) throws RuntimeException {
 
 		String collectionName = editCollection.getCollectionName();
 
@@ -130,9 +121,34 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 		return cIdx;
 	}
 
+	public void deleteQA10LayerCollection(UserVO userVO, int cIdx) throws RuntimeException{
+
+		QA10DBQueryManager queryManager = new QA10DBQueryManager();
+
+		HashMap<String, Object> deleteTableCommonsQuery = queryManager.getDeleteTables(cIdx);
+		qa10DAO.deleteField(userVO, deleteTableCommonsQuery);
+
+		HashMap<String, Object> deleteValidateProgressQuery = queryManager.getDeleteQA10ProgressQuery(cIdx);
+		progressDAO.deleteQA10Progress(deleteValidateProgressQuery);
+
+		HashMap<String, Object> deleteLayerCollectionQuery = queryManager.getDeleteLayerCollection(cIdx);
+		qa10DAO.deleteField(userVO, deleteLayerCollectionQuery);
+	}
+
+	public void deleteQA20LayerCollection(UserVO userVO, int cIdx) throws RuntimeException{
+
+		QA20DBQueryManager queryManager = new QA20DBQueryManager();
+
+		HashMap<String, Object> deleteValidateProgressQuery = queryManager.getDeleteQA10ProgressQuery(cIdx);
+		progressDAO.deleteQA20Progress(deleteValidateProgressQuery);
+
+		HashMap<String, Object> deleteLayerCollectionQuery = queryManager.getDeleteLayerCollection(cIdx);
+		qa20DAO.deleteField(userVO, deleteLayerCollectionQuery);
+	}
+
 	@Override
 	public boolean createQA20Layer(UserVO userVO, String type, Integer idx, String collectionName, QA20Layer qa20Layer, String src)
-			throws PSQLException {
+			throws RuntimeException {
 
 		/*DefaultTransactionDefinition def = new DefaultTransactionDefinition();
 		def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
@@ -193,13 +209,13 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 				}
 			}
 		} catch (Exception e) {
-			return false;
+			throw new RuntimeException();
 		}
 		return true;
 	}
 
 	@Override
-	public void insertQA20CreateFeature(UserVO userVO, String tableName, QA20Feature createFeature, String src) {
+	public void insertQA20CreateFeature(UserVO userVO, String tableName, QA20Feature createFeature, String src) throws RuntimeException{
 
 		QA20DBQueryManager queryManager = new QA20DBQueryManager();
 		HashMap<String, Object> insertQuertMap = queryManager.getInertQA20FeatureQuery(tableName, createFeature, src);
@@ -207,7 +223,7 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 	}
 
 	@Override
-	public void updateQA20ModifyFeature(UserVO userVO, String tableName, QA20Feature modifyFeature, String src) {
+	public void updateQA20ModifyFeature(UserVO userVO, String tableName, QA20Feature modifyFeature, String src) throws RuntimeException{
 
 		QA20DBQueryManager queryManager = new QA20DBQueryManager();
 
@@ -238,7 +254,7 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 
 	@Override
 	public boolean modifyQA20Layer(UserVO userVO, String type, Integer collectionIdx, String collectionName, QA20Layer qa20Layer,
-			Map<String, Object> geoLayer) throws PSQLException {
+			Map<String, Object> geoLayer) throws RuntimeException {
 
 		/*DefaultTransactionDefinition def = new DefaultTransactionDefinition();
 		def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
@@ -320,7 +336,7 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 	}
 
 	@Override
-	public List<HashMap<String, Object>> getQA20LayerMetadataIdx(UserVO userVO, Integer collectionIdx) {
+	public List<HashMap<String, Object>> getQA20LayerMetadataIdx(UserVO userVO, Integer collectionIdx)throws RuntimeException {
 
 		QA20DBQueryManager queryManager = new QA20DBQueryManager();
 		HashMap<String, Object> queryMap = queryManager.getSelectQA20LayerMetaDataIdxQuery(collectionIdx);
@@ -333,7 +349,7 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 	}
 
 	@Override
-	public void deleteQA20RemovedFeature(UserVO userVO, String tableName, String featureId) {
+	public void deleteQA20RemovedFeature(UserVO userVO, String tableName, String featureId) throws RuntimeException{
 
 		QA20DBQueryManager queryManager = new QA20DBQueryManager();
 
@@ -354,7 +370,7 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 	}
 
 	@Override
-	public boolean dropQA20Layer(UserVO userVO, String type, Integer collectionIdx, String collectionName, QA20Layer layer) {
+	public boolean dropQA20Layer(UserVO userVO, String type, Integer collectionIdx, String collectionName, QA20Layer layer) throws RuntimeException{
 
 		/*DefaultTransactionDefinition def = new DefaultTransactionDefinition();
 		def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
@@ -386,13 +402,13 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 			// layerMetadata 삭제
 			HashMap<String, Object> deleteLayerMetaQuery = queryManager.getDeleteQA20LayerMetaQuery(mIdx);
 			qa20DAO.deleteField(userVO,deleteLayerMetaQuery);
-			
+
 			HashMap<String, Object> dropQuery = queryManager.getQA20DropLayerQuery(type, collectionName, layerName);
 			qa20DAO.dropLayer(userVO,dropQuery);
-			
-//			HashMap<String, Object> deleteLayerCollectionQuery = queryManager
-//					.getDeleteQA20LayerCollectionQuery(collectionIdx);
-//			qa20DAO.deleteField(deleteLayerCollectionQuery);
+
+			// HashMap<String, Object> deleteLayerCollectionQuery = queryManager
+			// .getDeleteQA20LayerCollectionQuery(collectionIdx);
+			// qa20DAO.deleteField(deleteLayerCollectionQuery);
 		} catch (Exception e) {
 //			txManager.rollback(status);
 			return false;
@@ -409,7 +425,7 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 	}
 
 	@Override
-	public void insertQA10CreateFeature(UserVO userVO, String tableName, QA10Feature createFeature) {
+	public void insertQA10CreateFeature(UserVO userVO, String tableName, QA10Feature createFeature) throws RuntimeException{
 
 		QA10DBQueryManager queryManager = new QA10DBQueryManager();
 		HashMap<String, Object> insertQuertMap = queryManager.getInertFeatureQuery(tableName, createFeature);
@@ -417,7 +433,7 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 	}
 
 	@Override
-	public void updateQA10ModifyFeature(UserVO userVO, String tableName, QA10Feature modifyFeature) {
+	public void updateQA10ModifyFeature(UserVO userVO, String tableName, QA10Feature modifyFeature) throws RuntimeException{
 
 		QA10DBQueryManager queryManager = new QA10DBQueryManager();
 
@@ -446,7 +462,7 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 	}
 
 	@Override
-	public void deleteQA10RemovedFeature(UserVO userVO, String tableName, String featureId) {
+	public void deleteQA10RemovedFeature(UserVO userVO, String tableName, String featureId) throws RuntimeException{
 
 		QA10DBQueryManager queryManager = new QA10DBQueryManager();
 
@@ -468,7 +484,7 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 	}
 
 	@Override
-	public Integer checkQA10LayerCollectionName(UserVO userVO, String collectionName) {
+	public Integer checkQA10LayerCollectionName(UserVO userVO, String collectionName) throws RuntimeException{
 
 		QA10DBQueryManager queryManager = new QA10DBQueryManager();
 		HashMap<String, Object> queryMap = queryManager.getSelectLayerCollectionIdx(collectionName);
@@ -482,7 +498,7 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 
 	@Override
 	public boolean createQA10Layer(UserVO userVO, String type, Integer collectionIdx, String collectionName, QA10Layer createLayer,
-			String src) throws PSQLException {
+			String src) throws RuntimeException{
 
 		QA10DBQueryManager queryManager = new QA10DBQueryManager();
 
@@ -496,14 +512,12 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 			qa10DAO.createQA10LayerTb(userVO,createQuery);
 
 			// insertQA10Layer
-			// List<HashMap<String, Object>> inertLayerQuerys =
-			// queryManager.qa10LayerTbInsertQuery(type, collectionName,
-			// createLayer, src);
-			// for (int j = 0; j < inertLayerQuerys.size(); j++) {
-			// HashMap<String, Object> insertLayerQuery =
-			// inertLayerQuerys.get(j);
-			// qa10DAO.insertQA10Layer(insertLayerQuery);
-			// }
+/*			List<HashMap<String, Object>> inertLayerQuerys = queryManager.qa10LayerTbInsertQuery(type, collectionName,
+					createLayer, src);
+			for (int j = 0; j < inertLayerQuerys.size(); j++) {
+				HashMap<String, Object> insertLayerQuery = inertLayerQuerys.get(j);
+				qa10DAO.insertQA10Layer(insertLayerQuery);
+			}*/
 
 			// insertLayerMetadata
 			HashMap<String, Object> insertQueryMap = queryManager.getInsertLayerMeataData(type, collectionName,
@@ -530,66 +544,91 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 	}
 
 	@Override
-	public boolean dropQA10Layer(UserVO userVO, String type, Integer collectionIdx, String collectionName, QA10Layer layer) {
+	public boolean dropQA10Layer(UserVO userVO, String type, Integer collectionIdx, String collectionName, QA10Layer layer) throws RuntimeException{
 
 		/*DefaultTransactionDefinition def = new DefaultTransactionDefinition();
 		def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
 		TransactionStatus status = txManager.getTransaction(def);*/
+
+		String layerId = layer.getLayerID();
+		String[] typeSplit = layerId.split("_");
+		//String id = typeSplit[0] + "_" + typeSplit[1];
+		String id = typeSplit[0];
+
 		try {
 			QA10DBQueryManager dbManager = new QA10DBQueryManager();
 			HashMap<String, Object> selectLayerCollectionIdxQuery = dbManager
 					.getSelectLayerCollectionIdx(collectionName);
 			Integer cIdx = qa10DAO.selectQA10LayerCollectionIdx(userVO,selectLayerCollectionIdxQuery);
 			if (cIdx != null) {
-				HashMap<String, Object> metadataIdxQuery = dbManager.getSelectLayerMetaDataIdx(cIdx);
-				List<HashMap<String, Object>> metadataIdxMapList = qa10DAO
-						.selectQA10LayerMetadataIdxs(userVO,metadataIdxQuery);
-				for (int i = 0; i < metadataIdxMapList.size(); i++) {
-					HashMap<String, Object> metadataIdxMap = metadataIdxMapList.get(i);
-					Integer mIdx = (Integer) metadataIdxMap.get("lm_idx");
-
-					// get layerTb name
-					HashMap<String, Object> layerTbNameQuery = dbManager.getSelectLayerTableNameQuery(mIdx);
-					HashMap<String, Object> layerTbNameMap = qa10DAO.selectQA10LayerTableName(userVO,layerTbNameQuery);
-
-					// layerTb drop
-					String layerTbName = (String) layerTbNameMap.get("layer_t_name");
-					HashMap<String, Object> dropLayerTbQuery = dbManager.getDropLayer(layerTbName);
-					qa10DAO.dropLayer(userVO,dropLayerTbQuery);
-
-					// layerMetadata 삭제
-					HashMap<String, Object> deleteLayerMetaQuery = dbManager.getDeleteLayerMeta(cIdx);
-					qa10DAO.deleteField(userVO,deleteLayerMetaQuery);
-
-					// tables
-					HashMap<String, Object> tableIdxQuery = dbManager.getSelectTableCommonIdx(cIdx);
-					Integer tcIdx = qa10DAO.selectTableCommonIdx(userVO,tableIdxQuery);
-
-					if (tcIdx != null) {
-						// tables - layer
-						HashMap<String, Object> deleteTableLayersQuery = dbManager.getDeleteTableLayers(tcIdx);
-						qa10DAO.deleteField(userVO,deleteTableLayersQuery);
+				HashMap<String, Object> metadataIdxQuery = dbManager.getSelectQA10LayerMetaDataIdxQuery(cIdx, layerId);
+				int mIdx = qa10DAO.selectQA10LayerMetadataIdx(userVO, metadataIdxQuery);
+				// get layerTb name
+				HashMap<String, Object> layerTbNameQuery = dbManager.getSelectLayerTableNameQuery(mIdx);
+				HashMap<String, Object> layerTbNameMap = qa10DAO.selectQA10LayerTableName(userVO, layerTbNameQuery);
+				// layerTb drop
+				String layerTbName = (String) layerTbNameMap.get("layer_t_name");
+				HashMap<String, Object> dropLayerTbQuery = dbManager.getDropLayer(layerTbName);
+				qa10DAO.dropLayer(userVO,dropLayerTbQuery);
+				// tables
+				HashMap<String, Object> tableIdxQuery = dbManager.getSelectTableCommonIdx(cIdx);
+				Integer tcIdx = qa10DAO.selectTableCommonIdx(userVO,tableIdxQuery);
+				if (tcIdx != null) {
+					// tables - layer
+					HashMap<String, Object> deleteTableLayersQuery = dbManager.getDeleteTableLayers(tcIdx, id);
+					qa10DAO.deleteField(userVO,deleteTableLayersQuery);
+					// blocks - commonIdx
+					HashMap<String, Object> blocksIdxQuery = dbManager.getSelectBlockCommonIdx(cIdx, id);
+					Integer bcIdx = qa10DAO.selectBlockCommonIdx(userVO,blocksIdxQuery);
+					if (bcIdx != null) {
+						// blocks - vertex
+						HashMap<String, Object> deleteBlocksVertexQuery = dbManager.getDeleteBlockVertex(bcIdx);
+						qa10DAO.deleteField(userVO,deleteBlocksVertexQuery);
+						// blocks - polyline
+						HashMap<String, Object> deleteBlocksPolylineQuery = dbManager.getDeleteBlockPolyline(bcIdx);
+						qa10DAO.deleteField(userVO,deleteBlocksPolylineQuery);
+						// blocks - text
+						HashMap<String, Object> deleteBlocksTextQuery = dbManager.getDeleteBlockText(bcIdx);
+						qa10DAO.deleteField(userVO,deleteBlocksTextQuery);
+						// blocks - circle
+						HashMap<String, Object> deleteBlocksCircleQuery = dbManager.getDeleteBlockCircle(bcIdx);
+						qa10DAO.deleteField(userVO,deleteBlocksCircleQuery);
+						// blocks - arc
+						HashMap<String, Object> deleteBlocksArcQuery = dbManager.getDeleteBlockArc(bcIdx);
+						qa10DAO.deleteField(userVO,deleteBlocksArcQuery);
+						// blocks - commons
+						HashMap<String, Object> deleteBlocksCommonsQuery = dbManager.getDeleteBlocks(bcIdx);
+						qa10DAO.deleteField(userVO,deleteBlocksCommonsQuery);
 					}
 				}
+				// layerMetadata 삭제
+				HashMap<String, Object> deleteLayerMetaQuery = dbManager.getDeleteLayerMeta(mIdx);
+				qa10DAO.deleteField(userVO,deleteLayerMetaQuery);
 			}
 		} catch (Exception e) {
 //			txManager.rollback(status);
 			return false;
 		}
-//		txManager.commit(status);
-		return true;
+		String layerTableName = "geo" + "_" + type + "_" + collectionName + "_" + layerId;
+		String groupName = "gro" + "_" + type + "_" + collectionName;
+		boolean isSuccessed = geoserverService.removeGeoserverLayer(userVO,groupName, layerTableName);
+		if (isSuccessed) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	@Override
 	public boolean modifyQA10Layer(UserVO userVO, String type, Integer collectionIdx, String collectionName, QA10Layer qa10Layer,
-			Map<String, Object> geoLayer) {
+			Map<String, Object> geoLayer) throws RuntimeException{
 
 	/*	DefaultTransactionDefinition def = new DefaultTransactionDefinition();
 		def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
 		TransactionStatus status = txManager.getTransaction(def);*/
 
 		QA10DBQueryManager queryManager = new QA10DBQueryManager();
-	
+
 		String orignId = qa10Layer.getOriginLayerID();
 		String currentId = qa10Layer.getLayerID();
 		try {
@@ -635,5 +674,13 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 			return false;
 		}
 		// return true;
+	}
+
+	@Override
+	public void deleteQA10LayerCollectionTablesCommon(UserVO userVO, Integer cIdx) throws RuntimeException{
+		
+		QA10DBQueryManager queryManager = new QA10DBQueryManager();
+		HashMap<String, Object> deleteQuery = queryManager.getDeleteTables(cIdx); 
+		qa10DAO.deleteField(userVO,deleteQuery);
 	}
 }

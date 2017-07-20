@@ -82,7 +82,7 @@
 					 * 
 					 * @comment 소이준
 					 */
-					plugins : [ "contextmenu", "dnd", "search", "state", "types", "sort", "visibility" ]
+					plugins : [ "contextmenu", "dnd", "search", "state", "types", "sort", "visibility", "layerproperties" ]
 				},
 				/**
 				 * stores all loaded jstreeol3 plugins (used internally)
@@ -598,6 +598,9 @@
 									layer.setZIndex(zidx);
 									lastZidx++;
 								}
+							} else {
+								layer.setZIndex(zidx);
+								lastZidx++;
 							}
 						} else {
 							layer.setZIndex(zidx);
@@ -651,6 +654,8 @@
 									} else if (git.fake === "child") {
 										layer.set("treeid", id);
 									}
+								} else {
+									layer.set("treeid", id);
 								}
 							} else {
 								layer.set("treeid", id);
@@ -1783,6 +1788,10 @@
 									if (layer.get("treeid") === id) {
 										isUnique = false;
 									}
+								}
+							} else {
+								if (layer.get("treeid") === id) {
+									isUnique = false;
 								}
 							}
 						} else {
@@ -4960,6 +4969,10 @@
 								} else if (git.fake === "child" && layer.get("treeid") === id) {
 									result = layer;
 								}
+							} else {
+								if (layer.get("treeid") === id) {
+									result = layer;
+								}
 							}
 						} else {
 							if (layer.get("treeid") === id) {
@@ -5018,6 +5031,10 @@
 								} else if (git.fake === "child" && layer.get("id") === id) {
 									result = layer;
 								}
+							} else {
+								if (layer.get("id") === id) {
+									result = layer;
+								}
 							}
 						} else {
 							if (layer.get("id") === id) {
@@ -5066,6 +5083,8 @@
 								} else if (git.fake === "child") {
 									num += 1;
 								}
+							} else {
+								num += 1;
 							}
 						} else {
 							num += 1;
@@ -10417,10 +10436,17 @@
 								var inst = $.jstreeol3.reference(data.reference), obj = inst.get_node(data.reference);
 								if (inst.is_selected(obj)) {
 									// inst.delete_node_layer(inst.get_selected());
+									var layer = inst.get_LayerById(obj.id);
+									console.log(layer);
+									var git = layer.get("git");
+									if (git) {
+										inst._data.layerproperties.properties.setInformation(git.information);
+										inst._data.layerproperties.properties.setForm(git.information);
+										inst._data.layerproperties.properties.open();
+									}
 								} else {
 									// inst.delete_node_layer(obj);
 								}
-								console.log("Not yet");
 							}
 						},
 						"style" : {

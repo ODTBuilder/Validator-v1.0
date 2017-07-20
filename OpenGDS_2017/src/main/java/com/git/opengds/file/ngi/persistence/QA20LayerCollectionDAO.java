@@ -26,7 +26,6 @@ import org.postgresql.util.PSQLException;
 import com.git.opengds.user.domain.UserVO;
 
 public interface QA20LayerCollectionDAO {
-	
 
 	public int insertQA20LayerCollection(UserVO userVO, Map<String, Object> collection) throws RuntimeException;
 
@@ -74,7 +73,7 @@ public interface QA20LayerCollectionDAO {
 
 	public void updateNdaAspatialField(UserVO userVO, HashMap<String, Object> updateFieldQuery) throws RuntimeException;
 
-	public HashMap<String, Object> selectQA20LayerMeataAll(UserVO userVO, HashMap<String, Object> selectAllMetaIdxQuery) throws RuntimeException;
+	public HashMap<String, Object> selectQA20LayerMeata(UserVO userVO, HashMap<String, Object> selectAllMetaIdxQuery);
 
 	public List<HashMap<String, Object>> selectTextRepresent(UserVO userVO, HashMap<String, Object> selectTextRepresentQuery) throws RuntimeException;
 
@@ -84,5 +83,9 @@ public interface QA20LayerCollectionDAO {
 
 	public List<HashMap<String, Object>> selectLineStringRepresent(
 			UserVO userVO, HashMap<String, Object> selectLineStringRepresentQuery) throws RuntimeException;
+
+	public List<HashMap<String, Object>> selectNdaAspatialField(UserVO userVO, HashMap<String, Object> selectNdaAspatialFieldQuery) throws RuntimeException;
+
+	public List<HashMap<String, Object>> selectAllQA20Features(UserVO userVO, HashMap<String, Object> selectAllFeaturesQuery) throws RuntimeException;
 
 }

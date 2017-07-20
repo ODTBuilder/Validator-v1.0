@@ -18,7 +18,7 @@ gb.layer.Attribute = function(obj) {
 	this.decimal = options.decimal ? options.decimal : null;
 	this.size = options.size ? options.size : null;
 	this.isUnique = options.isUnique ? options.isUnique : null;
-	this.nullable = options.nullable ? options.nullable : null;
+	this.nullable = options.nullable !== undefined ? options.nullable : true;
 	this.isNew = options.isNew ? options.isNew : true;
 }
 gb.layer.Attribute.prototype.setOriginFieldName = function(fname) {
