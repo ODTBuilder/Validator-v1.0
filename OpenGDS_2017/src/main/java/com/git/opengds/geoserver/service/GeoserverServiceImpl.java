@@ -29,6 +29,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.stereotype.Service;
 
+import com.git.gdsbuilder.geolayer.data.DTGeoGroupLayer;
 import com.git.gdsbuilder.geolayer.data.DTGeoGroupLayerList;
 import com.git.gdsbuilder.geolayer.data.DTGeoLayerList;
 import com.git.gdsbuilder.geoserver.data.GeoserverLayerCollectionTree;
@@ -36,6 +37,8 @@ import com.git.gdsbuilder.geoserver.factory.DTGeoserverPublisher;
 import com.git.gdsbuilder.geoserver.factory.DTGeoserverReader;
 import com.git.gdsbuilder.geosolutions.geoserver.rest.decoder.RESTFeatureType;
 import com.git.gdsbuilder.geosolutions.geoserver.rest.decoder.RESTLayer;
+import com.git.gdsbuilder.geosolutions.geoserver.rest.decoder.RESTLayerList;
+import com.git.gdsbuilder.geosolutions.geoserver.rest.decoder.RESTPublishedList;
 import com.git.gdsbuilder.geosolutions.geoserver.rest.encoder.GSLayerEncoder;
 import com.git.gdsbuilder.geosolutions.geoserver.rest.encoder.GSLayerGroupEncoder;
 import com.git.gdsbuilder.geosolutions.geoserver.rest.encoder.GSResourceEncoder.ProjectionPolicy;
@@ -44,6 +47,7 @@ import com.git.gdsbuilder.type.geoserver.layer.GeoLayerInfo;
 import com.git.gdsbuilder.type.geoserver.layer.GeoLayerInfoList;
 import com.git.opengds.geoserver.data.style.GeoserverSldTextType;
 import com.git.opengds.upload.domain.FileMeta;
+import com.git.opengds.user.domain.UserVO;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryCollection;
@@ -65,6 +69,8 @@ public class GeoserverServiceImpl implements GeoserverService {
 	private static DTGeoserverReader dtReader;
 	private static DTGeoserverPublisher dtPublisher;
 
+//	private final String workspace;
+	
 	static {
 		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 		Properties properties = new Properties();
@@ -85,6 +91,11 @@ public class GeoserverServiceImpl implements GeoserverService {
 			e.printStackTrace();
 		}
 	}
+	
+/*	public GeoserverServiceImpl(UserVO userVO) {
+		// TODO Auto-generated constructor stub
+		workspace = userVO.getId();
+	}*/
 
 	/**
 	 * @since 2017. 5. 12.
@@ -96,10 +107,9 @@ public class GeoserverServiceImpl implements GeoserverService {
 	 * @see com.git.opengds.geoserver.service.GeoserverService#dbLayerPublishGeoserver(com.git.gdsbuilder.type.geoserver.layer.GeoLayerInfo)
 	 */
 	@SuppressWarnings("unused")
-	public FileMeta dbLayerPublishGeoserver(GeoLayerInfo layerInfo)
-			throws IllegalArgumentException, MalformedURLException {
-		String wsName = ID;
-		String dsName = ID;
+	public FileMeta dbLayerPublishGeoserver(UserVO userVO, GeoLayerInfo layerInfo){
+		String wsName = userVO.getId();
+		String dsName = userVO.getId();
 
 		String fileName = layerInfo.getFileName();
 		List<String> layerNameList = layerInfo.getLayerNames();
@@ -211,7 +221,7 @@ public class GeoserverServiceImpl implements GeoserverService {
 			flag = dtPublisher.publishDBLayer(wsName, dsName, fte, layerEncoder);
 
 			if (flag == true) {
-				RESTLayer layer = dtReader.getLayer(ID, layerFullName);
+				RESTLayer layer = dtReader.getLayer(userVO.getId(), layerFullName);
 				RESTFeatureType featureType = dtReader.getFeatureType(layer);
 
 				double minx = featureType.getNativeBoundingBox().getMinX();
@@ -233,38 +243,41 @@ public class GeoserverServiceImpl implements GeoserverService {
 				}
 			} else if (flag == false) {
 				for (String sucLayerName : successLayerList) {
-					dtPublisher.removeLayer(ID, sucLayerName);
+					dtPublisher.removeLayer(wsName, sucLayerName);
 				}
-				dtPublisher.removeLayer(ID, layerName);
+				dtPublisher.removeLayer(wsName, layerName);
 				layerInfo.setServerPublishFlag(flag);
 				return layerInfo;
 			}
 			successLayerList.add(layerFullName);
 		}
 
-		GeometryCollection collection = (GeometryCollection) geometryFactory.buildGeometry(geometryCollection);
-		Geometry geometry = collection.union();
-		GSLayerGroupEncoder group = new GSLayerGroupEncoder();
-		for (int i = 0; i < successLayerList.size(); i++) {
-			String Layer = (String) successLayerList.get(i);
-			group.addLayer(Layer);
+		
+		if(layerNameList.size()!=0){
+			GeometryCollection collection = (GeometryCollection) geometryFactory.buildGeometry(geometryCollection);
+			Geometry geometry = collection.union();
+			GSLayerGroupEncoder group = new GSLayerGroupEncoder();
+			for (int i = 0; i < successLayerList.size(); i++) {
+				String Layer = (String) successLayerList.get(i);
+				group.addLayer(Layer);
+			}
+	
+			Coordinate[] coordinateArray = geometry.getEnvelope().getCoordinates();
+			Coordinate minCoordinate = new Coordinate();
+			Coordinate maxCoordinate = new Coordinate();
+	
+			minCoordinate = coordinateArray[0];
+			maxCoordinate = coordinateArray[2];
+	
+			double minx = minCoordinate.x;
+			double miny = minCoordinate.y;
+			double maxx = maxCoordinate.x;
+			double maxy = maxCoordinate.y;
+	
+			group.setBounds(originSrc, minx, maxx, miny, maxy);
+	
+			dtPublisher.createLayerGroup(wsName, "gro_" + fileType + "_" + fileName, group);
 		}
-
-		Coordinate[] coordinateArray = geometry.getEnvelope().getCoordinates();
-		Coordinate minCoordinate = new Coordinate();
-		Coordinate maxCoordinate = new Coordinate();
-
-		minCoordinate = coordinateArray[0];
-		maxCoordinate = coordinateArray[2];
-
-		double minx = minCoordinate.x;
-		double miny = minCoordinate.y;
-		double maxx = maxCoordinate.x;
-		double maxy = maxCoordinate.y;
-
-		group.setBounds(originSrc, minx, maxx, miny, maxy);
-
-		dtPublisher.createLayerGroup(wsName, "gro_" + fileType + "_" + fileName, group);
 		layerInfo.setServerPublishFlag(flag);
 
 		return layerInfo;
@@ -277,8 +290,8 @@ public class GeoserverServiceImpl implements GeoserverService {
 	 * @see com.git.opengds.geoserver.service.GeoserverService#getGeoserverLayerCollectionTree()
 	 */
 	@Override
-	public JSONArray getGeoserverLayerCollectionTree() {
-		GeoserverLayerCollectionTree collectionTree = dtReader.getGeoserverLayerCollectionTree(ID);
+	public JSONArray getGeoserverLayerCollectionTree(UserVO userVO) {
+		GeoserverLayerCollectionTree collectionTree = dtReader.getGeoserverLayerCollectionTree(userVO.getId());
 		return collectionTree;
 	}
 
@@ -291,10 +304,10 @@ public class GeoserverServiceImpl implements GeoserverService {
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public JSONObject duplicateCheck(ArrayList<String> layerList) {
+	public JSONObject duplicateCheck(UserVO userVO, ArrayList<String> layerList) {
 		JSONObject object = new JSONObject();
 		for (String layerName : layerList) {
-			object.put(layerName, dtReader.existsLayer(ID, layerName));
+			object.put(layerName, dtReader.existsLayer(userVO.getId(), layerName));
 		}
 		return object;
 	}
@@ -307,12 +320,12 @@ public class GeoserverServiceImpl implements GeoserverService {
 	 * @see com.git.opengds.geoserver.service.GeoserverService#getGeoLayerList(java.util.ArrayList)
 	 */
 	@Override
-	public DTGeoLayerList getGeoLayerList(ArrayList<String> layerList) {
+	public DTGeoLayerList getGeoLayerList(UserVO userVO, ArrayList<String> layerList) {
 		if (layerList == null)
 			throw new IllegalArgumentException("LayerNames may not be null");
 		if (layerList.size() == 0)
 			throw new IllegalArgumentException("LayerNames may not be null");
-		return dtReader.getDTGeoLayerList(ID, layerList);
+		return dtReader.getDTGeoLayerList(userVO.getId(), layerList);
 	}
 
 	/**
@@ -323,12 +336,12 @@ public class GeoserverServiceImpl implements GeoserverService {
 	 * @see com.git.opengds.geoserver.service.GeoserverService#getGeoGroupLayerList(java.util.ArrayList)
 	 */
 	@Override
-	public DTGeoGroupLayerList getGeoGroupLayerList(ArrayList<String> groupList) {
+	public DTGeoGroupLayerList getGeoGroupLayerList(UserVO userVO, ArrayList<String> groupList) {
 		if (groupList == null)
 			throw new IllegalArgumentException("GroupNames may not be null");
 		if (groupList.size() == 0)
 			throw new IllegalArgumentException("GroupNames may not be null");
-		return dtReader.getDTGeoGroupLayerList(ID, groupList);
+		return dtReader.getDTGeoGroupLayerList(userVO.getId(), groupList);
 	}
 
 	/**
@@ -339,8 +352,35 @@ public class GeoserverServiceImpl implements GeoserverService {
 	 * @see com.git.opengds.geoserver.service.GeoserverService#removeGeoserverLayer(java.lang.String)
 	 */
 	@Override
-	public boolean removeGeoserverLayer(String layerName) {
-		return dtPublisher.removeLayer(ID, layerName);
+	public boolean removeGeoserverLayer(UserVO userVO, String groupLayerName,String layerName) {
+		boolean isConfigureGroup = false;
+//		boolean isRemoveLayer = false;
+		boolean isRemoveFeatureType = false;
+		DTGeoGroupLayer dtGeoGroupLayer = dtReader.getDTGeoGroupLayer(userVO.getId(), groupLayerName);
+		
+		if(dtGeoGroupLayer!=null){
+			List<String> layerList = dtGeoGroupLayer.getPublishedList().getNames();
+			layerList.remove(layerName);
+			
+			GSLayerGroupEncoder groupEncoder = new GSLayerGroupEncoder();
+			groupEncoder.setName(dtGeoGroupLayer.getName());
+			groupEncoder.setWorkspace(dtGeoGroupLayer.getWorkspace());
+			groupEncoder.setBounds(dtGeoGroupLayer.getCRS(), dtGeoGroupLayer.getMinX(), dtGeoGroupLayer.getMaxY(), dtGeoGroupLayer.getMinY(), dtGeoGroupLayer.getMaxY());
+			for(String name : layerList){
+				groupEncoder.addLayer(name);
+			}
+			
+			isConfigureGroup = dtPublisher.configureLayerGroup(userVO.getId(), groupLayerName, groupEncoder);
+//			isRemoveLayer = dtPublisher.removeLayer(ID, layerName);
+			isRemoveFeatureType = dtPublisher.unpublishFeatureType(userVO.getId(), userVO.getId(), layerName);
+		}
+		else
+			return false;
+		
+		if(!isConfigureGroup&&!isRemoveFeatureType){
+			return false;
+		}
+		return true;
 	}
 
 	/**
@@ -351,8 +391,8 @@ public class GeoserverServiceImpl implements GeoserverService {
 	 * @see com.git.opengds.geoserver.service.GeoserverService#removeGeoserverLayers(java.util.List)
 	 */
 	@Override
-	public boolean removeGeoserverLayers(List<String> layerNameList) {
-		return dtPublisher.removeLayers(ID, layerNameList);
+	public boolean removeGeoserverLayers(UserVO userVO, List<String> layerNameList) {
+		return dtPublisher.removeLayers(userVO.getId(), layerNameList);
 	}
 
 	/**
@@ -364,8 +404,8 @@ public class GeoserverServiceImpl implements GeoserverService {
 	 * @see com.git.opengds.geoserver.service.GeoserverService#removeGeoserverGroupLayer(java.lang.String)
 	 */
 	@Override
-	public boolean removeGeoserverGroupLayer(String groupLayerName) {
-		return dtPublisher.removeLayerGroup(ID, groupLayerName);
+	public boolean removeGeoserverGroupLayer(UserVO userVO,String groupLayerName) {
+		return dtPublisher.removeLayerGroup(userVO.getId(), groupLayerName);
 	}
 
 	/**
@@ -423,7 +463,7 @@ public class GeoserverServiceImpl implements GeoserverService {
 	};
 
 	@Override
-	public boolean updateFeatureType(String orginalName, String name, String title, String abstractContent,
+	public boolean updateFeatureType(UserVO userVO, String orginalName, String name, String title, String abstractContent,
 			String style, boolean attChangeFlag) {
 		boolean updateFlag = false;
 		GSFeatureTypeEncoder fte = new GSFeatureTypeEncoder();
@@ -455,7 +495,7 @@ public class GeoserverServiceImpl implements GeoserverService {
 
 		// boolean flag = dtPublisher.recalculate(workspace, storename,
 		// layerFullName, testFte, testLayerEncoder);
-		updateFlag = dtPublisher.updateFeatureType(ID, ID, orginalName, fte, layerEncoder, attChangeFlag);
+		updateFlag = dtPublisher.updateFeatureType(userVO.getId(), userVO.getId(), orginalName, fte, layerEncoder, attChangeFlag);
 
 		return updateFlag;
 	}
@@ -472,9 +512,9 @@ public class GeoserverServiceImpl implements GeoserverService {
 	}
 
 	@Override
-	public boolean errLayerPublishGeoserver(GeoLayerInfo geoLayerInfo) {
+	public boolean errLayerPublishGeoserver(UserVO userVO,GeoLayerInfo geoLayerInfo) {
 		// TODO Auto-generated method stub
-		return dtPublisher.publishErrLayer(ID, ID, geoLayerInfo);
+		return dtPublisher.publishErrLayer(userVO.getId(), userVO.getId(), geoLayerInfo);
 	}
 
 }

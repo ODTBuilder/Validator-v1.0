@@ -104,7 +104,8 @@ public class QA20DBQueryManager {
 		String tableName = "\"geo" + "_" + type + "_" + collectionName + "_" + qa20Layer.getLayerName() + "\"";
 		String defalutCreateQuery = "create table " + tableName + " (" + "f_idx serial primary key" + ","
 				+ "feature_id varchar(100)" + "," + "feature_type varchar(100)" + "," + "geom geometry(" + layerTypeStr
-				+ ", " + src + ")" + "," + "num_rings numeric" + "," + "num_vertexes numeric" + ",";
+				+ ", " + src + ")" + "," + "num_rings numeric" + "," + "num_vertexes numeric" + ", "
+				+ "style_id varchar(100)" + ", ";
 
 		if (isTextLayer) {
 			defalutCreateQuery += "\"" + "TEXT" + "\"" + "varchar(100),";
@@ -157,10 +158,10 @@ public class QA20DBQueryManager {
 			}
 
 			String insertDefaultQuery = "insert into " + tableName
-					+ "(feature_id, feature_type, geom, num_rings, num_vertexes, ";
+					+ "(feature_id, feature_type, geom, num_rings, num_vertexes, style_id, ";
 			String insertDefaultValues = " values('" + feature.getFeatureID() + "'," + "'" + featureType + "',"
 					+ "ST_GeomFromText('" + feature.getGeom().toString() + "', " + src + ")" + "," + numparts + ","
-					+ numVertexts + ",";
+					+ numVertexts + ", '" + feature.getStyleID() + "', ";
 
 			// properties
 			HashMap<String, Object> properties = feature.getProperties();
@@ -477,6 +478,14 @@ public class QA20DBQueryManager {
 		return selectQuery;
 	}
 
+	public HashMap<String, Object> getSelectAllQA20LayerMetaDataQuery(int lmIdx) {
+		HashMap<String, Object> selectQuery = new HashMap<String, Object>();
+		String tableName = "\"" + "qa20_layer_metadata" + "\"";
+		String selectQueryStr = "select * from " + tableName + " where lm_idx = " + lmIdx;
+		selectQuery.put("selectAllQuery", selectQueryStr);
+		return selectQuery;
+	}
+
 	public HashMap<String, Object> getSelectQA20LayerTableNameQuery(Integer mIdx) {
 		HashMap<String, Object> selectQuery = new HashMap<String, Object>();
 		String tableName = "\"" + "qa20_layer_metadata" + "\"";
@@ -525,10 +534,10 @@ public class QA20DBQueryManager {
 		return deleteQuery;
 	}
 
-	public HashMap<String, Object> getDeleteQA20LayerMetaQuery(Integer cIdx) {
+	public HashMap<String, Object> getDeleteQA20LayerMetaQuery(Integer mIdx) {
 		HashMap<String, Object> deleteQuery = new HashMap<String, Object>();
 		String tableName = "\"" + "qa20_layer_metadata" + "\"";
-		String deleteQueryStr = "delete from " + tableName + " where c_idx = " + cIdx;
+		String deleteQueryStr = "delete from " + tableName + " where lm_idx = " + mIdx;
 		deleteQuery.put("deleteQuery", deleteQueryStr);
 		return deleteQuery;
 	}
@@ -600,5 +609,83 @@ public class QA20DBQueryManager {
 		updateQuery.put("updateQuery", updateQueryStr);
 
 		return updateQuery;
+	}
+
+	public HashMap<String, Object> getSelectTextRepresentQuery(int lmIdx) {
+		HashMap<String, Object> selectQuery = new HashMap<String, Object>();
+		String tableName = "\"" + "ngi_text_represent" + "\"";
+		String selectQueryStr = "select * from " + tableName + " where lm_idx = " + lmIdx;
+		selectQuery.put("selectAllQuery", selectQueryStr);
+		return selectQuery;
+	}
+
+	public HashMap<String, Object> getSelectResionRepresentQuery(int lmIdx) {
+		HashMap<String, Object> selectQuery = new HashMap<String, Object>();
+		String tableName = "\"" + "ngi_region_represent" + "\"";
+		String selectQueryStr = "select * from " + tableName + " where lm_idx = " + lmIdx;
+		selectQuery.put("selectAllQuery", selectQueryStr);
+		return selectQuery;
+	}
+
+	public HashMap<String, Object> getSelectPointRepresentQuery(int lmIdx) {
+		HashMap<String, Object> selectQuery = new HashMap<String, Object>();
+		String tableName = "\"" + "ngi_point_represent" + "\"";
+		String selectQueryStr = "select * from " + tableName + " where lm_idx = " + lmIdx;
+		selectQuery.put("selectAllQuery", selectQueryStr);
+		return selectQuery;
+	}
+
+	public HashMap<String, Object> getSelectLineRepresentQuery(int lmIdx) {
+		HashMap<String, Object> selectQuery = new HashMap<String, Object>();
+		String tableName = "\"" + "ngi_linestring_represent" + "\"";
+		String selectQueryStr = "select * from " + tableName + " where lm_idx = " + lmIdx;
+		selectQuery.put("selectAllQuery", selectQueryStr);
+		return selectQuery;
+	}
+
+	public HashMap<String, Object> getSelectNadAspatialFieldQuery(int lmIdx) {
+		HashMap<String, Object> selectQuery = new HashMap<String, Object>();
+		String tableName = "\"" + "nda_aspatial_field_def" + "\"";
+		String selectQueryStr = "select * from " + tableName + " where lm_idx = " + lmIdx;
+		selectQuery.put("selectAllQuery", selectQueryStr);
+		return selectQuery;
+	}
+
+	public HashMap<String, Object> getSelectAllFeaturesQuery(String layerTbName,
+			List<HashMap<String, Object>> aspatialFields) {
+
+		String selectQueryStr = "select f_idx, feature_id, feature_type, ST_AsText(geom) as geom, num_rings, num_vertexes, style_id, ";
+		int size = aspatialFields.size();
+		for (int i = 0; i < size; i++) {
+			HashMap<String, Object> fieldMap = aspatialFields.get(i);
+			String fieldName = (String) fieldMap.get("f_name");
+			selectQueryStr += "\"" + fieldName + "\"";
+			if (i == size - 1) {
+				selectQueryStr += " from " + layerTbName;
+			} else {
+				selectQueryStr += ", ";
+			}
+		}
+
+		HashMap<String, Object> selectQuery = new HashMap<String, Object>();
+		// String selectQueryStr = "select * from " + layerTbName;
+		selectQuery.put("selectAllQuery", selectQueryStr);
+		return selectQuery;
+	}
+
+	public HashMap<String, Object> getDeleteQA10ProgressQuery(int cIdx) {
+		HashMap<String, Object> deleteQuery = new HashMap<String, Object>();
+		String tableName = "qa20_layercollection_qa_progress";
+		String deleteQueryStr = "delete from " + tableName + " where c_idx = " + cIdx;
+		deleteQuery.put("deleteQuery", deleteQueryStr);
+		return deleteQuery;
+	}
+
+	public HashMap<String, Object> getDeleteLayerCollection(int cIdx) {
+		HashMap<String, Object> deleteQuery = new HashMap<String, Object>();
+		String tableName = "\"" + "qa20_layercollection" + "\"";
+		String deleteQueryStr = "delete from " + tableName + " where c_idx = " + cIdx;
+		deleteQuery.put("deleteQuery", deleteQueryStr);
+		return deleteQuery;
 	}
 }

@@ -25,36 +25,49 @@ import javax.inject.Inject;
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Repository;
 
-@Repository
-public class ErrorLayerDAOImpl implements ErrorLayerDAO {
+import com.git.opengds.common.DataSourceFactory;
+import com.git.opengds.user.domain.UserVO;
 
-	@Inject
+@Repository
+public class ErrorLayerDAOImpl extends DataSourceFactory implements ErrorLayerDAO {
+
 	private SqlSession sqlSession;
 
 	private static final String namespace = "com.git.mappers.errLayerMapper.ErrorLayerMapper";
 
+/*	public ErrorLayerDAOImpl(UserVO user) {
+		// TODO Auto-generated constructor stub
+		sqlSession = super.getSqlSession(user.getId());
+	}*/
+	
+	
 	@Override
-	public void createErrorLayerTb(HashMap<String, Object> createQuery) {
+	public void createErrorLayerTb(UserVO userVO, HashMap<String, Object> createQuery) {
+		sqlSession = super.getSqlSession(userVO.getId());
 		sqlSession.update(namespace + ".createErrorLayerTb", createQuery);
 	}
 
 	@Override
-	public void insertErrorFeature(HashMap<String, Object> insertQuery) {
+	public void insertErrorFeature(UserVO userVO, HashMap<String, Object> insertQuery) {
+		sqlSession = super.getSqlSession(userVO.getId());
 		sqlSession.insert(namespace + ".insertErrorFeature", insertQuery);
 	}
 
 	@Override
-	public List<HashMap<String, Object>> selectErrorFeatures(HashMap<String, Object> selectQuery) {
+	public List<HashMap<String, Object>> selectErrorFeatures(UserVO userVO, HashMap<String, Object> selectQuery) {
+		sqlSession = super.getSqlSession(userVO.getId());
 		return sqlSession.selectList(namespace + ".selectErrorFeatures", selectQuery);
 	}
 
 	@Override
-	public List<HashMap<String, Object>> selectAllErrorFeatures(HashMap<String, Object> selectAllQuery) {
+	public List<HashMap<String, Object>> selectAllErrorFeatures(UserVO userVO, HashMap<String, Object> selectAllQuery) {
+		sqlSession = super.getSqlSession(userVO.getId());
 		return sqlSession.selectList(namespace + ".selectAllErrorFeatures", selectAllQuery);
 	}
 
 	@Override
-	public void dropErrorLayerTb(HashMap<String, Object> dropQuery) {
+	public void dropErrorLayerTb(UserVO userVO, HashMap<String, Object> dropQuery) {
+		sqlSession = super.getSqlSession(userVO.getId());
 		sqlSession.update(namespace + ".dropErrorLayerTb", dropQuery);
 	}
 

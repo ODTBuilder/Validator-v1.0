@@ -43,6 +43,7 @@ import com.git.gdsbuilder.geoserver.service.en.EnGeoserverService;
 import com.git.gdsbuilder.geoserver.service.impl.DTGeoserverServiceManagerImpl;
 import com.git.gdsbuilder.geoserver.service.wfs.WFSGetFeature;
 import com.git.gdsbuilder.geoserver.service.wms.WMSGetMap;
+import com.git.opengds.user.domain.UserVO;
 
 /**
  * 프록시서버 요청에 대한 요청을 처리하는 클래스
@@ -51,10 +52,11 @@ import com.git.gdsbuilder.geoserver.service.wms.WMSGetMap;
  * */
 @Service
 public class GeoserverLayerProxyServiceImpl implements GeoserverLayerProxyService {
-	private static final String serverURL;
-	private static final String user;
+	private static final String URL;
+	private static final String ID;
 //	private static GeoServerRESTReader reader;
 	private static final Logger LOGGER = LoggerFactory.getLogger(GeoserverLayerProxyServiceImpl.class);
+	
 	
 	static {
 		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
@@ -68,22 +70,28 @@ public class GeoserverLayerProxyServiceImpl implements GeoserverLayerProxyServic
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		serverURL = properties.getProperty("url");
-		user = properties.getProperty("user");
+		URL = properties.getProperty("url");
+		ID = properties.getProperty("id");
 	}
+	
+	/*public GeoserverLayerProxyServiceImpl(UserVO userVO) {
+		// TODO Auto-generated constructor stub
+		workspace = userVO.getId();
+	}*/
+	
 
 	@Override
-	public void requestGeoserverDataOutput(HttpServletRequest request, HttpServletResponse response){
+	public void requestGeoserverDataOutput(UserVO userVO, HttpServletRequest request, HttpServletResponse response){
 		String serviceType = "";
 		
 		serviceType = request.getParameter("serviceType");
 		
 		if(serviceType.toLowerCase().equals(EnGeoserverService.WFS.getStateName())){
-			this.requestGetFeature(request,response);
+			this.requestGetFeature(userVO, request,response);
 		}
 		else if(serviceType.toLowerCase().equals(EnGeoserverService.WMS.getStateName())){
 			try {
-				this.requestWMSLayer(request,response);
+				this.requestWMSLayer(userVO, request,response);
 			} catch (ServletException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -108,9 +116,9 @@ public class GeoserverLayerProxyServiceImpl implements GeoserverLayerProxyServic
 	
 	
 	@Override
-	public void requestWMSLayer(HttpServletRequest request, HttpServletResponse response)
+	public void requestWMSLayer(UserVO userVO, HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		WMSGetMap wmsGetMap = this.createWMSGetMap(request);
+		WMSGetMap wmsGetMap = this.createWMSGetMap(userVO, request);
 		DTGeoserverServiceManager geoserverService = new DTGeoserverServiceManagerImpl(request,response);
 		geoserverService.requestWMSGetMap(wmsGetMap);
 	}
@@ -135,8 +143,8 @@ public class GeoserverLayerProxyServiceImpl implements GeoserverLayerProxyServic
 	}
 	*/
 	
-	private WMSGetMap createWMSGetMap(HttpServletRequest request){
-		 String serverURL = this.serverURL + "/" + user + "/wms";
+	private WMSGetMap createWMSGetMap(UserVO userVO, HttpServletRequest request){
+		 String serverURL = this.URL + "/" + userVO.getId() + "/wms";
 		 String version="";
 		 String format="";
 		 String layers="";
@@ -217,16 +225,16 @@ public class GeoserverLayerProxyServiceImpl implements GeoserverLayerProxyServic
 	}
 	
 	@Override
-	public void requestGetFeature(HttpServletRequest request, HttpServletResponse response){
+	public void requestGetFeature(UserVO userVO, HttpServletRequest request, HttpServletResponse response){
 //		String urlParam = this.createGetFeatureInfoURL(request);
-		WFSGetFeature wfsGetFeature = this.createWFSGetFeature(request);
+		WFSGetFeature wfsGetFeature = this.createWFSGetFeature(userVO, request);
 		DTGeoserverServiceManager geoserverService = new DTGeoserverServiceManagerImpl(request,response);
 		geoserverService.requestWFSGetFeature(wfsGetFeature);
 	};
 	
 	@SuppressWarnings("unused")
-	private WFSGetFeature createWFSGetFeature(HttpServletRequest request) {
-		String serverURL = this.serverURL + "/" + user + "/wfs"; 
+	private WFSGetFeature createWFSGetFeature(UserVO userVO, HttpServletRequest request) {
+		String serverURL = this.URL + "/" + userVO.getId() + "/wfs"; 
 		String version = "";
 		String typeName = "";
 		int maxFeatures = 0;

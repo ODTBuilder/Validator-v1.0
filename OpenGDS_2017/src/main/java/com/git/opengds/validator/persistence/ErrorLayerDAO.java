@@ -20,16 +20,18 @@ package com.git.opengds.validator.persistence;
 import java.util.HashMap;
 import java.util.List;
 
+import com.git.opengds.user.domain.UserVO;
+
 public interface ErrorLayerDAO {
 
-	public void createErrorLayerTb(HashMap<String, Object> createQuery);
+	public void createErrorLayerTb(UserVO userVO, HashMap<String, Object> createQuery);
 
-	public void insertErrorFeature(HashMap<String, Object> insertQuery);
+	public void insertErrorFeature(UserVO userVO, HashMap<String, Object> insertQuery);
 
-	public List<HashMap<String, Object>> selectErrorFeatures(HashMap<String, Object> selectQuery);
+	public List<HashMap<String, Object>> selectErrorFeatures(UserVO userVO, HashMap<String, Object> selectQuery);
 	
-	public List<HashMap<String, Object>> selectAllErrorFeatures(HashMap<String, Object> selectQuery);
+	public List<HashMap<String, Object>> selectAllErrorFeatures(UserVO userVO, HashMap<String, Object> selectQuery);
 	
-	public void dropErrorLayerTb(HashMap<String, Object> dropQuery);
+	public void dropErrorLayerTb(UserVO userVO, HashMap<String, Object> dropQuery);
 
 }

@@ -36,10 +36,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.git.gdsbuilder.geolayer.data.DTGeoGroupLayerList;
 import com.git.gdsbuilder.geolayer.data.DTGeoLayerList;
+import com.git.opengds.common.AbstractController;
 import com.git.opengds.geoserver.service.GeoserverLayerProxyService;
 import com.git.opengds.geoserver.service.GeoserverLayerProxyServiceImpl;
 import com.git.opengds.geoserver.service.GeoserverService;
 import com.git.opengds.geoserver.service.GeoserverServiceImpl;
+import com.git.opengds.user.domain.UserVO;
+import com.git.opengds.user.domain.UserVO.EnUserType;
 
 
 /** 
@@ -49,20 +52,22 @@ import com.git.opengds.geoserver.service.GeoserverServiceImpl;
 * @date 2017. 4. 3. 오후 2:16:03 
 *  
 */
-@Controller("geoserver2Controller")
-@RequestMapping("/geoserver2")
-public class GeoserverController{
+@Controller("geoserverController")
+@RequestMapping("/geoserver")
+public class GeoserverController extends AbstractController{
+	
 
 	@Autowired
-	private GeoserverService geoserverService = new GeoserverServiceImpl();
+	private GeoserverService geoserverService;
 	
 	@Autowired
-	private GeoserverLayerProxyService proService = new GeoserverLayerProxyServiceImpl();
+	private GeoserverLayerProxyService proService;
 	
 	
 	@RequestMapping(value="/downloadRequest.do")
 	public void geoserverDataDownload(HttpServletRequest request , HttpServletResponse response){
-		proService.requestGeoserverDataOutput(request, response);
+		UserVO generalUser  = (UserVO) getSession(request,EnUserType.GENERAL.getTypeName());
+		proService.requestGeoserverDataOutput(generalUser,request, response);
 	}
 	
 	
@@ -76,7 +81,11 @@ public class GeoserverController{
 	@RequestMapping(value = "/getGeolayerCollectionTree.ajax")
 	@ResponseBody
 	public JSONArray getGeolayerCollectionTree(HttpServletRequest request){
-		JSONArray array = geoserverService.getGeoserverLayerCollectionTree();
+		UserVO generalUser  = (UserVO) getSession(request,EnUserType.GENERAL.getTypeName());
+		if(generalUser==null){
+			return null;
+		}
+		JSONArray array = geoserverService.getGeoserverLayerCollectionTree(generalUser);
 		return array;
 	}
  
@@ -109,7 +118,8 @@ public class GeoserverController{
  	@RequestMapping(value="geoserverWMSLayerLoad.do")
 	@ResponseBody
 	public void geoserverWMSLoad(HttpServletRequest request , HttpServletResponse response) throws ServletException, IOException {
- 		proService.requestWMSLayer(request, response);
+ 		UserVO generalUser  = (UserVO) getSession(request,EnUserType.GENERAL.getTypeName());
+ 		proService.requestWMSLayer(generalUser,request, response);
 	}
  	
  	
@@ -126,7 +136,8 @@ public class GeoserverController{
  	@RequestMapping(value="geoserverWFSGetFeature.ajax")
 	@ResponseBody
 	public void geoserverWFSGetFeature(HttpServletRequest request , HttpServletResponse response) throws ServletException, IOException {
-		proService.requestGetFeature(request, response);
+ 		UserVO generalUser  = (UserVO) getSession(request,EnUserType.GENERAL.getTypeName());
+		proService.requestGetFeature(generalUser,request, response);
 	}
 	
 	/**
@@ -142,13 +153,17 @@ public class GeoserverController{
 	@RequestMapping(value="getGeoLayerInfoList.ajax")
 	@ResponseBody
 	public DTGeoLayerList getGeoLayerList(HttpServletRequest request , @RequestBody JSONObject jsonObject){
+		UserVO generalUser  = (UserVO) getSession(request,EnUserType.GENERAL.getTypeName());
+		if(generalUser==null){
+			return null;
+		}
 		List<String> geoLayerList = new ArrayList<String>();
 		geoLayerList = (ArrayList<String>) jsonObject.get("geoLayerList");
 		if(geoLayerList.size()==0){
 			return null; 
 		}
 		else
-			return geoserverService.getGeoLayerList((ArrayList<String>) geoLayerList);
+			return geoserverService.getGeoLayerList(generalUser,(ArrayList<String>) geoLayerList);
 	}
 	
 	/**
@@ -164,13 +179,17 @@ public class GeoserverController{
 	@RequestMapping(value="layerDuplicateCheck.ajax")
 	@ResponseBody
 	public JSONObject duplicateCheck(HttpServletRequest request , @RequestBody JSONObject jsonObject){
+		UserVO generalUser  = (UserVO) getSession(request,EnUserType.GENERAL.getTypeName());
+		if(generalUser==null){
+			return null;
+		}
 		List<String> layerList = new ArrayList<String>();
 		layerList = (ArrayList<String>) jsonObject.get("layerList");
 		if(layerList.size()==0){
 			return null; 
 		}
 		else
-			return geoserverService.duplicateCheck((ArrayList<String>) layerList);
+			return geoserverService.duplicateCheck(generalUser,(ArrayList<String>) layerList);
 	}
 	
 	
@@ -187,13 +206,17 @@ public class GeoserverController{
 	@RequestMapping(value="getGeoGroupLayerInfoList.ajax")
 	@ResponseBody
 	public DTGeoGroupLayerList getGeoGroupLayerInfoList(HttpServletRequest request , @RequestBody JSONObject jsonObject){
+		UserVO generalUser  = (UserVO) getSession(request,EnUserType.GENERAL.getTypeName());
+		if(generalUser==null){
+			return null;
+		}
 		List<String> geoLayerList = new ArrayList<String>();
 		geoLayerList = (ArrayList<String>) jsonObject.get("geoLayerList");
 		if(geoLayerList.size()==0){
 			return null;
 		}
 		else
-			return geoserverService.getGeoGroupLayerList((ArrayList<String>) geoLayerList);
+			return geoserverService.getGeoGroupLayerList(generalUser,(ArrayList<String>) geoLayerList);
 	}
 	
 	
@@ -201,7 +224,11 @@ public class GeoserverController{
 	@RequestMapping(value = "/getGeoserverStyleList.ajax")
 	@ResponseBody
 	public List<String> getGeoserverStyleList(HttpServletRequest request){
-		return geoserverService.getGeoserverLayerCollectionTree();
+		UserVO generalUser  = (UserVO) getSession(request,EnUserType.GENERAL.getTypeName());
+		if(generalUser==null){
+			return null;
+		}
+		return geoserverService.getGeoserverLayerCollectionTree(generalUser);
 	}
  
 	
@@ -209,6 +236,7 @@ public class GeoserverController{
 	@RequestMapping(value="publishGeoserverStyle.do")
 	@ResponseBody
 	public void publishGeoserverStyle(HttpServletRequest request , @RequestBody JSONObject jsonObject){
+		UserVO generalUser  = (UserVO) getSession(request,EnUserType.GENERAL.getTypeName());
 		String sldBody = (String) jsonObject.get("sldBody");
 		String name = (String) jsonObject.get("name");
 		
@@ -218,6 +246,7 @@ public class GeoserverController{
 	@RequestMapping(value="updateGeoserverStyle.do")
 	@ResponseBody
 	public void updateGeoserverStyle(HttpServletRequest request , @RequestBody JSONObject jsonObject){
+		UserVO generalUser  = (UserVO) getSession(request,EnUserType.GENERAL.getTypeName());
 		String sldBody = (String) jsonObject.get("sldBody");
 		String name = (String) jsonObject.get("name");
 		
@@ -227,8 +256,8 @@ public class GeoserverController{
 	@RequestMapping(value="removeGeoserverStyle.do")
 	@ResponseBody
 	public void removeGeoserverStyle(HttpServletRequest request , @RequestBody JSONObject jsonObject){
+		UserVO generalUser  = (UserVO) getSession(request,EnUserType.GENERAL.getTypeName());
 		String name = (String) jsonObject.get("name");
-		
 		geoserverService.removeStyle(name);
 	}
 }

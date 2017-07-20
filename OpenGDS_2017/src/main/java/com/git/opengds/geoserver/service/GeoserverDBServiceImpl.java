@@ -5,11 +5,12 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.git.gdsbuilder.FileRead.en.EnFileFormat;
 import com.git.opengds.geoserver.persistence.GeoserverDAO;
+import com.git.opengds.geoserver.persistence.GeoserverDAOImpl;
+import com.git.opengds.user.domain.UserVO;
 
 @Service
 public class GeoserverDBServiceImpl implements GeoserverDBService{
@@ -17,8 +18,13 @@ public class GeoserverDBServiceImpl implements GeoserverDBService{
 	@Inject
 	private GeoserverDAO geoserverDAO;
 	
+	/*public GeoserverDBServiceImpl(UserVO userVO) {
+		// TODO Auto-generated constructor stub
+		geoserverDAO = new GeoserverDAOImpl(userVO);
+	}
+	*/
 	@Override
-	public boolean selectEditLayerDuplicateCheck(EnFileFormat fileFormat, String fileName, String layerName){
+	public boolean selectEditLayerDuplicateCheck(UserVO userVO, EnFileFormat fileFormat, String fileName, String layerName){
 		boolean dupFlag = true;
 		Map<String, Object> paramsMap = new HashMap<String, Object>();
 		if(fileFormat == EnFileFormat.DXF){
@@ -52,7 +58,7 @@ public class GeoserverDBServiceImpl implements GeoserverDBService{
 			return false;
 		}
 		
-		dupFlag = geoserverDAO.selectEditLayerDuplicateCheck(paramsMap);
+		dupFlag = geoserverDAO.selectEditLayerDuplicateCheck(userVO, paramsMap);
 		
 		return dupFlag;
 	};

@@ -155,6 +155,7 @@
       dictInvalidFileNameSC: "It is not possible to include special characters in file name.", //파일이름 특수문자 에러메세지 추가
       dictInvalidFileNameByte: "File name must be 30 bytes or less in length", //파일이름 길이 에러메세지 추가
       dictInvalidFileDuplicate : "The file exists on the server", //파일 중복 메세지
+      dictInvalidFilePublish : "Failed to publish layer.",
       dictResponseError: "Server responded with {{statusCode}} code.",
       dictCancelUpload: "Cancel upload",
       dictCancelUploadConfirmation: "Are you sure you want to cancel this upload?",
@@ -638,7 +639,7 @@
         	//모든 파일 업로드 및 발행완료시 변환
         	  //진행중
         	if(this.options.uploading){ // 업로드 진행중일시
-	        	$('#total-progress-in').text('Uploaded and published successfully.');
+	        	$('#total-progress-in').text('Your request is complete.');
 	        	$('#total-progress-in').addClass("progress-bar-success");
 	        	$('#total-progress').removeClass("active");
         	}
@@ -1108,7 +1109,7 @@
 			Dropzone.prototype.epsgSearch(this,epsgCode);
 		}
 		else{
-			alertPopup('warning','WARNING','Please enter the code')
+			alertPopup('warning','경고','좌표체계 코드를 입력해주세요.')
 		}
 	}
    
@@ -1134,14 +1135,14 @@
 							$("input[id=epsgtext]").attr("readonly",true);
 							dropzone.options.params = {"epsg":$('#epsgtext').val()};
 							dropzone.initFileTypeChange();
-							alertPopup('success','Success.','Supports corresponding coordinate codes.')
+							alertPopup('success','성공','지원하는 좌표체계 코드입니다.')
 //							gitrnd.setProjection(code, name, proj4def, bbox);
 							return;
 						}
 					}
 				}
 			}
-			alertPopup('warning','Please try again.','This code is not supported.')
+			alertPopup('warning','다시시도해주세요.','지원하지 않는 좌표코드입니다.')
 		});
 	}
     
@@ -1193,10 +1194,12 @@
     Dropzone.prototype.enqueueFiles = function(files) {
       var file, _i, _len;
       
+      if(files.length!=0){
       //파일프로그레스바 초기화
-      $('#total-progress-in').removeClass("progress-bar-success");
-      $('#total-progress-in').removeClass("progress-bar-danger");
-  	  $('#total-progress').addClass("active");
+	      $('#total-progress-in').removeClass("progress-bar-success");
+	      $('#total-progress-in').removeClass("progress-bar-danger");
+	  	  $('#total-progress').addClass("active");
+      }
       for (_i = 0, _len = files.length; _i < _len; _i++) {
         file = files[_i];
         this.enqueueFile(file);
@@ -1587,12 +1590,34 @@
       return xhr.send(formData);
     };
 
+    
+    //업데이트중
     Dropzone.prototype._finished = function(files, responseText, e) {
       var file, _i, _len;
+      var fileResponse = {};
       for (_i = 0, _len = files.length; _i < _len; _i++) {
         file = files[_i];
-        file.status = Dropzone.SUCCESS;
-        this.emit("success", file, responseText, this.options.dictSuccessMessage, e); // success 메세지 추가 
+        
+        if(responseText[0]!=null){
+        fileResponse.uploadFlag = responseText[0].uploadFlag;
+        fileResponse.dbInsertFlag = responseText[0].dbInsertFlag;
+        fileResponse.serverPublishFlag = responseText[0].serverPublishFlag;
+            if(fileResponse.uploadFlag&&fileResponse.dbInsertFlag&&fileResponse.serverPublishFlag){
+	        	file.status = Dropzone.SUCCESS;
+	        	this.emit("success", file, responseText, this.options.dictSuccessMessage, e); // success 메세지 추가
+	        }
+	        else{
+	        	file.status = Dropzone.ERROR;
+	        	file.previewElement.classList.add("dz-success"); //프로그래스바 없애기
+	        	this.emit("error", file, this.options.dictInvalidFilePublish);
+	        }
+        }else{
+        	file.status = Dropzone.ERROR;
+        	file.previewElement.classList.add("dz-success"); //프로그래스바 없애기
+        	this.emit("error", file, this.options.dictInvalidFilePublish);
+        }
+        	
+         
         this.emit("complete", file);
       }
       if (this.options.uploadMultiple) {

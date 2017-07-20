@@ -22,12 +22,13 @@ import java.util.Map;
 
 import com.git.gdsbuilder.type.validate.error.ErrorLayer;
 import com.git.gdsbuilder.type.validate.error.ErrorLayerList;
+import com.git.opengds.user.domain.UserVO;
 
 public interface ErrorLayerService {
 
-	public boolean publishErrorLayerList(ErrorLayerList errLayerList)
+	public boolean publishErrorLayerList(UserVO userVO, ErrorLayerList errLayerList)
 			throws IllegalArgumentException, MalformedURLException;
 
-	public Map<String, Object> publishErrorLayer(ErrorLayer errLayer)
+	public Map<String, Object> publishErrorLayer(UserVO userVO, ErrorLayer errLayer)
 			throws IllegalArgumentException, MalformedURLException;
 }

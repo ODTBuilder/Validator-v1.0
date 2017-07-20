@@ -17,8 +17,10 @@
 
 package com.git.opengds.editor.service;
 
+import com.git.opengds.user.domain.UserVO;
+
 public interface EditService {
 
-	public void editLayerCollection(String editJSON) throws Exception;
+	public void editLayerCollection(UserVO userVO, String editJSON) throws Exception;
 
 }

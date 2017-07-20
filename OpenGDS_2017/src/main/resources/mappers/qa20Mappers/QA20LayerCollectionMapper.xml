@@ -31,6 +31,11 @@
 		${dropQuery}
 	</update>
 
+	<select id="selectAllfeatures" parameterType="hashMap"
+		resultType="hashMap">
+		${selectAllQuery}
+	</select>
+
 	<select id="selectCountAllFeatures" parameterType="hashMap"
 		resultType="hashMap">
 		${countQuery}
@@ -68,6 +73,11 @@
 		${selectQuery}
 	</select>
 
+	<select id="selectAllLayerMeata" parameterType="hashMap"
+		resultType="hashMap">
+		${selectAllQuery}
+	</select>
+
 	<select id="updateQA20LayerMetadataLayerName" parameterType="hashMap"
 		resultType="hashMap">
 		${updateQuery}
@@ -96,25 +106,50 @@
 		${updateQuery}
 	</select>
 
+	<select id="selectNdaAspatialField" parameterType="hashMap"
+		resultType="hashMap">
+		${selectAllQuery}
+	</select>
+
 	<!-- ngi_point_represent -->
 	<insert id="insertPointRepresent" parameterType="hashmap">
 		${insertQuery}
 	</insert>
+
+	<select id="selectPointRepresent" parameterType="hashMap"
+		resultType="hashMap">
+		${selectAllQuery}
+	</select>
 
 	<!-- ngi_linestring_represent -->
 	<insert id="insertLineStringRepresent" parameterType="hashmap">
 		${insertQuery}
 	</insert>
 
+	<select id="selectLineStringRepresent" parameterType="hashMap"
+		resultType="hashMap">
+		${selectAllQuery}
+	</select>
+
 	<!-- ngi_region_represent -->
 	<insert id="insertRegionRepresent" parameterType="hashmap">
 		${insertQuery}
 	</insert>
 
+	<select id="selectResionRepresent" parameterType="hashMap"
+		resultType="hashMap">
+		${selectAllQuery}
+	</select>
+
 	<!-- ngi_text_represent -->
 	<insert id="insertTextRepresent" parameterType="hashmap">
 		${insertQuery}
 	</insert>
+
+	<select id="selectTextRepresent" parameterType="hashMap"
+		resultType="hashMap">
+		${selectAllQuery}
+	</select>
 
 	<select id="deleteHeader" parameterType="hashMap">
 		${deleteQuery}

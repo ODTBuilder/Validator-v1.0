@@ -241,7 +241,6 @@ public class GeoserverLayerCollectionTree extends JSONArray {
 							layerJson.put("text", lastName);
 							layerJson.put("type", "g_layer_shp");
 						}
-
 						super.add(layerJson);
 					} else {
 						int dash = cutLayerName.indexOf("_");
@@ -255,12 +254,11 @@ public class GeoserverLayerCollectionTree extends JSONArray {
 							String fileName = lastName.substring(0, div);
 							String lastLayerName = lastName.substring(div + 1);
 
-							int layerTypeDash = lastLayerName.indexOf("_");
+							int layerTypeDash = lastLayerName.lastIndexOf("_");
 							String exTypelayerName = lastLayerName.substring(0, layerTypeDash);
 							String layerType = lastLayerName.substring(layerTypeDash + 1);
 							String suLayerType = "";
 
-							String codeFileName = preName + "_" + fileType + "_" + fileName;
 							String groupName = "gro_" + fileType + "_" + fileName;
 
 							JSONObject fileNameJson = new JSONObject();

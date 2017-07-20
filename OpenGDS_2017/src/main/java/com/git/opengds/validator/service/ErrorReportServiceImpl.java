@@ -24,13 +24,8 @@ import javax.inject.Inject;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.stereotype.Service;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.transaction.TransactionDefinition;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.git.gdsbuilder.type.validate.layer.ValidateLayerType;
 import com.git.gdsbuilder.validator.result.DetailsValidateResultList;
@@ -40,6 +35,7 @@ import com.git.opengds.file.ngi.dbManager.QA20DBQueryManager;
 import com.git.opengds.file.ngi.persistence.QA20LayerCollectionDAO;
 import com.git.opengds.parser.error.ErrorReportParser;
 import com.git.opengds.parser.validate.ValidateTypeParser;
+import com.git.opengds.user.domain.UserVO;
 import com.git.opengds.validator.dbManager.ErrorLayerDBQueryManager;
 import com.git.opengds.validator.persistence.ErrorLayerDAO;
 
@@ -53,10 +49,16 @@ public class ErrorReportServiceImpl implements ErrorReportService {
 	@Inject
 	private QA20LayerCollectionDAO qa20LayerCollectionDAO;
 
-	@Autowired
-	private DataSourceTransactionManager txManager;
+/*	@Autowired
+	private DataSourceTransactionManager txManager;*/
+	
+	/*public ErrorReportServiceImpl(UserVO userVO) {
+		// TODO Auto-generated constructor stub
+		errLayerDAO = new ErrorLayerDAOImpl(userVO);
+		qa20LayerCollectionDAO = new QA20LayerCollectionDAOImpl(userVO);
+	}*/
 
-	public JSONObject getISOReport(String layerCollectionName, JSONObject jsonObject) {
+	public JSONObject getISOReport(UserVO userVO, String layerCollectionName, JSONObject jsonObject) {
 
 		// 옵션
 		JSONArray typeValidates = (JSONArray) jsonObject.get("typeValidate");
@@ -67,9 +69,9 @@ public class ErrorReportServiceImpl implements ErrorReportService {
 			ErrorLayerDBQueryManager errorLayerDBQueryManager = new ErrorLayerDBQueryManager();
 
 			// transaction
-			DefaultTransactionDefinition def = new DefaultTransactionDefinition();
+		/*	DefaultTransactionDefinition def = new DefaultTransactionDefinition();
 			def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
-			TransactionStatus status = txManager.getTransaction(def);
+			TransactionStatus status = txManager.getTransaction(def);*/
 			try {
 				for (int j = 0; j < typeValidates.size(); j++) {
 					JSONObject layerType = (JSONObject) typeValidates.get(j);
@@ -83,20 +85,20 @@ public class ErrorReportServiceImpl implements ErrorReportService {
 					HashMap<String, Object> selectFeatureCountQuery = qaLayerManager
 							.selectCountAllQA20FeaturesQuery(typeName, layerCollectionName, layerIDList);
 					HashMap<String, Object> featureCount = qa20LayerCollectionDAO
-							.selectCountAllQA20Features(selectFeatureCountQuery);
+							.selectCountAllQA20Features(userVO, selectFeatureCountQuery);
 
 					// get typeLayer's error feature count
 					HashMap<String, Object> selectErrorFeatureQuery = errorLayerDBQueryManager
 							.selecctErrorFeaturesQuery(layerCollectionName, layerIDList);
 					List<HashMap<String, Object>> errFeatures = errLayerDAO
-							.selectErrorFeatures(selectErrorFeatureQuery);
+							.selectErrorFeatures(userVO, selectErrorFeatureQuery);
 
 					// get isoReportField
 					ISOReportField isoField = ErrorReportParser.parseISOErrorReport(typeName, featureCount, errFeatures,
 							weight);
 					isoFieldList.add(isoField);
 				}
-				txManager.commit(status);
+//				txManager.commit(status);
 				JSONObject isoReport = new JSONObject();
 				JSONArray fields = isoFieldList.parseJSON();
 				double totalAccuracy = isoFieldList.getTotalAccuracy();
@@ -104,7 +106,7 @@ public class ErrorReportServiceImpl implements ErrorReportService {
 				isoReport.put("totalAccuracy", totalAccuracy);
 				return isoReport;
 			} catch (Exception e) {
-				txManager.rollback(status);
+//				txManager.rollback(status);
 				return null;
 			}
 		} else {
@@ -112,26 +114,26 @@ public class ErrorReportServiceImpl implements ErrorReportService {
 		}
 	}
 
-	public JSONObject getDetailsReport(String layerCollectionName) {
+	public JSONObject getDetailsReport(UserVO userVO, String layerCollectionName) {
 		ErrorLayerDBQueryManager errorLayerDBQueryManager = new ErrorLayerDBQueryManager();
 		HashMap<String, Object> selectAllQuery = errorLayerDBQueryManager
 				.selectAllErrorFeaturesQuery(layerCollectionName);
 
-		DefaultTransactionDefinition def = new DefaultTransactionDefinition();
+	/*	DefaultTransactionDefinition def = new DefaultTransactionDefinition();
 		def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
-		TransactionStatus status = txManager.getTransaction(def);
+		TransactionStatus status = txManager.getTransaction(def);*/
 		try {
-			List<HashMap<String, Object>> errAllFeatures = errLayerDAO.selectAllErrorFeatures(selectAllQuery);
+			List<HashMap<String, Object>> errAllFeatures = errLayerDAO.selectAllErrorFeatures(userVO, selectAllQuery);
 			DetailsValidateResultList detailList = ErrorReportParser.parseDetailsErrorReport(errAllFeatures);
 			if (errAllFeatures.size() != 0) {
 				JSONObject detailReport = new JSONObject();
 				JSONArray fields = detailList.parseJSON();
 				detailReport.put("fields", fields);
-				txManager.commit(status);
+//				txManager.commit(status);
 				return detailReport;
 			}
 		} catch (Exception e) {
-			txManager.rollback(status);
+//			txManager.rollback(status);
 			return null;
 		}
 		return null;

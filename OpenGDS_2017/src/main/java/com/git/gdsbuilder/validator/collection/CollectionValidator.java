@@ -29,6 +29,7 @@
  *    This library is distributed in the hope that it will be useful,
  *    but WITHOUT ANY WARRANTY; without even the implied warranty of
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    OpenGDS_2018
  *    Lesser General Public License for more details.
  */
 
@@ -85,6 +86,7 @@ import com.git.gdsbuilder.type.validate.option.RefZValueMiss;
 import com.git.gdsbuilder.type.validate.option.SelfEntity;
 import com.git.gdsbuilder.type.validate.option.SmallArea;
 import com.git.gdsbuilder.type.validate.option.SmallLength;
+import com.git.gdsbuilder.type.validate.option.UnderShoot;
 import com.git.gdsbuilder.type.validate.option.UselessEntity;
 import com.git.gdsbuilder.type.validate.option.UselessPoint;
 import com.git.gdsbuilder.type.validate.option.ValidatorOption;
@@ -116,6 +118,7 @@ public class CollectionValidator {
 	protected static double lineOverTolorence = 0.01; // 중심선이 경계면 초과 (m2)
 	protected static double areaRatioTolorence = 0.1; // 지류계와 경지계 불일치 (%)
 	protected static double spatialAccuracyTolorence = 0.01; // 공간분석 정밀도 설정 (m)
+	protected static double underShootTolorence = 0.2; // 공간분석 정밀도 설정 (m)
 
 	ValidateLayerCollectionList validateLayerCollectionList;
 	ErrorLayerList errLayerList;
@@ -211,27 +214,28 @@ public class CollectionValidator {
 		for (int i = 0; i < layerCollections.size(); i++) {
 			GeoLayerCollection collection = layerCollections.get(i);
 			String collectionName = collection.getCollectionName();
-			try {
+//			try {
 				ErrorLayer errorLayer = new ErrorLayer();
 				errorLayer.setCollectionName(collectionName);
 				errorLayer.setCollectionType(this.collectionType);
 
 				// layerMiss 검수
-		//		layerMissValidate(types, collection, errorLayer);
+
+				layerMissValidate(types, collection, errorLayer);
 
 				// geometric 검수
-		//		geometricValidate(types, collection, errorLayer);
+				geometricValidate(types, collection, errorLayer);
 
 				// attribute 검수
-		//		attributeValidate(types, collection, errorLayer);
+				attributeValidate(types, collection, errorLayer);
 
 				// 인접도엽 검수
 				closeCollectionValidate(types, mapSystemRule, collection, "", errorLayer);
 				errLayerList.add(errorLayer);
 				progress.put(collection.getCollectionName(), 2);
-			} catch (Exception e) {
-				progress.put(collection.getCollectionName(), 3);
-			}
+//			} catch (Exception e) {
+//				progress.put(collection.getCollectionName(), 3);
+//			}
 		}
 	}
 
@@ -427,13 +431,10 @@ public class CollectionValidator {
 								errorLayer.mergeErrorLayer(typeErrorLayer);
 							}
 						}
-						/*
-						 * if (option instanceof UnderShoot) { double tolerence
-						 * = ((UnderShoot) option).getTolerence();
-						 * typeErrorLayer =
-						 * layerValidator.validateUnderShoot(neatLayer,
-						 * tolerence); }
-						 */
+						if (option instanceof UnderShoot) {
+							double tolerence = ((UnderShoot) option).getTolerence();
+							typeErrorLayer = layerValidator.validateUnderShoot(neatLayer, tolerence);
+						}
 						if (option instanceof UselessEntity) {
 							typeErrorLayer = layerValidator.validateUselessEntity();
 							if (typeErrorLayer != null) {
@@ -644,11 +645,10 @@ public class CollectionValidator {
 			LineString rightLineString = geometryFactory.createLineString(rightLineCoords);
 			// System.out.println("right: " +
 			// rightLineString.buffer(0.01).getArea());
-
-			Polygon topBuffer = (Polygon) topLineString.buffer(0.01);
-			Polygon bottomBuffer = (Polygon) bottomLineString.buffer(0.01);
-			Polygon leftBuffer = (Polygon) leftLineString.buffer(0.01);
-			Polygon rightBuffer = (Polygon) rightLineString.buffer(0.01);
+			Polygon topBuffer = (Polygon) topLineString.buffer(underShootTolorence);
+			Polygon bottomBuffer = (Polygon) bottomLineString.buffer(underShootTolorence);
+			Polygon leftBuffer = (Polygon) leftLineString.buffer(underShootTolorence);
+			Polygon rightBuffer = (Polygon) rightLineString.buffer(underShootTolorence);
 
 			Map<MapSystemRuleType, LineString> collectionBoundary = new HashMap<MapSystemRule.MapSystemRuleType, LineString>();
 
@@ -743,7 +743,7 @@ public class CollectionValidator {
 			nearFeaturesGetBoundary.put(MapSystemRuleType.BOTTOM, bottomBuffer);
 			nearFeaturesGetBoundary.put(MapSystemRuleType.LEFT, leftBuffer);
 			nearFeaturesGetBoundary.put(MapSystemRuleType.RIGHT, rightBuffer);
-			
+
 			for (ValidateLayerType layerType : types) {
 				GeoLayerList typeLayers = validateLayerCollectionList.getTypeLayers(layerType.getTypeName(),
 						layerCollection);
@@ -774,11 +774,17 @@ public class CollectionValidator {
 									collectionOptions.putRefAttributeMissOption(colunms);
 								}
 								if (option instanceof RefZValueMiss) {
-									String colunm = ((RefZValueMiss) option).getRefZValueMissOpt(layerName);
-									collectionOptions.putRefZValueMissOption(colunm);
+									HashMap<String, List<String>> opts = ((RefZValueMiss) option)
+											.getRefZValueMissOpts();
+									List<String> colunms = opts.get(layerName);
+									collectionOptions.putRefZValueMissOption(colunms);
 								}
 								if (option instanceof EdgeMatchMiss) {
 									collectionOptions.putEdgeMatchMissOption(true);
+								}
+								if(option instanceof UnderShoot){
+									double tolerence = ((UnderShoot) option).getTolerence();
+									collectionOptions.putUnderShootOption(tolerence);
 								}
 							}
 

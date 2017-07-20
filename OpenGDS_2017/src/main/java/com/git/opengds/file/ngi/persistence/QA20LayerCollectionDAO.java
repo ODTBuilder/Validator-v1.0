@@ -23,52 +23,69 @@ import java.util.Map;
 
 import org.postgresql.util.PSQLException;
 
+import com.git.opengds.user.domain.UserVO;
+
 public interface QA20LayerCollectionDAO {
 
-	public int insertQA20LayerCollection(Map<String, Object> collection);
+	public int insertQA20LayerCollection(UserVO userVO, Map<String, Object> collection) throws RuntimeException;
 
-	public int selectQA20LayerCollectionIdx(HashMap<String, Object> selectLayerCollectionIdxQuery);
+	public int selectQA20LayerCollectionIdx(UserVO userVO, HashMap<String, Object> selectLayerCollectionIdxQuery) throws RuntimeException;
 
-	public void createQA20LayerTb(HashMap<String, Object> hashMap) throws PSQLException;
+	public void createQA20LayerTb(UserVO userVO, HashMap<String, Object> hashMap) throws RuntimeException;
 
-	public void insertQA20Layer(HashMap<String, Object> layer) throws PSQLException;
+	public void insertQA20Layer(UserVO userVO, HashMap<String, Object> layer) throws RuntimeException;
 
-	public int dropLayer(HashMap<String, Object> dropQuery);
+	public int dropLayer(UserVO userVO, HashMap<String, Object> dropQuery) throws RuntimeException;
 
-	public int insertQA20LayerMetadata(HashMap<String, Object> metadata) throws PSQLException;
+	public int insertQA20LayerMetadata(UserVO userVO, HashMap<String, Object> metadata) throws RuntimeException;
 
-	public void insertNdaAspatialFieldDefs(HashMap<String, Object> fieldDef) throws PSQLException;
+	public void insertNdaAspatialFieldDefs(UserVO userVO, HashMap<String, Object> fieldDef) throws RuntimeException;
 
-	public void insertPointRepresent(HashMap<String, Object> hashMap) throws PSQLException;
+	public void insertPointRepresent(UserVO userVO, HashMap<String, Object> hashMap) throws RuntimeException;
 
-	public void insertLineStringRepresent(HashMap<String, Object> hashMap) throws PSQLException;
+	public void insertLineStringRepresent(UserVO userVO, HashMap<String, Object> hashMap) throws RuntimeException;
 
-	public void insertRegionRepresent(HashMap<String, Object> hashMap) throws PSQLException;
+	public void insertRegionRepresent(UserVO userVO, HashMap<String, Object> hashMap) throws RuntimeException;
 
-	public void insertTextRepresent(HashMap<String, Object> hashMap) throws PSQLException;
+	public void insertTextRepresent(UserVO userVO, HashMap<String, Object> hashMap) throws RuntimeException;
 
-	public HashMap<String, Object> selectCountAllQA20Features(HashMap<String, Object> countquery);
+	public HashMap<String, Object> selectCountAllQA20Features(UserVO userVO, HashMap<String, Object> countquery)throws RuntimeException;
 
-	public HashMap<String, Object> selectQA20FeatureIdx(HashMap<String, Object> selectQuery);
+	public HashMap<String, Object> selectQA20FeatureIdx(UserVO userVO, HashMap<String, Object> selectQuery)throws RuntimeException;
 
-	public int deleteQA20Feature(HashMap<String, Object> deleteQuery);
+	public int deleteQA20Feature(UserVO userVO, HashMap<String, Object> deleteQuery) throws RuntimeException;
 
-	public void insertQA20Feature(HashMap<String, Object> insertQuery);
+	public void insertQA20Feature(UserVO userVO, HashMap<String, Object> insertQuery) throws RuntimeException;
 
-	public List<HashMap<String, Object>> selectQA20LayerMetadataIdxs(HashMap<String, Object> metadataIdxQuery);
+	public List<HashMap<String, Object>> selectQA20LayerMetadataIdxs(UserVO userVO, HashMap<String, Object> metadataIdxQuery) throws RuntimeException;
 
-	public int selectQA20LayerMetadataIdx(HashMap<String, Object> metadataIdxQuery);
+	public int selectQA20LayerMetadataIdx(UserVO userVO, HashMap<String, Object> metadataIdxQuery) throws RuntimeException;
 
-	public HashMap<String, Object> selectQA20LayerTableName(HashMap<String, Object> layerTbNameQuery);
+	public HashMap<String, Object> selectQA20LayerTableName(UserVO userVO, HashMap<String, Object> layerTbNameQuery) throws RuntimeException;
 
-	public void deleteField(HashMap<String, Object> deleteTextRepQuery);
+	public void deleteField(UserVO userVO, HashMap<String, Object> deleteTextRepQuery) throws RuntimeException;
 
-	public void updateQA20LayerMetadataLayerName(HashMap<String, Object> updateLayerNameQuery);
+	public void updateQA20LayerMetadataLayerName(UserVO userVO, HashMap<String, Object> updateLayerNameQuery) throws RuntimeException;
 
-	public void updateQA20LayerMetadataBoundary(HashMap<String, Object> updateBoundaryQuery);
+	public void updateQA20LayerMetadataBoundary(UserVO userVO, HashMap<String, Object> updateBoundaryQuery) throws RuntimeException;
 
-	public HashMap<String, Object> selectNdaAspatialFieldFidxs(HashMap<String, Object> selectNadFieldsQuery);
+	public HashMap<String, Object> selectNdaAspatialFieldFidxs(UserVO userVO, HashMap<String, Object> selectNadFieldsQuery) throws RuntimeException;
 
-	public void updateNdaAspatialField(HashMap<String, Object> updateFieldQuery);
+	public void updateNdaAspatialField(UserVO userVO, HashMap<String, Object> updateFieldQuery) throws RuntimeException;
+
+	public HashMap<String, Object> selectQA20LayerMeata(UserVO userVO, HashMap<String, Object> selectAllMetaIdxQuery);
+
+	public List<HashMap<String, Object>> selectTextRepresent(UserVO userVO, HashMap<String, Object> selectTextRepresentQuery) throws RuntimeException;
+
+	public List<HashMap<String, Object>> selectResionRepresent(UserVO userVO, HashMap<String, Object> selectResionRepresentQuery) throws RuntimeException;
+
+	public List<HashMap<String, Object>> selectPointRepresent(UserVO userVO, HashMap<String, Object> selectPointRepresentQuery) throws RuntimeException;
+
+	public List<HashMap<String, Object>> selectLineStringRepresent(
+			UserVO userVO, HashMap<String, Object> selectLineStringRepresentQuery) throws RuntimeException;
+
+	public List<HashMap<String, Object>> selectNdaAspatialField(UserVO userVO, HashMap<String, Object> selectNdaAspatialFieldQuery) throws RuntimeException;
+
+	public List<HashMap<String, Object>> selectAllQA20Features(UserVO userVO, HashMap<String, Object> selectAllFeaturesQuery) throws RuntimeException;
 
 }

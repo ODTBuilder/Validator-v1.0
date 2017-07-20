@@ -29,6 +29,7 @@ import com.git.gdsbuilder.geolayer.data.DTGeoLayerList;
 import com.git.gdsbuilder.type.geoserver.layer.GeoLayerInfo;
 import com.git.gdsbuilder.type.geoserver.layer.GeoLayerInfoList;
 import com.git.opengds.upload.domain.FileMeta;
+import com.git.opengds.user.domain.UserVO;
 
 
 
@@ -49,7 +50,7 @@ public interface GeoserverService {
 	 * @throws IllegalArgumentException
 	 * @throws MalformedURLException FileMeta
 	 * */
-	public FileMeta dbLayerPublishGeoserver(GeoLayerInfo layerInfo) throws IllegalArgumentException, MalformedURLException;
+	public FileMeta dbLayerPublishGeoserver(UserVO userVO, GeoLayerInfo layerInfo) throws IllegalArgumentException, MalformedURLException;
 
 	/**
 	 * Geoserver에 errorLayer 발행하기
@@ -59,7 +60,7 @@ public interface GeoserverService {
 	 * */
 	public boolean errLayerListPublishGeoserver(GeoLayerInfoList geoLayerInfoList);
 	
-	public boolean errLayerPublishGeoserver(GeoLayerInfo geoLayerInfo);
+	public boolean errLayerPublishGeoserver(UserVO userVO, GeoLayerInfo geoLayerInfo);
 	
 	/**
 	 * Tree 형태의 GeoaerverLayerCollection JSONObject 객체
@@ -67,7 +68,7 @@ public interface GeoserverService {
 	 * @Date 2017. 4. 10. 오후 3:17:23
 	 * @return JSONObject - Tree 형태의 GeoaerverLayerCollection JSONObject 객체 반환
 	 * */
-	public JSONArray getGeoserverLayerCollectionTree();
+	public JSONArray getGeoserverLayerCollectionTree(UserVO userVO);
 	
 	/**
 	 * 레이어를 중복체크한다.
@@ -76,7 +77,7 @@ public interface GeoserverService {
 	 * @param layerList
 	 * @return JSONObject - {레이어명 : 중복여부}
 	 * */
-	public JSONObject duplicateCheck(ArrayList<String> layerList);
+	public JSONObject duplicateCheck(UserVO userVO, ArrayList<String> layerList);
 	
 	/**
 	 * DTGeoLayerList를 조회한다.
@@ -85,7 +86,7 @@ public interface GeoserverService {
 	 * @param layerList
 	 * @return DTGeoLayerList - 레이어명 리스트
 	 * */
-	public DTGeoLayerList getGeoLayerList(ArrayList<String> layerList);
+	public DTGeoLayerList getGeoLayerList(UserVO userVO, ArrayList<String> layerList);
 	
 	/**
 	 * DTGeoGroupLayerList를 조회한다.
@@ -94,7 +95,7 @@ public interface GeoserverService {
 	 * @param groupList
 	 * @return DTGeoGroupLayerList - 그룹레이어명 리스트
 	 * */
-	public DTGeoGroupLayerList getGeoGroupLayerList(ArrayList<String> groupList);
+	public DTGeoGroupLayerList getGeoGroupLayerList(UserVO userVO, ArrayList<String> groupList);
 	
 	/**
 	 * 단일 레이어를 삭제한다.
@@ -103,7 +104,7 @@ public interface GeoserverService {
 	 * @param layerName 삭제할 레이어 이름
 	 * @return boolean - 삭제여부
 	 * */
-	public boolean removeGeoserverLayer(final String layerName);
+	public boolean removeGeoserverLayer(UserVO userVO, final String groupLayerName,final String layerName);
 	
 	/**
 	 * 다중 레이어를 삭제한다.
@@ -112,7 +113,7 @@ public interface GeoserverService {
 	 * @param layerNameList 삭제할 레이어 이름 리스트
 	 * @return boolean - 삭제여부
 	 * */
-	public boolean removeGeoserverLayers(List<String> layerNameList);
+	public boolean removeGeoserverLayers(UserVO userVO, List<String> layerNameList);
 	
 	/**
 	 *
@@ -121,7 +122,7 @@ public interface GeoserverService {
 	 * @param groupLayerName 삭제할 그룹레이어
 	 * @return boolean - 삭제여부
 	 * */
-	public boolean removeGeoserverGroupLayer(final String groupLayerName);
+	public boolean removeGeoserverGroupLayer(UserVO userVO, final String groupLayerName);
 	
 	
 	
@@ -177,7 +178,7 @@ public interface GeoserverService {
 	 * @param attChangeFlag
 	 * @return boolean
 	 * */
-	public boolean updateFeatureType(final String orginalName,final String name,final String title,final String abstractContent,final String style, boolean attChangeFlag);
+	public boolean updateFeatureType(UserVO userVO, final String orginalName,final String name,final String title,final String abstractContent,final String style, boolean attChangeFlag);
 }
 
 

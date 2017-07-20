@@ -19,9 +19,11 @@ package com.git.opengds.validator.service;
 
 import org.json.simple.JSONObject;
 
+import com.git.opengds.user.domain.UserVO;
+
 public interface ErrorReportService {
 
-	public JSONObject getISOReport(String layerCollectionName, JSONObject jsonObject);
+	public JSONObject getISOReport(UserVO userVO, String layerCollectionName, JSONObject jsonObject);
 
-	public JSONObject getDetailsReport(String layerCollectionName);
+	public JSONObject getDetailsReport(UserVO userVO, String layerCollectionName);
 }
