@@ -288,7 +288,25 @@ html {
 			gitrnd.resize();
 		});
 
-		var lprop = new gb.edit.ModifyLayerProperties({});
+		var lrecord = new gb.edit.LayerRecord({});
+
+		var frecord = new gb.edit.FeatureRecord({
+			id : "feature_id"
+		});
+
+		var lprop = new gb.edit.ModifyLayerProperties({
+			layerRecord : lrecord,
+			featureRecord : frecord
+		});
+
+		var nlayer = new gb.edit.CreateVectorLayer({
+			refer : $('#builderClientLayer').jstreeol3(true),
+			map : map,
+			layerRecord : lrecord
+		});
+		$("#newVector").click(function() {
+			nlayer.open();
+		});
 
 		$('#builderClientLayer').jstreeol3({
 			"core" : {
@@ -300,15 +318,10 @@ html {
 			},
 			"layerproperties" : {
 				"properties" : lprop,
+				"layerRecord" : lrecord
 			},
 			plugins : [ "contextmenu", "dnd", "search", "state", "types", "sort", "visibility", "layerproperties" ]
 		});
-
-		var frecord = new gb.edit.FeatureRecord({
-			id : "feature_id"
-		});
-
-		var lrecord = new gb.edit.LayerRecord({});
 
 		var transfer = new gb.edit.RecordTransfer({
 			url : "editLayerCollection/editLayerCollection.ajax",
@@ -324,7 +337,7 @@ html {
 			url : "geoserver/geoserverWFSGetFeature.ajax",
 			map : map,
 			user : "admin",
-			record : frecord,
+			featureRecord : frecord,
 			treeInstance : $('#builderClientLayer').jstreeol3(true),
 			selected : function() {
 				return $('#builderClientLayer').jstreeol3("get_selected_layer");
@@ -456,14 +469,6 @@ html {
 		});
 		$("#srefresh").click(function() {
 			$("#builderServerLayer").jstree(true).refresh();
-		});
-
-		var nlayer = new gb.edit.CreateVectorLayer({
-			refer : $('#builderClientLayer').jstreeol3(true),
-			map : map
-		});
-		$("#newVector").click(function() {
-			nlayer.open();
 		});
 	</script>
 
