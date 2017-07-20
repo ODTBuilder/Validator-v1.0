@@ -18,7 +18,7 @@ gitbuilder.ui.EditingTool = $.widget("gitbuilder.editingtool", {
 		user : undefined,
 		selected : undefined,
 		appendTo : "body",
-		record : undefined,
+		featureRecord : undefined,
 		url : undefined
 	},
 	map : undefined,
@@ -277,7 +277,7 @@ gitbuilder.ui.EditingTool = $.widget("gitbuilder.editingtool", {
 			var obj = {};
 			obj[$(this).parent().prev().text()] = $(this).val();
 			that.feature.setProperties(obj);
-			that.options.record.update(that.getLayer(), that.feature);
+			that.options.featureRecord.update(that.getLayer(), that.feature);
 		});
 
 		this.map.on('postcompose', function(evt) {
@@ -431,7 +431,7 @@ gitbuilder.ui.EditingTool = $.widget("gitbuilder.editingtool", {
 		that.interaction.select.getFeatures().extend(cFeatures);
 		var newFeatures = [];
 		for (var j = 0; j < ids.length; j++) {
-			if (!that.options.record.isRemoved(ids[j].substring(0, ids[j].indexOf(".")), that.tempSource.getFeatureById(ids[j]))) {
+			if (!that.options.featureRecord.isRemoved(ids[j].substring(0, ids[j].indexOf(".")), that.tempSource.getFeatureById(ids[j]))) {
 				newFeatures.push(that.tempSource.getFeatureById(ids[j]));
 			}
 		}
@@ -607,30 +607,35 @@ gitbuilder.ui.EditingTool = $.widget("gitbuilder.editingtool", {
 					that.setLayer(that.updateSelected());
 					var attrInfo = that.getLayer().get("git").attribute;
 					that.feature = that.features.item(0);
-					var attr = that.features.item(0).getProperties();
-					var keys = Object.keys(attrInfo);
-					for (var i = 0; i < keys.length; i++) {
-						if (keys[i] === "geometry") {
-							continue;
+					if (!!attrInfo) {
+						var attr = that.features.item(0).getProperties();
+						var keys = Object.keys(attrInfo);
+						for (var i = 0; i < keys.length; i++) {
+							if (keys[i] === "geometry") {
+								continue;
+							}
+							var td1 = $("<td>").text(keys[i]);
+							var tform = $("<input>").addClass("gb-edit-sel-alist").attr({
+								"type" : "text"
+							}).css({
+								"width" : "100%",
+								"border" : "none"
+							}).val(attr[keys[i]]);
+							var td2 = $("<td>").append(tform);
+							var tr = $("<tr>").append(td1).append(td2);
+							that.attrTB.append(tr);
 						}
-						var td1 = $("<td>").text(keys[i]);
-						var tform = $("<input>").addClass("gb-edit-sel-alist").attr({
-							"type" : "text"
-						}).css({
-							"width" : "100%",
-							"border" : "none"
-						}).val(attr[keys[i]]);
-						var td2 = $("<td>").append(tform);
-						var tr = $("<tr>").append(td1).append(td2);
-						that.attrTB.append(tr);
+						$(that.attrPop).show();
+						$(that.attrPop).position({
+							"my" : "right bottom",
+							"at" : "right bottom+100",
+							"of" : document,
+							"collision" : "fit"
+						});
+					} else {
+						// $(that.featurePop).hide();
+						$(that.attrPop).hide();
 					}
-					$(that.attrPop).show();
-					$(that.attrPop).position({
-						"my" : "right bottom",
-						"at" : "right bottom+100",
-						"of" : document,
-						"collision" : "fit"
-					});
 				} else {
 					$(that.featurePop).hide();
 					$(that.attrPop).hide();
@@ -747,7 +752,7 @@ gitbuilder.ui.EditingTool = $.widget("gitbuilder.editingtool", {
 				url : that.options.url,
 				select : that.interaction.select,
 				destination : that.tempVector,
-				record : that.options.record,
+				record : that.options.featureRecord,
 				layer : function() {
 					return that.updateSelected();
 				}
@@ -881,12 +886,12 @@ gitbuilder.ui.EditingTool = $.widget("gitbuilder.editingtool", {
 				}
 				if (that.getLayer().get("id") === layers[0].get("id")) {
 					var feature = evt.feature;
-					var c = that.options.record.getCreated();
+					var c = that.options.featureRecord.getCreated();
 					var l = c[that.getLayer().get("id")];
 					if (!l) {
 						var fid = that.getLayer().get("id") + ".new0";
 						feature.setId(fid);
-						that.options.record.create(layers[0], feature);
+						that.options.featureRecord.create(layers[0], feature);
 					} else {
 						var keys = Object.keys(l);
 						var count;
@@ -899,7 +904,7 @@ gitbuilder.ui.EditingTool = $.widget("gitbuilder.editingtool", {
 						}
 						var fid = that.getLayer().get("id") + ".new" + count;
 						feature.setId(fid);
-						that.options.record.create(layers[0], feature);
+						that.options.featureRecord.create(layers[0], feature);
 					}
 				}
 			});
@@ -912,9 +917,30 @@ gitbuilder.ui.EditingTool = $.widget("gitbuilder.editingtool", {
 				source : sourceLayer.getSource(),
 				type : git.geometry
 			});
+
 			this.interaction.draw.selectedType = function() {
-				return that.updateSelected().get("git").geometry;
+				var irreGeom = that.updateSelected().get("git").geometry;
+				var geom;
+				switch (irreGeom) {
+				case "Polyline":
+					geom = "LineString";
+					break;
+				case "LWPolyline":
+					geom = "LineString";
+					break;
+				case "Insert":
+					geom = "Point";
+					break;
+				case "Text":
+					geom = "Point";
+					break;
+				default:
+					geom = that.updateSelected().get("git").geometry;
+					break;
+				}
+				return geom;
 			};
+
 			this.interaction.draw.on("drawend", function(evt) {
 				console.log(evt);
 				var layers = that.options.selected();
@@ -923,12 +949,12 @@ gitbuilder.ui.EditingTool = $.widget("gitbuilder.editingtool", {
 				}
 				if (that.getLayer().get("id") === layers[0].get("id")) {
 					var feature = evt.feature;
-					var c = that.options.record.getCreated();
+					var c = that.options.featureRecord.getCreated();
 					var l = c[that.getLayer().get("id")];
 					if (!l) {
 						var fid = that.getLayer().get("id") + ".new0";
 						feature.setId(fid);
-						that.options.record.create(layers[0], feature);
+						that.options.featureRecord.create(layers[0], feature);
 					} else {
 						var keys = Object.keys(l);
 						var count;
@@ -941,7 +967,7 @@ gitbuilder.ui.EditingTool = $.widget("gitbuilder.editingtool", {
 						}
 						var fid = that.getLayer().get("id") + ".new" + count;
 						feature.setId(fid);
-						that.options.record.create(layers[0], feature);
+						that.options.featureRecord.create(layers[0], feature);
 					}
 				}
 			});
@@ -984,7 +1010,7 @@ gitbuilder.ui.EditingTool = $.widget("gitbuilder.editingtool", {
 				if (that.getLayer().get("id") === layers[0].get("id")) {
 					var features = evt.features;
 					for (var i = 0; i < features.getLength(); i++) {
-						that.options.record.update(layers[0], features.item(i));
+						that.options.featureRecord.update(layers[0], features.item(i));
 					}
 				}
 			});
@@ -1030,7 +1056,7 @@ gitbuilder.ui.EditingTool = $.widget("gitbuilder.editingtool", {
 				}
 				if (that.getLayer().get("id") === layers[0].get("id")) {
 					var feature = evt.feature;
-					that.options.record.update(layers[0], feature);
+					that.options.featureRecord.update(layers[0], feature);
 				}
 			});
 			this.map.addInteraction(this.interaction.rotate);
@@ -1073,7 +1099,7 @@ gitbuilder.ui.EditingTool = $.widget("gitbuilder.editingtool", {
 				if (that.getLayer().get("id") === layers[0].get("id")) {
 					var features = evt.features;
 					for (var i = 0; i < features.getLength(); i++) {
-						that.options.record.update(layers[0], features.item(i));
+						that.options.featureRecord.update(layers[0], features.item(i));
 					}
 				}
 			});
@@ -1135,7 +1161,7 @@ gitbuilder.ui.EditingTool = $.widget("gitbuilder.editingtool", {
 					} else {
 						features.item(i).setStyle(style);
 					}
-					that.options.record.remove(layers[0], features.item(i));
+					that.options.featureRecord.remove(layers[0], features.item(i));
 				}
 			}
 			this.interaction.select.getFeatures().clear();

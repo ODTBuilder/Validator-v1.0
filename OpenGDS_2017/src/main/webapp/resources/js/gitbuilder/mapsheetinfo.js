@@ -25,10 +25,10 @@ gb.mapsheet.Mapsheet.prototype.setLayers = function(layers) {
 	this.layers = layers;
 };
 
-gb.mapsheet.Mapsheet.prototype.getNumber = function() {
+gb.mapsheet.Mapsheet.prototype.getSheetNumber = function() {
 	return this.number;
 };
-gb.mapsheet.Mapsheet.prototype.setNumber = function(number) {
+gb.mapsheet.Mapsheet.prototype.setSheetNumber = function(number) {
 	this.number = number;
 };
 
