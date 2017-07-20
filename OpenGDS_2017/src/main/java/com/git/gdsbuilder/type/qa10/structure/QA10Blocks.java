@@ -198,11 +198,11 @@ public class QA10Blocks {
 	}
 
 	private LinkedHashMap<String, Object> getPolylineValues(DXFPolyline entityObj) {
-
+		
 		String type = entityObj.getType();
 		LinkedHashMap<String, Object> polyline = new LinkedHashMap<String, Object>();
 
-		if (type.equals("POLYLINE") || type.equals("LWPOLYLINE")) {
+		if (type.equals("POLYLINE")) {
 			// polyline
 			polyline.put("0", "POLYLINE");
 			polyline.put("8", entityObj.getLayerName());
@@ -213,6 +213,24 @@ public class QA10Blocks {
 			polyline.put("30", "0");
 			polyline.put("70", "0");
 
+			// vertexs
+			List<LinkedHashMap<String, Object>> vertexMapList = new ArrayList<LinkedHashMap<String, Object>>();
+			Iterator vertexIt = entityObj.getVertexIterator();
+			while (vertexIt.hasNext()) {
+				DXFVertex vertex = (DXFVertex) vertexIt.next();
+				LinkedHashMap<String, Object> vertexMap = getVertexValues(vertex);
+				vertexMapList.add(vertexMap);
+			}
+			polyline.put("vertexs", vertexMapList);
+		} else if (type.equals("LWPOLYLINE")) {
+
+			polyline.put("0", "LWPOLYLINE");
+			polyline.put("8", entityObj.getLayerName());
+			// polyline.put("330", entityObj.getID());
+			polyline.put("90", entityObj.getVertexCount());
+			polyline.put("70", entityObj.getFlags());
+			polyline.put("43", 0);
+			
 			// vertexs
 			List<LinkedHashMap<String, Object>> vertexMapList = new ArrayList<LinkedHashMap<String, Object>>();
 			Iterator vertexIt = entityObj.getVertexIterator();

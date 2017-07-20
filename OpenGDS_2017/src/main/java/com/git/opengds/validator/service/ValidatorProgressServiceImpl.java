@@ -24,8 +24,9 @@ import com.git.opengds.validator.persistence.ValidateProgressDAOImpl;
 @Service
 public class ValidatorProgressServiceImpl implements ValidatorProgressService {
 
-/*	@Inject
-	private DataSourceTransactionManager txManager;*/
+	/*
+	 * @Inject private DataSourceTransactionManager txManager;
+	 */
 
 	@Inject
 	private QA10LayerCollectionDAO qa10DAO;
@@ -35,14 +36,14 @@ public class ValidatorProgressServiceImpl implements ValidatorProgressService {
 
 	@Inject
 	private ValidateProgressDAO progressDAO;
-	
-	/*public ValidatorProgressServiceImpl(UserVO userVO) {
-		// TODO Auto-generated constructor stub
-		qa10DAO = new QA10LayerCollectionDAOImpl(userVO);
-		qa20DAO = new QA20LayerCollectionDAOImpl(userVO);
-		progressDAO = new ValidateProgressDAOImpl(userVO);
-	}*/
-	
+
+	/*
+	 * public ValidatorProgressServiceImpl(UserVO userVO) { // TODO
+	 * Auto-generated constructor stub qa10DAO = new
+	 * QA10LayerCollectionDAOImpl(userVO); qa20DAO = new
+	 * QA20LayerCollectionDAOImpl(userVO); progressDAO = new
+	 * ValidateProgressDAOImpl(userVO); }
+	 */
 
 	public Integer setStateToRequest(UserVO userVO, int validateStart, String collectionName, String fileType) {
 
@@ -51,14 +52,15 @@ public class ValidatorProgressServiceImpl implements ValidatorProgressService {
 		int cidx = 0;
 		if (fileType.equals("ngi")) {
 			QA20DBQueryManager qa20QueryManager = new QA20DBQueryManager();
-			cidx = qa20DAO
-					.selectQA20LayerCollectionIdx(userVO, qa20QueryManager.getSelectQA20LayerCollectionIdx(collectionName));
+			cidx = qa20DAO.selectQA20LayerCollectionIdx(userVO,
+					qa20QueryManager.getSelectQA20LayerCollectionIdx(collectionName));
 			HashMap<String, Object> insertQuery = queryManager.getInsertQA20RequestState(validateStart, collectionName,
 					fileType, cidx);
 			pIdx = progressDAO.insertQA20RequestState(userVO, insertQuery);
 		} else if (fileType.equals("dxf")) {
 			QA10DBQueryManager qa10QueryManager = new QA10DBQueryManager();
-			cidx = qa10DAO.selectQA10LayerCollectionIdx(userVO, qa10QueryManager.getSelectLayerCollectionIdx(collectionName));
+			cidx = qa10DAO.selectQA10LayerCollectionIdx(userVO,
+					qa10QueryManager.getSelectLayerCollectionIdx(collectionName));
 			HashMap<String, Object> insertQuery = queryManager.getInsertQA10RequestState(validateStart, collectionName,
 					fileType, cidx);
 			pIdx = progressDAO.insertQA10RequestState(userVO, insertQuery);
@@ -70,9 +72,11 @@ public class ValidatorProgressServiceImpl implements ValidatorProgressService {
 
 		ValidateProgressDBQueryManager queryManager = new ValidateProgressDBQueryManager();
 		if (fileType.equals("ngi")) {
-			progressDAO.updateQA20ProgressingState(userVO, queryManager.getUpdateQA20ProgressingState(pIdx, validateStart));
+			progressDAO.updateQA20ProgressingState(userVO,
+					queryManager.getUpdateQA20ProgressingState(pIdx, validateStart));
 		} else if (fileType.equals("dxf")) {
-			progressDAO.updateQA10ProgressingState(userVO, queryManager.getUpdateQA10ProgressingState(pIdx, validateStart));
+			progressDAO.updateQA10ProgressingState(userVO,
+					queryManager.getUpdateQA10ProgressingState(pIdx, validateStart));
 		}
 	}
 
@@ -80,11 +84,11 @@ public class ValidatorProgressServiceImpl implements ValidatorProgressService {
 	public void setStateToValidateSuccess(UserVO userVO, int validateSuccess, String fileType, int pIdx) {
 		ValidateProgressDBQueryManager queryManager = new ValidateProgressDBQueryManager();
 		if (fileType.equals("ngi")) {
-			progressDAO
-					.updateQA20ValidateSuccessState(userVO, queryManager.getUpdateQA20ProgressingState(pIdx, validateSuccess));
+			progressDAO.updateQA20ValidateSuccessState(userVO,
+					queryManager.getUpdateQA20ProgressingState(pIdx, validateSuccess));
 		} else if (fileType.equals("dxf")) {
-			progressDAO
-					.updateQA10ValidateSuccessState(userVO, queryManager.getUpdateQA10ProgressingState(pIdx, validateSuccess));
+			progressDAO.updateQA10ValidateSuccessState(userVO,
+					queryManager.getUpdateQA10ProgressingState(pIdx, validateSuccess));
 		}
 	}
 
@@ -92,21 +96,24 @@ public class ValidatorProgressServiceImpl implements ValidatorProgressService {
 	public void setStateToValidateFail(UserVO userVO, int validateFail, String fileType, int pIdx) {
 		ValidateProgressDBQueryManager queryManager = new ValidateProgressDBQueryManager();
 		if (fileType.equals("ngi")) {
-			progressDAO.updateQA20ValidateFailState(userVO, queryManager.getUpdateQA20ProgressingState(pIdx, validateFail));
+			progressDAO.updateQA20ValidateFailState(userVO,
+					queryManager.getUpdateQA20ProgressingState(pIdx, validateFail));
 		} else if (fileType.equals("dxf")) {
-			progressDAO.updateQA10ValidateFailState(userVO, queryManager.getUpdateQA10ProgressingState(pIdx, validateFail));
+			progressDAO.updateQA10ValidateFailState(userVO,
+					queryManager.getUpdateQA10ProgressingState(pIdx, validateFail));
 		}
 	}
 
 	@Override
-	public void setStateToErrLayerSuccess(UserVO userVO, int errLayerSuccess, String fileType, int pIdx, String tableName) {
+	public void setStateToErrLayerSuccess(UserVO userVO, int errLayerSuccess, String fileType, int pIdx,
+			String tableName) {
 		ValidateProgressDBQueryManager queryManager = new ValidateProgressDBQueryManager();
 		if (fileType.equals("ngi")) {
-			progressDAO.updateQA20ValidateErrLayerSuccess(userVO, 
+			progressDAO.updateQA20ValidateErrLayerSuccess(userVO,
 					queryManager.getUpdateQA20ProgressingState(pIdx, errLayerSuccess));
 			progressDAO.insertQA20ErrorTableName(userVO, queryManager.getInsertQA20ErrorTableName(pIdx, tableName));
 		} else if (fileType.equals("dxf")) {
-			progressDAO.updateQA10ValidateErrLayerSuccess(userVO, 
+			progressDAO.updateQA10ValidateErrLayerSuccess(userVO,
 					queryManager.getUpdateQA10ProgressingState(pIdx, errLayerSuccess));
 			progressDAO.insertQA10ErrorTableName(userVO, queryManager.getInsertQA10ErrorTableName(pIdx, tableName));
 		}
@@ -116,9 +123,11 @@ public class ValidatorProgressServiceImpl implements ValidatorProgressService {
 	public void setStateToErrLayerFail(UserVO userVO, int errLayerFail, String fileType, int pIdx) {
 		ValidateProgressDBQueryManager queryManager = new ValidateProgressDBQueryManager();
 		if (fileType.equals("ngi")) {
-			progressDAO.updateQA20ValidateErrLayerFail(userVO, queryManager.getUpdateQA20ProgressingState(pIdx, errLayerFail));
+			progressDAO.updateQA20ValidateErrLayerFail(userVO,
+					queryManager.getUpdateQA20ProgressingState(pIdx, errLayerFail));
 		} else if (fileType.equals("dxf")) {
-			progressDAO.updateQA10ValidateErrLayerFail(userVO, queryManager.getUpdateQA10ProgressingState(pIdx, errLayerFail));
+			progressDAO.updateQA10ValidateErrLayerFail(userVO,
+					queryManager.getUpdateQA10ProgressingState(pIdx, errLayerFail));
 		}
 	}
 
@@ -140,11 +149,11 @@ public class ValidatorProgressServiceImpl implements ValidatorProgressService {
 		ValidateProgressDBQueryManager queryManager = new ValidateProgressDBQueryManager();
 		List<HashMap<String, Object>> progressListMap = null;
 		if (type.equals("ngi")) {
-			progressListMap = progressDAO
-					.selectAllQA20ValidateProgress(userVO, queryManager.getSelectAllQA20ValidateProgress());
+			progressListMap = progressDAO.selectAllQA20ValidateProgress(userVO,
+					queryManager.getSelectAllQA20ValidateProgress());
 		} else if (type.equals("dxf")) {
-			progressListMap = progressDAO
-					.selectAllQA10ValidateProgress(userVO, queryManager.getSelectAllQA10ValidateProgress());
+			progressListMap = progressDAO.selectAllQA10ValidateProgress(userVO,
+					queryManager.getSelectAllQA10ValidateProgress());
 		}
 		ValidateProgressList progressList = new ValidateProgressList();
 		for (int i = 0; i < progressListMap.size(); i++) {
