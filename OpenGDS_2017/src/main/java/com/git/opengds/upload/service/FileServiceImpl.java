@@ -26,7 +26,6 @@ import java.util.LinkedList;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletResponse;
 
-import org.aspectj.internal.lang.annotation.ajcDeclareAnnotation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.test.context.ContextConfiguration;
@@ -35,16 +34,19 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.git.opengds.file.dxf.service.QA10FileUploadService;
+import com.git.opengds.file.dxf.service.QA10FileUploadServiceImpl;
 import com.git.opengds.file.ngi.service.QA20FileUploadService;
+import com.git.opengds.file.ngi.service.QA20FileUploadServiceImpl;
 import com.git.opengds.upload.domain.FileMeta;
 import com.git.opengds.upload.persistence.FileDAO;
+import com.git.opengds.upload.persistence.FileDAOImpl;
+import com.git.opengds.user.domain.UserVO;
 
 @Service
 @ContextConfiguration(locations = { "file:src/main/webapp/WEB-INF/spring/**/*.xml" })
 public class FileServiceImpl implements FileService {
 
 	private static final String dirPath = "D:\\files";
-	private static final String id = "admin";
 
 	@Autowired
 	private QA20FileUploadService qa20FileService;
@@ -54,9 +56,17 @@ public class FileServiceImpl implements FileService {
 
 	@Inject
 	private FileDAO fileDAO;
+	
+	/*public FileServiceImpl(UserVO userVO) {
+		// TODO Auto-generated constructor stub
+		id = userVO.getId();
+		qa20FileService = new QA20FileUploadServiceImpl(userVO);
+		qa10FileService = new QA10FileUploadServiceImpl(userVO);
+		fileDAO = new FileDAOImpl(userVO);
+	}*/
 
-	public LinkedList<FileMeta> filesUpload(MultipartHttpServletRequest request, HttpServletResponse response) {
-		String fullDirPath = this.dirPath + "\\" + this.id;
+	public LinkedList<FileMeta> filesUpload(UserVO userVO, MultipartHttpServletRequest request, HttpServletResponse response) {
+		String fullDirPath = this.dirPath + "\\" + userVO.getId();
 		File dir = new File(dirPath);
 		File targetDir = new File(fullDirPath);
 
@@ -129,12 +139,12 @@ public class FileServiceImpl implements FileService {
 				e.printStackTrace();
 			}
 			// 2.4 add to files
-			files = this.filesPublish(files);
+			files = this.filesPublish(userVO, files);
 		}
 		return files;
 	}
 
-	private LinkedList<FileMeta> filesPublish(LinkedList<FileMeta> fileMetaList) {
+	private LinkedList<FileMeta> filesPublish(UserVO userVO, LinkedList<FileMeta> fileMetaList) {
 		LinkedList<FileMeta> fileMetas = fileMetaList;
 
 		for (int i = 0; i < fileMetas.size(); i++) {
@@ -146,9 +156,9 @@ public class FileServiceImpl implements FileService {
 				FileMeta refileMeta = null;
 				try {
 					if(ext.equals("dxf")) {
-						refileMeta = qa10FileService.dxfUpload(fileMeta);
+						refileMeta = qa10FileService.dxfUpload(userVO, fileMeta);
 					} else {
-						refileMeta = qa20FileService.ngiUpload(fileMeta);
+						refileMeta = qa20FileService.ngiUpload(userVO, fileMeta);
 					}
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
@@ -160,7 +170,7 @@ public class FileServiceImpl implements FileService {
 		return fileMetas;
 	}
 
-	public boolean fileNameDupCheck(String fileFullName) {
+	public boolean fileNameDupCheck(UserVO userVO, String fileFullName) {
 		boolean dupFlag = false;
 
 		if (fileFullName.length() != 0) {
@@ -172,9 +182,9 @@ public class FileServiceImpl implements FileService {
 			if (fileType.endsWith("dxf") || fileType.endsWith("ngi") || fileType.endsWith("nda")
 					|| fileType.endsWith("shp")) {
 				if (fileType.endsWith("ngi") || fileType.endsWith("nda")) {
-					dupFlag = fileDAO.selectNGIDuplicateCheck(fileName);
+					dupFlag = fileDAO.selectNGIDuplicateCheck(userVO, fileName);
 				} else if (fileType.endsWith("dxf")) {
-					dupFlag = fileDAO.selectDXFDuplicateCheck(fileName);
+					dupFlag = fileDAO.selectDXFDuplicateCheck(userVO, fileName);
 				}
 			}
 		}

@@ -30,12 +30,16 @@ import com.git.gdsbuilder.type.qa20.collection.QA20LayerCollection;
 import com.git.gdsbuilder.type.qa20.layer.QA20Layer;
 import com.git.opengds.file.dxf.dbManager.QA10DBQueryManager;
 import com.git.opengds.file.dxf.persistence.QA10LayerCollectionDAO;
+import com.git.opengds.file.dxf.persistence.QA10LayerCollectionDAOImpl;
 import com.git.opengds.file.ngi.dbManager.QA20DBQueryManager;
 import com.git.opengds.file.ngi.persistence.QA20LayerCollectionDAO;
+import com.git.opengds.file.ngi.persistence.QA20LayerCollectionDAOImpl;
 import com.git.opengds.parser.error.ErrorLayerDXFExportParser;
 import com.git.opengds.parser.error.ErrorLayerNGIExportParser;
+import com.git.opengds.user.domain.UserVO;
 import com.git.opengds.validator.dbManager.ErrorLayerDBQueryManager;
 import com.git.opengds.validator.persistence.ErrorLayerDAO;
+import com.git.opengds.validator.persistence.ErrorLayerDAOImpl;
 import com.vividsolutions.jts.io.ParseException;
 
 @Service
@@ -50,9 +54,16 @@ public class ErrorLayerExportServiceImpl implements ErrorLayerExportService {
 
 	@Inject
 	private QA10LayerCollectionDAO qa10LayerCollectionDAO;
-
+	
+	/*public ErrorLayerExportServiceImpl(UserVO userVO) {
+		// TODO Auto-generated constructor stub
+		errLayerDAO = new ErrorLayerDAOImpl(userVO);
+		qa20LayerCollectionDAO = new QA20LayerCollectionDAOImpl(userVO);
+		qa10LayerCollectionDAO = new QA10LayerCollectionDAOImpl(userVO);
+	}
+*/
 	@Override
-	public boolean exportErrorLayer(String format, String type, String name, HttpServletRequest request,
+	public boolean exportErrorLayer(UserVO userVO, String format, String type, String name, HttpServletRequest request,
 			HttpServletResponse response) throws IOException, ParseException {
 
 		Map<String, Object> fileMap = null;
@@ -61,7 +72,7 @@ public class ErrorLayerExportServiceImpl implements ErrorLayerExportService {
 		try {
 			// fileWrite
 			HashMap<String, Object> selectQuery = dbManager.selectAllErrorFeaturesQuery(name);
-			List<HashMap<String, Object>> errAllFeatures = errLayerDAO.selectAllErrorFeatures(selectQuery);
+			List<HashMap<String, Object>> errAllFeatures = errLayerDAO.selectAllErrorFeatures(userVO,selectQuery);
 			String[] nameSplit = name.split("_");
 			String collectionName = nameSplit[2];
 			if (format.equals("ngi")) {
@@ -72,10 +83,10 @@ public class ErrorLayerExportServiceImpl implements ErrorLayerExportService {
 				qa20LayerCollection.setFileName(collectionName);
 				HashMap<String, Object> selectLayerCollectionIdxQuery = qa20dbManager
 						.getSelectQA20LayerCollectionIdx(collectionName);
-				int cIdx = qa20LayerCollectionDAO.selectQA20LayerCollectionIdx(selectLayerCollectionIdxQuery);
+				int cIdx = qa20LayerCollectionDAO.selectQA20LayerCollectionIdx(userVO, selectLayerCollectionIdxQuery);
 				HashMap<String, Object> selectAllMetaIdxQuery = qa20dbManager.getSelectQA20LayerMetaDataIdxQuery(cIdx);
 				List<HashMap<String, Object>> mIdxMapList = qa20LayerCollectionDAO
-						.selectQA20LayerMetadataIdxs(selectAllMetaIdxQuery);
+						.selectQA20LayerMetadataIdxs(userVO,selectAllMetaIdxQuery);
 				// errlayer 합쳐합쳐
 				QA20Layer errQA20Layer = ErrorLayerNGIExportParser.parseQA20ErrorLayer(name, errAllFeatures);
 				for (int i = 0; i < mIdxMapList.size(); i++) {
@@ -84,7 +95,7 @@ public class ErrorLayerExportServiceImpl implements ErrorLayerExportService {
 					// layerMeata
 					HashMap<String, Object> selectAllMetaQuery = qa20dbManager
 							.getSelectAllQA20LayerMetaDataQuery(lmIdx);
-					HashMap<String, Object> metaMap = qa20LayerCollectionDAO.selectQA20LayerMeata(selectAllMetaQuery);
+					HashMap<String, Object> metaMap = qa20LayerCollectionDAO.selectQA20LayerMeata(userVO, selectAllMetaQuery);
 
 					List<HashMap<String, Object>> textRepresenets = null;
 					List<HashMap<String, Object>> regionRepresenets = null;
@@ -95,35 +106,35 @@ public class ErrorLayerExportServiceImpl implements ErrorLayerExportService {
 					if ((Boolean) metaMap.get("ngi_mask_text")) {
 						HashMap<String, Object> selectTextRepresentQuery = qa20dbManager
 								.getSelectTextRepresentQuery(lmIdx);
-						textRepresenets = qa20LayerCollectionDAO.selectTextRepresent(selectTextRepresentQuery);
+						textRepresenets = qa20LayerCollectionDAO.selectTextRepresent(userVO, selectTextRepresentQuery);
 					}
 					// rRepresent
 					if ((Boolean) metaMap.get("ngi_mask_region")) {
 						HashMap<String, Object> selectRegionRepresentQuery = qa20dbManager
 								.getSelectResionRepresentQuery(lmIdx);
-						regionRepresenets = qa20LayerCollectionDAO.selectResionRepresent(selectRegionRepresentQuery);
+						regionRepresenets = qa20LayerCollectionDAO.selectResionRepresent(userVO, selectRegionRepresentQuery);
 					}
 					// pRepresent
 					if ((Boolean) metaMap.get("ngi_mask_point")) {
 						HashMap<String, Object> selectPointRepresentQuery = qa20dbManager
 								.getSelectPointRepresentQuery(lmIdx);
-						pointRepresenets = qa20LayerCollectionDAO.selectPointRepresent(selectPointRepresentQuery);
+						pointRepresenets = qa20LayerCollectionDAO.selectPointRepresent(userVO, selectPointRepresentQuery);
 					}
 					// lRepresent
 					if ((Boolean) metaMap.get("ngi_mask_linestring")) {
 						HashMap<String, Object> selectLineRepresentQuery = qa20dbManager
 								.getSelectLineRepresentQuery(lmIdx);
-						lineRepresenets = qa20LayerCollectionDAO.selectLineStringRepresent(selectLineRepresentQuery);
+						lineRepresenets = qa20LayerCollectionDAO.selectLineStringRepresent(userVO, selectLineRepresentQuery);
 					}
 					HashMap<String, Object> selectNdaAspatialFieldQuery = qa20dbManager
 							.getSelectNadAspatialFieldQuery(lmIdx);
-					aspatialField = qa20LayerCollectionDAO.selectNdaAspatialField(selectNdaAspatialFieldQuery);
+					aspatialField = qa20LayerCollectionDAO.selectNdaAspatialField(userVO, selectNdaAspatialFieldQuery);
 					// layerTB
 					String layerTbName = (String) metaMap.get("layer_t_name");
 					HashMap<String, Object> selectAllFeaturesQuery = qa20dbManager
 							.getSelectAllFeaturesQuery(layerTbName, aspatialField);
 					List<HashMap<String, Object>> featuresMapList = qa20LayerCollectionDAO
-							.selectAllQA20Features(selectAllFeaturesQuery);
+							.selectAllQA20Features(userVO, selectAllFeaturesQuery);
 
 					QA20Layer qa20Layer = ErrorLayerNGIExportParser.parseQA20Layer(metaMap, featuresMapList,
 							pointRepresenets, lineRepresenets, regionRepresenets, textRepresenets, aspatialField);
@@ -145,11 +156,11 @@ public class ErrorLayerExportServiceImpl implements ErrorLayerExportService {
 				// collectionIdx
 				HashMap<String, Object> selectLayerCollectionIdxQuery = qa10dbQueryManager
 						.getSelectLayerCollectionIdx(collectionName);
-				int cIdx = qa10LayerCollectionDAO.selectQA10LayerCollectionIdx(selectLayerCollectionIdxQuery);
+				int cIdx = qa10LayerCollectionDAO.selectQA10LayerCollectionIdx(userVO, selectLayerCollectionIdxQuery);
 
 				HashMap<String, Object> selectAllMetaIdxQuery = qa10dbQueryManager.getSelectLayerMetaDataIdx(cIdx);
 				List<HashMap<String, Object>> mIdxMapList = qa10LayerCollectionDAO
-						.selectQA10LayerMetadataIdxs(selectAllMetaIdxQuery);
+						.selectQA10LayerMetadataIdxs(userVO, selectAllMetaIdxQuery);
 
 				List<LinkedHashMap<String, Object>> blocks = new ArrayList<LinkedHashMap<String, Object>>();
 				for (int i = 0; i < mIdxMapList.size(); i++) {
@@ -157,7 +168,7 @@ public class ErrorLayerExportServiceImpl implements ErrorLayerExportService {
 					int lmIdx = (Integer) mIdxMap.get("lm_idx");
 					// layerMeata
 					HashMap<String, Object> selectMetaQuery = qa10dbQueryManager.getSelectQA10LayerMetaDataQuery(lmIdx);
-					HashMap<String, Object> metaMap = qa10LayerCollectionDAO.selectQA10LayerMeata(selectMetaQuery);
+					HashMap<String, Object> metaMap = qa10LayerCollectionDAO.selectQA10LayerMeata(userVO, selectMetaQuery);
 
 					String layerId = (String) metaMap.get("layer_id");
 					String[] typeSplit = layerId.split("_");
@@ -168,7 +179,7 @@ public class ErrorLayerExportServiceImpl implements ErrorLayerExportService {
 					String id = typeSplit[0];
 					HashMap<String, Object> selectBlockCommonQuery = qa10dbQueryManager.getSelectBlockCommon(cIdx, id);
 					HashMap<String, Object> blockCommonMap = qa10LayerCollectionDAO
-							.selectQA10layerBlocksCommon(selectBlockCommonQuery);
+							.selectQA10layerBlocksCommon(userVO, selectBlockCommonQuery);
 					if (blockCommonMap != null) {
 						LinkedHashMap<String, Object> block = new LinkedHashMap<String, Object>();
 						LinkedHashMap<String, Object> blockCommons = QA10Blocks.getCommonsValue(blockCommonMap);
@@ -182,7 +193,7 @@ public class ErrorLayerExportServiceImpl implements ErrorLayerExportService {
 						if ((Boolean) blockCommonMap.get("is_arc")) {
 							HashMap<String, Object> selectBlockArcList = qa10dbQueryManager.getSelectBlockArc(bcIdx);
 							List<HashMap<String, Object>> blockArcMapList = qa10LayerCollectionDAO
-									.selectBlockEntities(selectBlockArcList);
+									.selectBlockEntities(userVO, selectBlockArcList);
 							if (blockArcMapList != null) {
 								for (int j = 0; j < blockArcMapList.size(); j++) {
 									HashMap<String, Object> blockArcMap = blockArcMapList.get(j);
@@ -196,7 +207,7 @@ public class ErrorLayerExportServiceImpl implements ErrorLayerExportService {
 							HashMap<String, Object> selectBlockCircleList = qa10dbQueryManager
 									.getSelectBlockCircle(bcIdx);
 							List<HashMap<String, Object>> blockCircleMapList = qa10LayerCollectionDAO
-									.selectBlockEntities(selectBlockCircleList);
+									.selectBlockEntities(userVO, selectBlockCircleList);
 							if (blockCircleMapList != null) {
 								for (int j = 0; j < blockCircleMapList.size(); j++) {
 									HashMap<String, Object> blockCircleMap = blockCircleMapList.get(j);
@@ -210,7 +221,7 @@ public class ErrorLayerExportServiceImpl implements ErrorLayerExportService {
 							HashMap<String, Object> selectBlockPolylineList = qa10dbQueryManager
 									.getSelectBlockPolyline(bcIdx);
 							List<HashMap<String, Object>> blockPolylineMapList = qa10LayerCollectionDAO
-									.selectBlockEntities(selectBlockPolylineList);
+									.selectBlockEntities(userVO, selectBlockPolylineList);
 							if (blockPolylineMapList != null) {
 								for (int j = 0; j < blockPolylineMapList.size(); j++) {
 									HashMap<String, Object> blockPolylineMap = blockPolylineMapList.get(j);
@@ -221,7 +232,7 @@ public class ErrorLayerExportServiceImpl implements ErrorLayerExportService {
 									HashMap<String, Object> selectBlockVertexList = qa10dbQueryManager
 											.getSelectBlockPolylineVertex(bpIdx);
 									List<HashMap<String, Object>> blockVertexMapList = qa10LayerCollectionDAO
-											.selectBlockEntities(selectBlockVertexList);
+											.selectBlockEntities(userVO, selectBlockVertexList);
 									if (blockVertexMapList != null) {
 										List<LinkedHashMap<String, Object>> vertexEntityList = new ArrayList<LinkedHashMap<String, Object>>();
 										for (int k = 0; k < blockVertexMapList.size(); k++) {
@@ -238,7 +249,7 @@ public class ErrorLayerExportServiceImpl implements ErrorLayerExportService {
 						if ((Boolean) blockCommonMap.get("is_text")) {
 							HashMap<String, Object> selectBlockTextList = qa10dbQueryManager.getSelectBlockText(bcIdx);
 							List<HashMap<String, Object>> blockTextMapList = qa10LayerCollectionDAO
-									.selectBlockEntities(selectBlockTextList);
+									.selectBlockEntities(userVO, selectBlockTextList);
 							if (blockTextMapList != null) {
 								for (int j = 0; j < blockTextMapList.size(); j++) {
 									HashMap<String, Object> blockTextMap = blockTextMapList.get(j);
@@ -252,7 +263,7 @@ public class ErrorLayerExportServiceImpl implements ErrorLayerExportService {
 						if ((Boolean) blockCommonMap.get("is_line")) {
 							HashMap<String, Object> selectBlockLineList = qa10dbQueryManager.getSelectBlockLine(bcIdx);
 							List<HashMap<String, Object>> blockLineMapList = qa10LayerCollectionDAO
-									.selectBlockEntities(selectBlockLineList);
+									.selectBlockEntities(userVO, selectBlockLineList);
 							if (blockLineMapList != null) {
 								for (int j = 0; j < blockLineMapList.size(); j++) {
 									HashMap<String, Object> blockLineMap = blockLineMapList.get(j);
@@ -266,7 +277,7 @@ public class ErrorLayerExportServiceImpl implements ErrorLayerExportService {
 							HashMap<String, Object> selectBlockLWPolylineList = qa10dbQueryManager
 									.getSelectBlockLWPolyline(bcIdx);
 							List<HashMap<String, Object>> blockLWPolylineMapList = qa10LayerCollectionDAO
-									.selectBlockEntities(selectBlockLWPolylineList);
+									.selectBlockEntities(userVO, selectBlockLWPolylineList);
 							if (blockLWPolylineMapList != null) {
 								for (int j = 0; j < blockLWPolylineMapList.size(); j++) {
 									HashMap<String, Object> blockLWPolylineMap = blockLWPolylineMapList.get(j);
@@ -277,7 +288,7 @@ public class ErrorLayerExportServiceImpl implements ErrorLayerExportService {
 									HashMap<String, Object> selectBlockLWPolylineVertexList = qa10dbQueryManager
 											.getSelectBlockLWPolylineVertex(blpIdx);
 									List<HashMap<String, Object>> blockLWPolylineVertexMapList = qa10LayerCollectionDAO
-											.selectBlockEntities(selectBlockLWPolylineVertexList);
+											.selectBlockEntities(userVO, selectBlockLWPolylineVertexList);
 									if (blockLWPolylineVertexMapList != null) {
 										List<LinkedHashMap<String, Object>> vertexEntityList = new ArrayList<LinkedHashMap<String, Object>>();
 										for (int k = 0; k < blockLWPolylineVertexMapList.size(); k++) {
@@ -299,7 +310,7 @@ public class ErrorLayerExportServiceImpl implements ErrorLayerExportService {
 					HashMap<String, Object> selectFeaturesQuery = qa10dbQueryManager.getSelectFeatureQuery(layerTbName,
 							layerType);
 					List<HashMap<String, Object>> featuresMapList = qa10LayerCollectionDAO
-							.selectQA10Features(selectFeaturesQuery);
+							.selectQA10Features(userVO, selectFeaturesQuery);
 
 					QA10Layer qa10Layer = ErrorLayerDXFExportParser.parseQA10Layer(layerId, featuresMapList);
 					qa10Layer.setLayerType(layerType);
@@ -327,13 +338,13 @@ public class ErrorLayerExportServiceImpl implements ErrorLayerExportService {
 				// tableCommonValue
 				HashMap<String, Object> selectTablesCommonsQuery = qa10dbQueryManager.getSelectTableCommon(cIdx);
 				HashMap<String, Object> tablesCommonMap = qa10LayerCollectionDAO
-						.selectTablesCommon(selectTablesCommonsQuery);
+						.selectTablesCommon(userVO, selectTablesCommonsQuery);
 				int tcIdx = (Integer) tablesCommonMap.get("tc_idx");
 
 				// tableLayerValue
 				HashMap<String, Object> selectTablesLayerQuery = qa10dbQueryManager.getSelectTableLayer(tcIdx);
 				List<HashMap<String, Object>> tablesLayerMap = qa10LayerCollectionDAO
-						.selectTablesLayer(selectTablesLayerQuery);
+						.selectTablesLayer(userVO, selectTablesLayerQuery);
 
 				// setDefaultTableLtype
 				QA10Tables tables = new QA10Tables();

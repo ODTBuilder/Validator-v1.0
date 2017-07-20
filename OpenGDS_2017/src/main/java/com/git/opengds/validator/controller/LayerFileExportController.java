@@ -11,12 +11,15 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.git.opengds.common.AbstractController;
+import com.git.opengds.user.domain.UserVO;
+import com.git.opengds.user.domain.UserVO.EnUserType;
 import com.git.opengds.validator.service.ErrorLayerExportService;
 import com.vividsolutions.jts.io.ParseException;
 
 @Controller("layerFileExportController")
 @RequestMapping("/fileExport")
-public class LayerFileExportController {
+public class LayerFileExportController extends AbstractController{
 
 	@Autowired
 	ErrorLayerExportService exportService;
@@ -26,6 +29,10 @@ public class LayerFileExportController {
 	@ResponseBody
 	public boolean exportLayerToFile(HttpServletRequest request, HttpServletResponse response) throws IOException, ParseException {
 
+		UserVO generalUser  = (UserVO) getSession(request,EnUserType.GENERAL.getTypeName());
+		if(generalUser==null){
+			return false;
+		}
 		String format = null;
 		String type = null;
 		String name = null;
@@ -41,6 +48,6 @@ public class LayerFileExportController {
 				name = request.getParameter(key);
 			}
 		}
-		return exportService.exportErrorLayer(format, type, name, request, response);
+		return exportService.exportErrorLayer(generalUser, format, type, name, request, response);
 	}
 }

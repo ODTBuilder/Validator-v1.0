@@ -19,6 +19,8 @@ package com.git.opengds.geoserver.persistence;
 
 import java.util.Map;
 
+import com.git.opengds.user.domain.UserVO;
+
 public interface GeoserverDAO {
 
 	/**
@@ -28,6 +30,6 @@ public interface GeoserverDAO {
 	 * @param paramsMap
 	 * @return boolean
 	 * */
-	public boolean selectEditLayerDuplicateCheck(Map<String, Object> paramsMap);
+	public boolean selectEditLayerDuplicateCheck(UserVO userVO, Map<String, Object> paramsMap);
 	
 }

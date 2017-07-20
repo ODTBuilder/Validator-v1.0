@@ -22,6 +22,8 @@ import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.git.opengds.user.domain.UserVO;
+
 @Service
 public class EditServiceImpl implements EditService {
 
@@ -35,13 +37,20 @@ public class EditServiceImpl implements EditService {
 	protected static final String isShp = "shp";
 
 	@Autowired
-	EditLayerService editLayerService;
+	private EditLayerService editLayerService;
 
 	@Autowired
-	EditFeatureService editFeatureService;
+	private EditFeatureService editFeatureService;
+/*	
+	public EditServiceImpl(UserVO userVO) {
+		// TODO Auto-generated constructor stub
+		editLayerService = new EditLayerServiceImpl(userVO);
+		editFeatureService = new EditFeatureServiceImpl(userVO);
+	}*/
+	
 
 	@Override
-	public void editLayerCollection(String editJSONStr) throws Exception {
+	public void editLayerCollection(UserVO userVO, String editJSONStr) throws Exception {
 
 		JSONParser jsonParser = new JSONParser();
 		JSONObject editJSONObject = (JSONObject) jsonParser.parse(editJSONStr);
@@ -50,14 +59,14 @@ public class EditServiceImpl implements EditService {
 		Object layerEditObj = editJSONObject.get("layer");
 		if (layerEditObj != null) {
 			JSONObject layerEdit = (JSONObject) layerEditObj;
-			editLayerService.editLayer(layerEdit);
+			editLayerService.editLayer(userVO,layerEdit);
 		}
 
 		// featureEdit
 		Object featureEditObj = editJSONObject.get("feature");
 		if (featureEditObj != null) {
 			JSONObject featureEdit = (JSONObject) featureEditObj;
-			editFeatureService.editFeature(featureEdit);
+			editFeatureService.editFeature(userVO,featureEdit);
 		}
 	}
 

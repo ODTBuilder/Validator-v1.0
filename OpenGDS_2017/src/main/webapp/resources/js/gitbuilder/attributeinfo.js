@@ -84,10 +84,11 @@ gb.layer.Attribute.prototype.clone = function() {
 	return obj;
 };
 
-gb.layer.Attribute.prototype.toString = function() {
+gb.layer.Attribute.prototype.getStructure = function() {
 	var that = this;
+	var obj;
 	if (this.isNew === true) {
-		var obj = {
+		obj = {
 			fieldName : this.getFieldName(),
 			type : this.getType(),
 			decimal : this.getDecimal(),
@@ -96,7 +97,7 @@ gb.layer.Attribute.prototype.toString = function() {
 			nullable : this.getNull()
 		};
 	} else {
-		var obj = {
+		obj = {
 			originFieldName : this.getOriginFieldName(),
 			fieldName : this.getFieldName(),
 			type : this.getType(),
@@ -106,6 +107,5 @@ gb.layer.Attribute.prototype.toString = function() {
 			nullable : this.getNull()
 		};
 	}
-	var str = JSON.stringify(obj);
-	return str;
+	return obj;
 };

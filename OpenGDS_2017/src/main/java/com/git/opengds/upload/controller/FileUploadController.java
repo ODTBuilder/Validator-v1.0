@@ -19,6 +19,7 @@ package com.git.opengds.upload.controller;
 
 import java.util.LinkedList;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
@@ -31,9 +32,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import com.git.opengds.common.AbstractController;
 import com.git.opengds.geoserver.service.GeoserverService;
 import com.git.opengds.upload.domain.FileMeta;
 import com.git.opengds.upload.service.FileService;
+import com.git.opengds.upload.service.FileServiceImpl;
+import com.git.opengds.user.domain.UserVO;
+import com.git.opengds.user.domain.UserVO.EnUserType;
 
 /**
  * 파일 업로드와 관련된 요청을 수행한다.
@@ -43,15 +48,11 @@ import com.git.opengds.upload.service.FileService;
  */
 @Controller
 @RequestMapping("/file")
-public class FileUploadController {
+public class FileUploadController extends AbstractController {
 	private static final Logger logger = LoggerFactory.getLogger(FileUploadController.class);
 
 	@Autowired
 	private FileService fileService;
-
-	
-	@Autowired
-	private GeoserverService geoserverService;
 	
 	/**
 	 * 파일업로드
@@ -66,9 +67,9 @@ public class FileUploadController {
 	@RequestMapping(value = "/fileUpload.do", method = RequestMethod.POST)
 	public @ResponseBody LinkedList<FileMeta> fileUploadRequest(MultipartHttpServletRequest request,
 			HttpServletResponse response) throws Exception {
+		UserVO generalUser  = (UserVO) getSession(request,EnUserType.GENERAL.getTypeName());
 		LinkedList<FileMeta> files = new LinkedList<FileMeta>();
-		files = fileService.filesUpload(request, response);
-		
+		files = fileService.filesUpload(generalUser, request, response);
 /*		geoserverService.groupPublish();
 		
 		geoserverService.updateDBLayer("admin", "admin", "geo_ngi_00000738000124_E0052114_POLYGON", null, null);*/
@@ -85,10 +86,14 @@ public class FileUploadController {
 	 * @throws
 	 * */
 	@RequestMapping(value = "/fileNameDupCheckAjax.ajax", method = RequestMethod.GET)
-	public @ResponseBody boolean fileNameDupCheck(@RequestParam(value="fileName", required=true) String fileName)
+	public @ResponseBody boolean fileNameDupCheck(HttpServletRequest request, @RequestParam(value="fileName", required=true) String fileName)
 	{
+		UserVO generalUser  = (UserVO) getSession(request,EnUserType.GENERAL.getTypeName());
+		if(generalUser==null){
+			return false;
+		}
 		boolean dupFlag = false;
-		dupFlag = fileService.fileNameDupCheck(fileName);
+		dupFlag = fileService.fileNameDupCheck(generalUser, fileName);
 		return dupFlag;
 	}
 }

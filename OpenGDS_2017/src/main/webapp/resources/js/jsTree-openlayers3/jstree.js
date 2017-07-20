@@ -10377,8 +10377,17 @@
 							"action" : function(data) {
 								var inst = $.jstreeol3.reference(data.reference), obj = inst.get_node(data.reference);
 								if (inst.is_selected(obj)) {
-									inst.delete_node_layer(inst.get_selected());
+									var layers = inst.get_selected();
+									for (var i = 0; i < layers.length; i++) {
+										var layer = inst.get_LayerById(layers[i]);
+										var info = layer.get("git").information;
+										inst._data.layerproperties.layerRecord.remove(info.getFormat(), info.getSheetNumber(), layer);
+										inst.delete_node_layer(layers[i]);
+									}
 								} else {
+									var layer = inst.get_LayerById(obj.id);
+									var info = layer.get("git").information;
+									inst._data.layerproperties.layerRecord.remove(info.getFormat(), info.getSheetNumber(), layer);
 									inst.delete_node_layer(obj);
 								}
 							}
@@ -10440,9 +10449,13 @@
 									console.log(layer);
 									var git = layer.get("git");
 									if (git) {
-										inst._data.layerproperties.properties.setInformation(git.information);
-										inst._data.layerproperties.properties.setForm(git.information);
-										inst._data.layerproperties.properties.open();
+										if (inst._data.layerproperties.properties.getFeatureRecord().isEditing(layer)) {
+											console.error("Please save before set properties.");
+										} else {
+											inst._data.layerproperties.properties.setLayer(layer);
+											inst._data.layerproperties.properties.setRefer(inst);
+											inst._data.layerproperties.properties.open();
+										}
 									}
 								} else {
 									// inst.delete_node_layer(obj);

@@ -25,6 +25,48 @@ gb.edit.FeatureRecord.prototype.getModified = function() {
 gb.edit.FeatureRecord.prototype.getRemoved = function() {
 	return this.removed;
 };
+gb.edit.FeatureRecord.prototype.clearAll = function() {
+	this.created = {};
+	this.modified = {};
+	this.removed = {};
+};
+gb.edit.FeatureRecord.prototype.clearCreated = function() {
+	this.created = {};
+};
+gb.edit.FeatureRecord.prototype.clearModified = function() {
+	this.modified = {};
+};
+gb.edit.FeatureRecord.prototype.clearRemoved = function() {
+	this.removed = {};
+};
+gb.edit.FeatureRecord.prototype.isEditing = function(layer) {
+	var result = false;
+	var c = this.getCreated();
+	var ckeys = Object.keys(c);
+	for (var i = 0; i < ckeys.length; i++) {
+		if (layer.get("id") === ckeys[i]) {
+			result = true;
+			return result;
+		}
+	}
+	var m = this.getModified();
+	var mkeys = Object.keys(m);
+	for (var i = 0; i < mkeys.length; i++) {
+		if (layer.get("id") === mkeys[i]) {
+			result = true;
+			return result;
+		}
+	}
+	var r = this.getRemoved();
+	var rkeys = Object.keys(r);
+	for (var i = 0; i < rkeys.length; i++) {
+		if (layer.get("id") === rkeys[i]) {
+			result = true;
+			return result;
+		}
+	}
+	return result;
+};
 gb.edit.FeatureRecord.prototype.isRemoved = function(layer, feature) {
 	var isRemoved = false;
 	var lid;
@@ -68,6 +110,22 @@ gb.edit.FeatureRecord.prototype.remove = function(layer, feature) {
 		}
 	}
 	console.log(this.removed);
+	console.log(this.created);
+	console.log(this.modified);
+}
+gb.edit.FeatureRecord.prototype.removeByLayer = function(layer) {
+	if (this.removed.hasOwnProperty(layer.get("id"))) {
+		delete this.removed[layer.get("id")];
+	}
+	if (this.created.hasOwnProperty(layer.get("id"))) {
+		delete this.created[layer.get("id")];
+	}
+	if (this.modified.hasOwnProperty(layer.get("id"))) {
+		delete this.modified[layer.get("id")];
+	}
+	console.log(this.removed);
+	console.log(this.created);
+	console.log(this.modified);
 }
 gb.edit.FeatureRecord.prototype.update = function(layer, feature) {
 	if (!this.modified) {
@@ -81,6 +139,8 @@ gb.edit.FeatureRecord.prototype.update = function(layer, feature) {
 		}
 		this.modified[layer.get("id")][this.id ? feature.get(this.id) : feature.getId()] = feature;
 	}
+	console.log(this.removed);
+	console.log(this.created);
 	console.log(this.modified);
 }
 gb.edit.FeatureRecord.prototype.getStructure = function() {
@@ -149,6 +209,5 @@ gb.edit.FeatureRecord.prototype.getStructure = function() {
 			obj[rLayers[j]]["removed"].push(names[k]);
 		}
 	}
-
 	return obj;
 }

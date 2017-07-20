@@ -6,6 +6,7 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.json.simple.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.git.gdsbuilder.edit.qa10.EditQA10Collection;
@@ -18,9 +19,10 @@ import com.git.gdsbuilder.type.qa20.layer.QA20Layer;
 import com.git.gdsbuilder.type.qa20.layer.QA20LayerList;
 import com.git.opengds.editor.EditLayerCondition;
 import com.git.opengds.geoserver.service.GeoserverService;
-
+import com.git.opengds.geoserver.service.GeoserverServiceImpl;
 import com.git.opengds.parser.json.BuilderJSONQA10Parser;
 import com.git.opengds.parser.json.BuilderJSONQA20Parser;
+import com.git.opengds.user.domain.UserVO;
 
 @Service
 public class EditLayerServiceImpl implements EditLayerService {
@@ -34,14 +36,21 @@ public class EditLayerServiceImpl implements EditLayerService {
 	protected static final String isDxf = "dxf";
 	protected static final String isShp = "shp";
 
-	@Inject
+	@Autowired
 	EditDBManagerService editDBManager;
 
-	@Inject
+	@Autowired
 	GeoserverService geoserver;
+	
+/*	public EditLayerServiceImpl(UserVO userVO) {
+		// TODO Auto-generated constructor stub
+		editDBManager = new EditDBManagerServiceImpl(userVO);
+		geoserver = new GeoserverServiceImpl(userVO);
+	}*/
+
 
 	@Override
-	public void editLayer(JSONObject layerEditObj) throws Exception {
+	public void editLayer(UserVO userVO, JSONObject layerEditObj) throws Exception {
 
 		String src = "5186";
 
@@ -56,7 +65,7 @@ public class EditLayerServiceImpl implements EditLayerService {
 					String collectionName = editCollection.getCollectionName();
 					EditLayerCondition condition = new EditLayerCondition();
 					// collection 중복 여부 확인
-					Integer collectionIdx = editDBManager.checkQA20LayerCollectionName(collectionName);
+					Integer collectionIdx = editDBManager.checkQA20LayerCollectionName(userVO,collectionName);
 					if (editCollection.isCreated()) {
 						if (collectionIdx != null) {
 							// 1. 중복되었을 시(이미 존재하는 collection에 레이어 테이블만
@@ -65,7 +74,7 @@ public class EditLayerServiceImpl implements EditLayerService {
 							for (int j = 0; j < createLayerList.size(); j++) {
 								QA20Layer createLayer = createLayerList.get(j);
 								String layerName = createLayer.getLayerName();
-								boolean isSuccessed = editDBManager.createQA20Layer(isNgi, collectionIdx,
+								boolean isSuccessed = editDBManager.createQA20Layer(userVO,isNgi, collectionIdx,
 										collectionName, createLayer, src);
 								if (isSuccessed) {
 									condition.putSuccessedLayers(collectionName, layerName);
@@ -76,12 +85,12 @@ public class EditLayerServiceImpl implements EditLayerService {
 						} else {
 							// 2. 중복되지 않았을 시 collection insert 후 레이어 테이블
 							// create
-							Integer insertIdx = editDBManager.createQA20LayerCollection(isNgi, editCollection);
+							Integer insertIdx = editDBManager.createQA20LayerCollection(userVO,isNgi, editCollection);
 							QA20LayerList createLayerList = editCollection.getCreateLayerList();
 							for (int j = 0; j < createLayerList.size(); j++) {
 								QA20Layer createLayer = createLayerList.get(j);
 								String layerName = createLayer.getLayerName();
-								boolean isSuccessed = editDBManager.createQA20Layer(isNgi, insertIdx, collectionName,
+								boolean isSuccessed = editDBManager.createQA20Layer(userVO,isNgi, insertIdx, collectionName,
 										createLayer, src);
 								if (isSuccessed) {
 									condition.putSuccessedLayers(collectionName, layerName);
@@ -100,7 +109,7 @@ public class EditLayerServiceImpl implements EditLayerService {
 							String originName = modifiedLayer.getOriginLayerName();
 							Map<String, Object> geoLayerList = editCollection.getGeoLayerList();
 							Map<String, Object> geoLayer = (Map<String, Object>) geoLayerList.get(originName);
-							boolean isSuccessed = editDBManager.modifyQA20Layer(isNgi, collectionIdx, collectionName,
+							boolean isSuccessed = editDBManager.modifyQA20Layer(userVO,isNgi, collectionIdx, collectionName,
 									modifiedLayer, geoLayer);
 							if (isSuccessed) {
 								condition.putSuccessedLayers(collectionName, layerName);
@@ -113,10 +122,10 @@ public class EditLayerServiceImpl implements EditLayerService {
 						QA20LayerList layerList = editCollection.getDeletedLayerList();
 						for (int j = 0; j < layerList.size(); j++) {
 							QA20Layer layer = layerList.get(j);
-							editDBManager.dropQA20Layer(isNgi, collectionIdx, collectionName, layer);
+							editDBManager.dropQA20Layer(userVO,isNgi, collectionIdx, collectionName, layer);
 						}
 						if (editCollection.isDeleteAll()) {
-							geoserver.removeGeoserverGroupLayer(editCollection.getCollectionName());
+							geoserver.removeGeoserverGroupLayer(userVO,editCollection.getCollectionName());
 						}
 					}
 				}
@@ -127,7 +136,7 @@ public class EditLayerServiceImpl implements EditLayerService {
 					EditQA10Collection editCollection = edtCollectionList.get(i);
 					String collectionName = editCollection.getCollectionName();
 					EditLayerCondition condition = new EditLayerCondition();
-					Integer collectionIdx = editDBManager.checkQA10LayerCollectionName(collectionName);
+					Integer collectionIdx = editDBManager.checkQA10LayerCollectionName(userVO,collectionName);
 					if (editCollection.isCreated()) {
 						if (collectionIdx != null) {
 							// 1. 중복되었을 시(이미 존재하는 collection에 레이어 테이블만
@@ -136,7 +145,7 @@ public class EditLayerServiceImpl implements EditLayerService {
 							for (int j = 0; j < createLayerList.size(); j++) {
 								QA10Layer createLayer = createLayerList.get(j);
 								String layerId = createLayer.getLayerID();
-								boolean isSuccessed = editDBManager.createQA10Layer(isDxf, collectionIdx,
+								boolean isSuccessed = editDBManager.createQA10Layer(userVO,isDxf, collectionIdx,
 										collectionName, createLayer, src);
 								if (isSuccessed) {
 									condition.putSuccessedLayers(collectionName, layerId);
@@ -147,12 +156,12 @@ public class EditLayerServiceImpl implements EditLayerService {
 						} else {
 							// 2. 중복되지 않았을 시 collection insert 후 레이어 테이블
 							// create
-							Integer insertIdx = editDBManager.createQA10LayerCollection(isDxf, editCollection);
+							Integer insertIdx = editDBManager.createQA10LayerCollection(userVO,isDxf, editCollection);
 							QA10LayerList createLayerList = editCollection.getCreateLayerList();
 							for (int j = 0; j < createLayerList.size(); j++) {
 								QA10Layer createLayer = createLayerList.get(j);
 								String layerId = createLayer.getLayerID();
-								boolean isSuccessed = editDBManager.createQA10Layer(isDxf, insertIdx, collectionName,
+								boolean isSuccessed = editDBManager.createQA10Layer(userVO,isDxf, insertIdx, collectionName,
 										createLayer, src);
 								if (isSuccessed) {
 									condition.putSuccessedLayers(collectionName, layerId);
@@ -171,7 +180,7 @@ public class EditLayerServiceImpl implements EditLayerService {
 							String originID = modifiedLayer.getOriginLayerID();
 							Map<String, Object> geoLayerList = editCollection.getGeoLayerList();
 							Map<String, Object> geoLayer = (Map<String, Object>) geoLayerList.get(originID);
-							boolean isSuccessed = editDBManager.modifyQA10Layer(isDxf, collectionIdx, collectionName,
+							boolean isSuccessed = editDBManager.modifyQA10Layer(userVO,isDxf, collectionIdx, collectionName,
 									modifiedLayer, geoLayer);
 							if (isSuccessed) {
 								condition.putSuccessedLayers(collectionName, layerId);
@@ -184,12 +193,12 @@ public class EditLayerServiceImpl implements EditLayerService {
 						QA10LayerList layerList = editCollection.getDeletedLayerList();
 						for (int j = 0; j < layerList.size(); j++) {
 							QA10Layer layer = layerList.get(j);
-							editDBManager.dropQA10Layer(isDxf, collectionIdx, collectionName, layer);
+							editDBManager.dropQA10Layer(userVO,isDxf, collectionIdx, collectionName, layer);
 						}
 						if (editCollection.isDeleteAll()) {
-							editDBManager.deleteQA10LayerCollectionTablesCommon(collectionIdx);
-							editDBManager.deleteQA10LayerCollection(collectionIdx);
-							geoserver.removeGeoserverGroupLayer(editCollection.getCollectionName());
+							editDBManager.deleteQA10LayerCollectionTablesCommon(userVO,collectionIdx);
+							editDBManager.deleteQA10LayerCollection(userVO,collectionIdx);
+							geoserver.removeGeoserverGroupLayer(userVO,editCollection.getCollectionName());
 						}
 					}
 				}
