@@ -118,8 +118,9 @@ public class CollectionValidator {
 	protected static double lineOverTolorence = 0.01; // 중심선이 경계면 초과 (m2)
 	protected static double areaRatioTolorence = 0.1; // 지류계와 경지계 불일치 (%)
 	protected static double spatialAccuracyTolorence = 0.01; // 공간분석 정밀도 설정 (m)
-	protected static double underShootTolorence = 0.2; // 공간분석 정밀도 설정 (m)
-
+	protected static double underShootTolorence = 0.2; 
+	protected static double selfEntityLineTolerance = 0.01; 
+	
 	ValidateLayerCollectionList validateLayerCollectionList;
 	ErrorLayerList errLayerList;
 	Map<String, Object> progress;
@@ -418,7 +419,7 @@ public class CollectionValidator {
 							List<String> relationNames = ((SelfEntity) option).getRelationType();
 							for (int r = 0; r < relationNames.size(); r++) {
 								typeErrorLayer = layerValidator.validateSelfEntity(validateLayerCollectionList
-										.getTypeLayers(relationNames.get(r), layerCollection));
+										.getTypeLayers(relationNames.get(r), layerCollection), selfEntityLineTolerance, polygonInvadedTolorence);
 								if (typeErrorLayer != null) {
 									errorLayer.mergeErrorLayer(typeErrorLayer);
 								}

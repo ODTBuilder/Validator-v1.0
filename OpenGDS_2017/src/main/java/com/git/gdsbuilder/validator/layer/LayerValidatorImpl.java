@@ -328,7 +328,7 @@ public class LayerValidatorImpl implements LayerValidator {
 		}
 	}
 
-	public ErrorLayer validateSelfEntity(List<GeoLayer> relationLayers) throws SchemaException {
+	public ErrorLayer validateSelfEntity(List<GeoLayer> relationLayers, double selfEntityLineTolerance, double polygonInvadedTolorence) throws SchemaException {
 
 		ErrorLayer errLayer = new ErrorLayer();
 
@@ -339,7 +339,7 @@ public class LayerValidatorImpl implements LayerValidator {
 			SimpleFeature simpleFeature = simpleFeatureIterator.next();
 			simpleFeatures.add(simpleFeature);
 		}
-		ErrorLayer selfErrorLayer = selfEntity(simpleFeatures);
+		ErrorLayer selfErrorLayer = selfEntity(simpleFeatures, selfEntityLineTolerance, polygonInvadedTolorence);
 		// if (selfErrorLayer != null) {
 		// errLayer.mergeErrorLayer(selfErrorLayer);
 		// }
@@ -352,7 +352,7 @@ public class LayerValidatorImpl implements LayerValidator {
 				SimpleFeature simpleFeature = relationSimpleFeatureIterator.next();
 				relationSimpleFeatures.add(simpleFeature);
 			}
-			ErrorLayer relationErrorLayer = selfEntity(simpleFeatures, relationSimpleFeatures);
+			ErrorLayer relationErrorLayer = selfEntity(simpleFeatures, relationSimpleFeatures,selfEntityLineTolerance, polygonInvadedTolorence);
 			if (relationErrorLayer != null) {
 				errLayer.mergeErrorLayer(relationErrorLayer);
 			}
@@ -360,7 +360,7 @@ public class LayerValidatorImpl implements LayerValidator {
 		return errLayer;
 	}
 
-	private ErrorLayer selfEntity(List<SimpleFeature> simpleFeatures, List<SimpleFeature> relationSimpleFeatures)
+	private ErrorLayer selfEntity(List<SimpleFeature> simpleFeatures, List<SimpleFeature> relationSimpleFeatures, double selfEntityLineTolerance, double polygonInvadedTolorence)
 			throws SchemaException {
 
 		ErrorLayer errLayer = new ErrorLayer();
@@ -371,7 +371,7 @@ public class LayerValidatorImpl implements LayerValidator {
 			SimpleFeature simpleFeatureI = simpleFeatures.get(i);
 			for (int j = 0; j < tmpSizeJ; j++) {
 				SimpleFeature simpleFeatureJ = relationSimpleFeatures.get(j);
-				List<ErrorFeature> errFeatures = graphicValidator.validateSelfEntity(simpleFeatureI, simpleFeatureJ);
+				List<ErrorFeature> errFeatures = graphicValidator.validateSelfEntity(simpleFeatureI, simpleFeatureJ, selfEntityLineTolerance, polygonInvadedTolorence);
 				if (errFeatures != null) {
 					for (ErrorFeature errFeature : errFeatures) {
 						errFeature.setLayerName(validatorLayer.getLayerName());
@@ -387,7 +387,7 @@ public class LayerValidatorImpl implements LayerValidator {
 		}
 	}
 
-	private ErrorLayer selfEntity(List<SimpleFeature> simpleFeatures) throws SchemaException {
+	private ErrorLayer selfEntity(List<SimpleFeature> simpleFeatures, double selfEntityLineTolerance, double polygonInvadedTolorence) throws SchemaException {
 
 		ErrorLayer errLayer = new ErrorLayer();
 
@@ -397,7 +397,7 @@ public class LayerValidatorImpl implements LayerValidator {
 			for (int j = i + 1; j < tmpSize; j++) {
 				SimpleFeature tmpSimpleFeatureJ = simpleFeatures.get(j);
 				List<ErrorFeature> errFeatures = graphicValidator.validateSelfEntity(tmpSimpleFeatureI,
-						tmpSimpleFeatureJ);
+						tmpSimpleFeatureJ, selfEntityLineTolerance, polygonInvadedTolorence);
 				if (errFeatures != null) {
 					for (ErrorFeature errFeature : errFeatures) {
 						errFeature.setLayerName(validatorLayer.getLayerName());

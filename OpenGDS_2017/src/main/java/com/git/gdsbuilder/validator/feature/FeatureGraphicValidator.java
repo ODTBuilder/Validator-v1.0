@@ -89,7 +89,7 @@ public interface FeatureGraphicValidator {
 	 * 4. 18. 오후 3:35:06 @param simpleFeatureI @param simpleFeatureJ @return
 	 * List<ErrorFeature> @throws SchemaException @throws
 	 */
-	public List<ErrorFeature> validateSelfEntity(SimpleFeature simpleFeatureI, SimpleFeature simpleFeatureJ)
+	public List<ErrorFeature> validateSelfEntity(SimpleFeature simpleFeatureI, SimpleFeature simpleFeatureJ, double selfEntityTolerance, double polygonInvadedTolorence)
 			throws SchemaException;
 
 	/**

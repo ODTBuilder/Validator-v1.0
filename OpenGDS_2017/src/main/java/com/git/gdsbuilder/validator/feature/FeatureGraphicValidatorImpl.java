@@ -84,6 +84,8 @@ import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 
+import net.opengis.ows11.validation.DocumentRootValidator;
+
 public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 
 	@Override
@@ -286,7 +288,7 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 	}
 
 	@Override
-	public List<ErrorFeature> validateSelfEntity(SimpleFeature simpleFeatureI, SimpleFeature simpleFeatureJ)
+	public List<ErrorFeature> validateSelfEntity(SimpleFeature simpleFeatureI, SimpleFeature simpleFeatureJ, double selfEntityTolerance, double polygonInvadedTolorence)
 			throws SchemaException {
 
 		List<ErrorFeature> errFeatures = new ArrayList<ErrorFeature>();
@@ -300,10 +302,10 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 			returnGeom = selfEntityPoint(geometryI, geometryJ);
 		}
 		if (geomIType.equals("LineString") || geomIType.equals("MultiLineString")) {
-			returnGeom = selfEntityLineString(geometryI, geometryJ);
+			returnGeom = selfEntityLineString(geometryI, geometryJ, selfEntityTolerance, polygonInvadedTolorence);
 		}
 		if (geomIType.equals("Polygon") || geomIType.equals("MultiPolygon")) {
-			returnGeom = selfEntityPolygon(geometryI, geometryJ);
+			returnGeom = selfEntityPolygon(geometryI, geometryJ, selfEntityTolerance, polygonInvadedTolorence);
 		}
 		if (returnGeom != null) {
 			for (int i = 0; i < returnGeom.getNumGeometries(); i++) {
@@ -342,8 +344,8 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 		return returnGeom;
 	}
 
-	private Geometry selfEntityLineString(Geometry geometryI, Geometry geometryJ) {
-
+	private Geometry selfEntityLineString(Geometry geometryI, Geometry geometryJ, double selfEntityTolerance, double polygonInvadedTolorence) {
+		GeometryFactory geometryFactory = new GeometryFactory();
 		String typeJ = geometryJ.getGeometryType();
 		Geometry returnGeom = null;
 		if (typeJ.equals("Point") || typeJ.equals("MultiPoint")) {
@@ -353,25 +355,86 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 		}
 
 		if (typeJ.equals("LineString") || typeJ.equals("MultiLineString")) {
-
 			if (geometryI.crosses(geometryJ) && !geometryI.equals(geometryJ)) {
-				returnGeom = geometryI.intersection(geometryJ);
+				Geometry lineReturnGeom = null;
+				lineReturnGeom = geometryI.intersection(geometryJ);
+				String upperType = lineReturnGeom.getGeometryType().toString().toUpperCase();
+
+				Coordinate[] coors = geometryI.getCoordinates();
+				Coordinate firstCoor = coors[0];
+				Coordinate lastCoor = coors[coors.length - 1];
+				Point firstPoint = geometryFactory.createPoint(firstCoor);
+				Point lastPoint = geometryFactory.createPoint(lastCoor);
+				Coordinate[] coorsJ = geometryJ.getCoordinates();
+				Coordinate firstCoorJ = coorsJ[0];
+				Coordinate lastCoorJ = coorsJ[coorsJ.length -1];
+				Point firstPointJ = geometryFactory.createPoint(firstCoorJ);
+				Point lastPointJ = geometryFactory.createPoint(lastCoorJ);
+
+				if(upperType.equals("POINT")){
+					double firstDistance = firstPoint.distance(lineReturnGeom);
+					double lastDistance = lastPoint.distance(lineReturnGeom);
+					double firstDistanceJ = firstPointJ.distance(lineReturnGeom);
+					double lastDistanceJ = lastPointJ.distance(lineReturnGeom);
+					if(firstPoint.equals(lastPoint) && !firstPointJ.equals(lastPointJ)){
+						if(firstDistanceJ > selfEntityTolerance && lastDistanceJ > selfEntityTolerance){
+							returnGeom = lineReturnGeom;
+						}
+					}else if(!firstPoint.equals(lastPoint) && firstPointJ.equals(lastPointJ)){
+						if(firstDistance > selfEntityTolerance && lastDistance > selfEntityTolerance
+								&& firstDistanceJ > selfEntityTolerance && lastDistanceJ > selfEntityTolerance){
+							if(firstDistance > selfEntityTolerance && lastDistance > selfEntityTolerance){
+								returnGeom = lineReturnGeom;
+							}
+						}
+					}else if(!firstPoint.equals(lastPoint) && !firstPointJ.equals(lastPointJ)){
+						if(firstDistance > selfEntityTolerance && lastDistance > selfEntityTolerance
+								&& firstDistanceJ > selfEntityTolerance && lastDistanceJ > selfEntityTolerance){
+							returnGeom = lineReturnGeom;
+						}
+					}
+
+				}else{
+					if(firstPoint.equals(lastPoint) && firstPointJ.equals(lastPointJ)){
+						//Coordinate[] intersectCoors = lineReturnGeom.getCoordinates();
+						LinearRing  ringI = geometryFactory.createLinearRing(coors);
+						LinearRing holesI[] = null;
+						Polygon polygonI = geometryFactory.createPolygon(ringI, holesI);
+						LinearRing  ringJ = geometryFactory.createLinearRing(coors);
+						LinearRing holesJ[] = null;
+						Polygon polygonJ = geometryFactory.createPolygon(ringJ, holesJ);
+						Geometry intersectPolygon = polygonI.intersection(polygonJ);
+						if(intersectPolygon.getArea() > polygonInvadedTolorence){
+							returnGeom = lineReturnGeom;
+						}
+						/*lineReturnGeom = geometryI.intersection(geometryJ);
+					returnGeom = lineReturnGeom;*/
+					}else{
+						returnGeom = lineReturnGeom;
+					}
+				}
 			}
 		}
 		if (typeJ.equals("Polygon") || typeJ.equals("MultiPolygon")) {
+
 			if (geometryI.crosses(geometryJ.getBoundary()) || geometryI.within(geometryJ)) {
-				returnGeom = geometryI.intersection(geometryJ.getBoundary());
+				Geometry geometry =geometryI.intersection(geometryJ);
+				String upperType = geometry.getGeometryType().toUpperCase();
+				if(upperType.equals("LINESTRING") || upperType.equals("MULTILINESTRING")){
+					if(geometry.getLength() > selfEntityTolerance){
+						returnGeom = geometryI.intersection(geometryJ.getBoundary());
+					}
+				}
 			}
 		}
 		return returnGeom;
 	}
 
-	private Geometry selfEntityPolygon(Geometry geometryI, Geometry geometryJ) {
+	private Geometry selfEntityPolygon(Geometry geometryI, Geometry geometryJ, double selfEntityTolerance, double polygonInvadedTolorence) {
 
 		String typeJ = geometryJ.getGeometryType();
 		Geometry returnGeom = null;
 		try {
-
 			if (typeJ.equals("Point") || typeJ.equals("MultiPoint")) {
 				if (geometryI.within(geometryJ)) {
 					returnGeom = geometryI.intersection(geometryJ);
@@ -383,20 +446,35 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 				// geometryI.intersects(geometryJ)) {
 				// returnGeom = geometryI.intersection(geometryJ);
 				// }
-				boolean isTrue = false;
-				GeometryFactory factory = new GeometryFactory();
-				Coordinate[] coors = geometryJ.getCoordinates();
-				for (int i = 0; i < coors.length; i++) {
-					Point pt = factory.createPoint(coors[i]);
-					if (geometryI.within(pt)) {
-						returnGeom = pt;
+				Geometry geom = geometryI.intersection(geometryJ);
+				String upperType = geom.getGeometryType().toUpperCase();
+				if(upperType.equals("LINESTRING") || upperType.equals("MULTILINESTRING")){
+					if(geom.getLength() > selfEntityTolerance ){
+						//
+						boolean isTrue = false;
+						GeometryFactory factory = new GeometryFactory();
+						Coordinate[] coors = geometryJ.getCoordinates();
+						for (int i = 0; i < coors.length; i++) {
+							Point pt = factory.createPoint(coors[i]);
+							if (geometryI.within(pt)) {
+								returnGeom = pt;
+							}
+						}
+						//
 					}
 				}
 			}
 			if (typeJ.equals("Polygon") || typeJ.equals("MultiPolygon")) {
 				if (!geometryI.equals(geometryJ)) {
 					if (geometryI.overlaps(geometryJ) || geometryI.within(geometryJ) || geometryI.contains(geometryJ)) {
-						returnGeom = geometryI.intersection(geometryJ);
+						Geometry geometry = geometryI.intersection(geometryJ);
+						String upperType = geometry.getGeometryType().toUpperCase();
+						if(upperType.equals("POLYGON") || upperType.equals("MULTIPOLYGON")){
+							if(geometry.getArea() > polygonInvadedTolorence){
+								returnGeom = geometry;
+							}
+						}
+						//returnGeom = geometryI.intersection(geometryJ);
 					}
 				}
 			}
