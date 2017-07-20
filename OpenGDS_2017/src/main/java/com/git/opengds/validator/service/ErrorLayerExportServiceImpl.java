@@ -355,8 +355,8 @@ public class ErrorLayerExportServiceImpl implements ErrorLayerExportService {
 				tables.setLayerValues(tablesCommonMap, tablesLayerMap);
 				tables.setLayers(true);
 				qa10LayerCollection.setTables(tables);
-
-				// setEntities
+				
+				// writeFile
 				QA10FileWriter qa10Writer = new QA10FileWriter();
 				fileMap = qa10Writer.writeDxfFile(qa10LayerCollection);
 				String fileName = (String) fileMap.get("fileName");

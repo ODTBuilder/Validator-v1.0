@@ -84,74 +84,36 @@ public class QA10FileWriter {
 		dxfWriter.write(sectionNameCode);
 		dxfWriter.newLine();
 		dxfWriter.write(blocks);
+		dxfWriter.newLine();
 
 		List<LinkedHashMap<String, Object>> blocksMapList = qa10Blocks.getBlocks();
 		for (int i = 0; i < blocksMapList.size(); i++) {
 			LinkedHashMap<String, Object> blocksMap = blocksMapList.get(i);
 			// common
 			LinkedHashMap<String, Object> common = (LinkedHashMap<String, Object>) blocksMap.get("block");
-			dxfWriter.newLine();
+
 			dxfWriter.write(startBlockCode);
 			dxfWriter.newLine();
 			dxfWriter.write(block);
+			dxfWriter.newLine();
 			Iterator commonIt = common.keySet().iterator();
 			while (commonIt.hasNext()) {
 				String commonKey = (String) commonIt.next();
-				String commonValue = (String) common.get(commonKey);
-				dxfWriter.newLine();
-				dxfWriter.write(commonKey);
-				dxfWriter.newLine();
-				dxfWriter.write(commonValue);
+				Object commonValue = common.get(commonKey);
+				if (commonValue != null) {
+					dxfWriter.write(commonKey);
+					dxfWriter.newLine();
+					dxfWriter.write((String) commonValue);
+					dxfWriter.newLine();
+				} else {
+					continue;
+				}
 			}
 			// entities
 			List<LinkedHashMap<String, Object>> entities = (List<LinkedHashMap<String, Object>>) blocksMap
 					.get("entities");
-			for (int j = 0; j < entities.size(); j++) {
-				LinkedHashMap<String, Object> entity = entities.get(j);
-				String entityType = (String) entity.get("0");
-				if (entityType.equals("POLYLINE") || entityType.equals("LWPOLYLINE")) {
-					Iterator entityIt = entity.keySet().iterator();
-					while (entityIt.hasNext()) {
-						String entityKey = (String) entityIt.next();
-						if (entityKey.equals("0")) {
-							String entityValue = "POLYLINE";
-							dxfWriter.newLine();
-							dxfWriter.write(entityKey);
-							dxfWriter.newLine();
-							dxfWriter.write(entityValue);
-						} else if (entityKey.equals("vertexs")) {
-							List<LinkedHashMap<String, Object>> entityValueList = (List<LinkedHashMap<String, Object>>) entity
-									.get(entityKey);
-							for (int k = 0; k < entityValueList.size(); k++) {
-								LinkedHashMap<String, Object> entityValue = entityValueList.get(k);
-								Iterator vertexIt = entityValue.keySet().iterator();
-								while (vertexIt.hasNext()) {
-									String vertexKey = (String) vertexIt.next();
-									if (vertexKey.equals("8")) {
-										String vertexValue = (String) entity.get("8");
-										dxfWriter.newLine();
-										dxfWriter.write(vertexKey);
-										dxfWriter.newLine();
-										dxfWriter.write(vertexValue);
-									}
-									String vertexValue = (String) entityValue.get(vertexKey);
-									dxfWriter.newLine();
-									dxfWriter.write(vertexKey);
-									dxfWriter.newLine();
-									dxfWriter.write(vertexValue);
-								}
-							}
-						} else {
-							String entityValue = (String) entity.get(entityKey);
-							dxfWriter.newLine();
-							dxfWriter.write(entityKey);
-							dxfWriter.newLine();
-							dxfWriter.write(entityValue);
-						}
-					}
-				}
-			}
-			dxfWriter.newLine();
+			writeEntities(entities, true);
+
 			dxfWriter.write(startEndBlocksCode);
 			dxfWriter.newLine();
 			dxfWriter.write(endBlock);
@@ -159,12 +121,97 @@ public class QA10FileWriter {
 			dxfWriter.write("8");
 			dxfWriter.newLine();
 			dxfWriter.write("0");
+			dxfWriter.newLine();
 		}
-		dxfWriter.newLine();
 		dxfWriter.write(endSectionCode);
 		dxfWriter.newLine();
 		dxfWriter.write(endSection);
 		dxfWriter.newLine();
+	}
+
+	private void writeEntities(List<LinkedHashMap<String, Object>> entities, boolean isBlocks) throws IOException {
+
+		for (int j = 0; j < entities.size(); j++) {
+			LinkedHashMap<String, Object> entity = entities.get(j);
+			String entityType = (String) entity.get("0");
+			String layerId = (String) entity.get("8");
+			if (entityType.equals("POLYLINE") || entityType.equals("LWPOLYLINE")) {
+				Iterator entityIt = entity.keySet().iterator();
+				while (entityIt.hasNext()) {
+					String entityKey = (String) entityIt.next();
+					if (entityKey.equals("0")) {
+						String entityValue = "POLYLINE";
+						dxfWriter.write(entityKey);
+						dxfWriter.newLine();
+						dxfWriter.write(entityValue);
+						dxfWriter.newLine();
+					}
+					if (entityKey.equals("vertexs")) {
+						List<LinkedHashMap<String, Object>> entityValueList = (List<LinkedHashMap<String, Object>>) entity
+								.get(entityKey);
+						for (int k = 0; k < entityValueList.size(); k++) {
+							LinkedHashMap<String, Object> entityValue = entityValueList.get(k);
+							Iterator vertexIt = entityValue.keySet().iterator();
+							while (vertexIt.hasNext()) {
+								String vertexKey = (String) vertexIt.next();
+								if (vertexKey.equals("8")) {
+									String vertexValue = (String) entity.get("8");
+									dxfWriter.write(vertexKey);
+									dxfWriter.newLine();
+									dxfWriter.write(vertexValue);
+									dxfWriter.newLine();
+								} else {
+									Object vertexValue = entityValue.get(vertexKey);
+									if (vertexValue != null) {
+										dxfWriter.write(vertexKey);
+										dxfWriter.newLine();
+										dxfWriter.write((String) vertexValue);
+										dxfWriter.newLine();
+									} else {
+										continue;
+									}
+								}
+							}
+						}
+					}
+					if (!entityKey.equals("0") && !entityKey.equals("vertexs")) {
+						Object entityValue = entity.get(entityKey);
+						if (entityValue != null) {
+							dxfWriter.write(entityKey);
+							dxfWriter.newLine();
+							dxfWriter.write((String) entityValue);
+							dxfWriter.newLine();
+						} else {
+							continue;
+						}
+					}
+				}
+			} else {
+				Iterator entityIt = entity.keySet().iterator();
+				while (entityIt.hasNext()) {
+					String entityKey = (String) entityIt.next();
+					Object entityValue = entity.get(entityKey);
+					if (entityValue != null) {
+						dxfWriter.write(entityKey);
+						dxfWriter.newLine();
+						dxfWriter.write((String) entityValue);
+						dxfWriter.newLine();
+					} else {
+						continue;
+					}
+				}
+			}
+			if (isBlocks) {
+				dxfWriter.write("0");
+				dxfWriter.newLine();
+				dxfWriter.write("SEQEND");
+				dxfWriter.newLine();
+				dxfWriter.write("8");
+				dxfWriter.newLine();
+				dxfWriter.write(layerId);
+				dxfWriter.newLine();
+			}
+		}
 	}
 
 	private void writeDefaultBlockSection() throws IOException {
@@ -194,24 +241,13 @@ public class QA10FileWriter {
 		dxfWriter.write(entities);
 		dxfWriter.newLine();
 
-		Map<String, Object> variablesMap = qa10Entities.getValues();
-		Iterator entitiesIt = variablesMap.keySet().iterator();
-		while (entitiesIt.hasNext()) {
-			String layerId = (String) entitiesIt.next();
-			List<LinkedHashMap<String, Object>> variables = (List<LinkedHashMap<String, Object>>) variablesMap
-					.get(layerId);
-			for (int i = 0; i < variables.size(); i++) {
-				LinkedHashMap<String, Object> variable = variables.get(i);
-				Iterator variableIt = variable.keySet().iterator();
-				while (variableIt.hasNext()) {
-					String variableKey = (String) variableIt.next();
-					String variableValue = (String) variable.get(variableKey);
-					dxfWriter.write(variableKey);
-					dxfWriter.newLine();
-					dxfWriter.write(variableValue);
-					dxfWriter.newLine();
-				}
-			}
+		Map<String, Object> valuesMap = qa10Entities.getValues();
+		Iterator layerIt = valuesMap.keySet().iterator();
+		while (layerIt.hasNext()) {
+			String layerID = (String) layerIt.next();
+			List<LinkedHashMap<String, Object>> entitiyMapList = (List<LinkedHashMap<String, Object>>) valuesMap
+					.get(layerID);
+			writeEntities(entitiyMapList, false);
 		}
 		dxfWriter.write(endSectionCode);
 		dxfWriter.newLine();

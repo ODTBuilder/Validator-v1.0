@@ -19,7 +19,6 @@ import com.git.gdsbuilder.type.qa10.feature.style.DTDXFLWPolylineStyle;
 import com.git.gdsbuilder.type.qa10.feature.style.DTDXFPolylineStyle;
 import com.git.gdsbuilder.type.qa10.feature.style.DTDXFStyle;
 import com.git.gdsbuilder.type.qa10.feature.style.DTDXFTextSyle;
-import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 
 public class QA10FileFeatureParser {
@@ -186,6 +185,9 @@ public class QA10FileFeatureParser {
 
 			String entityID = dxfText.getID();
 			QA10Feature dxfFeature = new QA10Feature(entityID);
+			dxfFeature.setFeatureType(entityType);
+			dxfFeature.setHeight(dxfText.getHeight());
+			dxfFeature.setRotate(dxfText.getRotation());
 			dxfFeature.setFeatureType(entityType);
 			dxfFeature.setGeom(geom);
 			dxfFeature.setTextValue(dxfText.getText());

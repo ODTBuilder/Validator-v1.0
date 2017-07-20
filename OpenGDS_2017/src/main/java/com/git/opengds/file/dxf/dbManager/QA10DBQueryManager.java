@@ -34,7 +34,7 @@ public class QA10DBQueryManager {
 				+ "), feature_type varchar(50)";
 
 		if (originLayerType.equals("TEXT")) {
-			defaultCreateQuery += ", text_value varchar(100)";
+			defaultCreateQuery += ", text_value varchar(100), height double precision, rotate double precision";
 		}
 		if (originLayerType.equals("LWPOLYLINE") || originLayerType.equals("POLYLINE")) {
 			defaultCreateQuery += ", elevation double precision";
@@ -64,8 +64,9 @@ public class QA10DBQueryManager {
 					+ feature.getGeom().toString() + "'," + src + "), '" + feature.getFeatureType() + "'";
 
 			if (originLayerType.equals("TEXT")) {
-				defaultInsertColumns += ", text_value";
-				values += ", '" + feature.getTextValue() + "'";
+				defaultInsertColumns += ", text_value, height, rotate";
+				values += ", '" + feature.getTextValue() + "'" + ", '" + feature.getHeight() + "'" + ", '"
+						+ feature.getRotate() + "'";
 			}
 
 			if (originLayerType.equals("LWPOLYLINE") || originLayerType.equals("POLYLINE")) {
@@ -608,8 +609,8 @@ public class QA10DBQueryManager {
 	public HashMap<String, Object> getSelectBlockCommon(Integer cIdx, String id) {
 		HashMap<String, Object> selectIdxQuery = new HashMap<String, Object>();
 		String tableName = "qa10_layercollection_block_common";
-		String selectQueryStr = "select * from "
-				+ tableName + " where c_idx = " + cIdx + " AND " + "\"2\"" + " = '" + id + "'";
+		String selectQueryStr = "select * from " + tableName + " where c_idx = " + cIdx + " AND " + "\"2\"" + " = '"
+				+ id + "'";
 		selectIdxQuery.put("selectQuery", selectQueryStr);
 		return selectIdxQuery;
 	}
