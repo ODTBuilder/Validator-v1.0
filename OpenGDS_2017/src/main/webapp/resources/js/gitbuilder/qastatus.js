@@ -41,7 +41,7 @@ gb.qa.QAStatus = function(obj) {
 	 * 
 	 * 
 	 */
-	this.naviArea = $("<div>");
+	this.naviArea = $("<div>").css("margin-bottom", "10px");
 	var htd0 = $("<td>").text("#");
 	var htd1 = $("<td>").text("Format");
 	var htd2 = $("<td>").text("Map sheet number");
@@ -56,24 +56,7 @@ gb.qa.QAStatus = function(obj) {
 	this.tb = $("<table>").addClass("table").addClass("text-center").append(thead).append(this.tbody);
 	this.listArea = $("<div>").append(this.tb);
 
-	this.rtb = $("<table>");
-	$(this.rtb).DataTable({
-		columns : [ {
-			title : "Map sheet number"
-		}, {
-			title : "Layer name"
-		}, {
-			title : "Feature ID"
-		}, {
-			title : "Error type"
-		}, {
-			title : "Error name"
-		}, {
-			title : "Coordinate X"
-		}, {
-			title : "Coordinate Y"
-		} ]
-	});
+	this.rtb = $("<table>").addClass("table").addClass("table-striped");
 	this.reportArea = $("<div>").append(this.rtb);
 
 	this.body = $("<div>").append(this.naviArea).append(this.listArea).append(this.reportArea);
@@ -124,7 +107,7 @@ gb.qa.QAStatus = function(obj) {
 	this.window.modal({
 		backdrop : true,
 		keyboard : true,
-		show : false,
+		show : false
 	});
 };
 gb.qa.QAStatus.prototype.open = function() {
@@ -175,7 +158,23 @@ gb.qa.QAStatus.prototype.setList = function() {
 	$(this.tbody).append(tr);
 };
 gb.qa.QAStatus.prototype.setReport = function() {
-
+	$(this.rtb).DataTable({
+		columns : [ {
+			title : "Map sheet number"
+		}, {
+			title : "Layer name"
+		}, {
+			title : "Feature ID"
+		}, {
+			title : "Error type"
+		}, {
+			title : "Error name"
+		}, {
+			title : "Coordinate X"
+		}, {
+			title : "Coordinate Y"
+		} ]
+	});
 };
 gb.qa.QAStatus.prototype.setUrl = function(url) {
 	if (typeof url === "string") {
