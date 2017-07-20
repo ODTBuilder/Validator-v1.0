@@ -119,12 +119,7 @@ html {
 					<li><a href="#" title="Validation" id="validation">Validation</a></li>
 				</ul></li>
 			<li><a href="#" title="QA Edit" id="qaedit">QA Edit</a></li>
-			<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
-				aria-expanded="false" title="Validation Result">Result</a>
-				<ul class="dropdown-menu" role="menu">
-					<li><a href="#">Error Navigator</a></li>
-					<li><a href="#">Error Report</a></li>
-				</ul></li>
+			<li><a href="#" title="QA Status" id="qastat">QA Status</a></li>
 
 			<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
 				aria-expanded="false" title="ToolBox">ToolBox</a>
@@ -469,6 +464,14 @@ html {
 		});
 		$("#srefresh").click(function() {
 			$("#builderServerLayer").jstree(true).refresh();
+		});
+		var qastat = new gb.qa.QAStatus({
+			"statusURL" : "",
+			"errorURL" : "",
+			"downloadURL" : ""
+		});
+		$("#qastat").click(function() {
+			qastat.open();
 		});
 	</script>
 
