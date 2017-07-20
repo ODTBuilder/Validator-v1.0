@@ -607,30 +607,35 @@ gitbuilder.ui.EditingTool = $.widget("gitbuilder.editingtool", {
 					that.setLayer(that.updateSelected());
 					var attrInfo = that.getLayer().get("git").attribute;
 					that.feature = that.features.item(0);
-					var attr = that.features.item(0).getProperties();
-					var keys = Object.keys(attrInfo);
-					for (var i = 0; i < keys.length; i++) {
-						if (keys[i] === "geometry") {
-							continue;
+					if (!!attrInfo) {
+						var attr = that.features.item(0).getProperties();
+						var keys = Object.keys(attrInfo);
+						for (var i = 0; i < keys.length; i++) {
+							if (keys[i] === "geometry") {
+								continue;
+							}
+							var td1 = $("<td>").text(keys[i]);
+							var tform = $("<input>").addClass("gb-edit-sel-alist").attr({
+								"type" : "text"
+							}).css({
+								"width" : "100%",
+								"border" : "none"
+							}).val(attr[keys[i]]);
+							var td2 = $("<td>").append(tform);
+							var tr = $("<tr>").append(td1).append(td2);
+							that.attrTB.append(tr);
 						}
-						var td1 = $("<td>").text(keys[i]);
-						var tform = $("<input>").addClass("gb-edit-sel-alist").attr({
-							"type" : "text"
-						}).css({
-							"width" : "100%",
-							"border" : "none"
-						}).val(attr[keys[i]]);
-						var td2 = $("<td>").append(tform);
-						var tr = $("<tr>").append(td1).append(td2);
-						that.attrTB.append(tr);
+						$(that.attrPop).show();
+						$(that.attrPop).position({
+							"my" : "right bottom",
+							"at" : "right bottom+100",
+							"of" : document,
+							"collision" : "fit"
+						});
+					} else {
+						// $(that.featurePop).hide();
+						$(that.attrPop).hide();
 					}
-					$(that.attrPop).show();
-					$(that.attrPop).position({
-						"my" : "right bottom",
-						"at" : "right bottom+100",
-						"of" : document,
-						"collision" : "fit"
-					});
 				} else {
 					$(that.featurePop).hide();
 					$(that.attrPop).hide();
@@ -912,9 +917,30 @@ gitbuilder.ui.EditingTool = $.widget("gitbuilder.editingtool", {
 				source : sourceLayer.getSource(),
 				type : git.geometry
 			});
+
 			this.interaction.draw.selectedType = function() {
-				return that.updateSelected().get("git").geometry;
+				var irreGeom = that.updateSelected().get("git").geometry;
+				var geom;
+				switch (irreGeom) {
+				case "Polyline":
+					geom = "LineString";
+					break;
+				case "LWPolyline":
+					geom = "LineString";
+					break;
+				case "Insert":
+					geom = "Point";
+					break;
+				case "Text":
+					geom = "Point";
+					break;
+				default:
+					geom = that.updateSelected().get("git").geometry;
+					break;
+				}
+				return geom;
 			};
+
 			this.interaction.draw.on("drawend", function(evt) {
 				console.log(evt);
 				var layers = that.options.selected();

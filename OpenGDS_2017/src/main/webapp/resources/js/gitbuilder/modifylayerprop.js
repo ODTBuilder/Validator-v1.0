@@ -420,7 +420,6 @@ gb.edit.ModifyLayerProperties.prototype.initExpertForm = function() {
 	$(this.expertForm).append(tp).append(table).append(table2);
 };
 gb.edit.ModifyLayerProperties.prototype.getDefinitionForm = function() {
-	var info = this.getInformation();
 	if (this.type === "mapsheet") {
 
 	} else if (this.type === "layer") {
@@ -429,6 +428,7 @@ gb.edit.ModifyLayerProperties.prototype.getDefinitionForm = function() {
 			return;
 		}
 		var layer = this.getLayer();
+		var oldLayerId = layer.get("id");
 		var info = layer.get("git").information;
 
 		if (info.getName() !== $(this.layerNameInput).val().replace(/(\s*)/g, '')) {
@@ -484,5 +484,6 @@ gb.edit.ModifyLayerProperties.prototype.getDefinitionForm = function() {
 				layer.get("git").attribute = info.getAttributesJSON();
 			}
 		}
+		this.getLayerRecord().update(info.getFormat(), info.getSheetNumber(), layer, oldLayerId);
 	}
 };

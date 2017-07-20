@@ -434,7 +434,7 @@ gb.edit.CreateVectorLayer.prototype.getDefinitionForm = function() {
 		});
 		var groupLayer = new ol.layer.Group();
 		groupLayer.set("id", mapsheet.getId());
-		groupLayer.set("name", mapsheet.getNumber());
+		groupLayer.set("name", mapsheet.getSheetNumber());
 		var gitGroup = {
 			"information" : mapsheet
 		};
@@ -445,21 +445,37 @@ gb.edit.CreateVectorLayer.prototype.getDefinitionForm = function() {
 			console.error("no layer name");
 			return;
 		}
-		var layer = new gb.layer.LayerInfo({
-			name : $(this.layerNameInput).val().replace(/(\s*)/g, ''),
-			id : "geo_" + this.format + "_" + $(this.sheetNumInput).val().replace(/(\s*)/g, '') + "_"
-					+ $(this.layerNameInput).val().replace(/(\s*)/g, '') + "_" + ($(this.geomForm).find("select").val().toUpperCase()),
-			format : this.format,
-			epsg : "5186",
-			NGIVer : parseInt($(this.ver).val()),
-			NGIDim : parseInt($(this.dim).val()),
-			NGIRep : $(this.rep).val(),
-			mbound : [ [ $(this.minx).val(), $(this.miny).val() ], [ $(this.maxx).val(), $(this.maxy).val() ] ],
-			lbound : [ [ 122.71, 28.6 ], [ 134.28, 40.27 ] ],
-			isNew : true,
-			geometry : $(this.geomForm).find("select").val(),
-			sheetNum : $(this.sheetNumInput).val().replace(/(\s*)/g, '')
-		});
+		var layerl
+		if (this.format === "ngi") {
+			layer = new gb.layer.LayerInfo({
+				name : $(this.layerNameInput).val().replace(/(\s*)/g, ''),
+				id : "geo_" + this.format + "_" + $(this.sheetNumInput).val().replace(/(\s*)/g, '') + "_"
+						+ $(this.layerNameInput).val().replace(/(\s*)/g, '') + "_" + ($(this.geomForm).find("select").val().toUpperCase()),
+				format : this.format,
+				epsg : "5186",
+				NGIVer : parseInt($(this.ver).val()),
+				NGIDim : parseInt($(this.dim).val()),
+				NGIRep : $(this.rep).val(),
+				mbound : [ [ $(this.minx).val(), $(this.miny).val() ], [ $(this.maxx).val(), $(this.maxy).val() ] ],
+				lbound : [ [ 122.71, 28.6 ], [ 134.28, 40.27 ] ],
+				isNew : true,
+				geometry : $(this.geomForm).find("select").val(),
+				sheetNum : $(this.sheetNumInput).val().replace(/(\s*)/g, '')
+			});
+		} else if (this.format === "dxf") {
+			layer = new gb.layer.LayerInfo({
+				name : $(this.layerNameInput).val().replace(/(\s*)/g, ''),
+				id : "geo_" + this.format + "_" + $(this.sheetNumInput).val().replace(/(\s*)/g, '') + "_"
+						+ $(this.layerNameInput).val().replace(/(\s*)/g, '') + "_" + ($(this.geomForm).find("select").val().toUpperCase()),
+				format : this.format,
+				epsg : "5186",
+				mbound : [ [ $(this.minx).val(), $(this.miny).val() ], [ $(this.maxx).val(), $(this.maxy).val() ] ],
+				lbound : [ [ 122.71, 28.6 ], [ 134.28, 40.27 ] ],
+				isNew : true,
+				geometry : $(this.geomForm).find("select").val(),
+				sheetNum : $(this.sheetNumInput).val().replace(/(\s*)/g, '')
+			});
+		}
 		var vectorLayer = new ol.layer.Vector({
 			source : new ol.source.Vector()
 		});

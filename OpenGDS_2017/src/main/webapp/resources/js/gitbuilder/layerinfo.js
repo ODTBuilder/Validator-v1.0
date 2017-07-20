@@ -13,6 +13,7 @@ if (!gb.layer)
 gb.layer.LayerInfo = function(opt) {
 	var options = opt ? opt : null;
 	this.name = options.name ? options.name : null;
+	this.oldName = options.name ? options.name : null;
 	this.id = options.id ? options.id : null;
 	this.sheetNum = options.sheetNum ? options.sheetNum : undefined;
 	this.attributes = options.attributes ? options.attributes : undefined;
@@ -83,8 +84,8 @@ gb.layer.LayerInfo.prototype.getAttribute = function(key) {
 	return result;
 };
 
-gb.layer.LayerInfo.prototype.getName = function() {
-	return this.name;
+gb.layer.LayerInfo.prototype.getOldName = function() {
+	return this.oldName;
 };
 
 gb.layer.LayerInfo.prototype.setName = function(name) {

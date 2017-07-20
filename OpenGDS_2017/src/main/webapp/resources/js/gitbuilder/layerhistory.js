@@ -60,7 +60,7 @@ gb.edit.LayerRecord.prototype.createByMapsheet = function(mapsheetLayer) {
 		return;
 	}
 	var format = info.getFormat();
-	var mapsheet = info.getNumber();
+	var mapsheet = info.getSheetNumber();
 	var layers;
 	if (mapsheetLayer instanceof ol.layer.Group) {
 		layers = mapsheetLayer.getLayers();
@@ -89,41 +89,212 @@ gb.edit.LayerRecord.prototype.create = function(format, mapsheet, layer) {
 	console.log(this.created);
 }
 gb.edit.LayerRecord.prototype.remove = function(format, mapsheet, layer) {
-	var git = layer.get("git");
-	if (!git) {
-		console.error("no git property");
-		return;
-	}
-	var info = git.information;
-	if (!info) {
-		console.error("no information");
-		return;
-	}
+	if (layer instanceof ol.layer.Group) {
+		var layers = layer.getLayers();
+		for (var i = 0; i < layers.getLength().length; i++) {
+			var git = layers.item(i).get("git");
+			if (!git) {
+				console.error("no git property");
+				return;
+			}
+			var info = git.information;
+			if (!info) {
+				console.error("no information");
+				return;
+			}
 
-	if (info.getIsNew() === true) {
-		delete this.created[format][mapsheet][layer.get("id")];
+			if (info.getIsNew() === true) {
+				delete this.created[format][mapsheet][layers.item(i).get("id")];
+				var mkeys = Object.keys(this.created[format][mapsheet]);
+				if (mkeys.length === 0) {
+					delete this.created[format][mapsheet];
+				}
+				var fkeys = Object.keys(this.created[format]);
+				if (fkeys.length === 0) {
+					delete this.created[format];
+				}
+			} else {
+				if (!this.removed.hasOwnProperty(format)) {
+					this.removed[format] = {};
+				}
+				if (!this.removed[format].hasOwnProperty(mapsheet)) {
+					this.removed[format][mapsheet] = {};
+				}
+				this.removed[format][mapsheet][layers.item(i).get("id")] = layers.item(i);
+				if (this.modified.hasOwnProperty(format)) {
+					if (this.modified[format].hasOwnProperty(mapsheet)) {
+						if (this.modified[format][mapsheet].hasOwnProperty(layers.item(i).get("id"))) {
+							delete this.modified[format][mapsheet][layers.item(i).get("id")];
+							var mkeys = Object.keys(this.modified[format][mapsheet]);
+							if (mkeys.length === 0) {
+								delete this.modified[format][mapsheet];
+							}
+							var fkeys = Object.keys(this.modified[format]);
+							if (fkeys.length === 0) {
+								delete this.modified[format];
+							}
+						}
+					}
+				}
+			}
+		}
 	} else {
-		if (!this.removed.hasOwnProperty(format)) {
-			this.removed[format] = {};
-		}
-		if (!this.removed[format].hasOwnProperty(mapsheet)) {
-			this.removed[format][mapsheet] = {};
-		}
-		this.removed[format][mapsheet][layer.get("id")] = layer;
-		if (this.modified.hasOwnProperty(format)) {
-			if (this.modified[format].hasOwnProperty(mapsheet)) {
-				if (this.modified[format][mapsheet].hasOwnProperty(layer.get("id"))) {
-					delete this.modified[format][mapsheet][layer.get("id")];
+		var git = layer.get("git");
+		if (git.hasOwnProperty("fake")) {
+			if (git["fake"] === "parent") {
+				var layers = git.layers;
+				for (var i = 0; i < layers.getLength().length; i++) {
+					var git = layers.item(i).get("git");
+					if (!git) {
+						console.error("no git property");
+						return;
+					}
+					var info = git.information;
+					if (!info) {
+						console.error("no information");
+						return;
+					}
+
+					if (info.getIsNew() === true) {
+						delete this.created[format][mapsheet][layers.item(i).get("id")];
+						var mkeys = Object.keys(this.created[format][mapsheet]);
+						if (mkeys.length === 0) {
+							delete this.created[format][mapsheet];
+						}
+						var fkeys = Object.keys(this.created[format]);
+						if (fkeys.length === 0) {
+							delete this.created[format];
+						}
+					} else {
+						if (!this.removed.hasOwnProperty(format)) {
+							this.removed[format] = {};
+						}
+						if (!this.removed[format].hasOwnProperty(mapsheet)) {
+							this.removed[format][mapsheet] = {};
+						}
+						this.removed[format][mapsheet][layers.item(i).get("id")] = layers.item(i);
+						if (this.modified.hasOwnProperty(format)) {
+							if (this.modified[format].hasOwnProperty(mapsheet)) {
+								if (this.modified[format][mapsheet].hasOwnProperty(layers.item(i).get("id"))) {
+									delete this.modified[format][mapsheet][layers.item(i).get("id")];
+									var mkeys = Object.keys(this.modified[format][mapsheet]);
+									if (mkeys.length === 0) {
+										delete this.modified[format][mapsheet];
+									}
+									var fkeys = Object.keys(this.modified[format]);
+									if (fkeys.length === 0) {
+										delete this.modified[format];
+									}
+								}
+							}
+						}
+					}
+				}
+			} else if (git["fake"] === "child") {
+				var git = layer.get("git");
+				if (!git) {
+					console.error("no git property");
+					return;
+				}
+				var info = git.information;
+				if (!info) {
+					console.error("no information");
+					return;
+				}
+
+				if (info.getIsNew() === true) {
+					delete this.created[format][mapsheet][layer.get("id")];
+					var mkeys = Object.keys(this.created[format][mapsheet]);
+					if (mkeys.length === 0) {
+						delete this.created[format][mapsheet];
+					}
+					var fkeys = Object.keys(this.created[format]);
+					if (fkeys.length === 0) {
+						delete this.created[format];
+					}
+				} else {
+					if (!this.removed.hasOwnProperty(format)) {
+						this.removed[format] = {};
+					}
+					if (!this.removed[format].hasOwnProperty(mapsheet)) {
+						this.removed[format][mapsheet] = {};
+					}
+					this.removed[format][mapsheet][layer.get("id")] = layer;
+					if (this.modified.hasOwnProperty(format)) {
+						if (this.modified[format].hasOwnProperty(mapsheet)) {
+							if (this.modified[format][mapsheet].hasOwnProperty(layer.get("id"))) {
+								delete this.modified[format][mapsheet][layer.get("id")];
+								var mkeys = Object.keys(this.modified[format][mapsheet]);
+								if (mkeys.length === 0) {
+									delete this.modified[format][mapsheet];
+								}
+								var fkeys = Object.keys(this.modified[format]);
+								if (fkeys.length === 0) {
+									delete this.modified[format];
+								}
+							}
+						}
+					}
+				}
+			}
+		} else {
+			var git = layer.get("git");
+			if (!git) {
+				console.error("no git property");
+				return;
+			}
+			var info = git.information;
+			if (!info) {
+				console.error("no information");
+				return;
+			}
+
+			if (info.getIsNew() === true) {
+				delete this.created[format][mapsheet][layer.get("id")];
+				var mkeys = Object.keys(this.created[format][mapsheet]);
+				if (mkeys.length === 0) {
+					delete this.created[format][mapsheet];
+				}
+				var fkeys = Object.keys(this.created[format]);
+				if (fkeys.length === 0) {
+					delete this.created[format];
+				}
+			} else {
+				if (!this.removed.hasOwnProperty(format)) {
+					this.removed[format] = {};
+				}
+				if (!this.removed[format].hasOwnProperty(mapsheet)) {
+					this.removed[format][mapsheet] = {};
+				}
+				this.removed[format][mapsheet][layer.get("id")] = layer;
+				if (this.modified.hasOwnProperty(format)) {
+					if (this.modified[format].hasOwnProperty(mapsheet)) {
+						if (this.modified[format][mapsheet].hasOwnProperty(layer.get("id"))) {
+							delete this.modified[format][mapsheet][layer.get("id")];
+							var mkeys = Object.keys(this.modified[format][mapsheet]);
+							if (mkeys.length === 0) {
+								delete this.modified[format][mapsheet];
+							}
+							var fkeys = Object.keys(this.modified[format]);
+							if (fkeys.length === 0) {
+								delete this.modified[format];
+							}
+						}
+					}
 				}
 			}
 		}
 	}
+
 	console.log(this.removed);
+	console.log(this.created);
+	console.log(this.modified);
 }
 gb.edit.LayerRecord.prototype.update = function(format, mapsheet, layer, oldLayerId) {
 	if (!this.modified) {
 		this.modified = {};
 	}
+	var info = layer.get("git").information;
 	if (info.getIsNew() === true) {
 		delete this.created[format][mapsheet][oldLayerId];
 		this.created[format][mapsheet][layer.get("id")] = layer;
@@ -135,74 +306,121 @@ gb.edit.LayerRecord.prototype.update = function(format, mapsheet, layer, oldLaye
 			}
 		}
 	}
+	console.log(this.removed);
+	console.log(this.created);
 	console.log(this.modified);
 }
 gb.edit.LayerRecord.prototype.getStructure = function() {
-	// var format = new ol.format.GeoJSON();
 	var obj = {};
-	var cLayers = Object.keys(this.created);
-	for (var i = 0; i < cLayers.length; i++) {
-		if (Object.keys(this.created[cLayers[i]]).length < 1) {
-			continue;
+	var created = this.getCreated();
+	var cFormat = Object.keys(created);
+	for (var i = 0; i < cFormat.length; i++) {
+		if (!obj.hasOwnProperty(cFormat[i])) {
+			obj[cFormat[i]] = {};
 		}
-		obj[cLayers[i]] = {};
-	}
-
-	for (var j = 0; j < cLayers.length; j++) {
-		var names = Object.keys(this.created[cLayers[j]]);
-		for (var k = 0; k < names.length; k++) {
-			if (!obj[cLayers[j]].hasOwnProperty("created")) {
-				obj[cLayers[j]]["created"] = {};
+		var cSheetNum = Object.keys(created[cFormat[i]]);
+		for (var j = 0; j < cSheetNum.length; j++) {
+			if (!obj[cFormat[i]].hasOwnProperty(cSheetNum[j])) {
+				obj[cFormat[i]][cSheetNum[j]] = {};
+				obj[cFormat[i]][cSheetNum[j]]["create"] = [];
 			}
-			if (!obj[cLayers[j]]["created"].hasOwnProperty("features")) {
-				obj[cLayers[j]]["created"]["features"] = [];
+			var cLayers = Object.keys(created[cFormat[i]][cSheetNum[j]]);
+			for (var k = 0; k < cLayers.length; k++) {
+				var cLayer = created[cFormat[i]][cSheetNum[j]][cLayers[k]];
+				var cInfo = cLayer.get("git").information;
+				var cObj;
+				if (cInfo.getFormat() === "ngi") {
+					cObj = {
+						"layerName" : cInfo.getName() + "_" + (cInfo.getGeometry().toUpperCase()),
+						"layerType" : cInfo.getGeometry(),
+						"version" : cInfo.getNGIVersion(),
+						"dim" : cInfo.getNGIDim(),
+						"bound" : cInfo.getMbound(),
+						"represent" : cInfo.getNGIRep()
+					};
+					var attrs = [];
+					var cAttrs = cInfo.getAttributes();
+					if (!!cAttrs) {
+						for (var l = 0; l < cAttrs.length; l++) {
+							attrs.push(cAttrs[l].getStructure());
+						}
+						cObj["attr"] = attrs;
+					}
+				} else if (cInfo.getFormat() === "dxf") {
+					cObj = {
+						"layerName" : cInfo.getName() + "_" + (cInfo.getGeometry().toUpperCase()),
+						"layerType" : cInfo.getGeometry()
+					};
+				}
+				obj[cFormat[i]][cSheetNum[j]]["create"].push(cObj);
 			}
-			obj[cLayers[j]]["created"]["features"].push(format.writeFeature(this.created[cLayers[j]][names[k]]));
-		}
-	}
-
-	var mLayers = Object.keys(this.modified);
-	for (var i = 0; i < mLayers.length; i++) {
-		if (Object.keys(this.modified[mLayers[i]]).length < 1 || obj.hasOwnProperty(mLayers[i])) {
-			continue;
-		}
-		obj[mLayers[i]] = {};
-	}
-
-	for (var j = 0; j < mLayers.length; j++) {
-		var names = Object.keys(this.modified[mLayers[j]]);
-		for (var k = 0; k < names.length; k++) {
-			if (!obj[mLayers[j]].hasOwnProperty("modified")) {
-				obj[mLayers[j]]["modified"] = {};
-			}
-			if (!obj[mLayers[j]]["modified"].hasOwnProperty("features")) {
-				obj[mLayers[j]]["modified"]["features"] = [];
-			}
-			var clone = this.modified[mLayers[j]][names[k]];
-			if (this.id) {
-				clone.setId(clone.get(this.id));
-			}
-			obj[mLayers[j]]["modified"]["features"].push(format.writeFeature(clone));
-		}
-	}
-
-	var rLayers = Object.keys(this.removed);
-	for (var i = 0; i < rLayers.length; i++) {
-		if (Object.keys(this.removed[rLayers[i]]).length < 1 || obj.hasOwnProperty(rLayers[i])) {
-			continue;
-		}
-		obj[rLayers[i]] = {};
-	}
-
-	for (var j = 0; j < rLayers.length; j++) {
-		var names = Object.keys(this.removed[rLayers[j]]);
-		for (var k = 0; k < names.length; k++) {
-			if (!obj[rLayers[j]].hasOwnProperty("removed")) {
-				obj[rLayers[j]]["removed"] = [];
-			}
-			obj[rLayers[j]]["removed"].push(names[k]);
 		}
 	}
 
+	var modified = this.getModified();
+	var mFormat = Object.keys(modified);
+	for (var i = 0; i < mFormat.length; i++) {
+		if (!obj.hasOwnProperty(mFormat[i])) {
+			obj[mFormat[i]] = {};
+		}
+		var mSheetNum = Object.keys(modified[mFormat[i]]);
+		for (var j = 0; j < mSheetNum.length; j++) {
+			if (!obj[mFormat[i]].hasOwnProperty(mSheetNum[j])) {
+				obj[mFormat[i]][mSheetNum[j]] = {};
+				obj[mFormat[i]][mSheetNum[j]]["modify"] = [];
+			}
+			var mLayers = Object.keys(modified[mFormat[i]][mSheetNum[j]]);
+			for (var k = 0; k < mLayers.length; k++) {
+				var mLayer = modified[mFormat[i]][mSheetNum[j]][mLayers[k]];
+				var mInfo = mLayer.get("git").information;
+
+				var mObj = {
+					"nativeName" : mInfo.getId(),
+					"originLayerName" : mInfo.getOldName() + "_" + (mInfo.getGeometry().toUpperCase()),
+					"currentLayerName" : mInfo.getName() + "_" + (mInfo.getGeometry().toUpperCase()),
+					// "layerType" : mInfo.getGeometry(),
+					// "version" : mInfo.getNGIVersion(),
+					// "dim" : mInfo.getNGIDim(),
+					"bound" : mInfo.getMbound(),
+					"represent" : mInfo.getNGIRep()
+				};
+				var attrs = [];
+				var mAttrs = mInfo.getAttributes();
+				if (!!mAttrs) {
+					for (var l = 0; l < mAttrs.length; l++) {
+						attrs.push(mAttrs[l].getStructure());
+					}
+					mObj["updateAttr"] = attrs;
+				}
+				obj[mFormat[i]][mSheetNum[j]]["modify"].push(mObj);
+			}
+		}
+	}
+
+	var removed = this.getRemoved();
+	var rFormat = Object.keys(removed);
+	for (var i = 0; i < rFormat.length; i++) {
+		if (!obj.hasOwnProperty(rFormat[i])) {
+			obj[rFormat[i]] = {};
+		}
+		var rSheetNum = Object.keys(removed[rFormat[i]]);
+		for (var j = 0; j < rSheetNum.length; j++) {
+			if (!obj[rFormat[i]].hasOwnProperty(rSheetNum[j])) {
+				obj[rFormat[i]][rSheetNum[j]] = {};
+				obj[rFormat[i]][rSheetNum[j]]["remove"] = {};
+			}
+			var scope = "part";
+			var layer = [];
+			var rLayers = Object.keys(removed[rFormat[i]][rSheetNum[j]]);
+			for (var k = 0; k < rLayers.length; k++) {
+				var rLayer = removed[rFormat[i]][rSheetNum[j]][rLayers[k]];
+				var rInfo = rLayer.get("git").information;
+				var name = info.rInfo.getOldName() + "_" + (rInfo.getGeometry().toUpperCase());
+				layer.push(name);
+			}
+			obj[rFormat[i]][rSheetNum[j]]["remove"]["scope"] = scope;
+			obj[rFormat[i]][rSheetNum[j]]["remove"]["layer"] = layer;
+		}
+	}
 	return obj;
 }

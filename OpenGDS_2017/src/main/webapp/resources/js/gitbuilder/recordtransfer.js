@@ -17,9 +17,9 @@ gb.edit.RecordTransfer = function(obj) {
 }
 gb.edit.RecordTransfer.prototype.getStructure = function() {
 	var obj = {};
-	// if (this.layer instanceof gb.edit.LayerRecord) {
-	// obj["layer"]
-	// }
+	if (this.layer instanceof gb.edit.LayerRecord) {
+		obj["layer"] = this.layer.getStructure();
+	}
 
 	if (this.feature instanceof gb.edit.FeatureRecord) {
 		obj["feature"] = this.feature.getStructure();

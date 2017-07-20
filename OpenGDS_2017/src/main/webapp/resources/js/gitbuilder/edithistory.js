@@ -110,6 +110,8 @@ gb.edit.FeatureRecord.prototype.remove = function(layer, feature) {
 		}
 	}
 	console.log(this.removed);
+	console.log(this.created);
+	console.log(this.modified);
 }
 gb.edit.FeatureRecord.prototype.removeByLayer = function(layer) {
 	if (this.removed.hasOwnProperty(layer.get("id"))) {
@@ -137,6 +139,8 @@ gb.edit.FeatureRecord.prototype.update = function(layer, feature) {
 		}
 		this.modified[layer.get("id")][this.id ? feature.get(this.id) : feature.getId()] = feature;
 	}
+	console.log(this.removed);
+	console.log(this.created);
 	console.log(this.modified);
 }
 gb.edit.FeatureRecord.prototype.getStructure = function() {
@@ -205,6 +209,5 @@ gb.edit.FeatureRecord.prototype.getStructure = function() {
 			obj[rLayers[j]]["removed"].push(names[k]);
 		}
 	}
-
 	return obj;
 }
