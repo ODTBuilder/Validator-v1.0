@@ -28,29 +28,36 @@ gb.edit.LayerRecord.prototype.getRemoved = function() {
 gb.edit.LayerRecord.prototype.isRemoved = function(layer) {
 	var isRemoved = false;
 	if (this.removed.hasOwnProperty(layer.get("id"))) {
-		if (this.removed[layer.get("id")].hasOwnProperty(this.id ? feature.get(this.id) : feature.getId())) {
-			isRemoved = true;
-		}
+		isRemoved = true;
 	}
 	return isRemoved;
 };
-gb.edit.LayerRecord.prototype.create = function(type, mapsheet, layer) {
-	if (!this.created[type]) {
-		this.created[type] = {};
+gb.edit.LayerRecord.prototype.create = function(format, mapsheet, layer) {
+	if (!this.created.hasOwnProperty(format)) {
+		this.created[format] = {};
 	}
-	if (!this.created[type][mapsheet]) {
-		this.created[type][mapsheet] = {};
+	if (!this.created[format].hasOwnProperty(mapsheet)) {
+		this.created[format][mapsheet] = {};
 	}
-	if (!this.created[layer.get("id")]) {
-		this.created[layer.get("id")] = {};
-	}
-	this.created[layer.get("id")][feature.getId()] = feature;
+	this.created[format][mapsheet][layer.get("id")] = layer;
 	console.log(this.created);
 }
-gb.edit.LayerRecord.prototype.remove = function(layer, feature) {
-	if (!this.removed[layer.get("id")]) {
-		this.removed[layer.get("id")] = {};
+gb.edit.LayerRecord.prototype.remove = function(format, mapsheet, layer) {
+	var git = layer.get("git");
+	if (!git) {
+		console.error("no git property");
+		return;
 	}
+	var info = git.information;
+	if (!info) {
+		console.error("no information");
+		return;
+	}
+	if (!this.removed.hasOwnProperty(format)) {
+		this.removed[format] = {};
+	}
+	this.removed[format][mapsheet] = {};
+
 	if (feature.getId().search(".new") !== -1) {
 		var keys = Object.keys(this.created[layer.get("id")]);
 		for (var i = 0; i < keys.length; i++) {

@@ -7338,6 +7338,7 @@
 									"action" : function(data) {
 										var inst = $.jstree.reference(data.reference), obj = inst.get_node(data.reference);
 										inst._data.geoserver.createLayer.setReference(inst);
+										inst._data.geoserver.createLayer.setClientReference(inst._data.geoserver.clientRefer);
 										if (obj.type === "n_ngi_group") {
 											inst._data.geoserver.createLayer.setForm("ngi", "layer", obj.text);
 											inst._data.geoserver.createLayer.open();
@@ -7371,6 +7372,7 @@
 								var sameGroupParentDXF = {};
 								var sameGroupParentNGI = {};
 								var sameParent = [];
+								var editingtCheck = [];
 								for (var i = 0; i < arr.length; i++) {
 									var node = inst.get_node(arr[i]);
 									var parent = inst.get_node(node.parent);
@@ -7379,13 +7381,16 @@
 											sameGroupParentNGI[parent.id] = {};
 										}
 										sameGroupParentNGI[parent.id][node.id] = node;
+										editingtCheck.push(node.id);
 									} else if (parent.type === "n_dxf_group") {
 										if (!sameGroupParentDXF.hasOwnProperty(parent.id)) {
 											sameGroupParentDXF[parent.id] = {};
 										}
 										sameGroupParentDXF[parent.id][node.id] = node;
+										editingtCheck.push(node.id);
 									} else if (parent.type === "n_ngi") {
 										var children = node.children;
+										editingtCheck = children.concat(children);
 										var substr = [];
 										for (var i = 0; i < children.length; i++) {
 											var position = getPosition(children[i], "_", 3);
@@ -7394,6 +7399,7 @@
 										inst._data.geoserver.deleteLayer.addStructure("ngi", node.text, "all", substr);
 									} else if (parent.type === "n_dxf") {
 										var children = node.children;
+										editingtCheck = children.concat(children);
 										var substr = [];
 										for (var i = 0; i < children.length; i++) {
 											var position = getPosition(children[i], "_", 3);
@@ -7409,13 +7415,14 @@
 									// }
 								}
 
-								if (sameParent.length > 0) {
-									var part = [];
-									for (var j = 0; j < sameParent.length; j++) {
-										part.push(sameParent[j].id);
-									}
-									inst._data.geoserver.deleteLayer.addStructure("part", part);
-								}
+								// if (sameParent.length > 0) {
+								// var part = [];
+								// for (var j = 0; j < sameParent.length; j++) {
+								// part.push(sameParent[j].id);
+								// }
+								// inst._data.geoserver.deleteLayer.addStructure("part",
+								// part);
+								// }
 								var pkeys = Object.keys(sameGroupParentNGI);
 								if (pkeys.length > 0) {
 									for (var i = 0; i < pkeys.length; i++) {
@@ -7447,7 +7454,11 @@
 									}
 								}
 								console.log(inst._data.geoserver.deleteLayer.getStructure());
-								inst._data.geoserver.deleteLayer.save(inst._data.geoserver.deleteLayer.getStructure());
+								inst._data.geoserver.deleteLayer.setReference(inst);
+								inst._data.geoserver.deleteLayer.setClientReference(inst._data.geoserver.clientRefer);
+								var isEditing = inst._data.geoserver.deleteLayer.isEditing(editingtCheck);
+								inst._data.geoserver.deleteLayer.alert();
+
 							}
 						},
 						"properties" : {

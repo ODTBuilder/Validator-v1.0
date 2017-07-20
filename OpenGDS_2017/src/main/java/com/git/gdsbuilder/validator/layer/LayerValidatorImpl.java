@@ -40,6 +40,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.taglibs.standard.lang.jstl.BooleanLiteral;
 import org.geotools.data.DataUtilities;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureIterator;
@@ -48,6 +49,7 @@ import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.feature.DefaultFeatureCollection;
 import org.geotools.feature.SchemaException;
 import org.json.simple.JSONObject;
+import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory2;
@@ -64,6 +66,7 @@ import com.git.gdsbuilder.type.validate.option.EdgeMatchMiss;
 import com.git.gdsbuilder.type.validate.option.EntityNone;
 import com.git.gdsbuilder.type.validate.option.RefAttributeMiss;
 import com.git.gdsbuilder.type.validate.option.RefZValueMiss;
+import com.git.gdsbuilder.type.validate.option.UnderShoot;
 import com.git.gdsbuilder.validator.collection.opt.ValCollectionOption;
 import com.git.gdsbuilder.validator.collection.opt.ValCollectionOption.ValCollectionOptionType;
 import com.git.gdsbuilder.validator.collection.rule.MapSystemRule.MapSystemRuleType;
@@ -973,6 +976,7 @@ public class LayerValidatorImpl implements LayerValidator {
 				Map<MapSystemRuleType, GeoLayer> collectionMap = closeCollectionLayer.getCollectionMap();
 				Map<MapSystemRuleType, LineString> collectionBoundary = closeCollectionLayer.getCollectionBoundary();
 				double tolorence = closeCollectionLayer.getTolorence();
+				
 				ValCollectionOption closeValidateOptions = closeCollectionLayer.getCloseValidateOptions();
 				Map<MapSystemRuleType, Polygon> targetFeaturesGetBoundary = closeCollectionLayer
 						.getTargetFeaturesGetBoundary();
@@ -990,7 +994,8 @@ public class LayerValidatorImpl implements LayerValidator {
 						}
 						if (iteratorVal.equals(EdgeMatchMiss.Type.EDGEMATCHMISS.errName())
 								|| iteratorVal.equals(RefAttributeMiss.Type.RefAttributeMiss.errName())
-								|| iteratorVal.equals(RefZValueMiss.Type.REFZVALUEMISS.errName())) {
+								|| iteratorVal.equals(RefZValueMiss.Type.REFZVALUEMISS.errName()) 
+								|| iteratorVal.equals(UnderShoot.Type.UNDERSHOOT.errName())) {
 							isTarget = true;
 						}
 					}
@@ -1041,6 +1046,7 @@ public class LayerValidatorImpl implements LayerValidator {
 
 				// 대상도엽, 인접도엽 Tolorence 영역내 FeatureList GET
 				if (topGeoLayer != null) {
+					String direction = "TOP";
 					Filter topFilter = ff.intersects(ff.property(geomColunm), ff.literal(topPolygon));
 					Filter nearTopFilter = ff.intersects(ff.property(geomColunm), ff.literal(nearTopPolygon));
 
@@ -1064,7 +1070,7 @@ public class LayerValidatorImpl implements LayerValidator {
 					if (isTarget) {
 						for (SimpleFeature targetFeature : topFeatureList) {
 							errorFeatures = closeCollectionValidator.ValidateCloseCollectionTarget(targetFeature,
-									nearTopFeatureList, closeValidateOptions, topLineString, tolorence);
+									nearTopFeatureList, closeValidateOptions, topLineString, tolorence, direction);
 							for (ErrorFeature errorFeature : errorFeatures) {
 								errorFeature.setLayerName(validatorLayer.getLayerName());
 								errorLayer.addErrorFeature(errorFeature);
@@ -1084,6 +1090,7 @@ public class LayerValidatorImpl implements LayerValidator {
 				}
 
 				if (bottomGeoLayer != null) {
+					String direction = "BOTTOM";
 					Filter bottomFilter = ff.intersects(ff.property(geomColunm), ff.literal(bottomPolygon));
 					Filter bottomTopFilter = ff.intersects(ff.property(geomColunm), ff.literal(nearBottomPolygon));
 
@@ -1107,7 +1114,7 @@ public class LayerValidatorImpl implements LayerValidator {
 					if (isTarget) {
 						for (SimpleFeature targetFeature : bottomFeatureList) {
 							errorFeatures = closeCollectionValidator.ValidateCloseCollectionTarget(targetFeature,
-									nearBottomFeatureList, closeValidateOptions, bottomLineString, tolorence);
+									nearBottomFeatureList, closeValidateOptions, bottomLineString, tolorence, direction);
 							for (ErrorFeature errorFeature : errorFeatures) {
 								errorFeature.setLayerName(validatorLayer.getLayerName());
 								errorLayer.addErrorFeature(errorFeature);
@@ -1127,6 +1134,7 @@ public class LayerValidatorImpl implements LayerValidator {
 				}
 
 				if (leftGeoLayer != null) {
+					String direction = "LEFT";
 					Filter leftFilter = ff.intersects(ff.property(geomColunm), ff.literal(leftPolygon));
 					Filter nearLeftFilter = ff.intersects(ff.property(geomColunm), ff.literal(nearLeftPolygon));
 
@@ -1150,7 +1158,7 @@ public class LayerValidatorImpl implements LayerValidator {
 					if (isTarget) {
 						for (SimpleFeature targetFeature : leftFeatureList) {
 							errorFeatures = closeCollectionValidator.ValidateCloseCollectionTarget(targetFeature,
-									nearLeftFeatureList, closeValidateOptions, leftLineString, tolorence);
+									nearLeftFeatureList, closeValidateOptions, leftLineString, tolorence, direction);
 							for (ErrorFeature errorFeature : errorFeatures) {
 								errorFeature.setLayerName(validatorLayer.getLayerName());
 								errorLayer.addErrorFeature(errorFeature);
@@ -1170,6 +1178,7 @@ public class LayerValidatorImpl implements LayerValidator {
 				}
 
 				if (rightGeoLayer != null) {
+					String direction = "RIGHT";
 					Filter rightFilter = ff.intersects(ff.property(geomColunm), ff.literal(rightPolygon));
 					Filter nearRightFilter = ff.intersects(ff.property(geomColunm), ff.literal(nearRightPolygon));
 
@@ -1193,11 +1202,11 @@ public class LayerValidatorImpl implements LayerValidator {
 					if (isTarget) {
 						for (SimpleFeature targetFeature : rightFeatureList) {
 							errorFeatures = closeCollectionValidator.ValidateCloseCollectionTarget(targetFeature,
-									nearRightFeatureList, closeValidateOptions, rightLineString, tolorence);
+									nearRightFeatureList, closeValidateOptions, rightLineString, tolorence, direction);
 							for (ErrorFeature errorFeature : errorFeatures) {
 								errorFeature.setLayerName(validatorLayer.getLayerName());
 								errorLayer.addErrorFeature(errorFeature);
-							}
+							} 
 						}
 					}
 					if (isRelation) {

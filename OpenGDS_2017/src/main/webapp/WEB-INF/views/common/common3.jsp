@@ -1,5 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
@@ -15,8 +14,7 @@
 
 <%-- 제이쿼리UI --%>
 <script src="${ctx}/resources/js/jqueryui/jquery-ui.js"></script>
-<link rel="stylesheet"
-	href="${ctx}/resources/js/jqueryui/jquery-ui.min.css">
+<link rel="stylesheet" href="${ctx}/resources/js/jqueryui/jquery-ui.min.css">
 
 <%-- 스펙트럼 --%>
 <script src="${ctx}/resources/js/spectrum/spectrum.js"></script>
@@ -34,122 +32,104 @@
 
 <%-- 부트스트랩 --%>
 <script src="${ctx}/resources/js/bootstrap/js/bootstrap.min.js"></script>
-<link rel="stylesheet"
-	href="${ctx}/resources/js/bootstrap/css/bootstrap.min.css">
+<link rel="stylesheet" href="${ctx}/resources/js/bootstrap/css/bootstrap.min.css">
 
 <%-- 데이터 테이블 --%>
-<script type="text/javascript"
-	src="${ctx}/resources/js/datatables/js/jquery.dataTables.min.js"></script>
-<link rel="stylesheet" type="text/css"
-	href="${ctx}/resources/js/datatables/css/jquery.dataTables.min.css" />
+<script type="text/javascript" src="${ctx}/resources/js/datatables/js/jquery.dataTables.min.js"></script>
+<link rel="stylesheet" type="text/css" href="${ctx}/resources/js/datatables/css/jquery.dataTables.min.css" />
 
 <%-- 폰트어썸 --%>
-<link rel="stylesheet"
-	href="${ctx}/resources/css/fontawesome/css/font-awesome.min.css" />
+<link rel="stylesheet" href="${ctx}/resources/css/fontawesome/css/font-awesome.min.css" />
 
 <%-- jsTree openlayers3--%>
-<script type="text/javascript"
-	src="${ctx}/resources/js/jsTree-openlayers3/jstree.js"></script>
-<link rel="stylesheet" type="text/css"
-	href="${ctx}/resources/js/jsTree-openlayers3/themes/default/style.css" />
+<script type="text/javascript" src="${ctx}/resources/js/jsTree-openlayers3/jstree.js"></script>
+<link rel="stylesheet" type="text/css" href="${ctx}/resources/js/jsTree-openlayers3/themes/default/style.css" />
+<script type="text/javascript" src="${ctx}/resources/js/jsTree-openlayers3/jstree-layerproperties.js"></script>
 
 <%-- jsTree geoserver--%>
-<script type="text/javascript"
-	src="${ctx}/resources/js/jsTree-geoserver/jstree.js"></script>
-<link rel="stylesheet" type="text/css"
-	href="${ctx}/resources/js/jsTree-geoserver/themes/default/style.css" />
-<script type="text/javascript"
-	src="${ctx}/resources/js/jsTree-geoserver/jstree-geoserver.js"></script>
+<script type="text/javascript" src="${ctx}/resources/js/jsTree-geoserver/jstree.js"></script>
+<link rel="stylesheet" type="text/css" href="${ctx}/resources/js/jsTree-geoserver/themes/default/style.css" />
+<script type="text/javascript" src="${ctx}/resources/js/jsTree-geoserver/jstree-geoserver.js"></script>
+
 <%-- 베이스맵 변경 --%>
-<script
-	src="${pageContext.request.contextPath}/resources/js/gitbuilder/changebase.js"></script>
-<link rel="stylesheet"
-	href="${pageContext.request.contextPath}/resources/js/gitbuilder/gitbuilder2017.css">
+<script src="${pageContext.request.contextPath}/resources/js/gitbuilder/changebase.js"></script>
+<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/js/gitbuilder/gitbuilder2017.css">
 
 <%-- 2.0 레이어 코드 정의 --%>
-<script
-	src="${pageContext.request.contextPath}/resources/js/gitbuilder/layerdefinition20.js"></script>
+<script src="${pageContext.request.contextPath}/resources/js/gitbuilder/layerdefinition20.js"></script>
 
 <%-- 1.0 레이어 코드 정의 --%>
-<script
-	src="${pageContext.request.contextPath}/resources/js/gitbuilder/layerdefinition10.js"></script>
+<script src="${pageContext.request.contextPath}/resources/js/gitbuilder/layerdefinition10.js"></script>
 
 <%-- 2.0 검수 옵션 정의 --%>
-<script
-	src="${pageContext.request.contextPath}/resources/js/gitbuilder/optiondefinition20.js"></script>
+<script src="${pageContext.request.contextPath}/resources/js/gitbuilder/optiondefinition20.js"></script>
 
 <%-- 1.0 검수 옵션 정의 --%>
-<script
-	src="${pageContext.request.contextPath}/resources/js/gitbuilder/optiondefinition.js"></script>
+<script src="${pageContext.request.contextPath}/resources/js/gitbuilder/optiondefinition.js"></script>
 
 <%-- 가중치 정의 --%>
-<script
-	src="${pageContext.request.contextPath}/resources/js/gitbuilder/layerweight.js"></script>
+<script src="${pageContext.request.contextPath}/resources/js/gitbuilder/layerweight.js"></script>
 
 <%-- 검수창 --%>
-<script
-	src="${pageContext.request.contextPath}/resources/js/gitbuilder/validation.js"></script>
+<script src="${pageContext.request.contextPath}/resources/js/gitbuilder/validation.js"></script>
 <script src="${ctx}/resources/js/gitbuilder/changebase.js"></script>
-<link rel="stylesheet"
-	href="${ctx}/resources/js/gitbuilder/gitbuilder2017.css">
+<link rel="stylesheet" href="${ctx}/resources/js/gitbuilder/gitbuilder2017.css">
 
 <%-- 검수 편집 --%>
-<script
-	src="${pageContext.request.contextPath}/resources/js/gitbuilder/qaedit.js"></script>
+<script src="${pageContext.request.contextPath}/resources/js/gitbuilder/qaedit.js"></script>
 
 <%-- 편집툴 --%>
-<script
-	src="${pageContext.request.contextPath}/resources/js/gitbuilder/editingtool.js"></script>
+<script src="${pageContext.request.contextPath}/resources/js/gitbuilder/editingtool.js"></script>
 
 <%-- wms편집이력 --%>
-<script
-	src="${pageContext.request.contextPath}/resources/js/gitbuilder/edithistory.js"></script>
+<script src="${pageContext.request.contextPath}/resources/js/gitbuilder/edithistory.js"></script>
+
+<%-- 레이어 편집이력 --%>
+<script src="${pageContext.request.contextPath}/resources/js/gitbuilder/layerhistory.js"></script>
 
 <%-- 편집이력 전송 --%>
-<script
-	src="${pageContext.request.contextPath}/resources/js/gitbuilder/recordtransfer.js"></script>
+<script src="${pageContext.request.contextPath}/resources/js/gitbuilder/recordtransfer.js"></script>
 
 <%-- 커스텀 인터랙션 --%>
-<script
-	src="${pageContext.request.contextPath}/resources/js/gitbuilder/interaction.js"></script>
+<script src="${pageContext.request.contextPath}/resources/js/gitbuilder/interaction.js"></script>
 
 <%-- 오픈 레이어스 프로토타입 확장 --%>
-<script
-	src="${pageContext.request.contextPath}/resources/js/gitbuilder/olextension.js"></script>
+<script src="${pageContext.request.contextPath}/resources/js/gitbuilder/olextension.js"></script>
 
 <%-- 레이어 정보 --%>
-<script
-	src="${pageContext.request.contextPath}/resources/js/gitbuilder/modifylayer.js"></script>
+<script src="${pageContext.request.contextPath}/resources/js/gitbuilder/modifylayer.js"></script>
+
+<%-- 도엽 정보 객체--%>
+<script src="${pageContext.request.contextPath}/resources/js/gitbuilder/mapsheetinfo.js"></script>
 
 <%-- 레이어 정보 객체--%>
-<script
-	src="${pageContext.request.contextPath}/resources/js/gitbuilder/layerinfo.js"></script>
+<script src="${pageContext.request.contextPath}/resources/js/gitbuilder/layerinfo.js"></script>
 
 <%-- 애트리뷰트 정보 객체 --%>
-<script
-	src="${pageContext.request.contextPath}/resources/js/gitbuilder/attributeinformation.js"></script>
+<script src="${pageContext.request.contextPath}/resources/js/gitbuilder/attributeinfo.js"></script>
+
+<%-- 클라이언트 레이어 생성--%>
+<script src="${pageContext.request.contextPath}/resources/js/gitbuilder/createvectorlayer.js"></script>
+
+<%-- 클라이언트 레이어 수정--%>
+<script src="${pageContext.request.contextPath}/resources/js/gitbuilder/modifylayerprop.js"></script>
 
 <%-- 지오서버 레이어 생성--%>
-<script
-	src="${pageContext.request.contextPath}/resources/js/gitbuilder/createlayer.js"></script>
+<script src="${pageContext.request.contextPath}/resources/js/gitbuilder/createlayer.js"></script>
 
 <%-- 지오서버 레이어 삭제--%>
-<script
-	src="${pageContext.request.contextPath}/resources/js/gitbuilder/deletelayer.js"></script>
+<script src="${pageContext.request.contextPath}/resources/js/gitbuilder/deletelayer.js"></script>
 
 <%-- 파일업로드 --%>
 <script src="${ctx}/resources/js/dropzone/dropzone.js"></script>
-<link rel="stylesheet"
-	href="${ctx}/resources/css/fileupload/jquery.fileupload-ui.css">
+<link rel="stylesheet" href="${ctx}/resources/css/fileupload/jquery.fileupload-ui.css">
 
 <%-- 지오코더 --%>
-<link href="${ctx}/resources/js/ol3-geocoder/ol3-geocoder.css"
-	rel="stylesheet" />
+<link href="${ctx}/resources/js/ol3-geocoder/ol3-geocoder.css" rel="stylesheet" />
 <script src="${ctx}/resources/js/ol3-geocoder/ol3-geocoder.js"></script>
 
 <%-- 알림 --%>
-<link rel="stylesheet"
-	href="${ctx}/resources/js/sweetalert/sweetalert.css">
+<link rel="stylesheet" href="${ctx}/resources/js/sweetalert/sweetalert.css">
 <script src="${ctx}/resources/js/sweetalert/sweetalert.min.js"></script>
 <script src="${ctx}/resources/js/sweetalert/sweetalert.js"></script>
 

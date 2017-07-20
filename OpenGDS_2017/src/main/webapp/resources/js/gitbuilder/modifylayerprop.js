@@ -8,17 +8,15 @@
 var gb;
 if (!gb)
 	gb = {};
-if (!gb.geoserver)
-	gb.geoserver = {};
-gb.geoserver.CreateLayer = function(obj) {
+if (!gb.edit)
+	gb.edit = {};
+gb.edit.ModifyLayerProperties = function(obj) {
 	var that = this;
 	var options = obj;
 	this.window;
-	this.url = options.URL ? options.URL : null;
 	this.format = undefined;
 	this.type = undefined;
-	this.refer = options.refer ? options.refer : undefined;
-	this.clientRefer = options.clientRefer ? options.clientRefer : undefined;
+	this.info = undefined;
 
 	var xSpan = $("<span>").attr({
 		"aria-hidden" : true
@@ -31,7 +29,7 @@ gb.geoserver.CreateLayer = function(obj) {
 	$(xButton).addClass("close");
 
 	this.htag = $("<h4>");
-	this.htag.text("Create layer");
+	this.htag.text("Layer Properties");
 	$(this.htag).addClass("modal-title");
 
 	var header = $("<div>").append(xButton).append(this.htag);
@@ -43,6 +41,10 @@ gb.geoserver.CreateLayer = function(obj) {
 	 * 
 	 * 
 	 */
+
+	var formatArea = $("<div>").css({
+		"margin-bottom" : "10px"
+	});
 	var sheetNum = $("<p>").text("Map Sheet Number");
 	this.sheetNumInput = $("<input>").addClass("form-control").attr({
 		"type" : "text"
@@ -71,12 +73,36 @@ gb.geoserver.CreateLayer = function(obj) {
 		"margin-bottom" : "10px"
 	});
 
-	this.message = $("<div>").addClass("text-danger").css({
-		"margin-bottom" : "10px",
-		"display" : "none"
+	this.formatRadio1 = $("<input>").attr({
+		"type" : "radio",
+		"value" : "ngi",
+		"name" : "gitbuilder-modifylayerprop-radio",
+		"disabled" : true
+	}).prop({
+		"checked" : true
 	});
-	this.body = $("<div>").append(div1).append(this.layerNameForm).append(this.typeForm).append(this.attrForm).append(this.expertForm)
-			.append(this.message);
+	var label1 = $("<label>").addClass("radio-inline").append(this.formatRadio1).append("NGI");
+
+	this.formatRadio2 = $("<input>").attr({
+		"type" : "radio",
+		"value" : "dxf",
+		"name" : "gitbuilder-modifylayerprop-radio",
+		"disabled" : true
+	});
+	var label2 = $("<label>").addClass("radio-inline").append(this.formatRadio2).append("DXF");
+
+	this.formatRadio3 = $("<input>").attr({
+		"type" : "radio",
+		"value" : "shp",
+		"name" : "gitbuilder-modifylayerprop-radio",
+		"disabled" : true
+	});
+	var label3 = $("<label>").addClass("radio-inline").append(this.formatRadio3).append("SHP");
+	$(formatArea).append(label1).append(label2).append(label3);
+
+	this.body = $("<div>").append(formatArea).append(div1).append(this.layerNameForm).append(this.typeForm).append(this.attrForm).append(
+			this.expertForm);
+	// that.setForm("ngi", "layer");
 	$(this.body).addClass("modal-body");
 	/*
 	 * 
@@ -97,20 +123,13 @@ gb.geoserver.CreateLayer = function(obj) {
 	var okBtn = $("<button>").attr({
 		"type" : "button"
 	}).on("click", function() {
-		var opt = that.getDefinitionForm();
-		var isExisting = that.isExisting([ that.futureId ]);
-		if (isExisting) {
-			$(that.message).empty();
-			$(that.message).show();
-			$(that.message).text("Layer name or Map sheet number is duplicated.");
-		} else {
-			that.save(opt);
-			that.close();
-		}
+		// var opt = that.getDefinitionForm();
+		// that.save(opt);
+		that.close();
 	});
 	$(okBtn).addClass("btn");
 	$(okBtn).addClass("btn-primary");
-	$(okBtn).text("Create");
+	$(okBtn).text("OK");
 
 	var pright = $("<span>").css("float", "right");
 	$(pright).append(closeBtn).append(okBtn);
@@ -144,101 +163,72 @@ gb.geoserver.CreateLayer = function(obj) {
 		keyboard : true,
 		show : false,
 	});
-};
-
-gb.geoserver.CreateLayer.prototype.isExisting = function(ids) {
-	var result = false;
-	var refer = this.getReference();
-	if (!Array.isArray(ids)) {
-		return;
-	}
-	for (var i = 0; i < ids.length; i++) {
-		var layer = refer.get_node(ids[i]);
-		if (!!layer) {
-			result = true;
-			break;
-		}
-	}
-
-	return result;
-};
-gb.geoserver.CreateLayer.prototype.open = function() {
-	$(this.message).hide();
+}
+gb.edit.ModifyLayerProperties.prototype.open = function() {
 	this.window.modal('show');
 };
-gb.geoserver.CreateLayer.prototype.close = function() {
+gb.edit.ModifyLayerProperties.prototype.close = function() {
 	this.window.modal('hide');
 };
-gb.geoserver.CreateLayer.prototype.setClientReference = function(refer) {
-	this.clientRefer = refer;
+gb.edit.ModifyLayerProperties.prototype.setInformation = function(info) {
+	this.information = info;
 };
-gb.geoserver.CreateLayer.prototype.getClientReference = function() {
-	return this.clientRefer;
+gb.edit.ModifyLayerProperties.prototype.getInformation = function() {
+	return this.information;
 };
-gb.geoserver.CreateLayer.prototype.setReference = function(refer) {
-	this.refer = refer;
-};
-gb.geoserver.CreateLayer.prototype.getReference = function() {
-	return this.refer;
-};
-gb.geoserver.CreateLayer.prototype.save = function(obj) {
-	var that = this;
-	$.ajax({
-		url : this.getUrl(),
-		method : "POST",
-		contentType : "application/json; charset=UTF-8",
-		cache : false,
-		// async : false,
-		data : JSON.stringify(obj),
-		beforeSend : function() {
-			$("body").css("cursor", "wait");
-		},
-		complete : function() {
-			$("body").css("cursor", "default");
-		},
-		traditional : true,
-		success : function(data, textStatus, jqXHR) {
-			console.log(data);
-			that.getReference().refresh();
-		}
-	});
-};
-gb.geoserver.CreateLayer.prototype.setForm = function(format, type, sheetNum) {
-	this.format = format;
-	this.type = type;
-	if (type === "mapsheet") {
-		if (format === "dxf") {
-			$(this.htag).text("Create a map sheet (DXF)");
-		} else if (format === "ngi") {
-			$(this.htag).text("Create a map sheet (NGI)");
+gb.edit.ModifyLayerProperties.prototype.setForm = function() {
+	var info = this.getInformation();
+	this.format = info.getFormat();
+	this.type = info instanceof gb.layer.LayerInfo ? "layer" : "mapsheet";
+	if (this.type === "mapsheet") {
+		if (this.format === "dxf") {
+			$(this.htag).text("Map sheet Properties(DXF)");
+		} else if (this.format === "ngi") {
+			$(this.htag).text("Map sheet Properties(NGI)");
 		}
 		$(this.sheetNumInput).val("");
 		$(this.layerNameForm).hide();
 		$(this.typeForm).hide();
 		$(this.attrForm).hide();
 		$(this.expertForm).hide();
-	} else if (type === "layer") {
-		$(this.htag).text("Create a layer");
-		$(this.sheetNumInput).val(sheetNum);
-		$(this.layerNameInput).val("");
+	} else if (this.type === "layer") {
+		$(this.htag).text("Layer Properties");
+		// $(this.sheetNumInput).val(sheetNum);
+		$(this.sheetNumInput).hide();
+		switch (this.format) {
+		case "ngi":
+			$(this.formatRadio1).prop("checked", true);
+			break;
+		case "dxf":
+			$(this.formatRadio2).prop("checked", true);
+			break;
+		case "shp":
+			$(this.formatRadio3).prop("checked", true);
+			break;
+		default:
+			break;
+		}
+		$(this.layerNameInput).val(info.getName());
 		$(this.layerNameForm).show();
-		if (format === "dxf") {
-			this.initTypeForm("dxf");
+		if (this.format === "dxf") {
+			this.initTypeForm("dxf", info.getGeometry());
 			$(this.typeForm).show();
 			$(this.attrForm).hide();
 			$(this.expertForm).hide();
-		} else if (format === "ngi") {
-			this.initTypeForm("ngi");
+		} else if (this.format === "ngi") {
+			this.initTypeForm("ngi", info.getGeometry());
 			$(this.typeForm).show();
-			this.initAttrForm();
+			this.initAttrForm(info.getAttributes());
 			$(this.attrForm).show();
 			this.initExpertForm();
 			$(this.expertForm).show();
 		}
 	}
 };
-gb.geoserver.CreateLayer.prototype.initTypeForm = function(type) {
-	var select = $("<select>").addClass("form-control");
+gb.edit.ModifyLayerProperties.prototype.initTypeForm = function(type, selected) {
+	var select = $("<select>").prop({
+		"disabled" : true
+	}).addClass("form-control");
 	if (type === "dxf") {
 		var option1 = $("<option>").text("LWPolyline");
 		var option2 = $("<option>").text("Polyline");
@@ -252,11 +242,15 @@ gb.geoserver.CreateLayer.prototype.initTypeForm = function(type) {
 		var option4 = $("<option>").text("Text");
 		$(select).append(option1).append(option2).append(option3).append(option4);
 	}
+	$(select).val(selected);
 	$(this.typeForm).empty();
 	var tp = $("<p>").text("Type");
 	$(this.typeForm).append(tp).append(select);
 };
-gb.geoserver.CreateLayer.prototype.initAttrForm = function() {
+gb.edit.ModifyLayerProperties.prototype.initAttrForm = function(attrs) {
+	if (!Array.isArray(attrs)) {
+		return;
+	}
 	var that = this;
 	var htd1 = $("<td>").text("Name");
 	var htd2 = $("<td>").text("Type");
@@ -264,31 +258,36 @@ gb.geoserver.CreateLayer.prototype.initAttrForm = function() {
 	var htd4 = $("<td>").text("Unique");
 	var thd = $("<thead>").append(htd1).append(htd2).append(htd3).append(htd4);
 
-	var key = $("<input>").addClass("form-control").attr({
-		"type" : "text"
-	});
-	var td1 = $("<td>").append(key);
+	this.typeFormBody = $("<tbody>");
 
-	var opt1 = $("<option>").text("Integer");
-	var opt2 = $("<option>").text("Double");
-	var opt3 = $("<option>").text("String");
-	var opt4 = $("<option>").text("Date");
-	var opt5 = $("<option>").text("Boolean");
-	var type = $("<select>").addClass("form-control").append(opt1).append(opt2).append(opt3).append(opt4).append(opt5);
-	var td2 = $("<td>").append(type);
+	for (var i = 0; i < attrs.length; i++) {
+		var key = $("<input>").addClass("form-control").attr({
+			"type" : "text"
+		}).val(attrs[i].fieldName);
+		var td1 = $("<td>").append(key);
 
-	var nullable = $("<input>").attr({
-		"type" : "checkbox"
-	});
-	var td3 = $("<td>").append(nullable);
+		var opt1 = $("<option>").text("Integer");
+		var opt2 = $("<option>").text("Double");
+		var opt3 = $("<option>").text("String");
+		var opt4 = $("<option>").text("Date");
+		var opt5 = $("<option>").text("Boolean");
+		var type = $("<select>").addClass("form-control").append(opt1).append(opt2).append(opt3).append(opt4).append(opt5).val(
+				attrs[i].type).prop("disabled", true);
+		var td2 = $("<td>").append(type);
 
-	var unique = $("<input>").attr({
-		"type" : "checkbox"
-	});
-	var td4 = $("<td>").append(unique);
+		var nullable = $("<input>").attr({
+			"type" : "checkbox"
+		}).prop("checked", attrs[i].nullable ? false : true).prop("disabled", true);
+		var td3 = $("<td>").append(nullable);
 
-	var tr1 = $("<tr>").append(td1).append(td2).append(td3).append(td4);
-	this.typeFormBody = $("<tbody>").append(tr1);
+		var unique = $("<input>").attr({
+			"type" : "checkbox"
+		}).prop("checked", attrs[i].isUnique ? true : false).prop("disabled", true);
+		var td4 = $("<td>").append(unique);
+
+		var tr1 = $("<tr>").append(td1).append(td2).append(td3).append(td4);
+		$(this.typeFormBody).append(tr1);
+	}
 
 	var table = $("<table>").addClass("table").addClass("text-center").append(thd).append(this.typeFormBody);
 	var addBtn = $("<input>").addClass("gitbuilder-createlayer-addattr").addClass("btn").addClass("btn-default").attr({
@@ -325,8 +324,9 @@ gb.geoserver.CreateLayer.prototype.initAttrForm = function() {
 	var tp = $("<p>").text("Attribute");
 	$(this.attrForm).append(tp).append(table).append(addBtn);
 };
-gb.geoserver.CreateLayer.prototype.initExpertForm = function() {
+gb.edit.ModifyLayerProperties.prototype.initExpertForm = function() {
 	var that = this;
+	var info = this.getInformation();
 	var htd1 = $("<td>").text("Version");
 	var htd2 = $("<td>").text("Dimension");
 	var htd3 = $("<td>").text("Represent");
@@ -334,17 +334,17 @@ gb.geoserver.CreateLayer.prototype.initExpertForm = function() {
 
 	var veropt1 = $("<option>").text("1");
 	var veropt2 = $("<option>").text("2");
-	this.ver = $("<select>").addClass("form-control").append(veropt1).append(veropt2).val("2");
+	this.ver = $("<select>").addClass("form-control").append(veropt1).append(veropt2).val(info.getNGIVersion());
 	var td1 = $("<td>").append(this.ver);
 
 	var dimopt1 = $("<option>").text("2");
 	var dimopt2 = $("<option>").text("3");
-	this.dim = $("<select>").addClass("form-control").append(dimopt1).append(dimopt2).val("2");
+	this.dim = $("<select>").addClass("form-control").append(dimopt1).append(dimopt2).val(info.getNGIDim());
 	var td2 = $("<td>").append(this.dim);
 
 	this.rep = $("<input>").addClass("form-control").attr({
 		"type" : "text"
-	}).val("255;0;102");
+	}).val(info.getNGIRep());
 	var td3 = $("<td>").append(this.rep);
 
 	var tr1 = $("<tr>").append(td1).append(td2).append(td3);
@@ -361,19 +361,19 @@ gb.geoserver.CreateLayer.prototype.initExpertForm = function() {
 
 	this.minx = $("<input>").addClass("form-control").attr({
 		"type" : "text"
-	}).val("-219825.99");
+	}).val(info.getMbound()[0][0]);
 	var td12 = $("<td>").append(this.minx);
 	this.miny = $("<input>").addClass("form-control").attr({
 		"type" : "text"
-	}).val("-435028.96");
+	}).val(info.getMbound()[0][1]);
 	var td22 = $("<td>").append(this.miny);
 	this.maxx = $("<input>").addClass("form-control").attr({
 		"type" : "text"
-	}).val("819486.07");
+	}).val(info.getMbound()[1][0]);
 	var td32 = $("<td>").append(this.maxx);
 	this.maxy = $("<input>").addClass("form-control").attr({
 		"type" : "text"
-	}).val("877525.22");
+	}).val(info.getMbound()[1][1]);
 	var td42 = $("<td>").append(this.maxy);
 
 	var tr12 = $("<tr>").append(td12).append(td22).append(td32).append(td42);
@@ -386,7 +386,7 @@ gb.geoserver.CreateLayer.prototype.initExpertForm = function() {
 	var tp = $("<p>").text("NGI Setting");
 	$(this.expertForm).append(tp).append(table).append(table2);
 };
-gb.geoserver.CreateLayer.prototype.getDefinitionForm = function() {
+gb.edit.ModifyLayerProperties.prototype.getDefinitionForm = function() {
 	var opt = {
 		"layer" : {}
 	};
@@ -463,12 +463,4 @@ gb.geoserver.CreateLayer.prototype.getDefinitionForm = function() {
 	}
 	console.log(opt);
 	return opt;
-};
-gb.geoserver.CreateLayer.prototype.setUrl = function(url) {
-	if (typeof url === "string") {
-		this.url = url;
-	}
-};
-gb.geoserver.CreateLayer.prototype.getUrl = function() {
-	return this.url;
 };

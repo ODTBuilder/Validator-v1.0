@@ -8,17 +8,18 @@
 var gb;
 if (!gb)
 	gb = {};
-if (!gb.geoserver)
-	gb.geoserver = {};
-gb.geoserver.CreateLayer = function(obj) {
+if (!gb.edit)
+	gb.edit = {};
+gb.edit.CreateVectorLayer = function(obj) {
 	var that = this;
 	var options = obj;
 	this.window;
-	this.url = options.URL ? options.URL : null;
+	// this.url = options.URL ? options.URL : null;
 	this.format = undefined;
 	this.type = undefined;
 	this.refer = options.refer ? options.refer : undefined;
-	this.clientRefer = options.clientRefer ? options.clientRefer : undefined;
+	this.map = options.map ? options.map : undefined;
+	// this.clientRefer = options.clientRefer ? options.clientRefer : undefined;
 
 	var xSpan = $("<span>").attr({
 		"aria-hidden" : true
@@ -43,6 +44,10 @@ gb.geoserver.CreateLayer = function(obj) {
 	 * 
 	 * 
 	 */
+
+	var formatArea = $("<div>").css({
+		"margin-bottom" : "10px"
+	});
 	var sheetNum = $("<p>").text("Map Sheet Number");
 	this.sheetNumInput = $("<input>").addClass("form-control").attr({
 		"type" : "text"
@@ -71,12 +76,40 @@ gb.geoserver.CreateLayer = function(obj) {
 		"margin-bottom" : "10px"
 	});
 
-	this.message = $("<div>").addClass("text-danger").css({
-		"margin-bottom" : "10px",
-		"display" : "none"
+	this.formatRadio1 = $("<input>").attr({
+		"type" : "radio",
+		"value" : "ngi",
+		"name" : "gitbuilder-createvector-radio"
+	}).prop({
+		"checked" : true
+	}).change(function() {
+		that.setForm("ngi", "layer");
 	});
-	this.body = $("<div>").append(div1).append(this.layerNameForm).append(this.typeForm).append(this.attrForm).append(this.expertForm)
-			.append(this.message);
+	var label1 = $("<label>").addClass("radio-inline").append(this.formatRadio1).append("NGI");
+
+	this.formatRadio2 = $("<input>").attr({
+		"type" : "radio",
+		"value" : "dxf",
+		"name" : "gitbuilder-createvector-radio"
+	}).change(function() {
+		that.setForm("dxf", "layer");
+	});
+	var label2 = $("<label>").addClass("radio-inline").append(this.formatRadio2).append("DXF");
+
+	this.formatRadio3 = $("<input>").attr({
+		"type" : "radio",
+		"value" : "shp",
+		"name" : "gitbuilder-createvector-radio",
+		"disabled" : true
+	}).change(function() {
+		that.setForm("shp", "layer");
+	});
+	var label3 = $("<label>").addClass("radio-inline").append(this.formatRadio3).append("SHP");
+	$(formatArea).append(label1).append(label2).append(label3);
+
+	this.body = $("<div>").append(formatArea).append(div1).append(this.layerNameForm).append(this.typeForm).append(this.attrForm).append(
+			this.expertForm);
+	that.setForm("ngi", "layer");
 	$(this.body).addClass("modal-body");
 	/*
 	 * 
@@ -98,15 +131,8 @@ gb.geoserver.CreateLayer = function(obj) {
 		"type" : "button"
 	}).on("click", function() {
 		var opt = that.getDefinitionForm();
-		var isExisting = that.isExisting([ that.futureId ]);
-		if (isExisting) {
-			$(that.message).empty();
-			$(that.message).show();
-			$(that.message).text("Layer name or Map sheet number is duplicated.");
-		} else {
-			that.save(opt);
-			that.close();
-		}
+		that.save(opt);
+		that.close();
 	});
 	$(okBtn).addClass("btn");
 	$(okBtn).addClass("btn-primary");
@@ -144,66 +170,30 @@ gb.geoserver.CreateLayer = function(obj) {
 		keyboard : true,
 		show : false,
 	});
-};
-
-gb.geoserver.CreateLayer.prototype.isExisting = function(ids) {
-	var result = false;
-	var refer = this.getReference();
-	if (!Array.isArray(ids)) {
-		return;
-	}
-	for (var i = 0; i < ids.length; i++) {
-		var layer = refer.get_node(ids[i]);
-		if (!!layer) {
-			result = true;
-			break;
-		}
-	}
-
-	return result;
-};
-gb.geoserver.CreateLayer.prototype.open = function() {
-	$(this.message).hide();
+}
+gb.edit.CreateVectorLayer.prototype.open = function() {
 	this.window.modal('show');
 };
-gb.geoserver.CreateLayer.prototype.close = function() {
+gb.edit.CreateVectorLayer.prototype.close = function() {
 	this.window.modal('hide');
 };
-gb.geoserver.CreateLayer.prototype.setClientReference = function(refer) {
+gb.edit.CreateVectorLayer.prototype.setClientReference = function(refer) {
 	this.clientRefer = refer;
 };
-gb.geoserver.CreateLayer.prototype.getClientReference = function() {
+gb.edit.CreateVectorLayer.prototype.getClientReference = function() {
 	return this.clientRefer;
 };
-gb.geoserver.CreateLayer.prototype.setReference = function(refer) {
+gb.edit.CreateVectorLayer.prototype.setReference = function(refer) {
 	this.refer = refer;
 };
-gb.geoserver.CreateLayer.prototype.getReference = function() {
+gb.edit.CreateVectorLayer.prototype.getReference = function() {
 	return this.refer;
 };
-gb.geoserver.CreateLayer.prototype.save = function(obj) {
+gb.edit.CreateVectorLayer.prototype.save = function(obj) {
 	var that = this;
-	$.ajax({
-		url : this.getUrl(),
-		method : "POST",
-		contentType : "application/json; charset=UTF-8",
-		cache : false,
-		// async : false,
-		data : JSON.stringify(obj),
-		beforeSend : function() {
-			$("body").css("cursor", "wait");
-		},
-		complete : function() {
-			$("body").css("cursor", "default");
-		},
-		traditional : true,
-		success : function(data, textStatus, jqXHR) {
-			console.log(data);
-			that.getReference().refresh();
-		}
-	});
+
 };
-gb.geoserver.CreateLayer.prototype.setForm = function(format, type, sheetNum) {
+gb.edit.CreateVectorLayer.prototype.setForm = function(format, type) {
 	this.format = format;
 	this.type = type;
 	if (type === "mapsheet") {
@@ -219,7 +209,7 @@ gb.geoserver.CreateLayer.prototype.setForm = function(format, type, sheetNum) {
 		$(this.expertForm).hide();
 	} else if (type === "layer") {
 		$(this.htag).text("Create a layer");
-		$(this.sheetNumInput).val(sheetNum);
+		$(this.sheetNumInput).val("");
 		$(this.layerNameInput).val("");
 		$(this.layerNameForm).show();
 		if (format === "dxf") {
@@ -234,10 +224,16 @@ gb.geoserver.CreateLayer.prototype.setForm = function(format, type, sheetNum) {
 			$(this.attrForm).show();
 			this.initExpertForm();
 			$(this.expertForm).show();
+		} else if (format === "shp") {
+			this.initTypeForm("shp");
+			$(this.typeForm).show();
+			this.initAttrForm();
+			$(this.attrForm).show();
+			$(this.expertForm).hide();
 		}
 	}
 };
-gb.geoserver.CreateLayer.prototype.initTypeForm = function(type) {
+gb.edit.CreateVectorLayer.prototype.initTypeForm = function(type) {
 	var select = $("<select>").addClass("form-control");
 	if (type === "dxf") {
 		var option1 = $("<option>").text("LWPolyline");
@@ -251,12 +247,17 @@ gb.geoserver.CreateLayer.prototype.initTypeForm = function(type) {
 		var option3 = $("<option>").text("Polygon");
 		var option4 = $("<option>").text("Text");
 		$(select).append(option1).append(option2).append(option3).append(option4);
+	} else if (type === "shp") {
+		var option1 = $("<option>").text("Point");
+		var option2 = $("<option>").text("LineString");
+		var option3 = $("<option>").text("Polygon");
+		$(select).append(option1).append(option2).append(option3);
 	}
 	$(this.typeForm).empty();
 	var tp = $("<p>").text("Type");
 	$(this.typeForm).append(tp).append(select);
 };
-gb.geoserver.CreateLayer.prototype.initAttrForm = function() {
+gb.edit.CreateVectorLayer.prototype.initAttrForm = function() {
 	var that = this;
 	var htd1 = $("<td>").text("Name");
 	var htd2 = $("<td>").text("Type");
@@ -325,7 +326,7 @@ gb.geoserver.CreateLayer.prototype.initAttrForm = function() {
 	var tp = $("<p>").text("Attribute");
 	$(this.attrForm).append(tp).append(table).append(addBtn);
 };
-gb.geoserver.CreateLayer.prototype.initExpertForm = function() {
+gb.edit.CreateVectorLayer.prototype.initExpertForm = function() {
 	var that = this;
 	var htd1 = $("<td>").text("Version");
 	var htd2 = $("<td>").text("Dimension");
@@ -386,55 +387,96 @@ gb.geoserver.CreateLayer.prototype.initExpertForm = function() {
 	var tp = $("<p>").text("NGI Setting");
 	$(this.expertForm).append(tp).append(table).append(table2);
 };
-gb.geoserver.CreateLayer.prototype.getDefinitionForm = function() {
-	var opt = {
-		"layer" : {}
-	};
+gb.edit.CreateVectorLayer.prototype.getDefinitionForm = function() {
+	// var opt = {
+	// "layer" : {}
+	// };
+	var mapsheet;
 	if (this.type === "mapsheet") {
-		opt.layer[this.format] = {};
-		opt.layer[this.format][$(this.sheetNumInput).val()] = {};
-		if ($(this.sheetNumInput).val().replace(/(\s*)/g, '') === "") {
-			console.error("no mapsheet number");
-			return;
-		}
-		opt.layer[this.format][$(this.sheetNumInput).val()]["create"] = [];
-		var layerObj = {
-			"layerName" : "default",
-			"layerType" : "Point"
-		};
-		opt.layer[this.format][$(this.sheetNumInput).val()]["create"].push(layerObj);
-		if (this.format === "ngi") {
-			var attr = {
-				"fieldName" : "UFID",
-				"type" : "String",
-				"decimal" : null,
-				"size" : 256,
-				"isUnique" : true
-			}
-			layerObj["attr"] = [ attr ];
-			layerObj["version"] = 2;
-			layerObj["dim"] = 2;
-			layerObj["bound"] = [ [ 122.6019287109375, 49.73690656023088 ], [ 122.14874267578125, 49.40918616182351 ] ];
-			layerObj["represent"] = "255;0;102";
-		}
-		this.futureId = "gro_" + this.format + "_" + $(this.sheetNumInput).val().replace(/(\s*)/g, '');
+		// opt.layer[this.format] = {};
+		// opt.layer[this.format][$(this.sheetNumInput).val()] = {};
+		// if ($(this.sheetNumInput).val().replace(/(\s*)/g, '') === "") {
+		// console.error("no mapsheet number");
+		// return;
+		// }
+		// opt.layer[this.format][$(this.sheetNumInput).val()]["create"] = [];
+		// var layerObj = {
+		// "layerName" : "default",
+		// "layerType" : "Point"
+		// };
+		// opt.layer[this.format][$(this.sheetNumInput).val()]["create"].push(layerObj);
+		// if (this.format === "ngi") {
+		// var attr = {
+		// "fieldName" : "UFID",
+		// "type" : "String",
+		// "decimal" : null,
+		// "size" : 256,
+		// "isUnique" : true
+		// }
+		// layerObj["attr"] = [ attr ];
+		// layerObj["version"] = 2;
+		// layerObj["dim"] = 2;
+		// layerObj["bound"] = [ [ 122.6019287109375, 49.73690656023088 ], [
+		// 122.14874267578125, 49.40918616182351 ] ];
+		// layerObj["represent"] = "255;0;102";
+		// }
 	} else if (this.type === "layer") {
-		opt.layer[this.format] = {};
+		// opt.layer[this.format] = {};
 		if ($(this.sheetNumInput).val().replace(/(\s*)/g, '') === "") {
 			console.error("no mapsheet number");
 			return;
 		}
-		opt.layer[this.format][$(this.sheetNumInput).val()] = {};
-		opt.layer[this.format][$(this.sheetNumInput).val()]["create"] = [];
+		mapsheet = new gb.mapsheet.Mapsheet({
+			number : $(this.sheetNumInput).val().replace(/(\s*)/g, ''),
+			id : "gro_" + this.format + "_" + $(this.sheetNumInput).val().replace(/(\s*)/g, ''),
+			format : this.format
+		});
+		var groupLayer = new ol.layer.Group();
+		groupLayer.set("id", mapsheet.getId());
+		groupLayer.set("name", mapsheet.getNumber());
+		var gitGroup = {
+			"information" : mapsheet
+		};
+		groupLayer.set("git", gitGroup);
+		// opt.layer[this.format][$(this.sheetNumInput).val()] = {};
+		// opt.layer[this.format][$(this.sheetNumInput).val()]["create"] = [];
 		if ($(this.layerNameInput).val().replace(/(\s*)/g, '') === "") {
 			console.error("no layer name");
 			return;
 		}
-		var layerObj = {
-			"layerName" : $(this.layerNameInput).val(),
-			"layerType" : $(this.typeForm).find("select").val()
+		var layer = new gb.layer.LayerInfo({
+			name : $(this.layerNameInput).val().replace(/(\s*)/g, ''),
+			id : "geo_" + this.format + "_" + $(this.sheetNumInput).val().replace(/(\s*)/g, '') + "_"
+					+ $(this.layerNameInput).val().replace(/(\s*)/g, '') + "_" + ($(this.typeForm).find("select").val().toUpperCase()),
+			format : this.format,
+			epsg : "5186",
+			NGIVer : parseInt($(this.ver).val()),
+			NGIDim : parseInt($(this.dim).val()),
+			NGIRep : $(this.rep).val(),
+			mbound : [ [ $(this.minx).val(), $(this.miny).val() ], [ $(this.maxx).val(), $(this.maxy).val() ] ],
+			lbound : [ [ 122.71, 28.6 ], [ 134.28, 40.27 ] ],
+			isNew : true,
+			geometry : $(this.typeForm).find("select").val()
+		});
+		var vectorLayer = new ol.layer.Vector({
+			source : new ol.source.Vector()
+		});
+		vectorLayer.set("id", layer.getId());
+		vectorLayer.set("name", layer.getName());
+		var gitLayer = {
+			"editable" : true,
+			"geometry" : layer.getGeometry(),
+			"validation" : false,
+			"information" : layer
 		};
-		opt.layer[this.format][$(this.sheetNumInput).val()]["create"].push(layerObj);
+		// layerObj["bound"] = [ [ $(this.minx).val(), $(this.miny).val() ], [
+		// $(this.maxx).val(), $(this.maxy).val() ] ];
+		// layerObj["represent"] = $(this.rep).val();
+		// var layerObj = {
+		// "layerName" : $(this.layerNameInput).val(),
+		// "layerType" : $(this.typeForm).find("select").val()
+		// };
+		// opt.layer[this.format][$(this.sheetNumInput).val()]["create"].push(layerObj);
 		var layerAttr = [];
 		if (this.format === "ngi") {
 			var attrs = $(this.attrForm).find("tr");
@@ -442,33 +484,49 @@ gb.geoserver.CreateLayer.prototype.getDefinitionForm = function() {
 				if ($(attrs[i]).children().eq(0).find("input:text").val().replace(/(\s*)/g, '') === "") {
 					break;
 				}
-				var attr = {
-					"fieldName" : $(attrs[i]).children().eq(0).find("input:text").val().replace(/(\s*)/g, ''),
-					"type" : $(attrs[i]).children().eq(1).find("select").val(),
-					"nullable" : $(attrs[i]).children().eq(2).find("input:checkbox").prop("checked") ? false : true,
-					"isUnique" : $(attrs[i]).children().eq(3).find("input:checkbox").prop("checked") ? true : false,
-					"decimal" : $(attrs[i]).children().eq(1).find("select").val() === "Double" ? 30 : null,
-					"size" : 256
-				};
-				layerAttr.push(attr);
+				var attribute = new gb.layer.Attribute({
+					originFieldName : $(attrs[i]).children().eq(0).find("input:text").val().replace(/(\s*)/g, ''),
+					fieldName : $(attrs[i]).children().eq(0).find("input:text").val().replace(/(\s*)/g, ''),
+					type : $(attrs[i]).children().eq(1).find("select").val(),
+					decimal : $(attrs[i]).children().eq(1).find("select").val() === "Double" ? 30 : null,
+					size : 256,
+					isUnique : $(attrs[i]).children().eq(3).find("input:checkbox").prop("checked") ? true : false,
+					nullable : $(attrs[i]).children().eq(2).find("input:checkbox").prop("checked") ? false : true,
+					isNew : true
+				});
+				// var attr = {
+				// "fieldName" :
+				// $(attrs[i]).children().eq(0).find("input:text").val().replace(/(\s*)/g,
+				// ''),
+				// "type" : $(attrs[i]).children().eq(1).find("select").val(),
+				// "nullable" :
+				// $(attrs[i]).children().eq(2).find("input:checkbox").prop("checked")
+				// ? false : true,
+				// "isUnique" :
+				// $(attrs[i]).children().eq(3).find("input:checkbox").prop("checked")
+				// ? true : false,
+				// "decimal" : $(attrs[i]).children().eq(1).find("select").val()
+				// === "Double" ? 30 : null,
+				// "size" : 256
+				// };
+				layerAttr.push(attribute);
 			}
-			layerObj["attr"] = layerAttr;
-			layerObj["version"] = $(this.ver).val();
-			layerObj["dim"] = $(this.dim).val();
-			layerObj["bound"] = [ [ $(this.minx).val(), $(this.miny).val() ], [ $(this.maxx).val(), $(this.maxy).val() ] ];
-			layerObj["represent"] = $(this.rep).val();
+			// layerObj["attr"] = layerAttr;
+			layer.setAttributes(layerAttr);
+			gitLayer["attribute"] = layer.getAttributesJSON();
 		}
-		this.futureId = "geo_" + this.format + "_" + $(this.sheetNumInput).val().replace(/(\s*)/g, '') + "_" + $(this.layerNameInput).val()
-				+ "_" + ($(this.typeForm).find("select").val().toUpperCase());
+		vectorLayer.set("git", gitLayer);
+		var col = new ol.Collection();
+		col.push(vectorLayer);
+		groupLayer.setLayers(col);
+		this.map.addLayer(groupLayer);
 	}
-	console.log(opt);
-	return opt;
 };
-gb.geoserver.CreateLayer.prototype.setUrl = function(url) {
+gb.edit.CreateVectorLayer.prototype.setUrl = function(url) {
 	if (typeof url === "string") {
 		this.url = url;
 	}
 };
-gb.geoserver.CreateLayer.prototype.getUrl = function() {
+gb.edit.CreateVectorLayer.prototype.getUrl = function() {
 	return this.url;
 };

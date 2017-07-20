@@ -15,6 +15,7 @@ html {
 #builderHeader {
 	border-radius: 0;
 	margin-bottom: 0;
+	min-height: 30px;
 }
 
 #builderContent {
@@ -65,39 +66,35 @@ html {
 	border: 0;
 	background-color: transparent;
 }
+
+#builderHeader .navbar-nav>li>a {
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
 </style>
 
 </head>
 <body>
-
-	<nav id="builderHeader" class="navbar navbar-toggleable-md navbar-default fixed-top">
-
-		<div class="navbar-header">
-			<a class="navbar-brand" href="#"> <img alt="Geospatial Information Technology"
-				src="${pageContext.request.contextPath}/resources/img/gitcism.png">
-			</a>
-		</div>
-
+	<jsp:include page="/WEB-INF/views/common/header.jsp" />
+	<nav id="builderHeader" class="navbar navbar-default fixed-top">
 		<ul class="nav navbar-nav">
-
 			<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
-				aria-expanded="false" title="New layer"><i class="fa fa-file-o fa-lg" aria-hidden="true"></i> New</a>
+				aria-expanded="false" title="New layer">New</a>
 				<ul class="dropdown-menu" role="menu">
-					<li><a href="#" id="newVector" title="Vector">New</a></li>
 					<li><a href="#" id="uploadFile" title="Upload File" onclick="gitbuilder.ui.NewFileWindow()">File</a></li>
+					<li><a href="#" id="newVector" title="Vector">Layer</a></li>
 				</ul></li>
 			<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
-				aria-expanded="false" title="Save"><i class="fa fa-floppy-o fa-lg" aria-hidden="true"></i> Save</a>
+				aria-expanded="false" title="Save">Save</a>
 				<ul class="dropdown-menu" role="menu">
 					<li><a href="#">as a SHP</a></li>
 					<li><a href="#" id="save">to Server</a></li>
 				</ul></li>
 
-			<li><a href="#" title="Edit" id="edit"><i class="fa fa-pencil-square-o fa-lg" aria-hidden="true"></i> Edit</a></li>
-			<li><a href="#" title="Base map" id="changeBase"><i class="fa fa-map-o fa-lg" aria-hidden="true"></i> Base
-					Map</a></li>
+			<li><a href="#" title="Edit" id="edit">Edit</a></li>
+			<li><a href="#" title="Base map" id="changeBase">Base Map</a></li>
 			<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
-				aria-expanded="false" title="Validation"><i class="fa fa-search fa-lg fa-lg" aria-hidden="true"></i> QA 1.0</a>
+				aria-expanded="false" title="Validation">QA 1.0</a>
 				<ul class="dropdown-menu" role="menu">
 					<li><a href="#" title="Layer Definition" id="layerDefinition1">Layer Definition</a></li>
 					<li><a href="#" title="Validating Option" id="validDefinition1">Validating Option</a></li>
@@ -105,31 +102,30 @@ html {
 					<li><a href="#" title="Validation" id="validation1">Validation</a></li>
 				</ul></li>
 			<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
-				aria-expanded="false" title="Validation"><i class="fa fa-search fa-lg fa-lg" aria-hidden="true"></i> QA 2.0</a>
+				aria-expanded="false" title="Validation">QA 2.0</a>
 				<ul class="dropdown-menu" role="menu">
 					<li><a href="#" title="Layer Definition" id="layerDefinition">Layer Definition</a></li>
 					<li><a href="#" title="Validating Option" id="validDefinition">Validating Option</a></li>
 					<li><a href="#" title="Layer Weight" id="weight">Layer Weight</a></li>
 					<li><a href="#" title="Validation" id="validation">Validation</a></li>
 				</ul></li>
-			<li><a href="#" title="QA Edit" id="qaedit"><i class="fa fa-object-group fa-lg" aria-hidden="true"></i> QA
-					Edit</a></li>
+			<li><a href="#" title="QA Edit" id="qaedit">QA Edit</a></li>
 			<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
-				aria-expanded="false" title="Validation Result"><i class="fa fa-list-alt fa-lg" aria-hidden="true"></i> Result</a>
+				aria-expanded="false" title="Validation Result">Result</a>
 				<ul class="dropdown-menu" role="menu">
 					<li><a href="#">Error Navigator</a></li>
 					<li><a href="#">Error Report</a></li>
 				</ul></li>
 
 			<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
-				aria-expanded="false" title="ToolBox"><i class="fa fa-calculator fa-lg" aria-hidden="true"></i> ToolBox</a>
+				aria-expanded="false" title="ToolBox">ToolBox</a>
 				<ul class="dropdown-menu" role="menu">
 					<li><a href="#">CRS Transformation</a></li>
 					<li><a href="#">Spatial Operation</a></li>
 				</ul></li>
 
 			<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
-				aria-expanded="false" title="History"><i class="fa fa-history fa-lg" aria-hidden="true"></i> History</a>
+				aria-expanded="false" title="History">History</a>
 				<ul class="dropdown-menu" role="menu">
 					<li><a href="#">History</a></li>
 					<li role="presentation" class="divider"></li>
@@ -137,18 +133,8 @@ html {
 					<li><a href="#">Upload History</a></li>
 				</ul></li>
 
-			<li><a href="#" title="Information"><i class="fa fa-info-circle fa-lg" aria-hidden="true"></i> Information</a></li>
+			<li><a href="#" title="Information">Information</a></li>
 		</ul>
-
-		<form class="navbar-form navbar-right" role="login" style="margin-right: 0;">
-			<div class="form-group">
-				<input type="text" class="form-control" placeholder="ID" style="width: 150px;">
-			</div>
-			<div class="form-group">
-				<input type="password" class="form-control" placeholder="Password" style="width: 150px;">
-			</div>
-			<button type="submit" class="btn btn-default">Login</button>
-		</form>
 	</nav>
 
 	<div id="builderContent" class="container-fluid">
@@ -212,7 +198,9 @@ html {
 		var gitrnd = {
 			resize : function() {
 				var winHeight = $(window).innerHeight();
-				var conHeight = winHeight - ($("#builderHeader").outerHeight(true) + $("#builderFooter").outerHeight(true));
+				var conHeight = winHeight
+						- ($("#mainHeader").outerHeight(true) + $("#builderHeader").outerHeight(true) + $("#builderFooter").outerHeight(
+								true));
 				var winWidth = $(window).innerWidth();
 				var mapWidth = winWidth - ($("#builderLayer").outerWidth(true));
 				$("#builderLayer").outerHeight(conHeight);
@@ -223,9 +211,10 @@ html {
 				$("#builderBaseMap").css("top", str);
 				$("#builderBaseMap").find(".ol-viewport").css("z-index", 1);
 				$("#builderMap").find(".ol-viewport").css("z-index", 2);
-				var listHeight = $("#builderLayer").innerHeight() / 2 - 16;
-				// 				38은 패널 헤더의 높이
-				var treeHeight = listHeight - 38;
+				//16은 아래 마진, 1은 위 아래 보더 
+				var listHeight = $("#builderLayer").innerHeight() / 2 - (16 + 1 + 1);
+				// 				41은 패널 헤더의 높이
+				var treeHeight = listHeight - (41);
 				$(".gitbuilder-layer-panel").outerHeight(treeHeight);
 				$("#builderLayerGeoServerPanel").outerHeight(listHeight);
 				$("#builderLayerClientPanel").outerHeight(listHeight);
@@ -290,6 +279,8 @@ html {
 			gitrnd.resize();
 		});
 
+		var lprop = new gb.edit.ModifyLayerProperties({});
+
 		$('#builderClientLayer').jstreeol3({
 			"core" : {
 				"map" : map,
@@ -297,16 +288,23 @@ html {
 				"themes" : {
 					"stripes" : true
 				},
-			}
+			},
+			"layerproperties" : {
+				"properties" : lprop,
+			},
+			plugins : [ "contextmenu", "dnd", "search", "state", "types", "sort", "visibility", "layerproperties" ]
 		});
 
-		var record = new gb.edit.FeatureRecord({
+		var frecord = new gb.edit.FeatureRecord({
 			id : "feature_id"
 		});
 
+		var lrecord = new gb.edit.LayerRecord({});
+
 		var transfer = new gb.edit.RecordTransfer({
 			url : "editLayerCollection/editLayerCollection.ajax",
-			feature : record
+			layer : lrecord,
+			feature : frecord
 		});
 
 		$("#save").click(function() {
@@ -317,7 +315,7 @@ html {
 			url : "geoserver2/geoserverWFSGetFeature.ajax",
 			map : map,
 			user : "admin",
-			record : record,
+			record : frecord,
 			treeInstance : $('#builderClientLayer').jstreeol3(true),
 			selected : function() {
 				return $('#builderClientLayer').jstreeol3("get_selected_layer");
@@ -433,10 +431,13 @@ html {
 				"user" : "admin",
 				"layerInfo" : layerInfo,
 				"layerInfoURL" : "geoserver2/getGeoLayerInfoList.ajax",
+				"groupLayerInfoURL" : "geoserver2/getGeoGroupLayerInfoList.ajax",
+				"WMSLayerURL" : "geoserver2/geoserverWMSLayerLoad.do",
 				"createLayer" : createLayer,
 				"deleteLayer" : deleteLayer,
 				"downloadNGIDXF" : "fileExport/fileExport.ajax",
-				"downloadGeoserver" : "geoserver2/downloadRequest.do"
+				"downloadGeoserver" : "geoserver2/downloadRequest.do",
+				"clientRefer" : $('#builderClientLayer').jstreeol3(true)
 			},
 			"plugins" : [ "contextmenu", "search", "state", "types", "geoserver" ]
 		});
@@ -446,6 +447,14 @@ html {
 		});
 		$("#srefresh").click(function() {
 			$("#builderServerLayer").jstree(true).refresh();
+		});
+
+		var nlayer = new gb.edit.CreateVectorLayer({
+			refer : $('#builderClientLayer').jstreeol3(true),
+			map : map
+		});
+		$("#newVector").click(function() {
+			nlayer.open();
 		});
 	</script>
 
