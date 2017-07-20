@@ -76,12 +76,13 @@ html {
 
 </head>
 <body>
-<script>
-    var checkUnload = true;
-    $(window).on("beforeunload", function(){
-        if(checkUnload) return "이 페이지를 벗어나면 작성된 내용은 저장되지 않습니다.";
-    });
-</script>
+	<script>
+		var checkUnload = true;
+		$(window).on("beforeunload", function() {
+			if (checkUnload)
+				return "이 페이지를 벗어나면 작성된 내용은 저장되지 않습니다.";
+		});
+	</script>
 
 
 	<jsp:include page="/WEB-INF/views/common/header.jsp" />
@@ -466,7 +467,7 @@ html {
 			$("#builderServerLayer").jstree(true).refresh();
 		});
 		var qastat = new gb.qa.QAStatus({
-			"statusURL" : "",
+			"statusURL" : "validateProgress/validateProgress.ajax",
 			"errorURL" : "",
 			"downloadURL" : ""
 		});

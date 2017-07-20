@@ -144,6 +144,28 @@ gb.qa.QAStatus.prototype.switchArea = function(area) {
 	}
 };
 gb.qa.QAStatus.prototype.setList = function() {
+	var that = this;
+	var obj = {
+		"atest" : "true"
+	};
+	$.ajax({
+		url : that.getStatusURL(),
+		method : "POST",
+		contentType : "application/json; charset=UTF-8",
+		cache : false,
+		// async : false,
+		data : JSON.stringify(obj),
+		beforeSend : function() { // 호출전실행
+			$("body").css("cursor", "wait");
+		},
+		complete : function() {
+			$("body").css("cursor", "default");
+		},
+		traditional : true,
+		success : function(data, textStatus, jqXHR) {
+			console.log(data);
+		}
+	});
 	var td0 = $("<td>").text("1");
 	var td1 = $("<td>").text("NGI");
 	var td2 = $("<td>").text("37712003");
@@ -176,11 +198,11 @@ gb.qa.QAStatus.prototype.setReport = function() {
 		} ]
 	});
 };
-gb.qa.QAStatus.prototype.setUrl = function(url) {
+gb.qa.QAStatus.prototype.setStatusURL = function(url) {
 	if (typeof url === "string") {
-		this.url = url;
+		this.statusURL = url;
 	}
 };
-gb.qa.QAStatus.prototype.getUrl = function() {
-	return this.url;
+gb.qa.QAStatus.prototype.getStatusURL = function() {
+	return this.statusURL
 };
