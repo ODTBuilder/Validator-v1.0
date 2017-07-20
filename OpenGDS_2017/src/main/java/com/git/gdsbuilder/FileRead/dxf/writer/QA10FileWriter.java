@@ -112,7 +112,7 @@ public class QA10FileWriter {
 			// entities
 			List<LinkedHashMap<String, Object>> entities = (List<LinkedHashMap<String, Object>>) blocksMap
 					.get("entities");
-			writeEntities(entities, true);
+			writeEntities(entities);
 
 			dxfWriter.write(startEndBlocksCode);
 			dxfWriter.newLine();
@@ -129,7 +129,7 @@ public class QA10FileWriter {
 		dxfWriter.newLine();
 	}
 
-	private void writeEntities(List<LinkedHashMap<String, Object>> entities, boolean isBlocks) throws IOException {
+	private void writeEntities(List<LinkedHashMap<String, Object>> entities) throws IOException {
 
 		for (int j = 0; j < entities.size(); j++) {
 			LinkedHashMap<String, Object> entity = entities.get(j);
@@ -186,6 +186,14 @@ public class QA10FileWriter {
 						}
 					}
 				}
+				dxfWriter.write("0");
+				dxfWriter.newLine();
+				dxfWriter.write("SEQEND");
+				dxfWriter.newLine();
+				dxfWriter.write("8");
+				dxfWriter.newLine();
+				dxfWriter.write(layerId);
+				dxfWriter.newLine();
 			} else {
 				Iterator entityIt = entity.keySet().iterator();
 				while (entityIt.hasNext()) {
@@ -200,16 +208,6 @@ public class QA10FileWriter {
 						continue;
 					}
 				}
-			}
-			if (isBlocks) {
-				dxfWriter.write("0");
-				dxfWriter.newLine();
-				dxfWriter.write("SEQEND");
-				dxfWriter.newLine();
-				dxfWriter.write("8");
-				dxfWriter.newLine();
-				dxfWriter.write(layerId);
-				dxfWriter.newLine();
 			}
 		}
 	}
@@ -247,7 +245,7 @@ public class QA10FileWriter {
 			String layerID = (String) layerIt.next();
 			List<LinkedHashMap<String, Object>> entitiyMapList = (List<LinkedHashMap<String, Object>>) valuesMap
 					.get(layerID);
-			writeEntities(entitiyMapList, false);
+			writeEntities(entitiyMapList);
 		}
 		dxfWriter.write(endSectionCode);
 		dxfWriter.newLine();
