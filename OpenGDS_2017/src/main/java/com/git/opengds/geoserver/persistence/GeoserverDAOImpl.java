@@ -24,15 +24,23 @@ import javax.inject.Inject;
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Repository;
 
+import com.git.opengds.common.DataSourceFactory;
+import com.git.opengds.user.domain.UserVO;
+
 /**
  * 파일에 대한 DB처리를 하는 클래스
  * @author SG.Lee
  * @Date 2017. 5. 12. 오전 2:24:03
  * */
 @Repository
-public class GeoserverDAOImpl implements GeoserverDAO {
-	@Inject
+public class GeoserverDAOImpl extends DataSourceFactory implements GeoserverDAO {
+	
 	private SqlSession sqlSession;
+	
+/*	public GeoserverDAOImpl(UserVO user) {
+		// TODO Auto-generated constructor stub
+		sqlSession = super.getSqlSession(user.getId());
+	}*/
 
 	private static final String namespace = "com.git.mappers.geolayerMappers.GeolayerMapper";
 
@@ -44,7 +52,8 @@ public class GeoserverDAOImpl implements GeoserverDAO {
 	 * @see com.git.opengds.geoserver.persistence.GeoserverDAO#selectEditLayerDuplicateCheck(java.util.HashMap)
 	 */
 	@Override
-	public boolean selectEditLayerDuplicateCheck(Map<String,Object> infoMap){
+	public boolean selectEditLayerDuplicateCheck(UserVO userVO, Map<String,Object> infoMap){
+		sqlSession = super.getSqlSession(userVO.getId());
 		int duplicateNums = 0;
 		try{
 			duplicateNums = sqlSession.selectOne(namespace + ".selectEditLayerDuplicateCheck", infoMap);

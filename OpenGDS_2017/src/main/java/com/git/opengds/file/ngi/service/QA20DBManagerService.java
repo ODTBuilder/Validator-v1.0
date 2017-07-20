@@ -17,15 +17,14 @@
 
 package com.git.opengds.file.ngi.service;
 
-import java.util.HashMap;
-
 import com.git.gdsbuilder.type.geoserver.layer.GeoLayerInfo;
 import com.git.gdsbuilder.type.qa20.collection.QA20LayerCollection;
+import com.git.opengds.user.domain.UserVO;
 
 public interface QA20DBManagerService {
 	
-	public GeoLayerInfo insertQA20LayerCollection(QA20LayerCollection dtCollection, GeoLayerInfo layerInfo) throws Exception;
+	public GeoLayerInfo insertQA20LayerCollection(UserVO userVO, QA20LayerCollection dtCollection, GeoLayerInfo layerInfo) throws Exception;
 
-	public GeoLayerInfo dropQA20LayerCollection(QA20LayerCollection dtCollection, GeoLayerInfo layerInfo);
+	public GeoLayerInfo dropQA20LayerCollection(UserVO userVO, QA20LayerCollection dtCollection, GeoLayerInfo layerInfo);
 
 }

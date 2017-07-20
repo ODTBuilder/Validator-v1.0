@@ -1109,7 +1109,7 @@
 			Dropzone.prototype.epsgSearch(this,epsgCode);
 		}
 		else{
-			alertPopup('warning','WARNING','Please enter the code')
+			alertPopup('warning','경고','좌표체계 코드를 입력해주세요.')
 		}
 	}
    
@@ -1135,14 +1135,14 @@
 							$("input[id=epsgtext]").attr("readonly",true);
 							dropzone.options.params = {"epsg":$('#epsgtext').val()};
 							dropzone.initFileTypeChange();
-							alertPopup('success','Success.','Supports corresponding coordinate codes.')
+							alertPopup('success','성공','지원하는 좌표체계 코드입니다.')
 //							gitrnd.setProjection(code, name, proj4def, bbox);
 							return;
 						}
 					}
 				}
 			}
-			alertPopup('warning','Please try again.','This code is not supported.')
+			alertPopup('warning','다시시도해주세요.','지원하지 않는 좌표코드입니다.')
 		});
 	}
     
@@ -1598,15 +1598,20 @@
       for (_i = 0, _len = files.length; _i < _len; _i++) {
         file = files[_i];
         
+        if(responseText[0]!=null){
         fileResponse.uploadFlag = responseText[0].uploadFlag;
         fileResponse.dbInsertFlag = responseText[0].dbInsertFlag;
         fileResponse.serverPublishFlag = responseText[0].serverPublishFlag;
-        
-        if(fileResponse.uploadFlag&&fileResponse.dbInsertFlag&&fileResponse.serverPublishFlag){
-        	file.status = Dropzone.SUCCESS;
-        	this.emit("success", file, responseText, this.options.dictSuccessMessage, e); // success 메세지 추가
-        }
-        else{
+            if(fileResponse.uploadFlag&&fileResponse.dbInsertFlag&&fileResponse.serverPublishFlag){
+	        	file.status = Dropzone.SUCCESS;
+	        	this.emit("success", file, responseText, this.options.dictSuccessMessage, e); // success 메세지 추가
+	        }
+	        else{
+	        	file.status = Dropzone.ERROR;
+	        	file.previewElement.classList.add("dz-success"); //프로그래스바 없애기
+	        	this.emit("error", file, this.options.dictInvalidFilePublish);
+	        }
+        }else{
         	file.status = Dropzone.ERROR;
         	file.previewElement.classList.add("dz-success"); //프로그래스바 없애기
         	this.emit("error", file, this.options.dictInvalidFilePublish);

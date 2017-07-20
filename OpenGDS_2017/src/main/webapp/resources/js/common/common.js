@@ -1,63 +1,3 @@
-
-
-/**
- * 활성화되어 있는 팝업창을 닫는다.
- * 
- * @author seulgi.lee
- * @date 2016. 02.
- */
-function closePop() {
-	$('.layerPop').xHidePopup();
-}
-
-
-function goMainPage(){
-   /* swal({
-	    title : 'Do you want to go to the main page?',
-	    text : 'This work will disappear when you move the page.',
-	    type : 'warning',
-	    showCancelButton : true,
-	    confirmButtonColor : '#3085d6',
-	    cancelButtonColor : '#d33',
-	    confirmButtonText : 'Yes',
-	    cancelButtonText : 'No, cancel!',
-	    confirmButtonClass : 'btn btn-success',
-	    cancelButtonClass : 'btn btn-danger',
-	    buttonsStyling : false
-	}.then(function() {
-	    var path = CONTEXT+"/temp.do";
-	    var params = {};
-	    var target = "_self";
-	    getToUrl(path, params, target);
-	}, function(dismiss) {
-	    // dismiss can be 'cancel', 'overlay',
-	    // 'close', and 'timer'
-	    if (dismiss === 'cancel') {
-		swal('Cancelled', 'Your imaginary file is safe :)', 'error')
-	    }
-	})*/
-	swal({
-	    title : 'Do you want to go to the main page?',
-	    text : 'This work will disappear when you move the page.',
-	    type : 'warning',
-	    showCancelButton : true,
-	    confirmButtonColor : '#3085d6',
-	    cancelButtonColor : '#d33',
-	    confirmButtonText : 'Yes',
-	    cancelButtonText : 'No, cancel!',
-	    confirmButtonClass : 'btn btn-success',
-	    cancelButtonClass : 'btn btn-danger',
-	    buttonsStyling : false
-	  },
-	  function(isConfirm){
-	    if (isConfirm) {
-		 var path = CONTEXT+"/temp.do";
-		    var params = {};
-		    var target = "_self";
-		    getToUrl(path, params, target);
-	  }});
-}
-
 /**
  * URL 생성
  * @author seulgi.lee
@@ -478,9 +418,9 @@ function validation(validCase) {
 			}
 			if(!str) {
             			    if(val.type == "text") {
-            				alertPopup("Warning","Please enter your "+val.name);
+            				alertPopup("warning",val.name+" 입력해주세요.");
             			} else if( val.type == "radio"){
-            				alertPopup("Warning","Please choose your"+val.name);
+            				alertPopup("warning",val.name+" 입력해주세요.");
             			}
 				errorCnt++;
 				return false;
@@ -494,3 +434,5 @@ function validation(validCase) {
 		return false;
 	}
 }
+
+

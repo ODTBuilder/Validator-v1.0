@@ -27,7 +27,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.git.opengds.common.AbstractController;
+import com.git.opengds.user.domain.UserVO;
+import com.git.opengds.user.domain.UserVO.EnUserType;
 import com.git.opengds.validator.service.ValidatorService;
+import com.git.opengds.validator.service.ValidatorServiceImpl;
 
 @Controller("validatorController")
 @RequestMapping("/validator")
@@ -41,8 +44,11 @@ public class ValidatorController extends AbstractController {
 	@ResponseBody
 	public JSONObject geoserverAddLoadAjax(HttpServletRequest request, @RequestBody String geo) throws Exception {
 		
-		System.out.println(geo);
+		UserVO generalUser  = (UserVO) getSession(request,EnUserType.GENERAL.getTypeName());
+		if(generalUser==null){
+			return null;
+		}
 		
-		return validatorService.validate(geo);
+		return validatorService.validate(generalUser, geo);
 	}
 }

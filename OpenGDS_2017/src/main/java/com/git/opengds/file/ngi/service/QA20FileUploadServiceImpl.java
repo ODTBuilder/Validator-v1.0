@@ -33,7 +33,9 @@ import com.git.gdsbuilder.FileRead.ngi.reader.QA20FileReader;
 import com.git.gdsbuilder.type.geoserver.layer.GeoLayerInfo;
 import com.git.gdsbuilder.type.qa20.collection.QA20LayerCollection;
 import com.git.opengds.geoserver.service.GeoserverService;
+import com.git.opengds.geoserver.service.GeoserverServiceImpl;
 import com.git.opengds.upload.domain.FileMeta;
+import com.git.opengds.user.domain.UserVO;
 
 @Service
 @ContextConfiguration(locations = { "file:src/main/webapp/WEB-INF/spring/**/*.xml" })
@@ -44,8 +46,14 @@ public class QA20FileUploadServiceImpl implements QA20FileUploadService {
 
 	@Inject
 	private GeoserverService geoserverService;
+	
+/*	public QA20FileUploadServiceImpl(UserVO userVO) {
+		// TODO Auto-generated constructor stub
+		qa20dbManagerService = new QA20DBManagerServiceImpl(userVO);
+		geoserverService = new GeoserverServiceImpl(userVO);
+	}*/
 
-	public FileMeta ngiUpload(FileMeta fileMeta) throws Exception {
+	public FileMeta ngiUpload(UserVO userVO, FileMeta fileMeta) throws Exception {
 
 		String filePath = fileMeta.getFilePath();
 		String src = fileMeta.getOriginSrc();
@@ -64,18 +72,18 @@ public class QA20FileUploadServiceImpl implements QA20FileUploadService {
 		layerInfo.setTransSrc("EPSG:3857");
 
 		// input DB layer
-		GeoLayerInfo returnInfo = qa20dbManagerService.insertQA20LayerCollection(dtCollection, layerInfo);
+		GeoLayerInfo returnInfo = qa20dbManagerService.insertQA20LayerCollection(userVO, dtCollection, layerInfo);
 		fileMeta.setDbInsertFlag(returnInfo.isDbInsertFlag());
 
 		// publish Layer
 		if (fileMeta.isDbInsertFlag()) {
 			fileMeta.setUploadFlag(true);
-			FileMeta geoserverFileMeta = geoserverService.dbLayerPublishGeoserver(returnInfo);
+			FileMeta geoserverFileMeta = geoserverService.dbLayerPublishGeoserver(userVO, returnInfo);
 			boolean isPublished = geoserverFileMeta.isServerPublishFlag();
 			fileMeta.setServerPublishFlag(isPublished);
 			if (!isPublished) {
 				// 다시 다 삭제
-				GeoLayerInfo returnDropInfo = qa20dbManagerService.dropQA20LayerCollection(dtCollection, layerInfo);
+				GeoLayerInfo returnDropInfo = qa20dbManagerService.dropQA20LayerCollection(userVO, dtCollection, layerInfo);
 				fileMeta.setUploadFlag(returnDropInfo.isUploadFlag());
 			}
 		}

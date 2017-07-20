@@ -26,6 +26,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import com.git.gdsbuilder.type.geoserver.collection.GeoLayerCollectionList;
@@ -35,6 +36,7 @@ import com.git.gdsbuilder.type.validate.error.ErrorLayerList;
 import com.git.gdsbuilder.type.validate.layer.ValidateLayerTypeList;
 import com.git.gdsbuilder.validator.collection.CollectionValidator;
 import com.git.opengds.parser.json.BuilderJSONParser;
+import com.git.opengds.user.domain.UserVO;
 
 @Service
 public class ValidatorServiceImpl implements ValidatorService {
@@ -55,9 +57,15 @@ public class ValidatorServiceImpl implements ValidatorService {
 	@Autowired
 	private ValidatorProgressService progressService;
 
+	/*public ValidatorServiceImpl(UserVO generalUser) {
+		// TODO Auto-generated constructor stub
+		errorLayerService = new ErrorLayerServiceImpl(generalUser);
+	}*/
+
 	@SuppressWarnings("unchecked")
+	@Async
 	@Override
-	public JSONObject validate(String jsonObject) throws Exception {
+	public JSONObject validate(UserVO userVO, String jsonObject) throws Exception {
 
 		JSONParser parser = new JSONParser();
 		JSONObject jsonObj = (JSONObject) parser.parse(jsonObject);
@@ -70,7 +78,7 @@ public class ValidatorServiceImpl implements ValidatorService {
 		// progress : 0 -> 검수 요청
 		for (int i = 0; i < layerCollectionNames.size(); i++) {
 			String collectionName = (String) layerCollectionNames.get(i);
-			Integer pIdx = progressService.setStateToRequest(requestSuccess, collectionName, fileType);
+			Integer pIdx = progressService.setStateToRequest(userVO, requestSuccess, collectionName, fileType);
 			progressMap.put(collectionName, pIdx);
 		}
 		try {
@@ -78,7 +86,7 @@ public class ValidatorServiceImpl implements ValidatorService {
 			for (int i = 0; i < layerCollectionNames.size(); i++) {
 				String collectionName = (String) layerCollectionNames.get(i);
 				Integer pIdx = (Integer) progressMap.get(collectionName);
-				progressService.setStateToProgressing(validateProgresing, fileType, pIdx);
+				progressService.setStateToProgressing(userVO, validateProgresing, fileType, pIdx);
 			}
 			// 파라미터 파싱
 			BuilderJSONParser parserManager = new BuilderJSONParser();
@@ -99,9 +107,9 @@ public class ValidatorServiceImpl implements ValidatorService {
 				Integer pIdx = (Integer) progressMap.get(collectionName);
 				int state = (Integer) validateProgressMap.get(collectionName);
 				if (state == validateSuccess) {
-					progressService.setStateToValidateSuccess(validateSuccess, fileType, pIdx);
+					progressService.setStateToValidateSuccess(userVO, validateSuccess, fileType, pIdx);
 				} else if (state == validateFail) {
-					progressService.setStateToValidateFail(validateFail, fileType, pIdx);
+					progressService.setStateToValidateFail(userVO, validateFail, fileType, pIdx);
 				}
 			}
 
@@ -113,16 +121,16 @@ public class ValidatorServiceImpl implements ValidatorService {
 				String collectionName = errLayer.getCollectionName();
 				Integer pIdx = (Integer) progressMap.get(collectionName);
 				String collectionType = errLayer.getCollectionType();
-				Map<String, Object> isSuccessPublish = publishErrorLayer(errLayer);
+				Map<String, Object> isSuccessPublish = publishErrorLayer(userVO, errLayer);
 				if (isSuccessPublish != null) {
 					// progress : 4 오류레이어 발행 완료 / 검수 끝
 					String tableName = (String) isSuccessPublish.get("errTbName");
-					progressService.setStateToErrLayerSuccess(errLayerSuccess, collectionType, pIdx, tableName);
-					progressService.setStateToResponse(collectionType, pIdx);
+					progressService.setStateToErrLayerSuccess(userVO, errLayerSuccess, collectionType, pIdx, tableName);
+					progressService.setStateToResponse(userVO, collectionType, pIdx);
 				} else {
 					// progress : 5 오류레이어 발행 실패 / 검수 끝
-					progressService.setStateToErrLayerFail(errLayerFail, collectionType, pIdx);
-					progressService.setStateToResponse(collectionType, pIdx);
+					progressService.setStateToErrLayerFail(userVO, errLayerFail, collectionType, pIdx);
+					progressService.setStateToResponse(userVO, collectionType, pIdx);
 					isAllSuccessPublish = false;
 				}
 			}
@@ -145,10 +153,10 @@ public class ValidatorServiceImpl implements ValidatorService {
 		}
 	}
 
-	public Map<String, Object> publishErrorLayer(ErrorLayer errorLayer)
+	public Map<String, Object> publishErrorLayer(UserVO userVO, ErrorLayer errorLayer)
 			throws IllegalArgumentException, MalformedURLException {
 		if (errorLayer != null) {
-			return errorLayerService.publishErrorLayer(errorLayer);
+			return errorLayerService.publishErrorLayer(userVO, errorLayer);
 		}
 		return null;
 	}

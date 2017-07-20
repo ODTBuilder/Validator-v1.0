@@ -215,7 +215,7 @@ public class CollectionValidator {
 		for (int i = 0; i < layerCollections.size(); i++) {
 			GeoLayerCollection collection = layerCollections.get(i);
 			String collectionName = collection.getCollectionName();
-			try {
+//			try {
 				ErrorLayer errorLayer = new ErrorLayer();
 				errorLayer.setCollectionName(collectionName);
 				errorLayer.setCollectionType(this.collectionType);
@@ -234,9 +234,9 @@ public class CollectionValidator {
 				closeCollectionValidate(types, mapSystemRule, collection, "", errorLayer);
 				errLayerList.add(errorLayer);
 				progress.put(collection.getCollectionName(), 2);
-			} catch (Exception e) {
-				progress.put(collection.getCollectionName(), 3);
-			}
+//			} catch (Exception e) {
+//				progress.put(collection.getCollectionName(), 3);
+//			}
 		}
 	}
 

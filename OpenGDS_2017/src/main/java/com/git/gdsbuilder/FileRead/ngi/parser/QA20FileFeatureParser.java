@@ -294,7 +294,7 @@ public class QA20FileFeatureParser {
 		}
 		String graphicID = getGraphicID();
 		QA20Feature feature = new QA20Feature(featureID, "POLYGON", ringCountStr,
-				String.valueOf(polygon.getNumPoints()), polygon, graphicID);
+				String.valueOf(polygon.getNumPoints() - 1), polygon, graphicID);
 		return feature;
 	}
 
