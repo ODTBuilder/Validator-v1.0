@@ -13,7 +13,6 @@ import com.git.opengds.common.AbstractController;
 import com.git.opengds.user.domain.UserVO;
 import com.git.opengds.user.domain.UserVO.EnUserType;
 import com.git.opengds.validator.service.ValidatorProgressService;
-import com.git.opengds.validator.service.ValidatorProgressServiceImpl;
 
 @Controller("validateProgressController")
 @RequestMapping("/validateProgress")

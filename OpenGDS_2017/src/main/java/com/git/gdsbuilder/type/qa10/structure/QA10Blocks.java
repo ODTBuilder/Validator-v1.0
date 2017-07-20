@@ -245,7 +245,7 @@ public class QA10Blocks {
 		LinkedHashMap<String, Object> circle = new LinkedHashMap<String, Object>();
 		circle.put("0", entity.get("0"));
 		circle.put("8", entity.get("8"));
-		circle.put("330", entity.get("330"));
+		// circle.put("330", entity.get("330"));
 		circle.put("10", entity.get("10"));
 		circle.put("20", entity.get("20"));
 		circle.put("30", entity.get("30"));
@@ -285,7 +285,8 @@ public class QA10Blocks {
 		return arc;
 	}
 
-	public static LinkedHashMap<String, Object> getPolylineValue(HashMap<String, Object> blockPolylineMap) {
+	public static LinkedHashMap<String, Object> getPolylineValue(HashMap<String, Object> blockPolylineMap,
+			HashMap<String, Object> vertexMap) {
 
 		// polyline
 		LinkedHashMap<String, Object> polyline = new LinkedHashMap<String, Object>();
@@ -293,10 +294,10 @@ public class QA10Blocks {
 		polyline.put("8", blockPolylineMap.get("8"));
 		// polyline.put("330", blockPolylineMap.get("330"));
 		polyline.put("66", blockPolylineMap.get("66"));
-		polyline.put("10", blockPolylineMap.get("10"));
-		polyline.put("20", blockPolylineMap.get("20"));
-		polyline.put("30", blockPolylineMap.get("30"));
-		polyline.put("70", blockPolylineMap.get("70"));
+		polyline.put("10", vertexMap.get("10"));
+		polyline.put("20", vertexMap.get("20"));
+		polyline.put("30", vertexMap.get("30"));
+		polyline.put("70", "8");
 		return polyline;
 	}
 
@@ -330,21 +331,22 @@ public class QA10Blocks {
 
 	public static LinkedHashMap<String, Object> getLineValue(HashMap<String, Object> blockLineMap) {
 
-		LinkedHashMap<String, Object> line = new LinkedHashMap<String, Object>();
-		line.put("0", blockLineMap.get("0"));
-		line.put("8", blockLineMap.get("8"));
-		// line.put("330", blockLineMap.get("330"));
-		line.put("10", blockLineMap.get("10"));
-		line.put("20", blockLineMap.get("20"));
-		line.put("30", blockLineMap.get("30"));
-		line.put("11", blockLineMap.get("10"));
-		line.put("21", blockLineMap.get("20"));
-		line.put("31", blockLineMap.get("30"));
+		// polyline
+		LinkedHashMap<String, Object> polyline = new LinkedHashMap<String, Object>();
+		polyline.put("0", "POLYLINE");
+		polyline.put("8", blockLineMap.get("8"));
+		// polyline.put("330", blockPolylineMap.get("330"));
+		polyline.put("66", "1");
+		polyline.put("10", blockLineMap.get("10"));
+		polyline.put("20", blockLineMap.get("20"));
+		polyline.put("30", blockLineMap.get("30"));
+		polyline.put("70", "8");
+		return polyline;
 
-		return line;
 	}
 
-	public static LinkedHashMap<String, Object> getLWPolylineValue(HashMap<String, Object> blockLWPolylineMap) {
+	public static LinkedHashMap<String, Object> getLWPolylineValue(HashMap<String, Object> blockLWPolylineMap,
+			HashMap<String, Object> vertexMap) {
 
 		// polyline
 		LinkedHashMap<String, Object> polyline = new LinkedHashMap<String, Object>();
@@ -352,10 +354,10 @@ public class QA10Blocks {
 		polyline.put("8", blockLWPolylineMap.get("8"));
 		// polyline.put("330", blockPolylineMap.get("330"));
 		polyline.put("66", "1");
-		polyline.put("10", "0");
-		polyline.put("20", "0");
-		polyline.put("30", "0");
-		polyline.put("70", "0");
+		polyline.put("10", vertexMap.get("10"));
+		polyline.put("20", vertexMap.get("20"));
+		polyline.put("30", vertexMap.get("30"));
+		polyline.put("70", "8");
 		return polyline;
 	}
 }
