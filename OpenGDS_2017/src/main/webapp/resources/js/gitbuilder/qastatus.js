@@ -41,6 +41,7 @@ gb.qa.QAStatus = function(obj) {
 	 * 
 	 * 
 	 */
+	this.naviArea = $("<div>");
 	var htd0 = $("<td>").text("#");
 	var htd1 = $("<td>").text("Format");
 	var htd2 = $("<td>").text("Map sheet number");
@@ -55,9 +56,27 @@ gb.qa.QAStatus = function(obj) {
 	this.tb = $("<table>").addClass("table").addClass("text-center").append(thead).append(this.tbody);
 	this.listArea = $("<div>").append(this.tb);
 
-	var backBtn = $("<button>").addClass("btn").addClass("btn-default");
-	this.reportArea = $("<div>");
-	this.body = $("<div>").append(this.listArea).append(this.reportArea);
+	this.rtb = $("<table>");
+	$(this.rtb).DataTable({
+		columns : [ {
+			title : "Map sheet number"
+		}, {
+			title : "Layer name"
+		}, {
+			title : "Feature ID"
+		}, {
+			title : "Error type"
+		}, {
+			title : "Error name"
+		}, {
+			title : "Coordinate X"
+		}, {
+			title : "Coordinate Y"
+		} ]
+	});
+	this.reportArea = $("<div>").append(this.rtb);
+
+	this.body = $("<div>").append(this.naviArea).append(this.listArea).append(this.reportArea);
 	$(this.body).addClass("modal-body");
 	/*
 	 * 
@@ -75,18 +94,8 @@ gb.qa.QAStatus = function(obj) {
 	$(closeBtn).addClass("btn-default");
 	$(closeBtn).text("Close");
 
-	var okBtn = $("<button>").attr({
-		"type" : "button"
-	}).on("click", function() {
-
-		that.close();
-	});
-	$(okBtn).addClass("btn");
-	$(okBtn).addClass("btn-primary");
-	$(okBtn).text("Create");
-
 	var pright = $("<span>").css("float", "right");
-	$(pright).append(closeBtn).append(okBtn);
+	$(pright).append(closeBtn);
 
 	var footer = $("<div>").append(pright);
 	$(footer).addClass("modal-footer");
@@ -121,9 +130,35 @@ gb.qa.QAStatus = function(obj) {
 gb.qa.QAStatus.prototype.open = function() {
 	this.window.modal('show');
 	this.setList();
+	this.switchArea("list");
 };
 gb.qa.QAStatus.prototype.close = function() {
 	this.window.modal('hide');
+};
+gb.qa.QAStatus.prototype.switchNavi = function(area) {
+	var that = this;
+	if (area === "list") {
+		$(this.naviArea).empty();
+	} else if (area === "report") {
+		$(this.naviArea).empty();
+		var icon = $("<i>").addClass("fa").addClass("fa-reply").attr({
+			"aria-hidden" : true
+		});
+		var backBtn = $("<button>").addClass("btn").addClass("btn-default").append(icon).append(" Back").click(function() {
+			that.switchArea("list");
+		});
+		$(this.naviArea).append(backBtn);
+	}
+};
+gb.qa.QAStatus.prototype.switchArea = function(area) {
+	this.switchNavi(area);
+	if (area === "list") {
+		$(this.listArea).show();
+		$(this.reportArea).hide();
+	} else if (area === "report") {
+		$(this.listArea).hide();
+		$(this.reportArea).show();
+	}
 };
 gb.qa.QAStatus.prototype.setList = function() {
 	var td0 = $("<td>").text("1");
@@ -138,6 +173,9 @@ gb.qa.QAStatus.prototype.setList = function() {
 	var td7 = $("<td>").append(downBtn);
 	var tr = $("<tr>").append(td0).append(td1).append(td2).append(td3).append(td4).append(td5).append(td6).append(td7);
 	$(this.tbody).append(tr);
+};
+gb.qa.QAStatus.prototype.setReport = function() {
+
 };
 gb.qa.QAStatus.prototype.setUrl = function(url) {
 	if (typeof url === "string") {
