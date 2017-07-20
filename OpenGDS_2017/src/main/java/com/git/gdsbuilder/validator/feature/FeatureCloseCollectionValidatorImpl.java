@@ -177,21 +177,6 @@ public class FeatureCloseCollectionValidatorImpl implements FeatureCloseCollecti
 				}
 			}
 
-			// target객체의 도엽근처의 좌표 뽑기
-			/*		Coordinate[] targetCoors = targetGeometry.getCoordinates();
-			List<Point> coorList = new ArrayList<Point>();
-			for (int i = 0; i < targetCoors.length; i++) {
-				Coordinate targetCoor = targetCoors[i];
-				Point targetPoint = geometryFactory.createPoint(targetCoor);
-				double targetPointDist = nearLine.distance(targetPoint);
-				if(targetPointDist < tolerence || targetPointDist == tolerence){
-					coorList.add(targetPoint);
-				}
-			}*/
-			//
-
-
-
 			String upperType = simpleFeature.getAttribute("feature_type").toString().toUpperCase();
 
 			if(upperType.equals("POLYGON")){

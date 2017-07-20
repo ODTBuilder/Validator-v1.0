@@ -396,11 +396,10 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 
 				}else{
 					if(firstPoint.equals(lastPoint) && firstPointJ.equals(lastPointJ)){
-						//Coordinate[] intersectCoors = lineReturnGeom.getCoordinates();
 						LinearRing  ringI = geometryFactory.createLinearRing(coors);
 						LinearRing holesI[] = null;
 						Polygon polygonI = geometryFactory.createPolygon(ringI, holesI);
-						LinearRing  ringJ = geometryFactory.createLinearRing(coors);
+						LinearRing  ringJ = geometryFactory.createLinearRing(coorsJ);
 						LinearRing holesJ[] = null;
 						Polygon polygonJ = geometryFactory.createPolygon(ringJ, holesJ);
 						Geometry intersectPolygon = polygonI.intersection(polygonJ);
@@ -451,7 +450,6 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 				if(upperType.equals("LINESTRING") || upperType.equals("MULTILINESTRING")){
 					if(geom.getLength() > selfEntityTolerance ){
 						//
-						boolean isTrue = false;
 						GeometryFactory factory = new GeometryFactory();
 						Coordinate[] coors = geometryJ.getCoordinates();
 						for (int i = 0; i < coors.length; i++) {
