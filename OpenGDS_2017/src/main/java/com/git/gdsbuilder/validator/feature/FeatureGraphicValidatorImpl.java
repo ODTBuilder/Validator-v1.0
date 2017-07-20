@@ -81,6 +81,7 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.LinearRing;
+import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 
@@ -381,12 +382,9 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 							returnGeom = lineReturnGeom;
 						}
 					}else if(!firstPoint.equals(lastPoint) && firstPointJ.equals(lastPointJ)){
-						if(firstDistance > selfEntityTolerance && lastDistance > selfEntityTolerance
-								&& firstDistanceJ > selfEntityTolerance && lastDistanceJ > selfEntityTolerance){
 							if(firstDistance > selfEntityTolerance && lastDistance > selfEntityTolerance){
 								returnGeom = lineReturnGeom;
 							}
-						}
 					}else if(!firstPoint.equals(lastPoint) && !firstPointJ.equals(lastPointJ)){
 						if(firstDistance > selfEntityTolerance && lastDistance > selfEntityTolerance
 								&& firstDistanceJ > selfEntityTolerance && lastDistanceJ > selfEntityTolerance){
@@ -408,8 +406,40 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 						}
 						/*lineReturnGeom = geometryI.intersection(geometryJ);
 					returnGeom = lineReturnGeom;*/
-					}else{
-						returnGeom = lineReturnGeom;
+					}else if(firstPoint.equals(lastPoint) && !firstPointJ.equals(lastPointJ)){
+						List<Point> points = new ArrayList<Point>();
+						Coordinate[] lineReturnCoor = lineReturnGeom.getCoordinates();
+						for (int i = 0; i < lineReturnCoor.length; i++) {
+							Point returnPoint = geometryFactory.createPoint(lineReturnCoor[i]);
+							if(returnPoint.distance(firstPointJ)>selfEntityTolerance&&returnPoint.distance(lastPointJ)>selfEntityTolerance){
+								//returnGeom = lineReturnGeom;
+								points.add(returnPoint);
+							}
+						}
+						if(points.size()!=0){
+							Point[] pointList = new Point[points.size()];
+							for(int j=0;j<points.size();j++){
+								pointList[j] = points.get(j);
+							}
+							returnGeom = geometryFactory.createMultiPoint(pointList);
+						}
+						
+					}else if(!firstPoint.equals(lastPoint) && firstPointJ.equals(lastPointJ)){
+						List<Point> points = new ArrayList<Point>();
+						Coordinate[] lineReturnCoor = lineReturnGeom.getCoordinates();
+						for (int i = 0; i < lineReturnCoor.length; i++) {
+							Point returnPoint = geometryFactory.createPoint(lineReturnCoor[i]);
+							if(returnPoint.distance(firstPoint)>selfEntityTolerance&&returnPoint.distance(lastPoint)>selfEntityTolerance){
+								points.add(returnPoint);
+							}
+						}
+						if(points.size()!=0){
+							Point[] pointList = new Point[points.size()];
+							for(int j=0;j<points.size();j++){
+								pointList[j] = points.get(j);
+							}
+							returnGeom = geometryFactory.createMultiPoint(pointList);
+						}
 					}
 				}
 			}
@@ -472,7 +502,6 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 								returnGeom = geometry;
 							}
 						}
-						//returnGeom = geometryI.intersection(geometryJ);
 					}
 				}
 			}

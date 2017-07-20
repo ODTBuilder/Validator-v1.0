@@ -46,12 +46,6 @@ public class FeatureCloseCollectionValidatorImpl implements FeatureCloseCollecti
 		String featureIdx = simpleFeature.getID();
 		Property featuerIDPro = simpleFeature.getProperty("feature_id");
 		String featureID = (String) featuerIDPro.getValue();
-		if(featureID.equals("69B3D")){
-			System.out.println();	
-		}
-		if(featureID.equals("RECORD 947")){
-			System.out.println();	
-		}
 
 		// 인접도엽 옵션객체 선언
 		boolean matchMiss = false;
