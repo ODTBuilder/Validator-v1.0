@@ -10,7 +10,9 @@ public class QA10Feature {
 	String textValue;
 	double elevation;
 	double rotate;
-	
+	double width;
+	double height;
+
 	public QA10Feature() {
 		super();
 		this.featureID = "";
@@ -18,6 +20,8 @@ public class QA10Feature {
 		this.textValue = "";
 		this.elevation = 0;
 		this.rotate = 0;
+		this.width = 0;
+		this.height = 0;
 	}
 
 	public QA10Feature(String featureID) {
@@ -36,6 +40,22 @@ public class QA10Feature {
 		this.geom = geom;
 		this.textValue = "";
 		this.elevation = 0;
+	}
+
+	public double getWidth() {
+		return width;
+	}
+
+	public void setWidth(double width) {
+		this.width = width;
+	}
+
+	public double getHeight() {
+		return height;
+	}
+
+	public void setHeight(double height) {
+		this.height = height;
 	}
 
 	public double getElevation() {
