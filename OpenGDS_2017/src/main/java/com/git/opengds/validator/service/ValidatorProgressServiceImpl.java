@@ -163,9 +163,25 @@ public class ValidatorProgressServiceImpl implements ValidatorProgressService {
 			progress.setCollectionName((String) progressMap.get("collection_name"));
 			progress.setFileType((String) progressMap.get("file_type"));
 			progress.setState((Integer) progressMap.get("state"));
-			progress.setRequestTime(progressMap.get("request_time").toString());
-			progress.setRequestTime(progressMap.get("response_time").toString());
-			progress.setErrLayerName((String) progressMap.get("err_layer_name"));
+
+			Object requestTime = progressMap.get("request_time");
+			if (requestTime != null) {
+				progress.setRequestTime(progressMap.get("request_time").toString());
+			} else {
+				progress.setRequestTime("");
+			}
+			Object responseTime = progressMap.get("response_time");
+			if (responseTime != null) {
+				progress.setRequestTime(progressMap.get("response_time").toString());
+			} else {
+				progress.setRequestTime("");
+			}
+			Object errLayerName = progressMap.get("err_layer_name");
+			if (errLayerName != null) {
+				progress.setErrLayerName(progressMap.get("err_layer_name").toString());
+			} else {
+				progress.setErrLayerName("");
+			}
 			progressList.add(progress);
 		}
 		return progressList;
