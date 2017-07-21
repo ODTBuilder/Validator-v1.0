@@ -112,7 +112,7 @@ import com.vividsolutions.jts.geom.Polygon;
 public class CollectionValidator {
 
 	protected static double lineInvadedTolorence = 0.01; // 선형이 면형 객체 침범 (m)
-	protected static double polygonInvadedTolorence = 0.001; // 면형이 면형 객체 침범
+	protected static double polygonInvadedTolorence = 0.01; // 면형이 면형 객체 침범
 	// (m2)
 	protected static double lineOverTolorence = 0.01; // 중심선이 경계면 초과 (m2)
 	protected static double areaRatioTolorence = 0.1; // 지류계와 경지계 불일치 (%)

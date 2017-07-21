@@ -17,6 +17,8 @@ gb.qa.QAStatus = function(obj) {
 	this.statusURL = options.statusURL ? options.statusURL : undefined;
 	this.errorURL = options.errorURL ? options.errorURL : undefined;
 	this.downloadURL = options.downloadURL ? options.downloadURL : undefined;
+	this.listInstance = undefined;
+	this.reportInstance = undefined;
 
 	var xSpan = $("<span>").attr({
 		"aria-hidden" : true
@@ -43,8 +45,19 @@ gb.qa.QAStatus = function(obj) {
 	 */
 	this.naviArea = $("<div>").css("margin-bottom", "10px");
 
-	this.tb = $("<table>");
+	this.tb = $("<table>").addClass("gb-qastatus-list");
 	this.listArea = $("<div>").append(this.tb);
+
+	$(document).on('click', '.gb-qastatus-list tbody .gb-qastatus-reportBtn', function() {
+		var data = that.listInstance.row($(this).parents('tr')).data();
+		that.setReport(data[2]);
+		console.log(data);
+	});
+	$(document).on('click', '.gb-qastatus-list tbody .gb-qastatus-downBtn', function() {
+		// var data = table.row( $(this).parents('tr') ).data();
+		// alert( data[0] +"'s salary is: "+ data[ 5 ] );
+		console.log("down");
+	});
 
 	this.rtb = $("<table>").addClass("table").addClass("table-striped");
 	this.reportArea = $("<div>").append(this.rtb);
@@ -184,23 +197,9 @@ gb.qa.QAStatus.prototype.setList = function() {
 						break;
 					}
 
-					var tbData = [ qa1[i].fileType, qa1[i].collectionName, statText, qa1[i].requestTime, qa1[i].responseTime ];
+					var tbData = [ qa1[i].fileType, qa1[i].collectionName, qa1[i].errLayerName, statText, qa1[i].requestTime,
+							qa1[i].responseTime ];
 					total.push(tbData);
-					// var td0 = $("<td>").text(count);
-					// var td1 = $("<td>").text(qa1[i].fileType);
-					// var td2 = $("<td>").text(qa1[i].collectionName);
-					//					
-					// var td3 = $("<td>").text(statText);
-					// var td4 = $("<td>").text(qa1[i].requestTime);
-					// var td5 = $("<td>").text(qa1[i].responseTime);
-					// var reportBtn =
-					// $("<button>").addClass("btn").addClass("btn-default").text("Click");
-					// var td6 = $("<td>").append(reportBtn);
-					// var downBtn =
-					// $("<button>").addClass("btn").addClass("btn-default").text("Click");
-					// var td7 = $("<td>").append(downBtn);
-					// var tr =
-					// $("<tr>").append(td0).append(td1).append(td2).append(td3).append(td4).append(td5).append(td6).append(td7);
 
 				}
 			}
@@ -231,16 +230,23 @@ gb.qa.QAStatus.prototype.setList = function() {
 						break;
 					}
 
-					var tbData = [ qa2[i].fileType, qa2[i].collectionName, statText, qa2[i].requestTime, qa2[i].responseTime ];
+					var tbData = [ qa2[i].fileType, qa2[i].collectionName, qa2[i].errLayerName, statText, qa2[i].requestTime,
+							qa2[i].responseTime ];
 					total.push(tbData);
 				}
 			}
-			$(that.tb).DataTable({
+			if (!!that.listInstance) {
+				that.listInstance.destroy();
+				that.listInstance = undefined;
+			}
+			that.listInstance = $(that.tb).DataTable({
 				"data" : total,
 				"columns" : [ {
 					title : "Format"
 				}, {
 					title : "Map sheet number"
+				}, {
+					title : "Layer name"
 				}, {
 					title : "Status"
 				}, {
@@ -253,37 +259,68 @@ gb.qa.QAStatus.prototype.setList = function() {
 					title : "Download"
 				} ],
 				"columnDefs" : [ {
-					"targets" : 5,
-					"data" : null,
-					"defaultContent" : "<button>Click</button>"
-				}, {
 					"targets" : 6,
 					"data" : null,
-					"defaultContent" : "<button>Click</button>"
+					"defaultContent" : "<button class='btn btn-default gb-qastatus-reportBtn'>Click</button>"
+				}, {
+					"targets" : 7,
+					"data" : null,
+					"defaultContent" : "<button class='btn btn-default gb-qastatus-downBtn'>Click</button>"
 				} ]
 			});
+
 		}
 	});
 
 };
-gb.qa.QAStatus.prototype.setReport = function() {
-	$(this.rtb).DataTable({
-		columns : [ {
-			title : "Map sheet number"
-		}, {
-			title : "Layer name"
-		}, {
-			title : "Feature ID"
-		}, {
-			title : "Error type"
-		}, {
-			title : "Error name"
-		}, {
-			title : "Coordinate X"
-		}, {
-			title : "Coordinate Y"
-		} ]
+gb.qa.QAStatus.prototype.setReport = function(layer) {
+	var that = this;
+	var obj = {
+		"errorLayer" : layer
+	};
+	$.ajax({
+		url : "errrorLayer/errorReport.ajax",
+		method : "POST",
+		contentType : "application/json; charset=UTF-8",
+		cache : false,
+		// async : false,
+		data : JSON.stringify(obj),
+		beforeSend : function() { // 호출전실행
+			$("body").css("cursor", "wait");
+		},
+		complete : function() {
+			$("body").css("cursor", "default");
+		},
+		traditional : true,
+		success : function(data, textStatus, jqXHR) {
+			console.log(data);
+
+			if (!!that.reportInstance) {
+				that.reportInstance.destroy();
+				that.reportInstance = undefined;
+			}
+			that.reportInstance = $(this.rtb).DataTable({
+				"data" : null,
+				"columns" : [ {
+					title : "Map sheet number"
+				}, {
+					title : "Layer name"
+				}, {
+					title : "Feature ID"
+				}, {
+					title : "Error type"
+				}, {
+					title : "Error name"
+				}, {
+					title : "Coordinate X"
+				}, {
+					title : "Coordinate Y"
+				} ]
+			});
+
+		}
 	});
+
 };
 gb.qa.QAStatus.prototype.setStatusURL = function(url) {
 	if (typeof url === "string") {

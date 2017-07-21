@@ -172,9 +172,9 @@ public class ValidatorProgressServiceImpl implements ValidatorProgressService {
 			}
 			Object responseTime = progressMap.get("response_time");
 			if (responseTime != null) {
-				progress.setRequestTime(progressMap.get("response_time").toString());
+				progress.setResponseTime(progressMap.get("response_time").toString());
 			} else {
-				progress.setRequestTime("");
+				progress.setResponseTime("");
 			}
 			Object errLayerName = progressMap.get("err_layer_name");
 			if (errLayerName != null) {
