@@ -155,6 +155,8 @@ public class ErrorLayerExportServiceImpl implements ErrorLayerExportService {
 				layerFileOutputStream(fileName, ndaFileDir, response);
 			} else if (format.equals("dxf")) {
 
+				QA10Layer errQ120Layer = ErrorLayerDXFExportParser.parseQA10ErrorLayer(name, errAllFeatures);
+				
 				QA10LayerList layerList = new QA10LayerList();
 				QA10DBQueryManager qa10dbQueryManager = new QA10DBQueryManager();
 				// collectionIdx
@@ -364,7 +366,7 @@ public class ErrorLayerExportServiceImpl implements ErrorLayerExportService {
 
 				// writeFile
 				QA10FileWriter qa10Writer = new QA10FileWriter();
-				fileMap = qa10Writer.writeDxfFile(qa10LayerCollection);
+				fileMap = qa10Writer.writeDxfFile(qa10LayerCollection, errQ120Layer);
 				String fileName = (String) fileMap.get("fileName");
 				String dxfDir = (String) fileMap.get("fileDxfDir");
 				layerFileOutputStream(fileName, dxfDir, response);
