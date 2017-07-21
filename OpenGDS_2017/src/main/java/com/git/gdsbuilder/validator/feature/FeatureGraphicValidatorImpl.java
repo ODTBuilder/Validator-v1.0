@@ -108,7 +108,6 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 				Geometry aopGeom = (Geometry) aopSimpleFeature.getDefaultGeometry();
 				if (geometry.intersection(aopGeom) != null) {
 					Coordinate[] temp = new Coordinate[] { start, end };
-					// DataConvertor convertService = new DataConvertor();
 					int tempSize = temp.length;
 					for (int i = 0; i < tempSize; i++) {
 						Geometry returnGeom = geometryFactory.createPoint(temp[i]);
@@ -215,9 +214,6 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 			// 길이 조건
 			double tmpLength = a.distance(b);
 			double distance = JTS.orthodromicDistance(a, b, crs);
-
-			// double km = distance / 1000;
-			// double meters = distance - (km * 1000);
 
 			if (tmpLength == 0) {
 				CentroidPoint cPoint = new CentroidPoint();
@@ -404,15 +400,12 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 						if(intersectPolygon.getArea() > polygonInvadedTolorence){
 							returnGeom = lineReturnGeom;
 						}
-						/*lineReturnGeom = geometryI.intersection(geometryJ);
-					returnGeom = lineReturnGeom;*/
 					}else if(firstPoint.equals(lastPoint) && !firstPointJ.equals(lastPointJ)){
 						List<Point> points = new ArrayList<Point>();
 						Coordinate[] lineReturnCoor = lineReturnGeom.getCoordinates();
 						for (int i = 0; i < lineReturnCoor.length; i++) {
 							Point returnPoint = geometryFactory.createPoint(lineReturnCoor[i]);
 							if(returnPoint.distance(firstPointJ)>selfEntityTolerance&&returnPoint.distance(lastPointJ)>selfEntityTolerance){
-								//returnGeom = lineReturnGeom;
 								points.add(returnPoint);
 							}
 						}
@@ -470,16 +463,10 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 				}
 			}
 			if (typeJ.equals("LineString") || typeJ.equals("MultiLineString")) {
-				// if (geometryI.crosses(geometryJ) ||
-				// geometryI.contains(geometryJ) ||
-				// geometryI.intersects(geometryJ)) {
-				// returnGeom = geometryI.intersection(geometryJ);
-				// }
 				Geometry geom = geometryI.intersection(geometryJ);
 				String upperType = geom.getGeometryType().toUpperCase();
 				if(upperType.equals("LINESTRING") || upperType.equals("MULTILINESTRING")){
 					if(geom.getLength() > selfEntityTolerance ){
-						//
 						GeometryFactory factory = new GeometryFactory();
 						Coordinate[] coors = geometryJ.getCoordinates();
 						for (int i = 0; i < coors.length; i++) {
@@ -488,7 +475,6 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 								returnGeom = pt;
 							}
 						}
-						//
 					}
 				}
 			}
@@ -665,7 +651,6 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 		}
 	}
 
-	/*********************************************** 추가 ***************/
 	public ErrorFeature validateUselessEntity(SimpleFeature simpleFeature) throws SchemaException {
 		String upperType = simpleFeature.getAttribute("feature_type").toString().toUpperCase();
 		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
@@ -823,7 +808,6 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 		for (int i = 0; i < simpleFeatures.size(); i++) {
 			SimpleFeature simpleFeature = simpleFeatures.get(i);
 			Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
-			// String upperType = geometry.getGeometryType().toUpperCase();
 			String upperType = simpleFeature.getAttribute("feature_type").toString().toUpperCase();
 
 			if (upperType.equals("POINT") || upperType.equals("TEXT")) {
