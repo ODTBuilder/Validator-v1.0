@@ -42,18 +42,8 @@ gb.qa.QAStatus = function(obj) {
 	 * 
 	 */
 	this.naviArea = $("<div>").css("margin-bottom", "10px");
-	var htd0 = $("<td>").text("#");
-	var htd1 = $("<td>").text("Format");
-	var htd2 = $("<td>").text("Map sheet number");
-	var htd3 = $("<td>").text("Status");
-	var htd4 = $("<td>").text("Requested time");
-	var htd5 = $("<td>").text("Completed time");
-	var htd6 = $("<td>").text("Report");
-	var htd7 = $("<td>").text("Download");
-	var htr = $("<tr>").append(htd0).append(htd1).append(htd2).append(htd3).append(htd4).append(htd5).append(htd6).append(htd7);
-	var thead = $("<thead>").append(htr);
-	this.tbody = $("<tbody>");
-	this.tb = $("<table>").addClass("table").addClass("text-center").append(thead).append(this.tbody);
+
+	this.tb = $("<table>");
 	this.listArea = $("<div>").append(this.tb);
 
 	this.rtb = $("<table>").addClass("table").addClass("table-striped");
@@ -164,20 +154,117 @@ gb.qa.QAStatus.prototype.setList = function() {
 		traditional : true,
 		success : function(data, textStatus, jqXHR) {
 			console.log(data);
+			var qa1 = data["QA10"];
+			var qa2 = data["QA20"];
+			var total = [];
+			if (Array.isArray(qa1)) {
+				for (var i = 0; i < qa1.length; i++) {
+					var stat = qa1[i].state;
+					var statText;
+					switch (stat) {
+					case 0:
+						statText = "Request successful";
+						break;
+					case 1:
+						statText = "Validating";
+						break;
+					case 2:
+						statText = "Validation successful";
+						break;
+					case 3:
+						statText = "Validation failure";
+						break;
+					case 4:
+						statText = "Error layer created";
+						break;
+					case 5:
+						statText = "Error layer failed";
+						break;
+					default:
+						break;
+					}
+
+					var tbData = [ qa1[i].fileType, qa1[i].collectionName, statText, qa1[i].requestTime, qa1[i].responseTime ];
+					total.push(tbData);
+					// var td0 = $("<td>").text(count);
+					// var td1 = $("<td>").text(qa1[i].fileType);
+					// var td2 = $("<td>").text(qa1[i].collectionName);
+					//					
+					// var td3 = $("<td>").text(statText);
+					// var td4 = $("<td>").text(qa1[i].requestTime);
+					// var td5 = $("<td>").text(qa1[i].responseTime);
+					// var reportBtn =
+					// $("<button>").addClass("btn").addClass("btn-default").text("Click");
+					// var td6 = $("<td>").append(reportBtn);
+					// var downBtn =
+					// $("<button>").addClass("btn").addClass("btn-default").text("Click");
+					// var td7 = $("<td>").append(downBtn);
+					// var tr =
+					// $("<tr>").append(td0).append(td1).append(td2).append(td3).append(td4).append(td5).append(td6).append(td7);
+
+				}
+			}
+			if (Array.isArray(qa2)) {
+				for (var i = 0; i < qa2.length; i++) {
+					var stat = qa2[i].state;
+					var statText;
+					switch (stat) {
+					case 0:
+						statText = "Request successful";
+						break;
+					case 1:
+						statText = "Validating";
+						break;
+					case 2:
+						statText = "Validation successful";
+						break;
+					case 3:
+						statText = "Validation failure";
+						break;
+					case 4:
+						statText = "Error layer created";
+						break;
+					case 5:
+						statText = "Error layer failed";
+						break;
+					default:
+						break;
+					}
+
+					var tbData = [ qa2[i].fileType, qa2[i].collectionName, statText, qa2[i].requestTime, qa2[i].responseTime ];
+					total.push(tbData);
+				}
+			}
+			$(that.tb).DataTable({
+				"data" : total,
+				"columns" : [ {
+					title : "Format"
+				}, {
+					title : "Map sheet number"
+				}, {
+					title : "Status"
+				}, {
+					title : "Requested time"
+				}, {
+					title : "Completed time"
+				}, {
+					title : "Report"
+				}, {
+					title : "Download"
+				} ],
+				"columnDefs" : [ {
+					"targets" : 5,
+					"data" : null,
+					"defaultContent" : "<button>Click</button>"
+				}, {
+					"targets" : 6,
+					"data" : null,
+					"defaultContent" : "<button>Click</button>"
+				} ]
+			});
 		}
 	});
-	var td0 = $("<td>").text("1");
-	var td1 = $("<td>").text("NGI");
-	var td2 = $("<td>").text("37712003");
-	var td3 = $("<td>").text("Completed");
-	var td4 = $("<td>").text("2017-07-20 15:38:49");
-	var td5 = $("<td>").text("2017-07-20 15:40:49");
-	var reportBtn = $("<button>").addClass("btn").addClass("btn-default").text("Click");
-	var td6 = $("<td>").append(reportBtn);
-	var downBtn = $("<button>").addClass("btn").addClass("btn-default").text("Click");
-	var td7 = $("<td>").append(downBtn);
-	var tr = $("<tr>").append(td0).append(td1).append(td2).append(td3).append(td4).append(td5).append(td6).append(td7);
-	$(this.tbody).append(tr);
+
 };
 gb.qa.QAStatus.prototype.setReport = function() {
 	$(this.rtb).DataTable({
