@@ -10381,13 +10381,17 @@
 									for (var i = 0; i < layers.length; i++) {
 										var layer = inst.get_LayerById(layers[i]);
 										var info = layer.get("git").information;
-										inst._data.layerproperties.layerRecord.remove(info.getFormat(), info.getSheetNumber(), layer);
+										if (!!info) {
+											inst._data.layerproperties.layerRecord.remove(info.getFormat(), info.getSheetNumber(), layer);
+										}
 										inst.delete_node_layer(layers[i]);
 									}
 								} else {
 									var layer = inst.get_LayerById(obj.id);
 									var info = layer.get("git").information;
-									inst._data.layerproperties.layerRecord.remove(info.getFormat(), info.getSheetNumber(), layer);
+									if (!!info) {
+										inst._data.layerproperties.layerRecord.remove(info.getFormat(), info.getSheetNumber(), layer);
+									}
 									inst.delete_node_layer(obj);
 								}
 							}
