@@ -279,7 +279,7 @@ gb.qa.QAStatus.prototype.setReport = function(layer) {
 		"errorLayer" : layer
 	};
 	$.ajax({
-		url : "errrorLayer/errorReport.ajax",
+		url : "errorLayer/errorReport.ajax",
 		method : "POST",
 		contentType : "application/json; charset=UTF-8",
 		cache : false,
