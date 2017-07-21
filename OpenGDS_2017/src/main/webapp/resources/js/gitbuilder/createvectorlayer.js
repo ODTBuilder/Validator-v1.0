@@ -445,7 +445,7 @@ gb.edit.CreateVectorLayer.prototype.getDefinitionForm = function() {
 			console.error("no layer name");
 			return;
 		}
-		var layerl
+		var layer;
 		if (this.format === "ngi") {
 			layer = new gb.layer.LayerInfo({
 				name : $(this.layerNameInput).val().replace(/(\s*)/g, ''),

@@ -377,30 +377,32 @@ gitbuilder.ui.EditingTool = $.widget("gitbuilder.editingtool", {
 				that.setLayer(that.updateSelected());
 				var attrInfo = that.getLayer().get("git").attribute;
 				that.feature = that.features.item(0);
-				var attr = that.features.item(0).getProperties();
-				var keys = Object.keys(attrInfo);
-				for (var i = 0; i < keys.length; i++) {
-					if (keys[i] === "geometry") {
-						continue;
+				if (condition) {
+					var attr = that.features.item(0).getProperties();
+					var keys = Object.keys(attrInfo);
+					for (var i = 0; i < keys.length; i++) {
+						if (keys[i] === "geometry") {
+							continue;
+						}
+						var td1 = $("<td>").text(keys[i]);
+						var tform = $("<input>").addClass("gb-edit-sel-alist").attr({
+							"type" : "text"
+						}).css({
+							"width" : "100%",
+							"border" : "none"
+						}).val(attr[keys[i]]);
+						var td2 = $("<td>").append(tform);
+						var tr = $("<tr>").append(td1).append(td2);
+						that.attrTB.append(tr);
 					}
-					var td1 = $("<td>").text(keys[i]);
-					var tform = $("<input>").addClass("gb-edit-sel-alist").attr({
-						"type" : "text"
-					}).css({
-						"width" : "100%",
-						"border" : "none"
-					}).val(attr[keys[i]]);
-					var td2 = $("<td>").append(tform);
-					var tr = $("<tr>").append(td1).append(td2);
-					that.attrTB.append(tr);
+					$(that.attrPop).show();
+					$(that.attrPop).position({
+						"my" : "right bottom",
+						"at" : "right bottom+100",
+						"of" : document,
+						"collision" : "fit"
+					});
 				}
-				$(that.attrPop).show();
-				$(that.attrPop).position({
-					"my" : "right bottom",
-					"at" : "right bottom+100",
-					"of" : document,
-					"collision" : "fit"
-				});
 			} else {
 				$(that.featurePop).hide();
 				$(that.attrPop).hide();
@@ -698,6 +700,41 @@ gitbuilder.ui.EditingTool = $.widget("gitbuilder.editingtool", {
 									var ogit = sourceLayer.get("git");
 									ogit["attribute"] = data2[i].attInfo;
 									ogit["geometry"] = data2[i].geomType;
+									var getPosition = function(str, subString, index) {
+										return str.split(subString, index).join(subString).length;
+									};
+									var id = sourceLayer.get("id");
+									var format = id.substring((getPosition(id, "_", 1) + 1), getPosition(id, "_", 2));
+									var layer;
+									if (format === "ngi") {
+										layer = new gb.layer.LayerInfo({
+											name : sourceLayer.get("name"),
+											id : id,
+											format : format,
+											epsg : "5186",
+											mbound : [ [ data2[i].nbBox.minx.toString(), data2[i].nbBox.miny.toString() ],
+													[ data2[i].nbBox.maxx.toString(), data2[i].nbBox.maxy.toString() ] ],
+											lbound : [ [ 122.71, 28.6 ], [ 134.28, 40.27 ] ],
+											isNew : false,
+											geometry : id.substring(getPosition(id, "_", 4) + 1),
+											sheetNum : id.substring((getPosition(id, "_", 2) + 1), getPosition(id, "_", 3))
+										});
+									} else if (format === "dxf") {
+										layer = new gb.layer.LayerInfo({
+											name : sourceLayer.get("name"),
+											id : id,
+											format : format,
+											epsg : "5186",
+											mbound : [ [ data2[i].nbBox.minx.toString(), data2[i].nbBox.miny.toString() ],
+													[ data2[i].nbBox.maxx.toString(), data2[i].nbBox.maxy.toString() ] ],
+											isNew : false,
+											lbound : [ [ 122.71, 28.6 ], [ 134.28, 40.27 ] ],
+											isNew : false,
+											geometry : id.substring(getPosition(id, "_", 4) + 1),
+											sheetNum : id.substring((getPosition(id, "_", 2) + 1), getPosition(id, "_", 3))
+										});
+									}
+									ogit["information"] = layer;
 									// var git = {
 									// "validation" : false,
 									// "geometry" : data2[i].geomType,
@@ -791,30 +828,33 @@ gitbuilder.ui.EditingTool = $.widget("gitbuilder.editingtool", {
 					that.setLayer(that.updateSelected());
 					var attrInfo = that.getLayer().get("git").attribute;
 					that.feature = that.features.item(0);
-					var attr = that.features.item(0).getProperties();
-					var keys = Object.keys(attrInfo);
-					for (var i = 0; i < keys.length; i++) {
-						if (keys[i] === "geometry") {
-							continue;
+					if (!!attrInfo) {
+						var attr = that.features.item(0).getProperties();
+						var keys = Object.keys(attrInfo);
+
+						for (var i = 0; i < keys.length; i++) {
+							if (keys[i] === "geometry") {
+								continue;
+							}
+							var td1 = $("<td>").text(keys[i]);
+							var tform = $("<input>").addClass("gb-edit-sel-alist").attr({
+								"type" : "text"
+							}).css({
+								"width" : "100%",
+								"border" : "none"
+							}).val(attr[keys[i]]);
+							var td2 = $("<td>").append(tform);
+							var tr = $("<tr>").append(td1).append(td2);
+							that.attrTB.append(tr);
 						}
-						var td1 = $("<td>").text(keys[i]);
-						var tform = $("<input>").addClass("gb-edit-sel-alist").attr({
-							"type" : "text"
-						}).css({
-							"width" : "100%",
-							"border" : "none"
-						}).val(attr[keys[i]]);
-						var td2 = $("<td>").append(tform);
-						var tr = $("<tr>").append(td1).append(td2);
-						that.attrTB.append(tr);
+						$(that.attrPop).show();
+						$(that.attrPop).position({
+							"my" : "right bottom",
+							"at" : "right bottom+100",
+							"of" : document,
+							"collision" : "fit"
+						});
 					}
-					$(that.attrPop).show();
-					$(that.attrPop).position({
-						"my" : "right bottom",
-						"at" : "right bottom+100",
-						"of" : document,
-						"collision" : "fit"
-					});
 				} else {
 					$(that.featurePop).hide();
 					$(that.attrPop).hide();
