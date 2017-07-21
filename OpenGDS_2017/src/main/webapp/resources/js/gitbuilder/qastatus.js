@@ -146,7 +146,7 @@ gb.qa.QAStatus.prototype.switchArea = function(area) {
 gb.qa.QAStatus.prototype.setList = function() {
 	var that = this;
 	var obj = {
-		"atest" : "true"
+		"atest" : "hi"
 	};
 	$.ajax({
 		url : that.getStatusURL(),

@@ -46,12 +46,6 @@ public class FeatureCloseCollectionValidatorImpl implements FeatureCloseCollecti
 		String featureIdx = simpleFeature.getID();
 		Property featuerIDPro = simpleFeature.getProperty("feature_id");
 		String featureID = (String) featuerIDPro.getValue();
-		if(featureID.equals("69B3D")){
-			System.out.println();	
-		}
-		if(featureID.equals("RECORD 947")){
-			System.out.println();	
-		}
 
 		// 인접도엽 옵션객체 선언
 		boolean matchMiss = false;
@@ -176,21 +170,6 @@ public class FeatureCloseCollectionValidatorImpl implements FeatureCloseCollecti
 					relationList.add(relationSimpleFeature);
 				}
 			}
-
-			// target객체의 도엽근처의 좌표 뽑기
-			/*		Coordinate[] targetCoors = targetGeometry.getCoordinates();
-			List<Point> coorList = new ArrayList<Point>();
-			for (int i = 0; i < targetCoors.length; i++) {
-				Coordinate targetCoor = targetCoors[i];
-				Point targetPoint = geometryFactory.createPoint(targetCoor);
-				double targetPointDist = nearLine.distance(targetPoint);
-				if(targetPointDist < tolerence || targetPointDist == tolerence){
-					coorList.add(targetPoint);
-				}
-			}*/
-			//
-
-
 
 			String upperType = simpleFeature.getAttribute("feature_type").toString().toUpperCase();
 

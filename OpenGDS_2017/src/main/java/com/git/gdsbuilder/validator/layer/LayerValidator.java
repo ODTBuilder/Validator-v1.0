@@ -111,7 +111,7 @@ public interface LayerValidator {
 	 * 4. 18. 오후 3:51:01 @param relationLayers @return @throws
 	 * SchemaException @throws
 	 */
-	public ErrorLayer validateSelfEntity(List<GeoLayer> relationLayers) throws SchemaException;
+	public ErrorLayer validateSelfEntity(List<GeoLayer> relationLayers, double selfEntityLineTolerance, double polygonInvadedTolorence) throws SchemaException;
 
 	/**
 	 * 검수 항목 중 두 레이어의 “경계초과오류 (Out Boundary)” 검수 @author DY.Oh @Date 2017. 4.
