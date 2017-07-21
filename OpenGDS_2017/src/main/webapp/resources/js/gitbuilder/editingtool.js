@@ -336,9 +336,53 @@ gitbuilder.ui.EditingTool = $.widget("gitbuilder.editingtool", {
 			this.interaction.select.getFeatures().clear();
 		}
 		this.map.removeInteraction(this.interaction.select);
+		var styles = [ new ol.style.Style({
+			stroke : new ol.style.Stroke({
+				color : 'rgba(0,153,255,1)',
+				width : 2
+			}),
+			fill : new ol.style.Fill({
+				color : 'rgba(255, 255, 255, 0.5)'
+			})
+		}), new ol.style.Style({
+			image : new ol.style.Circle({
+				radius : 10,
+				fill : new ol.style.Fill({
+					color : 'rgba(0,153,255,0.4)'
+				})
+			}),
+			geometry : function(feature) {
+
+				var coordinates;
+				var geom;
+
+				if (feature.getGeometry() instanceof ol.geom.MultiPolygon) {
+					coordinates = feature.getGeometry().getCoordinates()[0][0];
+					geom = new ol.geom.MultiPoint(coordinates);
+				} else if (feature.getGeometry() instanceof ol.geom.Polygon) {
+					coordinates = feature.getGeometry().getCoordinates()[0];
+					geom = new ol.geom.MultiPoint(coordinates);
+				} else if (feature.getGeometry() instanceof ol.geom.MultiLineString) {
+					coordinates = feature.getGeometry().getCoordinates()[0];
+					geom = new ol.geom.MultiPoint(coordinates);
+				} else if (feature.getGeometry() instanceof ol.geom.LineString) {
+					coordinates = feature.getGeometry().getCoordinates();
+					geom = new ol.geom.MultiPoint(coordinates);
+				} else if (feature.getGeometry() instanceof ol.geom.MultiPoint) {
+					coordinates = feature.getGeometry().getCoordinates();
+					geom = new ol.geom.MultiPoint(coordinates);
+				} else if (feature.getGeometry() instanceof ol.geom.Point) {
+					coordinates = [ feature.getGeometry().getCoordinates() ];
+					geom = new ol.geom.MultiPoint(coordinates);
+				}
+
+				return geom;
+			}
+		}) ];
 		this.interaction.select = new ol.interaction.Select({
 			layers : [ this.tempVector ],
-			toggleCondition : ol.events.condition.platformModifierKeyOnly
+			toggleCondition : ol.events.condition.platformModifierKeyOnly,
+			style : styles
 		});
 		this.map.addInteraction(this.interaction.select);
 		this.map.removeInteraction(this.interaction.dragbox);
@@ -558,9 +602,53 @@ gitbuilder.ui.EditingTool = $.widget("gitbuilder.editingtool", {
 				this.interaction.select.getFeatures().clear();
 			}
 			this.map.removeInteraction(this.interaction.select);
+			var styles = [ new ol.style.Style({
+				stroke : new ol.style.Stroke({
+					color : 'rgba(0,153,255,1)',
+					width : 2
+				}),
+				fill : new ol.style.Fill({
+					color : 'rgba(255, 255, 255, 0.5)'
+				})
+			}), new ol.style.Style({
+				image : new ol.style.Circle({
+					radius : 10,
+					fill : new ol.style.Fill({
+						color : 'rgba(0,153,255,0.4)'
+					})
+				}),
+				geometry : function(feature) {
+
+					var coordinates;
+					var geom;
+
+					if (feature.getGeometry() instanceof ol.geom.MultiPolygon) {
+						coordinates = feature.getGeometry().getCoordinates()[0][0];
+						geom = new ol.geom.MultiPoint(coordinates);
+					} else if (feature.getGeometry() instanceof ol.geom.Polygon) {
+						coordinates = feature.getGeometry().getCoordinates()[0];
+						geom = new ol.geom.MultiPoint(coordinates);
+					} else if (feature.getGeometry() instanceof ol.geom.MultiLineString) {
+						coordinates = feature.getGeometry().getCoordinates()[0];
+						geom = new ol.geom.MultiPoint(coordinates);
+					} else if (feature.getGeometry() instanceof ol.geom.LineString) {
+						coordinates = feature.getGeometry().getCoordinates();
+						geom = new ol.geom.MultiPoint(coordinates);
+					} else if (feature.getGeometry() instanceof ol.geom.MultiPoint) {
+						coordinates = feature.getGeometry().getCoordinates();
+						geom = new ol.geom.MultiPoint(coordinates);
+					} else if (feature.getGeometry() instanceof ol.geom.Point) {
+						coordinates = [ feature.getGeometry().getCoordinates() ];
+						geom = new ol.geom.MultiPoint(coordinates);
+					}
+
+					return geom;
+				}
+			}) ];
 			this.interaction.select = new ol.interaction.Select({
 				layers : [ sourceLayer ],
-				toggleCondition : ol.events.condition.platformModifierKeyOnly
+				toggleCondition : ol.events.condition.platformModifierKeyOnly,
+				style : styles
 			});
 			this.map.addInteraction(this.interaction.select);
 			this.map.removeInteraction(this.interaction.dragbox);
@@ -768,9 +856,53 @@ gitbuilder.ui.EditingTool = $.widget("gitbuilder.editingtool", {
 				this.interaction.select.getFeatures().clear();
 			}
 			this.map.removeInteraction(this.interaction.select);
+			var styles = [ new ol.style.Style({
+				stroke : new ol.style.Stroke({
+					color : 'rgba(0,153,255,1)',
+					width : 2
+				}),
+				fill : new ol.style.Fill({
+					color : 'rgba(255, 255, 255, 0.5)'
+				})
+			}), new ol.style.Style({
+				image : new ol.style.Circle({
+					radius : 10,
+					fill : new ol.style.Fill({
+						color : 'rgba(0,153,255,0.4)'
+					})
+				}),
+				geometry : function(feature) {
+
+					var coordinates;
+					var geom;
+
+					if (feature.getGeometry() instanceof ol.geom.MultiPolygon) {
+						coordinates = feature.getGeometry().getCoordinates()[0][0];
+						geom = new ol.geom.MultiPoint(coordinates);
+					} else if (feature.getGeometry() instanceof ol.geom.Polygon) {
+						coordinates = feature.getGeometry().getCoordinates()[0];
+						geom = new ol.geom.MultiPoint(coordinates);
+					} else if (feature.getGeometry() instanceof ol.geom.MultiLineString) {
+						coordinates = feature.getGeometry().getCoordinates()[0];
+						geom = new ol.geom.MultiPoint(coordinates);
+					} else if (feature.getGeometry() instanceof ol.geom.LineString) {
+						coordinates = feature.getGeometry().getCoordinates();
+						geom = new ol.geom.MultiPoint(coordinates);
+					} else if (feature.getGeometry() instanceof ol.geom.MultiPoint) {
+						coordinates = feature.getGeometry().getCoordinates();
+						geom = new ol.geom.MultiPoint(coordinates);
+					} else if (feature.getGeometry() instanceof ol.geom.Point) {
+						coordinates = [ feature.getGeometry().getCoordinates() ];
+						geom = new ol.geom.MultiPoint(coordinates);
+					}
+
+					return geom;
+				}
+			}) ];
 			this.interaction.select = new ol.interaction.Select({
 				layers : [ this.tempVector ],
-				toggleCondition : ol.events.condition.platformModifierKeyOnly
+				toggleCondition : ol.events.condition.platformModifierKeyOnly,
+				style : styles
 			});
 			this.map.addInteraction(this.interaction.select);
 			this.map.removeInteraction(this.interaction.dragbox);
