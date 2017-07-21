@@ -27,10 +27,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.git.opengds.common.AbstractController;
+import com.git.opengds.user.domain.UserVO;
+import com.git.opengds.user.domain.UserVO.EnUserType;
 import com.git.opengds.validator.service.ErrorReportService;
 
 @Controller("errorLayerController")
-@RequestMapping("/errrorLayer")
+@RequestMapping("/errorLayer")
 public class ErrorReportController extends AbstractController {
 
 	@Autowired
@@ -41,8 +43,11 @@ public class ErrorReportController extends AbstractController {
 	@ResponseBody
 	public JSONObject seletErrorLayer(HttpServletRequest request, @RequestBody String geo) throws Exception {
 
-		// return errReportService.getDetailsReport(userVO,
-		// layerCollectionName);
+		UserVO generalUser = (UserVO) getSession(request, EnUserType.GENERAL.getTypeName());
+		if (generalUser == null) {
+			return null;
+		}
+		JSONObject json = errReportService.getDetailsReport(generalUser, "");
 		return null;
 	}
 }
