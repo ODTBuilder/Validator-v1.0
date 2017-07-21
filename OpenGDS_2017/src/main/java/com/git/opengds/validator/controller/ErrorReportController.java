@@ -20,6 +20,7 @@ package com.git.opengds.validator.controller;
 import javax.servlet.http.HttpServletRequest;
 
 import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -47,7 +48,9 @@ public class ErrorReportController extends AbstractController {
 		if (generalUser == null) {
 			return null;
 		}
-		JSONObject json = errReportService.getDetailsReport(generalUser, "");
-		return null;
+		
+		JSONObject geoObj =  (JSONObject) JSONValue.parse(geo);
+		JSONObject json = errReportService.getDetailsReport(generalUser, (String) geoObj.get("errorLayer"));
+		return json;
 	}
 }
