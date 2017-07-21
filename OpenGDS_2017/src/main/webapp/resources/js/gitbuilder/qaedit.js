@@ -398,7 +398,7 @@ gitbuilder.ui.QAEdit = $.widget("gitbuilder.qaedit",
 				});
 				$(document).on("click", this.eventNamespace + " .gitbuilder-qaedit-delright", function() {
 					that.mapsheet.right = undefined;
-					$(this).val("right : Not assigned");
+					$(this).val("Right : Not assigned");
 					console.log(that.mapsheet);
 				});
 				$(document).on("click", this.eventNamespace + " .gitbuilder-qaedit-delcenter", function() {
@@ -1023,6 +1023,7 @@ gitbuilder.ui.QAEdit = $.widget("gitbuilder.qaedit",
 				return this.error;
 			},
 			open : function() {
+				$(this.list).jstree(true).refresh();
 				this.window.modal('show');
 			},
 			openNavigator : function() {

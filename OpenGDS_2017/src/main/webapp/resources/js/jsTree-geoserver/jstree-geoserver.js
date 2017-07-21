@@ -69,6 +69,9 @@ $.jstree.plugins.geoserver = function(options, parent) {
 			beforeSend : function() { // 호출전실행
 				$("body").css("cursor", "wait");
 			},
+			complete : function() {
+				$("body").css("cursor", "default");
+			},
 			traditional : true,
 			success : function(data, textStatus, jqXHR) {
 				console.log(data);
@@ -108,12 +111,23 @@ $.jstree.plugins.geoserver = function(options, parent) {
 							layer.set("name", name);
 							layers.push(layer);
 						}
+						var getPosition = function(str, subString, index) {
+							return str.split(subString, index).join(subString).length;
+						};
+						var id = data[i].name.replace(/(\s*)/g, '');
+						var format = id.substring((getPosition(id, "_", 1) + 1), getPosition(id, "_", 2));
+						var mapsheet = new gb.mapsheet.Mapsheet({
+							id : data[i].name.replace(/(\s*)/g, ''),
+							number : obj.refer.get_node(data[i].name).text.replace(/(\s*)/g, ''),
+							format : format
+						});
 						var git = {
 							"validation" : false,
 							"geometry" : data[i].geomType,
 							"editable" : true,
 							"fake" : "parent",
-							"layers" : layers
+							"layers" : layers,
+							"information" : mapsheet
 						}
 
 						wms.set("name", obj.refer.get_node(data[i].name).text);
@@ -154,6 +168,9 @@ $.jstree.plugins.geoserver = function(options, parent) {
 			data : JSON.stringify(farr),
 			beforeSend : function() { // 호출전실행
 				$("body").css("cursor", "wait");
+			},
+			complete : function() {
+				$("body").css("cursor", "default");
 			},
 			traditional : true,
 			success : function(data, textStatus, jqXHR) {
@@ -200,12 +217,23 @@ $.jstree.plugins.geoserver = function(options, parent) {
 							layer.set("name", name);
 							layers.push(layer);
 						}
+						var getPosition = function(str, subString, index) {
+							return str.split(subString, index).join(subString).length;
+						};
+						var id = data[i].name.replace(/(\s*)/g, '');
+						var format = id.substring((getPosition(id, "_", 1) + 1), getPosition(id, "_", 2));
+						var mapsheet = new gb.mapsheet.Mapsheet({
+							id : data[i].name.replace(/(\s*)/g, ''),
+							number : obj.refer.get_node(data[i].name).text.replace(/(\s*)/g, ''),
+							format : format
+						});
 						var git = {
 							"validation" : false,
 							"geometry" : data[i].geomType,
 							"editable" : true,
 							"fake" : "parent",
-							"layers" : layers
+							"layers" : layers,
+							"information" : mapsheet
 						}
 						wms.set("name", obj.refer.get_node(data[i].name).text);
 						wms.set("id", data[i].name);
@@ -242,10 +270,11 @@ $.jstree.plugins.geoserver = function(options, parent) {
 									names.push(befCollection.item(i).get("id"));
 								}
 								befParams["LAYERS"] = names.toString();
-								// var group = new
-								// ol.layer.Group({
-								// layers : befCollection
-								// });
+								mapLayers.item(j).getSource().updateParams(befParams);
+								// that._data.geoserver.clientRefer.refresh();
+								var group = new ol.layer.Group({
+									layers : befCollection
+								});
 								var wms2 = new ol.layer.Tile({
 									source : new ol.source.TileWMS({
 										url : that._data.geoserver.WMSLayerURL,
@@ -256,11 +285,11 @@ $.jstree.plugins.geoserver = function(options, parent) {
 								wms2.set("name", lname);
 								wms2.set("id", lid);
 								wms2.set("git", git);
-								// wms.set("type", "Group");
+								wms.set("type", "Group");
 								that._data.geoserver.map.removeLayer(mapLayers.item(j));
 								that._data.geoserver.map.addLayer(wms2);
 								flag = false;
-								console.log(wms2);
+								// console.log(wms2);
 								$("body").css("cursor", "default");
 								break;
 							}
@@ -303,6 +332,9 @@ $.jstree.plugins.geoserver = function(options, parent) {
 			data : JSON.stringify(farr),
 			beforeSend : function() { // 호출전실행
 				$("body").css("cursor", "wait");
+			},
+			complete : function() {
+				$("body").css("cursor", "default");
 			},
 			traditional : true,
 			success : function(data, textStatus, jqXHR) {
@@ -359,6 +391,9 @@ $.jstree.plugins.geoserver = function(options, parent) {
 					data : JSON.stringify(arr),
 					beforeSend : function() { // 호출전실행
 						// loadImageShow();
+					},
+					complete : function() {
+						$("body").css("cursor", "default");
 					},
 					traditional : true,
 					success : function(data2, textStatus, jqXHR) {
@@ -493,6 +528,9 @@ $.jstree.plugins.geoserver = function(options, parent) {
 			beforeSend : function() { // 호출전실행
 				// loadImageShow();
 			},
+			complete : function() {
+				$("body").css("cursor", "default");
+			},
 			traditional : true,
 			success : function(data, textStatus, jqXHR) {
 				console.log(data);
@@ -599,6 +637,9 @@ $.jstree.plugins.geoserver = function(options, parent) {
 			beforeSend : function() { // 호출전실행
 				$("body").css("cursor", "wait");
 			},
+			complete : function() {
+				$("body").css("cursor", "default");
+			},
 			traditional : true,
 			success : function(data, textStatus, jqXHR) {
 				console.log(data);
@@ -655,6 +696,9 @@ $.jstree.plugins.geoserver = function(options, parent) {
 						data : JSON.stringify(arr),
 						beforeSend : function() { // 호출전실행
 							// loadImageShow();
+						},
+						complete : function() {
+							$("body").css("cursor", "default");
 						},
 						traditional : true,
 						success : function(data2, textStatus, jqXHR) {
@@ -791,6 +835,9 @@ $.jstree.plugins.geoserver = function(options, parent) {
 			data : JSON.stringify(arr),
 			beforeSend : function() { // 호출전실행
 				// loadImageShow();
+			},
+			complete : function() {
+				$("body").css("cursor", "default");
 			},
 			traditional : true,
 			success : function(data, textStatus, jqXHR) {

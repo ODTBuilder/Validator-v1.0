@@ -19,6 +19,6 @@ public interface ValidatorProgressService {
 
 	public void setStateToResponse(UserVO userVO, String fileType, int pIdx);
 	
-	public ValidateProgressList selectProgressOfCollection(UserVO userVO, String type, String collectionName);
+	public ValidateProgressList selectProgressOfCollection(UserVO userVO, String type);
 
 }

@@ -130,7 +130,7 @@ public class QA10Tables {
 		while (layerIterator.hasNext()) {
 			DXFLayer dxfLayer = (DXFLayer) layerIterator.next();
 			String layerName = dxfLayer.getName();
-			if(layerName.equals("0")) {
+			if (layerName.equals("0")) {
 				continue;
 			}
 			LinkedHashMap<String, Object> layer = new LinkedHashMap<String, Object>();
@@ -145,7 +145,7 @@ public class QA10Tables {
 		this.layers = variabliesMap;
 	}
 
-	public Map<String, Object> getLayerValues(QA10Layer qa10Layer) {
+	public static Map<String, Object> getLayerValues(QA10Layer qa10Layer) {
 
 		Map<String, Object> variabliesMap = new LinkedHashMap<String, Object>();
 
