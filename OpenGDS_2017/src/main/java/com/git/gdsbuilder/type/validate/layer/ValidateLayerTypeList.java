@@ -20,6 +20,10 @@ package com.git.gdsbuilder.type.validate.layer;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.git.gdsbuilder.type.geoserver.collection.GeoLayerCollection;
+import com.git.gdsbuilder.type.geoserver.layer.GeoLayer;
+import com.git.gdsbuilder.type.geoserver.layer.GeoLayerList;
+
 /**
  * ValidateLayerTypeList 정보를 담고 있는 클래스
  * 
@@ -44,6 +48,26 @@ public class ValidateLayerTypeList extends ArrayList<ValidateLayerType> {
 
 	public void addLayerId(String layerID) {
 		this.layerIDList.add(layerID);
+	}
+	
+	public GeoLayerList getTypeLayers(String typeName, GeoLayerCollection layerCollection) {
+		GeoLayerList layers = new GeoLayerList();
+		for (int j = 0; j < this.size(); j++) {
+			ValidateLayerType type = this.get(j);
+			if (type.getTypeName().equals(typeName)) {
+				List<String> names = type.getLayerIDList();
+				for (int i = 0; i < names.size(); i++) {
+					String name = names.get(i);
+					GeoLayer geoLayer = layerCollection.getLayer(name, layerCollection);
+					if (geoLayer != null) {
+						layers.add(geoLayer);
+					} else {
+						continue;
+					}
+				}
+			}
+		}
+		return layers;
 	}
 
 }

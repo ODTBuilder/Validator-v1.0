@@ -82,9 +82,6 @@ public class GeoserverLayerCollectionTree extends JSONArray {
 	 */
 	@SuppressWarnings("unchecked")
 	public GeoserverLayerCollectionTree build(RESTFeatureTypeList featureTypeList) {
-		if (featureTypeList == null) {
-			throw new IllegalArgumentException("RESTFeatureTypeList may not be null");
-		}
 		JSONObject geoserverLayers = new JSONObject();
 		JSONObject validatorLayers = new JSONObject();
 		JSONObject generalizationLayers = new JSONObject();
@@ -170,6 +167,10 @@ public class GeoserverLayerCollectionTree extends JSONArray {
 		super.add(ngiGenLayers);
 		super.add(dxfGenLayers);
 		super.add(shpGenLayers);
+		
+		if (featureTypeList == null) {
+			return this;
+		}
 
 		if (featureTypeList.size() > 1) {
 			List<String> layerNames = new ArrayList<String>(); // 레이어 이름 리스트

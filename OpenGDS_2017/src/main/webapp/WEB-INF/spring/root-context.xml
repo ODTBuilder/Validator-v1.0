@@ -183,6 +183,10 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
 	</tx:advice>
 
 
+
+
+
+
 	<!-- 예제 test -->
 	<context:component-scan base-package="com.git.opengds"> 
 		<context:exclude-filter expression="org.springframework.stereotype.Controller" type="annotation" /> 

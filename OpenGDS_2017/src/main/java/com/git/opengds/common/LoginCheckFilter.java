@@ -26,14 +26,14 @@ public class LoginCheckFilter implements Filter{
 
 	//로그인 세션 체크 예외 URL
 	private final static String[] NOT_CHECK_LOGIN_SESSION = {
-		"/main.do", "/layer/loadApprovalMap.do", "/generalization/loadGeneralizationMap.do"
+		"/main.do", "/user/loginView.do", "/user/login.ajax", "/user/logout.do"
 	};
-	private final static String[] CHECK_INSPECTOR_SESSION = {
-		"/main.do", "/user/logout.do", "/layer/qaStart.do", "/receipt/approvalRequest.do", "/layer/loadApprovalMap.do", "/qa/downloadExcel.do"
-	};
-	//로그인 세션 체크 예외 URL
-	private final static String[] CHECK_CHAIRMAN_SESSION = {
-		"/main.do", "/user/logout.do", "/chairman/detailInfoView.do", "layer/loadApprovalMap.do"
+	private final static String[] CHECK_USER_SESSION = {
+		"/fileExport/fileExport.ajax",  "/validateProgress/validateProgress.ajax","/validator/validate.ajax", "/file/fileUpload.do","/file/fileNameDupCheckAjax.ajax",
+		"/geoserver/downloadRequest.do","/geoserver/getGeolayerCollectionTree.ajax","/geoserver/geoserverWMSLayerLoad.do",
+		"/geoserver/geoserverWFSGetFeature.ajax","/geoserver/getGeoLayerInfoList.ajax","/geoserver/layerDuplicateCheck.ajax",
+		"/geoserver/getGeoGroupLayerInfoList.ajax","/geoserver/getGeoserverStyleList.ajax","/geoserver/publishGeoserverStyle.do",
+		"/geoserver/updateGeoserverStyle.do","/geoserver/removeGeoserverStyle.do","/editLayerCollection/editLayerCollection.ajax"
 	};
 	
 	
@@ -79,14 +79,12 @@ public class LoginCheckFilter implements Filter{
 				
 				boolean isPerUrl = false; 
 				if( user != null ) {
-					for(String str : CHECK_INSPECTOR_SESSION ) {
+					for(String str : CHECK_USER_SESSION ) {
 						if (request.getRequestURI().endsWith(str)) {
 							isPerUrl = true;
 						}
 					}
 				}
-				
-				
 				
 				if( isPerUrl ) {
 					chain.doFilter(req, res);

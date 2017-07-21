@@ -37,5 +37,5 @@ public interface ValidatorService {
 	 * @throws Exception JSONObject
 	 * @throws
 	 * */
-	public JSONObject validate(UserVO userVO, String jsonObject) throws Exception;
+	public void validate(UserVO userVO, String jsonObject) throws Exception;
 }

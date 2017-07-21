@@ -184,7 +184,6 @@ public class GeoserverServiceImpl implements GeoserverService {
 						}
 					}
 					if(!isTextStyle){
-						for(String etext : exceptTextList){
 							if(cutLayerName.toUpperCase().equals("H0059153")){
 								if(fileType.equals("dxf")){
 									styleName = "DXF_"+ cutLayerName + "+_TEXT";
@@ -201,7 +200,6 @@ public class GeoserverServiceImpl implements GeoserverService {
 								isTextStyle = true;
 								break;
 							}
-						}
 					}
 				}
 			}

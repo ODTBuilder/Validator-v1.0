@@ -157,9 +157,7 @@ public class DTGeoserverReader extends GeoServerRESTReader {
 		}
 		RESTFeatureTypeList typeList = super.getFeatureTypes(workspace);
 		GeoserverLayerCollectionTree collectionTree = null;
-		if(typeList!=null){
-			collectionTree = new GeoserverLayerCollectionTree(typeList);
-		}
+		collectionTree = new GeoserverLayerCollectionTree(typeList);
 		return collectionTree;
 	}
 	

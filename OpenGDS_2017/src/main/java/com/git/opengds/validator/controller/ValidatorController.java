@@ -42,13 +42,13 @@ public class ValidatorController extends AbstractController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/validate.ajax")
 	@ResponseBody
-	public JSONObject geoserverAddLoadAjax(HttpServletRequest request, @RequestBody String geo) throws Exception {
+	public void geoserverAddLoadAjax(HttpServletRequest request, @RequestBody String geo) throws Exception {
 		
 		UserVO generalUser  = (UserVO) getSession(request,EnUserType.GENERAL.getTypeName());
 		if(generalUser==null){
-			return null;
+//			return null;
 		}
-		
-		return validatorService.validate(generalUser, geo);
+		validatorService.validate(generalUser, geo);
+//		return 
 	}
 }
