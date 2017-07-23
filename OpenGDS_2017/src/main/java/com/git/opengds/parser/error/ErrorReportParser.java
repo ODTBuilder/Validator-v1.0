@@ -26,19 +26,17 @@ import com.git.gdsbuilder.validator.result.ISOReportField;
 
 /**
  * ErrorLayer를 조회하여 ErrorReport(검수결과) 객체로 파싱하는 클래스
+ * 
  * @author DY.Oh
  * @Date 2017. 3. 11. 오후 2:18:26
- * */
+ */
 public class ErrorReportParser {
 
 	/**
-	 * ErrorLayer를 조회하여 DetailsValidateResultList 객체로 파싱
-	 * @author DY.Oh
-	 * @Date 2017. 3. 11. 오후 2:18:29
-	 * @param errFeatures
-	 * @return DetailsValidateResultList
-	 * @throws
-	 * */
+	 * ErrorLayer를 조회하여 DetailsValidateResultList 객체로 파싱 @author DY.Oh @Date
+	 * 2017. 3. 11. 오후 2:18:29 @param errFeatures @return
+	 * DetailsValidateResultList @throws
+	 */
 	public static DetailsValidateResultList parseDetailsErrorReport(List<HashMap<String, Object>> errFeatures) {
 
 		DetailsValidateResultList dtValidateResultList = new DetailsValidateResultList();
@@ -51,8 +49,8 @@ public class ErrorReportParser {
 			String featureID = (String) errFeature.get("feature_id");
 			String errorType = (String) errFeature.get("err_type");
 			String errorName = (String) errFeature.get("err_name");
-			double errorCoordinateX = (Double) errFeature.get("x_Coordinate");
-			double errorCoordinateY = (Double) errFeature.get("y_Coordinate");
+			double errorCoordinateX = (Double) errFeature.get("x_coordinate");
+			double errorCoordinateY = (Double) errFeature.get("y_coordinate");
 
 			DetailsValidateResult dtValidateResult = new DetailsValidateResult(collectionName, layerName, featureID,
 					errorType, errorName, errorCoordinateX, errorCoordinateY);
@@ -62,16 +60,10 @@ public class ErrorReportParser {
 	}
 
 	/**
-	 * ErrorLayer를 조회하여 ISOReportField 객체로 파싱
-	 * @author DY.Oh
-	 * @Date 2017. 3. 11. 오후 2:18:32
-	 * @param typeName
-	 * @param featureCount
-	 * @param errFeatures
-	 * @param weight
-	 * @return ISOReportField
-	 * @throws
-	 * */
+	 * ErrorLayer를 조회하여 ISOReportField 객체로 파싱 @author DY.Oh @Date 2017. 3. 11.
+	 * 오후 2:18:32 @param typeName @param featureCount @param errFeatures @param
+	 * weight @return ISOReportField @throws
+	 */
 	public static ISOReportField parseISOErrorReport(String typeName, HashMap<String, Object> featureCount,
 			List<HashMap<String, Object>> errFeatures, double weight) {
 
