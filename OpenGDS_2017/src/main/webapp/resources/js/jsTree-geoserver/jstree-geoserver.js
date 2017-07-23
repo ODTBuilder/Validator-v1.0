@@ -64,7 +64,6 @@ $.jstree.plugins.geoserver = function(options, parent) {
 			method : "POST",
 			contentType : "application/json; charset=UTF-8",
 			cache : false,
-			// async : false,
 			data : JSON.stringify(farr),
 			beforeSend : function() { // 호출전실행
 				$("body").css("cursor", "wait");
@@ -164,7 +163,6 @@ $.jstree.plugins.geoserver = function(options, parent) {
 			method : "POST",
 			contentType : "application/json; charset=UTF-8",
 			cache : false,
-			// async : false,
 			data : JSON.stringify(farr),
 			beforeSend : function() { // 호출전실행
 				$("body").css("cursor", "wait");
@@ -328,7 +326,6 @@ $.jstree.plugins.geoserver = function(options, parent) {
 			method : "POST",
 			contentType : "application/json; charset=UTF-8",
 			cache : false,
-			// async : false,
 			data : JSON.stringify(farr),
 			beforeSend : function() { // 호출전실행
 				$("body").css("cursor", "wait");
@@ -387,7 +384,6 @@ $.jstree.plugins.geoserver = function(options, parent) {
 					method : "POST",
 					contentType : "application/json; charset=UTF-8",
 					cache : false,
-					// async : false,
 					data : JSON.stringify(arr),
 					beforeSend : function() { // 호출전실행
 						// loadImageShow();
@@ -523,7 +519,6 @@ $.jstree.plugins.geoserver = function(options, parent) {
 			method : "POST",
 			contentType : "application/json; charset=UTF-8",
 			cache : false,
-			// async : false,
 			data : JSON.stringify(arr),
 			beforeSend : function() { // 호출전실행
 				// loadImageShow();
@@ -632,7 +627,6 @@ $.jstree.plugins.geoserver = function(options, parent) {
 			method : "POST",
 			contentType : "application/json; charset=UTF-8",
 			cache : false,
-			// async : false,
 			data : JSON.stringify(farr),
 			beforeSend : function() { // 호출전실행
 				$("body").css("cursor", "wait");
@@ -692,7 +686,6 @@ $.jstree.plugins.geoserver = function(options, parent) {
 						method : "POST",
 						contentType : "application/json; charset=UTF-8",
 						cache : false,
-						// async : false,
 						data : JSON.stringify(arr),
 						beforeSend : function() { // 호출전실행
 							// loadImageShow();
@@ -831,7 +824,6 @@ $.jstree.plugins.geoserver = function(options, parent) {
 			method : "POST",
 			contentType : "application/json; charset=UTF-8",
 			cache : false,
-			// async : false,
 			data : JSON.stringify(arr),
 			beforeSend : function() { // 호출전실행
 				// loadImageShow();

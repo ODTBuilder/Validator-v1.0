@@ -185,7 +185,6 @@ gb.qa.QAStatus.prototype.setList = function() {
 		method : "POST",
 		contentType : "application/json; charset=UTF-8",
 		cache : false,
-		// async : false,
 		data : JSON.stringify(obj),
 		beforeSend : function() { // 호출전실행
 			$("body").css("cursor", "wait");
@@ -312,7 +311,6 @@ gb.qa.QAStatus.prototype.setReport = function(layer) {
 		method : "POST",
 		contentType : "application/json; charset=UTF-8",
 		cache : false,
-		// async : false,
 		data : JSON.stringify(obj),
 		beforeSend : function() { // 호출전실행
 			$("body").css("cursor", "wait");

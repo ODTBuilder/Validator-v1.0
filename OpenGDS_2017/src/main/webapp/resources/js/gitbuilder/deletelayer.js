@@ -149,7 +149,6 @@ gb.geoserver.DeleteLayer.prototype.save = function(obj) {
 		method : "POST",
 		contentType : "application/json; charset=UTF-8",
 		cache : false,
-		// async : false,
 		data : JSON.stringify(obj),
 		beforeSend : function() {
 			$("body").css("cursor", "wait");

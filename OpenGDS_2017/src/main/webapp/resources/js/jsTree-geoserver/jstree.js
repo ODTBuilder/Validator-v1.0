@@ -7614,7 +7614,6 @@
 											method : "POST",
 											contentType : "application/json; charset=UTF-8",
 											cache : false,
-											// async : false,
 											data : JSON.stringify(arr),
 											beforeSend : function() { // 호출전실행
 												// loadImageShow();
@@ -7669,7 +7668,6 @@
 											method : "POST",
 											contentType : "application/json; charset=UTF-8",
 											cache : false,
-											// async : false,
 											data : JSON.stringify(arr),
 											beforeSend : function() { // 호출전실행
 												// loadImageShow();
@@ -7724,7 +7722,6 @@
 											method : "POST",
 											contentType : "application/json; charset=UTF-8",
 											cache : false,
-											// async : false,
 											data : JSON.stringify(arr),
 											beforeSend : function() { // 호출전실행
 												// loadImageShow();
@@ -7779,7 +7776,6 @@
 											method : "POST",
 											contentType : "application/json; charset=UTF-8",
 											cache : false,
-											// async : false,
 											data : JSON.stringify(arr),
 											beforeSend : function() { // 호출전실행
 												// loadImageShow();
@@ -7834,7 +7830,6 @@
 											method : "POST",
 											contentType : "application/json; charset=UTF-8",
 											cache : false,
-											// async : false,
 											data : JSON.stringify(arr),
 											beforeSend : function() { // 호출전실행
 												// loadImageShow();
@@ -7890,7 +7885,6 @@
 											method : "POST",
 											contentType : "application/json; charset=UTF-8",
 											cache : false,
-											// async : false,
 											data : JSON.stringify(arr),
 											beforeSend : function() { // 호출전실행
 												// loadImageShow();

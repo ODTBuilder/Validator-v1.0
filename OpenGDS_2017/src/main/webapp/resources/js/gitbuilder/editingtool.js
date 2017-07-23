@@ -760,7 +760,6 @@ gitbuilder.ui.EditingTool = $.widget("gitbuilder.editingtool", {
 						method : "POST",
 						contentType : "application/json; charset=UTF-8",
 						cache : false,
-						// async : false,
 						data : JSON.stringify(arr),
 						beforeSend : function() { // 호출전실행
 							$("body").css("cursor", "wait");

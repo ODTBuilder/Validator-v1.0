@@ -482,7 +482,6 @@ gitbuilder.ui.QAEdit = $.widget("gitbuilder.qaedit",
 					method : "POST",
 					contentType : "application/json; charset=UTF-8",
 					cache : false,
-					// async : false,
 					data : JSON.stringify(groupLayerName),
 					beforeSend : function() { // 호출전실행
 						$("body").css("cursor", "wait");
@@ -566,10 +565,8 @@ gitbuilder.ui.QAEdit = $.widget("gitbuilder.qaedit",
 				$.ajax({
 					url : groupInfoURL,
 					method : "POST",
-					async : false,
 					contentType : "application/json; charset=UTF-8",
 					cache : false,
-					// async : false,
 					data : JSON.stringify(groupLayerName),
 					beforeSend : function() { // 호출전실행
 						$("body").css("cursor", "wait");
@@ -630,7 +627,6 @@ gitbuilder.ui.QAEdit = $.widget("gitbuilder.qaedit",
 					method : "POST",
 					contentType : "application/json; charset=UTF-8",
 					cache : false,
-					async : false,
 					data : JSON.stringify(arr),
 					beforeSend : function() { // 호출전실행
 						// loadImageShow();
@@ -707,7 +703,6 @@ gitbuilder.ui.QAEdit = $.widget("gitbuilder.qaedit",
 					url : wfsURL,
 					data : defaultParameters,
 					dataType : 'jsonp',
-					async : false,
 					jsonpCallback : 'getJson',
 					success : function(errorData, textStatus, jqXHR) {
 						console.log(errorData);
@@ -944,7 +939,6 @@ gitbuilder.ui.QAEdit = $.widget("gitbuilder.qaedit",
 							method : "POST",
 							contentType : "application/json; charset=UTF-8",
 							cache : false,
-							async : false,
 							data : JSON.stringify(arr),
 							beforeSend : function() { // 호출전실행
 								// loadImageShow();
