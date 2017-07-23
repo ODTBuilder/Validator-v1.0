@@ -469,7 +469,7 @@ html {
 		var qastat = new gb.qa.QAStatus({
 			"statusURL" : "validateProgress/validateProgress.ajax",
 			"errorURL" : "",
-			"downloadURL" : ""
+			"downloadNGIDXFURL" : "fileExport/fileExport.ajax"
 		});
 		$("#qastat").click(function() {
 			qastat.open();

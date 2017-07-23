@@ -188,7 +188,7 @@ gitbuilder.ui.Validation = $.widget("gitbuilder.validation", {
 			"width" : "0",
 			"min-width" : "2em"
 		}).text("0%");
-		var prog = $("<div>").append(this.bar);
+		var prog = $("<div>").append(this.bar).css("display", "none");
 		this._addClass(prog, "progress");
 		this.info = $("<div>").addClass("well");
 		var infobody = $("<div>").append(this.info).append(prog);

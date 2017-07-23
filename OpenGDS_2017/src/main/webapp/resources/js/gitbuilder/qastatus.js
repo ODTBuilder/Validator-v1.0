@@ -16,7 +16,7 @@ gb.qa.QAStatus = function(obj) {
 	this.window;
 	this.statusURL = options.statusURL ? options.statusURL : undefined;
 	this.errorURL = options.errorURL ? options.errorURL : undefined;
-	this.downloadURL = options.downloadURL ? options.downloadURL : undefined;
+	this.downloadNGIDXFURL = options.downloadNGIDXFURL ? options.downloadNGIDXFURL : undefined;
 	this.listInstance = undefined;
 	this.reportInstance = undefined;
 
@@ -57,6 +57,10 @@ gb.qa.QAStatus = function(obj) {
 		// var data = table.row( $(this).parents('tr') ).data();
 		// alert( data[0] +"'s salary is: "+ data[ 5 ] );
 		console.log("down");
+		var data = that.listInstance.row($(this).parents('tr')).data();
+		var format = data[0];
+		var layerName = data[2];
+		that.downloadErrorLayer(format, layerName);
 	});
 
 	this.rtb = $("<table>").addClass("table").addClass("table-striped");
@@ -120,6 +124,31 @@ gb.qa.QAStatus.prototype.open = function() {
 };
 gb.qa.QAStatus.prototype.close = function() {
 	this.window.modal('hide');
+};
+gb.qa.QAStatus.prototype.downloadErrorLayer = function(format, layerName) {
+	var that = this;
+	var obj = {
+		"format" : format,
+		"type" : "layer",
+		"name" : layerName
+	}
+
+	var path = this.downloadNGIDXFURL;
+	var target = "gitWindow";
+	var form = document.createElement("form");
+	form.setAttribute("method", "post");
+	form.setAttribute("action", path);
+	var keys = Object.keys(obj);
+	for (var k = 0; k < keys.length; k++) {
+		var hiddenField = document.createElement("input");
+		hiddenField.setAttribute("type", "hidden");
+		hiddenField.setAttribute("name", keys[k]);
+		hiddenField.setAttribute("value", obj[keys[k]]);
+		form.appendChild(hiddenField);
+	}
+	form.target = target;
+	document.body.appendChild(form);
+	form.submit();
 };
 gb.qa.QAStatus.prototype.switchNavi = function(area) {
 	var that = this;
