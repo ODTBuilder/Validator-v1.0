@@ -42,7 +42,7 @@ public class ErrorReportController extends AbstractController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/errorReport.ajax")
 	@ResponseBody
-	public JSONObject seletErrorLayer(HttpServletRequest request, @RequestBody String geo) throws Exception {
+	public String seletErrorLayer(HttpServletRequest request, @RequestBody String geo) throws Exception {
 
 		UserVO generalUser = (UserVO) getSession(request, EnUserType.GENERAL.getTypeName());
 		if (generalUser == null) {
@@ -51,6 +51,7 @@ public class ErrorReportController extends AbstractController {
 		
 		JSONObject geoObj =  (JSONObject) JSONValue.parse(geo);
 		JSONObject json = errReportService.getDetailsReport(generalUser, (String) geoObj.get("errorLayer"));
-		return json;
+		String str = json.toJSONString();
+		return str;
 	}
 }
