@@ -27,6 +27,8 @@ gitbuilder.ui.Validation = $.widget("gitbuilder.validation", {
 	fileType : undefined,
 	info : undefined,
 	bar : undefined,
+	warning : undefined, 
+	okBtn : undefined,
 	options : {
 		layerDefinition : undefined,
 		optionDefinition : undefined,
@@ -130,10 +132,10 @@ gitbuilder.ui.Validation = $.widget("gitbuilder.validation", {
 					that.updateLayerList(r);
 				}
 			}
-// if (r.length > 0) {
-				that.updateValidationDef(r);
-				that.updateLayerList(r);
-// }
+//			if (r.length > 0) {
+			that.updateValidationDef(r);
+			that.updateLayerList(r);
+//			}
 		});
 		$(this.tree).on('select_node.jstree', function(e, data) {
 			var r = [];
@@ -166,10 +168,10 @@ gitbuilder.ui.Validation = $.widget("gitbuilder.validation", {
 					that.updateLayerList(r);
 				}
 			}
-// if (r.length > 0) {
-				that.updateValidationDef(r);
-				that.updateLayerList(r);
-// }
+//			if (r.length > 0) {
+			that.updateValidationDef(r);
+			that.updateLayerList(r);
+//			}
 		});
 		var layerlist = $("<div>").append(listhead).append(listbody);
 		this._addClass(layerlist, "panel");
@@ -221,7 +223,10 @@ gitbuilder.ui.Validation = $.widget("gitbuilder.validation", {
 		this._addClass(uright, "col-md-7");
 		var row = $("<div>").append(uleft).append(uright);
 		this._addClass(row, "row");
-		var body = $("<div>").append(row);
+		this.warning = $("<div>").addClass("alert").addClass("alert-success");
+		$(this.warning).hide();
+		var row2 = $("<div>").append(this.warning);
+		var body = $("<div>").append(row).append(row2);
 		this._addClass(body, "modal-body");
 		/*
 		 * 
@@ -238,23 +243,23 @@ gitbuilder.ui.Validation = $.widget("gitbuilder.validation", {
 		this._addClass(closeBtn, "btn-default");
 		$(closeBtn).text("Close");
 
-		var okBtn = $("<button>").attr({
+		this.okBtn = $("<button>").attr({
 			"type" : "button"
 		});
-		this._addClass(okBtn, "btn");
-		this._addClass(okBtn, "btn-primary");
-		this._addClass(okBtn, "validation-btn-start");
-		$(okBtn).text("Start");
+		this._addClass(this.okBtn, "btn");
+		this._addClass(this.okBtn, "btn-primary");
+		this._addClass(this.okBtn, "validation-btn-start");
+		$(this.okBtn).text("Start");
 
-		this._on(false, okBtn, {
+		this._on(false, this.okBtn, {
 			click : function(event) {
-				if (event.target === okBtn[0]) {
+				if (event.target === this.okBtn[0]) {
 					that.start();
 				}
 			}
 		});
 
-		var footer = $("<div>").append(closeBtn).append(okBtn);
+		var footer = $("<div>").append(closeBtn).append(this.okBtn);
 		this._addClass(footer, "modal-footer");
 		/*
 		 * 
@@ -289,6 +294,8 @@ gitbuilder.ui.Validation = $.widget("gitbuilder.validation", {
 		this.setMessage('Select map sheets for QA');
 		this.setProgress(0);
 		$(this.tree).jstree("refesh");
+		$(this.okBtn).prop("disabled", false);
+		$(this.warning).hide();
 	},
 	setLayerDefinition : function(obj) {
 		this.layerDef = obj;
@@ -348,34 +355,76 @@ gitbuilder.ui.Validation = $.widget("gitbuilder.validation", {
 		var that = this;
 		if (!!this.valiDef) {
 			console.log(this.valiDef);
+			if (this.valiDef.layerCollections.collectionName.length < 1) {
+				this.setMessage("Error. No selected map sheets.");
+				return;
+			}
+			if (this.valiDef.typeValidate.length < 1) {
+				this.setMessage("Error. There is no validating option.");
+				return;
+			}
 			$.ajax({
 				url : that.options.validatorURL,
 				type : "POST",
 				contentType : "application/json; charset=UTF-8",
 				cache : false,
-				async : true,
 				data : JSON.stringify(this.valiDef),
 				beforeSend : function() { // 호출전실행
-// loadImageShow();
+					// loadImageShow();
 				},
 				traditional : true,
 				success : function(data, textStatus, jqXHR) {
 					console.log(data);
-					if (!data.ErrorLayer && !data["Publising ErrorLayer"]) {
-						that.setMessage("No errors. Not published.");
-						that.setProgress(0);
-					} else if(data.ErrorLayer && data["Publising ErrorLayer"]){
-						that.setMessage("Validation complete");
-						that.setProgress(100);
-					} else if(data.ErrorLayer && !data["Publising ErrorLayer"]){
-						that.setMessage("Error detected. Not published.");
-						that.setProgress(0);
+					// if (!data.ErrorLayer && !data["Publising
+					// ErrorLayer"]) {
+					// that.setMessage("No errors. Not published.");
+					// that.setProgress(0);
+					// } else if(data.ErrorLayer && data["Publising
+					// ErrorLayer"]){
+					// that.setMessage("Validation complete");
+					// that.setProgress(100);
+					// } else if(data.ErrorLayer && !data["Publising
+					// ErrorLayer"]){
+					// that.setMessage("Error detected. Not published.");
+					// that.setProgress(0);
+					// }
+					that.afterRequest();
+				},
+				error : function( jqXHR,  textStatus,  errorThrown ){
+					console.log(jqXHR);
+					if (jqXHR.status === 500) {
+						that.setMessage("Error. Check the validating option.");
 					}
 				}
 			});
 		} else {
-			that.setMessage('No option');
+			that.setMessage("Validating option is not assigned.");
 		}
+	},
+	afterRequest : function(){
+		$(this.okBtn).prop("disabled", true);
+		var that = this;
+		setTimeout(function(){ 
+			$(that.warning).text("Request completed. This window will be closed in 5 second.");
+			$(that.warning).show();
+		}, 1000);
+		setTimeout(function(){ 
+			$(that.warning).text("Request completed. This window will be closed in 4 second.");
+		}, 2000);
+		setTimeout(function(){ 
+			$(that.warning).text("Request completed. This window will be closed in 3 second.");
+		}, 3000);
+		setTimeout(function(){ 
+			$(that.warning).text("Request completed. This window will be closed in 2 second.");
+		}, 4000);
+		setTimeout(function(){ 
+			$(that.warning).text("Request completed. This window will be closed in 1 second.");
+		}, 5000);
+		setTimeout(function(){ 
+			$(that.warning).text("Request completed. This window will be closed in 0 second.");
+			that.close();
+			$(that.warning).hide();
+		}, 6000);
 	},
 	setProgress : function(figure) {
 		var int = parseInt(figure);
@@ -424,13 +473,15 @@ gitbuilder.ui.Validation = $.widget("gitbuilder.validation", {
 		var ldef = this.getLayerDefinition();
 		var odef = this.getOptionDefinition();
 		var wdef = this.getWeightDefinition();
-		if (Object.keys(ldef).length === 0 || Object.keys(odef).length === 0 || Object.keys(wdef).length === 0) {
-			console.error("required option missing");
-			this.setMessage('Error : Check the options (Layer definition, Option definition, Weight definition)');
-			$(this.windiw).find(".validation-btn-start").prop("disabled", true);
-		} else {
-			$(this.windiw).find(".validation-btn-start").prop("disabled", false);
-		}
+//		if (Object.keys(ldef).length === 0 || Object.keys(odef).length === 0 ||
+//		Object.keys(wdef).length === 0) {
+//		console.error("required option missing");
+//		this.setMessage('Error : Check the options (Layer definition, Option
+//		definition, Weight definition)');
+//		$(this.window).find(".validation-btn-start").prop("disabled", true);
+//		} else {
+//		$(this.window).find(".validation-btn-start").prop("disabled", false);
+//		}
 		var lkeys = Object.keys(odef);
 		var layers = [];
 
@@ -508,12 +559,12 @@ gitbuilder.ui.Validation = $.widget("gitbuilder.validation", {
 			}  else if ($(this.tree).jstree("get_node", keys[i]).type === "n_dxf_layer_txt") {
 				type = "TEXT";
 			} 
-// layers.push($(this.tree).jstree("get_node", keys[i]).text+"_"+type);
+//			layers.push($(this.tree).jstree("get_node", keys[i]).text+"_"+type);
 			notDupObj[$(this.tree).jstree("get_node", keys[i]).text+"_"+type] = 0;
 		}
 		var dkeys = Object.keys(notDupObj);
 		for (var i = 0; i < dkeys.length; i++) {
-// layers.push($(this.tree).jstree("get_node", dkeys[i]).text+"_"+type);
+//			layers.push($(this.tree).jstree("get_node", dkeys[i]).text+"_"+type);
 			layers.push(dkeys[i]);
 		}
 
@@ -522,6 +573,7 @@ gitbuilder.ui.Validation = $.widget("gitbuilder.validation", {
 		totalObj["layerCollections"] = layerColl;
 		totalObj["typeValidate"] = typeValidate;
 		console.log(totalObj);
+
 		this.valiDef = totalObj;
 		// return totalObj;
 	},
@@ -561,10 +613,10 @@ gitbuilder.ui.Validation = $.widget("gitbuilder.validation", {
 			}
 		}
 
-// if (r.length > 0) {
-			this.updateValidationDef(r);
-			this.updateLayerList(r);
-// }
+//		if (r.length > 0) {
+		this.updateValidationDef(r);
+		this.updateLayerList(r);
+//		}
 	},
 	close : function() {
 		this.window.modal('hide');
