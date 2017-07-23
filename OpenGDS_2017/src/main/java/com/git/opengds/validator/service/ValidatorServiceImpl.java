@@ -78,7 +78,6 @@ public class ValidatorServiceImpl implements ValidatorService {
 	}*/
 
 	@SuppressWarnings("unchecked")
-	@Async
 	@Override
 	public void validate(final UserVO userVO, String jsonObject) throws Exception {
 
@@ -159,7 +158,6 @@ public class ValidatorServiceImpl implements ValidatorService {
 						}
 					} catch (NumberFormatException e) {
 						LOGGER.info("대상도엽 숫자아님");
-						return;
 					}
 					
 					Runnable runnable = new Runnable() {
@@ -228,6 +226,7 @@ public class ValidatorServiceImpl implements ValidatorService {
 					System.out.println("완료");
 //					return returnJSON;
 				} catch (Exception e) {
+					e.printStackTrace();
 					System.out.println("실패");
 //					e.printStackTrace();
 //					JSONObject returnJSON = new JSONObject();

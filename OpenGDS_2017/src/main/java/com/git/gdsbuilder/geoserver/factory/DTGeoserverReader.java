@@ -128,7 +128,7 @@ public class DTGeoserverReader extends GeoServerRESTReader {
 		for(String layerName:layerNames){
 			DTGeoLayer dtGeoLayer = getDTGeoLayer(workspace, layerName);
 			RESTLayer layer = getLayer(username, layerName);
-			dtGeoLayer.setStyle(layer.getDefaultStyle());
+//			dtGeoLayer.setStyle(layer.getDefaultStyle());
 			geoLayerList.add(dtGeoLayer);
 		}
 		return geoLayerList;

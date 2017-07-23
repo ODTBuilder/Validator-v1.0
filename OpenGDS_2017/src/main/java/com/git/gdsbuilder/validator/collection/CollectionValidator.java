@@ -257,7 +257,9 @@ public class CollectionValidator {
 			attributeValidate(types, collection, errorLayer);
 
 			// 인접도엽 검수
-			closeCollectionValidate(types, mapSystemRule, collection, "", errorLayer);
+			if(nearCollections.size()!=0){
+				closeCollectionValidate(types, mapSystemRule, collection, "", errorLayer);
+			}
 			errLayerList.add(errorLayer);
 			progress.put(collection.getCollectionName(), 2);
 
