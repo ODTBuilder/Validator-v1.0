@@ -189,7 +189,7 @@ gb.interaction.SelectWMS.prototype.setExtent = function(extent) {
 				"service" : "WFS",
 				"version" : "1.0.0",
 				"request" : "GetFeature",
-				"typeName" : "admin:" + that.layer.getSource().getParams().LAYERS,
+				"typeName" : that.layer.getSource().getParams().LAYERS,
 				"outputformat" : "text/javascript",
 				"bbox" : extent.toString(),
 				"format_options" : "callback:getJson"
@@ -199,7 +199,7 @@ gb.interaction.SelectWMS.prototype.setExtent = function(extent) {
 				"service" : "WFS",
 				"version" : "1.0.0",
 				"request" : "GetFeature",
-				"typeName" : "admin:" + that.layer.get("id"),
+				"typeName" : that.layer.get("id"),
 				"outputformat" : "text/javascript",
 				"bbox" : extent.toString(),
 				"format_options" : "callback:getJson"

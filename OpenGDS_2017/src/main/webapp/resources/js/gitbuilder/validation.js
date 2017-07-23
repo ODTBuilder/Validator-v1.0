@@ -132,10 +132,10 @@ gitbuilder.ui.Validation = $.widget("gitbuilder.validation", {
 					that.updateLayerList(r);
 				}
 			}
-//			if (r.length > 0) {
+// if (r.length > 0) {
 			that.updateValidationDef(r);
 			that.updateLayerList(r);
-//			}
+// }
 		});
 		$(this.tree).on('select_node.jstree', function(e, data) {
 			var r = [];
@@ -168,10 +168,10 @@ gitbuilder.ui.Validation = $.widget("gitbuilder.validation", {
 					that.updateLayerList(r);
 				}
 			}
-//			if (r.length > 0) {
+// if (r.length > 0) {
 			that.updateValidationDef(r);
 			that.updateLayerList(r);
-//			}
+// }
 		});
 		var layerlist = $("<div>").append(listhead).append(listbody);
 		this._addClass(layerlist, "panel");
@@ -388,7 +388,7 @@ gitbuilder.ui.Validation = $.widget("gitbuilder.validation", {
 					// that.setMessage("Error detected. Not published.");
 					// that.setProgress(0);
 					// }
-					that.afterRequest();
+					
 				},
 				error : function( jqXHR,  textStatus,  errorThrown ){
 					console.log(jqXHR);
@@ -397,6 +397,7 @@ gitbuilder.ui.Validation = $.widget("gitbuilder.validation", {
 					}
 				}
 			});
+			that.afterRequest();
 		} else {
 			that.setMessage("Validating option is not assigned.");
 		}
@@ -473,15 +474,15 @@ gitbuilder.ui.Validation = $.widget("gitbuilder.validation", {
 		var ldef = this.getLayerDefinition();
 		var odef = this.getOptionDefinition();
 		var wdef = this.getWeightDefinition();
-//		if (Object.keys(ldef).length === 0 || Object.keys(odef).length === 0 ||
-//		Object.keys(wdef).length === 0) {
-//		console.error("required option missing");
-//		this.setMessage('Error : Check the options (Layer definition, Option
-//		definition, Weight definition)');
-//		$(this.window).find(".validation-btn-start").prop("disabled", true);
-//		} else {
-//		$(this.window).find(".validation-btn-start").prop("disabled", false);
-//		}
+// if (Object.keys(ldef).length === 0 || Object.keys(odef).length === 0 ||
+// Object.keys(wdef).length === 0) {
+// console.error("required option missing");
+// this.setMessage('Error : Check the options (Layer definition, Option
+// definition, Weight definition)');
+// $(this.window).find(".validation-btn-start").prop("disabled", true);
+// } else {
+// $(this.window).find(".validation-btn-start").prop("disabled", false);
+// }
 		var lkeys = Object.keys(odef);
 		var layers = [];
 
@@ -559,12 +560,12 @@ gitbuilder.ui.Validation = $.widget("gitbuilder.validation", {
 			}  else if ($(this.tree).jstree("get_node", keys[i]).type === "n_dxf_layer_txt") {
 				type = "TEXT";
 			} 
-//			layers.push($(this.tree).jstree("get_node", keys[i]).text+"_"+type);
+// layers.push($(this.tree).jstree("get_node", keys[i]).text+"_"+type);
 			notDupObj[$(this.tree).jstree("get_node", keys[i]).text+"_"+type] = 0;
 		}
 		var dkeys = Object.keys(notDupObj);
 		for (var i = 0; i < dkeys.length; i++) {
-//			layers.push($(this.tree).jstree("get_node", dkeys[i]).text+"_"+type);
+// layers.push($(this.tree).jstree("get_node", dkeys[i]).text+"_"+type);
 			layers.push(dkeys[i]);
 		}
 
@@ -580,6 +581,7 @@ gitbuilder.ui.Validation = $.widget("gitbuilder.validation", {
 	open : function() {
 		this.window.modal('show');
 		this._init();
+		$(this.tree).jstree("refesh");
 		var arr = $(this.tree).jstree("get_selected");
 		var r = [];
 
@@ -613,10 +615,10 @@ gitbuilder.ui.Validation = $.widget("gitbuilder.validation", {
 			}
 		}
 
-//		if (r.length > 0) {
+// if (r.length > 0) {
 		this.updateValidationDef(r);
 		this.updateLayerList(r);
-//		}
+// }
 	},
 	close : function() {
 		this.window.modal('hide');

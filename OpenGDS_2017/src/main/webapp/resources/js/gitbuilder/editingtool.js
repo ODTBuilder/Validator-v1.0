@@ -421,7 +421,7 @@ gitbuilder.ui.EditingTool = $.widget("gitbuilder.editingtool", {
 				that.setLayer(that.updateSelected());
 				var attrInfo = that.getLayer().get("git").attribute;
 				that.feature = that.features.item(0);
-				if (condition) {
+				if (!!attrInfo) {
 					var attr = that.features.item(0).getProperties();
 					var keys = Object.keys(attrInfo);
 					for (var i = 0; i < keys.length; i++) {
@@ -760,7 +760,6 @@ gitbuilder.ui.EditingTool = $.widget("gitbuilder.editingtool", {
 						method : "POST",
 						contentType : "application/json; charset=UTF-8",
 						cache : false,
-						// async : false,
 						data : JSON.stringify(arr),
 						beforeSend : function() { // 호출전실행
 							$("body").css("cursor", "wait");

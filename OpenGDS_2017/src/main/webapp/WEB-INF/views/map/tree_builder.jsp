@@ -4,7 +4,7 @@
 <head>
 <jsp:include page="/WEB-INF/views/common/common3.jsp" />
 <script src='${pageContext.request.contextPath}/resources/js/login/login.js'></script>
-<title>Builder Test 2017</title>
+<title>GeoDT Online</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
 html {

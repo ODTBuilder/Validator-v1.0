@@ -2,8 +2,8 @@
 <nav id="mainHeader" class="navbar" style="margin-bottom: 0; border-radius: 0;">
 	<div class="container-fluid">
 		<div class="navbar-default">
-			<a class="navbar-brand" href="/opengds/main.do"> <img src="${pageContext.request.contextPath}/resources/img/logo379.png"
-				style="height: 22px; width: auto;">
+			<a class="navbar-brand" href="/opengds/main.do"> <img
+				src="${pageContext.request.contextPath}/resources/img/logo379.png" style="height: 22px; width: auto;">
 			</a>
 		</div>
 
@@ -14,15 +14,21 @@
 				<li><a href="#">Contact</a></li>
 			</ul>
 			<ul class="nav navbar-nav navbar-right">
-				<c:choose>	
+				<c:choose>
+					<c:when test="${user ne null}">
+						<li><a href="#"><i class="fa fa-user-circle-o"></i>&nbsp;${user.id}</a></li>
+					</c:when>
+				</c:choose>
+				<c:choose>
 					<c:when test="${user eq null}">
-					 	<li><a href="/opengds/user/loginView.do"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+						<li><a href="/opengds/user/loginView.do"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
 					</c:when>
 					<c:when test="${user ne null}">
-				 		<li><a href="javascript:logoutPopup()"><span class="glyphicon glyphicon-log-out"></span> Login-out</a></li>
-				</c:when>
+						<li><a href="javascript:logoutPopup()"><span class="glyphicon glyphicon-log-out"></span> Login-out</a></li>
+					</c:when>
 				</c:choose>
-				<li><a href="http://www.git.co.kr/main/main.html" target="_blank"><img src="${pageContext.request.contextPath}/resources/img/geo.png" height="20px"></a></li>
+				<li><a href="http://www.git.co.kr/main/main.html" target="_blank"><img
+						src="${pageContext.request.contextPath}/resources/img/geo.png" height="20px"></a></li>
 			</ul>
 		</div>
 	</div>
