@@ -139,7 +139,7 @@ public class FeatureCloseCollectionValidatorImpl implements FeatureCloseCollecti
 				}
 				if (matchMiss && isError) {
 					ErrorFeature errFeature = new ErrorFeature(featureIdx, featureID,
-							EdgeMatchMiss.Type.EDGEMATCHMISS.errType(), EdgeMatchMiss.Type.EDGEMATCHMISS.errName(),
+							EdgeMatchMiss.Type.EDGEMATCHMISS.errType(), "RefEntityMiss",
 							tmpPt);
 					collectionErrors.add(errFeature);
 				}
@@ -776,7 +776,7 @@ public class FeatureCloseCollectionValidatorImpl implements FeatureCloseCollecti
 					}
 					if (!isTrue) {
 						ErrorFeature errFeature = new ErrorFeature(featureIdx, featureID,
-								EntityNone.Type.ENTITYNONE.errType(), EntityNone.Type.ENTITYNONE.errName(), nearPoint);
+								EntityNone.Type.ENTITYNONE.errType(), "RefEntityMiss", nearPoint);
 						collectionErrs.add(errFeature);
 					}
 				}
