@@ -3,7 +3,7 @@
 <head>
   <jsp:include page="/WEB-INF/views/common/common3.jsp" />
   <meta charset="UTF-8">
-  <title>Login/Logout animation concept</title>
+  <title>GeoDT Online Login</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes">
 
   <link rel='stylesheet prefetch' href='https://fonts.googleapis.com/css?family=Open+Sans'>
