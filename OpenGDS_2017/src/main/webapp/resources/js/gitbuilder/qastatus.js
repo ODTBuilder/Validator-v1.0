@@ -322,14 +322,27 @@ gb.qa.QAStatus.prototype.setReport = function(layer) {
 		},
 		traditional : true,
 		success : function(data, textStatus, jqXHR) {
-			console.log(data);
 
+			var json = JSON.parse(data);
+			var arr = json.fields;
+			var tableData = [];
+			for (var i = 0; i < arr.length; i++) {
+				var row = [];
+				row.push(arr[i].collectionName);
+				row.push(arr[i].layerName);
+				row.push(arr[i].featureID);
+				row.push(arr[i].errorType);
+				row.push(arr[i].errorName);
+				row.push(arr[i].errorCoordinateX);
+				row.push(arr[i].errorCoordinateY);
+				tableData.push(row);
+			}
 			if (!!that.reportInstance) {
 				that.reportInstance.destroy();
 				that.reportInstance = undefined;
 			}
-			that.reportInstance = $(this.rtb).DataTable({
-				"data" : null,
+			that.reportInstance = $(that.rtb).DataTable({
+				"data" : tableData,
 				"columns" : [ {
 					title : "Map sheet number"
 				}, {
@@ -346,7 +359,8 @@ gb.qa.QAStatus.prototype.setReport = function(layer) {
 					title : "Coordinate Y"
 				} ]
 			});
-
+			that.switchNavi("report");
+			that.switchArea("report");
 		}
 	});
 
