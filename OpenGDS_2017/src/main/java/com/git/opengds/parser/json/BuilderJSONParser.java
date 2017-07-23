@@ -14,12 +14,11 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 
 import com.git.gdsbuilder.FileRead.en.EnFileFormat;
-import com.git.gdsbuilder.edit.qa10.EditQA10LayerCollectionList;
-import com.git.gdsbuilder.edit.qa20.EditQA20LayerCollectionList;
 import com.git.gdsbuilder.type.geoserver.collection.GeoLayerCollectionList;
 import com.git.gdsbuilder.type.geoserver.parser.GeoLayerCollectionParser;
 import com.git.gdsbuilder.type.validate.layer.ValidateLayerTypeList;
 import com.git.opengds.parser.validate.ValidateTypeParser;
+import com.git.opengds.user.domain.UserVO;
 
 public class BuilderJSONParser {
 
@@ -49,7 +48,7 @@ public class BuilderJSONParser {
 	 * HashMap<String,Object> @throws FileNotFoundException @throws
 	 * IOException @throws ParseException @throws SchemaException @throws
 	 */
-	public static HashMap<String, Object> parseValidateObj(JSONObject jsonObj)
+	public static HashMap<String, Object> parseValidateObj(JSONObject jsonObj, UserVO userVO)
 			throws FileNotFoundException, IOException, ParseException, SchemaException {
 
 		HashMap<String, Object> validateMap = new HashMap<String, Object>();
@@ -76,7 +75,7 @@ public class BuilderJSONParser {
 
 		String getCapabilities = URL + "/wfs?REQUEST=GetCapabilities&version=1.0.0";
 
-		GeoLayerCollectionParser collectionParser = new GeoLayerCollectionParser(layerCollections, ID, getCapabilities,
+		GeoLayerCollectionParser collectionParser = new GeoLayerCollectionParser(layerCollections, userVO.getId(), getCapabilities,
 				enFileFormat, validateLayerList);
 		GeoLayerCollectionList collectionList = collectionParser.getLayerCollections();
 		if (collectionList.size() == 0 && validateLayerTypeList.size() == 0) {
