@@ -145,3 +145,5 @@
 <script type="text/javascript">
 	var CONTEXT = "${pageContext.request.contextPath}";
 </script>
+
+<link rel="icon" type="image/png" href="${pageContext.request.contextPath}/resources/img/favi32.png"/>

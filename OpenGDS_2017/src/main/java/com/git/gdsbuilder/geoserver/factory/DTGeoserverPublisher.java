@@ -11,6 +11,7 @@ import com.git.gdsbuilder.geosolutions.geoserver.rest.HTTPUtils;
 import com.git.gdsbuilder.geosolutions.geoserver.rest.encoder.GSLayerEncoder;
 import com.git.gdsbuilder.geosolutions.geoserver.rest.encoder.GSResourceEncoder;
 import com.git.gdsbuilder.geosolutions.geoserver.rest.encoder.feature.GSFeatureTypeEncoder;
+import com.git.gdsbuilder.geosolutions.geoserver.rest.encoder.utils.NestedElementEncoder;
 import com.git.gdsbuilder.type.geoserver.layer.GeoLayerInfo;
 
 public class DTGeoserverPublisher extends GeoServerRESTPublisher
@@ -28,7 +29,49 @@ public class DTGeoserverPublisher extends GeoServerRESTPublisher
     this.gspass = password;
   }
 
+  @SuppressWarnings("deprecation")
+public boolean publishDBLayer(final String workspace, final String storename,
+          final GSFeatureTypeEncoder fte, final GSLayerEncoder layerEncoder){
+	  String ftypeXml = fte.toString();
+      StringBuilder postUrl = new StringBuilder(restURL).append("/rest/workspaces/")
+              .append(workspace).append("/datastores/").append(storename).append("/featuretypes");
 
+      final String layername = fte.getName();
+      if (layername == null || layername.isEmpty()) {
+          if (LOGGER.isErrorEnabled())
+              LOGGER.error("GSFeatureTypeEncoder has no valid name associated, try using GSFeatureTypeEncoder.setName(String)");
+          return false;
+      }
+
+      String configuredResult = HTTPUtils.postXml(postUrl.toString(), ftypeXml, this.gsuser,
+              this.gspass);
+      boolean published = configuredResult != null;
+      boolean configured = false;
+
+      if (!published) {
+          LOGGER.warn("Error in publishing (" + configuredResult + ") " + workspace + ":"
+                  + storename + "/" + layername);
+      } else {
+          LOGGER.info("DB layer successfully added (layer:" + layername + ")");
+
+          if (layerEncoder == null) {
+              if (LOGGER.isErrorEnabled())
+                  LOGGER.error("GSLayerEncoder is null: Unable to find the defaultStyle for this layer");
+              return false;
+          }
+
+          configured = configureLayer(workspace, layername, layerEncoder);
+
+          if (!configured) {
+              LOGGER.warn("Error in configuring (" + configuredResult + ") " + workspace + ":"
+                      + storename + "/" + layername);
+          } else {
+              LOGGER.info("DB layer successfully configured (layer:" + layername + ")");
+          }
+      }
+      return published && configured;
+  }
+  
   public boolean publishErrLayer(String wsName, String dsName, GeoLayerInfo geoLayerInfo)
   {
     String fileName = geoLayerInfo.getFileName();

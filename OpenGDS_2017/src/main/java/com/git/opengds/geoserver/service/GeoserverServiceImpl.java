@@ -43,6 +43,8 @@ import com.git.gdsbuilder.geosolutions.geoserver.rest.encoder.GSLayerEncoder;
 import com.git.gdsbuilder.geosolutions.geoserver.rest.encoder.GSLayerGroupEncoder;
 import com.git.gdsbuilder.geosolutions.geoserver.rest.encoder.GSResourceEncoder.ProjectionPolicy;
 import com.git.gdsbuilder.geosolutions.geoserver.rest.encoder.feature.GSFeatureTypeEncoder;
+import com.git.gdsbuilder.geosolutions.geoserver.rest.encoder.utils.NestedElementEncoder;
+import com.git.gdsbuilder.geosolutions.geoserver.rest.encoder.utils.XmlElement;
 import com.git.gdsbuilder.type.geoserver.layer.GeoLayerInfo;
 import com.git.gdsbuilder.type.geoserver.layer.GeoLayerInfoList;
 import com.git.opengds.geoserver.data.style.GeoserverSldTextType;
@@ -142,9 +144,10 @@ public class GeoserverServiceImpl implements GeoserverService {
 			fte.setNativeCRS(originSrc);
 			fte.setNativeName(layerFullName); // nativeName
 			// fte.setLatLonBoundingBox(minx, miny, maxx, maxy, originSrc);
-
 			
-			
+			//성능향상
+			fte.addMetadata("cacheAgeMax", "604800");
+			fte.addMetadata("cachingEnabled", ("true"));
 			
 			//Style 적용
 			String styleName = upperLayerName;
@@ -247,7 +250,7 @@ public class GeoserverServiceImpl implements GeoserverService {
 				layerInfo.setServerPublishFlag(flag);
 				return layerInfo;
 			}
-			successLayerList.add(layerFullName);
+			successLayerList.add(userVO.getId()+":"+layerFullName);
 		}
 
 		
@@ -256,8 +259,8 @@ public class GeoserverServiceImpl implements GeoserverService {
 			Geometry geometry = collection.union();
 			GSLayerGroupEncoder group = new GSLayerGroupEncoder();
 			for (int i = 0; i < successLayerList.size(); i++) {
-				String Layer = (String) successLayerList.get(i);
-				group.addLayer(Layer);
+				String layer = (String) successLayerList.get(i);
+				group.addLayer(layer);
 			}
 	
 			Coordinate[] coordinateArray = geometry.getEnvelope().getCoordinates();
@@ -280,6 +283,13 @@ public class GeoserverServiceImpl implements GeoserverService {
 
 		return layerInfo;
 	}
+	
+	
+	private void layerPublishTread(){
+		
+	}
+	
+	
 
 	/**
 	 * @since 2017. 5. 12.

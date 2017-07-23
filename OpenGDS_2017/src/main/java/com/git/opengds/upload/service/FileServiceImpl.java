@@ -147,6 +147,7 @@ public class FileServiceImpl implements FileService {
 	private LinkedList<FileMeta> filesPublish(UserVO userVO, LinkedList<FileMeta> fileMetaList) {
 		LinkedList<FileMeta> fileMetas = fileMetaList;
 
+		int a  = fileMetaList.size();
 		for (int i = 0; i < fileMetas.size(); i++) {
 			FileMeta fileMeta = fileMetas.get(i);
 			int pos = fileMeta.getFilePath().lastIndexOf(".");
@@ -169,6 +170,9 @@ public class FileServiceImpl implements FileService {
 		}
 		return fileMetas;
 	}
+	
+	
+//	private 
 
 	public boolean fileNameDupCheck(UserVO userVO, String fileFullName) {
 		boolean dupFlag = false;

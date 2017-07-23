@@ -23,6 +23,7 @@ public class QA10FileUploadServiceImpl implements QA10FileUploadService {
 	@Inject
 	private GeoserverService geoserverService;
 	
+	
 /*	public QA10FileUploadServiceImpl(UserVO userVO) {
 		// TODO Auto-generated constructor stub
 		dbmanagerService = new QA10DBManagerServiceImpl(userVO);

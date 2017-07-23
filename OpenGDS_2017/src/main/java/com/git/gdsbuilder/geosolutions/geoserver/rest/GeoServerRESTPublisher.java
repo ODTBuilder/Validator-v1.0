@@ -974,6 +974,7 @@ public class GeoServerRESTPublisher {
      */
     public boolean publishDBLayer(final String workspace, final String storename,
             final GSFeatureTypeEncoder fte, final GSLayerEncoder layerEncoder) {
+    	 System.out.println(fte.toString());
         /*
          * This is the equivalent call with cUrl:
          * 
