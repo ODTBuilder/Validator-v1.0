@@ -332,7 +332,6 @@ html {
 		$("#edit").editingtool({
 			url : "geoserver/geoserverWFSGetFeature.ajax",
 			map : map,
-			user : "admin",
 			featureRecord : frecord,
 			treeInstance : $('#builderClientLayer').jstreeol3(true),
 			selected : function() {
@@ -473,6 +472,18 @@ html {
 		});
 		$("#qastat").click(function() {
 			qastat.open();
+		});
+
+		var pan = new gb.panel.EditingTool({
+			width : 84,
+			height : 145,
+			positionX : 425,
+			positionY : 100,
+			autoOpen : true,
+			map : map,
+			infoURL : "geoserver/getGeoLayerInfoList.ajax",
+			wmsURL : "geoserver/geoserverWMSLayerLoad.do",
+			wfsURL : "geoserver/geoserverWFSGetFeature.ajax"
 		});
 	</script>
 
