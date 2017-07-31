@@ -4,7 +4,7 @@
  * @author yijun.so
  * @date 2017. 07.26
  * @version 0.01
- * @class gb.panel.Base
+ * @class gb.panel.EditingTool
  * @constructor
  */
 var gb;
@@ -16,12 +16,24 @@ gb.panel.EditingTool = function(obj) {
 	gb.panel.Base.call(this, obj);
 	var options = obj ? obj : {};
 	this.map = options.map ? options.map : undefined;
+	this.featureRecord = options.featureRecord ? options.featureRecord : undefined;
+	this.treeInstance = options.treeInstance ? options.treeInstance : undefined;
+	this.selected = options.selected ? options.selected : undefined;
 	this.infoURL = options.infoURL ? options.infoURL : undefined;
 	this.wmsURL = options.wmsURL ? options.wmsURL : undefined;
 	this.wfsURL = options.wfsURL ? options.wfsURL : undefined;
 
 	this.layers = undefined;
 	this.layer = undefined;
+
+	this.features = new ol.Collection();
+	this.tempSource = new ol.source.Vector({
+		features : this.features
+	});
+	this.tempVector = new ol.layer.Vector({
+		map : this.map,
+		source : this.tempSource
+	});
 
 	this.btn = {
 		selectBtn : undefined,
@@ -51,8 +63,12 @@ gb.panel.EditingTool = function(obj) {
 		remove : undefined
 	};
 
+	var that = this;
 	var i1 = $("<i>").addClass("fa").addClass("fa-mouse-pointer").attr("aria-hidden", true);
-	this.btn.selectBtn = $("<button>").addClass("gb-panel-editingtool-btn").append(i1);
+	this.btn.selectBtn = $("<button>").addClass("gb-panel-editingtool-btn").click(function() {
+		console.log("click select");
+		that.select(that.updateSelected());
+	}).append(i1);
 	var float1 = $("<div>").css({
 		"float" : "left"
 	}).append(this.btn.selectBtn);
@@ -95,10 +111,96 @@ gb.panel.EditingTool = function(obj) {
 		this.close();
 	}
 	$("body").append(this.panel);
+
+	var fth1 = $("<th>").text("Index");
+	var fth2 = $("<th>").text("Description");
+	var ftr = $("<tr>").append(fth1).append(fth2);
+	var fhd = $("<thead>").append(ftr);
+	this.featureTB = $("<tbody>").mouseleave(function() {
+		that.map.getView().fit(that.tempSelectSource.getExtent(), that.map.getSize());
+	});
+	var ftb = $("<table>").addClass("gb-table").append(fhd).append(this.featureTB);
+
+	this.featurePop = new gb.panel.Base({
+		"width" : "240px",
+		"positionX" : 0,
+		"positionY" : 0,
+		"autoOpen" : false,
+		"body" : ftb
+	});
+
+	var ath1 = $("<th>").text("Key");
+	var ath2 = $("<th>").text("Value");
+	var atr = $("<tr>").append(ath1).append(ath2);
+	var ahd = $("<thead>").append(atr);
+	this.attrTB = $("<tbody>");
+	var atb = $("<table>").addClass("gb-table").append(ahd).append(this.attrTB);
+	this.attrPop = new gb.panel.Base({
+		"width" : "300px",
+		"positionX" : 0,
+		"positionY" : 0,
+		"autoOpen" : false,
+		"body" : atb
+	});
+	// var ahead = $("<div>").addClass("panel-heading").css({
+	// "padding" : 0
+	// }).append(" ");
+	// var alist =
+	// $("<div>").addClass("panel-body").addClass("gb-edit-sel-apan").css({
+	// "max-height" : "300px",
+	// "overflow-y" : "auto"
+	// }).append(this.attrTB);
+	// this.attrPop = $("<div>").css({
+	// "width" : "250px",
+	// // "max-height" : "300px",
+	// "top" : 0,
+	// "right" : 0,
+	// "position" : "absolute",
+	// "z-Index" : "999",
+	// "margin-bottom" : 0
+	// }).addClass("panel").addClass("panel-default").append(ahead).append(alist);
+	// $("body").append(this.attrPop);
+	// $(this.attrPop).hide();
+	// $(this.attrPop).draggable({
+	// appendTo : "body"
+	// });
 };
 gb.panel.EditingTool.prototype = Object.create(gb.panel.Base.prototype);
 gb.panel.EditingTool.prototype.constructor = gb.panel.EditingTool;
-
+/**
+ * 피처목록을 생성한다.
+ * 
+ */
+gb.panel.EditingTool.prototype.setFeatureList_ = function() {
+	return this.interaction;
+};
+/**
+ * 내부 인터랙션 구조를 반환한다.
+ * 
+ * @return {Mixed Obj} {select : ol.interaction.Select..}
+ */
+gb.panel.EditingTool.prototype.getInteractions_ = function() {
+	return this.interaction;
+};
+/**
+ * 내부 인터랙션 하나를 반환한다.
+ * 
+ * @return {Mixed Obj} {select : ol.interaction.Select..}
+ */
+gb.panel.EditingTool.prototype.getInteraction_ = function(key) {
+	return this.interaction[key];
+};
+/**
+ * 내부 인터랙션 구조를 설정한다.
+ * 
+ * @param {String}
+ *            key - interaction name
+ * @param {ol.interaction.Interaction}
+ *            val - interaction
+ */
+gb.panel.EditingTool.prototype.setInteraction_ = function(key, val) {
+	this.interaction[key] = val;
+};
 /**
  * 편집할 레이어를 설정한다.
  * 
@@ -125,13 +227,15 @@ gb.panel.EditingTool.prototype.getLayer = function() {
  */
 gb.panel.EditingTool.prototype.activeIntrct_ = function(intrct) {
 	// var that = this;
-	var keys = Object.keys(this.interaction);
+	var keys = Object.keys(this.getInteractions_());
 	for (var i = 0; i < keys.length; i++) {
-		this.interaction[keys[i]].setActive(false);
+		if (this.getInteraction_(keys[i])) {
+			this.getInteraction_(keys[i]).setActive(false);
+		}
 	}
 	if (Array.isArray(intrct)) {
 		for (var j = 0; j < intrct.length; j++) {
-			this.interaction[intrct[j]].setActive(true);
+			this.getInteraction_(intrct[j]).setActive(true);
 			if (intrct[j] === "select" || intrct[j] === "selectWMS" || intrct[j] === "dragbox") {
 				this.isOn["select"] = true;
 			} else {
@@ -139,7 +243,7 @@ gb.panel.EditingTool.prototype.activeIntrct_ = function(intrct) {
 			}
 		}
 	} else if (typeof intrct === "string") {
-		this.interaction[intrct].setActive(true);
+		this.getInteraction_(intrct).setActive(true);
 		if (intrct === "select" || intrct === "selectWMS" || intrct[j] === "dragbox") {
 			this.isOn["select"] = true;
 		} else {
@@ -161,7 +265,7 @@ gb.panel.EditingTool.prototype.deactiveIntrct_ = function(intrct) {
 			}
 			if (intrct[j] === "select" || intrct[j] === "selectWMS") {
 				this.isOn["select"] = false;
-				$(this.featurePop).hide();
+				this.featurePop.close();
 			} else {
 				this.isOn[intrct[j]] = false;
 				this.tempVector.setMap(this.map);
@@ -223,9 +327,9 @@ gb.panel.EditingTool.prototype.select = function(layer) {
 	if (this.isOn.select) {
 		if (!!this.interaction.selectWMS || !!this.interaction.select) {
 			this.interaction.select.getFeatures().clear();
-			this.deactiveIntrct([ "dragbox", "select", "selectWMS" ]);
+			this.deactiveIntrct_([ "dragbox", "select", "selectWMS" ]);
 		}
-		this.deactiveBtn("selectBtn");
+		this.deactiveBtn_("selectBtn");
 		this.isOn.select = false;
 		return;
 	}
@@ -324,30 +428,38 @@ gb.panel.EditingTool.prototype.select = function(layer) {
 			that.tempSelectSource.clear();
 			that.tempSelectSource.addFeatures(that.features.getArray());
 			if (that.features.getLength() > 1) {
-				$(that.featurePop).hide();
+				that.featurePop.close();
 				for (var i = 0; i < that.features.getLength(); i++) {
+					var idx = that.features.item(i).getId().substring(that.features.item(i).getId().indexOf(".") + 1);
+					var td1 = $("<td>").text(idx);
 					var anc = $("<a>").addClass("gb-edit-sel-flist").css("cursor", "pointer").attr({
-						"title" : that.features.item(i).getId()
-					}).text(that.features.item(i).getId());
-					var td = $("<td>").css({
-						"text-overflow" : "ellipsis",
-						"overflow" : "hidden",
-						"text-align" : "right"
-					}).append(anc);
-					var tr = $("<tr>").append(td);
+						"value" : that.features.item(i).getId()
+					}).text("Selecting feature").click(function() {
+						var feature = that.tempSelectSource.getFeatureById($(this).attr("value"));
+						that.interaction.select.getFeatures().clear();
+						that.interaction.select.getFeatures().push(feature);
+						that.featurePop.close();
+						console.log(feature);
+					});
+					var td2 = $("<td>").append(anc).mouseover(function() {
+						var fid = $(this).find("a").attr("value");
+						var feature = that.tempSelectSource.getFeatureById(fid);
+						that.map.getView().fit(feature.getGeometry().getExtent(), that.map.getSize());
+					});
+					var tr = $("<tr>").append(td1).append(td2);
 					$(that.featureTB).append(tr);
 				}
 
-				$(that.featurePop).show();
-				$(that.featurePop).position({
-					"my" : "right center",
-					"at" : "right center",
-					"of" : document,
+				that.featurePop.open();
+				that.featurePop.getPanel().position({
+					"my" : "left top",
+					"at" : "right top",
+					"of" : that.getPanel(),
 					"collision" : "fit"
 				});
-				$(that.attrPop).hide();
+				that.attrPop.close();
 			} else if (that.features.getLength() === 1) {
-				$(that.featurePop).hide();
+				that.featurePop.close();
 				$(that.attrTB).empty();
 				that.setLayer(that.updateSelected());
 				var attrInfo = that.getLayer().get("git").attribute;
@@ -365,33 +477,38 @@ gb.panel.EditingTool.prototype.select = function(layer) {
 						}).css({
 							"width" : "100%",
 							"border" : "none"
-						}).val(attr[keys[i]]);
+						}).val(attr[keys[i]]).on("input", function() {
+							var obj = {};
+							obj[$(this).parent().prev().text()] = $(this).val();
+							that.feature.setProperties(obj);
+							that.featureRecord.update(that.getLayer(), that.feature);
+						});
 						var td2 = $("<td>").append(tform);
 						var tr = $("<tr>").append(td1).append(td2);
 						that.attrTB.append(tr);
 					}
-					$(that.attrPop).show();
-					$(that.attrPop).position({
-						"my" : "right bottom",
-						"at" : "right bottom+100",
-						"of" : document,
+					that.attrPop.open();
+					that.attrPop.getPanel().position({
+						"my" : "left top",
+						"at" : "right top",
+						"of" : that.getPanel(),
 						"collision" : "fit"
 					});
 				} else {
 					// $(that.featurePop).hide();
-					$(that.attrPop).hide();
+					that.attrPop.close();
 				}
 			} else {
-				$(that.featurePop).hide();
-				$(that.attrPop).hide();
+				that.featurePop.close();
+				that.attrPop.close();
 			}
 
 		});
 		// this.map.addInteraction(this.interaction.selectWMS);
-		this.activeIntrct([ "select", "dragbox" ]);
+		this.activeIntrct_([ "select", "dragbox" ]);
 		this.isOn.select = true;
-		this.activeBtn("selectBtn");
-		this.deactiveIntrct([ "move", "rotate" ]);
+		this.activeBtn_("selectBtn");
+		this.deactiveIntrct_([ "move", "rotate" ]);
 	} else if (sourceLayer instanceof ol.layer.Base) {
 		// && (sourceLayer.get("git").geometry === "Point" ||
 		// sourceLayer.get("git").geometry === "LineString"
@@ -572,10 +689,10 @@ gb.panel.EditingTool.prototype.select = function(layer) {
 			that.interaction.selectWMS.setExtent(this.getGeometry().getExtent());
 		});
 		this.interaction.selectWMS = new gb.interaction.SelectWMS({
-			url : that.options.url,
+			url : this.wfsURL,
 			select : that.interaction.select,
 			destination : that.tempVector,
-			record : that.options.featureRecord,
+			record : this.featureRecord,
 			layer : function() {
 				return that.updateSelected();
 			}
@@ -586,30 +703,38 @@ gb.panel.EditingTool.prototype.select = function(layer) {
 			that.tempSelectSource.clear();
 			that.tempSelectSource.addFeatures(that.features.getArray());
 			if (that.features.getLength() > 1) {
-				$(that.featurePop).hide();
+				that.featurePop.close();
 				for (var i = 0; i < that.features.getLength(); i++) {
+					var idx = that.features.item(i).getId().substring(that.features.item(i).getId().indexOf(".") + 1);
+					var td1 = $("<td>").text(idx);
 					var anc = $("<a>").addClass("gb-edit-sel-flist").css("cursor", "pointer").attr({
-						"title" : that.features.item(i).getId()
-					}).text(that.features.item(i).getId());
-					var td = $("<td>").css({
-						"text-overflow" : "ellipsis",
-						"overflow" : "hidden",
-						"text-align" : "right"
-					}).append(anc);
-					var tr = $("<tr>").append(td);
+						"value" : that.features.item(i).getId()
+					}).text("Selecting feature").click(function() {
+						var feature = that.tempSelectSource.getFeatureById($(this).attr("value"));
+						that.interaction.select.getFeatures().clear();
+						that.interaction.select.getFeatures().push(feature);
+						that.featurePop.close();
+						console.log(feature);
+					});
+					var td2 = $("<td>").append(anc).mouseover(function() {
+						var fid = $(this).find("a").attr("value");
+						var feature = that.tempSelectSource.getFeatureById(fid);
+						that.map.getView().fit(feature.getGeometry().getExtent(), that.map.getSize());
+					});
+					var tr = $("<tr>").append(td1).append(td2);
 					$(that.featureTB).append(tr);
 				}
 
-				$(that.featurePop).show();
-				$(that.featurePop).position({
-					"my" : "right center",
-					"at" : "right center",
-					"of" : document,
+				that.featurePop.open();
+				that.featurePop.getPanel().position({
+					"my" : "left top",
+					"at" : "right top",
+					"of" : that.getPanel(),
 					"collision" : "fit"
 				});
-				$(that.attrPop).hide();
+				that.attrPop.close();
 			} else if (that.features.getLength() === 1) {
-				$(that.featurePop).hide();
+				that.featurePop.close();
 				$(that.attrTB).empty();
 				that.setLayer(that.updateSelected());
 				var attrInfo = that.getLayer().get("git").attribute;
@@ -628,30 +753,36 @@ gb.panel.EditingTool.prototype.select = function(layer) {
 						}).css({
 							"width" : "100%",
 							"border" : "none"
-						}).val(attr[keys[i]]);
+						}).val(attr[keys[i]]).on("input", function() {
+							var obj = {};
+							obj[$(this).parent().prev().text()] = $(this).val();
+							that.feature.setProperties(obj);
+							that.featureRecord.update(that.getLayer(), that.feature);
+						});
+
 						var td2 = $("<td>").append(tform);
 						var tr = $("<tr>").append(td1).append(td2);
 						that.attrTB.append(tr);
 					}
-					$(that.attrPop).show();
-					$(that.attrPop).position({
-						"my" : "right bottom",
-						"at" : "right bottom+100",
-						"of" : document,
+					that.attrPop.open();
+					that.attrPop.getPanel().position({
+						"my" : "left top",
+						"at" : "right top",
+						"of" : that.getPanel(),
 						"collision" : "fit"
 					});
 				}
 			} else {
-				$(that.featurePop).hide();
-				$(that.attrPop).hide();
+				that.featurePop.close();
+				that.attrPop.close();
 			}
 
 		});
 		this.map.addInteraction(this.interaction.selectWMS);
-		this.activeIntrct([ "select", "selectWMS", "dragbox" ]);
+		this.activeIntrct_([ "select", "selectWMS", "dragbox" ]);
 		this.isOn.select = true;
-		this.activeBtn("selectBtn");
-		this.deactiveIntrct([ "move", "rotate" ]);
+		this.activeBtn_("selectBtn");
+		this.deactiveIntrct_([ "move", "rotate" ]);
 	}
 };
 /**
@@ -664,14 +795,14 @@ gb.panel.EditingTool.prototype.draw = function(layer) {
 	var that = this;
 	if (this.isOn.draw) {
 		if (!!this.interaction.draw || !!this.interaction.updateDraw) {
-			this.deactiveIntrct("draw");
+			this.deactiveIntrct_("draw");
 			this.deactiveBtn("drawBtn");
 		}
 		return;
 	}
 	if (!!this.interaction.select) {
 		this.interaction.select.getFeatures().clear();
-		this.deactiveIntrct([ "dragbox", "select", "selectWMS" ]);
+		this.deactiveIntrct_([ "dragbox", "select", "selectWMS" ]);
 	}
 	var sourceLayer;
 	if (Array.isArray(layer)) {
@@ -711,18 +842,18 @@ gb.panel.EditingTool.prototype.draw = function(layer) {
 		};
 		this.interaction.draw.on("drawend", function(evt) {
 			console.log(evt);
-			var layers = that.options.selected();
+			var layers = that.selected();
 			if (layers.length !== 1) {
 				return;
 			}
 			if (that.getLayer().get("id") === layers[0].get("id")) {
 				var feature = evt.feature;
-				var c = that.options.featureRecord.getCreated();
+				var c = that.featureRecord.getCreated();
 				var l = c[that.getLayer().get("id")];
 				if (!l) {
 					var fid = that.getLayer().get("id") + ".new0";
 					feature.setId(fid);
-					that.options.featureRecord.create(layers[0], feature);
+					that.featureRecord.create(layers[0], feature);
 				} else {
 					var keys = Object.keys(l);
 					var count;
@@ -735,14 +866,14 @@ gb.panel.EditingTool.prototype.draw = function(layer) {
 					}
 					var fid = that.getLayer().get("id") + ".new" + count;
 					feature.setId(fid);
-					that.options.featureRecord.create(layers[0], feature);
+					that.featureRecord.create(layers[0], feature);
 				}
 			}
 		});
 		this.map.addInteraction(this.interaction.draw);
-		this.deactiveIntrct([ "select", "selectWMS", "move", "modify", "rotate" ]);
-		this.activeIntrct("draw");
-		this.activeBtn("drawBtn");
+		this.deactiveIntrct_([ "select", "selectWMS", "move", "modify", "rotate" ]);
+		this.activeIntrct_("draw");
+		this.activeBtn_("drawBtn");
 	} else if (git.editable === true && sourceLayer instanceof ol.layer.Vector) {
 		this.interaction.draw = new ol.interaction.Draw({
 			source : sourceLayer.getSource(),
@@ -774,18 +905,18 @@ gb.panel.EditingTool.prototype.draw = function(layer) {
 
 		this.interaction.draw.on("drawend", function(evt) {
 			console.log(evt);
-			var layers = that.options.selected();
+			var layers = that.selected();
 			if (layers.length !== 1) {
 				return;
 			}
 			if (that.getLayer().get("id") === layers[0].get("id")) {
 				var feature = evt.feature;
-				var c = that.options.featureRecord.getCreated();
+				var c = that.featureRecord.getCreated();
 				var l = c[that.getLayer().get("id")];
 				if (!l) {
 					var fid = that.getLayer().get("id") + ".new0";
 					feature.setId(fid);
-					that.options.featureRecord.create(layers[0], feature);
+					that.featureRecord.create(layers[0], feature);
 				} else {
 					var keys = Object.keys(l);
 					var count;
@@ -798,14 +929,14 @@ gb.panel.EditingTool.prototype.draw = function(layer) {
 					}
 					var fid = that.getLayer().get("id") + ".new" + count;
 					feature.setId(fid);
-					that.options.featureRecord.create(layers[0], feature);
+					that.featureRecord.create(layers[0], feature);
 				}
 			}
 		});
 		this.map.addInteraction(this.interaction.draw);
-		this.deactiveIntrct([ "select", "selectWMS", "move", "modify", "rotate" ]);
-		this.activeIntrct("draw");
-		this.activeBtn("drawBtn");
+		this.deactiveIntrct_([ "select", "selectWMS", "move", "modify", "rotate" ]);
+		this.activeIntrct_("draw");
+		this.activeBtn_("drawBtn");
 	}
 
 };
@@ -821,7 +952,7 @@ gb.panel.EditingTool.prototype.move = function(layer) {
 		if (this.isOn.move) {
 			if (!!this.interaction.move) {
 				this.interaction.select.getFeatures().clear();
-				this.deactiveIntrct("move");
+				this.deactiveIntrct_("move");
 				this.deactiveBtn("moveBtn");
 				this.map.removeLayer(this.managed);
 			}
@@ -840,21 +971,21 @@ gb.panel.EditingTool.prototype.move = function(layer) {
 		});
 		this.interaction.move.on("translateend", function(evt) {
 			console.log(evt);
-			var layers = that.options.selected();
+			var layers = that.selected();
 			if (layers.length !== 1) {
 				return;
 			}
 			if (that.getLayer().get("id") === layers[0].get("id")) {
 				var features = evt.features;
 				for (var i = 0; i < features.getLength(); i++) {
-					that.options.featureRecord.update(layers[0], features.item(i));
+					that.featureRecord.update(layers[0], features.item(i));
 				}
 			}
 		});
 		this.map.addInteraction(this.interaction.move);
-		this.deactiveIntrct([ "select", "selectWMS", "modify", "rotate" ]);
-		this.activeIntrct("move");
-		this.activeBtn("moveBtn");
+		this.deactiveIntrct_([ "select", "selectWMS", "modify", "rotate" ]);
+		this.activeIntrct_("move");
+		this.activeBtn_("moveBtn");
 	} else {
 		console.error("select features");
 	}
@@ -871,7 +1002,7 @@ gb.panel.EditingTool.prototype.rotate = function(layer) {
 		if (this.isOn.rotate) {
 			if (!!this.interaction.rotate) {
 				this.interaction.select.getFeatures().clear();
-				this.deactiveIntrct("rotate");
+				this.deactiveIntrct_("rotate");
 				this.deactiveBtn("rotateBtn");
 			}
 			return;
@@ -893,19 +1024,19 @@ gb.panel.EditingTool.prototype.rotate = function(layer) {
 		});
 		this.interaction.rotate.on("transformend", function(evt) {
 			console.log(evt);
-			var layers = that.options.selected();
+			var layers = that.selected();
 			if (layers.length !== 1) {
 				return;
 			}
 			if (that.getLayer().get("id") === layers[0].get("id")) {
 				var feature = evt.feature;
-				that.options.featureRecord.update(layers[0], feature);
+				that.featureRecord.update(layers[0], feature);
 			}
 		});
 		this.map.addInteraction(this.interaction.rotate);
-		this.deactiveIntrct([ "select", "selectWMS", "move", "modify" ]);
-		this.activeIntrct("rotate");
-		this.activeBtn("rotateBtn");
+		this.deactiveIntrct_([ "select", "selectWMS", "move", "modify" ]);
+		this.activeIntrct_("rotate");
+		this.activeBtn_("rotateBtn");
 	} else {
 		console.error("select features");
 	}
@@ -922,7 +1053,7 @@ gb.panel.EditingTool.prototype.modify = function(layer) {
 		if (this.isOn.modify) {
 			if (!!this.interaction.modify) {
 				this.interaction.select.getFeatures().clear();
-				this.deactiveIntrct("modify");
+				this.deactiveIntrct_("modify");
 				this.deactiveBtn("modiBtn");
 				this.map.removeLayer(this.managed);
 			}
@@ -941,21 +1072,21 @@ gb.panel.EditingTool.prototype.modify = function(layer) {
 		});
 		this.interaction.modify.on("modifyend", function(evt) {
 			console.log(evt);
-			var layers = that.options.selected();
+			var layers = that.selected();
 			if (layers.length !== 1) {
 				return;
 			}
 			if (that.getLayer().get("id") === layers[0].get("id")) {
 				var features = evt.features;
 				for (var i = 0; i < features.getLength(); i++) {
-					that.options.featureRecord.update(layers[0], features.item(i));
+					that.featureRecord.update(layers[0], features.item(i));
 				}
 			}
 		});
 		this.map.addInteraction(this.interaction.modify);
-		this.deactiveIntrct([ "select", "selectWMS", "move", "rotate" ]);
-		this.activeIntrct("modify");
-		this.activeBtn("modiBtn");
+		this.deactiveIntrct_([ "select", "selectWMS", "move", "rotate" ]);
+		this.activeIntrct_("modify");
+		this.activeBtn_("modiBtn");
 	} else {
 		console.error("select features");
 	}
@@ -985,7 +1116,7 @@ gb.panel.EditingTool.prototype.remove = function(layer) {
 			this.managed.set("id", "temp_vector");
 			this.map.addLayer(this.managed);
 		}
-		var layers = that.options.selected();
+		var layers = that.selected();
 		if (layers.length !== 1) {
 			return;
 		}
@@ -1016,7 +1147,7 @@ gb.panel.EditingTool.prototype.remove = function(layer) {
 				} else {
 					features.item(i).setStyle(style);
 				}
-				that.options.featureRecord.remove(layers[0], features.item(i));
+				that.featureRecord.remove(layers[0], features.item(i));
 			}
 		}
 		this.interaction.select.getFeatures().clear();
@@ -1032,8 +1163,8 @@ gb.panel.EditingTool.prototype.remove = function(layer) {
  */
 gb.panel.EditingTool.prototype.updateSelected = function() {
 	var result;
-	if (typeof this.options.selected === "function") {
-		this.layers = this.options.selected();
+	if (typeof this.selected === "function") {
+		this.layers = this.selected();
 		if (Array.isArray(this.layers)) {
 			this.layer = this.layers[0];
 			result = this.layer;

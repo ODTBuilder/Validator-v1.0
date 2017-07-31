@@ -329,15 +329,15 @@ html {
 			transfer.sendStructure();
 		});
 
-		$("#edit").editingtool({
-			url : "geoserver/geoserverWFSGetFeature.ajax",
-			map : map,
-			featureRecord : frecord,
-			treeInstance : $('#builderClientLayer').jstreeol3(true),
-			selected : function() {
-				return $('#builderClientLayer').jstreeol3("get_selected_layer");
-			}
-		});
+		// 		$("#edit").editingtool({
+		// 			url : "geoserver/geoserverWFSGetFeature.ajax",
+		// 			map : map,
+		// 			featureRecord : frecord,
+		// 			treeInstance : $('#builderClientLayer').jstreeol3(true),
+		// 			selected : function() {
+		// 				return $('#builderClientLayer').jstreeol3("get_selected_layer");
+		// 			}
+		// 		});
 
 		$("#changeBase").changebase({
 			map : map2
@@ -475,12 +475,17 @@ html {
 		});
 
 		var pan = new gb.panel.EditingTool({
-			width : 84,
-			height : 145,
+			width : "84px",
+			height : "145px",
 			positionX : 425,
 			positionY : 100,
 			autoOpen : true,
 			map : map,
+			featureRecord : frecord,
+			treeInstance : $('#builderClientLayer').jstreeol3(true),
+			selected : function() {
+				return $('#builderClientLayer').jstreeol3("get_selected_layer");
+			},
 			infoURL : "geoserver/getGeoLayerInfoList.ajax",
 			wmsURL : "geoserver/geoserverWMSLayerLoad.do",
 			wfsURL : "geoserver/geoserverWFSGetFeature.ajax"

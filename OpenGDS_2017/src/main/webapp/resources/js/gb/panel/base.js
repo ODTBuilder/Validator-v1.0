@@ -13,29 +13,36 @@ if (!gb)
 if (!gb.panel)
 	gb.panel = {};
 gb.panel.Base = function(obj) {
+	var that = this;
 	var options = obj ? obj : {};
-	this.width = options.width ? options.width : 200;
-	this.height = options.height ? options.height : 400;
+	this.width = options.width ? options.width : "auto";
+	this.height = options.height ? options.height : "auto";
 	this.x = options.positionX ? options.positionX : 0;
 	this.y = options.positionY ? options.positionY : 0;
 	this.autoOpen = options.autoOpen ? true : false;
-	this.panelHead = $("<div>").addClass("gb-panel-head").css({
-		"height" : "10px"
+	var span = $("<span>").html("&times;");
+	var btn = $("<button>").append(span).click(function() {
+		that.close();
 	});
+	this.panelHead = $("<div>").addClass("gb-panel-head").append(btn);
+	var body = typeof options.body === "function" ? options.body() : options.body;
 	this.panelBody = $("<div>").addClass("gb-panel-body");
+	if (body) {
+		$(this.panelBody).append(body);
+	}
 	this.panel = $("<div>").addClass("gb-panel").css({
-		"width" : this.width + "px",
-		"height" : this.height + "px",
+		"width" : this.width,
+		"height" : this.height,
 		"position" : "absolute",
 		"z-Index" : "999",
 		"top" : this.y + "px",
 		"left" : this.x + "px"
 	}).append(this.panelHead).append(this.panelBody);
 
-	$(this.panel).draggable({
-		appendTo : "body",
-		containment : "body"
-	});
+	// $(this.panel).draggable({
+	// appendTo : "body",
+	// containment : "body"
+	// });
 
 	if (this.autoOpen) {
 		this.open();
@@ -44,6 +51,28 @@ gb.panel.Base = function(obj) {
 	}
 	$("body").append(this.panel);
 
+};
+/**
+ * 패널 바디를 설정한다.
+ * 
+ * @method setPanelBody
+ * @param {DOM}
+ */
+gb.panel.Base.prototype.setPanelBody = function(body) {
+	if (typeof body === "function") {
+		$(this.panelBody).append(body());
+	} else {
+		$(this.panelBody).append(body);
+	}
+};
+/**
+ * 패널을 반환한다.
+ * 
+ * @method getPanel
+ * @return {DOM}
+ */
+gb.panel.Base.prototype.getPanel = function() {
+	return this.panel;
 };
 /**
  * 패널을 나타낸다.
