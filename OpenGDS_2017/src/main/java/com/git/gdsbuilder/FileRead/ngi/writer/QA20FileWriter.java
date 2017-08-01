@@ -1,8 +1,10 @@
 package com.git.gdsbuilder.FileRead.ngi.writer;
 
 import java.io.BufferedWriter;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,9 +48,9 @@ public class QA20FileWriter {
 		ngiFileMap.put("NgifileDir", ngiFileRoot);
 		ngiFileMap.put("NdafileDir", ndaFileRoot);
 
-		this.ngiWriter = new BufferedWriter(new FileWriter(ngiFileRoot, true));
-		this.ndaWriter = new BufferedWriter(new FileWriter(ndaFileRoot, true));
-
+		this.ngiWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(ngiFileRoot), "euc-kr"));
+		this.ndaWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(ndaFileRoot), "euc-kr"));
+		
 		// fileLayer
 		QA20LayerList layerList = qa20LayerCollection.getQa20LayerList();
 		int size = layerList.size();
@@ -282,8 +284,16 @@ public class QA20FileWriter {
 			String featureID = feature.getFeatureID();
 			ngiWriter.write("$" + featureID);
 			ngiWriter.newLine();
-			ngiWriter.write(feature.getFeatureType());
-			ngiWriter.newLine();
+
+			String textType = feature.getFeatureType();
+			if (textType.equals("TEXT")) {
+				String textValue = feature.getText();
+				ngiWriter.write(feature.getFeatureType() + "(\"" + textValue + "\")");
+				ngiWriter.newLine();
+			} else {
+				ngiWriter.write(feature.getFeatureType());
+				ngiWriter.newLine();
+			}
 			String numparts = feature.getNumparts();
 			if (numparts != null) {
 				ngiWriter.write("NUMPARTS " + numparts);
@@ -347,7 +357,7 @@ public class QA20FileWriter {
 		List<NDAField> fields = ndaHeader.getAspatial_field_def();
 		for (int i = 0; i < features.size(); i++) {
 			QA20Feature feature = features.get(i);
-			int tmp = i + recordCount; 
+			int tmp = i + recordCount;
 			ndaWriter.write("$RECORD " + tmp);
 			ndaWriter.newLine();
 
@@ -467,10 +477,10 @@ public class QA20FileWriter {
 
 		ngiWriter.write(dataTg);
 		ngiWriter.newLine();
-		
+
 		for (int i = 0; i < qa20FeatureList.size(); i++) {
 			QA20Feature feature = qa20FeatureList.get(i);
-			int tmp = i + recordCount; 
+			int tmp = i + recordCount;
 			ngiWriter.write("$RECORD " + tmp);
 			ngiWriter.newLine();
 			ngiWriter.write(feature.getFeatureType());

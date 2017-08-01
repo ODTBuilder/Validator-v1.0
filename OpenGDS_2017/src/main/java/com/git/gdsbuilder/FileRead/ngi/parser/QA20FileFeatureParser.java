@@ -165,8 +165,7 @@ public class QA20FileFeatureParser {
 		GeometryFactory factory = new GeometryFactory();
 		Geometry point = factory.createPoint(coor);
 		String graphicID = getGraphicID();
-		QA20Feature feature = new QA20Feature(featureID, "TEXT", null, null, point, graphicID);
-		feature.putProperty("TEXT", textValue);
+		QA20Feature feature = new QA20Feature(featureID, "TEXT", null, null, point, graphicID, textValue, null);
 		return feature;
 	}
 

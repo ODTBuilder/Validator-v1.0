@@ -16,7 +16,6 @@ import com.git.gdsbuilder.type.qa10.feature.style.DTDXFArcStyle;
 import com.git.gdsbuilder.type.qa10.feature.style.DTDXFCircleStyle;
 import com.git.gdsbuilder.type.qa10.feature.style.DTDXFInsertStyle;
 import com.git.gdsbuilder.type.qa10.feature.style.DTDXFLWPolylineStyle;
-import com.git.gdsbuilder.type.qa10.feature.style.DTDXFPolylineStyle;
 import com.git.gdsbuilder.type.qa10.feature.style.DTDXFStyle;
 import com.git.gdsbuilder.type.qa10.feature.style.DTDXFTextSyle;
 import com.vividsolutions.jts.geom.Geometry;
@@ -26,20 +25,15 @@ public class QA10FileFeatureParser {
 	public static QA10Feature parseDTLineFeaeture(DXFEntity dxfEntity) throws SchemaException {
 
 		Geometry geom = null;
-		DTDXFStyle style = null;
 		String entityType = dxfEntity.getType();
 		if (entityType.equals("LINE")) {
 			DXFLine dxfLine = (DXFLine) dxfEntity;
-			// attribute
-			// style = QA10FileStyleParser.parseLineStyle(dxfEntity);
-			// gemo
 			geom = QA10FileGeomParser.parseDTLine(dxfLine.getStartPoint(), dxfLine.getEndPoint());
 
 			String entityID = dxfLine.getID();
 			QA10Feature dxfFeature = new QA10Feature(entityID);
 			dxfFeature.setFeatureType(entityType);
 			dxfFeature.setGeom(geom);
-			// dxfFeature.setProperties(EnDXFCommon.getProperties(style));
 			return dxfFeature;
 		} else {
 			return null;
@@ -49,13 +43,9 @@ public class QA10FileFeatureParser {
 	public static QA10Feature parseDTPolylineFeature(DXFEntity dxfEntity) {
 
 		Geometry geom = null;
-		DTDXFPolylineStyle style = null;
 		String entityType = dxfEntity.getType();
 		if (entityType.equals("POLYLINE")) {
 			DXFPolyline dxfPolyline = (DXFPolyline) dxfEntity;
-			// attribute
-			// style = QA10FileStyleParser.parsePolylinetStyle(dxfPolyline);
-			// gemo
 			boolean flag = dxfPolyline.isClosed();
 			geom = QA10FileGeomParser.parseDTLineString(flag, dxfPolyline.getVertexIterator(),
 					dxfPolyline.getVertexCount());
@@ -65,7 +55,7 @@ public class QA10FileFeatureParser {
 			dxfFeature.setFeatureType(entityType);
 			dxfFeature.setGeom(geom);
 			dxfFeature.setElevation(elevation);
-			// dxfFeature.setProperties(EnDXFPolyline.getProperties(style));
+			dxfFeature.setFlag(dxfEntity.getFlags());
 			return dxfFeature;
 		} else {
 			return null;
@@ -79,10 +69,6 @@ public class QA10FileFeatureParser {
 		String entityType = dxfEntity.getType();
 		if (entityType.equals("LWPOLYLINE")) {
 			DXFLWPolyline dxfLwPolyline = (DXFLWPolyline) dxfEntity;
-			// attribute
-			// style = QA10FileStyleParser.parseLWPolylinetStyle(dxfEntity);
-			// gemo
-
 			double elevation = dxfLwPolyline.getElevation();
 			boolean flag = dxfLwPolyline.isClosed();
 			geom = QA10FileGeomParser.parseDTLineString(flag, dxfLwPolyline.getVertexIterator(),
@@ -92,6 +78,7 @@ public class QA10FileFeatureParser {
 			dxfFeature.setFeatureType(entityType);
 			dxfFeature.setGeom(geom);
 			dxfFeature.setElevation(elevation);
+			dxfFeature.setFlag(dxfEntity.getFlags());
 			// dxfFeature.setProperties(EnDXFPolyline.getProperties(style));
 			return dxfFeature;
 		} else {

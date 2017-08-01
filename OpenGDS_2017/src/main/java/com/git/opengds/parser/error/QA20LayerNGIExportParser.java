@@ -17,7 +17,7 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.WKTReader;
 
-public class ErrorLayerNGIExportParser {
+public class QA20LayerNGIExportParser {
 
 	protected static String layerID = "1";
 
@@ -151,6 +151,7 @@ public class ErrorLayerNGIExportParser {
 		String coordinateSize = null;
 		Geometry geom = null;
 		String styleId = null;
+		String text = null;
 		HashMap<String, Object> properties = new HashMap<String, Object>();
 
 		Iterator featureIt = featureMap.keySet().iterator();
@@ -168,13 +169,15 @@ public class ErrorLayerNGIExportParser {
 			} else if (featureKey.equals("geom")) {
 				WKTReader reader = new WKTReader();
 				geom = reader.read(String.valueOf(value));
-			} else if(featureKey.equals("style_id")) {
+			} else if (featureKey.equals("style_id")) {
 				styleId = (String) value;
-			}else {
+			} else if (featureKey.equals("text")) {
+				text = (String) value;
+			} else {
 				properties.put(featureKey, value);
 			}
 		}
-		QA20Feature qa20Feature = new QA20Feature(featureID, featureType, numparts, coordinateSize, geom, styleId,
+		QA20Feature qa20Feature = new QA20Feature(featureID, featureType, numparts, coordinateSize, geom, styleId, text,
 				properties);
 
 		return qa20Feature;

@@ -17,7 +17,7 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.WKTReader;
 
-public class ErrorLayerDXFExportParser {
+public class QA10LayerDXFExportParser {
 
 	protected static String errIdx = "err_idx";
 	protected static String featureId = "feature_id";
@@ -84,10 +84,22 @@ public class ErrorLayerDXFExportParser {
 			if (featureType.equals("TEXT")) {
 				String textValue = (String) featureMap.get("text_value");
 				feature.setTextValue(textValue);
+				double height = (double) featureMap.get("height");
+				feature.setHeight(height);
+				double rotate = (double) featureMap.get("rotate");
+				feature.setRotate(rotate);
 			}
-			if (featureType.equals("LWPOLYLINE")) {
+			if (featureType.equals("LWPOLYLINE") || featureType.equals("LWPOLYLINE")) {
 				double elevation = (Double) featureMap.get("elevation");
 				feature.setElevation(elevation);
+				int flag = (int) featureMap.get("flag");
+				if (flag == 0) {
+					feature.setFlag(flag);
+				} else if (flag == 1 || flag == 129) {
+					feature.setFlag(1);
+				} else if (flag == 128) {
+					feature.setFlag(8);
+				}
 			}
 			if (featureType.equals("INSERT")) {
 				double rotate = (Double) featureMap.get("rotate");

@@ -1,8 +1,9 @@
 package com.git.gdsbuilder.FileRead.dxf.writer;
 
 import java.io.BufferedWriter;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -55,7 +56,10 @@ public class QA10FileWriter {
 		dxfFileMap.put("fileName", collectionName);
 		String dxfFileRoot = "D:\\" + collectionName + exe;
 		dxfFileMap.put("fileDxfDir", dxfFileRoot);
-		this.dxfWriter = new BufferedWriter(new FileWriter(dxfFileRoot, true));
+		// this.dxfWriter = new BufferedWriter(new FileWriter(dxfFileRoot,
+		// true));
+
+		this.dxfWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(dxfFileRoot), "euc-kr"));
 
 		// header
 		writeDefaultHeaderSection(qa10LayerCollection.getHeader());
@@ -250,8 +254,9 @@ public class QA10FileWriter {
 			writeEntities(entitiyMapList);
 		}
 
+		// err
 		QA10Entities entity = new QA10Entities();
-		entity.setPointValues(errQA20Layer);
+		entity.setErrTextValues(errQA20Layer);
 		LinkedHashMap<String, Object> errEntity = (LinkedHashMap<String, Object>) entity.getValues();
 		writeEntity((List<LinkedHashMap<String, Object>>) errEntity.get(errQA20Layer.getLayerID()));
 
@@ -436,36 +441,17 @@ public class QA10FileWriter {
 				dxfWriter.newLine();
 			}
 		}
-
 		// err
-		LinkedHashMap<String, Object> errTable = (LinkedHashMap<String, Object>) QA10Tables
-				.getLayerValues(errQA20Layer);
-
-		LinkedHashMap<String, Object> errCommons = (LinkedHashMap<String, Object>) errTable.get("common");
-		Iterator errCommonsIt = errCommons.keySet().iterator();
-		while (errCommonsIt.hasNext()) {
-			String commonsKey = (String) errCommonsIt.next();
-			String commonValue = (String) errCommons.get(commonsKey);
-			dxfWriter.write(commonsKey);
+		LinkedHashMap<String, Object> layer = QA10Tables.getLayerValues(errQA20Layer);
+		Iterator variableIt = layer.keySet().iterator();
+		while (variableIt.hasNext()) {
+			String variableKey = (String) variableIt.next();
+			String variableValue = (String) layer.get(variableKey);
+			dxfWriter.write(variableKey);
 			dxfWriter.newLine();
-			dxfWriter.write(commonValue);
+			dxfWriter.write(variableValue);
 			dxfWriter.newLine();
-
 		}
-		List<LinkedHashMap<String, Object>> errLayers = (List<LinkedHashMap<String, Object>>) errTable.get("layers");
-		for (int i = 0; i < errLayers.size(); i++) {
-			LinkedHashMap<String, Object> layer = errLayers.get(i);
-			Iterator variableIt = layer.keySet().iterator();
-			while (variableIt.hasNext()) {
-				String variableKey = (String) variableIt.next();
-				String variableValue = (String) layer.get(variableKey);
-				dxfWriter.write(variableKey);
-				dxfWriter.newLine();
-				dxfWriter.write(variableValue);
-				dxfWriter.newLine();
-			}
-		}
-
 		dxfWriter.write(endTableCode);
 		dxfWriter.newLine();
 		dxfWriter.write(endTable);

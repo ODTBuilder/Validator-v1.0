@@ -23,14 +23,9 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import org.postgresql.util.PSQLException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.stereotype.Service;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.transaction.TransactionDefinition;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.git.gdsbuilder.edit.qa10.EditQA10Collection;
 import com.git.gdsbuilder.edit.qa20.EditQA20Collection;
@@ -63,7 +58,7 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 	private QA20LayerCollectionDAO qa20DAO;
 
 	@Inject
-	private QA10LayerCollectionDAO qa10DAO;
+	private QA10LayerCollectionDAO qa10DAO;	
 
 	@Inject
 	private ValidateProgressDAO progressDAO;
@@ -552,8 +547,8 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 
 		String layerId = layer.getLayerID();
 		String[] typeSplit = layerId.split("_");
-		//String id = typeSplit[0] + "_" + typeSplit[1];
-		String id = typeSplit[0];
+		String id = typeSplit[0] + "_" + typeSplit[1];
+	//	String id = typeSplit[0];
 
 		try {
 			QA10DBQueryManager dbManager = new QA10DBQueryManager();
