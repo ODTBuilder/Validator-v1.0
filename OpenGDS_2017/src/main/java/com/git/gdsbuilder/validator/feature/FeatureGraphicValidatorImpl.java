@@ -517,19 +517,31 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 			return null;
 		}
 	}
-
+	
 	@Override
 	public ErrorFeature validateSmallLength(SimpleFeature simpleFeature, double inputLength) throws SchemaException {
 
 		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
+		GeometryFactory geometryFactory = new GeometryFactory();
 		double length = geometry.getLength();
-		if (length < inputLength) {
-			String featureIdx = simpleFeature.getID();
-			Property featuerIDPro = simpleFeature.getProperty("feature_id");
-			String featureID = (String) featuerIDPro.getValue();
-			ErrorFeature errFeature = new ErrorFeature(featureIdx, featureID, SmallLength.Type.SMALLLENGTH.errType(),
-					SmallLength.Type.SMALLLENGTH.errName(), geometry.getInteriorPoint());
-			return errFeature;
+		if (length <= inputLength) {
+			if(length == 0.0 || length == 0){
+				Coordinate[] coordinates = geometry.getCoordinates();
+				Point errPoint = geometryFactory.createPoint(coordinates[0]); 
+				String featureIdx = simpleFeature.getID();
+				Property featuerIDPro = simpleFeature.getProperty("feature_id");
+				String featureID = (String) featuerIDPro.getValue();
+				ErrorFeature errFeature = new ErrorFeature(featureIdx, featureID, SmallLength.Type.SMALLLENGTH.errType(),
+						SmallLength.Type.SMALLLENGTH.errName(), errPoint);
+				return errFeature;
+			}else{
+				String featureIdx = simpleFeature.getID();
+				Property featuerIDPro = simpleFeature.getProperty("feature_id");
+				String featureID = (String) featuerIDPro.getValue();
+				ErrorFeature errFeature = new ErrorFeature(featureIdx, featureID, SmallLength.Type.SMALLLENGTH.errType(),
+						SmallLength.Type.SMALLLENGTH.errName(), geometry.getInteriorPoint());
+				return errFeature;
+			}
 		} else {
 			return null;
 		}
