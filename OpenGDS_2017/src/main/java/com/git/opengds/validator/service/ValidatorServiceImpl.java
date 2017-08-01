@@ -226,7 +226,6 @@ public class ValidatorServiceImpl implements ValidatorService {
 					System.out.println("완료");
 //					return returnJSON;
 				} catch (Exception e) {
-					e.printStackTrace();
 					System.out.println("실패");
 //					e.printStackTrace();
 //					JSONObject returnJSON = new JSONObject();

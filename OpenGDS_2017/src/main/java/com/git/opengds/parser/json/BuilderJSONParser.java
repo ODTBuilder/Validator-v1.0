@@ -75,7 +75,7 @@ public class BuilderJSONParser {
 
 		String getCapabilities = URL + "/wfs?REQUEST=GetCapabilities&version=1.0.0";
 
-		GeoLayerCollectionParser collectionParser = new GeoLayerCollectionParser(layerCollections, userVO.getId(), getCapabilities,
+		GeoLayerCollectionParser collectionParser = new GeoLayerCollectionParser(layerCollections,userVO.getId(), getCapabilities,
 				enFileFormat, validateLayerList);
 		GeoLayerCollectionList collectionList = collectionParser.getLayerCollections();
 		if (collectionList.size() == 0 && validateLayerTypeList.size() == 0) {

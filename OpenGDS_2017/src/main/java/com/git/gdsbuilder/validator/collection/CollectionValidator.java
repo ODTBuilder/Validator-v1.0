@@ -120,15 +120,14 @@ public class CollectionValidator {
 	protected static double lineOverTolorence = 0.01; // 중심선이 경계면 초과 (m2)
 	protected static double areaRatioTolorence = 0.1; // 지류계와 경지계 불일치 (%)
 	protected static double spatialAccuracyTolorence = 0.01; // 공간분석 정밀도 설정 (m)
-	protected static double underShootTolorence = 0.2; 
-	protected static double selfEntityLineTolerance = 0.01; 
+	protected static double underShootTolorence = 0.2;
+	protected static double selfEntityLineTolerance = 0.01;
 
-//	ValidateLayerCollectionList validateLayerCollectionList;
+	// ValidateLayerCollectionList validateLayerCollectionList;
 	ErrorLayerList errLayerList;
-//	Map<String, Object> progress;
-//	String collectionType;
-	
-	
+	// Map<String, Object> progress;
+	// String collectionType;
+
 	GeoLayerCollection collection;
 	List<GeoLayerCollection> nearCollections;
 	ValidateLayerTypeList types;
@@ -228,20 +227,18 @@ public class CollectionValidator {
 	 * 
 	 * @throws IOException
 	 */
-	public void collectionValidate()
-			throws SchemaException, NoSuchAuthorityCodeException, FactoryException, TransformException, IOException {
+	public void collectionValidate(){
 
 		this.errLayerList = new ErrorLayerList();
 
 		GeoLayerCollection collection = this.collection;
 		ValidateLayerTypeList types = this.types;
 		MapSystemRule mapSystemRule = this.mapSystemRule;
-
+		ErrorLayer errorLayer = new ErrorLayer();
 //	    MapSystemRule mapSystemRule = new MapSystemRule(-10, 10, -1, 1);
 		
 		
 		try {
-			ErrorLayer errorLayer = new ErrorLayer();
 			errorLayer.setCollectionName(collection.getCollectionName());
 
 			errorLayer.setCollectionType(this.collectionType);
@@ -264,6 +261,7 @@ public class CollectionValidator {
 			progress.put(collection.getCollectionName(), 2);
 
 		} catch (Exception e) {
+			e.printStackTrace();
 			progress.put(collection.getCollectionName(), 3);
 
 		}
@@ -358,6 +356,8 @@ public class CollectionValidator {
 					throws SchemaException, NoSuchAuthorityCodeException, FactoryException, TransformException, IOException {
 
 		GeoLayer neatLayer = layerCollection.getNeatLine();
+		
+		
 		for (int i = 0; i < types.size(); i++) {
 			// getType
 			ValidateLayerType type = types.get(i);

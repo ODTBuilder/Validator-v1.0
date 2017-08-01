@@ -524,5 +524,4 @@ public class GeoserverServiceImpl implements GeoserverService {
 		// TODO Auto-generated method stub
 		return dtPublisher.publishErrLayer(userVO.getId(), userVO.getId(), geoLayerInfo);
 	}
-
 }
