@@ -82,7 +82,7 @@
 <script src="${pageContext.request.contextPath}/resources/js/gitbuilder/qastatus.js"></script>
 
 <%-- 편집툴 --%>
-<script src="${pageContext.request.contextPath}/resources/js/gitbuilder/editingtool.js"></script>
+<script src="${pageContext.request.contextPath}/resources/js/gitbuilder/editingtool2.js"></script>
 
 <%-- wms편집이력 --%>
 <script src="${pageContext.request.contextPath}/resources/js/gitbuilder/edithistory.js"></script>
@@ -146,4 +146,12 @@
 	var CONTEXT = "${pageContext.request.contextPath}";
 </script>
 
-<link rel="icon" type="image/png" href="${pageContext.request.contextPath}/resources/img/favi32.png"/>
+<link rel="icon" type="image/png" href="${pageContext.request.contextPath}/resources/img/favi32.png" />
+
+<!-- 프로토타입 코딩 -->
+<!-- gb css -->
+<link href="${ctx}/resources/js/gb/css/gb.css" rel="stylesheet" />
+<!-- gb.panel.Base -->
+<script src="${pageContext.request.contextPath}/resources/js/gb/panel/base.js"></script>
+<!-- gb.panel.EditingTool -->
+<script src="${pageContext.request.contextPath}/resources/js/gb/panel/editingtool.js"></script>
