@@ -12,6 +12,7 @@ public class QA10Feature {
 	double rotate;
 	double width;
 	double height;
+	int flag = 0; // default = 0, isClosed = 1, isOpen = 128
 
 	public QA10Feature() {
 		super();
@@ -22,6 +23,7 @@ public class QA10Feature {
 		this.rotate = 0;
 		this.width = 0;
 		this.height = 0;
+		this.flag = 0;
 	}
 
 	public QA10Feature(String featureID) {
@@ -31,6 +33,10 @@ public class QA10Feature {
 		this.textValue = "";
 		this.elevation = 0;
 		this.rotate = 0;
+		this.rotate = 0;
+		this.width = 0;
+		this.height = 0;
+		this.flag = 0;
 	}
 
 	public QA10Feature(String featureID, String featureType, Geometry geom) {
@@ -40,6 +46,18 @@ public class QA10Feature {
 		this.geom = geom;
 		this.textValue = "";
 		this.elevation = 0;
+		this.rotate = 0;
+		this.width = 0;
+		this.height = 0;
+		this.flag = 0;
+	}
+
+	public int getFlag() {
+		return flag;
+	}
+
+	public void setFlag(int flag) {
+		this.flag = flag;
 	}
 
 	public double getWidth() {

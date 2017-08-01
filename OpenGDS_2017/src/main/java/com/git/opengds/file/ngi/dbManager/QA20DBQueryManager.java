@@ -108,7 +108,7 @@ public class QA20DBQueryManager {
 				+ "style_id varchar(100)" + ", ";
 
 		if (isTextLayer) {
-			defalutCreateQuery += "\"" + "TEXT" + "\"" + "varchar(100),";
+			defalutCreateQuery += "text varchar(100),";
 		}
 
 		NDAHeader ndaHeader = qa20Layer.getNdaHeader();
@@ -162,6 +162,11 @@ public class QA20DBQueryManager {
 			String insertDefaultValues = " values('" + feature.getFeatureID() + "'," + "'" + featureType + "',"
 					+ "ST_GeomFromText('" + feature.getGeom().toString() + "', " + src + ")" + "," + numparts + ","
 					+ numVertexts + ", '" + feature.getStyleID() + "', ";
+
+			if (featureType.equals("TEXT")) {
+				insertDefaultQuery += "text, ";
+				insertDefaultValues += "'" + feature.getText() + "', ";
+			}
 
 			// properties
 			HashMap<String, Object> properties = feature.getProperties();
@@ -655,6 +660,11 @@ public class QA20DBQueryManager {
 			List<HashMap<String, Object>> aspatialFields) {
 
 		String selectQueryStr = "select f_idx, feature_id, feature_type, ST_AsText(geom) as geom, num_rings, num_vertexes, style_id, ";
+		String[] strs = layerTbName.replaceAll("\"", "").split("_");
+		String layerType = strs[4];
+		if (layerType.equals("TEXT")) {
+			selectQueryStr += "text, ";
+		}
 		int size = aspatialFields.size();
 		for (int i = 0; i < size; i++) {
 			HashMap<String, Object> fieldMap = aspatialFields.get(i);

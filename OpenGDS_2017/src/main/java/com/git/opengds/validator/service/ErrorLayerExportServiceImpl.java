@@ -30,16 +30,13 @@ import com.git.gdsbuilder.type.qa20.collection.QA20LayerCollection;
 import com.git.gdsbuilder.type.qa20.layer.QA20Layer;
 import com.git.opengds.file.dxf.dbManager.QA10DBQueryManager;
 import com.git.opengds.file.dxf.persistence.QA10LayerCollectionDAO;
-import com.git.opengds.file.dxf.persistence.QA10LayerCollectionDAOImpl;
 import com.git.opengds.file.ngi.dbManager.QA20DBQueryManager;
 import com.git.opengds.file.ngi.persistence.QA20LayerCollectionDAO;
-import com.git.opengds.file.ngi.persistence.QA20LayerCollectionDAOImpl;
-import com.git.opengds.parser.error.ErrorLayerDXFExportParser;
-import com.git.opengds.parser.error.ErrorLayerNGIExportParser;
+import com.git.opengds.parser.error.QA10LayerDXFExportParser;
+import com.git.opengds.parser.error.QA20LayerNGIExportParser;
 import com.git.opengds.user.domain.UserVO;
 import com.git.opengds.validator.dbManager.ErrorLayerDBQueryManager;
 import com.git.opengds.validator.persistence.ErrorLayerDAO;
-import com.git.opengds.validator.persistence.ErrorLayerDAOImpl;
 import com.vividsolutions.jts.io.ParseException;
 
 @Service
@@ -88,7 +85,7 @@ public class ErrorLayerExportServiceImpl implements ErrorLayerExportService {
 				List<HashMap<String, Object>> mIdxMapList = qa20LayerCollectionDAO.selectQA20LayerMetadataIdxs(userVO,
 						selectAllMetaIdxQuery);
 				// errlayer 합쳐합쳐
-				QA20Layer errQA20Layer = ErrorLayerNGIExportParser.parseQA20ErrorLayer(name, errAllFeatures);
+				QA20Layer errQA20Layer = QA20LayerNGIExportParser.parseQA20ErrorLayer(name, errAllFeatures);
 				for (int i = 0; i < mIdxMapList.size(); i++) {
 					HashMap<String, Object> mIdxMap = mIdxMapList.get(i);
 					int lmIdx = (Integer) mIdxMap.get("lm_idx");
@@ -135,12 +132,15 @@ public class ErrorLayerExportServiceImpl implements ErrorLayerExportService {
 					aspatialField = qa20LayerCollectionDAO.selectNdaAspatialField(userVO, selectNdaAspatialFieldQuery);
 					// layerTB
 					String layerTbName = (String) metaMap.get("layer_t_name");
+					if(layerTbName.equals("\"geo_ngi_37712002_H0040000_TEXT\"")) {
+						System.out.println("");
+					}
 					HashMap<String, Object> selectAllFeaturesQuery = qa20dbManager
 							.getSelectAllFeaturesQuery(layerTbName, aspatialField);
 					List<HashMap<String, Object>> featuresMapList = qa20LayerCollectionDAO.selectAllQA20Features(userVO,
 							selectAllFeaturesQuery);
 
-					QA20Layer qa20Layer = ErrorLayerNGIExportParser.parseQA20Layer(metaMap, featuresMapList,
+					QA20Layer qa20Layer = QA20LayerNGIExportParser.parseQA20Layer(metaMap, featuresMapList,
 							pointRepresenets, lineRepresenets, regionRepresenets, textRepresenets, aspatialField);
 					qa20LayerCollection.addQA20Layer(qa20Layer);
 				}
@@ -155,8 +155,8 @@ public class ErrorLayerExportServiceImpl implements ErrorLayerExportService {
 				layerFileOutputStream(fileName, ndaFileDir, response);
 			} else if (format.equals("dxf")) {
 
-				QA10Layer errQ120Layer = ErrorLayerDXFExportParser.parseQA10ErrorLayer(name, errAllFeatures);
-				
+				QA10Layer errQ120Layer = QA10LayerDXFExportParser.parseQA10ErrorLayer(name, errAllFeatures);
+
 				QA10LayerList layerList = new QA10LayerList();
 				QA10DBQueryManager qa10dbQueryManager = new QA10DBQueryManager();
 				// collectionIdx
@@ -275,8 +275,11 @@ public class ErrorLayerExportServiceImpl implements ErrorLayerExportService {
 							if (blockLineMapList != null) {
 								for (int j = 0; j < blockLineMapList.size(); j++) {
 									HashMap<String, Object> blockLineMap = blockLineMapList.get(j);
-									LinkedHashMap<String, Object> entity = QA10Blocks.getLineValue(blockLineMap);
-									entities.add(entity);
+									LinkedHashMap<String, Object> lineEntity = QA10Blocks.getLineValue(blockLineMap);
+									List<LinkedHashMap<String, Object>> vertexEntityList = QA10Blocks
+											.getLineVertexsValue(blockLineMap);
+									lineEntity.put("vertexs", vertexEntityList);
+									entities.add(lineEntity);
 								}
 							}
 						}
@@ -320,7 +323,7 @@ public class ErrorLayerExportServiceImpl implements ErrorLayerExportService {
 					List<HashMap<String, Object>> featuresMapList = qa10LayerCollectionDAO.selectQA10Features(userVO,
 							selectFeaturesQuery);
 
-					QA10Layer qa10Layer = ErrorLayerDXFExportParser.parseQA10Layer(layerId, featuresMapList);
+					QA10Layer qa10Layer = QA10LayerDXFExportParser.parseQA10Layer(layerId, featuresMapList);
 					qa10Layer.setLayerType(layerType);
 
 					layerList.add(qa10Layer);

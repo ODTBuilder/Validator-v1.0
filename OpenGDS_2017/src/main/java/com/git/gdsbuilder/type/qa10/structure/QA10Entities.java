@@ -66,23 +66,23 @@ public class QA10Entities {
 		this.values = layerVariableMap;
 	}
 
-	public void setPointValues(QA10Layer qa10Layer) {
+	public void setErrTextValues(QA10Layer qa10Layer) {
 
 		List<LinkedHashMap<String, Object>> entitiyMapList = new ArrayList<LinkedHashMap<String, Object>>();
 		String layerId = qa10Layer.getLayerID();
-		String[] typeSplit = layerId.split("_");
-		String id = typeSplit[0];
 		QA10FeatureList qa10FeatureList = qa10Layer.getQa10FeatureList();
 		for (int i = 0; i < qa10FeatureList.size(); i++) {
 			QA10Feature qa10Feature = qa10FeatureList.get(i);
 			LinkedHashMap<String, Object> entitiyMap = new LinkedHashMap<String, Object>();
 			Geometry geom = qa10Feature.getGeom();
 			Coordinate coor = geom.getCoordinate();
-			entitiyMap.put("0", "POINT");
-			entitiyMap.put("8", id);
+			entitiyMap.put("0", "TEXT");
+			entitiyMap.put("8", layerId);
 			entitiyMap.put("10", String.valueOf(coor.x));
 			entitiyMap.put("20", String.valueOf(coor.y));
 			entitiyMap.put("30", "0");
+			entitiyMap.put("40", "16");
+			entitiyMap.put("1", "0");
 			entitiyMapList.add(entitiyMap);
 		}
 		this.values.put(layerId, entitiyMapList);
@@ -100,11 +100,12 @@ public class QA10Entities {
 			LinkedHashMap<String, Object> entitiyMap = new LinkedHashMap<String, Object>();
 			entitiyMap.put("0", "POLYLINE");
 			entitiyMap.put("8", id);
-			//entitiyMap.put("330", qa10Feature.getFeatureID());
+			// entitiyMap.put("330", qa10Feature.getFeatureID());
 			entitiyMap.put("66", "1");
 			entitiyMap.put("10", "0");
 			entitiyMap.put("20", "0");
 			entitiyMap.put("30", "0");
+			entitiyMap.put("70", String.valueOf(qa10Feature.getFlag()));
 
 			List<LinkedHashMap<String, Object>> vertexMapList = new ArrayList<LinkedHashMap<String, Object>>();
 			double elevation = qa10Feature.getElevation();
@@ -118,6 +119,7 @@ public class QA10Entities {
 				vertexMap.put("10", String.valueOf(coor.x));
 				vertexMap.put("20", String.valueOf(coor.y));
 				vertexMap.put("30", String.valueOf(elevation));
+				vertexMap.put("70", "32");
 				vertexMapList.add(vertexMap);
 			}
 			entitiyMap.put("vertexs", vertexMapList);
@@ -140,12 +142,22 @@ public class QA10Entities {
 			Coordinate coor = geom.getCoordinate();
 			entitiyMap.put("0", "TEXT");
 			entitiyMap.put("8", id);
-		//	entitiyMap.put("330", qa10Feature.getFeatureID());
+			// entitiyMap.put("330", qa10Feature.getFeatureID());
 			entitiyMap.put("10", String.valueOf(coor.x));
 			entitiyMap.put("20", String.valueOf(coor.y));
 			entitiyMap.put("30", "0");
-			entitiyMap.put("40", String.valueOf(qa10Feature.getHeight()));
-			entitiyMap.put("1", String.valueOf(qa10Feature.getTextValue()));
+			double height = qa10Feature.getHeight();
+			if (height != 0) {
+				entitiyMap.put("40", String.valueOf(qa10Feature.getHeight()));
+			}
+			String textValue = qa10Feature.getTextValue();
+			if (!textValue.equals("")) {
+				entitiyMap.put("1", String.valueOf(qa10Feature.getTextValue()));
+			}
+			double rotate = qa10Feature.getRotate();
+			if (rotate != 0) {
+				entitiyMap.put("50", String.valueOf(qa10Feature.getRotate()));
+			}
 			entitiyMap.put("7", "STANDARD");
 			entitiyMapList.add(entitiyMap);
 		}
@@ -156,23 +168,27 @@ public class QA10Entities {
 
 		List<LinkedHashMap<String, Object>> entitiyMapList = new ArrayList<LinkedHashMap<String, Object>>();
 		String layerId = qa10Layer.getLayerID();
+
 		String[] typeSplit = layerId.split("_");
 		String id = typeSplit[0];
+
 		QA10FeatureList qa10FeatureList = qa10Layer.getQa10FeatureList();
 		for (int i = 0; i < qa10FeatureList.size(); i++) {
 			QA10Feature qa10Feature = qa10FeatureList.get(i);
 			LinkedHashMap<String, Object> entitiyMap = new LinkedHashMap<String, Object>();
 			Geometry geom = qa10Feature.getGeom();
 			Coordinate coor = geom.getCoordinate();
-			entitiyMap.put("0", "TEXT");
+			entitiyMap.put("0", "INSERT");
 			entitiyMap.put("8", id);
-	//		entitiyMap.put("330", qa10Feature.getFeatureID());
+			entitiyMap.put("2", id);
+			// entitiyMap.put("330", qa10Feature.getFeatureID());
 			entitiyMap.put("10", String.valueOf(coor.x));
 			entitiyMap.put("20", String.valueOf(coor.y));
 			entitiyMap.put("30", "0");
 			entitiyMap.put("41", "1");
 			entitiyMap.put("42", "1");
 			entitiyMap.put("50", String.valueOf(qa10Feature.getRotate()));
+			entitiyMap.put("43", "1");
 			entitiyMapList.add(entitiyMap);
 		}
 		this.values.put(layerId, entitiyMapList);

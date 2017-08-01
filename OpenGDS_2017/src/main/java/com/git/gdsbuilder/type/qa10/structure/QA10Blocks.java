@@ -158,9 +158,9 @@ public class QA10Blocks {
 		text.put("0", "TEXT");
 		text.put("8", entityObj.getLayerName());
 		text.put("330", entityObj.getID());
-		text.put("10", entityObj.getAlignX());
-		text.put("20", entityObj.getAlignY());
-		text.put("30", entityObj.getAlignZ());
+		text.put("10", entityObj.getInsertPoint().getX());
+		text.put("20", entityObj.getInsertPoint().getY());
+		text.put("30", entityObj.getInsertPoint().getZ());
 		text.put("40", entityObj.getHeight());
 		text.put("1", entityObj.getText());
 		text.put("7", entityObj.getTextStyle());
@@ -198,7 +198,7 @@ public class QA10Blocks {
 	}
 
 	private LinkedHashMap<String, Object> getPolylineValues(DXFPolyline entityObj) {
-		
+
 		String type = entityObj.getType();
 		LinkedHashMap<String, Object> polyline = new LinkedHashMap<String, Object>();
 
@@ -230,7 +230,7 @@ public class QA10Blocks {
 			polyline.put("90", entityObj.getVertexCount());
 			polyline.put("70", entityObj.getFlags());
 			polyline.put("43", 0);
-			
+
 			// vertexs
 			List<LinkedHashMap<String, Object>> vertexMapList = new ArrayList<LinkedHashMap<String, Object>>();
 			Iterator vertexIt = entityObj.getVertexIterator();
@@ -276,7 +276,7 @@ public class QA10Blocks {
 
 		LinkedHashMap<String, Object> block = new LinkedHashMap<String, Object>();
 
-		block.put("8", blockCommonMap.get("8"));
+		block.put("8", blockCommonMap.get("2"));
 		block.put("2", blockCommonMap.get("2"));
 		block.put("70", blockCommonMap.get("70"));
 		block.put("10", blockCommonMap.get("10"));
@@ -338,7 +338,7 @@ public class QA10Blocks {
 	public static LinkedHashMap<String, Object> getVertexValue(HashMap<String, Object> vertexMap) {
 
 		LinkedHashMap<String, Object> vertex = new LinkedHashMap<String, Object>();
-		vertex.put("0", vertexMap.get("0"));
+		vertex.put("0", "VERTEX");
 		vertex.put("8", vertexMap.get("8"));
 		vertex.put("10", vertexMap.get("10"));
 		vertex.put("20", vertexMap.get("20"));
@@ -354,11 +354,12 @@ public class QA10Blocks {
 		polyline.put("0", "POLYLINE");
 		polyline.put("8", blockLineMap.get("8"));
 		// polyline.put("330", blockPolylineMap.get("330"));
-		polyline.put("66", "1");
 		polyline.put("10", blockLineMap.get("10"));
 		polyline.put("20", blockLineMap.get("20"));
 		polyline.put("30", blockLineMap.get("30"));
+		polyline.put("66", "1");
 		polyline.put("70", "8");
+
 		return polyline;
 
 	}
@@ -375,7 +376,38 @@ public class QA10Blocks {
 		polyline.put("10", vertexMap.get("10"));
 		polyline.put("20", vertexMap.get("20"));
 		polyline.put("30", vertexMap.get("30"));
-		polyline.put("70", "8");
+
+		String flag = (String) blockLWPolylineMap.get("70");
+		if (flag.equals("0")) {
+			polyline.put("70", "0");
+		} else if (flag.equals("1")) {
+			polyline.put("70", "1");
+		} else if (flag.equals("128")) {
+			polyline.put("70", "8");
+		}
 		return polyline;
+	}
+
+	public static List<LinkedHashMap<String, Object>> getLineVertexsValue(HashMap<String, Object> blockLineMap) {
+
+		LinkedHashMap<String, Object> firVertex = new LinkedHashMap<String, Object>();
+		firVertex.put("0", "VERTEX");
+		firVertex.put("8", blockLineMap.get("8"));
+		firVertex.put("10", blockLineMap.get("10"));
+		firVertex.put("20", blockLineMap.get("20"));
+		firVertex.put("30", blockLineMap.get("30"));
+
+		LinkedHashMap<String, Object> secVertex = new LinkedHashMap<String, Object>();
+		secVertex.put("0", "VERTEX");
+		secVertex.put("8", blockLineMap.get("8"));
+		secVertex.put("10", blockLineMap.get("11"));
+		secVertex.put("20", blockLineMap.get("21"));
+		secVertex.put("30", blockLineMap.get("31"));
+
+		List<LinkedHashMap<String, Object>> vertexEntityList = new ArrayList<LinkedHashMap<String, Object>>();
+		vertexEntityList.add(firVertex);
+		vertexEntityList.add(secVertex);
+
+		return vertexEntityList;
 	}
 }
