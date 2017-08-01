@@ -48,6 +48,7 @@ import com.git.gdsbuilder.type.validate.option.Admin;
 import com.git.gdsbuilder.type.validate.option.AttributeFix;
 import com.git.gdsbuilder.type.validate.option.BridgeName;
 import com.git.gdsbuilder.type.validate.option.EntityDuplicated;
+import com.git.gdsbuilder.type.validate.option.HouseAttribute;
 import com.git.gdsbuilder.type.validate.option.ZValueAmbiguous;
 import com.vividsolutions.jts.geom.Geometry;
 
@@ -112,9 +113,16 @@ public class FeatureAttributeValidatorImpl implements FeatureAttributeValidator 
 			Iterator iterator = notNullAtt.keySet().iterator();
 			while (iterator.hasNext()) {
 				String attributeKey = (String) iterator.next();
-				Object attribute = simpleFeature.getAttribute(attributeKey);
+				Object attribute = simpleFeature.getAttribute(attributeKey); // value
 				JSONArray attributeArray = (JSONArray) notNullAtt.get(attributeKey);
-				if (!(attributeArray.isEmpty())) {
+				if (attributeArray.get(0).equals("") || attributeArray.isEmpty()) {
+					//
+					if (attribute == null) {
+						flag = false;
+						break;
+					}
+				} else {
+					//
 					if (attribute != null) {
 						String attributeStr = attribute.toString();
 						Iterator attrIterator = attributeArray.iterator();
@@ -131,12 +139,8 @@ public class FeatureAttributeValidatorImpl implements FeatureAttributeValidator 
 								break;
 							}
 						}
-					} else {
-						flag = false;
-						break;
-					}
-				} else {
-					if (attribute == null) {
+					}else{
+						
 						flag = false;
 						break;
 					}
@@ -232,6 +236,28 @@ public class FeatureAttributeValidatorImpl implements FeatureAttributeValidator 
 			}
 		}
 	}
+	
+	public ErrorFeature validateHouseAttribute(SimpleFeature simpleFeature){
+		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
+		String notNullAttr = simpleFeature.getAttribute("주기").toString();
+
+		String featureIdx = simpleFeature.getID();
+		Property featuerIDPro = simpleFeature.getProperty("feature_id");
+		String featureID = (String) featuerIDPro.getValue();
+		
+		if (notNullAttr != null) {
+			ErrorFeature errorFeature = new ErrorFeature(featureIdx, featureID, HouseAttribute.Type.HOUSEATTRIBUTE.errType(),
+					HouseAttribute.Type.HOUSEATTRIBUTE.errName(), geometry.getInteriorPoint());
+			return errorFeature;
+		}else{
+			return null;
+		}
+	}
+	
+	
+	
+	
+
 
 	public ErrorFeature validateEntityDuplicated(SimpleFeature simpleFeatureI, SimpleFeature simpleFeatureJ) {
 
@@ -262,4 +288,9 @@ public class FeatureAttributeValidatorImpl implements FeatureAttributeValidator 
 			return null;
 		}
 	}
+	
+	
+	
+	
+	
 }

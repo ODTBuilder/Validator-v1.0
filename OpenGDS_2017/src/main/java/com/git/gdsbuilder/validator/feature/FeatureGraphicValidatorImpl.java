@@ -289,7 +289,7 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 			throws SchemaException {
 
 		List<ErrorFeature> errFeatures = new ArrayList<ErrorFeature>();
-
+		GeometryFactory geometryFactory = new GeometryFactory();
 		Geometry geometryI = (Geometry) simpleFeatureI.getDefaultGeometry();
 		Geometry geometryJ = (Geometry) simpleFeatureJ.getDefaultGeometry();
 
@@ -305,14 +305,36 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 			returnGeom = selfEntityPolygon(geometryI, geometryJ, selfEntityTolerance, polygonInvadedTolorence);
 		}
 		if (returnGeom != null) {
-			for (int i = 0; i < returnGeom.getNumGeometries(); i++) {
-				String featureIdx = simpleFeatureI.getID();
-				Property featuerIDPro = simpleFeatureI.getProperty("feature_id");
-				String featureID = (String) featuerIDPro.getValue();
-				ErrorFeature errFeature = new ErrorFeature(featureIdx, featureID, SelfEntity.Type.SELFENTITY.errType(),
-						SelfEntity.Type.SELFENTITY.errName(), returnGeom.getGeometryN(i).getInteriorPoint());
-				errFeatures.add(errFeature);
+			String returnGeomType = returnGeom.getGeometryType().toUpperCase();
+			if(returnGeomType.equals("LINESTRING")){
+				if(returnGeom.getLength() == 0.0 || returnGeom.getLength() == 0){
+					Coordinate[] coordinates = returnGeom.getCoordinates();
+					Point startPoint = geometryFactory.createPoint(coordinates[0]);
+					String featureIdx = simpleFeatureI.getID();
+					Property featureIDPro = simpleFeatureI.getProperty("feature_id");
+					String featureID = (String) featureIDPro.getValue();
+					ErrorFeature errFeature = new ErrorFeature(featureIdx, featureID, SelfEntity.Type.SELFENTITY.errType(),
+							SelfEntity.Type.SELFENTITY.errName(), startPoint);
+					errFeatures.add(errFeature);
+				}else{
+					String featureIdx = simpleFeatureI.getID();
+					Property featureIDPro = simpleFeatureI.getProperty("feature_id");
+					String featureID = (String) featureIDPro.getValue();
+					ErrorFeature errFeature = new ErrorFeature(featureIdx, featureID, SelfEntity.Type.SELFENTITY.errType(),
+							SelfEntity.Type.SELFENTITY.errName(), returnGeom.getInteriorPoint());
+					errFeatures.add(errFeature);
+					}
+			}else{
+				for (int i = 0; i < returnGeom.getNumGeometries(); i++) {
+					String featureIdx = simpleFeatureI.getID();
+					Property featuerIDPro = simpleFeatureI.getProperty("feature_id");
+					String featureID = (String) featuerIDPro.getValue();
+					ErrorFeature errFeature = new ErrorFeature(featureIdx, featureID, SelfEntity.Type.SELFENTITY.errType(),
+							SelfEntity.Type.SELFENTITY.errName(), returnGeom.getGeometryN(i).getInteriorPoint());
+					errFeatures.add(errFeature);
+				}
 			}
+			
 			return errFeatures;
 		} else {
 			return null;
@@ -378,9 +400,9 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 							returnGeom = lineReturnGeom;
 						}
 					}else if(!firstPoint.equals(lastPoint) && firstPointJ.equals(lastPointJ)){
-							if(firstDistance > selfEntityTolerance && lastDistance > selfEntityTolerance){
-								returnGeom = lineReturnGeom;
-							}
+						if(firstDistance > selfEntityTolerance && lastDistance > selfEntityTolerance){
+							returnGeom = lineReturnGeom;
+						}
 					}else if(!firstPoint.equals(lastPoint) && !firstPointJ.equals(lastPointJ)){
 						if(firstDistance > selfEntityTolerance && lastDistance > selfEntityTolerance
 								&& firstDistanceJ > selfEntityTolerance && lastDistanceJ > selfEntityTolerance){
@@ -416,7 +438,7 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 							}
 							returnGeom = geometryFactory.createMultiPoint(pointList);
 						}
-						
+
 					}else if(!firstPoint.equals(lastPoint) && firstPointJ.equals(lastPointJ)){
 						List<Point> points = new ArrayList<Point>();
 						Coordinate[] lineReturnCoor = lineReturnGeom.getCoordinates();
@@ -443,8 +465,12 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 				Geometry geometry =geometryI.intersection(geometryJ);
 				String upperType = geometry.getGeometryType().toUpperCase();
 				if(upperType.equals("LINESTRING") || upperType.equals("MULTILINESTRING")){
-					if(geometry.getLength() > selfEntityTolerance){
-						returnGeom = geometryI.intersection(geometryJ.getBoundary());
+					if(geometryI.within(geometryJ)){
+						returnGeom = geometry;
+					}else{
+						if(geometry.getLength() > selfEntityTolerance){
+							returnGeom = geometryI.intersection(geometryJ.getBoundary());
+						}
 					}
 				}
 			}
@@ -467,13 +493,10 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 				String upperType = geom.getGeometryType().toUpperCase();
 				if(upperType.equals("LINESTRING") || upperType.equals("MULTILINESTRING")){
 					if(geom.getLength() > selfEntityTolerance ){
-						GeometryFactory factory = new GeometryFactory();
-						Coordinate[] coors = geometryJ.getCoordinates();
-						for (int i = 0; i < coors.length; i++) {
-							Point pt = factory.createPoint(coors[i]);
-							if (geometryI.within(pt)) {
-								returnGeom = pt;
-							}
+						if(geometryI.contains(geometryJ)){
+							returnGeom = geometryI.intersection(geometryJ);
+						}else{
+							returnGeom = geometryI.intersection(geometryJ.getBoundary());
 						}
 					}
 				}
@@ -517,7 +540,7 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 			return null;
 		}
 	}
-	
+
 	@Override
 	public ErrorFeature validateSmallLength(SimpleFeature simpleFeature, double inputLength) throws SchemaException {
 

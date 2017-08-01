@@ -75,4 +75,5 @@ public interface FeatureAttributeValidator {
 
 	public ErrorFeature validateEntityDuplicated(SimpleFeature simpleFeatureI, SimpleFeature simpleFeatureJ);
 
+	public ErrorFeature validateHouseAttribute(SimpleFeature simpleFeature);
 }
