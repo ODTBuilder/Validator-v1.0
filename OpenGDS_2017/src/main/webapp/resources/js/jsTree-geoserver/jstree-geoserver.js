@@ -100,10 +100,39 @@ $.jstree.plugins.geoserver = function(options, parent) {
 							});
 							var id = data[i].publishedList.names[j];
 							var name = id.substring((id.split("_", 3).join("_").length) + 1, id.split("_", 4).join("_").length);
+							var dtype = id.substring(id.split("_", 4).join("_").length + 1);
+							var geom;
+							switch (dtype) {
+							case "LWPOLYLINE":
+								geom = "LineString";
+								break;
+							case "POLYLINE":
+								geom = "LineString";
+								break;
+							case "POINT":
+								geom = "Point";
+								break;
+							case "INSERT":
+								geom = "Point";
+								break;
+							case "POLYGON":
+								geom = "Polygon";
+								break;
+							case "LINESTRING":
+								geom = "LineString";
+								break;
+							case "TEXT":
+								geom = "Point";
+								break;
+
+							default:
+								break;
+							}
 							var gchild = {
 								"validation" : false,
 								"editable" : true,
-								"fake" : "child"
+								"fake" : "child",
+								"geometry" : geom
 							}
 							layer.set("git", gchild);
 							layer.set("id", id);
@@ -205,10 +234,39 @@ $.jstree.plugins.geoserver = function(options, parent) {
 							});
 							var id = obj.arr[j];
 							var name = id.substring((id.split("_", 3).join("_").length) + 1, id.split("_", 4).join("_").length);
+							var dtype = id.substring(id.split("_", 4).join("_").length + 1);
+							var geom;
+							switch (dtype) {
+							case "LWPOLYLINE":
+								geom = "LineString";
+								break;
+							case "POLYLINE":
+								geom = "LineString";
+								break;
+							case "POINT":
+								geom = "Point";
+								break;
+							case "INSERT":
+								geom = "Point";
+								break;
+							case "POLYGON":
+								geom = "Polygon";
+								break;
+							case "LINESTRING":
+								geom = "LineString";
+								break;
+							case "TEXT":
+								geom = "Point";
+								break;
+
+							default:
+								break;
+							}
 							var gchild = {
 								"validation" : false,
 								"editable" : true,
-								"fake" : "child"
+								"fake" : "child",
+								"geometry" : geom
 							}
 							layer.set("git", gchild);
 							layer.set("id", id);
@@ -227,7 +285,6 @@ $.jstree.plugins.geoserver = function(options, parent) {
 						});
 						var git = {
 							"validation" : false,
-							"geometry" : data[i].geomType,
 							"editable" : true,
 							"fake" : "parent",
 							"layers" : layers,

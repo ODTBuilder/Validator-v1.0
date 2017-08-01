@@ -329,15 +329,16 @@ html {
 			transfer.sendStructure();
 		});
 
-		// 		$("#edit").editingtool({
-		// 			url : "geoserver/geoserverWFSGetFeature.ajax",
-		// 			map : map,
-		// 			featureRecord : frecord,
-		// 			treeInstance : $('#builderClientLayer').jstreeol3(true),
-		// 			selected : function() {
-		// 				return $('#builderClientLayer').jstreeol3("get_selected_layer");
-		// 			}
-		// 		});
+
+		$("#edit").editingtool({
+			url : "geoserver/geoserverWFSGetFeature.ajax",
+			map : map,
+			featureRecord : frecord,
+			treeInstance : $('#builderClientLayer').jstreeol3(true),
+			selected : function() {
+				return $('#builderClientLayer').jstreeol3("get_selected_layer");
+			}
+		});
 
 		$("#changeBase").changebase({
 			map : map2
@@ -428,7 +429,7 @@ html {
 		});
 		var layerInfo = new gb.geoserver.ModifyLayer({
 			infoURL : "geoserver/getGeoLayerInfoList.ajax",
-			URL : "editLayerCollection/editLayerCollection.ajax"
+			editURL : "editLayerCollection/editLayerCollection.ajax"
 		});
 		$("#builderServerLayer").jstree({
 			"core" : {

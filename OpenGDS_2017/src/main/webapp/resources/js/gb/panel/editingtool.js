@@ -74,31 +74,46 @@ gb.panel.EditingTool = function(obj) {
 	}).append(this.btn.selectBtn);
 
 	var i2 = $("<i>").addClass("fa").addClass("fa-pencil").attr("aria-hidden", true);
-	this.btn.drawBtn = $("<button>").addClass("gb-panel-editingtool-btn").append(i2);
+	this.btn.drawBtn = $("<button>").addClass("gb-panel-editingtool-btn").click(function() {
+		console.log("click draw");
+		that.draw(that.updateSelected());
+	}).append(i2);
 	var float2 = $("<div>").css({
 		"float" : "left"
 	}).append(this.btn.drawBtn);
 
 	var i3 = $("<i>").addClass("fa").addClass("fa-arrows").attr("aria-hidden", true);
-	this.btn.moveBtn = $("<button>").addClass("gb-panel-editingtool-btn").append(i3);
+	this.btn.moveBtn = $("<button>").addClass("gb-panel-editingtool-btn").click(function() {
+		console.log("click move");
+		that.move(that.updateSelected());
+	}).append(i3);
 	var float3 = $("<div>").css({
 		"float" : "left"
 	}).append(this.btn.moveBtn);
 
 	var i4 = $("<i>").addClass("fa").addClass("fa-wrench").attr("aria-hidden", true);
-	this.btn.modiBtn = $("<button>").addClass("gb-panel-editingtool-btn").append(i4);
+	this.btn.modiBtn = $("<button>").addClass("gb-panel-editingtool-btn").click(function() {
+		console.log("click modify");
+		that.modify(that.updateSelected());
+	}).append(i4);
 	var float4 = $("<div>").css({
 		"float" : "left"
 	}).append(this.btn.modiBtn);
 
 	var i5 = $("<i>").addClass("fa").addClass("fa-repeat").attr("aria-hidden", true);
-	this.btn.rotateBtn = $("<button>").addClass("gb-panel-editingtool-btn").append(i5);
+	this.btn.rotateBtn = $("<button>").addClass("gb-panel-editingtool-btn").click(function() {
+		console.log("click rotate");
+		that.rotate(that.updateSelected());
+	}).append(i5);
 	var float5 = $("<div>").css({
 		"float" : "left"
 	}).append(this.btn.rotateBtn);
 
 	var i6 = $("<i>").addClass("fa").addClass("fa-eraser").attr("aria-hidden", true);
-	this.btn.delBtn = $("<button>").addClass("gb-panel-editingtool-btn").append(i6);
+	this.btn.delBtn = $("<button>").addClass("gb-panel-editingtool-btn").click(function() {
+		console.log("click remove");
+		that.remove(that.updateSelected());
+	}).append(i6);
 	var float6 = $("<div>").css({
 		"float" : "left"
 	}).append(this.btn.delBtn);
@@ -129,6 +144,10 @@ gb.panel.EditingTool = function(obj) {
 		"body" : ftb
 	});
 
+	$(this.featurePop.getPanel()).css({
+		"max-height" : "300px",
+		"overflow-y" : "auto"
+	});
 	var ath1 = $("<th>").text("Key");
 	var ath2 = $("<th>").text("Value");
 	var atr = $("<tr>").append(ath1).append(ath2);
@@ -164,6 +183,16 @@ gb.panel.EditingTool = function(obj) {
 	// $(this.attrPop).draggable({
 	// appendTo : "body"
 	// });
+
+	this.map.on('postcompose', function(evt) {
+		that.map.getInteractions().forEach(function(interaction) {
+			if (interaction instanceof gb.interaction.MultiTransform) {
+				if (interaction.getFeatures().getLength()) {
+					interaction.drawMbr(evt);
+				}
+			}
+		});
+	});
 };
 gb.panel.EditingTool.prototype = Object.create(gb.panel.Base.prototype);
 gb.panel.EditingTool.prototype.constructor = gb.panel.EditingTool;
@@ -796,7 +825,7 @@ gb.panel.EditingTool.prototype.draw = function(layer) {
 	if (this.isOn.draw) {
 		if (!!this.interaction.draw || !!this.interaction.updateDraw) {
 			this.deactiveIntrct_("draw");
-			this.deactiveBtn("drawBtn");
+			this.deactiveBtn_("drawBtn");
 		}
 		return;
 	}
@@ -815,31 +844,42 @@ gb.panel.EditingTool.prototype.draw = function(layer) {
 		} else {
 			sourceLayer = layer[0];
 		}
-	} else if (layer instanceof ol.layer.Tile || layer instanceof ol.layer.Vector) {
+	} else if (layer instanceof ol.layer.Base) {
 		sourceLayer = layer;
 	} else {
 		return;
 	}
 
 	var git = sourceLayer.get("git");
-	if (git.editable === true && sourceLayer instanceof ol.layer.Tile) {
-
-		if (!this.managed) {
-			this.managed = new ol.layer.Vector({
-				source : this.tempSource
-			});
-			this.managed.set("name", "temp_vector");
-			this.managed.set("id", "temp_vector");
-			this.map.addLayer(this.managed);
-		}
-
+	if (git.editable === true && sourceLayer instanceof ol.layer.Vector) {
 		this.interaction.draw = new ol.interaction.Draw({
-			source : this.tempSource,
+			source : sourceLayer.getSource(),
 			type : git.geometry
 		});
+
 		this.interaction.draw.selectedType = function() {
-			return that.updateSelected().get("git").geometry;
+			var irreGeom = that.updateSelected().get("git").geometry;
+			var geom;
+			switch (irreGeom) {
+			case "Polyline":
+				geom = "LineString";
+				break;
+			case "LWPolyline":
+				geom = "LineString";
+				break;
+			case "Insert":
+				geom = "Point";
+				break;
+			case "Text":
+				geom = "Point";
+				break;
+			default:
+				geom = that.updateSelected().get("git").geometry;
+				break;
+			}
+			return geom;
 		};
+
 		this.interaction.draw.on("drawend", function(evt) {
 			console.log(evt);
 			var layers = that.selected();
@@ -874,35 +914,24 @@ gb.panel.EditingTool.prototype.draw = function(layer) {
 		this.deactiveIntrct_([ "select", "selectWMS", "move", "modify", "rotate" ]);
 		this.activeIntrct_("draw");
 		this.activeBtn_("drawBtn");
-	} else if (git.editable === true && sourceLayer instanceof ol.layer.Vector) {
+	} else if (git.editable === true && sourceLayer instanceof ol.layer.Base) {
+
+		if (!this.managed) {
+			this.managed = new ol.layer.Vector({
+				source : this.tempSource
+			});
+			this.managed.set("name", "temp_vector");
+			this.managed.set("id", "temp_vector");
+			this.map.addLayer(this.managed);
+		}
+
 		this.interaction.draw = new ol.interaction.Draw({
-			source : sourceLayer.getSource(),
+			source : this.tempSource,
 			type : git.geometry
 		});
-
 		this.interaction.draw.selectedType = function() {
-			var irreGeom = that.updateSelected().get("git").geometry;
-			var geom;
-			switch (irreGeom) {
-			case "Polyline":
-				geom = "LineString";
-				break;
-			case "LWPolyline":
-				geom = "LineString";
-				break;
-			case "Insert":
-				geom = "Point";
-				break;
-			case "Text":
-				geom = "Point";
-				break;
-			default:
-				geom = that.updateSelected().get("git").geometry;
-				break;
-			}
-			return geom;
+			return that.updateSelected().get("git").geometry;
 		};
-
 		this.interaction.draw.on("drawend", function(evt) {
 			console.log(evt);
 			var layers = that.selected();
@@ -1108,14 +1137,14 @@ gb.panel.EditingTool.prototype.remove = function(layer) {
 			}
 			return;
 		}
-		if (!this.managed) {
-			this.managed = new ol.layer.Vector({
-				source : this.tempSource
-			});
-			this.managed.set("name", "temp_vector");
-			this.managed.set("id", "temp_vector");
-			this.map.addLayer(this.managed);
-		}
+		// if (!this.managed) {
+		// this.managed = new ol.layer.Vector({
+		// source : this.tempSource
+		// });
+		// this.managed.set("name", "temp_vector");
+		// this.managed.set("id", "temp_vector");
+		// this.map.addLayer(this.managed);
+		// }
 		var layers = that.selected();
 		if (layers.length !== 1) {
 			return;
@@ -1141,14 +1170,26 @@ gb.panel.EditingTool.prototype.remove = function(layer) {
 				fill : fill,
 				stroke : stroke
 			});
-			for (var i = 0; i < features.getLength(); i++) {
-				if (features.item(i).getId().search(".new") !== -1) {
-					this.managed.getSource().removeFeature(features.item(i));
-				} else {
-					features.item(i).setStyle(style);
+			if (layer instanceof ol.layer.Vector) {
+				for (var i = 0; i < features.getLength(); i++) {
+					if (features.item(i).getId().search(".new") !== -1) {
+						layer.getSource().removeFeature(features.item(i));
+					} else {
+						features.item(i).setStyle(style);
+					}
+					that.featureRecord.remove(layers[0], features.item(i));
 				}
-				that.featureRecord.remove(layers[0], features.item(i));
+			} else if (layer instanceof ol.layer.Base) {
+				for (var i = 0; i < features.getLength(); i++) {
+					if (features.item(i).getId().search(".new") !== -1) {
+						this.managed.getSource().removeFeature(features.item(i));
+					} else {
+						features.item(i).setStyle(style);
+					}
+					that.featureRecord.remove(layers[0], features.item(i));
+				}
 			}
+
 		}
 		this.interaction.select.getFeatures().clear();
 
