@@ -35,12 +35,6 @@ public class NDAField {
 
 	public NDAField() {
 		super();
-		this.originFieldName = "";
-		this.fieldName = "";
-		this.type = "";
-		this.size = "";
-		this.decimal = "";
-		this.isUnique = true;
 	}
 
 	/**

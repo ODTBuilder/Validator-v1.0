@@ -272,10 +272,10 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 
 			NGIHeader ngiHeader = qa20Layer.getNgiHeader();
 			// meta Tb - boundary update
-			String boundary = ngiHeader.getBound();
-			HashMap<String, Object> updateBoundaryQuery = queryManager.getUpdateQA20LayerMeataBoundaryQuery(lmIdx,
-					boundary);
-			qa20DAO.updateQA20LayerMetadataBoundary(userVO,updateBoundaryQuery);
+//			String boundary = ngiHeader.getBound();
+//			HashMap<String, Object> updateBoundaryQuery = queryManager.getUpdateQA20LayerMeataBoundaryQuery(lmIdx,
+//					boundary);
+//			qa20DAO.updateQA20LayerMetadataBoundary(userVO,updateBoundaryQuery);
 
 			// ngi_point_rep Tb update
 

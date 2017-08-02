@@ -3,8 +3,6 @@ package com.git.opengds.editor.service;
 import java.util.Iterator;
 import java.util.Map;
 
-import javax.inject.Inject;
-
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,7 +17,6 @@ import com.git.gdsbuilder.type.qa20.layer.QA20Layer;
 import com.git.gdsbuilder.type.qa20.layer.QA20LayerList;
 import com.git.opengds.editor.EditLayerCondition;
 import com.git.opengds.geoserver.service.GeoserverService;
-import com.git.opengds.geoserver.service.GeoserverServiceImpl;
 import com.git.opengds.parser.json.BuilderJSONQA10Parser;
 import com.git.opengds.parser.json.BuilderJSONQA20Parser;
 import com.git.opengds.user.domain.UserVO;
