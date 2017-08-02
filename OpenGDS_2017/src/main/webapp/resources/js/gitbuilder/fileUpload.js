@@ -312,8 +312,8 @@ gitbuilder.method ={};
 						gitbuilder.variable.myDropzone.hiddenFileInput.setAttribute("accept",".ngi,.nda");
 				    }
 				    else if(selectType =='shp'){
-						gitbuilder.variable.myDropzone.options.acceptedFiles = ".shp,.dbf,.shx,.prj";
-						gitbuilder.variable.myDropzone.hiddenFileInput.setAttribute("accept",".shp,.dbf,.shx,.prj");
+						gitbuilder.variable.myDropzone.options.acceptedFiles = ".zip";
+						gitbuilder.variable.myDropzone.hiddenFileInput.setAttribute("accept",".zip");
 				    }
 				    gitbuilder.variable.myDropzone.initFileTypeChange(); //파일리스트 초기화
 				});
