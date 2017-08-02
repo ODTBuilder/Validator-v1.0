@@ -224,7 +224,6 @@ gb.geoserver.ModifyLayer.prototype.save = function(obj) {
 		method : "POST",
 		contentType : "application/json; charset=UTF-8",
 		cache : false,
-		// async : false,
 		data : JSON.stringify(obj),
 		beforeSend : function() {
 			$("body").css("cursor", "wait");
@@ -260,7 +259,7 @@ gb.geoserver.ModifyLayer.prototype.load = function(name, code) {
 	this.structure["layer"] = {};
 	this.structure["layer"][format] = {};
 	this.structure["layer"][format][sheetNum] = {};
-	this.structure["layer"][format][sheetNum]["modify"] = this.sendObj;
+	this.structure["layer"][format][sheetNum]["modify"] = [ this.sendObj ];
 
 	this.originInfo["nativeName"] = name;
 	// this.originInfo["originLayerName"] =
@@ -503,7 +502,7 @@ gb.geoserver.ModifyLayer.prototype.load = function(name, code) {
 				var attrObj = {
 					"originFieldName" : keys[i],
 					"type" : data[0].attInfo[keys[i]]["type"],
-					"nullable" : data[0].attInfo[keys[i]]["nillable"]
+					"nullable" : data[0].attInfo[keys[i]]["nillable"] === "true" ? true : false
 				};
 				that.originInfo["attr"].push(attrObj);
 			}
@@ -530,6 +529,7 @@ gb.geoserver.ModifyLayer.prototype.getInformationForm = function() {
 	}
 
 	this.currentInfo["geoserver"]["summary"] = $(this.summaryInput).val();
+
 	if (this.currentInfo["geoserver"]["summary"] !== this.originInfo["geoserver"]["summary"]) {
 		if (!this.sendObj.hasOwnProperty("geoserver")) {
 			this.sendObj["geoserver"] = {};
