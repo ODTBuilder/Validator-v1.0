@@ -370,6 +370,9 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 		/*DefaultTransactionDefinition def = new DefaultTransactionDefinition();
 		def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
 		TransactionStatus status = txManager.getTransaction(def);*/
+		
+		boolean isSuccessed = false;
+		
 
 		String layerName = layer.getLayerName();
 		QA20DBQueryManager queryManager = new QA20DBQueryManager();
@@ -401,21 +404,21 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 			HashMap<String, Object> dropQuery = queryManager.getQA20DropLayerQuery(type, collectionName, layerName);
 			qa20DAO.dropLayer(userVO,dropQuery);
 
+			
+			String layerTableName = "geo" + "_" + type + "_" + collectionName + "_" + layerName;
+			String groupName = "gro" + "_" + type + "_" + collectionName;
+			isSuccessed = geoserverService.removeGeoserverLayer(userVO,groupName, layerTableName);
 			// HashMap<String, Object> deleteLayerCollectionQuery = queryManager
 			// .getDeleteQA20LayerCollectionQuery(collectionIdx);
 			// qa20DAO.deleteField(deleteLayerCollectionQuery);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 //			txManager.rollback(status);
-			return false;
+			throw new RuntimeException();
 		}
-		String layerTableName = "geo" + "_" + type + "_" + collectionName + "_" + layerName;
-		String groupName = "gro" + "_" + type + "_" + collectionName;
-		boolean isSuccessed = geoserverService.removeGeoserverLayer(userVO,groupName, layerTableName);
 		if (isSuccessed) {
-//			txManager.commit(status);
 			return true;
 		} else {
-			return false;
+			throw new RuntimeException();
 		}
 	}
 
