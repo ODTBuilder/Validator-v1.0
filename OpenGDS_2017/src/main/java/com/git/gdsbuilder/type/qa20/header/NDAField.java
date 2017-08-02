@@ -31,6 +31,7 @@ public class NDAField {
 	String size;
 	String decimal;
 	boolean isUnique;
+	boolean isNotNull;
 
 	public NDAField() {
 		super();
@@ -49,26 +50,37 @@ public class NDAField {
 	 * @param type
 	 * @param size
 	 * @param decimal
-	 * @param fields
+	 * @param isUnique
 	 */
 	public NDAField(String originFieldName, String fieldName, String type, String size, String decimal,
-			boolean fields) {
+			boolean isUnique, boolean isNotNull) {
 		super();
 		this.originFieldName = originFieldName;
 		this.fieldName = fieldName;
 		this.type = type;
 		this.size = size;
 		this.decimal = decimal;
-		this.isUnique = fields;
+		this.isUnique = isUnique;
+		this.isNotNull = isNotNull;
 	}
 
-	public NDAField(String fieldName, String type, String size, String decimal, boolean fields) {
+	public NDAField(String fieldName, String type, String size, String decimal, boolean isUnique, boolean isNotNull) {
 		super();
 		this.fieldName = fieldName;
 		this.type = type;
 		this.size = size;
 		this.decimal = decimal;
-		this.isUnique = fields;
+		this.isUnique = isUnique;
+		this.isNotNull = isNotNull;
+	}
+
+	public NDAField(String fieldName, String type, String size, String decimal, boolean isUnique) {
+		super();
+		this.fieldName = fieldName;
+		this.type = type;
+		this.size = size;
+		this.decimal = decimal;
+		this.isUnique = isUnique;
 	}
 
 	public String getOriginFieldName() {
