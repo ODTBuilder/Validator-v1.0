@@ -559,6 +559,7 @@ gitbuilder.ui.QAEdit = $.widget("gitbuilder.qaedit",
 				var group = new ol.layer.Group({
 					layers : layers
 				});
+
 				group.set("name", "Validator Layers");
 				group.set("type", "Group");
 

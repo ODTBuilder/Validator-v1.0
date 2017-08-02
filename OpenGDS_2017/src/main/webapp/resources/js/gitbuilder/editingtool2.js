@@ -15,7 +15,6 @@ gitbuilder.ui.EditingTool = $.widget("gitbuilder.editingtool", {
 	options : {
 		geoserverURL : undefined,
 		map : undefined,
-		user : undefined,
 		selected : undefined,
 		appendTo : "body",
 		featureRecord : undefined,

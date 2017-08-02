@@ -13,8 +13,8 @@ if (!gb.geoserver)
 gb.geoserver.ModifyLayer = function(obj) {
 	var that = this;
 	var options = obj;
-	this.url = options.infoURL ? options.infoURL : null;
-	this.editUrl = options.URL ? options.URL : null;
+	this.infoURL = options.infoURL ? options.infoURL : null;
+	this.editURL = options.editURL ? options.editURL : null;
 	this.layer;
 	this.window;
 	this.originInfo = {};
@@ -220,11 +220,10 @@ gb.geoserver.ModifyLayer.prototype.close = function() {
 gb.geoserver.ModifyLayer.prototype.save = function(obj) {
 	var that = this;
 	$.ajax({
-		url : this.getUrl(),
+		url : this.getEditURL(),
 		method : "POST",
 		contentType : "application/json; charset=UTF-8",
 		cache : false,
-		// async : false,
 		data : JSON.stringify(obj),
 		beforeSend : function() {
 			$("body").css("cursor", "wait");
@@ -260,7 +259,7 @@ gb.geoserver.ModifyLayer.prototype.load = function(name, code) {
 	this.structure["layer"] = {};
 	this.structure["layer"][format] = {};
 	this.structure["layer"][format][sheetNum] = {};
-	this.structure["layer"][format][sheetNum]["modify"] = this.sendObj;
+	this.structure["layer"][format][sheetNum]["modify"] = [ this.sendObj ];
 
 	this.originInfo["nativeName"] = name;
 	// this.originInfo["originLayerName"] =
@@ -272,7 +271,7 @@ gb.geoserver.ModifyLayer.prototype.load = function(name, code) {
 	}
 	console.log(JSON.stringify(arr));
 	$.ajax({
-		url : that.getUrl(),
+		url : that.getInfoURL(),
 		method : "POST",
 		contentType : "application/json; charset=UTF-8",
 		cache : false,
@@ -503,7 +502,7 @@ gb.geoserver.ModifyLayer.prototype.load = function(name, code) {
 				var attrObj = {
 					"originFieldName" : keys[i],
 					"type" : data[0].attInfo[keys[i]]["type"],
-					"nullable" : data[0].attInfo[keys[i]]["nillable"]
+					"nullable" : data[0].attInfo[keys[i]]["nillable"] === "true" ? true : false
 				};
 				that.originInfo["attr"].push(attrObj);
 			}
@@ -530,6 +529,7 @@ gb.geoserver.ModifyLayer.prototype.getInformationForm = function() {
 	}
 
 	this.currentInfo["geoserver"]["summary"] = $(this.summaryInput).val();
+
 	if (this.currentInfo["geoserver"]["summary"] !== this.originInfo["geoserver"]["summary"]) {
 		if (!this.sendObj.hasOwnProperty("geoserver")) {
 			this.sendObj["geoserver"] = {};
@@ -572,13 +572,21 @@ gb.geoserver.ModifyLayer.prototype.getInformationForm = function() {
 	console.log(this.sendObj);
 	return this.sendObj;
 };
-gb.geoserver.ModifyLayer.prototype.setUrl = function(url) {
+gb.geoserver.ModifyLayer.prototype.setInfoURL = function(url) {
 	if (typeof url === "string") {
-		this.url = url;
+		this.infoURL = url;
 	}
 };
-gb.geoserver.ModifyLayer.prototype.getUrl = function() {
-	return this.url;
+gb.geoserver.ModifyLayer.prototype.getInfoURL = function() {
+	return this.infoURL;
+};
+gb.geoserver.ModifyLayer.prototype.setEditURL = function(url) {
+	if (typeof url === "string") {
+		this.editURL = url;
+	}
+};
+gb.geoserver.ModifyLayer.prototype.getEditURL = function() {
+	return this.editURL;
 };
 gb.geoserver.ModifyLayer.prototype.setName = function(name) {
 	return;

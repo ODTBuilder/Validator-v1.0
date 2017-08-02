@@ -329,10 +329,10 @@ html {
 			transfer.sendStructure();
 		});
 
+
 		$("#edit").editingtool({
 			url : "geoserver/geoserverWFSGetFeature.ajax",
 			map : map,
-			user : "admin",
 			featureRecord : frecord,
 			treeInstance : $('#builderClientLayer').jstreeol3(true),
 			selected : function() {
@@ -429,7 +429,7 @@ html {
 		});
 		var layerInfo = new gb.geoserver.ModifyLayer({
 			infoURL : "geoserver/getGeoLayerInfoList.ajax",
-			URL : "editLayerCollection/editLayerCollection.ajax"
+			editURL : "editLayerCollection/editLayerCollection.ajax"
 		});
 		$("#builderServerLayer").jstree({
 			"core" : {
@@ -473,6 +473,23 @@ html {
 		});
 		$("#qastat").click(function() {
 			qastat.open();
+		});
+
+		var pan = new gb.panel.EditingTool({
+			width : "84px",
+			height : "145px",
+			positionX : 425,
+			positionY : 100,
+			autoOpen : true,
+			map : map,
+			featureRecord : frecord,
+			treeInstance : $('#builderClientLayer').jstreeol3(true),
+			selected : function() {
+				return $('#builderClientLayer').jstreeol3("get_selected_layer");
+			},
+			infoURL : "geoserver/getGeoLayerInfoList.ajax",
+			wmsURL : "geoserver/geoserverWMSLayerLoad.do",
+			wfsURL : "geoserver/geoserverWFSGetFeature.ajax"
 		});
 	</script>
 
