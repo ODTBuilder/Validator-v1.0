@@ -32,7 +32,22 @@ gb.panel.EditingTool = function(obj) {
 	});
 	this.tempVector = new ol.layer.Vector({
 		map : this.map,
-		source : this.tempSource
+		source : this.tempSource,
+		style : new ol.style.Style({
+			stroke : new ol.style.Stroke({
+				color : 'rgba(0,0,0,0)',
+				width : 1
+			}),
+			fill : new ol.style.Fill({
+				color : 'rgba(0, 0, 0, 0)'
+			}),
+			image : new ol.style.Circle({
+				radius : 10,
+				fill : new ol.style.Fill({
+					color : 'rgba(0,0,0,0)'
+				})
+			})
+		})
 	});
 
 	this.btn = {

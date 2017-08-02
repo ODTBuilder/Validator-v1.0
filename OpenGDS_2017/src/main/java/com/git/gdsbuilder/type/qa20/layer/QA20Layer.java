@@ -93,9 +93,8 @@ public class QA20Layer {
 		this.layerName = layerName;
 		this.ngiHeader = ngiHeader;
 		this.ndaHeader = ndaHeader;
-		this.layerType = "";
+		this.layerType = layerType;
 		this.features = features;
-		this.originLayerName = "";
 	}
 
 	/**

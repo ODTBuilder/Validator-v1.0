@@ -27,7 +27,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.git.opengds.common.AbstractController;
 import com.git.opengds.editor.service.EditService;
-import com.git.opengds.editor.service.EditServiceImpl;
 import com.git.opengds.user.domain.UserVO;
 import com.git.opengds.user.domain.UserVO.EnUserType;
 
