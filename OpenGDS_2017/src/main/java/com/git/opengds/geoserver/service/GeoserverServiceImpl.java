@@ -375,7 +375,7 @@ public class GeoserverServiceImpl implements GeoserverService {
 			groupEncoder.setWorkspace(dtGeoGroupLayer.getWorkspace());
 			groupEncoder.setBounds(dtGeoGroupLayer.getCRS(), dtGeoGroupLayer.getMinX(), dtGeoGroupLayer.getMaxY(), dtGeoGroupLayer.getMinY(), dtGeoGroupLayer.getMaxY());
 			for(String name : layerList){
-				groupEncoder.addLayer(name);
+				groupEncoder.addLayer(userVO.getId()+":"+name);
 			}
 			
 			isConfigureGroup = dtPublisher.configureLayerGroup(userVO.getId(), groupLayerName, groupEncoder);
