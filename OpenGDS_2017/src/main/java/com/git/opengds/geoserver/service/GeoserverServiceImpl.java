@@ -196,12 +196,10 @@ public class GeoserverServiceImpl implements GeoserverService {
 									styleName = "NGI_"+ cutLayerName + "+_TEXT";
 									isTextStyle = true;
 								}
-								break;
 							}
 							else if(cutLayerName.equals("H0040000")){
 								styleName = cutLayerName + "+_TEXT";
 								isTextStyle = true;
-								break;
 							}
 					}
 				}
