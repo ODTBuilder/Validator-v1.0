@@ -203,14 +203,17 @@ public class EditLayerParser {
 			String originFieldName = (String) attrObj.get("originFieldName");
 			String fieldName = (String) attrObj.get("fieldName");
 			String type = (String) attrObj.get("type");
-			long decimal = (long) attrObj.get("decimal");
-			String decimalStr = String.valueOf(decimal);
+			String decimalStr = "";
+			if(type.equals("Double")) {
+				long decimal = (long) attrObj.get("decimal");
+				decimalStr = String.valueOf(decimal);
+			}
 			long size = (long) attrObj.get("size");
 			String sizeStr = String.valueOf(size);
 			boolean isUnique = (boolean) attrObj.get("isUnique");
 			boolean isNotNull = (boolean) attrObj.get("nullable");
-			NDAField field = new NDAField(originFieldName, fieldName, type, sizeStr, decimalStr, isUnique, isNotNull);
-			fieldList.add(field);
+			NDAField fied = new NDAField(originFieldName, fieldName, type, sizeStr, decimalStr, isUnique, isNotNull);
+			fieldList.add(fied);
 		}
 		return fieldList;
 	}
