@@ -329,16 +329,15 @@ html {
 			transfer.sendStructure();
 		});
 
-
-		$("#edit").editingtool({
-			url : "geoserver/geoserverWFSGetFeature.ajax",
-			map : map,
-			featureRecord : frecord,
-			treeInstance : $('#builderClientLayer').jstreeol3(true),
-			selected : function() {
-				return $('#builderClientLayer').jstreeol3("get_selected_layer");
-			}
-		});
+		// 		$("#edit").editingtool({
+		// 			url : "geoserver/geoserverWFSGetFeature.ajax",
+		// 			map : map,
+		// 			featureRecord : frecord,
+		// 			treeInstance : $('#builderClientLayer').jstreeol3(true),
+		// 			selected : function() {
+		// 				return $('#builderClientLayer').jstreeol3("get_selected_layer");
+		// 			}
+		// 		});
 
 		$("#changeBase").changebase({
 			map : map2
@@ -408,9 +407,26 @@ html {
 			}
 		});
 
+		var epan = new gb.panel.EditingTool({
+			width : "84px",
+			height : "145px",
+			positionX : 425,
+			positionY : 100,
+			autoOpen : false,
+			map : map,
+			featureRecord : frecord,
+			treeInstance : $('#builderClientLayer').jstreeol3(true),
+			selected : function() {
+				return $('#builderClientLayer').jstreeol3("get_selected_layer");
+			},
+			infoURL : "geoserver/getGeoLayerInfoList.ajax",
+			wmsURL : "geoserver/geoserverWMSLayerLoad.do",
+			wfsURL : "geoserver/geoserverWFSGetFeature.ajax"
+		});
+
 		$("#qaedit").qaedit({
 			map : map,
-			editingTool : $("#edit").editingtool("instance"),
+			editingTool : epan,
 			treeInstance : $('#builderClientLayer').jstreeol3(true),
 			linkKey : "feature_idx",
 			user : "admin",
@@ -475,21 +491,8 @@ html {
 			qastat.open();
 		});
 
-		var pan = new gb.panel.EditingTool({
-			width : "84px",
-			height : "145px",
-			positionX : 425,
-			positionY : 100,
-			autoOpen : true,
-			map : map,
-			featureRecord : frecord,
-			treeInstance : $('#builderClientLayer').jstreeol3(true),
-			selected : function() {
-				return $('#builderClientLayer').jstreeol3("get_selected_layer");
-			},
-			infoURL : "geoserver/getGeoLayerInfoList.ajax",
-			wmsURL : "geoserver/geoserverWMSLayerLoad.do",
-			wfsURL : "geoserver/geoserverWFSGetFeature.ajax"
+		$("#edit").click(function() {
+			epan.open();
 		});
 	</script>
 
