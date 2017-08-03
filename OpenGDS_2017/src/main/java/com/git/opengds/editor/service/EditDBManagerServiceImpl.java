@@ -411,13 +411,13 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 			// HashMap<String, Object> deleteLayerCollectionQuery = queryManager
 			// .getDeleteQA20LayerCollectionQuery(collectionIdx);
 			// qa20DAO.deleteField(deleteLayerCollectionQuery);
+			if (isSuccessed) {
+				return true;
+			} else {
+				throw new RuntimeException();
+			}
 		} catch (RuntimeException e) {
 //			txManager.rollback(status);
-			throw new RuntimeException();
-		}
-		if (isSuccessed) {
-			return true;
-		} else {
 			throw new RuntimeException();
 		}
 	}
