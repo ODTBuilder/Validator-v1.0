@@ -10,12 +10,12 @@ import org.springframework.stereotype.Service;
 
 import com.git.gdsbuilder.type.validate.collection.ValidateProgress;
 import com.git.gdsbuilder.type.validate.collection.ValidateProgressList;
-import com.git.opengds.file.dxf.dbManager.QA10DBQueryManager;
-import com.git.opengds.file.dxf.persistence.QA10LayerCollectionDAO;
-import com.git.opengds.file.dxf.persistence.QA10LayerCollectionDAOImpl;
-import com.git.opengds.file.ngi.dbManager.QA20DBQueryManager;
-import com.git.opengds.file.ngi.persistence.QA20LayerCollectionDAO;
-import com.git.opengds.file.ngi.persistence.QA20LayerCollectionDAOImpl;
+import com.git.opengds.file.dxf.dbManager.DXFDBQueryManager;
+import com.git.opengds.file.dxf.persistence.DXFLayerCollectionDAO;
+import com.git.opengds.file.dxf.persistence.DXFLayerCollectionDAOImpl;
+import com.git.opengds.file.ngi.dbManager.NGIDBQueryManager;
+import com.git.opengds.file.ngi.persistence.NGILayerCollectionDAO;
+import com.git.opengds.file.ngi.persistence.NGILayerCollectionDAOImpl;
 import com.git.opengds.user.domain.UserVO;
 import com.git.opengds.validator.dbManager.ValidateProgressDBQueryManager;
 import com.git.opengds.validator.persistence.ValidateProgressDAO;
@@ -29,10 +29,10 @@ public class ValidatorProgressServiceImpl implements ValidatorProgressService {
 	 */
 
 	@Inject
-	private QA10LayerCollectionDAO qa10DAO;
+	private DXFLayerCollectionDAO qa10DAO;
 
 	@Inject
-	private QA20LayerCollectionDAO qa20DAO;
+	private NGILayerCollectionDAO qa20DAO;
 
 	@Inject
 	private ValidateProgressDAO progressDAO;
@@ -51,14 +51,14 @@ public class ValidatorProgressServiceImpl implements ValidatorProgressService {
 		ValidateProgressDBQueryManager queryManager = new ValidateProgressDBQueryManager();
 		int cidx = 0;
 		if (fileType.equals("ngi")) {
-			QA20DBQueryManager qa20QueryManager = new QA20DBQueryManager();
+			NGIDBQueryManager qa20QueryManager = new NGIDBQueryManager();
 			cidx = qa20DAO.selectQA20LayerCollectionIdx(userVO,
 					qa20QueryManager.getSelectQA20LayerCollectionIdx(collectionName));
 			HashMap<String, Object> insertQuery = queryManager.getInsertQA20RequestState(validateStart, collectionName,
 					fileType, cidx);
 			pIdx = progressDAO.insertQA20RequestState(userVO, insertQuery);
 		} else if (fileType.equals("dxf")) {
-			QA10DBQueryManager qa10QueryManager = new QA10DBQueryManager();
+			DXFDBQueryManager qa10QueryManager = new DXFDBQueryManager();
 			cidx = qa10DAO.selectQA10LayerCollectionIdx(userVO,
 					qa10QueryManager.getSelectLayerCollectionIdx(collectionName));
 			HashMap<String, Object> insertQuery = queryManager.getInsertQA10RequestState(validateStart, collectionName,

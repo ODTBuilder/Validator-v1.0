@@ -20,8 +20,8 @@ package com.git.opengds.parser.error;
 import java.util.HashMap;
 import java.util.List;
 
-import com.git.gdsbuilder.validator.result.DetailsValidateResult;
-import com.git.gdsbuilder.validator.result.DetailsValidateResultList;
+import com.git.gdsbuilder.validator.result.DetailsValidationResult;
+import com.git.gdsbuilder.validator.result.DetailsValidattionResultList;
 import com.git.gdsbuilder.validator.result.ISOReportField;
 
 /**
@@ -37,9 +37,9 @@ public class ErrorReportParser {
 	 * 2017. 3. 11. 오후 2:18:29 @param errFeatures @return
 	 * DetailsValidateResultList @throws
 	 */
-	public static DetailsValidateResultList parseDetailsErrorReport(List<HashMap<String, Object>> errFeatures) {
+	public static DetailsValidattionResultList parseDetailsErrorReport(List<HashMap<String, Object>> errFeatures) {
 
-		DetailsValidateResultList dtValidateResultList = new DetailsValidateResultList();
+		DetailsValidattionResultList dtValidateResultList = new DetailsValidattionResultList();
 
 		for (int i = 0; i < errFeatures.size(); i++) {
 			HashMap<String, Object> errFeature = errFeatures.get(i);
@@ -52,7 +52,7 @@ public class ErrorReportParser {
 			double errorCoordinateX = (Double) errFeature.get("x_coordinate");
 			double errorCoordinateY = (Double) errFeature.get("y_coordinate");
 
-			DetailsValidateResult dtValidateResult = new DetailsValidateResult(collectionName, layerName, featureID,
+			DetailsValidationResult dtValidateResult = new DetailsValidationResult(collectionName, layerName, featureID,
 					errorType, errorName, errorCoordinateX, errorCoordinateY);
 			dtValidateResultList.add(dtValidateResult);
 		}

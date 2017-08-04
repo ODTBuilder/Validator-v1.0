@@ -27,22 +27,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.test.context.ContextConfiguration;
 
-import com.git.gdsbuilder.edit.qa10.EditQA10Collection;
-import com.git.gdsbuilder.edit.qa20.EditQA20Collection;
-import com.git.gdsbuilder.type.qa10.feature.QA10Feature;
-import com.git.gdsbuilder.type.qa10.layer.QA10Layer;
-import com.git.gdsbuilder.type.qa10.structure.QA10Tables;
-import com.git.gdsbuilder.type.qa20.collection.QA20LayerCollection;
-import com.git.gdsbuilder.type.qa20.feature.QA20Feature;
-import com.git.gdsbuilder.type.qa20.header.NDAField;
-import com.git.gdsbuilder.type.qa20.header.NDAHeader;
-import com.git.gdsbuilder.type.qa20.header.NGIHeader;
-import com.git.gdsbuilder.type.qa20.layer.QA20Layer;
-import com.git.gdsbuilder.type.qa20.layer.QA20LayerList;
-import com.git.opengds.file.dxf.dbManager.QA10DBQueryManager;
-import com.git.opengds.file.dxf.persistence.QA10LayerCollectionDAO;
-import com.git.opengds.file.ngi.dbManager.QA20DBQueryManager;
-import com.git.opengds.file.ngi.persistence.QA20LayerCollectionDAO;
+import com.git.gdsbuilder.edit.dxf.EditDXFCollection;
+import com.git.gdsbuilder.edit.ngi.EditNGICollection;
+import com.git.gdsbuilder.type.dxf.feature.DTDXFFeature;
+import com.git.gdsbuilder.type.dxf.layer.DTDXFLayer;
+import com.git.gdsbuilder.type.dxf.structure.DTDXFTables;
+import com.git.gdsbuilder.type.ngi.collection.DTNGILayerCollection;
+import com.git.gdsbuilder.type.ngi.feature.DTNGIFeature;
+import com.git.gdsbuilder.type.ngi.header.NDAField;
+import com.git.gdsbuilder.type.ngi.header.NDAHeader;
+import com.git.gdsbuilder.type.ngi.header.NGIHeader;
+import com.git.gdsbuilder.type.ngi.layer.DTNGILayer;
+import com.git.gdsbuilder.type.ngi.layer.DTNGILayerList;
+import com.git.opengds.file.dxf.dbManager.DXFDBQueryManager;
+import com.git.opengds.file.dxf.persistence.DXFLayerCollectionDAO;
+import com.git.opengds.file.ngi.dbManager.NGIDBQueryManager;
+import com.git.opengds.file.ngi.persistence.NGILayerCollectionDAO;
 import com.git.opengds.geoserver.service.GeoserverService;
 import com.git.opengds.user.domain.UserVO;
 import com.git.opengds.validator.persistence.ValidateProgressDAO;
@@ -56,10 +56,10 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 	 */
 
 	@Inject
-	private QA20LayerCollectionDAO qa20DAO;
+	private NGILayerCollectionDAO qa20DAO;
 
 	@Inject
-	private QA10LayerCollectionDAO qa10DAO;
+	private DXFLayerCollectionDAO qa10DAO;
 
 	@Inject
 	private ValidateProgressDAO progressDAO;
@@ -78,7 +78,7 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 
 	public Integer checkQA20LayerCollectionName(UserVO userVO, String collectionName) throws RuntimeException {
 
-		QA20DBQueryManager queryManager = new QA20DBQueryManager();
+		NGIDBQueryManager queryManager = new NGIDBQueryManager();
 		HashMap<String, Object> queryMap = queryManager.getSelectQA20LayerCollectionIdx(collectionName);
 		Integer cIdx = qa20DAO.selectQA20LayerCollectionIdx(userVO, queryMap);
 		if (cIdx == null) {
@@ -89,17 +89,17 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 	}
 
 	@Override
-	public Integer createQA20LayerCollection(UserVO userVO, String type, EditQA20Collection editCollection)
+	public Integer createQA20LayerCollection(UserVO userVO, String type, EditNGICollection editCollection)
 			throws RuntimeException {
 
 		String collectionName = editCollection.getCollectionName();
 
-		QA20LayerList createLayerList = editCollection.getCreateLayerList();
-		QA20LayerCollection createCollection = new QA20LayerCollection();
+		DTNGILayerList createLayerList = editCollection.getCreateLayerList();
+		DTNGILayerCollection createCollection = new DTNGILayerCollection();
 		createCollection.setFileName(collectionName);
 		createCollection.setQa20LayerList(createLayerList);
 
-		QA20DBQueryManager queryManager = new QA20DBQueryManager();
+		NGIDBQueryManager queryManager = new NGIDBQueryManager();
 		HashMap<String, Object> insertCollectionQuery = queryManager.getInsertQA20LayerCollectionQuery(collectionName);
 		int cIdx = qa20DAO.insertQA20LayerCollection(userVO, insertCollectionQuery);
 
@@ -107,12 +107,12 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 	}
 
 	@Override
-	public Integer createQA10LayerCollection(UserVO userVO, String type, EditQA10Collection editCollection)
+	public Integer createQA10LayerCollection(UserVO userVO, String type, EditDXFCollection editCollection)
 			throws RuntimeException {
 
 		String collectionName = editCollection.getCollectionName();
 
-		QA10DBQueryManager queryManager = new QA10DBQueryManager();
+		DXFDBQueryManager queryManager = new DXFDBQueryManager();
 		HashMap<String, Object> insertCollectionQuery = queryManager.getInsertLayerCollection(collectionName);
 		int cIdx = qa10DAO.insertQA10LayerCollection(userVO, insertCollectionQuery);
 
@@ -121,7 +121,7 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 
 	public void deleteQA10LayerCollection(UserVO userVO, int cIdx) throws RuntimeException {
 
-		QA10DBQueryManager queryManager = new QA10DBQueryManager();
+		DXFDBQueryManager queryManager = new DXFDBQueryManager();
 
 		HashMap<String, Object> deleteTableCommonsQuery = queryManager.getDeleteTables(cIdx);
 		qa10DAO.deleteField(userVO, deleteTableCommonsQuery);
@@ -136,7 +136,7 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 
 	public void deleteQA20LayerCollection(UserVO userVO, int cIdx) throws RuntimeException {
 
-		QA20DBQueryManager queryManager = new QA20DBQueryManager();
+		NGIDBQueryManager queryManager = new NGIDBQueryManager();
 
 		// HashMap<String, Object> deleteValidateProgressQuery =
 		// queryManager.getDeleteQA10ProgressQuery(cIdx);
@@ -147,7 +147,7 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 	}
 
 	@Override
-	public boolean createQA20Layer(UserVO userVO, String type, Integer idx, String collectionName, QA20Layer qa20Layer,
+	public boolean createQA20Layer(UserVO userVO, String type, Integer idx, String collectionName, DTNGILayer qa20Layer,
 			String src) throws RuntimeException {
 
 		/*
@@ -158,7 +158,7 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 		 */
 
 		try {
-			QA20DBQueryManager queryManager = new QA20DBQueryManager();
+			NGIDBQueryManager queryManager = new NGIDBQueryManager();
 
 			// createQA20Layer
 			HashMap<String, Object> createQuery = queryManager.getQA20LayerTbCreateQuery(type, collectionName,
@@ -218,19 +218,19 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 	}
 
 	@Override
-	public void insertQA20CreateFeature(UserVO userVO, String tableName, QA20Feature createFeature, String src)
+	public void insertQA20CreateFeature(UserVO userVO, String tableName, DTNGIFeature createFeature, String src)
 			throws RuntimeException {
 
-		QA20DBQueryManager queryManager = new QA20DBQueryManager();
+		NGIDBQueryManager queryManager = new NGIDBQueryManager();
 		HashMap<String, Object> insertQuertMap = queryManager.getInertQA20FeatureQuery(tableName, createFeature, src);
 		qa20DAO.insertQA20Feature(userVO, insertQuertMap);
 	}
 
 	@Override
-	public void updateQA20ModifyFeature(UserVO userVO, String tableName, QA20Feature modifyFeature, String src)
+	public void updateQA20ModifyFeature(UserVO userVO, String tableName, DTNGIFeature modifyFeature, String src)
 			throws RuntimeException {
 
-		QA20DBQueryManager queryManager = new QA20DBQueryManager();
+		NGIDBQueryManager queryManager = new NGIDBQueryManager();
 
 		/*
 		 * DefaultTransactionDefinition def = new
@@ -262,7 +262,7 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 
 	@Override
 	public boolean modifyQA20Layer(UserVO userVO, String type, Integer collectionIdx, String collectionName,
-			QA20Layer qa20Layer, Map<String, Object> geoLayer) throws RuntimeException {
+			DTNGILayer qa20Layer, Map<String, Object> geoLayer) throws RuntimeException {
 
 		/*
 		 * DefaultTransactionDefinition def = new
@@ -271,7 +271,7 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 		 * ); TransactionStatus status = txManager.getTransaction(def);
 		 */
 
-		QA20DBQueryManager queryManager = new QA20DBQueryManager();
+		NGIDBQueryManager queryManager = new NGIDBQueryManager();
 		try {
 			String orignName = qa20Layer.getOriginLayerName();
 			HashMap<String, Object> queryMap = queryManager.getSelectQA20LayerMetaDataIdxQuery(collectionIdx,
@@ -352,7 +352,7 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 	public List<HashMap<String, Object>> getQA20LayerMetadataIdx(UserVO userVO, Integer collectionIdx)
 			throws RuntimeException {
 
-		QA20DBQueryManager queryManager = new QA20DBQueryManager();
+		NGIDBQueryManager queryManager = new NGIDBQueryManager();
 		HashMap<String, Object> queryMap = queryManager.getSelectQA20LayerMetaDataIdxQuery(collectionIdx);
 		List<HashMap<String, Object>> cIdx = qa20DAO.selectQA20LayerMetadataIdxs(userVO, queryMap);
 		if (cIdx == null) {
@@ -365,7 +365,7 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 	@Override
 	public void deleteQA20RemovedFeature(UserVO userVO, String tableName, String featureId) throws RuntimeException {
 
-		QA20DBQueryManager queryManager = new QA20DBQueryManager();
+		NGIDBQueryManager queryManager = new NGIDBQueryManager();
 
 		/*
 		 * DefaultTransactionDefinition def = new
@@ -388,7 +388,7 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 
 	@Override
 	public boolean dropQA20Layer(UserVO userVO, String type, Integer collectionIdx, String collectionName,
-			QA20Layer layer) throws RuntimeException {
+			DTNGILayer layer) throws RuntimeException {
 
 		/*
 		 * DefaultTransactionDefinition def = new
@@ -400,7 +400,7 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 		boolean isSuccessed = false;
 
 		String layerName = layer.getLayerName();
-		QA20DBQueryManager queryManager = new QA20DBQueryManager();
+		NGIDBQueryManager queryManager = new NGIDBQueryManager();
 
 		try {
 			HashMap<String, Object> metadataIdxQuery = queryManager.getSelectQA20LayerMetaDataIdxQuery(collectionIdx,
@@ -447,19 +447,19 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 	}
 
 	@Override
-	public void insertQA10CreateFeature(UserVO userVO, String tableName, QA10Feature createFeature)
+	public void insertQA10CreateFeature(UserVO userVO, String tableName, DTDXFFeature createFeature)
 			throws RuntimeException {
 
-		QA10DBQueryManager queryManager = new QA10DBQueryManager();
+		DXFDBQueryManager queryManager = new DXFDBQueryManager();
 		HashMap<String, Object> insertQuertMap = queryManager.getInertFeatureQuery(tableName, createFeature);
 		qa10DAO.insertQA10Feature(userVO, insertQuertMap);
 	}
 
 	@Override
-	public void updateQA10ModifyFeature(UserVO userVO, String tableName, QA10Feature modifyFeature)
+	public void updateQA10ModifyFeature(UserVO userVO, String tableName, DTDXFFeature modifyFeature)
 			throws RuntimeException {
 
-		QA10DBQueryManager queryManager = new QA10DBQueryManager();
+		DXFDBQueryManager queryManager = new DXFDBQueryManager();
 
 		/*
 		 * DefaultTransactionDefinition def = new
@@ -490,7 +490,7 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 	@Override
 	public void deleteQA10RemovedFeature(UserVO userVO, String tableName, String featureId) throws RuntimeException {
 
-		QA10DBQueryManager queryManager = new QA10DBQueryManager();
+		DXFDBQueryManager queryManager = new DXFDBQueryManager();
 
 		/*
 		 * DefaultTransactionDefinition def = new
@@ -515,7 +515,7 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 	@Override
 	public Integer checkQA10LayerCollectionName(UserVO userVO, String collectionName) throws RuntimeException {
 
-		QA10DBQueryManager queryManager = new QA10DBQueryManager();
+		DXFDBQueryManager queryManager = new DXFDBQueryManager();
 		HashMap<String, Object> queryMap = queryManager.getSelectLayerCollectionIdx(collectionName);
 		Integer cIdx = qa20DAO.selectQA20LayerCollectionIdx(userVO, queryMap);
 		if (cIdx == null) {
@@ -527,9 +527,9 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 
 	@Override
 	public boolean createQA10Layer(UserVO userVO, String type, Integer collectionIdx, String collectionName,
-			QA10Layer createLayer, String src) throws RuntimeException {
+			DTDXFLayer createLayer, String src) throws RuntimeException {
 
-		QA10DBQueryManager queryManager = new QA10DBQueryManager();
+		DXFDBQueryManager queryManager = new DXFDBQueryManager();
 
 		/*
 		 * DefaultTransactionDefinition def = new
@@ -559,7 +559,7 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 			qa10DAO.insertQA10LayerMetadata(userVO, insertQueryMap);
 
 			// tablesLayer
-			QA10Tables tables = new QA10Tables();
+			DTDXFTables tables = new DTDXFTables();
 			Map<String, Object> tbLayers = tables.getLayerValues(createLayer);
 			HashMap<String, Object> tablesQuery = queryManager.getInsertTables(collectionIdx, tbLayers);
 			int tbIdx = qa10DAO.insertQA10LayerCollectionTableCommon(userVO, tablesQuery);
@@ -579,7 +579,7 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 
 	@Override
 	public boolean dropQA10Layer(UserVO userVO, String type, Integer collectionIdx, String collectionName,
-			QA10Layer layer) throws RuntimeException {
+			DTDXFLayer layer) throws RuntimeException {
 
 		/*
 		 * DefaultTransactionDefinition def = new
@@ -598,7 +598,7 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 		boolean isSuccessed = false;
 
 		try {
-			QA10DBQueryManager dbManager = new QA10DBQueryManager();
+			DXFDBQueryManager dbManager = new DXFDBQueryManager();
 			HashMap<String, Object> selectLayerCollectionIdxQuery = dbManager
 					.getSelectLayerCollectionIdx(collectionName);
 			Integer cIdx = qa10DAO.selectQA10LayerCollectionIdx(userVO, selectLayerCollectionIdxQuery);
@@ -676,7 +676,7 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 
 	@Override
 	public boolean modifyQA10Layer(UserVO userVO, String type, Integer collectionIdx, String collectionName,
-			QA10Layer qa10Layer, Map<String, Object> geoLayer) throws RuntimeException {
+			DTDXFLayer qa10Layer, Map<String, Object> geoLayer) throws RuntimeException {
 
 		/*
 		 * DefaultTransactionDefinition def = new
@@ -685,7 +685,7 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 		 * ); TransactionStatus status = txManager.getTransaction(def);
 		 */
 
-		QA10DBQueryManager queryManager = new QA10DBQueryManager();
+		DXFDBQueryManager queryManager = new DXFDBQueryManager();
 
 		String orignId = qa10Layer.getOriginLayerID();
 		String currentId = qa10Layer.getLayerID();
@@ -738,7 +738,7 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 	@Override
 	public void deleteQA10LayerCollectionTablesCommon(UserVO userVO, Integer cIdx) throws RuntimeException {
 
-		QA10DBQueryManager queryManager = new QA10DBQueryManager();
+		DXFDBQueryManager queryManager = new DXFDBQueryManager();
 		HashMap<String, Object> deleteQuery = queryManager.getDeleteTables(cIdx);
 		qa10DAO.deleteField(userVO, deleteQuery);
 	}

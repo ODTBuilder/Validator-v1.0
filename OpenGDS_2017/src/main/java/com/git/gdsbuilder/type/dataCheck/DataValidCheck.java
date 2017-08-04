@@ -47,7 +47,7 @@ import org.opengis.feature.simple.SimpleFeature;
 import com.git.gdsbuilder.convertor.DataConvertor;
 import com.git.gdsbuilder.type.validate.error.ErrorFeature;
 import com.git.gdsbuilder.type.validate.error.ErrorLayer;
-import com.git.gdsbuilder.validator.result.DetailsValidateResult;
+import com.git.gdsbuilder.validator.result.DetailsValidationResult;
 import com.git.gdsbuilder.validator.result.ISOReportField;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;

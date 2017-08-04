@@ -116,10 +116,10 @@ public class BuilderJSONParser {
 			JSONObject stateObj = (JSONObject) editFeatureObj.get(tableName);
 			Map<String, Object> editFeatureMap = new HashMap<String, Object>();
 			if (collectionType.equals(isNgi)) {
-				editFeatureMap = BuilderJSONQA20Parser.parseNGIFeature(stateObj, layerType);
+				editFeatureMap = BuilderJSONNGIParser.parseNGIFeature(stateObj, layerType);
 			}
 			if (collectionType.equals(isDxf)) {
-				editFeatureMap = BuilderJSONQA10Parser.parseDXFFeature(stateObj, layerType);
+				editFeatureMap = BuilderJSONDXFParser.parseDXFFeature(stateObj, layerType);
 			}
 			editFeatureListMap.put(tableName, editFeatureMap);
 		}

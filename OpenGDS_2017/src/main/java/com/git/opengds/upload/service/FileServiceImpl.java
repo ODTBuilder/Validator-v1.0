@@ -33,10 +33,10 @@ import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
-import com.git.opengds.file.dxf.service.QA10FileUploadService;
-import com.git.opengds.file.dxf.service.QA10FileUploadServiceImpl;
-import com.git.opengds.file.ngi.service.QA20FileUploadService;
-import com.git.opengds.file.ngi.service.QA20FileUploadServiceImpl;
+import com.git.opengds.file.dxf.service.DXFFileUploadService;
+import com.git.opengds.file.dxf.service.DXFFileUploadServiceImpl;
+import com.git.opengds.file.ngi.service.NGIFileUploadService;
+import com.git.opengds.file.ngi.service.NGIFileUploadServiceImpl;
 import com.git.opengds.upload.domain.FileMeta;
 import com.git.opengds.upload.persistence.FileDAO;
 import com.git.opengds.upload.persistence.FileDAOImpl;
@@ -49,10 +49,10 @@ public class FileServiceImpl implements FileService {
 	private static final String dirPath = "D:\\files";
 
 	@Autowired
-	private QA20FileUploadService qa20FileService;
+	private NGIFileUploadService qa20FileService;
 
 	@Autowired
-	private QA10FileUploadService qa10FileService;
+	private DXFFileUploadService qa10FileService;
 
 	@Inject
 	private FileDAO fileDAO;

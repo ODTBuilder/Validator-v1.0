@@ -37,10 +37,10 @@ public class EditServiceImpl implements EditService {
 	protected static final String isShp = "shp";
 
 	@Autowired
-	private EditLayerService editLayerService;
+	private EditDTLayerService editLayerService;
 
 	@Autowired
-	private EditFeatureService editFeatureService;
+	private EditDTFeatureService editFeatureService;
 /*	
 	public EditServiceImpl(UserVO userVO) {
 		// TODO Auto-generated constructor stub

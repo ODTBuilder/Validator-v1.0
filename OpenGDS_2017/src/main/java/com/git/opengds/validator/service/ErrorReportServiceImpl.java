@@ -28,11 +28,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.test.context.ContextConfiguration;
 
 import com.git.gdsbuilder.type.validate.layer.ValidateLayerType;
-import com.git.gdsbuilder.validator.result.DetailsValidateResultList;
+import com.git.gdsbuilder.validator.result.DetailsValidattionResultList;
 import com.git.gdsbuilder.validator.result.ISOReportField;
 import com.git.gdsbuilder.validator.result.ISOReportFieldList;
-import com.git.opengds.file.ngi.dbManager.QA20DBQueryManager;
-import com.git.opengds.file.ngi.persistence.QA20LayerCollectionDAO;
+import com.git.opengds.file.ngi.dbManager.NGIDBQueryManager;
+import com.git.opengds.file.ngi.persistence.NGILayerCollectionDAO;
 import com.git.opengds.parser.error.ErrorReportParser;
 import com.git.opengds.parser.validate.ValidateTypeParser;
 import com.git.opengds.user.domain.UserVO;
@@ -47,7 +47,7 @@ public class ErrorReportServiceImpl implements ErrorReportService {
 	private ErrorLayerDAO errLayerDAO;
 
 	@Inject
-	private QA20LayerCollectionDAO qa20LayerCollectionDAO;
+	private NGILayerCollectionDAO qa20LayerCollectionDAO;
 
 /*	@Autowired
 	private DataSourceTransactionManager txManager;*/
@@ -65,7 +65,7 @@ public class ErrorReportServiceImpl implements ErrorReportService {
 		if (typeValidates.size() != 0) {
 
 			ISOReportFieldList isoFieldList = new ISOReportFieldList();
-			QA20DBQueryManager qaLayerManager = new QA20DBQueryManager();
+			NGIDBQueryManager qaLayerManager = new NGIDBQueryManager();
 			ErrorLayerDBQueryManager errorLayerDBQueryManager = new ErrorLayerDBQueryManager();
 
 			// transaction
@@ -124,7 +124,7 @@ public class ErrorReportServiceImpl implements ErrorReportService {
 		TransactionStatus status = txManager.getTransaction(def);*/
 		try {
 			List<HashMap<String, Object>> errAllFeatures = errLayerDAO.selectAllErrorFeatures(userVO, selectAllQuery);
-			DetailsValidateResultList detailList = ErrorReportParser.parseDetailsErrorReport(errAllFeatures);
+			DetailsValidattionResultList detailList = ErrorReportParser.parseDetailsErrorReport(errAllFeatures);
 			if (errAllFeatures.size() != 0) {
 				JSONObject detailReport = new JSONObject();
 				JSONArray fields = detailList.parseJSON();

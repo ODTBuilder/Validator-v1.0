@@ -36,12 +36,12 @@ import com.git.gdsbuilder.type.geoserver.layer.GeoLayerInfo;
 import com.git.gdsbuilder.type.geoserver.layer.GeoLayerInfoList;
 import com.git.gdsbuilder.type.validate.error.ErrorLayer;
 import com.git.gdsbuilder.type.validate.error.ErrorLayerList;
-import com.git.opengds.file.dxf.dbManager.QA10DBQueryManager;
-import com.git.opengds.file.dxf.persistence.QA10LayerCollectionDAO;
-import com.git.opengds.file.dxf.persistence.QA10LayerCollectionDAOImpl;
-import com.git.opengds.file.ngi.dbManager.QA20DBQueryManager;
-import com.git.opengds.file.ngi.persistence.QA20LayerCollectionDAO;
-import com.git.opengds.file.ngi.persistence.QA20LayerCollectionDAOImpl;
+import com.git.opengds.file.dxf.dbManager.DXFDBQueryManager;
+import com.git.opengds.file.dxf.persistence.DXFLayerCollectionDAO;
+import com.git.opengds.file.dxf.persistence.DXFLayerCollectionDAOImpl;
+import com.git.opengds.file.ngi.dbManager.NGIDBQueryManager;
+import com.git.opengds.file.ngi.persistence.NGILayerCollectionDAO;
+import com.git.opengds.file.ngi.persistence.NGILayerCollectionDAOImpl;
 import com.git.opengds.geoserver.service.GeoserverService;
 import com.git.opengds.geoserver.service.GeoserverServiceImpl;
 import com.git.opengds.user.domain.UserVO;
@@ -62,10 +62,10 @@ public class ErrorLayerServiceImpl implements ErrorLayerService {
 	private DataSourceTransactionManager txManager;
 */
 	@Inject
-	private QA10LayerCollectionDAO qa10DAO;
+	private DXFLayerCollectionDAO qa10DAO;
 
 	@Inject
-	private QA20LayerCollectionDAO qa20DAO;
+	private NGILayerCollectionDAO qa20DAO;
 
 	@Inject
 	private ValidateProgressDAO progressDAO;
@@ -106,7 +106,7 @@ public class ErrorLayerServiceImpl implements ErrorLayerService {
 				String errTableName = "\"" + "err_" + fileType + "_";
 				Integer cIdx = null;
 				if (fileType.equals("ngi")) {
-					QA20DBQueryManager qa20dbQueryManager = new QA20DBQueryManager();
+					NGIDBQueryManager qa20dbQueryManager = new NGIDBQueryManager();
 					cIdx = qa20DAO.selectQA20LayerCollectionIdx(userVO,
 							qa20dbQueryManager.getSelectQA20LayerCollectionIdx(collectionName));
 					HashMap<String, Object> selectIdxQuery = queryManager
@@ -120,7 +120,7 @@ public class ErrorLayerServiceImpl implements ErrorLayerService {
 					}
 				}
 				if (fileType.equals("dxf")) {
-					QA10DBQueryManager qa10dbQueryManager = new QA10DBQueryManager();
+					DXFDBQueryManager qa10dbQueryManager = new DXFDBQueryManager();
 					cIdx = qa10DAO.selectQA10LayerCollectionIdx(userVO,
 							qa10dbQueryManager.getSelectLayerCollectionIdx(collectionName));
 					HashMap<String, Object> selectIdxQuery = queryManager
@@ -181,7 +181,7 @@ public class ErrorLayerServiceImpl implements ErrorLayerService {
 			String errTableName = "err_" + fileType + "_";
 			Integer cIdx = null;
 			if (fileType.equals("ngi")) {
-				QA20DBQueryManager qa20dbQueryManager = new QA20DBQueryManager();
+				NGIDBQueryManager qa20dbQueryManager = new NGIDBQueryManager();
 				cIdx = qa20DAO.selectQA20LayerCollectionIdx(userVO,
 						qa20dbQueryManager.getSelectQA20LayerCollectionIdx(collectionName));
 				HashMap<String, Object> selectIdxQuery = queryManager.selectQA20ErrorLayerTbNamesCountQuery(fileType,
@@ -195,7 +195,7 @@ public class ErrorLayerServiceImpl implements ErrorLayerService {
 				}
 			}
 			if (fileType.equals("dxf")) {
-				QA10DBQueryManager qa10dbQueryManager = new QA10DBQueryManager();
+				DXFDBQueryManager qa10dbQueryManager = new DXFDBQueryManager();
 				cIdx = qa10DAO
 						.selectQA10LayerCollectionIdx(userVO,qa10dbQueryManager.getSelectLayerCollectionIdx(collectionName));
 				HashMap<String, Object> selectIdxQuery = queryManager.selectQA10ErrorLayerTbNamesCountQuery(fileType,

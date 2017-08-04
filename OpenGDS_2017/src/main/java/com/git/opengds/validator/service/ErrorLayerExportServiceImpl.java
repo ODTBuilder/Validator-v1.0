@@ -17,23 +17,23 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.test.context.ContextConfiguration;
 
-import com.git.gdsbuilder.FileRead.dxf.writer.QA10FileWriter;
-import com.git.gdsbuilder.FileRead.ngi.writer.QA20FileWriter;
-import com.git.gdsbuilder.type.qa10.collection.QA10LayerCollection;
-import com.git.gdsbuilder.type.qa10.layer.QA10Layer;
-import com.git.gdsbuilder.type.qa10.layer.QA10LayerList;
-import com.git.gdsbuilder.type.qa10.structure.QA10Blocks;
-import com.git.gdsbuilder.type.qa10.structure.QA10Entities;
-import com.git.gdsbuilder.type.qa10.structure.QA10Header;
-import com.git.gdsbuilder.type.qa10.structure.QA10Tables;
-import com.git.gdsbuilder.type.qa20.collection.QA20LayerCollection;
-import com.git.gdsbuilder.type.qa20.layer.QA20Layer;
-import com.git.opengds.file.dxf.dbManager.QA10DBQueryManager;
-import com.git.opengds.file.dxf.persistence.QA10LayerCollectionDAO;
-import com.git.opengds.file.ngi.dbManager.QA20DBQueryManager;
-import com.git.opengds.file.ngi.persistence.QA20LayerCollectionDAO;
-import com.git.opengds.parser.error.QA10LayerDXFExportParser;
-import com.git.opengds.parser.error.QA20LayerNGIExportParser;
+import com.git.gdsbuilder.FileRead.dxf.writer.DXFFileWriter;
+import com.git.gdsbuilder.FileRead.ngi.writer.NGIFileWriter;
+import com.git.gdsbuilder.type.dxf.collection.DTDXFLayerCollection;
+import com.git.gdsbuilder.type.dxf.layer.DTDXFLayer;
+import com.git.gdsbuilder.type.dxf.layer.DTDXFLayerList;
+import com.git.gdsbuilder.type.dxf.structure.DTDXFBlocks;
+import com.git.gdsbuilder.type.dxf.structure.DTDXFEntities;
+import com.git.gdsbuilder.type.dxf.structure.DTDXFHeader;
+import com.git.gdsbuilder.type.dxf.structure.DTDXFTables;
+import com.git.gdsbuilder.type.ngi.collection.DTNGILayerCollection;
+import com.git.gdsbuilder.type.ngi.layer.DTNGILayer;
+import com.git.opengds.file.dxf.dbManager.DXFDBQueryManager;
+import com.git.opengds.file.dxf.persistence.DXFLayerCollectionDAO;
+import com.git.opengds.file.ngi.dbManager.NGIDBQueryManager;
+import com.git.opengds.file.ngi.persistence.NGILayerCollectionDAO;
+import com.git.opengds.parser.error.DXFLayerExportParser;
+import com.git.opengds.parser.error.NGILayerExportParser;
 import com.git.opengds.user.domain.UserVO;
 import com.git.opengds.validator.dbManager.ErrorLayerDBQueryManager;
 import com.git.opengds.validator.persistence.ErrorLayerDAO;
@@ -47,10 +47,10 @@ public class ErrorLayerExportServiceImpl implements ErrorLayerExportService {
 	private ErrorLayerDAO errLayerDAO;
 
 	@Inject
-	private QA20LayerCollectionDAO qa20LayerCollectionDAO;
+	private NGILayerCollectionDAO qa20LayerCollectionDAO;
 
 	@Inject
-	private QA10LayerCollectionDAO qa10LayerCollectionDAO;
+	private DXFLayerCollectionDAO qa10LayerCollectionDAO;
 
 	/*
 	 * public ErrorLayerExportServiceImpl(UserVO userVO) { // TODO
@@ -73,9 +73,9 @@ public class ErrorLayerExportServiceImpl implements ErrorLayerExportService {
 			String[] nameSplit = name.split("_");
 			String collectionName = nameSplit[2];
 			if (format.equals("ngi")) {
-				QA20LayerCollection qa20LayerCollection = new QA20LayerCollection();
+				DTNGILayerCollection qa20LayerCollection = new DTNGILayerCollection();
 				// 기존 파일 layer 합쳐합쳐
-				QA20DBQueryManager qa20dbManager = new QA20DBQueryManager();
+				NGIDBQueryManager qa20dbManager = new NGIDBQueryManager();
 				// 기존 도엽 Collection 가져오기
 				qa20LayerCollection.setFileName(collectionName);
 				HashMap<String, Object> selectLayerCollectionIdxQuery = qa20dbManager
@@ -85,7 +85,7 @@ public class ErrorLayerExportServiceImpl implements ErrorLayerExportService {
 				List<HashMap<String, Object>> mIdxMapList = qa20LayerCollectionDAO.selectQA20LayerMetadataIdxs(userVO,
 						selectAllMetaIdxQuery);
 				// errlayer 합쳐합쳐
-				QA20Layer errQA20Layer = QA20LayerNGIExportParser.parseQA20ErrorLayer(name, errAllFeatures);
+				DTNGILayer errQA20Layer = NGILayerExportParser.parseQA20ErrorLayer(name, errAllFeatures);
 				for (int i = 0; i < mIdxMapList.size(); i++) {
 					HashMap<String, Object> mIdxMap = mIdxMapList.get(i);
 					int lmIdx = (Integer) mIdxMap.get("lm_idx");
@@ -140,11 +140,11 @@ public class ErrorLayerExportServiceImpl implements ErrorLayerExportService {
 					List<HashMap<String, Object>> featuresMapList = qa20LayerCollectionDAO.selectAllQA20Features(userVO,
 							selectAllFeaturesQuery);
 
-					QA20Layer qa20Layer = QA20LayerNGIExportParser.parseQA20Layer(metaMap, featuresMapList,
+					DTNGILayer qa20Layer = NGILayerExportParser.parseQA20Layer(metaMap, featuresMapList,
 							pointRepresenets, lineRepresenets, regionRepresenets, textRepresenets, aspatialField);
 					qa20LayerCollection.addQA20Layer(qa20Layer);
 				}
-				QA20FileWriter qa20Writer = new QA20FileWriter();
+				NGIFileWriter qa20Writer = new NGIFileWriter();
 				fileMap = qa20Writer.writeNGIFile(qa20LayerCollection, errQA20Layer);
 				String fileName = (String) fileMap.get("fileName");
 				// ngi
@@ -155,10 +155,10 @@ public class ErrorLayerExportServiceImpl implements ErrorLayerExportService {
 				layerFileOutputStream(fileName, ndaFileDir, response);
 			} else if (format.equals("dxf")) {
 
-				QA10Layer errQ120Layer = QA10LayerDXFExportParser.parseQA10ErrorLayer(name, errAllFeatures);
+				DTDXFLayer errQ120Layer = DXFLayerExportParser.parseQA10ErrorLayer(name, errAllFeatures);
 
-				QA10LayerList layerList = new QA10LayerList();
-				QA10DBQueryManager qa10dbQueryManager = new QA10DBQueryManager();
+				DTDXFLayerList layerList = new DTDXFLayerList();
+				DXFDBQueryManager qa10dbQueryManager = new DXFDBQueryManager();
 				// collectionIdx
 				HashMap<String, Object> selectLayerCollectionIdxQuery = qa10dbQueryManager
 						.getSelectLayerCollectionIdx(collectionName);
@@ -189,7 +189,7 @@ public class ErrorLayerExportServiceImpl implements ErrorLayerExportService {
 							selectBlockCommonQuery);
 					if (blockCommonMap != null) {
 						LinkedHashMap<String, Object> block = new LinkedHashMap<String, Object>();
-						LinkedHashMap<String, Object> blockCommons = QA10Blocks.getCommonsValue(blockCommonMap);
+						LinkedHashMap<String, Object> blockCommons = DTDXFBlocks.getCommonsValue(blockCommonMap);
 						block.put("block", blockCommons);
 
 						int bcIdx = (Integer) blockCommonMap.get("bc_idx");
@@ -204,7 +204,7 @@ public class ErrorLayerExportServiceImpl implements ErrorLayerExportService {
 							if (blockArcMapList != null) {
 								for (int j = 0; j < blockArcMapList.size(); j++) {
 									HashMap<String, Object> blockArcMap = blockArcMapList.get(j);
-									LinkedHashMap<String, Object> entity = QA10Blocks.getArcValues(blockArcMap);
+									LinkedHashMap<String, Object> entity = DTDXFBlocks.getArcValues(blockArcMap);
 									entities.add(entity);
 								}
 							}
@@ -218,7 +218,7 @@ public class ErrorLayerExportServiceImpl implements ErrorLayerExportService {
 							if (blockCircleMapList != null) {
 								for (int j = 0; j < blockCircleMapList.size(); j++) {
 									HashMap<String, Object> blockCircleMap = blockCircleMapList.get(j);
-									LinkedHashMap<String, Object> entity = QA10Blocks.getCircleValues(blockCircleMap);
+									LinkedHashMap<String, Object> entity = DTDXFBlocks.getCircleValues(blockCircleMap);
 									entities.add(entity);
 								}
 							}
@@ -241,11 +241,11 @@ public class ErrorLayerExportServiceImpl implements ErrorLayerExportService {
 									if (blockVertexMapList != null) {
 										List<LinkedHashMap<String, Object>> vertexEntityList = new ArrayList<LinkedHashMap<String, Object>>();
 										for (int k = 0; k < blockVertexMapList.size(); k++) {
-											LinkedHashMap<String, Object> vertextEntity = QA10Blocks
+											LinkedHashMap<String, Object> vertextEntity = DTDXFBlocks
 													.getVertexValue(blockVertexMapList.get(k));
 											vertexEntityList.add(vertextEntity);
 										}
-										LinkedHashMap<String, Object> polylineEntity = QA10Blocks
+										LinkedHashMap<String, Object> polylineEntity = DTDXFBlocks
 												.getPolylineValue(blockPolylineMap, blockVertexMapList.get(0));
 										polylineEntity.put("vertexs", vertexEntityList);
 										entities.add(polylineEntity);
@@ -261,7 +261,7 @@ public class ErrorLayerExportServiceImpl implements ErrorLayerExportService {
 							if (blockTextMapList != null) {
 								for (int j = 0; j < blockTextMapList.size(); j++) {
 									HashMap<String, Object> blockTextMap = blockTextMapList.get(j);
-									LinkedHashMap<String, Object> entity = QA10Blocks.getTextValue(blockTextMap);
+									LinkedHashMap<String, Object> entity = DTDXFBlocks.getTextValue(blockTextMap);
 									entities.add(entity);
 								}
 							}
@@ -275,8 +275,8 @@ public class ErrorLayerExportServiceImpl implements ErrorLayerExportService {
 							if (blockLineMapList != null) {
 								for (int j = 0; j < blockLineMapList.size(); j++) {
 									HashMap<String, Object> blockLineMap = blockLineMapList.get(j);
-									LinkedHashMap<String, Object> lineEntity = QA10Blocks.getLineValue(blockLineMap);
-									List<LinkedHashMap<String, Object>> vertexEntityList = QA10Blocks
+									LinkedHashMap<String, Object> lineEntity = DTDXFBlocks.getLineValue(blockLineMap);
+									List<LinkedHashMap<String, Object>> vertexEntityList = DTDXFBlocks
 											.getLineVertexsValue(blockLineMap);
 									lineEntity.put("vertexs", vertexEntityList);
 									entities.add(lineEntity);
@@ -301,11 +301,11 @@ public class ErrorLayerExportServiceImpl implements ErrorLayerExportService {
 									if (blockLWPolylineVertexMapList != null) {
 										List<LinkedHashMap<String, Object>> vertexEntityList = new ArrayList<LinkedHashMap<String, Object>>();
 										for (int k = 0; k < blockLWPolylineVertexMapList.size(); k++) {
-											LinkedHashMap<String, Object> vertextEntity = QA10Blocks
+											LinkedHashMap<String, Object> vertextEntity = DTDXFBlocks
 													.getVertexValue(blockLWPolylineVertexMapList.get(k));
 											vertexEntityList.add(vertextEntity);
 										}
-										LinkedHashMap<String, Object> entity = QA10Blocks.getLWPolylineValue(
+										LinkedHashMap<String, Object> entity = DTDXFBlocks.getLWPolylineValue(
 												blockLWPolylineMap, blockLWPolylineVertexMapList.get(0));
 										entity.put("vertexs", vertexEntityList);
 										entities.add(entity);
@@ -323,26 +323,26 @@ public class ErrorLayerExportServiceImpl implements ErrorLayerExportService {
 					List<HashMap<String, Object>> featuresMapList = qa10LayerCollectionDAO.selectQA10Features(userVO,
 							selectFeaturesQuery);
 
-					QA10Layer qa10Layer = QA10LayerDXFExportParser.parseQA10Layer(layerId, featuresMapList);
+					DTDXFLayer qa10Layer = DXFLayerExportParser.parseQA10Layer(layerId, featuresMapList);
 					qa10Layer.setLayerType(layerType);
 
 					layerList.add(qa10Layer);
 				}
-				QA10LayerCollection qa10LayerCollection = new QA10LayerCollection();
+				DTDXFLayerCollection qa10LayerCollection = new DTDXFLayerCollection();
 				qa10LayerCollection.setCollectionName(collectionName);
 
 				// setEntitise
-				QA10Entities qa10Entities = new QA10Entities();
+				DTDXFEntities qa10Entities = new DTDXFEntities();
 				qa10Entities.setEntitiesValue(layerList);
 				qa10LayerCollection.setEntities(qa10Entities);
 
 				// setBlock
-				QA10Blocks qa10Blocks = new QA10Blocks();
+				DTDXFBlocks qa10Blocks = new DTDXFBlocks();
 				qa10Blocks.setBlocks(blocks);
 				qa10LayerCollection.setBlocks(qa10Blocks);
 
 				// setDefaultHeaderValues
-				QA10Header header = new QA10Header();
+				DTDXFHeader header = new DTDXFHeader();
 				header.setDefaultHeaderValues();
 				qa10LayerCollection.setHeader(header);
 
@@ -358,7 +358,7 @@ public class ErrorLayerExportServiceImpl implements ErrorLayerExportService {
 						selectTablesLayerQuery);
 
 				// setDefaultTableLtype
-				QA10Tables tables = new QA10Tables();
+				DTDXFTables tables = new DTDXFTables();
 				tables.setDefaultLineTypeValues();
 				tables.setLineTypes(true);
 				tables.setDefaultStyleValues();
@@ -368,7 +368,7 @@ public class ErrorLayerExportServiceImpl implements ErrorLayerExportService {
 				qa10LayerCollection.setTables(tables);
 
 				// writeFile
-				QA10FileWriter qa10Writer = new QA10FileWriter();
+				DXFFileWriter qa10Writer = new DXFFileWriter();
 				fileMap = qa10Writer.writeDxfFile(qa10LayerCollection, errQ120Layer);
 				String fileName = (String) fileMap.get("fileName");
 				String dxfDir = (String) fileMap.get("fileDxfDir");
