@@ -35,8 +35,12 @@ public class QA10FileReader {
 		while (layerIterator.hasNext()) {
 			DXFLayer dxfLayer = (DXFLayer) layerIterator.next();
 			String layerId = dxfLayer.getName();
-			QA10LayerList dtLayers = QA10FileLayerParser.parseDTLayer(dxfLayer);
-			dtCollection.addAllQA10Layers(dtLayers);
+			if (layerId.matches("[0-9|a-z|A-Z|ㄱ-ㅎ|ㅏ-ㅣ|가-힝]*")) {
+				QA10LayerList dtLayers = QA10FileLayerParser.parseDTLayer(dxfLayer);
+				dtCollection.addAllQA10Layers(dtLayers);
+			} else {
+				continue;
+			}
 		}
 
 		// 1. header

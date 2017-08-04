@@ -138,8 +138,9 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 
 		QA20DBQueryManager queryManager = new QA20DBQueryManager();
 
-		HashMap<String, Object> deleteValidateProgressQuery = queryManager.getDeleteQA10ProgressQuery(cIdx);
-		progressDAO.deleteQA20Progress(deleteValidateProgressQuery);
+		// HashMap<String, Object> deleteValidateProgressQuery =
+		// queryManager.getDeleteQA10ProgressQuery(cIdx);
+		// progressDAO.deleteQA20Progress(deleteValidateProgressQuery);
 
 		HashMap<String, Object> deleteLayerCollectionQuery = queryManager.getDeleteLayerCollection(cIdx);
 		qa20DAO.deleteField(userVO, deleteLayerCollectionQuery);
@@ -589,99 +590,72 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 
 		String layerId = layer.getLayerID();
 		String[] typeSplit = layerId.split("_");
-		//String id = typeSplit[0] + "_" + typeSplit[1];
-		 String id = typeSplit[0];
+		// String id = typeSplit[0] + "_" + typeSplit[1];
+		String id = typeSplit[0];
+
+		System.out.println(layerId);
 
 		boolean isSuccessed = false;
 
-		System.out.println("============================================================");
-		
-		System.out.println(layerId);
-		
-	//	try {
+		try {
 			QA10DBQueryManager dbManager = new QA10DBQueryManager();
 			HashMap<String, Object> selectLayerCollectionIdxQuery = dbManager
 					.getSelectLayerCollectionIdx(collectionName);
 			Integer cIdx = qa10DAO.selectQA10LayerCollectionIdx(userVO, selectLayerCollectionIdxQuery);
-			System.out.println("cIdx :" + cIdx);
-
 			if (cIdx != null) {
 				HashMap<String, Object> metadataIdxQuery = dbManager.getSelectQA10LayerMetaDataIdxQuery(cIdx, layerId);
 				int mIdx = qa10DAO.selectQA10LayerMetadataIdx(userVO, metadataIdxQuery);
 
-				System.out.println("mIdx :" + mIdx);
-
 				// get layerTb name
 				HashMap<String, Object> layerTbNameQuery = dbManager.getSelectLayerTableNameQuery(mIdx);
 				HashMap<String, Object> layerTbNameMap = qa10DAO.selectQA10LayerTableName(userVO, layerTbNameQuery);
-
-				System.out.println("layerTbNameMap :" + layerTbNameMap);
 
 				// layerTb drop
 				String layerTbName = (String) layerTbNameMap.get("layer_t_name");
 				HashMap<String, Object> dropLayerTbQuery = dbManager.getDropLayer(layerTbName);
 				int dropLayer = qa10DAO.dropLayer(userVO, dropLayerTbQuery);
 
-				System.out.println("dropLayer :" + dropLayer);
-
 				// tables
 				HashMap<String, Object> tableIdxQuery = dbManager.getSelectTableCommonIdx(cIdx);
 				Integer tcIdx = qa10DAO.selectTableCommonIdx(userVO, tableIdxQuery);
-
-				System.out.println("tcIdx :" + tcIdx);
-
 				if (tcIdx != null) {
 					// tables - layer
 					HashMap<String, Object> deleteTableLayersQuery = dbManager.getDeleteTableLayers(tcIdx, id);
 					qa10DAO.deleteField(userVO, deleteTableLayersQuery);
 
-					System.out.println("tcIdx :" + tcIdx);
-
 					// blocks - commonIdx
 					HashMap<String, Object> blocksIdxQuery = dbManager.getSelectBlockCommonIdx(cIdx, id);
 					Integer bcIdx = qa10DAO.selectBlockCommonIdx(userVO, blocksIdxQuery);
-
-					System.out.println("bcIdx :" + bcIdx);
-
 					if (bcIdx != null) {
 						// blocks - vertex
 						HashMap<String, Object> deleteBlocksVertexQuery = dbManager.getDeleteBlockVertex(bcIdx);
 						int vertex = qa10DAO.deleteField(userVO, deleteBlocksVertexQuery);
-						System.out.println("vertex :" + vertex);
 						// blocks - polyline
 						HashMap<String, Object> deleteBlocksPolylineQuery = dbManager.getDeleteBlockPolyline(bcIdx);
 						int polyline = qa10DAO.deleteField(userVO, deleteBlocksPolylineQuery);
-						System.out.println("polyline :" + polyline);
 						// blocks - text
 						HashMap<String, Object> deleteBlocksTextQuery = dbManager.getDeleteBlockText(bcIdx);
 						int text = qa10DAO.deleteField(userVO, deleteBlocksTextQuery);
-						System.out.println("text :" + text);
 						// blocks - circle
 						HashMap<String, Object> deleteBlocksCircleQuery = dbManager.getDeleteBlockCircle(bcIdx);
 						int circle = qa10DAO.deleteField(userVO, deleteBlocksCircleQuery);
-						System.out.println("circle :" + circle);
 						// blocks - arc
 						HashMap<String, Object> deleteBlocksArcQuery = dbManager.getDeleteBlockArc(bcIdx);
 						int arc = qa10DAO.deleteField(userVO, deleteBlocksArcQuery);
-						System.out.println("arc :" + arc);
 						// blocks - line
 						HashMap<String, Object> deleteBlocksLineQuery = dbManager.getDeleteBlockLine(bcIdx);
 						int line = qa10DAO.deleteField(userVO, deleteBlocksLineQuery);
-						System.out.println("line :" + line);
 						// blocks - lwpolyline
 						HashMap<String, Object> deleteBlocksLWPolylineQuery = dbManager.getDeleteBlockLWPolyline(bcIdx);
 						int lwpolyline = qa10DAO.deleteField(userVO, deleteBlocksLWPolylineQuery);
-						System.out.println("lwpolyline :" + lwpolyline);
 						// blocks - commons
 						HashMap<String, Object> deleteBlocksCommonsQuery = dbManager.getDeleteBlocks(bcIdx);
 						int commons = qa10DAO.deleteField(userVO, deleteBlocksCommonsQuery);
-						System.out.println("commons :" + commons);
 					}
 				}
 				// layerMetadata 삭제
 				HashMap<String, Object> deleteLayerMetaQuery = dbManager.getDeleteLayerMeta(mIdx);
 				int layerMetadata = qa10DAO.deleteField(userVO, deleteLayerMetaQuery);
-				System.out.println("layerMetadata :" + layerMetadata);
 			}
 			String layerTableName = "geo" + "_" + type + "_" + collectionName + "_" + layerId;
 			String groupName = "gro" + "_" + type + "_" + collectionName;
@@ -692,13 +666,12 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 			if (isSuccessed) {
 				return true;
 			} else {
-				//throw new RuntimeException();
-				return false;
+				throw new RuntimeException();
 			}
-//		} catch (RuntimeException e) {
-//			// txManager.rollback(status);
-//			throw new RuntimeException();
-//		}
+		} catch (RuntimeException e) {
+			// txManager.rollback(status);
+			throw new RuntimeException();
+		}
 	}
 
 	@Override
