@@ -39,7 +39,7 @@ public interface QA10LayerCollectionDAO {
 
 	public int dropLayer(UserVO userVO, HashMap<String, Object> dropLayerTbQuery) throws RuntimeException;
 
-	public void deleteField(UserVO userVO, HashMap<String, Object> deleteLayerMetaQuery) throws RuntimeException;
+	public int deleteField(UserVO userVO, HashMap<String, Object> deleteLayerMetaQuery) throws RuntimeException;
 
 	public Integer selectTableCommonIdx(UserVO userVO, HashMap<String, Object> tableIdxQuery) throws RuntimeException;
 

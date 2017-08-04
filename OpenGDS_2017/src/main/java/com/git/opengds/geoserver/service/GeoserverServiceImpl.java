@@ -127,9 +127,16 @@ public class GeoserverServiceImpl implements GeoserverService {
 
 		for (int i = 0; i < layerNameList.size(); i++) {
 
+			System.out.println(i);
+			
 			GSFeatureTypeEncoder fte = new GSFeatureTypeEncoder();
 			GSLayerEncoder layerEncoder = new GSLayerEncoder();
 			String layerName = layerNameList.get(i);
+			
+			if(layerName.equals("A0023119_LWPOLYLINE")) {
+				System.out.println("");
+			}
+			
 			String upperLayerName = layerName.toUpperCase();
 
 			int dash = layerName.indexOf("_");
@@ -165,7 +172,6 @@ public class GeoserverServiceImpl implements GeoserverService {
 					if(cutLayerName.equals(stext)){
 						styleName = "SMALL_TEXT";
 						isTextStyle = true;
-						break;
 					}
 				}
 				
@@ -182,7 +188,6 @@ public class GeoserverServiceImpl implements GeoserverService {
 							if(cutLayerName.equals(ltext)){
 								styleName = "LARGE_TEXT";
 								isTextStyle = true;
-								break;
 							}
 						}
 					}
@@ -381,8 +386,13 @@ public class GeoserverServiceImpl implements GeoserverService {
 			isRemoveFeatureType = dtPublisher.unpublishFeatureType(userVO.getId(), userVO.getId(), layerName);
 //			isRemoveLayer = dtPublisher.removeLayer(userVO.getId(), layerName);
 		}
-		else
-			return false;
+		else{
+			isRemoveFeatureType = dtPublisher.unpublishFeatureType(userVO.getId(), userVO.getId(), layerName);
+			if(!isRemoveFeatureType){
+				return false;
+			}
+			return true;
+		}
 		
 		if(!isConfigureGroup&&!isRemoveFeatureType){
 			return false;

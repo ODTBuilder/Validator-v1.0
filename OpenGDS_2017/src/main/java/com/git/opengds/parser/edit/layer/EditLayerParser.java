@@ -173,26 +173,29 @@ public class EditLayerParser {
 		NDAHeader ndaHeader = new NDAHeader("1", updateAttr);
 		editQA20Layer.setNdaHeader(ndaHeader);
 
-		// bound
-		JSONArray boundArry = (JSONArray) layerObj.get("bound");
-		JSONArray minArry = (JSONArray) boundArry.get(0);
-		double minX = (Double) minArry.get(0);
-		double minY = (Double) minArry.get(1);
-
-		JSONArray maxArry = (JSONArray) boundArry.get(1);
-		double maxX = (Double) maxArry.get(0);
-		double maxY = (Double) maxArry.get(1);
-		String boundStr = "BOUND(" + minX + ", " + minY + ", " + maxX + ", " + maxY + ")";
-
-		NGIHeader ngiHeader = new NGIHeader();
-		ngiHeader.setBound(boundStr);
-
-		// represent
-		String represent = (String) layerObj.get("represent");
-
-		// ngiHeader
-		editQA20Layer.setNgiHeader(ngiHeader);
+		// // bound
+		// JSONArray boundArry = (JSONArray) layerObj.get("bound");
+		// JSONArray minArry = (JSONArray) boundArry.get(0);
+		// double minX = (Double) minArry.get(0);
+		// double minY = (Double) minArry.get(1);
+		//
+		
+		// JSONArray maxArry = (JSONArray) boundArry.get(1);
+		// double maxX = (Double) maxArry.get(0);
+		// double maxY = (Double) maxArry.get(1);
+		// String boundStr = "BOUND(" + minX + ", " + minY + ", " + maxX + ", "
+		// + maxY + ")";
+		//
+		// NGIHeader ngiHeader = new NGIHeader();
+		// ngiHeader.setBound(boundStr);
+		//
+		// // represent
+		// String represent = (String) layerObj.get("represent");
+		//
+		// // ngiHeader
+		// editQA20Layer.setNgiHeader(ngiHeader);
 		modifiedGeoserverLayerParse("ngi");
+		editQA20Layer.setModified(true);
 	}
 
 	private List<NDAField> parseAttrQA20Layer(String layerName, JSONArray attrArry) {
@@ -204,9 +207,12 @@ public class EditLayerParser {
 			String fieldName = (String) attrObj.get("fieldName");
 			String type = (String) attrObj.get("type");
 			String decimalStr = "";
-			if(type.equals("Double")) {
-				long decimal = (long) attrObj.get("decimal");
-				decimalStr = String.valueOf(decimal);
+			if (type.equals("Double")) {
+				Object decimalObj = attrObj.get("decimal");
+				if (decimalObj != null) {
+					long decimal = (long) decimalObj;
+					decimalStr = String.valueOf(decimal);
+				}
 			}
 			long size = (long) attrObj.get("size");
 			String sizeStr = String.valueOf(size);
@@ -257,7 +263,7 @@ public class EditLayerParser {
 			String fieldName = (String) attrObj.get("fieldName");
 			String type = (String) attrObj.get("type");
 			String decimalStr = "";
-			if(type.equals("Double")) {
+			if (type.equals("Double")) {
 				long decimal = (long) attrObj.get("decimal");
 				decimalStr = String.valueOf(decimal);
 			}
