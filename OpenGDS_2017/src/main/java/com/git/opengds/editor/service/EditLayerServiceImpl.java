@@ -187,6 +187,10 @@ public class EditLayerServiceImpl implements EditLayerService {
 						}
 					}
 					if (editCollection.isDeleted()) {
+						if (editCollection.isDeleteAll()) {
+							String groupName = "gro" + "_" + type + "_" + collectionName;
+							geoserver.removeGeoserverGroupLayer(userVO,groupName);
+						}
 						QA10LayerList layerList = editCollection.getDeletedLayerList();
 						for (int j = 0; j < layerList.size(); j++) {
 							QA10Layer layer = layerList.get(j);
@@ -195,7 +199,6 @@ public class EditLayerServiceImpl implements EditLayerService {
 						if (editCollection.isDeleteAll()) {
 							editDBManager.deleteQA10LayerCollectionTablesCommon(userVO,collectionIdx);
 							editDBManager.deleteQA10LayerCollection(userVO,collectionIdx);
-							geoserver.removeGeoserverGroupLayer(userVO,editCollection.getCollectionName());
 						}
 					}
 				}

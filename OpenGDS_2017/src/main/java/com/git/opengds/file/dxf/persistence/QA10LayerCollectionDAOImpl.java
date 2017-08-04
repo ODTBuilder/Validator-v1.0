@@ -120,9 +120,9 @@ public class QA10LayerCollectionDAOImpl extends DataSourceFactory implements QA1
 	}
 
 	@Override
-	public void deleteField(UserVO userVO, HashMap<String, Object> deleteFieldQuery)throws RuntimeException{
+	public int deleteField(UserVO userVO, HashMap<String, Object> deleteFieldQuery)throws RuntimeException{
 		sqlSession = super.getSqlSession(userVO.getId());
-		sqlSession.delete(namespace + ".deleteField", deleteFieldQuery);
+		return sqlSession.delete(namespace + ".deleteField", deleteFieldQuery);
 	}
 
 	@Override

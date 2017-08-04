@@ -131,6 +131,11 @@ public class QA10DBManagerServiceImpl implements QA10DBManagerService {
 			for (int i = 0; i < createLayerList.size(); i++) {
 				QA10Layer qa10Layer = createLayerList.get(i);
 				String layerId = qa10Layer.getLayerID();
+				
+				if(layerId.equals("A0023119_LWPOLYLINE")) {
+					System.out.println("");
+				}
+				
 
 				// isFeature
 				if (qa10Layer.getQa10FeatureList().size() == 0) {

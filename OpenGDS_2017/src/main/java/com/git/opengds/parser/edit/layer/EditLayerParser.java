@@ -179,6 +179,7 @@ public class EditLayerParser {
 		// double minX = (Double) minArry.get(0);
 		// double minY = (Double) minArry.get(1);
 		//
+		
 		// JSONArray maxArry = (JSONArray) boundArry.get(1);
 		// double maxX = (Double) maxArry.get(0);
 		// double maxY = (Double) maxArry.get(1);
@@ -204,17 +205,14 @@ public class EditLayerParser {
 			JSONObject attrObj = (JSONObject) attrArry.get(i);
 			String originFieldName = (String) attrObj.get("originFieldName");
 			String fieldName = (String) attrObj.get("fieldName");
-<<<<<<< HEAD
-			NDAField field = new NDAField();
-			field.setOriginFieldName(originFieldName);
-			field.setFieldName(fieldName);
-			fieldList.add(field);
-=======
 			String type = (String) attrObj.get("type");
 			String decimalStr = "";
-			if(type.equals("Double")) {
-				long decimal = (long) attrObj.get("decimal");
-				decimalStr = String.valueOf(decimal);
+			if (type.equals("Double")) {
+				Object decimalObj = attrObj.get("decimal");
+				if (decimalObj != null) {
+					long decimal = (long) decimalObj;
+					decimalStr = String.valueOf(decimal);
+				}
 			}
 			long size = (long) attrObj.get("size");
 			String sizeStr = String.valueOf(size);
@@ -222,7 +220,6 @@ public class EditLayerParser {
 			boolean isNotNull = (boolean) attrObj.get("nullable");
 			NDAField fied = new NDAField(originFieldName, fieldName, type, sizeStr, decimalStr, isUnique, isNotNull);
 			fieldList.add(fied);
->>>>>>> master
 		}
 		return fieldList;
 	}
