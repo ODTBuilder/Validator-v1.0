@@ -35,7 +35,7 @@ gb.panel.EditingTool = function(obj) {
 		source : this.tempSource
 	});
 
-	this.styles = new ol.style.Style({
+	this.styles = [ new ol.style.Style({
 		stroke : new ol.style.Stroke({
 			color : 'rgba(0,153,255,1)',
 			width : 2
@@ -50,26 +50,31 @@ gb.panel.EditingTool = function(obj) {
 				color : 'rgba(0,153,255,0.4)'
 			})
 		})
-	});
+	}) ];
 
-	this.highlightStyles = new ol.style.Style({
+	this.highlightStyles1 = new ol.style.Style({
 		stroke : new ol.style.Stroke({
 			color : 'rgba(255,0,0,1)',
 			width : 2
-		}),
-		fill : new ol.style.Fill({
-			color : 'rgba(255, 0, 0, 0.5)'
 		})
 	}), new ol.style.Style({
 		image : new ol.style.Circle({
-			radius : 10,
-			fill : new ol.style.Fill({
-				color : 'rgba(255,0,0,0.5)'
-			})
+			radius : 10
 		})
 	});
 
-	this.selectedStyles = new ol.style.Style({
+	this.highlightStyles2 = new ol.style.Style({
+		stroke : new ol.style.Stroke({
+			color : 'rgba(0, 0, 255, 1)',
+			width : 2
+		})
+	}), new ol.style.Style({
+		image : new ol.style.Circle({
+			radius : 10
+		})
+	});
+
+	this.selectedStyles = [ new ol.style.Style({
 		stroke : new ol.style.Stroke({
 			color : 'rgba(0,153,255,1)',
 			width : 2
@@ -111,9 +116,20 @@ gb.panel.EditingTool = function(obj) {
 
 			return geom;
 		}
-	});
+	}) ];
 
 	this.interval = undefined;
+	this.count = 1;
+	this.glitterFeature = function(feature) {
+		// var val = this.count % 2;
+		// if (val === 0) {
+		// feature.setStyle(this.highlightStyles1);
+		// } else {
+		// feature.setStyle(this.highlightStyles2);
+		// }
+		// this.count++;
+		console.log("hi");
+	};
 
 	this.btn = {
 		selectBtn : undefined,
@@ -674,27 +690,37 @@ gb.panel.EditingTool.prototype.select = function(layer) {
 					"value" : that.features.item(i).getId()
 				}).text("Selecting feature").click(function() {
 					var feature = that.tempSelectSource.getFeatureById($(this).attr("value"));
+					that.count = 1;
+					clearInterval(that.interval);
+					feature.setStyle(undefined);
 					that.interaction.select.getFeatures().clear();
 					that.interaction.select.getFeatures().push(feature);
 					that.featurePop.close();
 					console.log(feature);
 				});
 				var td2 = $("<td>").append(anc);
-				var tr = $("<tr>").append(td1).append(td2).mouseover(function(evt) {
-					event.stopPropagation();
+				var tr = $("<tr>").append(td1).append(td2).mouseenter(function(evt) {
 					var fid = $(this).find("a").attr("value");
 					var feature = that.tempSelectSource.getFeatureById(fid);
-					// that.interval = setInterval(function() {
-					// console.log("hi");
-					// }, 1000);
-					feature.setStyle(that.highlightStyles);
+					feature.setStyle(that.highlightStyles1);
+					that.interval = setInterval(function() {
+						var val = that.count % 2;
+						if (val === 0) {
+							feature.setStyle(that.highlightStyles1);
+						} else {
+							feature.setStyle(that.highlightStyles2);
+						}
+						that.count++;
+						console.log("hi");
+					}, 500);
 					that.map.getView().fit(feature.getGeometry().getExtent(), that.map.getSize());
 					console.log("in");
 				}).mouseleave(function() {
 					var fid = $(this).find("a").attr("value");
 					var feature = that.tempSelectSource.getFeatureById(fid);
-					feature.setStyle(null);
-					// clearInterval(that.interval);
+					that.count = 1;
+					clearInterval(that.interval);
+					feature.setStyle(undefined);
 					console.log("out");
 				});
 				$(that.featureTB).append(tr);
@@ -1291,7 +1317,7 @@ gb.panel.EditingTool.prototype.setFeatures = function(newFeature) {
 					that.featurePop.close();
 					console.log(feature);
 				});
-				var td2 = $("<td>").append(anc).mouseover(function() {
+				var td2 = $("<td>").append(anc).mouseenter(function() {
 					var fid = $(this).find("a").attr("value");
 					var feature = that.tempSelectSource.getFeatureById(fid);
 					that.map.getView().fit(feature.getGeometry().getExtent(), that.map.getSize());
