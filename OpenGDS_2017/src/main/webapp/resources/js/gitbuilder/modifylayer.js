@@ -424,42 +424,82 @@ gb.geoserver.ModifyLayer.prototype.load = function(name, code) {
 			var fttb = $("<table>").addClass("table").addClass("text-center").append(thead).append(tbody);
 			var keys = Object.keys(data[0].attInfo).sort();
 			for (var i = 0; i < keys.length; i++) {
-				var input = $("<input>").addClass("form-control").attr({
-					"type" : "text"
-				}).val(keys[i]).on("input", function() {
-					if (!that.sendObj.hasOwnProperty("updateAttr")) {
-						that.sendObj["updateAttr"] = [];
-					}
-					var trs = $(this).parent().parent().parent().find("tr");
-					var idx = $(trs).index($(this).parent().parent());
-					var oattr = that.originInfo["attr"][idx];
+				var input;
+				if (format === "ngi") {
+					if (keys[i] === "f_idx" || keys[i] === "feature_id" || keys[i] === "feature_type" || keys[i] === "geom"
+							|| keys[i] === "num_rings" || keys[i] === "num_vertexes" || keys[i] === "style_id") {
+						input = $("<input>").addClass("form-control").attr({
+							"type" : "text",
+							"disabled" : "disabled"
+						}).val(keys[i]);
+					} else {
+						input = $("<input>").addClass("form-control").attr({
+							"type" : "text"
+						}).val(keys[i]).on("input", function() {
+							if (!that.sendObj.hasOwnProperty("updateAttr")) {
+								that.sendObj["updateAttr"] = [];
+							}
+							var trs = $(this).parent().parent().parent().find("tr");
+							var idx = $(trs).index($(this).parent().parent());
+							var oattr = that.originInfo["attr"][idx];
 
-					console.log(idx);
-					if (that.sendObj["updateAttr"].length === 0) {
-						var obj = {
-							"originFieldName" : oattr.originFieldName,
-							"fieldName" : $(this).val(),
-							"type" : oattr.type,
-							"nullable" : oattr.nullable
-						};
-						that.sendObj["updateAttr"].push(obj);
-					} else if (that.sendObj["updateAttr"].length > 0) {
-						var isExist = true;
-						for (var j = 0; j < that.sendObj["updateAttr"].length; j++) {
-							var attr = that.sendObj["updateAttr"][j];
-							if (attr.originFieldName === oattr.originFieldName) {
+							console.log(idx);
+							if (that.sendObj["updateAttr"].length === 0) {
 								var obj = {
 									"originFieldName" : oattr.originFieldName,
 									"fieldName" : $(this).val(),
 									"type" : oattr.type,
 									"nullable" : oattr.nullable
 								};
-								that.sendObj["updateAttr"][j] = obj;
-								isExist = false;
-								break;
+								that.sendObj["updateAttr"].push(obj);
+							} else if (that.sendObj["updateAttr"].length > 0) {
+								var isExist = true;
+								for (var j = 0; j < that.sendObj["updateAttr"].length; j++) {
+									var attr = that.sendObj["updateAttr"][j];
+									if (attr.originFieldName === oattr.originFieldName) {
+										var obj = {
+											"originFieldName" : oattr.originFieldName,
+											"fieldName" : $(this).val(),
+											"type" : oattr.type,
+											"nullable" : oattr.nullable
+										};
+										that.sendObj["updateAttr"][j] = obj;
+										isExist = false;
+										break;
+									}
+								}
+								if (isExist) {
+									var obj = {
+										"originFieldName" : oattr.originFieldName,
+										"fieldName" : $(this).val(),
+										"type" : oattr.type,
+										"nullable" : oattr.nullable
+									};
+									that.sendObj["updateAttr"].push(obj);
+								}
 							}
+							console.log(that.sendObj);
+							// that.sendObj["geoserver"]["title"] = this.value;
+						});
+					}
+				} else if (format === "dxf") {
+					input = $("<input>").addClass("form-control").attr({
+						"type" : "text",
+						"disabled" : "disabled"
+					}).val(keys[i]);
+				} else {
+					input = $("<input>").addClass("form-control").attr({
+						"type" : "text"
+					}).val(keys[i]).on("input", function() {
+						if (!that.sendObj.hasOwnProperty("updateAttr")) {
+							that.sendObj["updateAttr"] = [];
 						}
-						if (isExist) {
+						var trs = $(this).parent().parent().parent().find("tr");
+						var idx = $(trs).index($(this).parent().parent());
+						var oattr = that.originInfo["attr"][idx];
+
+						console.log(idx);
+						if (that.sendObj["updateAttr"].length === 0) {
 							var obj = {
 								"originFieldName" : oattr.originFieldName,
 								"fieldName" : $(this).val(),
@@ -467,11 +507,36 @@ gb.geoserver.ModifyLayer.prototype.load = function(name, code) {
 								"nullable" : oattr.nullable
 							};
 							that.sendObj["updateAttr"].push(obj);
+						} else if (that.sendObj["updateAttr"].length > 0) {
+							var isExist = true;
+							for (var j = 0; j < that.sendObj["updateAttr"].length; j++) {
+								var attr = that.sendObj["updateAttr"][j];
+								if (attr.originFieldName === oattr.originFieldName) {
+									var obj = {
+										"originFieldName" : oattr.originFieldName,
+										"fieldName" : $(this).val(),
+										"type" : oattr.type,
+										"nullable" : oattr.nullable
+									};
+									that.sendObj["updateAttr"][j] = obj;
+									isExist = false;
+									break;
+								}
+							}
+							if (isExist) {
+								var obj = {
+									"originFieldName" : oattr.originFieldName,
+									"fieldName" : $(this).val(),
+									"type" : oattr.type,
+									"nullable" : oattr.nullable
+								};
+								that.sendObj["updateAttr"].push(obj);
+							}
 						}
-					}
-					console.log(that.sendObj);
-					// that.sendObj["geoserver"]["title"] = this.value;
-				});
+						console.log(that.sendObj);
+						// that.sendObj["geoserver"]["title"] = this.value;
+					});
+				}
 				var td1 = $("<td>").append(input);
 
 				var stritem = $("<option>").text("String");
