@@ -39,19 +39,41 @@ gitbuilder.ui.OptionDefinition = $
 						lwpolyline : [ "SelfEntity", "BSymbolOutSided", "BuildingOpen", "WaterOpen", "EntityNone", "EdgeMatchMiss",
 								"ConBreak", "ConIntersected", "ConOverDegree", "UselessEntity", "EntityDuplicated", "PointDuplicated",
 								"UselessPoint", "LayerMiss", "ZValueAmbiguous", "OverShoot", "UnderShoot", "RefLayerMiss", "RefZValueMiss" ],
-						text : [ "SelfEntity", "LayerMiss", "UselessEntity", "EntityDuplicated", "OverShoot" ],
+						text : [ "SelfEntity", "LayerMiss", "UselessEntity", "EntityDuplicated", "OverShoot", "UFIDLength" ],
 						insert : [ "SelfEntity", "LayerMiss", "UselessEntity", "EntityDuplicated", "OverShoot" ],
 						point : [ "LayerMiss", "UselessEntity", "EntityDuplicated", "SelfEntity", "AttributeFix", "OutBoundary",
-								"CharacterAccuracy", "OverShoot", "UnderShoot" ],
+								"CharacterAccuracy", "OverShoot", "UnderShoot", "UFIDLength" ],
 						linestring : [ "RefAttributeMiss", "EdgeMatchMiss", "UselessEntity", "LayerMiss", "RefLayerMiss", "SmallLength",
 								"EntityDuplicated", "SelfEntity", "PointDuplicated", "ConIntersected", "ConOverDegree", "ConBreak",
 								"AttributeFix", "OutBoundary", "ZValueAmbiguous", "UselessPoint", "OverShoot", "UnderShoot",
-								"RefZValueMiss" ],
+								"RefZValueMiss", "UFIDLength", "NeatLineAttribute" ],
 						polygon : [ "Admin", "CrossRoad", "RefAttributeMiss", "BridgeName", "NodeMiss", "EdgeMatchMiss", "UselessEntity",
 								"LayerMiss", "RefLayerMiss", "SmallArea", "EntityDuplicated", "SelfEntity", "PointDuplicated",
-								"AttributeFix", "OutBoundary", "OverShoot", "UnderShoot", "OneAcre", "OneStage", "BuildingSite" ]
+								"AttributeFix", "OutBoundary", "OverShoot", "UnderShoot", "OneAcre", "OneStage", "BuildingSite",
+								"UFIDLength", "HouseAttribute", "CemeterySite" ]
 					},
 					optItem : {
+						"CemeterySite" : {
+							"title" : "Cemetery Site Error",
+							"alias" : "CemeterySite",
+							"type" : "relation"
+						},
+						"HouseAttribute" : {
+							"title" : "House Attribute Error",
+							"alias" : "HouseAttribute",
+							"type" : "none"
+						},
+						"NeatLineAttribute" : {
+							"title" : "Neat Line Attribute Error",
+							"alias" : "NeatLineAttribute",
+							"type" : "none"
+						},
+						"UFIDLength" : {
+							"title" : "UFID Length Error",
+							"alias" : "UFIDLength",
+							"type" : "figure",
+							"unit" : "Characters"
+						},
 						"BuildingSite" : {
 							"title" : "Building Site Error",
 							"alias" : "BuildingSite",
@@ -1139,7 +1161,7 @@ gitbuilder.ui.OptionDefinition = $
 						for (var i = 0; i < dkeys.length; i++) {
 							var vkeys = Object.keys(def[dkeys[i]]);
 							for (var j = 0; j < vkeys.length; j++) {
-								if (this.optItem[vkeys[j]].type === "relation") {
+								if (this.optItem[vkeys[j]].type === "relation" || this.optItem[vkeys[j]].type === "labelnrelation") {
 									var relation = def[dkeys[i]][vkeys[j]].relation;
 									for (var k = 0; k < relation.length; k++) {
 										if (!def.hasOwnProperty(relation[k])) {
@@ -1187,7 +1209,7 @@ gitbuilder.ui.OptionDefinition = $
 						for (var i = 0; i < dkeys.length; i++) {
 							var vkeys = Object.keys(def[dkeys[i]]);
 							for (var j = 0; j < vkeys.length; j++) {
-								if (this.optItem[vkeys[j]].type === "relation") {
+								if (this.optItem[vkeys[j]].type === "relation" || this.optItem[vkeys[j]].type === "labelnrelation") {
 									var relation = def[dkeys[i]][vkeys[j]].relation;
 									for (var k = 0; k < relation.length; k++) {
 										this.updateRelation(relation[k], "up");
@@ -1686,7 +1708,9 @@ gitbuilder.ui.OptionDefinition = $
 						var attrs;
 						if (that.getOptDefCopy().hasOwnProperty(that.selectedLayerNow)) {
 							if (that.getOptDefCopy()[that.selectedLayerNow].hasOwnProperty(that.selectedValidationNow)) {
-								attrs = that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow][code];
+								if (that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]["label"].hasOwnProperty(code)) {
+									attrs = that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]["label"][code];
+								}
 							}
 						}
 						$(that.labelAttrForm).empty();
@@ -1733,7 +1757,7 @@ gitbuilder.ui.OptionDefinition = $
 								var btr1 = $("<tr>").append(td1).append(td2);
 								var btr2 = $("<tr>").append(td3);
 
-								$(that.attrForm).append(btr1).append(btr2);
+								$(that.labelAttrForm).append(btr1).append(btr2);
 							}
 						} else if (attrs && !multi) {
 							var keys = Object.keys(attrs);
@@ -1765,7 +1789,7 @@ gitbuilder.ui.OptionDefinition = $
 							var btr1 = $("<tr>").append(td1);
 							var btr2 = $("<tr>").append(td3);
 
-							$(that.attrForm).append(btr1).append(btr2);
+							$(that.labelAttrForm).append(btr1).append(btr2);
 						} else if (!attrs && !multi) {
 							var text = $("<input>").attr({
 								"type" : "text",
