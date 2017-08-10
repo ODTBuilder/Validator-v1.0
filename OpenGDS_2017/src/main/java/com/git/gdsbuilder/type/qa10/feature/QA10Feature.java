@@ -123,17 +123,4 @@ public class QA10Feature {
 	public void setRotate(double rotate) {
 		this.rotate = rotate;
 	}
-
-	/**
-	 *
-	 * @author JY.Kim
-	 * @Date 2017. 8. 10. 오후 4:47:45
-	 * @param flag void
-	 * @throws
-	 * */
-	public void setFlag(int flag) {
-		// TODO Auto-generated method stub
-		
-	}
-
 }

@@ -106,21 +106,6 @@ public class QA20Feature {
 	}
 
 	/**
-	 * @param featureID2
-	 * @param featureType2
-	 * @param numparts2
-	 * @param coordinateSize2
-	 * @param geom2
-	 * @param styleId2
-	 * @param text
-	 * @param properties2
-	 */
-	public QA20Feature(String featureID2, String featureType2, String numparts2, String coordinateSize2, Geometry geom2,
-			String styleId2, String text, HashMap<String, Object> properties2) {
-		// TODO Auto-generated constructor stub
-	}
-
-	/**
 	 * featureID getter @author DY.Oh @Date 2017. 3. 11. 오후 2:33:37 @return
 	 * String @throws
 	 */
