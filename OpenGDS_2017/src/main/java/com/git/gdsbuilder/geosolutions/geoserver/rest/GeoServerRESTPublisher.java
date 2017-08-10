@@ -2205,7 +2205,6 @@ public class GeoServerRESTPublisher {
      */
     public boolean unpublishFeatureType(String workspace, String storename, String layerName) {
         try {
-
             final String fqLayerName;
             // this null check is here only for backward compatibility.
             // workspace

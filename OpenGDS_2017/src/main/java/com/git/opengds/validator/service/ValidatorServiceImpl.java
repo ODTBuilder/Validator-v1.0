@@ -78,7 +78,6 @@ public class ValidatorServiceImpl implements ValidatorService {
 	}*/
 
 	@SuppressWarnings("unchecked")
-	@Async
 	@Override
 	public void validate(final UserVO userVO, String jsonObject) throws Exception {
 
@@ -104,7 +103,7 @@ public class ValidatorServiceImpl implements ValidatorService {
 			}
 			// 파라미터 파싱
 			BuilderJSONParser parserManager = new BuilderJSONParser();
-			HashMap<String, Object> valdateObj = parserManager.parseValidateObj(jsonObj);
+			HashMap<String, Object> valdateObj = parserManager.parseValidateObj(jsonObj,userVO);
 			ValidateLayerTypeList validateLayerTypeList = (ValidateLayerTypeList) valdateObj.get("typeValidate");
 			GeoLayerCollectionList collectionList = (GeoLayerCollectionList) valdateObj.get("collectionList");
 
@@ -159,7 +158,6 @@ public class ValidatorServiceImpl implements ValidatorService {
 						}
 					} catch (NumberFormatException e) {
 						LOGGER.info("대상도엽 숫자아님");
-						return;
 					}
 					
 					Runnable runnable = new Runnable() {

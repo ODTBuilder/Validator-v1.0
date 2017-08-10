@@ -45,6 +45,7 @@ import org.opengis.referencing.operation.TransformException;
 
 import com.git.gdsbuilder.type.geoserver.layer.GeoLayer;
 import com.git.gdsbuilder.type.geoserver.layer.GeoLayerList;
+import com.git.gdsbuilder.type.validate.collection.close.ValidateCloseCollectionLayer;
 import com.git.gdsbuilder.type.validate.error.ErrorLayer;
 
 /**
@@ -197,5 +198,9 @@ public interface LayerValidator {
 	public ErrorLayer validateOneAcre(GeoLayerList typeLayers, double spatialAccuracyTolorence);
 
 	public ErrorLayer validateOneStage(GeoLayerList typeLayers, double spatialAccuracyTolorence);
+	
+	public ErrorLayer valildateHouseAttribute();
+	
+	public ErrorLayer validateCloseCollection(ValidateCloseCollectionLayer closeCollectionLayer, String geomColunm);
 
 }

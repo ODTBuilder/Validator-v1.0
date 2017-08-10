@@ -37,7 +37,7 @@ public class QA10DBQueryManager {
 			defaultCreateQuery += ", text_value varchar(100), height double precision, rotate double precision";
 		}
 		if (originLayerType.equals("LWPOLYLINE") || originLayerType.equals("POLYLINE")) {
-			defaultCreateQuery += ", elevation double precision";
+			defaultCreateQuery += ", elevation double precision, flag int";
 		}
 		if (originLayerType.equals("INSERT")) {
 			defaultCreateQuery += ", rotate double precision";
@@ -70,8 +70,8 @@ public class QA10DBQueryManager {
 			}
 
 			if (originLayerType.equals("LWPOLYLINE") || originLayerType.equals("POLYLINE")) {
-				defaultInsertColumns += ", elevation";
-				values += "," + feature.getElevation();
+				defaultInsertColumns += ", elevation, flag";
+				values += "," + feature.getElevation() + ", " + feature.getFlag();
 			}
 
 			if (originLayerType.equals("INSERT")) {
@@ -467,6 +467,23 @@ public class QA10DBQueryManager {
 		return selectIdxQuery;
 	}
 
+	public HashMap<String, Object> getDeleteBlockLine(Integer bcIdx) {
+		HashMap<String, Object> deleteQuery = new HashMap<String, Object>();
+		String tableName = "qa10_layercollection_block_line";
+		String deleteQueryStr = "delete from " + tableName + " where bc_idx = " + bcIdx;
+		deleteQuery.put("deleteQuery", deleteQueryStr);
+		return deleteQuery;
+	}
+
+	public HashMap<String, Object> getDeleteBlockLWPolyline(Integer bcIdx) {
+		HashMap<String, Object> deleteQuery = new HashMap<String, Object>();
+		String tableName = "qa10_layercollection_block_lwpolyline";
+		String deleteQueryStr = "delete from " + tableName + " where bc_idx = " + bcIdx;
+		deleteQuery.put("deleteQuery", deleteQueryStr);
+		return deleteQuery;
+	}
+	
+	
 	public HashMap<String, Object> getDeleteBlockArc(Integer bcIdx) {
 		HashMap<String, Object> deleteQuery = new HashMap<String, Object>();
 		String tableName = "qa10_layercollection_block_arc";
@@ -568,10 +585,10 @@ public class QA10DBQueryManager {
 	public HashMap<String, Object> getSelectFeatureQuery(String layerTbName, String layerType) {
 		String selectQueryStr = "select f_idx, feature_id, feature_type, ST_AsText(geom) as geom";
 		if (layerType.equals("TEXT")) {
-			selectQueryStr += ", text_value ";
+			selectQueryStr += ", text_value, height, rotate ";
 		}
-		if (layerType.equals("LWPOLYLINE")) {
-			selectQueryStr += ", elevation ";
+		if (layerType.equals("LWPOLYLINE") || layerType.equals("POLYLINE")) {
+			selectQueryStr += ", elevation, flag ";
 		}
 		if (layerType.equals("INSERT")) {
 			selectQueryStr += ", rotate ";
@@ -756,4 +773,6 @@ public class QA10DBQueryManager {
 		selectQuery.put("selectAllQuery", selectQueryStr);
 		return selectQuery;
 	}
+
+
 }

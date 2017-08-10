@@ -36,9 +36,22 @@ public class QA20Feature {
 	String coordinateSize;
 	Geometry geom;
 	String styleID;
+	String text;
 	HashMap<String, Object> properties;
-	
-	
+
+	public QA20Feature(String featureID, String featureType, String numparts, String coordinateSize, Geometry geom,
+			String styleID, String text, HashMap<String, Object> properties) {
+		super();
+		this.featureID = featureID;
+		this.featureType = featureType;
+		this.numparts = numparts;
+		this.coordinateSize = coordinateSize;
+		this.geom = geom;
+		this.styleID = styleID;
+		this.text = text;
+		this.properties = properties;
+	}
+
 	/**
 	 * QA20Feature 생성자
 	 * 
@@ -82,6 +95,14 @@ public class QA20Feature {
 		this.geom = geom;
 		this.styleID = styleID;
 		this.properties = properties;
+	}
+
+	public String getText() {
+		return text;
+	}
+
+	public void setText(String text) {
+		this.text = text;
 	}
 
 	/**

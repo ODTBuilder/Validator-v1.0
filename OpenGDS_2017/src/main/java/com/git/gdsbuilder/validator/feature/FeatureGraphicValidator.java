@@ -179,19 +179,68 @@ public interface FeatureGraphicValidator {
 	 */
 	public ErrorFeature validateLayerMiss(SimpleFeature simpleFeature, List<String> typeNames) throws SchemaException;
 
+	/**
+	 * 검수 항목 중 "건물기호위치오류(B_SymbolOutSided)" 검수
+	 * @author JY.Kim
+	 * @Date 2017. 7. 28. 오후 5:49:27
+	 * @param simpleFeatures
+	 * @param relationSimpleFeature
+	 * @return ErrorFeature
+	 * @throws SchemaException 
+	 * @throws
+	 * */
 	public ErrorFeature validateB_SymbolOutSided(List<SimpleFeature> simpleFeatures,
 			SimpleFeature relationSimpleFeature) throws SchemaException;
 
+	/**
+	 * 검수 항목 중 "교차로 오류(CrossRoad)" 검수
+	 * @author JY.Kim
+	 * @Date 2017. 7. 28. 오후 5:50:13
+	 * @param simpleFeature
+	 * @param relationSimpleFeatures
+	 * @param tolerence
+	 * @return List<ErrorFeature>
+	 * @throws SchemaException 
+	 * @throws
+	 * */
 	public List<ErrorFeature> validateCrossRoad(SimpleFeature simpleFeature, List<SimpleFeature> relationSimpleFeatures,
 			double tolerence) throws SchemaException;
 
+	/**
+	 * 검수 항목 중 "꼬인객체(TwistedPolygon)" 검수
+	 * @author JY.Kim
+	 * @Date 2017. 7. 28. 오후 5:51:10
+	 * @param simpleFeature
+	 * @return ErrorFeature
+	 * @throws SchemaException 
+	 * @throws
+	 * */
 	public ErrorFeature validateTwistedPolygon(SimpleFeature simpleFeature) throws SchemaException;
-
+	
+	/**
+	 * 검수 항목 중 "노드오류(NodeMiss)" 검수
+	 * @author JY.Kim
+	 * @Date 2017. 7. 28. 오후 5:53:08
+	 * @param simpleFeature
+	 * @param relationSimpleFeature
+	 * @param tolerence
+	 * @return List<ErrorFeature>
+	 * @throws SchemaException 
+	 * @throws
+	 * */
 	public List<ErrorFeature> validateNodeMiss(SimpleFeature simpleFeature, List<SimpleFeature> relationSimpleFeature,
 			double tolerence) throws SchemaException;
-
+	
+	/**
+	 * 검수 항목 중 "등고선 교차오류(ConIntersected)" 검수
+	 * @author JY.Kim
+	 * @Date 2017. 7. 28. 오후 5:53:36
+	 * @param tmpSimpleFeatureI
+	 * @return List<ErrorFeature>
+	 * @throws
+	 * */
 	public List<ErrorFeature> validateConIntersected(SimpleFeature tmpSimpleFeatureI);
-
+	
 	public ErrorFeature validateOneAcre(SimpleFeature simpleFeature, SimpleFeatureCollection relationSfc);
 
 	public List<ErrorFeature> validateOneStage(SimpleFeatureCollection simpleFeatureCollection,

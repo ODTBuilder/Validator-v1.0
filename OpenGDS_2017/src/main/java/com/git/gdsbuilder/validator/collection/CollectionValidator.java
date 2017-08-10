@@ -35,6 +35,8 @@
 
 package com.git.gdsbuilder.validator.collection;
 
+import static org.hamcrest.CoreMatchers.instanceOf;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -77,6 +79,7 @@ import com.git.gdsbuilder.type.validate.option.CrossRoad;
 import com.git.gdsbuilder.type.validate.option.EdgeMatchMiss;
 import com.git.gdsbuilder.type.validate.option.EntityDuplicated;
 import com.git.gdsbuilder.type.validate.option.EntityNone;
+import com.git.gdsbuilder.type.validate.option.HouseAttribute;
 import com.git.gdsbuilder.type.validate.option.LayerMiss;
 import com.git.gdsbuilder.type.validate.option.NodeMiss;
 import com.git.gdsbuilder.type.validate.option.OneAcre;
@@ -120,23 +123,20 @@ public class CollectionValidator {
 	protected static double lineOverTolorence = 0.01; // 중심선이 경계면 초과 (m2)
 	protected static double areaRatioTolorence = 0.1; // 지류계와 경지계 불일치 (%)
 	protected static double spatialAccuracyTolorence = 0.01; // 공간분석 정밀도 설정 (m)
-	protected static double underShootTolorence = 0.2; 
-	protected static double selfEntityLineTolerance = 0.01; 
+	protected static double underShootTolorence = 0.2;
+	protected static double selfEntityLineTolerance = 0.01;
 
-//	ValidateLayerCollectionList validateLayerCollectionList;
+	// ValidateLayerCollectionList validateLayerCollectionList;
 	ErrorLayerList errLayerList;
-//	Map<String, Object> progress;
-//	String collectionType;
-	
-	
+	// Map<String, Object> progress;
+	// String collectionType;
+
 	GeoLayerCollection collection;
 	List<GeoLayerCollection> nearCollections;
 	ValidateLayerTypeList types;
 	MapSystemRule mapSystemRule;
 	Map<String, Object> progress;
 	String collectionType;
-	
-	
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(CollectionValidator.class);
 
@@ -151,15 +151,17 @@ public class CollectionValidator {
 	 * @throws TransformException
 	 * @throws IOException
 	 */
-	/*public CollectionValidator(ValidateLayerCollectionList validateLayerCollectionList, String fileType)
-			throws NoSuchAuthorityCodeException, SchemaException, FactoryException, TransformException, IOException {
-		this.validateLayerCollectionList = validateLayerCollectionList;
-		this.progress = new HashMap<String, Object>();
-		this.collectionType = fileType;
-		collectionValidate();
-	}*/
-	
-	public CollectionValidator(GeoLayerCollection collection, List<GeoLayerCollection> nearCollections,ValidateLayerTypeList types,MapSystemRule mapSystemRule, String fileType)
+	/*
+	 * public CollectionValidator(ValidateLayerCollectionList
+	 * validateLayerCollectionList, String fileType) throws
+	 * NoSuchAuthorityCodeException, SchemaException, FactoryException,
+	 * TransformException, IOException { this.validateLayerCollectionList =
+	 * validateLayerCollectionList; this.progress = new HashMap<String,
+	 * Object>(); this.collectionType = fileType; collectionValidate(); }
+	 */
+
+	public CollectionValidator(GeoLayerCollection collection, List<GeoLayerCollection> nearCollections,
+			ValidateLayerTypeList types, MapSystemRule mapSystemRule, String fileType)
 			throws NoSuchAuthorityCodeException, SchemaException, FactoryException, TransformException, IOException {
 
 		this.collection = collection;
@@ -184,18 +186,20 @@ public class CollectionValidator {
 	 * validateLayerCollectionList getter @author DY.Oh @Date 2017. 4. 18. 오후
 	 * 3:30:23 @return ValidateLayerCollectionList @throws
 	 */
-/*	public ValidateLayerCollectionList getValidateLayerCollectionList() {
-		return validateLayerCollectionList;
-	}
+	/*
+	 * public ValidateLayerCollectionList getValidateLayerCollectionList() {
+	 * return validateLayerCollectionList; }
+	 * 
+	 *//**
+		 * validateLayerCollectionList setter @author DY.Oh @Date 2017. 4. 18.
+		 * 오후 3:30:24 @param validateLayerCollectionList void @throws
+		 *//*
+		 * public void
+		 * setValidateLayerCollectionList(ValidateLayerCollectionList
+		 * validateLayerCollectionList) { this.validateLayerCollectionList =
+		 * validateLayerCollectionList; }
+		 */
 
-	*//**
-	 * validateLayerCollectionList setter @author DY.Oh @Date 2017. 4. 18. 오후
-	 * 3:30:24 @param validateLayerCollectionList void @throws
-	 *//*
-	public void setValidateLayerCollectionList(ValidateLayerCollectionList validateLayerCollectionList) {
-		this.validateLayerCollectionList = validateLayerCollectionList;
-	}
-*/
 	/**
 	 * errLayerList getter @author DY.Oh @Date 2017. 4. 18. 오후 3:30:26 @return
 	 * ErrorLayerList @throws
@@ -228,8 +232,7 @@ public class CollectionValidator {
 	 * 
 	 * @throws IOException
 	 */
-	public void collectionValidate()
-			throws SchemaException, NoSuchAuthorityCodeException, FactoryException, TransformException, IOException {
+	public void collectionValidate(){
 
 		this.errLayerList = new ErrorLayerList();
 
@@ -237,9 +240,6 @@ public class CollectionValidator {
 		ValidateLayerTypeList types = this.types;
 		MapSystemRule mapSystemRule = this.mapSystemRule;
 
-//	    MapSystemRule mapSystemRule = new MapSystemRule(-10, 10, -1, 1);
-		
-		
 		try {
 			ErrorLayer errorLayer = new ErrorLayer();
 			errorLayer.setCollectionName(collection.getCollectionName());
@@ -257,41 +257,42 @@ public class CollectionValidator {
 			attributeValidate(types, collection, errorLayer);
 
 			// 인접도엽 검수
-			closeCollectionValidate(types, mapSystemRule, collection, "", errorLayer);
+			if (nearCollections.size() != 0) {
+				closeCollectionValidate(types, mapSystemRule, collection, "", errorLayer);
+			}
 			errLayerList.add(errorLayer);
 			progress.put(collection.getCollectionName(), 2);
 
 		} catch (Exception e) {
+			e.printStackTrace();
 			progress.put(collection.getCollectionName(), 3);
 
 		}
 		System.out.println("검수완료");
-//		execService.shutdown();
+		// execService.shutdown();
 	}
 
-	/*private void testtread(GeoLayerCollection collection, ValidateLayerTypeList types,MapSystemRule mapSystemRule,int j) throws SchemaException, NoSuchAuthorityCodeException, FactoryException, TransformException, IOException{
-		System.out.println("쓰레드" + j);
-		String collectionName = collection.getCollectionName();
-//		try {
-			ErrorLayer errorLayer = new ErrorLayer();
-			errorLayer.setCollectionName(collectionName);
-			errorLayer.setCollectionType(this.collectionType);
+	/*
+	 * private void testtread(GeoLayerCollection collection,
+	 * ValidateLayerTypeList types,MapSystemRule mapSystemRule,int j) throws
+	 * SchemaException, NoSuchAuthorityCodeException, FactoryException,
+	 * TransformException, IOException{ System.out.println("쓰레드" + j); String
+	 * collectionName = collection.getCollectionName(); // try { ErrorLayer
+	 * errorLayer = new ErrorLayer();
+	 * errorLayer.setCollectionName(collectionName);
+	 * errorLayer.setCollectionType(this.collectionType);
+	 * 
+	 * // layerMiss 검수 layerMissValidate(types, collection, errorLayer);
+	 * 
+	 * // geometric 검수 geometricValidate(types, collection, errorLayer);
+	 * 
+	 * // attribute 검수 attributeValidate(types, collection, errorLayer);
+	 * 
+	 * // 인접도엽 검수 closeCollectionValidate(types, mapSystemRule, collection, "",
+	 * errorLayer); errLayerList.add(errorLayer);
+	 * progress.put(collection.getCollectionName(), 2); }
+	 */
 
-			// layerMiss 검수
-			layerMissValidate(types, collection, errorLayer);
-
-			// geometric 검수
-			geometricValidate(types, collection, errorLayer);
-
-			// attribute 검수
-			attributeValidate(types, collection, errorLayer);
-
-			// 인접도엽 검수
-			closeCollectionValidate(types, mapSystemRule, collection, "", errorLayer);
-			errLayerList.add(errorLayer);
-			progress.put(collection.getCollectionName(), 2);
-	}*/
-	
 	@SuppressWarnings("unused")
 	private void attributeValidate(ValidateLayerTypeList types, GeoLayerCollection layerCollection,
 			ErrorLayer errorLayer) throws SchemaException {
@@ -314,8 +315,8 @@ public class CollectionValidator {
 						if (option instanceof BridgeName) {
 							List<String> relationNames = ((BridgeName) option).getRelationType();
 							for (int l = 0; l < relationNames.size(); l++) {
-								typeErrorLayer = layerValidator.validateBridgeName(types
-										.getTypeLayers(relationNames.get(l), layerCollection));
+								typeErrorLayer = layerValidator
+										.validateBridgeName(types.getTypeLayers(relationNames.get(l), layerCollection));
 								if (typeErrorLayer != null) {
 									errorLayer.mergeErrorLayer(typeErrorLayer);
 								}
@@ -345,6 +346,12 @@ public class CollectionValidator {
 								errorLayer.mergeErrorLayer(typeErrorLayer);
 							}
 						}
+						if(option instanceof HouseAttribute){
+							typeErrorLayer = layerValidator.valildateHouseAttribute();
+							if (typeErrorLayer != null) {
+								errorLayer.mergeErrorLayer(typeErrorLayer);
+							}
+						}
 					}
 				}
 			}
@@ -353,9 +360,11 @@ public class CollectionValidator {
 
 	private void geometricValidate(ValidateLayerTypeList types, GeoLayerCollection layerCollection,
 			ErrorLayer errorLayer)
-					throws SchemaException, NoSuchAuthorityCodeException, FactoryException, TransformException, IOException {
+			throws SchemaException, NoSuchAuthorityCodeException, FactoryException, TransformException, IOException {
 
 		GeoLayer neatLayer = layerCollection.getNeatLine();
+		
+		
 		for (int i = 0; i < types.size(); i++) {
 			// getType
 			ValidateLayerType type = types.get(i);
@@ -390,8 +399,8 @@ public class CollectionValidator {
 						if (option instanceof OneAcre) {
 							List<String> relationNames = ((OneAcre) option).getRelationType();
 							for (int r = 0; r < relationNames.size(); r++) {
-								typeErrorLayer = layerValidator.validateOneAcre(types
-										.getTypeLayers(relationNames.get(r), layerCollection),
+								typeErrorLayer = layerValidator.validateOneAcre(
+										types.getTypeLayers(relationNames.get(r), layerCollection),
 										spatialAccuracyTolorence);
 								if (typeErrorLayer != null) {
 									errorLayer.mergeErrorLayer(typeErrorLayer);
@@ -402,8 +411,8 @@ public class CollectionValidator {
 						if (option instanceof OneStage) {
 							List<String> relationNames = ((OneStage) option).getRelationType();
 							for (int r = 0; r < relationNames.size(); r++) {
-								typeErrorLayer = layerValidator.validateOneStage(types
-										.getTypeLayers(relationNames.get(r), layerCollection),
+								typeErrorLayer = layerValidator.validateOneStage(
+										types.getTypeLayers(relationNames.get(r), layerCollection),
 										spatialAccuracyTolorence);
 								if (typeErrorLayer != null) {
 									errorLayer.mergeErrorLayer(typeErrorLayer);
@@ -445,8 +454,8 @@ public class CollectionValidator {
 						if (option instanceof OutBoundary) {
 							List<String> relationNames = ((OutBoundary) option).getRelationType();
 							for (int r = 0; r < relationNames.size(); r++) {
-								typeErrorLayer = layerValidator.validateOutBoundary(types
-										.getTypeLayers(relationNames.get(r), layerCollection),
+								typeErrorLayer = layerValidator.validateOutBoundary(
+										types.getTypeLayers(relationNames.get(r), layerCollection),
 										spatialAccuracyTolorence);
 								if (typeErrorLayer != null) {
 									errorLayer.mergeErrorLayer(typeErrorLayer);
@@ -470,8 +479,9 @@ public class CollectionValidator {
 						if (option instanceof SelfEntity) {
 							List<String> relationNames = ((SelfEntity) option).getRelationType();
 							for (int r = 0; r < relationNames.size(); r++) {
-								typeErrorLayer = layerValidator.validateSelfEntity(types
-										.getTypeLayers(relationNames.get(r), layerCollection),selfEntityLineTolerance,polygonInvadedTolorence);
+								typeErrorLayer = layerValidator.validateSelfEntity(
+										types.getTypeLayers(relationNames.get(r), layerCollection),
+										selfEntityLineTolerance, polygonInvadedTolorence);
 
 								if (typeErrorLayer != null) {
 									errorLayer.mergeErrorLayer(typeErrorLayer);
@@ -510,8 +520,8 @@ public class CollectionValidator {
 						if (option instanceof B_SymbolOutSided) {
 							List<String> relationNames = ((B_SymbolOutSided) option).getRelationType();
 							for (int l = 0; l < relationNames.size(); l++) {
-								typeErrorLayer = layerValidator.vallidateB_SymbolOutSided(types
-										.getTypeLayers(relationNames.get(l), layerCollection));
+								typeErrorLayer = layerValidator.vallidateB_SymbolOutSided(
+										types.getTypeLayers(relationNames.get(l), layerCollection));
 								if (typeErrorLayer != null) {
 									errorLayer.mergeErrorLayer(typeErrorLayer);
 								}
@@ -520,8 +530,8 @@ public class CollectionValidator {
 						if (option instanceof CrossRoad) {
 							List<String> relationNames = ((CrossRoad) option).getRelationType();
 							for (int l = 0; l < relationNames.size(); l++) {
-								typeErrorLayer = layerValidator.validateCrossRoad(types
-										.getTypeLayers(relationNames.get(l), layerCollection), "",
+								typeErrorLayer = layerValidator.validateCrossRoad(
+										types.getTypeLayers(relationNames.get(l), layerCollection), "",
 										spatialAccuracyTolorence);
 								if (typeErrorLayer != null) {
 									errorLayer.mergeErrorLayer(typeErrorLayer);
@@ -531,8 +541,8 @@ public class CollectionValidator {
 						if (option instanceof NodeMiss) {
 							List<String> relationNames = ((NodeMiss) option).getRelationType();
 							for (int l = 0; l < relationNames.size(); l++) {
-								typeErrorLayer = layerValidator.validateNodeMiss(types
-										.getTypeLayers(relationNames.get(l), layerCollection), "",
+								typeErrorLayer = layerValidator.validateNodeMiss(
+										types.getTypeLayers(relationNames.get(l), layerCollection), "",
 										spatialAccuracyTolorence);
 								if (typeErrorLayer != null) {
 									errorLayer.mergeErrorLayer(typeErrorLayer);
@@ -607,9 +617,10 @@ public class CollectionValidator {
 			GeoLayerCollection leftGeoCollection = null;
 			GeoLayerCollection rightGeoCollection = null;
 
-//			GeoLayerCollectionList collectionList = this.getLayerCollectionList();
+			// GeoLayerCollectionList collectionList =
+			// this.getLayerCollectionList();
 			List<GeoLayerCollection> collectionList = this.nearCollections;
-			
+
 			if (collectionList != null) {
 				String collectionName = layerCollection.getCollectionName();
 				try {
@@ -717,8 +728,7 @@ public class CollectionValidator {
 			nearFeaturesGetBoundary.put(MapSystemRuleType.RIGHT, rightBuffer);
 
 			for (ValidateLayerType layerType : types) {
-				GeoLayerList typeLayers = types.getTypeLayers(layerType.getTypeName(),
-						layerCollection);
+				GeoLayerList typeLayers = types.getTypeLayers(layerType.getTypeName(), layerCollection);
 				List<ValidatorOption> options = layerType.getOptionList();
 				if (options != null) {
 					ErrorLayer typeErrorLayer = null;
@@ -754,7 +764,7 @@ public class CollectionValidator {
 								if (option instanceof EdgeMatchMiss) {
 									collectionOptions.putEdgeMatchMissOption(true);
 								}
-								if(option instanceof UnderShoot){
+								if (option instanceof UnderShoot) {
 									double tolerence = ((UnderShoot) option).getTolerence();
 									collectionOptions.putUnderShootOption(tolerence);
 								}

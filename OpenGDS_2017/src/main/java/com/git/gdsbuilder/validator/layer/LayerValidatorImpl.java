@@ -924,6 +924,30 @@ public class LayerValidatorImpl implements LayerValidator {
 			return null;
 		}
 	}
+	
+	public ErrorLayer valildateHouseAttribute(){
+		
+		ErrorLayer errorLayer = new ErrorLayer();
+		SimpleFeatureCollection sfc = validatorLayer.getSimpleFeatureCollection();
+		SimpleFeatureIterator simpleFeatureIterator = sfc.features();
+		while (simpleFeatureIterator.hasNext()) {
+			SimpleFeature simpleFeature = simpleFeatureIterator.next();
+			ErrorFeature errorFeature = attributeValidator.validateHouseAttribute(simpleFeature);
+			if (errorFeature != null) {
+				errorFeature.setLayerName(validatorLayer.getLayerName());
+				errorLayer.addErrorFeature(errorFeature);
+			} else {
+				continue;
+			}
+		}
+		if (errorLayer.getErrFeatureList().size() > 0) {
+			return errorLayer;
+		} else {
+			return null;
+		}
+	}
+	
+	
 
 	public ErrorLayer validateCloseCollection(ValidateCloseCollectionLayer closeCollectionLayer, String geomColunm) {
 		FilterFactory2 ff = CommonFactoryFinder.getFilterFactory2();

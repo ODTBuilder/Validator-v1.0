@@ -11,7 +11,7 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
 	<bean id="adminDataSource" class="org.apache.commons.dbcp.BasicDataSource"
 		destroy-method="close">
 		<property name="driverClassName" value="org.postgresql.Driver" />
-		<property name="url" value="jdbc:postgresql://175.116.181.42:5433/admin" />
+		<property name="url" value="jdbc:postgresql://localhost:5433/admin" />
 		<property name="username" value="postgis" />
 		<property name="password" value="postgis" />
 	</bean>
@@ -47,7 +47,8 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
 	<aop:config proxy-target-class="true">
 <!-- 	    <aop:pointcut id="serviceOperation" expression="execution(* com.git.opengds..*.*(..))" /> -->
 <!-- 		<aop:pointcut id="serviceOperation" expression="execution(* com.git.opengds.file.*.service.*Service.*(a..))"/> -->
-		<aop:pointcut id="serviceOperation" expression="execution(* com.git.opengds.file.*.service.*DBManagerServiceImpl.*(..))"/>
+		<aop:pointcut id="serviceOperation" expression="execution(* com.git.opengds.file.*.service.*DBManagerServiceImpl.*(..))||
+	    												execution(* com.git.opengds.editor.service.*DBManagerServiceImpl.*(..))" />
 <!-- 			<aop:pointcut id="serviceOperation" expression="excution(* com.project.service.service..*.*(..))"/> -->
 
 
@@ -67,7 +68,7 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
 	<bean id="admin2DataSource" class="org.apache.commons.dbcp.BasicDataSource"
 		destroy-method="close">
 		<property name="driverClassName" value="org.postgresql.Driver" />
-		<property name="url" value="jdbc:postgresql://175.116.181.42:5433/admin2" />
+		<property name="url" value="jdbc:postgresql://localhost:5433/admin2" />
 		<property name="username" value="postgis" />
 		<property name="password" value="postgis" />
 	</bean>
@@ -91,7 +92,8 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
 	</bean>
 	
 	<aop:config proxy-target-class="true">
-	    <aop:pointcut id="serviceOperation2" expression="execution(* com.git.opengds.file.*.service.*DBManagerServiceImpl.*(..))" />
+	    <aop:pointcut id="serviceOperation2" expression="execution(* com.git.opengds.file.*.service.*DBManagerServiceImpl.*(..))||
+	    												execution(* com.git.opengds.editor.service.*DBManagerServiceImpl.*(..))" />
 	    <aop:advisor id="transactionAdvisor2" pointcut-ref="serviceOperation2" advice-ref="txAdvice2"/>
 	</aop:config>
 
@@ -108,7 +110,7 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
 	<bean id="admin3DataSource" class="org.apache.commons.dbcp.BasicDataSource"
 		destroy-method="close">
 		<property name="driverClassName" value="org.postgresql.Driver" />
-		<property name="url" value="jdbc:postgresql://175.116.181.42:5433/admin3" />
+		<property name="url" value="jdbc:postgresql://localhost:5433/admin3" />
 		<property name="username" value="postgis" />
 		<property name="password" value="postgis" />
 	</bean>
@@ -132,7 +134,8 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
 	</bean>
 
 	<aop:config proxy-target-class="true">
-	    <aop:pointcut id="serviceOperation3" expression="execution(* com.git.opengds.file.*.service.*DBManagerServiceImpl.*(..))" />
+	    <aop:pointcut id="serviceOperation3" expression="execution(* com.git.opengds.file.*.service.*DBManagerServiceImpl.*(..))||
+	    												execution(* com.git.opengds.editor.service.*DBManagerServiceImpl.*(..))" />
 	    <aop:advisor id="transactionAdvisor3" pointcut-ref="serviceOperation3" advice-ref="txAdvice3"/>
 	</aop:config>
 
@@ -148,7 +151,7 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
 	<bean id="userDataSource" class="org.apache.commons.dbcp.BasicDataSource"
 		destroy-method="close">
 		<property name="driverClassName" value="org.postgresql.Driver" />
-		<property name="url" value="jdbc:postgresql://175.116.181.42:5433/userdb" />
+		<property name="url" value="jdbc:postgresql://localhost:5433/userdb" />
 		<property name="username" value="postgis" />
 		<property name="password" value="postgis" />
 	</bean>
@@ -172,7 +175,8 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
 	</bean>
 	
 	<aop:config proxy-target-class="true">
-	    <aop:pointcut id="userServiceOperation" expression="execution(* com.git.opengds.file.*.service.*DBManagerServiceImpl.*(..))" />
+	    <aop:pointcut id="userServiceOperation" expression="execution(* com.git.opengds.file.*.service.*DBManagerServiceImpl.*(..))||
+	    												execution(* com.git.opengds.editor.service.*DBManagerServiceImpl.*(..))" />
 	    <aop:advisor id="userTransactionAdvisor" pointcut-ref="userServiceOperation" advice-ref="txAdviceUser"/>
 	</aop:config>
 

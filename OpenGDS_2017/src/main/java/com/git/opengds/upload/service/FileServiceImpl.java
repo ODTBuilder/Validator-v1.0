@@ -120,11 +120,14 @@ public class FileServiceImpl implements FileService {
 
 				String saveFilePath = "";
 
-				if (ext.endsWith("dxf") || ext.endsWith("ngi") || ext.endsWith("nda") || ext.endsWith("shp")) {
+				if (ext.endsWith("dxf") || ext.endsWith("ngi") || ext.endsWith("nda") || ext.endsWith("zip")) {
 					if (ext.endsWith("ngi") || ext.endsWith("nda")) {
 						saveFilePath = fullDirPath + "\\ngi\\" + mpf.getOriginalFilename();
-					} else
-						saveFilePath = fullDirPath + "\\" + ext + "\\" + mpf.getOriginalFilename();
+					} else if(ext.endsWith("dxf")){
+						saveFilePath = fullDirPath + "\\dxf\\" + mpf.getOriginalFilename();
+					} else if(ext.endsWith("zip")){
+						saveFilePath = fullDirPath + "\\shp\\" + mpf.getOriginalFilename();
+					}
 				} else
 					saveFilePath = fullDirPath + "\\other\\" + mpf.getOriginalFilename();
 
@@ -153,13 +156,17 @@ public class FileServiceImpl implements FileService {
 			int pos = fileMeta.getFilePath().lastIndexOf(".");
 			String ext = fileMeta.getFilePath().substring(pos + 1).toLowerCase();
 
-			if (ext.endsWith("ngi") || ext.endsWith("shp") || ext.endsWith("dxf")) {
+			if (ext.endsWith("ngi") || ext.endsWith("zip") || ext.endsWith("dxf")) {
 				FileMeta refileMeta = null;
 				try {
 					if(ext.equals("dxf")) {
 						refileMeta = qa10FileService.dxfUpload(userVO, fileMeta);
-					} else {
+					} else if(ext.equals("ngi")) {
 						refileMeta = qa20FileService.ngiUpload(userVO, fileMeta);
+					}
+					else if(ext.equals("zip")) {
+						//다연씨 여기다 코딩해요~~
+						
 					}
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
@@ -184,11 +191,14 @@ public class FileServiceImpl implements FileService {
 			String fileType = fileFullName.substring(Idx + 1);
 
 			if (fileType.endsWith("dxf") || fileType.endsWith("ngi") || fileType.endsWith("nda")
-					|| fileType.endsWith("shp")) {
+					|| fileType.endsWith("zip")) {
 				if (fileType.endsWith("ngi") || fileType.endsWith("nda")) {
 					dupFlag = fileDAO.selectNGIDuplicateCheck(userVO, fileName);
 				} else if (fileType.endsWith("dxf")) {
 					dupFlag = fileDAO.selectDXFDuplicateCheck(userVO, fileName);
+				} else if (fileType.endsWith("zip")) {
+					//추후에 shp중복체크 추가
+//					dupFlag = fileDAO.selectDXFDuplicateCheck(userVO, fileName);
 				}
 			}
 		}

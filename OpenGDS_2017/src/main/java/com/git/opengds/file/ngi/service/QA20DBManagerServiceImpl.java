@@ -23,12 +23,8 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.stereotype.Service;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.transaction.TransactionDefinition;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.git.gdsbuilder.type.geoserver.layer.GeoLayerInfo;
 import com.git.gdsbuilder.type.qa20.collection.QA20LayerCollection;
@@ -38,7 +34,6 @@ import com.git.gdsbuilder.type.qa20.layer.QA20Layer;
 import com.git.gdsbuilder.type.qa20.layer.QA20LayerList;
 import com.git.opengds.file.ngi.dbManager.QA20DBQueryManager;
 import com.git.opengds.file.ngi.persistence.QA20LayerCollectionDAO;
-import com.git.opengds.file.ngi.persistence.QA20LayerCollectionDAOImpl;
 import com.git.opengds.user.domain.UserVO;
 
 @Service

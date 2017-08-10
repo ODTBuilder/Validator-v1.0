@@ -581,6 +581,7 @@ gitbuilder.ui.Validation = $.widget("gitbuilder.validation", {
 	open : function() {
 		this.window.modal('show');
 		this._init();
+		$(this.tree).jstree("refesh");
 		var arr = $(this.tree).jstree("get_selected");
 		var r = [];
 

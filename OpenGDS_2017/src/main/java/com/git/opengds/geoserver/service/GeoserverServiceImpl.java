@@ -127,9 +127,16 @@ public class GeoserverServiceImpl implements GeoserverService {
 
 		for (int i = 0; i < layerNameList.size(); i++) {
 
+			System.out.println(i);
+			
 			GSFeatureTypeEncoder fte = new GSFeatureTypeEncoder();
 			GSLayerEncoder layerEncoder = new GSLayerEncoder();
 			String layerName = layerNameList.get(i);
+			
+			if(layerName.equals("A0023119_LWPOLYLINE")) {
+				System.out.println("");
+			}
+			
 			String upperLayerName = layerName.toUpperCase();
 
 			int dash = layerName.indexOf("_");
@@ -165,7 +172,6 @@ public class GeoserverServiceImpl implements GeoserverService {
 					if(cutLayerName.equals(stext)){
 						styleName = "SMALL_TEXT";
 						isTextStyle = true;
-						break;
 					}
 				}
 				
@@ -182,7 +188,6 @@ public class GeoserverServiceImpl implements GeoserverService {
 							if(cutLayerName.equals(ltext)){
 								styleName = "LARGE_TEXT";
 								isTextStyle = true;
-								break;
 							}
 						}
 					}
@@ -196,12 +201,10 @@ public class GeoserverServiceImpl implements GeoserverService {
 									styleName = "NGI_"+ cutLayerName + "+_TEXT";
 									isTextStyle = true;
 								}
-								break;
 							}
 							else if(cutLayerName.equals("H0040000")){
 								styleName = cutLayerName + "+_TEXT";
 								isTextStyle = true;
-								break;
 							}
 					}
 				}
@@ -362,7 +365,7 @@ public class GeoserverServiceImpl implements GeoserverService {
 	@Override
 	public boolean removeGeoserverLayer(UserVO userVO, String groupLayerName,String layerName) {
 		boolean isConfigureGroup = false;
-//		boolean isRemoveLayer = false;
+		boolean isRemoveLayer = false;
 		boolean isRemoveFeatureType = false;
 		DTGeoGroupLayer dtGeoGroupLayer = dtReader.getDTGeoGroupLayer(userVO.getId(), groupLayerName);
 		
@@ -375,15 +378,21 @@ public class GeoserverServiceImpl implements GeoserverService {
 			groupEncoder.setWorkspace(dtGeoGroupLayer.getWorkspace());
 			groupEncoder.setBounds(dtGeoGroupLayer.getCRS(), dtGeoGroupLayer.getMinX(), dtGeoGroupLayer.getMaxY(), dtGeoGroupLayer.getMinY(), dtGeoGroupLayer.getMaxY());
 			for(String name : layerList){
-				groupEncoder.addLayer(name);
+				groupEncoder.addLayer(userVO.getId()+":"+name);
 			}
 			
 			isConfigureGroup = dtPublisher.configureLayerGroup(userVO.getId(), groupLayerName, groupEncoder);
-//			isRemoveLayer = dtPublisher.removeLayer(ID, layerName);
+			
 			isRemoveFeatureType = dtPublisher.unpublishFeatureType(userVO.getId(), userVO.getId(), layerName);
+//			isRemoveLayer = dtPublisher.removeLayer(userVO.getId(), layerName);
 		}
-		else
-			return false;
+		else{
+			isRemoveFeatureType = dtPublisher.unpublishFeatureType(userVO.getId(), userVO.getId(), layerName);
+			if(!isRemoveFeatureType){
+				return false;
+			}
+			return true;
+		}
 		
 		if(!isConfigureGroup&&!isRemoveFeatureType){
 			return false;
@@ -524,5 +533,4 @@ public class GeoserverServiceImpl implements GeoserverService {
 		// TODO Auto-generated method stub
 		return dtPublisher.publishErrLayer(userVO.getId(), userVO.getId(), geoLayerInfo);
 	}
-
 }

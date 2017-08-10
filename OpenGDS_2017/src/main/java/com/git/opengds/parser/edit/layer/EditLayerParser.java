@@ -173,45 +173,53 @@ public class EditLayerParser {
 		NDAHeader ndaHeader = new NDAHeader("1", updateAttr);
 		editQA20Layer.setNdaHeader(ndaHeader);
 
-		// bound
-		JSONArray boundArry = (JSONArray) layerObj.get("bound");
-		JSONArray minArry = (JSONArray) boundArry.get(0);
-		double minX = (Double) minArry.get(0);
-		double minY = (Double) minArry.get(1);
-
-		JSONArray maxArry = (JSONArray) boundArry.get(1);
-		double maxX = (Double) maxArry.get(0);
-		double maxY = (Double) maxArry.get(1);
-		String boundStr = "BOUND(" + minX + ", " + minY + ", " + maxX + ", " + maxY + ")";
-
-		NGIHeader ngiHeader = new NGIHeader();
-		ngiHeader.setBound(boundStr);
-
-		// represent
-		String represent = (String) layerObj.get("represent");
-
-		// ngiHeader
-		editQA20Layer.setNgiHeader(ngiHeader);
+		// // bound
+		// JSONArray boundArry = (JSONArray) layerObj.get("bound");
+		// JSONArray minArry = (JSONArray) boundArry.get(0);
+		// double minX = (Double) minArry.get(0);
+		// double minY = (Double) minArry.get(1);
+		//
+		
+		// JSONArray maxArry = (JSONArray) boundArry.get(1);
+		// double maxX = (Double) maxArry.get(0);
+		// double maxY = (Double) maxArry.get(1);
+		// String boundStr = "BOUND(" + minX + ", " + minY + ", " + maxX + ", "
+		// + maxY + ")";
+		//
+		// NGIHeader ngiHeader = new NGIHeader();
+		// ngiHeader.setBound(boundStr);
+		//
+		// // represent
+		// String represent = (String) layerObj.get("represent");
+		//
+		// // ngiHeader
+		// editQA20Layer.setNgiHeader(ngiHeader);
 		modifiedGeoserverLayerParse("ngi");
+		editQA20Layer.setModified(true);
 	}
 
 	private List<NDAField> parseAttrQA20Layer(String layerName, JSONArray attrArry) {
 
 		List<NDAField> fieldList = new ArrayList<NDAField>();
 		for (int i = 0; i < attrArry.size(); i++) {
-			JSONObject attr = (JSONObject) attrArry.get(i);
-			String originFieldName = (String) attr.get("originFieldName");
-			String fieldName = (String) attr.get("fieldName");
-			String type = (String) attr.get("type");
-			String decimal = (String) attr.get("decimal");
-			String size = (String) attr.get("size");
-			String isUniqueStr = (String) attr.get("isUnique");
-			boolean isUnique = false;
-			if (isUniqueStr.equals("true")) {
-				isUnique = true;
+			JSONObject attrObj = (JSONObject) attrArry.get(i);
+			String originFieldName = (String) attrObj.get("originFieldName");
+			String fieldName = (String) attrObj.get("fieldName");
+			String type = (String) attrObj.get("type");
+			String decimalStr = "";
+			if (type.equals("Double")) {
+				Object decimalObj = attrObj.get("decimal");
+				if (decimalObj != null) {
+					long decimal = (long) decimalObj;
+					decimalStr = String.valueOf(decimal);
+				}
 			}
-			NDAField field = new NDAField(originFieldName, fieldName, type, size, decimal, isUnique);
-			fieldList.add(field);
+			long size = (long) attrObj.get("size");
+			String sizeStr = String.valueOf(size);
+			boolean isUnique = (boolean) attrObj.get("isUnique");
+			boolean isNotNull = (boolean) attrObj.get("nullable");
+			NDAField fied = new NDAField(originFieldName, fieldName, type, sizeStr, decimalStr, isUnique, isNotNull);
+			fieldList.add(fied);
 		}
 		return fieldList;
 	}
@@ -247,20 +255,23 @@ public class EditLayerParser {
 		ngiHeader.addRegion_represent(test);
 
 		NDAHeader ndaHeader = new NDAHeader();
+		ndaHeader.setVersion(version);
 		List<NDAField> fieldList = new ArrayList<NDAField>();
 		JSONArray attrArray = (JSONArray) layerObj.get("attr");
 		for (int i = 0; i < attrArray.size(); i++) {
 			JSONObject attrObj = (JSONObject) attrArray.get(i);
 			String fieldName = (String) attrObj.get("fieldName");
 			String type = (String) attrObj.get("type");
-			String decimal = (String) attrObj.get("decimal");
-			String size = (String) attrObj.get("size");
-			String isUniqueStr = (String) attrObj.get("isUnique");
-			boolean isUnique = true;
-			if (isUniqueStr.equals("false")) {
-				isUnique = false;
+			String decimalStr = "";
+			if (type.equals("Double")) {
+				long decimal = (long) attrObj.get("decimal");
+				decimalStr = String.valueOf(decimal);
 			}
-			NDAField fied = new NDAField(fieldName, type, size, decimal, isUnique);
+			long size = (long) attrObj.get("size");
+			String sizeStr = String.valueOf(size);
+			boolean isUnique = (boolean) attrObj.get("isUnique");
+			boolean isNotNull = (boolean) attrObj.get("nullable");
+			NDAField fied = new NDAField(fieldName, type, sizeStr, decimalStr, isUnique, isNotNull);
 			fieldList.add(fied);
 		}
 		ndaHeader.setAspatial_field_def(fieldList);

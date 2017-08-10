@@ -27,6 +27,11 @@
 		resultType="hashMap">
 		${updateQuery}
 	</select>
+	
+	<select id="updateQA20ValidateFailState" parameterType="hashMap"
+		resultType="hashMap">
+		${updateQuery}
+	</select>
 
 	<select id="updateQA20ValidateErrLayerFail" parameterType="hashMap"
 		resultType="hashMap">

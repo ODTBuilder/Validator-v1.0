@@ -28,6 +28,7 @@ import java.util.List;
  */
 public class ErrorLayer {
 
+	String layerName;
 	String collectionName;
 	List<ErrorFeature> errFeatureList;
 	String collectionType;
@@ -37,6 +38,7 @@ public class ErrorLayer {
 	 */
 	public ErrorLayer() {
 		super();
+		this.layerName = "";
 		this.collectionName = "";
 		this.errFeatureList = new ArrayList<ErrorFeature>();
 		this.collectionType = "";
@@ -52,6 +54,14 @@ public class ErrorLayer {
 		this.collectionName = "";
 		this.errFeatureList = errFeatureList;
 		this.collectionType = "";
+	}
+
+	public String getLayerName() {
+		return layerName;
+	}
+
+	public void setLayerName(String layerName) {
+		this.layerName = layerName;
 	}
 
 	/**

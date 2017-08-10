@@ -27,6 +27,7 @@ import com.vividsolutions.jts.geom.Geometry;
  */
 public class ErrorFeature {
 
+	String collectionName;
 	String layerID;
 	String layerName;
 	String featureID;
@@ -41,6 +42,19 @@ public class ErrorFeature {
 	public ErrorFeature() {
 		super();
 		// TODO Auto-generated constructor stub
+	}
+
+	public ErrorFeature(String collectionName, String layerID, String layerName, String featureID, String featureIdx,
+			String errType, String errName, Geometry errPoint) {
+		super();
+		this.collectionName = collectionName;
+		this.layerID = layerID;
+		this.layerName = layerName;
+		this.featureID = featureID;
+		this.featureIdx = featureIdx;
+		this.errType = errType;
+		this.errName = errName;
+		this.errPoint = errPoint;
 	}
 
 	/**
@@ -60,6 +74,14 @@ public class ErrorFeature {
 		this.errType = errType;
 		this.errName = errName;
 		this.errPoint = errPoint;
+	}
+
+	public String getCollectionName() {
+		return collectionName;
+	}
+
+	public void setCollectionName(String collectionName) {
+		this.collectionName = collectionName;
 	}
 
 	public String getFeatureIdx() {

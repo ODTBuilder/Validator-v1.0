@@ -39,6 +39,7 @@ import com.git.gdsbuilder.type.validate.option.CrossRoad;
 import com.git.gdsbuilder.type.validate.option.EdgeMatchMiss;
 import com.git.gdsbuilder.type.validate.option.EntityDuplicated;
 import com.git.gdsbuilder.type.validate.option.EntityNone;
+import com.git.gdsbuilder.type.validate.option.HouseAttribute;
 import com.git.gdsbuilder.type.validate.option.LayerMiss;
 import com.git.gdsbuilder.type.validate.option.NodeMiss;
 import com.git.gdsbuilder.type.validate.option.OneAcre;
@@ -486,6 +487,16 @@ public class ValidateTypeParser {
 					optionList.add(nodeMiss);
 				}
 			}
+			
+			if(optionName.equalsIgnoreCase(HouseAttribute.Type.HOUSEATTRIBUTE.errName())){
+				Boolean isTrue = (Boolean) qaOptions.get("HouseAttribute");
+				if(isTrue){
+					HouseAttribute houseAttribute = new HouseAttribute();
+					optionList.add(houseAttribute);
+				}
+			}
+			
+			
 			if (optionName.equalsIgnoreCase(EntityNone.Type.ENTITYNONE.errName())) {
 				Boolean isTrue = (Boolean) qaOptions.get("EntityNone");
 				if (isTrue) {

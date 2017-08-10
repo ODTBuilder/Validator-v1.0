@@ -40,7 +40,6 @@ public class QA20Layer {
 	NDAHeader ndaHeader;
 	String layerType;
 	QA20FeatureList features;
-	List<String> originFieldNams; 
 
 	/**
 	 * QA20Layer 생성자
@@ -54,7 +53,6 @@ public class QA20Layer {
 		this.ngiHeader = new NGIHeader();
 		this.ndaHeader = new NDAHeader();
 		this.features = new QA20FeatureList();
-		this.originFieldNams = new ArrayList<String>();
 	}
 
 	/**
@@ -93,9 +91,8 @@ public class QA20Layer {
 		this.layerName = layerName;
 		this.ngiHeader = ngiHeader;
 		this.ndaHeader = ndaHeader;
-		this.layerType = "";
+		this.layerType = layerType;
 		this.features = features;
-		this.originLayerName = "";
 	}
 
 	/**

@@ -145,16 +145,8 @@ public class QA10Tables {
 		this.layers = variabliesMap;
 	}
 
-	public static Map<String, Object> getLayerValues(QA10Layer qa10Layer) {
+	public static LinkedHashMap<String, Object> getLayerValues(QA10Layer qa10Layer) {
 
-		Map<String, Object> variabliesMap = new LinkedHashMap<String, Object>();
-
-		LinkedHashMap<String, Object> commons = new LinkedHashMap<String, Object>();
-		commons.put("2", "LAYER");
-		commons.put("70", "99");
-		variabliesMap.put("common", commons);
-
-		List<LinkedHashMap<String, Object>> layers = new ArrayList<LinkedHashMap<String, Object>>();
 		String layerName = qa10Layer.getLayerID();
 		LinkedHashMap<String, Object> layer = new LinkedHashMap<String, Object>();
 		layer.put("0", "LAYER");
@@ -162,10 +154,8 @@ public class QA10Tables {
 		layer.put("70", "64");
 		layer.put("62", "7");
 		layer.put("6", "COUNTINUOUS");
-		layers.add(layer);
-		variabliesMap.put("layers", layers);
 
-		return variabliesMap;
+		return layer;
 	}
 
 	public void setStyleValues(Iterator styleIterator) {
@@ -315,7 +305,7 @@ public class QA10Tables {
 			layer.put("2", tableLayerMap.get("2"));
 			layer.put("70", tableLayerMap.get("70"));
 			layer.put("62", tableLayerMap.get("62"));
-			layer.put("6", tableLayerMap.get("6"));
+			layer.put("6", "CONTINUOUS");
 			layers.add(layer);
 		}
 		variabliesMap.put("layers", layers);
