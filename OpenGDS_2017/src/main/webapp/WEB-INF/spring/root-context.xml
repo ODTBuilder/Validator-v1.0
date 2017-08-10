@@ -61,7 +61,7 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
 	</aop:config> -->
 
 
-
+<!-- test-->
 
 	<!-- JDBC의 연결을 처리하는 기능을 가진 DataSource -->
 	<bean id="admin2DataSource" class="org.apache.commons.dbcp.BasicDataSource"
