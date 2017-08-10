@@ -83,7 +83,7 @@ public class ErrorReportServiceImpl implements ErrorReportService {
 
 					// get typeLayer's all feature count
 					HashMap<String, Object> selectFeatureCountQuery = qaLayerManager
-							.selectCountAllQA20FeaturesQuery(typeName, layerCollectionName, layerIDList);
+							.selectCountAllNGIFeaturesQuery(typeName, layerCollectionName, layerIDList);
 					HashMap<String, Object> featureCount = qa20LayerCollectionDAO
 							.selectCountAllNGIFeatures(userVO, selectFeatureCountQuery);
 

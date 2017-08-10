@@ -100,7 +100,7 @@ public class NGIDBManagerServiceImpl implements NGIDBManagerService {
 					}
 
 					// insertLayerMedata
-					HashMap<String, Object> insertQueryMap = dbManager.getInsertQA20LayerMeataData(type, collectionName,
+					HashMap<String, Object> insertQueryMap = dbManager.getInsertNGILayerMeataData(type, collectionName,
 							cIdx, ngiLayer);
 					int lmIdx = dao.insertNGILayerMetadata(userVO, insertQueryMap);
 
@@ -181,10 +181,10 @@ public class NGIDBManagerServiceImpl implements NGIDBManagerService {
 		try {
 			String collectionName = dtCollection.getFileName();
 			HashMap<String, Object> selectLayerCollectionIdxQuery = dbManager
-					.getSelectQA20LayerCollectionIdx(collectionName);
+					.getSelectNGILayerCollectionIdx(collectionName);
 			Integer cIdx = dao.selectNGILayerCollectionIdx(userVO, selectLayerCollectionIdxQuery);
 			if (cIdx != null) {
-				HashMap<String, Object> metadataIdxQuery = dbManager.getSelectQA20LayerMetaDataIdxQuery(cIdx);
+				HashMap<String, Object> metadataIdxQuery = dbManager.getSelectNGILayerMetaDataIdxQuery(cIdx);
 				List<HashMap<String, Object>> metadataIdxMapList = dao.selectNGILayerMetadataIdxs(userVO,
 						metadataIdxQuery);
 				for (int i = 0; i < metadataIdxMapList.size(); i++) {
@@ -192,12 +192,12 @@ public class NGIDBManagerServiceImpl implements NGIDBManagerService {
 					Integer mIdx = (Integer) metadataIdxMap.get("lm_idx");
 
 					// get layerTb name
-					HashMap<String, Object> layerTbNameQuery = dbManager.getSelectQA20LayerTableNameQuery(mIdx);
+					HashMap<String, Object> layerTbNameQuery = dbManager.getSelectNGILayerTableNameQuery(mIdx);
 					HashMap<String, Object> layerTbNameMap = dao.selectNGILayerTableName(userVO, layerTbNameQuery);
 
 					// layerTb drop
 					String layerTbName = (String) layerTbNameMap.get("layer_t_name");
-					HashMap<String, Object> dropLayerTbQuery = dbManager.getQA20DropLayerQuery(layerTbName);
+					HashMap<String, Object> dropLayerTbQuery = dbManager.getDropNGILayerQuery(layerTbName);
 					dao.dropLayer(userVO, dropLayerTbQuery);
 
 					// ngi_text_represent 삭제
@@ -219,9 +219,9 @@ public class NGIDBManagerServiceImpl implements NGIDBManagerService {
 				}
 			}
 			// layerMetadata 삭제
-			HashMap<String, Object> deleteLayerMetaQuery = dbManager.getDeleteQA20LayerMetaQuery(cIdx);
+			HashMap<String, Object> deleteLayerMetaQuery = dbManager.getDeleteNGILayerMetaQuery(cIdx);
 			dao.deleteField(userVO, deleteLayerMetaQuery);
-			HashMap<String, Object> deleteLayerCollectionQuery = dbManager.getDeleteQA20LayerCollectionQuery(cIdx);
+			HashMap<String, Object> deleteLayerCollectionQuery = dbManager.getDeleteNGILayerCollectionQuery(cIdx);
 			dao.deleteField(userVO, deleteLayerCollectionQuery);
 		} catch (RuntimeException e) {
 			// txManager.rollback(status);

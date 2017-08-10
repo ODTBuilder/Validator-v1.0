@@ -37,7 +37,7 @@ import com.git.gdsbuilder.type.ngi.layer.DTNGILayer;
  */
 public class NGIDBQueryManager {
 
-	public HashMap<String, Object> getSelectQA20LayerCollectionIdx(String collectionName) {
+	public HashMap<String, Object> getSelectNGILayerCollectionIdx(String collectionName) {
 
 		String tableName = "\"" + "qa20_layercollection" + "\"";
 		String selectQuery = "select c_idx from " + tableName + " where file_name = '" + collectionName + "'";
@@ -47,7 +47,7 @@ public class NGIDBQueryManager {
 		return selectQueryMap;
 	}
 
-	public HashMap<String, Object> getInsertQA20LayerMeataData(String type, String collectionName, Integer idx,
+	public HashMap<String, Object> getInsertNGILayerMeataData(String type, String collectionName, Integer idx,
 			DTNGILayer qa20Layer) {
 
 		String layerID = qa20Layer.getLayerID(); // layer_id
@@ -339,7 +339,7 @@ public class NGIDBQueryManager {
 		}
 	}
 
-	public HashMap<String, Object> getInertQA20FeatureQuery(String tableName, DTNGIFeature createFeature, String src) {
+	public HashMap<String, Object> getInertNGIFeatureQuery(String tableName, DTNGIFeature createFeature, String src) {
 
 		HashMap<String, Object> insertQuery = new HashMap<String, Object>();
 		// default
@@ -386,7 +386,7 @@ public class NGIDBQueryManager {
 
 	}
 
-	public HashMap<String, Object> getSelectQA20FeatureIdxQuery(String tableName, String featureID) {
+	public HashMap<String, Object> getSelectNGIFeatureIdxQuery(String tableName, String featureID) {
 
 		HashMap<String, Object> selectQuery = new HashMap<String, Object>();
 		String querytStr = "select f_idx from \"" + tableName + "\" where feature_id = '" + featureID + "'";
@@ -396,7 +396,7 @@ public class NGIDBQueryManager {
 
 	}
 
-	public HashMap<String, Object> getDeleteQA20FeatureQuery(String tableName, int fIdx) {
+	public HashMap<String, Object> getDeleteNGIFeatureQuery(String tableName, int fIdx) {
 
 		HashMap<String, Object> deleteQuery = new HashMap<String, Object>();
 		String queryStr = "delete from \"" + tableName + "\" where f_idx = '" + fIdx + "'";
@@ -405,7 +405,7 @@ public class NGIDBQueryManager {
 		return deleteQuery;
 	}
 
-	public HashMap<String, Object> getQA20DropLayerQuery(String type, String collectionName, String layerName) {
+	public HashMap<String, Object> getDropNGILayerQuery(String type, String collectionName, String layerName) {
 
 		HashMap<String, Object> dropQueryMap = new HashMap<String, Object>();
 		String layerTableName = "\"geo" + "_" + type + "_" + collectionName + "_" + layerName + "\"";
@@ -414,7 +414,7 @@ public class NGIDBQueryManager {
 		return dropQueryMap;
 	}
 
-	public HashMap<String, Object> getQA20DropLayerQuery(String tableName) {
+	public HashMap<String, Object> getDropNGILayerQuery(String tableName) {
 
 		HashMap<String, Object> dropQueryMap = new HashMap<String, Object>();
 		String queryStr = "drop table " + tableName;
@@ -457,7 +457,7 @@ public class NGIDBQueryManager {
 		return columns;
 	}
 
-	public HashMap<String, Object> selectCountAllQA20FeaturesQuery(String collectionType, String layerCollectionName,
+	public HashMap<String, Object> selectCountAllNGIFeaturesQuery(String collectionType, String layerCollectionName,
 			List<String> layerIDList) {
 
 		String countQueryStr = "select ";
@@ -475,7 +475,7 @@ public class NGIDBQueryManager {
 		return countQueryMap;
 	}
 
-	public HashMap<String, Object> getSelectQA20LayerMetaDataIdxQuery(Integer cIdx) {
+	public HashMap<String, Object> getSelectNGILayerMetaDataIdxQuery(Integer cIdx) {
 		HashMap<String, Object> selectQuery = new HashMap<String, Object>();
 		String tableName = "\"" + "qa20_layer_metadata" + "\"";
 		String selectQueryStr = "select lm_idx from " + tableName + " where c_idx = " + cIdx;
@@ -483,7 +483,7 @@ public class NGIDBQueryManager {
 		return selectQuery;
 	}
 
-	public HashMap<String, Object> getSelectAllQA20LayerMetaDataQuery(int lmIdx) {
+	public HashMap<String, Object> getSelectAllNGILayerMetaDataQuery(int lmIdx) {
 		HashMap<String, Object> selectQuery = new HashMap<String, Object>();
 		String tableName = "\"" + "qa20_layer_metadata" + "\"";
 		String selectQueryStr = "select * from " + tableName + " where lm_idx = " + lmIdx;
@@ -491,7 +491,7 @@ public class NGIDBQueryManager {
 		return selectQuery;
 	}
 
-	public HashMap<String, Object> getSelectQA20LayerTableNameQuery(Integer mIdx) {
+	public HashMap<String, Object> getSelectNGILayerTableNameQuery(Integer mIdx) {
 		HashMap<String, Object> selectQuery = new HashMap<String, Object>();
 		String tableName = "\"" + "qa20_layer_metadata" + "\"";
 		String selectQueryStr = "select layer_t_name from " + tableName + " where lm_idx = " + mIdx;
@@ -539,7 +539,7 @@ public class NGIDBQueryManager {
 		return deleteQuery;
 	}
 
-	public HashMap<String, Object> getDeleteQA20LayerMetaQuery(Integer mIdx) {
+	public HashMap<String, Object> getDeleteNGILayerMetaQuery(Integer mIdx) {
 		HashMap<String, Object> deleteQuery = new HashMap<String, Object>();
 		String tableName = "\"" + "qa20_layer_metadata" + "\"";
 		String deleteQueryStr = "delete from " + tableName + " where lm_idx = " + mIdx;
@@ -547,7 +547,7 @@ public class NGIDBQueryManager {
 		return deleteQuery;
 	}
 
-	public HashMap<String, Object> getDeleteQA20LayerCollectionQuery(Integer cIdx) {
+	public HashMap<String, Object> getDeleteNGILayerCollectionQuery(Integer cIdx) {
 		HashMap<String, Object> deleteQuery = new HashMap<String, Object>();
 		String tableName = "\"" + "qa20_layercollection" + "\"";
 		String deleteQueryStr = "delete from " + tableName + " where c_idx = " + cIdx;
@@ -555,7 +555,7 @@ public class NGIDBQueryManager {
 		return deleteQuery;
 	}
 
-	public HashMap<String, Object> getSelectQA20LayerMetaDataIdxQuery(Integer collectionIdx, String layerName) {
+	public HashMap<String, Object> getSelectNGILayerMetaDataIdxQuery(Integer collectionIdx, String layerName) {
 		HashMap<String, Object> selectQuery = new HashMap<String, Object>();
 		String tableName = "\"" + "qa20_layer_metadata" + "\"";
 		String selectQueryStr = "select lm_idx from " + tableName + " where c_idx = " + collectionIdx + " and "
@@ -564,7 +564,7 @@ public class NGIDBQueryManager {
 		return selectQuery;
 	}
 
-	public HashMap<String, Object> getUpdateQA20LayerMeataLayerNameQuery(Integer lmIdx, String currentName) {
+	public HashMap<String, Object> getUpdateNGILayerMeataLayerNameQuery(Integer lmIdx, String currentName) {
 		HashMap<String, Object> updateQuery = new HashMap<String, Object>();
 		String tableName = "\"" + "qa20_layer_metadata" + "\"";
 		String updateQueryStr = "update " + tableName + " set current_layer_name = '" + currentName + "'"
@@ -573,7 +573,7 @@ public class NGIDBQueryManager {
 		return updateQuery;
 	}
 
-	public HashMap<String, Object> getUpdateQA20LayerMeataBoundaryQuery(Integer lmIdx, String boundary) {
+	public HashMap<String, Object> getUpdateNGILayerMeataBoundaryQuery(Integer lmIdx, String boundary) {
 		HashMap<String, Object> updateQuery = new HashMap<String, Object>();
 		String tableName = "\"" + "qa20_layer_metadata" + "\"";
 		String updateQueryStr = "update " + tableName + " set ngi_bound = '" + boundary + "'" + "where lm_idx = "
@@ -656,7 +656,7 @@ public class NGIDBQueryManager {
 		return selectQuery;
 	}
 
-	public HashMap<String, Object> getSelectAllFeaturesQuery(String layerTbName,
+	public HashMap<String, Object> getSelectAllNGIFeaturesQuery(String layerTbName,
 			List<HashMap<String, Object>> aspatialFields) {
 
 		String selectQueryStr = "select f_idx, feature_id, feature_type, ST_AsText(geom) as geom, num_rings, num_vertexes, style_id, ";
@@ -683,7 +683,7 @@ public class NGIDBQueryManager {
 		return selectQuery;
 	}
 
-	public HashMap<String, Object> getDeleteQA10ProgressQuery(int cIdx) {
+	public HashMap<String, Object> getDeleteDXFProgressQuery(int cIdx) {
 		HashMap<String, Object> deleteQuery = new HashMap<String, Object>();
 		String tableName = "qa20_layercollection_qa_progress";
 		String deleteQueryStr = "delete from " + tableName + " where c_idx = " + cIdx;
@@ -691,7 +691,7 @@ public class NGIDBQueryManager {
 		return deleteQuery;
 	}
 
-	public HashMap<String, Object> getDeleteLayerCollection(int cIdx) {
+	public HashMap<String, Object> getDeleteNGILayerCollection(int cIdx) {
 		HashMap<String, Object> deleteQuery = new HashMap<String, Object>();
 		String tableName = "\"" + "qa20_layercollection" + "\"";
 		String deleteQueryStr = "delete from " + tableName + " where c_idx = " + cIdx;

@@ -7,54 +7,54 @@ import com.git.opengds.user.domain.UserVO;
 
 public interface ValidateProgressDAO {
 
-	public Integer insertQA20RequestState(UserVO userVO, HashMap<String, Object> insertQuery);
+	public Integer insertNGIRequestState(UserVO userVO, HashMap<String, Object> insertQuery);
 
-	public Integer insertQA10RequestState(UserVO userVO, HashMap<String, Object> insertQuery);
+	public Integer insertDXFRequestState(UserVO userVO, HashMap<String, Object> insertQuery);
 
-	public int selectQA20ValidateProgressPid(UserVO userVO, HashMap<String, Object> selectQA20ValidateProgressPid);
+	public int selectNGIValidateProgressPid(UserVO userVO, HashMap<String, Object> selectQA20ValidateProgressPid);
 
-	public int selectQA10ValidateProgressPid(UserVO userVO, HashMap<String, Object> selectQA10ValidateProgressPid);
+	public int selectDXFValidateProgressPid(UserVO userVO, HashMap<String, Object> selectQA10ValidateProgressPid);
 
-	public void updateQA20ProgressingState(UserVO userVO, HashMap<String, Object> insertProgressingState);
+	public void updateNGIProgressingState(UserVO userVO, HashMap<String, Object> insertProgressingState);
 
-	public void updateQA20ValidateSuccessState(UserVO userVO, HashMap<String, Object> insertProgressingState);
+	public void updateNGIValidateSuccessState(UserVO userVO, HashMap<String, Object> insertProgressingState);
 
-	public void updateQA20ValidateFailState(UserVO userVO, HashMap<String, Object> insertProgressingState);
+	public void updateNGIValidateFailState(UserVO userVO, HashMap<String, Object> insertProgressingState);
 
-	public void updateQA20ValidateErrLayerSuccess(UserVO userVO, HashMap<String, Object> updateProgressingState);
+	public void updateNGIValidateErrLayerSuccess(UserVO userVO, HashMap<String, Object> updateProgressingState);
 
-	public void updateQA20ValidateErrLayerFail(UserVO userVO, HashMap<String, Object> updateProgressingState);
+	public void updateNGIValidateErrLayerFail(UserVO userVO, HashMap<String, Object> updateProgressingState);
 
-	public void insertQA20ResponseState(UserVO userVO, HashMap<String, Object> insertQuery);
+	public void insertNGIResponseState(UserVO userVO, HashMap<String, Object> insertQuery);
 
-	public void insertQA20ErrorTableName(UserVO userVO, HashMap<String, Object> insertErrorTableName);
+	public void insertNGIErrorTableName(UserVO userVO, HashMap<String, Object> insertErrorTableName);
 
-	public void updateQA10ProgressingState(UserVO userVO, HashMap<String, Object> insertProgressingState);
+	public void updateDXFProgressingState(UserVO userVO, HashMap<String, Object> insertProgressingState);
 
-	public void updateQA10ValidateSuccessState(UserVO userVO, HashMap<String, Object> insertProgressingState);
+	public void updateDXFValidateSuccessState(UserVO userVO, HashMap<String, Object> insertProgressingState);
 
-	public void updateQA10ValidateFailState(UserVO userVO, HashMap<String, Object> insertProgressingState);
+	public void updateDXFValidateFailState(UserVO userVO, HashMap<String, Object> insertProgressingState);
 
-	public void updateQA10ValidateErrLayerSuccess(UserVO userVO, HashMap<String, Object> updateProgressingState);
+	public void updateDXFValidateErrLayerSuccess(UserVO userVO, HashMap<String, Object> updateProgressingState);
 
-	public void updateQA10ValidateErrLayerFail(UserVO userVO, HashMap<String, Object> updateProgressingState);
+	public void updateDXFValidateErrLayerFail(UserVO userVO, HashMap<String, Object> updateProgressingState);
 
-	public void insertQA10ResponseState(UserVO userVO, HashMap<String, Object> insertQuery);
+	public void insertDXFResponseState(UserVO userVO, HashMap<String, Object> insertQuery);
 
-	public void insertQA10ErrorTableName(UserVO userVO, HashMap<String, Object> insertErrorTableName);
+	public void insertDXFErrorTableName(UserVO userVO, HashMap<String, Object> insertErrorTableName);
 
-	public Long selectQA20ErrorLayerTbNamesCount(UserVO userVO, HashMap<String, Object> selectIdxQuery);
+	public Long selectNGIErrorLayerTbNamesCount(UserVO userVO, HashMap<String, Object> selectIdxQuery);
 
-	public Long selectQA10ErrorLayerTbNamesCount(UserVO userVO, HashMap<String, Object> selectIdxQuery);
+	public Long selectDXFErrorLayerTbNamesCount(UserVO userVO, HashMap<String, Object> selectIdxQuery);
 
-	public List<HashMap<String, Object>> selectAllQA10ValidateProgress(
+	public List<HashMap<String, Object>> selectAllDXFValidateProgress(
 			UserVO userVO, HashMap<String, Object> selectAllQA10ValidateProgress);
 
-	public List<HashMap<String, Object>> selectAllQA20ValidateProgress(
+	public List<HashMap<String, Object>> selectAllNGIValidateProgress(
 			UserVO userVO, HashMap<String, Object> selectAllQA20ValidateProgress);
 
-	public void deleteQA10Progress(HashMap<String, Object> deleteValidateProgressQuery);
+	public void deleteDXFProgress(HashMap<String, Object> deleteValidateProgressQuery);
 
-	public void deleteQA20Progress(HashMap<String, Object> deleteValidateProgressQuery);
+	public void deleteNGIProgress(HashMap<String, Object> deleteValidateProgressQuery);
 
 }

@@ -614,7 +614,7 @@ public class DXFDBQueryManager {
 		return selectQuery;
 	}
 
-	public HashMap<String, Object> getDeleteQA10ProgressQuery(int cIdx) {
+	public HashMap<String, Object> getDeleteDXFProgressQuery(int cIdx) {
 		HashMap<String, Object> deleteQuery = new HashMap<String, Object>();
 		String tableName = "qa10_layercollection_qa_progress";
 		String deleteQueryStr = "delete from " + tableName + " where c_idx = " + cIdx;

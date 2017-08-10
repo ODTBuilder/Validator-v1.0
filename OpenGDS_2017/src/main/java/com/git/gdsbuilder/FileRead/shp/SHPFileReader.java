@@ -44,14 +44,6 @@ public class SHPFileReader {
 				File file = new File(upZipFilePath, shpFile);
 				SimpleFeatureCollection collection = getShpObject(file);
 				if (collection != null) {
-//					SimpleFeatureIterator sIt = collection.features();
-//					while (sIt.hasNext()) {
-//						SimpleFeature sf = sIt.next();
-//						for (int k = 0; k < sf.getAttributeCount(); i++) {
-//							System.out.println(sf.getAttribute(k));
-//						}
-//					}
-
 					DTSHPLayer dtLayer = new DTSHPLayer();
 					dtLayer.setSimpleFeatureCollection(collection);
 					dtLayer.setLayerName(shpName);

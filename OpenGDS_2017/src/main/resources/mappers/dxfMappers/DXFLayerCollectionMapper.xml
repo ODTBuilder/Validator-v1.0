@@ -178,9 +178,6 @@
 		${deleteQuery}
 	</select>
 
-	<select id="updateQA10LayerMetadataLayerName" parameterType="hashMap"
-		resultType="hashMap">
-		${updateQuery}
-	</select>
-
+	<!-- <select id="updateQA10LayerMetadataLayerName" parameterType="hashMap" 
+		resultType="hashMap"> ${updateQuery} </select> -->
 </mapper>

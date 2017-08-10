@@ -61,7 +61,7 @@ public class EditDTLayerServiceImpl implements EditDTLayerService {
 					String collectionName = editCollection.getCollectionName();
 					EditDTLayerCondition condition = new EditDTLayerCondition();
 					// collection 중복 여부 확인
-					Integer collectionIdx = editDBManager.checkQA20LayerCollectionName(userVO, collectionName);
+					Integer collectionIdx = editDBManager.checkNGILayerCollectionName(userVO, collectionName);
 					if (editCollection.isCreated()) {
 						if (collectionIdx != null) {
 							// 1. 중복되었을 시(이미 존재하는 collection에 레이어 테이블만
@@ -70,7 +70,7 @@ public class EditDTLayerServiceImpl implements EditDTLayerService {
 							for (int j = 0; j < createLayerList.size(); j++) {
 								DTNGILayer createLayer = createLayerList.get(j);
 								String layerName = createLayer.getLayerName();
-								boolean isSuccessed = editDBManager.createQA20Layer(userVO, isNgi, collectionIdx,
+								boolean isSuccessed = editDBManager.createNGILayer(userVO, isNgi, collectionIdx,
 										collectionName, createLayer, src);
 								if (isSuccessed) {
 									condition.putSuccessedLayers(collectionName, layerName);
@@ -81,12 +81,12 @@ public class EditDTLayerServiceImpl implements EditDTLayerService {
 						} else {
 							// 2. 중복되지 않았을 시 collection insert 후 레이어 테이블
 							// create
-							Integer insertIdx = editDBManager.createQA20LayerCollection(userVO, isNgi, editCollection);
+							Integer insertIdx = editDBManager.createNGILayerCollection(userVO, isNgi, editCollection);
 							DTNGILayerList createLayerList = editCollection.getCreateLayerList();
 							for (int j = 0; j < createLayerList.size(); j++) {
 								DTNGILayer createLayer = createLayerList.get(j);
 								String layerName = createLayer.getLayerName();
-								boolean isSuccessed = editDBManager.createQA20Layer(userVO, isNgi, insertIdx,
+								boolean isSuccessed = editDBManager.createNGILayer(userVO, isNgi, insertIdx,
 										collectionName, createLayer, src);
 								if (isSuccessed) {
 									condition.putSuccessedLayers(collectionName, layerName);
@@ -105,7 +105,7 @@ public class EditDTLayerServiceImpl implements EditDTLayerService {
 							String originName = modifiedLayer.getOriginLayerName();
 							Map<String, Object> geoLayerList = editCollection.getGeoLayerList();
 							Map<String, Object> geoLayer = (Map<String, Object>) geoLayerList.get(originName);
-							boolean isSuccessed = editDBManager.modifyQA20Layer(userVO, isNgi, collectionIdx,
+							boolean isSuccessed = editDBManager.modifyNGILayer(userVO, isNgi, collectionIdx,
 									collectionName, modifiedLayer, geoLayer);
 							if (isSuccessed) {
 								condition.putSuccessedLayers(collectionName, layerName);
@@ -122,10 +122,10 @@ public class EditDTLayerServiceImpl implements EditDTLayerService {
 						DTNGILayerList layerList = editCollection.getDeletedLayerList();
 						for (int j = 0; j < layerList.size(); j++) {
 							DTNGILayer layer = layerList.get(j);
-							editDBManager.dropQA20Layer(userVO, isNgi, collectionIdx, collectionName, layer);
+							editDBManager.dropNGILayer(userVO, isNgi, collectionIdx, collectionName, layer);
 						}
 						if (editCollection.isDeleteAll()) {
-							editDBManager.deleteQA20LayerCollection(userVO, collectionIdx);
+							editDBManager.deleteNGILayerCollection(userVO, collectionIdx);
 						}
 					}
 				}
@@ -136,7 +136,7 @@ public class EditDTLayerServiceImpl implements EditDTLayerService {
 					EditDXFCollection editCollection = edtCollectionList.get(i);
 					String collectionName = editCollection.getCollectionName();
 					EditDTLayerCondition condition = new EditDTLayerCondition();
-					Integer collectionIdx = editDBManager.checkQA10LayerCollectionName(userVO, collectionName);
+					Integer collectionIdx = editDBManager.checkDXFLayerCollectionName(userVO, collectionName);
 					if (editCollection.isCreated()) {
 						if (collectionIdx != null) {
 							// 1. 중복되었을 시(이미 존재하는 collection에 레이어 테이블만
@@ -145,7 +145,7 @@ public class EditDTLayerServiceImpl implements EditDTLayerService {
 							for (int j = 0; j < createLayerList.size(); j++) {
 								DTDXFLayer createLayer = createLayerList.get(j);
 								String layerId = createLayer.getLayerID();
-								boolean isSuccessed = editDBManager.createQA10Layer(userVO, isDxf, collectionIdx,
+								boolean isSuccessed = editDBManager.createDXFLayer(userVO, isDxf, collectionIdx,
 										collectionName, createLayer, src);
 								if (isSuccessed) {
 									condition.putSuccessedLayers(collectionName, layerId);
@@ -156,12 +156,12 @@ public class EditDTLayerServiceImpl implements EditDTLayerService {
 						} else {
 							// 2. 중복되지 않았을 시 collection insert 후 레이어 테이블
 							// create
-							Integer insertIdx = editDBManager.createQA10LayerCollection(userVO, isDxf, editCollection);
+							Integer insertIdx = editDBManager.createDXFLayerCollection(userVO, isDxf, editCollection);
 							DTDXFLayerList createLayerList = editCollection.getCreateLayerList();
 							for (int j = 0; j < createLayerList.size(); j++) {
 								DTDXFLayer createLayer = createLayerList.get(j);
 								String layerId = createLayer.getLayerID();
-								boolean isSuccessed = editDBManager.createQA10Layer(userVO, isDxf, insertIdx,
+								boolean isSuccessed = editDBManager.createDXFLayer(userVO, isDxf, insertIdx,
 										collectionName, createLayer, src);
 								if (isSuccessed) {
 									condition.putSuccessedLayers(collectionName, layerId);
@@ -180,7 +180,7 @@ public class EditDTLayerServiceImpl implements EditDTLayerService {
 							String originID = modifiedLayer.getOriginLayerID();
 							Map<String, Object> geoLayerList = editCollection.getGeoLayerList();
 							Map<String, Object> geoLayer = (Map<String, Object>) geoLayerList.get(originID);
-							boolean isSuccessed = editDBManager.modifyQA10Layer(userVO, isDxf, collectionIdx,
+							boolean isSuccessed = editDBManager.modifyDXFLayer(userVO, isDxf, collectionIdx,
 									collectionName, modifiedLayer, geoLayer);
 							if (isSuccessed) {
 								condition.putSuccessedLayers(collectionName, layerId);
@@ -197,11 +197,11 @@ public class EditDTLayerServiceImpl implements EditDTLayerService {
 						DTDXFLayerList layerList = editCollection.getDeletedLayerList();
 						for (int j = 0; j < layerList.size(); j++) {
 							DTDXFLayer layer = layerList.get(j);
-							editDBManager.dropQA10Layer(userVO, isDxf, collectionIdx, collectionName, layer);
+							editDBManager.dropDXFLayer(userVO, isDxf, collectionIdx, collectionName, layer);
 						}
 						if (editCollection.isDeleteAll()) {
-							editDBManager.deleteQA10LayerCollectionTablesCommon(userVO, collectionIdx);
-							editDBManager.deleteQA10LayerCollection(userVO, collectionIdx);
+							editDBManager.deleteDXFLayerCollectionTablesCommon(userVO, collectionIdx);
+							editDBManager.deleteDXFLayerCollection(userVO, collectionIdx);
 						}
 					}
 				}

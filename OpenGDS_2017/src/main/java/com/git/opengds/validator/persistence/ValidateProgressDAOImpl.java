@@ -26,21 +26,21 @@ public class ValidateProgressDAOImpl extends DataSourceFactory implements Valida
 	}
 	*/
 	@Override
-	public Integer insertQA20RequestState(UserVO userVO, HashMap<String, Object> insertQuery) {
+	public Integer insertNGIRequestState(UserVO userVO, HashMap<String, Object> insertQuery) {
 		sqlSession = super.getSqlSession(userVO.getId());
 		sqlSession.insert(qa20Namespace + ".insertQA20RequestState", insertQuery);
 		return (Integer) insertQuery.get("p_idx");
 	}
 
 	@Override
-	public Integer insertQA10RequestState(UserVO userVO, HashMap<String, Object> insertQuery) {
+	public Integer insertDXFRequestState(UserVO userVO, HashMap<String, Object> insertQuery) {
 		sqlSession = super.getSqlSession(userVO.getId());
 		sqlSession.insert(qa10Namespace + ".insertQA10RequestState", insertQuery);
 		return (Integer) insertQuery.get("p_idx");
 	}
 
 	@Override
-	public int selectQA20ValidateProgressPid(UserVO userVO, HashMap<String, Object> selectQA20ValidateProgressPid) {
+	public int selectNGIValidateProgressPid(UserVO userVO, HashMap<String, Object> selectQA20ValidateProgressPid) {
 		sqlSession = super.getSqlSession(userVO.getId());
 		HashMap<String, Object> idxMap = sqlSession.selectOne(qa20Namespace + ".selectQA20ValidateProgressPid",
 				selectQA20ValidateProgressPid);
@@ -48,7 +48,7 @@ public class ValidateProgressDAOImpl extends DataSourceFactory implements Valida
 	}
 
 	@Override
-	public int selectQA10ValidateProgressPid(UserVO userVO, HashMap<String, Object> selectQA10ValidateProgressPid) {
+	public int selectDXFValidateProgressPid(UserVO userVO, HashMap<String, Object> selectQA10ValidateProgressPid) {
 		sqlSession = super.getSqlSession(userVO.getId());
 		HashMap<String, Object> idxMap = sqlSession.selectOne(qa10Namespace + ".selectQA10ValidateProgressPid",
 				selectQA10ValidateProgressPid);
@@ -56,91 +56,91 @@ public class ValidateProgressDAOImpl extends DataSourceFactory implements Valida
 	}
 
 	@Override
-	public void updateQA20ProgressingState(UserVO userVO, HashMap<String, Object> insertProgressingState) {
+	public void updateNGIProgressingState(UserVO userVO, HashMap<String, Object> insertProgressingState) {
 		sqlSession = super.getSqlSession(userVO.getId());
 		sqlSession.update(qa20Namespace + ".updateQA20ProgressingState", insertProgressingState);
 	}
 
 	@Override
-	public void updateQA20ValidateSuccessState(UserVO userVO, HashMap<String, Object> insertProgressingState) {
+	public void updateNGIValidateSuccessState(UserVO userVO, HashMap<String, Object> insertProgressingState) {
 		sqlSession = super.getSqlSession(userVO.getId());
 		sqlSession.update(qa20Namespace + ".updateQA20ValidateSuccessState", insertProgressingState);
 	}
 
 	@Override
-	public void updateQA20ValidateFailState(UserVO userVO, HashMap<String, Object> insertProgressingState) {
+	public void updateNGIValidateFailState(UserVO userVO, HashMap<String, Object> insertProgressingState) {
 		sqlSession = super.getSqlSession(userVO.getId());
 		sqlSession.update(qa20Namespace + ".updateQA20ValidateFailState", insertProgressingState);
 	}
 
 	@Override
-	public void updateQA20ValidateErrLayerSuccess(UserVO userVO, HashMap<String, Object> updateProgressingState) {
+	public void updateNGIValidateErrLayerSuccess(UserVO userVO, HashMap<String, Object> updateProgressingState) {
 		sqlSession = super.getSqlSession(userVO.getId());
 		sqlSession.update(qa20Namespace + ".updateQA20ValidateErrLayerSuccess", updateProgressingState);
 	}
 
 	@Override
-	public void updateQA20ValidateErrLayerFail(UserVO userVO, HashMap<String, Object> updateProgressingState) {
+	public void updateNGIValidateErrLayerFail(UserVO userVO, HashMap<String, Object> updateProgressingState) {
 		sqlSession = super.getSqlSession(userVO.getId());
 		sqlSession.update(qa20Namespace + ".updateQA20ValidateErrLayerFail", updateProgressingState);
 	}
 
 	@Override
-	public void insertQA20ResponseState(UserVO userVO, HashMap<String, Object> insertQuery) {
+	public void insertNGIResponseState(UserVO userVO, HashMap<String, Object> insertQuery) {
 		sqlSession = super.getSqlSession(userVO.getId());
 		sqlSession.insert(qa20Namespace + ".updateQA20ResponseState", insertQuery);
 	}
 
 	@Override
-	public void insertQA20ErrorTableName(UserVO userVO, HashMap<String, Object> insertErrorTableName) {
+	public void insertNGIErrorTableName(UserVO userVO, HashMap<String, Object> insertErrorTableName) {
 		sqlSession = super.getSqlSession(userVO.getId());
 		sqlSession.insert(qa20Namespace + ".updateQA20ErrorTableName", insertErrorTableName);
 	}
 
 	@Override
-	public void updateQA10ProgressingState(UserVO userVO, HashMap<String, Object> insertProgressingState) {
+	public void updateDXFProgressingState(UserVO userVO, HashMap<String, Object> insertProgressingState) {
 		sqlSession = super.getSqlSession(userVO.getId());
 		sqlSession.update(qa10Namespace + ".updateQA10ProgressingState", insertProgressingState);
 	}
 
 	@Override
-	public void updateQA10ValidateSuccessState(UserVO userVO, HashMap<String, Object> insertProgressingState) {
+	public void updateDXFValidateSuccessState(UserVO userVO, HashMap<String, Object> insertProgressingState) {
 		sqlSession = super.getSqlSession(userVO.getId());
 		sqlSession.update(qa10Namespace + ".updateQA10ValidateSuccessState", insertProgressingState);
 	}
 
 	@Override
-	public void updateQA10ValidateFailState(UserVO userVO, HashMap<String, Object> insertProgressingState) {
+	public void updateDXFValidateFailState(UserVO userVO, HashMap<String, Object> insertProgressingState) {
 		sqlSession = super.getSqlSession(userVO.getId());
 		sqlSession.update(qa10Namespace + ".updateQA10ValidateFailState", insertProgressingState);
 	}
 
 	@Override
-	public void updateQA10ValidateErrLayerSuccess(UserVO userVO, HashMap<String, Object> updateProgressingState) {
+	public void updateDXFValidateErrLayerSuccess(UserVO userVO, HashMap<String, Object> updateProgressingState) {
 		sqlSession = super.getSqlSession(userVO.getId());
 		sqlSession.update(qa10Namespace + ".updateQA10ValidateErrLayerSuccess", updateProgressingState);
 	}
 
 	@Override
-	public void updateQA10ValidateErrLayerFail(UserVO userVO, HashMap<String, Object> updateProgressingState) {
+	public void updateDXFValidateErrLayerFail(UserVO userVO, HashMap<String, Object> updateProgressingState) {
 		sqlSession = super.getSqlSession(userVO.getId());
 		sqlSession.update(qa10Namespace + ".updateQA10ValidateErrLayerFail", updateProgressingState);
 	}
 
 	@Override
-	public void insertQA10ResponseState(UserVO userVO, HashMap<String, Object> insertQuery) {
+	public void insertDXFResponseState(UserVO userVO, HashMap<String, Object> insertQuery) {
 		sqlSession = super.getSqlSession(userVO.getId());
 		sqlSession.insert(qa10Namespace + ".updateQA10ResponseState", insertQuery);
 	}
 
 	@Override
-	public void insertQA10ErrorTableName(UserVO userVO, HashMap<String, Object> insertErrorTableName) {
+	public void insertDXFErrorTableName(UserVO userVO, HashMap<String, Object> insertErrorTableName) {
 		sqlSession = super.getSqlSession(userVO.getId());
 		sqlSession.insert(qa10Namespace + ".updateQA10ErrorTableName", insertErrorTableName);
 	}
 
 	@Override
-	public Long selectQA20ErrorLayerTbNamesCount(UserVO userVO, HashMap<String, Object> selectIdxQuery) {
+	public Long selectNGIErrorLayerTbNamesCount(UserVO userVO, HashMap<String, Object> selectIdxQuery) {
 		sqlSession = super.getSqlSession(userVO.getId());
 		HashMap<String, Object> countMap = sqlSession.selectOne(qa20Namespace + ".selectQA20ErrorLayerTbNamesCount",
 				selectIdxQuery);
@@ -149,7 +149,7 @@ public class ValidateProgressDAOImpl extends DataSourceFactory implements Valida
 	}
 
 	@Override
-	public Long selectQA10ErrorLayerTbNamesCount(UserVO userVO, HashMap<String, Object> selectIdxQuery) {
+	public Long selectDXFErrorLayerTbNamesCount(UserVO userVO, HashMap<String, Object> selectIdxQuery) {
 		sqlSession = super.getSqlSession(userVO.getId());
 		HashMap<String, Object> countMap = sqlSession.selectOne(qa10Namespace + ".selectQA10ErrorLayerTbNamesCount",
 				selectIdxQuery);
@@ -157,14 +157,14 @@ public class ValidateProgressDAOImpl extends DataSourceFactory implements Valida
 	}
 
 	@Override
-	public List<HashMap<String, Object>> selectAllQA10ValidateProgress(
+	public List<HashMap<String, Object>> selectAllDXFValidateProgress(
 			UserVO userVO, HashMap<String, Object> selectAllQA10ValidateProgress) {
 		sqlSession = super.getSqlSession(userVO.getId());
 		return sqlSession.selectList(qa10Namespace + ".selectAllQA10ValidateProgress", selectAllQA10ValidateProgress);
 	}
 
 	@Override
-	public List<HashMap<String, Object>> selectAllQA20ValidateProgress(
+	public List<HashMap<String, Object>> selectAllNGIValidateProgress(
 			UserVO userVO, HashMap<String, Object> selectAllQA20ValidateProgress) {
 		sqlSession = super.getSqlSession(userVO.getId());
 		// TODO Auto-generated method stub
@@ -172,12 +172,12 @@ public class ValidateProgressDAOImpl extends DataSourceFactory implements Valida
 	}
 
 	@Override
-	public void deleteQA10Progress(HashMap<String, Object> deleteValidateProgressQuery) {
+	public void deleteDXFProgress(HashMap<String, Object> deleteValidateProgressQuery) {
 		sqlSession.delete(qa10Namespace + ".deleteQA10Progress", deleteValidateProgressQuery);
 	}
 
 	@Override
-	public void deleteQA20Progress(HashMap<String, Object> deleteValidateProgressQuery) {
+	public void deleteNGIProgress(HashMap<String, Object> deleteValidateProgressQuery) {
 		sqlSession.delete(qa10Namespace + ".deleteQA20Progress", deleteValidateProgressQuery);
 	}
 }

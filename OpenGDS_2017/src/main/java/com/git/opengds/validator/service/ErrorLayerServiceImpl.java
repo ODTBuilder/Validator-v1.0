@@ -108,10 +108,10 @@ public class ErrorLayerServiceImpl implements ErrorLayerService {
 				if (fileType.equals("ngi")) {
 					NGIDBQueryManager qa20dbQueryManager = new NGIDBQueryManager();
 					cIdx = qa20DAO.selectNGILayerCollectionIdx(userVO,
-							qa20dbQueryManager.getSelectQA20LayerCollectionIdx(collectionName));
+							qa20dbQueryManager.getSelectNGILayerCollectionIdx(collectionName));
 					HashMap<String, Object> selectIdxQuery = queryManager
 							.selectQA20ErrorLayerTbNamesCountQuery(fileType, collectionName, cIdx);
-					Long errTbCount = progressDAO.selectQA20ErrorLayerTbNamesCount(userVO,selectIdxQuery);
+					Long errTbCount = progressDAO.selectNGIErrorLayerTbNamesCount(userVO,selectIdxQuery);
 					if (errTbCount == null) {
 						errTableName += collectionName;
 					} else {
@@ -125,7 +125,7 @@ public class ErrorLayerServiceImpl implements ErrorLayerService {
 							qa10dbQueryManager.getSelectDXFLayerCollectionIdxQuery(collectionName));
 					HashMap<String, Object> selectIdxQuery = queryManager
 							.selectQA10ErrorLayerTbNamesCountQuery(fileType, collectionName, cIdx);
-					Long errTbCount = progressDAO.selectQA10ErrorLayerTbNamesCount(userVO,selectIdxQuery);
+					Long errTbCount = progressDAO.selectDXFErrorLayerTbNamesCount(userVO,selectIdxQuery);
 					if (errTbCount == null) {
 						errTableName += collectionName;
 					} else {
@@ -183,10 +183,10 @@ public class ErrorLayerServiceImpl implements ErrorLayerService {
 			if (fileType.equals("ngi")) {
 				NGIDBQueryManager qa20dbQueryManager = new NGIDBQueryManager();
 				cIdx = qa20DAO.selectNGILayerCollectionIdx(userVO,
-						qa20dbQueryManager.getSelectQA20LayerCollectionIdx(collectionName));
+						qa20dbQueryManager.getSelectNGILayerCollectionIdx(collectionName));
 				HashMap<String, Object> selectIdxQuery = queryManager.selectQA20ErrorLayerTbNamesCountQuery(fileType,
 						collectionName, cIdx);
-				Long errTbCount = progressDAO.selectQA20ErrorLayerTbNamesCount(userVO,selectIdxQuery);
+				Long errTbCount = progressDAO.selectNGIErrorLayerTbNamesCount(userVO,selectIdxQuery);
 				if (errTbCount == null) {
 					errTableName += collectionName;
 				} else {
@@ -200,7 +200,7 @@ public class ErrorLayerServiceImpl implements ErrorLayerService {
 						.selectDXFLayerCollectionIdx(userVO,qa10dbQueryManager.getSelectDXFLayerCollectionIdxQuery(collectionName));
 				HashMap<String, Object> selectIdxQuery = queryManager.selectQA10ErrorLayerTbNamesCountQuery(fileType,
 						collectionName, cIdx);
-				Long errTbCount = progressDAO.selectQA10ErrorLayerTbNamesCount(userVO,selectIdxQuery);
+				Long errTbCount = progressDAO.selectDXFErrorLayerTbNamesCount(userVO,selectIdxQuery);
 				if (errTbCount == null) {
 					errTableName += collectionName;
 				} else {

@@ -79,9 +79,9 @@ public class ErrorLayerExportServiceImpl implements ErrorLayerExportService {
 				// 기존 도엽 Collection 가져오기
 				qa20LayerCollection.setFileName(collectionName);
 				HashMap<String, Object> selectLayerCollectionIdxQuery = qa20dbManager
-						.getSelectQA20LayerCollectionIdx(collectionName);
+						.getSelectNGILayerCollectionIdx(collectionName);
 				int cIdx = qa20LayerCollectionDAO.selectNGILayerCollectionIdx(userVO, selectLayerCollectionIdxQuery);
-				HashMap<String, Object> selectAllMetaIdxQuery = qa20dbManager.getSelectQA20LayerMetaDataIdxQuery(cIdx);
+				HashMap<String, Object> selectAllMetaIdxQuery = qa20dbManager.getSelectNGILayerMetaDataIdxQuery(cIdx);
 				List<HashMap<String, Object>> mIdxMapList = qa20LayerCollectionDAO.selectNGILayerMetadataIdxs(userVO,
 						selectAllMetaIdxQuery);
 				// errlayer 합쳐합쳐
@@ -91,7 +91,7 @@ public class ErrorLayerExportServiceImpl implements ErrorLayerExportService {
 					int lmIdx = (Integer) mIdxMap.get("lm_idx");
 					// layerMeata
 					HashMap<String, Object> selectAllMetaQuery = qa20dbManager
-							.getSelectAllQA20LayerMetaDataQuery(lmIdx);
+							.getSelectAllNGILayerMetaDataQuery(lmIdx);
 					HashMap<String, Object> metaMap = qa20LayerCollectionDAO.selectNGILayerMeata(userVO,
 							selectAllMetaQuery);
 
@@ -136,7 +136,7 @@ public class ErrorLayerExportServiceImpl implements ErrorLayerExportService {
 						System.out.println("");
 					}
 					HashMap<String, Object> selectAllFeaturesQuery = qa20dbManager
-							.getSelectAllFeaturesQuery(layerTbName, aspatialField);
+							.getSelectAllNGIFeaturesQuery(layerTbName, aspatialField);
 					List<HashMap<String, Object>> featuresMapList = qa20LayerCollectionDAO.selectAllNGIFeatures(userVO,
 							selectAllFeaturesQuery);
 

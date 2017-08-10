@@ -109,7 +109,7 @@ public class DTNGILayerCollection {
 	 * QA20LayerList setter @author DY.Oh @Date 2017. 3. 11. 오후 2:30:20 @param
 	 * qa20LayerList void @throws
 	 */
-	public void setQa20LayerList(DTNGILayerList qa20LayerList) {
+	public void setNGILayerList(DTNGILayerList qa20LayerList) {
 		this.qa20LayerList = qa20LayerList;
 	}
 

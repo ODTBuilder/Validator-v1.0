@@ -4,7 +4,7 @@ import java.util.HashMap;
 
 public class ValidateProgressDBQueryManager {
 
-	public HashMap<String, Object> getSelectQA20ValidateProgressPid(String collectionName) {
+	public HashMap<String, Object> getSelectNGIValidateProgressPid(String collectionName) {
 
 		String tableName = "\"" + "qa20_layercollection_qa_progress" + "\"";
 		String selectQuery = "select p_idx from " + tableName + " where collection_name = '" + collectionName + "'";
@@ -14,7 +14,7 @@ public class ValidateProgressDBQueryManager {
 		return selectQueryMap;
 	}
 
-	public HashMap<String, Object> getInsertQA20RequestState(int validateStart, String collectionName, String fileType,
+	public HashMap<String, Object> getInsertNGIRequestState(int validateStart, String collectionName, String fileType,
 			int cidx) {
 		String tableName = "\"" + "qa20_layercollection_qa_progress" + "\"";
 		String insertQueryStr = " insert into " + tableName
@@ -25,7 +25,7 @@ public class ValidateProgressDBQueryManager {
 		return insertQueryMap;
 	}
 
-	public HashMap<String, Object> getUpdateQA20ProgressingState(int pIdx, int validateStart) {
+	public HashMap<String, Object> getUpdateNGIProgressingState(int pIdx, int validateStart) {
 		String tableName = "\"" + "qa20_layercollection_qa_progress" + "\"";
 		String updateQueryStr = "update " + tableName + " set state = " + validateStart + " where p_idx = " + pIdx;
 		HashMap<String, Object> updateQueryQueryMap = new HashMap<String, Object>();
@@ -33,7 +33,7 @@ public class ValidateProgressDBQueryManager {
 		return updateQueryQueryMap;
 	}
 
-	public HashMap<String, Object> getInsertQA20ErrorTableName(int pIdx, String errTableName) {
+	public HashMap<String, Object> getInsertNGIErrorTableName(int pIdx, String errTableName) {
 		String tableName = "\"" + "qa20_layercollection_qa_progress" + "\"";
 		String updateQueryStr = "update " + tableName + " set err_layer_name = '" + errTableName + "' where p_idx = "
 				+ pIdx;
@@ -42,7 +42,7 @@ public class ValidateProgressDBQueryManager {
 		return updateQueryQueryMap;
 	}
 
-	public HashMap<String, Object> getInsertQA20ResponseState(int pIdx) {
+	public HashMap<String, Object> getInsertNGIResponseState(int pIdx) {
 		String tableName = "\"" + "qa20_layercollection_qa_progress" + "\"";
 		String updateQueryStr = "update " + tableName + " set response_time = " + "CURRENT_TIMESTAMP"
 				+ " where p_idx = " + pIdx;
@@ -51,7 +51,7 @@ public class ValidateProgressDBQueryManager {
 		return updateQueryQueryMap;
 	}
 
-	public HashMap<String, Object> getSelectQA10ValidateProgressPid(String collectionName) {
+	public HashMap<String, Object> getSelectDXFValidateProgressPid(String collectionName) {
 		String tableName = "\"" + "qa10_layercollection_qa_progress" + "\"";
 		String selectQuery = "select p_idx from " + tableName + " where collection_name = '" + collectionName + "'";
 		HashMap<String, Object> selectQueryMap = new HashMap<String, Object>();
@@ -59,7 +59,7 @@ public class ValidateProgressDBQueryManager {
 		return selectQueryMap;
 	}
 
-	public HashMap<String, Object> getInsertQA10RequestState(int validateStart, String collectionName, String fileType,
+	public HashMap<String, Object> getInsertDXFRequestState(int validateStart, String collectionName, String fileType,
 			int cidx) {
 		String tableName = "\"" + "qa10_layercollection_qa_progress" + "\"";
 		String insertQueryStr = " insert into " + tableName
@@ -70,7 +70,7 @@ public class ValidateProgressDBQueryManager {
 		return insertQueryMap;
 	}
 
-	public HashMap<String, Object> getUpdateQA10ProgressingState(int pIdx, int validateFail) {
+	public HashMap<String, Object> getUpdateDXFProgressingState(int pIdx, int validateFail) {
 		String tableName = "\"" + "qa10_layercollection_qa_progress" + "\"";
 		String updateQueryStr = "update " + tableName + " set state = " + validateFail + " where p_idx = " + pIdx;
 		HashMap<String, Object> updateQueryQueryMap = new HashMap<String, Object>();
@@ -104,7 +104,7 @@ public class ValidateProgressDBQueryManager {
 		return selectQueryMap;
 	}
 
-	public HashMap<String, Object>  getSelectAllQA20ValidateProgress() {
+	public HashMap<String, Object> getSelectAllQA20ValidateProgress() {
 		String tableName = "\"" + "qa20_layercollection_qa_progress" + "\"";
 		String selectQuery = "select * from " + tableName + " order by request_time DESC";
 		HashMap<String, Object> selectQueryMap = new HashMap<String, Object>();
