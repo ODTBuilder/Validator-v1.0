@@ -5,14 +5,14 @@
 <mapper namespace="com.git.mappers.qa10Mappers.QA10LayerCollectionMapper">
 
 	<!-- qa10_LayerCollection -->
-	<insert id="insertQA10LayerCollection" parameterType="hashmap">
+	<insert id="insertDXFLayerCollection" parameterType="hashmap">
 		${insertQuery}
 		<selectKey keyProperty="c_idx" resultType="int" order="AFTER">
 			select currval('qa10_layercollection_c_idx_seq')
 		</selectKey>
 	</insert>
 
-	<select id="selectLayerCollectionIdx" parameterType="hashMap"
+	<select id="selectDXFLayerCollectionIdx" parameterType="hashMap"
 		resultType="hashMap">
 		${selectQuery}
 	</select>
@@ -23,7 +23,7 @@
 	</select>
 
 	<!-- qa10_layercollection_tables -->
-	<insert id="insertQA10LayerCollectionTableCommon" parameterType="hashmap">
+	<insert id="insertDXFLayerCollectionTableCommon" parameterType="hashmap">
 		${insertQuery}
 		<selectKey keyProperty="tc_idx" resultType="int" order="AFTER">
 			select currval('qa10_layercollection_table_common_tc_idx_seq')
@@ -50,7 +50,7 @@
 		${selectQuery}
 	</select>
 
-	<insert id="insertQA10LayerCollectionTableLayer" parameterType="hashmap">
+	<insert id="insertDXFLayerCollectionTableLayer" parameterType="hashmap">
 		${insertQuery}
 	</insert>
 
@@ -60,7 +60,7 @@
 	</select>
 
 	<!-- qa10_layercollection_blocks -->
-	<insert id="insertQA10LayerCollectionBlockCommon" parameterType="hashmap">
+	<insert id="insertDXFLayerCollectionBlockCommon" parameterType="hashmap">
 		${insertQuery}
 		<selectKey keyProperty="bc_idx" resultType="int" order="AFTER">
 			select currval('qa10_layercollection_block_common_bc_idx_seq')
@@ -77,7 +77,7 @@
 		${selectQuery}
 	</select>
 
-	<select id="selectQA10layerBlocksCommon" parameterType="hashMap"
+	<select id="selectDXFlayerBlocksCommon" parameterType="hashMap"
 		resultType="hashMap">
 		${selectQuery}
 	</select>
@@ -87,7 +87,7 @@
 		${selectAllQuery}
 	</select>
 
-	<insert id="insertQA10LayercollectionBlockPolyline"
+	<insert id="insertDXFLayercollectionBlockPolyline"
 		parameterType="hashmap">
 		${insertQuery}
 		<selectKey keyProperty="bp_idx" resultType="int" order="AFTER">
@@ -95,7 +95,7 @@
 		</selectKey>
 	</insert>
 
-	<insert id="insertQA10LayercollectionBlockLWPolyline"
+	<insert id="insertDXFLayercollectionBlockLWPolyline"
 		parameterType="hashmap">
 		${insertQuery}
 		<selectKey keyProperty="blp_idx" resultType="int" order="AFTER">
@@ -103,74 +103,74 @@
 		</selectKey>
 	</insert>
 
-	<insert id="insertQA10LayercollectionBlockVertex" parameterType="hashmap">
+	<insert id="insertDXFLayercollectionBlockVertex" parameterType="hashmap">
 		${insertQuery}
 	</insert>
 
-	<insert id="insertQA10LayerCollectionBlockEntity" parameterType="hashmap">
+	<insert id="insertDXFLayerCollectionBlockEntity" parameterType="hashmap">
 		${insertQuery}
 	</insert>
 
 	<!-- qa10_layer_tb -->
-	<select id="createQA10LayerTb" parameterType="hashMap">
+	<select id="createDXFLayerTb" parameterType="hashMap">
 		${createQuery}
 	</select>
 
 	<!-- qa10_layer -->
-	<insert id="insertQA10Layer" parameterType="hashmap">
+	<insert id="insertDXFLayer" parameterType="hashmap">
 		${insertQuery}
 	</insert>
 
-	<select id="selectQA10LayerTableName" parameterType="hashMap"
+	<select id="selectDXFLayerTableName" parameterType="hashMap"
 		resultType="hashMap">
 		${selectQuery}
 	</select>
 
-	<update id="dropQA10Layer" parameterType="hashMap">
+	<update id="dropDXFLayer" parameterType="hashMap">
 		${dropQuery}
 	</update>
 
 	<!-- qa10_layer_metadata -->
-	<insert id="insertQA10LayerMetadata" parameterType="hashmap">
+	<insert id="insertDXFLayerMetadata" parameterType="hashmap">
 		${insertQuery}
 	</insert>
 
-	<select id="selectQA10LayerMetadataIdxs" parameterType="hashMap"
+	<select id="selectDXFLayerMetadataIdxs" parameterType="hashMap"
 		resultType="hashMap">
 		${selectAllQuery}
 	</select>
 
-	<select id="updateQA10LayerMetadataLayerID" parameterType="hashMap"
+	<select id="updateDXFLayerMetadataLayerID" parameterType="hashMap"
 		resultType="hashMap">
 		${updateQuery}
 	</select>
 
-	<select id="selectQA10LayerMetadataIdx" parameterType="hashMap"
+	<select id="selectDXFLayerMetadataIdx" parameterType="hashMap"
 		resultType="hashMap">
 		${selectQuery}
 	</select>
 
-	<select id="selectQA10LayerMeata" parameterType="hashMap"
+	<select id="selectDXFLayerMeata" parameterType="hashMap"
 		resultType="hashMap">
 		${selectQuery}
 	</select>
 
 	<!-- qa10_layer_feature -->
-	<insert id="insertQA10Feature" parameterType="hashmap">
+	<insert id="insertDXFFeature" parameterType="hashmap">
 		${insertQuery}
 	</insert>
 
-	<select id="selectQA10Features" parameterType="hashMap"
+	<select id="selectDXFFeatures" parameterType="hashMap"
 		resultType="hashMap">
 		${selectQuery}
 	</select>
 
-	<select id="selectFeatureIdx" parameterType="hashMap"
+	<select id="selectDXFFeatureIdx" parameterType="hashMap"
 		resultType="hashMap">
 		${selectQuery}
 	</select>
 
-	<delete id="deleteFeature" parameterType="hashMap">
+	<delete id="deleteDXFFeature" parameterType="hashMap">
 		${deleteQuery}
 	</delete>
 

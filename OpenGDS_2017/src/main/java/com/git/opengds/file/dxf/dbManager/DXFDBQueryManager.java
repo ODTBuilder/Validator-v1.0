@@ -13,7 +13,7 @@ import com.git.gdsbuilder.type.dxf.layer.DTDXFLayer;
 
 public class DXFDBQueryManager {
 
-	public HashMap<String, Object> getInsertLayerCollection(String collectionName) {
+	public HashMap<String, Object> getInsertDXFLayerCollection(String collectionName) {
 
 		String insertQuery = "insert into qa10_layercollection(collection_name) values('" + collectionName + "')";
 		HashMap<String, Object> insertQueryMap = new HashMap<String, Object>();
@@ -22,12 +22,12 @@ public class DXFDBQueryManager {
 		return insertQueryMap;
 	}
 
-	public HashMap<String, Object> qa10LayerTbCreateQuery(String type, String collectionName, DTDXFLayer qa10Layer,
+	public HashMap<String, Object> getDXFLayerTbCreateQuery(String type, String collectionName, DTDXFLayer dxfLayer,
 			String src) {
 
-		String layerType = qa10Layer.getLayerType();
-		String originLayerType = qa10Layer.getOriginLayerType();
-		String layerId = qa10Layer.getLayerID();
+		String layerType = dxfLayer.getLayerType();
+		String originLayerType = dxfLayer.getOriginLayerType();
+		String layerId = dxfLayer.getLayerID();
 		String tableName = "\"geo" + "_" + type + "_" + collectionName + "_" + layerId + "\"";
 		String defaultCreateQuery = "create table " + tableName + "("
 				+ "f_idx serial primary key, feature_id varchar(100), geom geometry(" + layerType + "," + src
@@ -48,15 +48,15 @@ public class DXFDBQueryManager {
 		return query;
 	}
 
-	public List<HashMap<String, Object>> qa10LayerTbInsertQuery(String type, String collectionName, DTDXFLayer qa10Layer,
-			String src) {
+	public List<HashMap<String, Object>> getDXFLayerTbInsertQuery(String type, String collectionName,
+			DTDXFLayer dxfLayer, String src) {
 
-		String originLayerType = qa10Layer.getOriginLayerType();
-		String layerId = qa10Layer.getLayerID();
+		String originLayerType = dxfLayer.getOriginLayerType();
+		String layerId = dxfLayer.getLayerID();
 		String tableName = "\"geo" + "_" + type + "_" + collectionName + "_" + layerId + "\"";
 
 		List<HashMap<String, Object>> dbLayers = new ArrayList<HashMap<String, Object>>();
-		DTDXFFeatureList features = qa10Layer.getQa10FeatureList();
+		DTDXFFeatureList features = dxfLayer.getQa10FeatureList();
 		for (int i = 0; i < features.size(); i++) {
 			DTDXFFeature feature = features.get(i);
 			String defaultInsertColumns = "insert into " + tableName + "(feature_id, geom, feature_type ";
@@ -88,10 +88,10 @@ public class DXFDBQueryManager {
 		return dbLayers;
 	}
 
-	public HashMap<String, Object> getInsertLayerMeataData(String type, String collectionName, int cIdx,
-			DTDXFLayer qa10Layer) {
+	public HashMap<String, Object> getInsertDXFLayerMeataDataQuery(String type, String collectionName, int cIdx,
+			DTDXFLayer dxfLayer) {
 
-		String layerId = qa10Layer.getLayerID();
+		String layerId = dxfLayer.getLayerID();
 		String layerTableName = "geo" + "_" + type + "_" + collectionName + "_" + layerId;
 		String insertQueryColumn = "insert into " + "\"qa10_layer_metadata" + "\""
 				+ "(layer_id, layer_t_name, c_idx, current_layer_id)";
@@ -114,7 +114,7 @@ public class DXFDBQueryManager {
 		return columns;
 	}
 
-	public HashMap<String, Object> getInertFeatureQuery(String tableName, DTDXFFeature createFeature) {
+	public HashMap<String, Object> getInertDXFFeatureQuery(String tableName, DTDXFFeature createFeature) {
 
 		String insertDefaultQuery = "insert into \"" + tableName + "\"" + "(feature_id, geom, feature_type)";
 		String insertDefaultValues = " values('" + createFeature.getFeatureID() + "'," + "ST_GeomFromText('"
@@ -125,7 +125,7 @@ public class DXFDBQueryManager {
 		return insertQuery;
 	}
 
-	public HashMap<String, Object> getSelectFeatureIdx(String tableName, String featureID) {
+	public HashMap<String, Object> getSelectDXFFeatureIdxQuery(String tableName, String featureID) {
 
 		HashMap<String, Object> selectQuery = new HashMap<String, Object>();
 		String querytStr = "select f_idx from \"" + tableName + "\" where feature_id = '" + featureID + "'";
@@ -134,7 +134,7 @@ public class DXFDBQueryManager {
 		return selectQuery;
 	}
 
-	public HashMap<String, Object> getDeleteFeature(String tableName, int fIdx) {
+	public HashMap<String, Object> getDeleteDXFFeatureQuery(String tableName, int fIdx) {
 
 		HashMap<String, Object> deleteQuery = new HashMap<String, Object>();
 		String queryStr = "delete from \"" + tableName + "\" where f_idx = '" + fIdx + "'";
@@ -143,7 +143,7 @@ public class DXFDBQueryManager {
 		return deleteQuery;
 	}
 
-	public HashMap<String, Object> getSelectLayerCollectionIdx(String collectionName) {
+	public HashMap<String, Object> getSelectDXFLayerCollectionIdxQuery(String collectionName) {
 
 		String tableName = "qa10_layercollection";
 		String selectQuery = "select c_idx from " + tableName + " where collection_name = '" + collectionName + "'";
@@ -153,7 +153,7 @@ public class DXFDBQueryManager {
 		return selectQueryMap;
 	}
 
-	public HashMap<String, Object> getInsertTables(int cIdx, Map<String, Object> tables) {
+	public HashMap<String, Object> getInsertTablesQuery(int cIdx, Map<String, Object> tables) {
 
 		LinkedHashMap<String, Object> commons = (LinkedHashMap<String, Object>) tables.get("common");
 
@@ -179,7 +179,7 @@ public class DXFDBQueryManager {
 		return query;
 	}
 
-	public List<HashMap<String, Object>> getInsertTablesLayers(int tbIdx, Map<String, Object> tables) {
+	public List<HashMap<String, Object>> getInsertTablesLayersQuery(int tbIdx, Map<String, Object> tables) {
 
 		List<HashMap<String, Object>> layerQuerys = new ArrayList<HashMap<String, Object>>();
 		List<LinkedHashMap<String, Object>> layers = (List<LinkedHashMap<String, Object>>) tables.get("layers");
@@ -208,7 +208,7 @@ public class DXFDBQueryManager {
 		return layerQuerys;
 	}
 
-	public List<HashMap<String, Object>> getInsertBlocksCommon(int cIdx, List<LinkedHashMap<String, Object>> blocks) {
+	public List<HashMap<String, Object>> getInsertBlocksCommonQuery(int cIdx, List<LinkedHashMap<String, Object>> blocks) {
 
 		List<HashMap<String, Object>> blockQuerys = new ArrayList<HashMap<String, Object>>();
 
@@ -378,7 +378,7 @@ public class DXFDBQueryManager {
 		return query;
 	}
 
-	public HashMap<String, Object> getSelectLayerMetaDataIdx(Integer cIdx) {
+	public HashMap<String, Object> getSelectLayerMetaDataIdxQuery(Integer cIdx) {
 		HashMap<String, Object> selectQuery = new HashMap<String, Object>();
 		String tableName = "\"" + "qa10_layer_metadata" + "\"";
 		String selectQueryStr = "select lm_idx from " + tableName + " where c_idx = " + cIdx;
@@ -394,14 +394,14 @@ public class DXFDBQueryManager {
 		return selectQuery;
 	}
 
-	public HashMap<String, Object> getDropLayer(String layerTbName) {
+	public HashMap<String, Object> getDropDXFLayerQuery(String layerTbName) {
 		HashMap<String, Object> dropQueryMap = new HashMap<String, Object>();
 		String queryStr = "drop table " + "\"" + layerTbName + "\"";
 		dropQueryMap.put("dropQuery", queryStr);
 		return dropQueryMap;
 	}
 
-	public HashMap<String, Object> getDeleteLayerMeta(Integer cIdx) {
+	public HashMap<String, Object> getDeleteDXFLayerMetaQuery(Integer cIdx) {
 		HashMap<String, Object> deleteQuery = new HashMap<String, Object>();
 		String tableName = "\"" + "qa10_layer_metadata" + "\"";
 		String deleteQueryStr = "delete from " + tableName + " where lm_idx = " + cIdx;
@@ -409,7 +409,7 @@ public class DXFDBQueryManager {
 		return deleteQuery;
 	}
 
-	public HashMap<String, Object> getDeleteLayerCollection(Integer cIdx) {
+	public HashMap<String, Object> getDeleteDXFLayerCollectionQuery(Integer cIdx) {
 		HashMap<String, Object> deleteQuery = new HashMap<String, Object>();
 		String tableName = "\"" + "qa10_layercollection" + "\"";
 		String deleteQueryStr = "delete from " + tableName + " where c_idx = " + cIdx;
@@ -417,7 +417,7 @@ public class DXFDBQueryManager {
 		return deleteQuery;
 	}
 
-	public HashMap<String, Object> getSelectTableCommonIdx(Integer cIdx) {
+	public HashMap<String, Object> getSelectTableCommonIdxQuery(Integer cIdx) {
 		HashMap<String, Object> selectIdxQuery = new HashMap<String, Object>();
 		String tableName = "qa10_layercollection_table_common";
 		String selectQueryStr = "select tc_idx from " + tableName + " where c_idx = " + cIdx;
@@ -425,7 +425,7 @@ public class DXFDBQueryManager {
 		return selectIdxQuery;
 	}
 
-	public HashMap<String, Object> getDeleteTableLayers(Integer tcIdx, String layerId) {
+	public HashMap<String, Object> getDeleteTableLayersQuery(Integer tcIdx, String layerId) {
 		HashMap<String, Object> deleteQuery = new HashMap<String, Object>();
 		String tableName = "qa10_layercollection_table_layer";
 		String deleteQueryStr = "delete from " + tableName + " where tc_idx = " + tcIdx + " AND " + "\"" + 2 + "\""
@@ -434,7 +434,7 @@ public class DXFDBQueryManager {
 		return deleteQuery;
 	}
 
-	public HashMap<String, Object> getDeleteTableLayers(Integer tcIdx) {
+	public HashMap<String, Object> getDeleteTableLayersQuery(Integer tcIdx) {
 		HashMap<String, Object> deleteQuery = new HashMap<String, Object>();
 		String tableName = "qa10_layercollection_table_layer";
 		String deleteQueryStr = "delete from " + tableName + " where tc_idx = " + tcIdx;
@@ -442,7 +442,7 @@ public class DXFDBQueryManager {
 		return deleteQuery;
 	}
 
-	public HashMap<String, Object> getDeleteTables(Integer cIdx) {
+	public HashMap<String, Object> getDeleteTablesQuery(Integer cIdx) {
 		HashMap<String, Object> deleteQuery = new HashMap<String, Object>();
 		String tableName = "qa10_layercollection_table_common";
 		String deleteQueryStr = "delete from " + tableName + " where c_idx = " + cIdx;
@@ -450,7 +450,7 @@ public class DXFDBQueryManager {
 		return deleteQuery;
 	}
 
-	public HashMap<String, Object> getSelectBlockCommonIdx(Integer cIdx) {
+	public HashMap<String, Object> getSelectBlockCommonIdxQuery(Integer cIdx) {
 		HashMap<String, Object> selectIdxQuery = new HashMap<String, Object>();
 		String tableName = "qa10_layercollection_block_common";
 		String selectQueryStr = "select bc_idx from " + tableName + " where c_idx = " + cIdx;
@@ -458,7 +458,7 @@ public class DXFDBQueryManager {
 		return selectIdxQuery;
 	}
 
-	public HashMap<String, Object> getSelectBlockCommonIdx(Integer cIdx, String id) {
+	public HashMap<String, Object> getSelectBlockCommonIdxQuery(Integer cIdx, String id) {
 		HashMap<String, Object> selectIdxQuery = new HashMap<String, Object>();
 		String tableName = "qa10_layercollection_block_common";
 		String selectQueryStr = "select bc_idx from " + tableName + " where c_idx = " + cIdx + " AND " + "\"" + 2 + "\""
@@ -467,7 +467,7 @@ public class DXFDBQueryManager {
 		return selectIdxQuery;
 	}
 
-	public HashMap<String, Object> getDeleteBlockLine(Integer bcIdx) {
+	public HashMap<String, Object> getDeleteBlockLineQuery(Integer bcIdx) {
 		HashMap<String, Object> deleteQuery = new HashMap<String, Object>();
 		String tableName = "qa10_layercollection_block_line";
 		String deleteQueryStr = "delete from " + tableName + " where bc_idx = " + bcIdx;
@@ -475,16 +475,15 @@ public class DXFDBQueryManager {
 		return deleteQuery;
 	}
 
-	public HashMap<String, Object> getDeleteBlockLWPolyline(Integer bcIdx) {
+	public HashMap<String, Object> getDeleteBlockLWPolylineQuery(Integer bcIdx) {
 		HashMap<String, Object> deleteQuery = new HashMap<String, Object>();
 		String tableName = "qa10_layercollection_block_lwpolyline";
 		String deleteQueryStr = "delete from " + tableName + " where bc_idx = " + bcIdx;
 		deleteQuery.put("deleteQuery", deleteQueryStr);
 		return deleteQuery;
 	}
-	
-	
-	public HashMap<String, Object> getDeleteBlockArc(Integer bcIdx) {
+
+	public HashMap<String, Object> getDeleteBlockArcQuery(Integer bcIdx) {
 		HashMap<String, Object> deleteQuery = new HashMap<String, Object>();
 		String tableName = "qa10_layercollection_block_arc";
 		String deleteQueryStr = "delete from " + tableName + " where bc_idx = " + bcIdx;
@@ -492,7 +491,7 @@ public class DXFDBQueryManager {
 		return deleteQuery;
 	}
 
-	public HashMap<String, Object> getDeleteBlockCircle(Integer bcIdx) {
+	public HashMap<String, Object> getDeleteBlockCircleQuery(Integer bcIdx) {
 		HashMap<String, Object> deleteQuery = new HashMap<String, Object>();
 		String tableName = "qa10_layercollection_block_circle";
 		String deleteQueryStr = "delete from " + tableName + " where bc_idx = " + bcIdx;
@@ -500,7 +499,7 @@ public class DXFDBQueryManager {
 		return deleteQuery;
 	}
 
-	public HashMap<String, Object> getDeleteBlockPolyline(Integer bcIdx) {
+	public HashMap<String, Object> getDeleteBlockPolylineQuery(Integer bcIdx) {
 		HashMap<String, Object> deleteQuery = new HashMap<String, Object>();
 		String tableName = "qa10_layercollection_block_polyline";
 		String deleteQueryStr = "delete from " + tableName + " where bc_idx = " + bcIdx;
@@ -508,7 +507,7 @@ public class DXFDBQueryManager {
 		return deleteQuery;
 	}
 
-	public HashMap<String, Object> getDeleteBlockText(Integer bcIdx) {
+	public HashMap<String, Object> getDeleteBlockTextQuery(Integer bcIdx) {
 		HashMap<String, Object> deleteQuery = new HashMap<String, Object>();
 		String tableName = "qa10_layercollection_block_text";
 		String deleteQueryStr = "delete from " + tableName + " where bc_idx = " + bcIdx;
@@ -516,7 +515,7 @@ public class DXFDBQueryManager {
 		return deleteQuery;
 	}
 
-	public HashMap<String, Object> getDeleteBlockVertex(Integer bcIdx) {
+	public HashMap<String, Object> getDeleteBlockVertexQuery(Integer bcIdx) {
 		HashMap<String, Object> deleteQuery = new HashMap<String, Object>();
 		String tableName = "qa10_layercollection_block_vertex";
 		String deleteQueryStr = "delete from " + tableName + " where bc_idx = " + bcIdx;
@@ -524,7 +523,7 @@ public class DXFDBQueryManager {
 		return deleteQuery;
 	}
 
-	public HashMap<String, Object> getDeleteBlocks(int bcIdx) {
+	public HashMap<String, Object> getDeleteBlocksQuery(int bcIdx) {
 		HashMap<String, Object> deleteQuery = new HashMap<String, Object>();
 		String tableName = "qa10_layercollection_block_common";
 		String deleteQueryStr = "delete from " + tableName + " where bc_idx = " + bcIdx;
@@ -550,7 +549,7 @@ public class DXFDBQueryManager {
 		return updateQuery;
 	}
 
-	public HashMap<String, Object> getSelectTableLayerIdx(int tcIdx, String orignId) {
+	public HashMap<String, Object> getSelectTableLayerIdxQuery(int tcIdx, String orignId) {
 
 		String originIdNotType = orignId.substring(0, orignId.indexOf("_"));
 
@@ -562,7 +561,7 @@ public class DXFDBQueryManager {
 		return selectQuery;
 	}
 
-	public HashMap<String, Object> getUpdateTableLayerId(int tlIdx, String currentId) {
+	public HashMap<String, Object> getUpdateTableLayerIdQuery(int tlIdx, String currentId) {
 
 		String currentIdNotType = currentId.substring(0, currentId.indexOf("_"));
 
@@ -599,14 +598,14 @@ public class DXFDBQueryManager {
 		return selectQueryMap;
 	}
 
-	public HashMap<String, Object> getSelectTableCommon(int cIdx) {
+	public HashMap<String, Object> getSelectTableCommonQuery(int cIdx) {
 		HashMap<String, Object> selectQueryMap = new HashMap<String, Object>();
 		String selectQueryStr = "select * from qa10_layercollection_table_common where c_idx = " + cIdx;
 		selectQueryMap.put("selectQuery", selectQueryStr);
 		return selectQueryMap;
 	}
 
-	public HashMap<String, Object> getSelectTableLayer(int tcIdx) {
+	public HashMap<String, Object> getSelectTableLayerQuery(int tcIdx) {
 		HashMap<String, Object> selectQuery = new HashMap<String, Object>();
 		String tableName = "\"" + "qa10_layercollection_table_layer" + "\"";
 		String selectQueryStr = "select \"0\", \"2\", \"70\", \"62\", \"6\" from " + tableName + " where tc_idx = "
@@ -623,7 +622,7 @@ public class DXFDBQueryManager {
 		return deleteQuery;
 	}
 
-	public HashMap<String, Object> getSelectBlockCommon(Integer cIdx, String id) {
+	public HashMap<String, Object> getSelectBlockCommonQuery(Integer cIdx, String id) {
 		HashMap<String, Object> selectIdxQuery = new HashMap<String, Object>();
 		String tableName = "qa10_layercollection_block_common";
 		String selectQueryStr = "select * from " + tableName + " where c_idx = " + cIdx + " AND " + "\"2\"" + " = '"
@@ -632,7 +631,7 @@ public class DXFDBQueryManager {
 		return selectIdxQuery;
 	}
 
-	public HashMap<String, Object> getSelectBlockArc(int bcIdx) {
+	public HashMap<String, Object> getSelectBlockArcQuery(int bcIdx) {
 		HashMap<String, Object> selectQuery = new HashMap<String, Object>();
 		String tableName = "\"" + "qa10_layercollection_block_arc" + "\"";
 		String selectQueryStr = "select \"0\", \"8\", \"330\", \"10\", \"20\", \"30\", \"40\", \"50\", \"51\" from "
@@ -641,7 +640,7 @@ public class DXFDBQueryManager {
 		return selectQuery;
 	}
 
-	public HashMap<String, Object> getSelectBlockCircle(int bcIdx) {
+	public HashMap<String, Object> getSelectBlockCircleQuery(int bcIdx) {
 		HashMap<String, Object> selectQuery = new HashMap<String, Object>();
 		String tableName = "\"" + "qa10_layercollection_block_circle" + "\"";
 		String selectQueryStr = "select \"0\", \"8\", \"330\", \"10\", \"20\", \"30\", \"40\" from " + tableName
@@ -650,7 +649,7 @@ public class DXFDBQueryManager {
 		return selectQuery;
 	}
 
-	public HashMap<String, Object> getSelectBlockPolyline(int bcIdx) {
+	public HashMap<String, Object> getSelectBlockPolylineQuery(int bcIdx) {
 		HashMap<String, Object> selectQuery = new HashMap<String, Object>();
 		String tableName = "\"" + "qa10_layercollection_block_polyline" + "\"";
 		String selectQueryStr = "select bp_idx, \"0\", \"8\", \"330\", \"66\", \"10\", \"20\", \"30\", \"70\" from "
@@ -659,7 +658,7 @@ public class DXFDBQueryManager {
 		return selectQuery;
 	}
 
-	public HashMap<String, Object> getSelectBlockText(int bcIdx) {
+	public HashMap<String, Object> getSelectBlockTextQuery(int bcIdx) {
 		HashMap<String, Object> selectQuery = new HashMap<String, Object>();
 		String tableName = "\"" + "qa10_layercollection_block_text" + "\"";
 		String selectQueryStr = "select \"0\", \"8\", \"330\", \"10\", \"20\", \"30\", \"40\", \"1\", \"7\" from "
@@ -668,7 +667,7 @@ public class DXFDBQueryManager {
 		return selectQuery;
 	}
 
-	public HashMap<String, Object> getSelectBlockPolylineVertex(int bpIdx) {
+	public HashMap<String, Object> getSelectBlockPolylineVertexQuery(int bpIdx) {
 		HashMap<String, Object> selectQuery = new HashMap<String, Object>();
 		String tableName = "\"" + "qa10_layercollection_block_vertex" + "\"";
 		String selectQueryStr = "select \"0\", \"8\", \"330\",\"10\", \"20\", \"30\" from " + tableName
@@ -747,7 +746,7 @@ public class DXFDBQueryManager {
 		return query;
 	}
 
-	public HashMap<String, Object> getSelectBlockLine(int bcIdx) {
+	public HashMap<String, Object> getSelectBlockLineQuery(int bcIdx) {
 		HashMap<String, Object> selectQuery = new HashMap<String, Object>();
 		String tableName = "\"" + "qa10_layercollection_block_line" + "\"";
 		String selectQueryStr = "select \"0\", \"8\", \"330\", \"10\", \"20\", \"30\", \"11\", \"21\", \"31\" from "
@@ -756,7 +755,7 @@ public class DXFDBQueryManager {
 		return selectQuery;
 	}
 
-	public HashMap<String, Object> getSelectBlockLWPolyline(int bcIdx) {
+	public HashMap<String, Object> getSelectBlockLWPolylineQuery(int bcIdx) {
 		HashMap<String, Object> selectQuery = new HashMap<String, Object>();
 		String tableName = "\"" + "qa10_layercollection_block_lwpolyline" + "\"";
 		String selectQueryStr = "select blp_idx, \"0\", \"8\", \"330\", \"90\", \"70\", \"43\" from " + tableName
@@ -765,7 +764,7 @@ public class DXFDBQueryManager {
 		return selectQuery;
 	}
 
-	public HashMap<String, Object> getSelectBlockLWPolylineVertex(int blpIdx) {
+	public HashMap<String, Object> getSelectBlockLWPolylineVertexQuery(int blpIdx) {
 		HashMap<String, Object> selectQuery = new HashMap<String, Object>();
 		String tableName = "\"" + "qa10_layercollection_block_vertex" + "\"";
 		String selectQueryStr = "select \"0\", \"8\", \"330\",\"10\", \"20\", \"30\" from " + tableName
@@ -773,6 +772,5 @@ public class DXFDBQueryManager {
 		selectQuery.put("selectAllQuery", selectQueryStr);
 		return selectQuery;
 	}
-
 
 }

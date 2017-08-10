@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.git.mappers.shpMappers.SHPLayerCollectionMapper">
+
+	<!-- SHPLayerCollection -->
+	<insert id="insertSHPLayerCollection" parameterType="hashmap">
+		${insertQuery}
+		<selectKey keyProperty="c_idx" resultType="int" order="AFTER">
+			select currval('shp_layercollection_c_idx_seq')
+		</selectKey>
+	</insert>
+
+	<!-- SHPLayer -->
+	<select id="createSHPLayerTb" parameterType="hashMap">
+		${createQuery}
+	</select>
+
+	<insert id="insertSHPLayer" parameterType="hashmap">
+		${insertQuery}
+	</insert>
+
+	<!-- SHPLayerMetadata -->
+	<insert id="insertSHPLayerMetadata" parameterType="hashmap"
+		useGeneratedKeys="true">
+		${insertQuery}
+	</insert>
+
+</mapper>

@@ -28,7 +28,8 @@ import com.git.opengds.user.domain.UserVO;
 
 public interface FileService {
 
-	public LinkedList<FileMeta> filesUpload(UserVO userVO, MultipartHttpServletRequest request, HttpServletResponse response);
+	public LinkedList<FileMeta> filesUpload(UserVO userVO, MultipartHttpServletRequest request,
+			HttpServletResponse response) throws Throwable;
 
 	public boolean fileNameDupCheck(UserVO userVO, String fileName);
 }

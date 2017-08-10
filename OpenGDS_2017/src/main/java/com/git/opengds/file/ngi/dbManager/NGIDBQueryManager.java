@@ -92,16 +92,16 @@ public class NGIDBQueryManager {
 		return insertQueryMap;
 	}
 
-	public HashMap<String, Object> getQA20LayerTbCreateQuery(String type, String collectionName, DTNGILayer qa20Layer,
+	public HashMap<String, Object> getNGILayerTbCreateQuery(String type, String collectionName, DTNGILayer ngiLayer,
 			String src) {
 
-		String layerTypeStr = qa20Layer.getLayerType();
+		String layerTypeStr = ngiLayer.getLayerType();
 		boolean isTextLayer = false;
 		if (layerTypeStr.equals("TEXT")) {
 			layerTypeStr = "POINT";
 			isTextLayer = true;
 		}
-		String tableName = "\"geo" + "_" + type + "_" + collectionName + "_" + qa20Layer.getLayerName() + "\"";
+		String tableName = "\"geo" + "_" + type + "_" + collectionName + "_" + ngiLayer.getLayerName() + "\"";
 		String defalutCreateQuery = "create table " + tableName + " (" + "f_idx serial primary key" + ","
 				+ "feature_id varchar(100)" + "," + "feature_type varchar(100)" + "," + "geom geometry(" + layerTypeStr
 				+ ", " + src + ")" + "," + "num_rings numeric" + "," + "num_vertexes numeric" + ", "
@@ -111,7 +111,7 @@ public class NGIDBQueryManager {
 			defalutCreateQuery += "text varchar(100),";
 		}
 
-		NDAHeader ndaHeader = qa20Layer.getNdaHeader();
+		NDAHeader ndaHeader = ngiLayer.getNdaHeader();
 		if (ndaHeader != null) {
 			List<NDAField> fields = ndaHeader.getAspatial_field_def();
 			for (NDAField field : fields) {
@@ -135,7 +135,7 @@ public class NGIDBQueryManager {
 		return query;
 	}
 
-	public List<HashMap<String, Object>> getQA20LayerInsertQuery(String type, String collectionName,
+	public List<HashMap<String, Object>> getNGILayerInsertQuery(String type, String collectionName,
 			DTNGILayer qa20Layer, String src) {
 
 		String tableName = "\"geo" + "_" + type + "_" + collectionName + "_" + qa20Layer.getLayerName() + "\"";
@@ -422,7 +422,7 @@ public class NGIDBQueryManager {
 		return dropQueryMap;
 	}
 
-	public HashMap<String, Object> getInsertQA20LayerCollectionQuery(String collectionName) {
+	public HashMap<String, Object> getInsertNGILayerCollectionQuery(String collectionName) {
 
 		String insertQuery = "insert into qa20_layercollection(file_name) values('" + collectionName + "')";
 		HashMap<String, Object> insertQueryMap = new HashMap<String, Object>();

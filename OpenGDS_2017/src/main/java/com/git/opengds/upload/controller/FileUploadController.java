@@ -53,43 +53,37 @@ public class FileUploadController extends AbstractController {
 
 	@Autowired
 	private FileService fileService;
-	
+
 	/**
-	 * 파일업로드
-	 * @author SG.Lee
-	 * @Date 2017. 4
-	 * @param request
-	 * @param response
-	 * @return
-	 * @throws Exception LinkedList<FileMeta>
-	 * @throws
-	 * */
+	 * @throws Throwable 파일업로드 @author SG.Lee @Date 2017. 4 @param
+	 * request @param response @return @throws Exception
+	 * LinkedList<FileMeta> @throws
+	 */
 	@RequestMapping(value = "/fileUpload.do", method = RequestMethod.POST)
 	public @ResponseBody LinkedList<FileMeta> fileUploadRequest(MultipartHttpServletRequest request,
-			HttpServletResponse response) throws Exception {
-		UserVO generalUser  = (UserVO) getSession(request,EnUserType.GENERAL.getTypeName());
+			HttpServletResponse response) throws Throwable {
+		UserVO generalUser = (UserVO) getSession(request, EnUserType.GENERAL.getTypeName());
 		LinkedList<FileMeta> files = new LinkedList<FileMeta>();
 		files = fileService.filesUpload(generalUser, request, response);
-/*		geoserverService.groupPublish();
-		
-		geoserverService.updateDBLayer("admin", "admin", "geo_ngi_00000738000124_E0052114_POLYGON", null, null);*/
-		
+		/*
+		 * geoserverService.groupPublish();
+		 * 
+		 * geoserverService.updateDBLayer("admin", "admin",
+		 * "geo_ngi_00000738000124_E0052114_POLYGON", null, null);
+		 */
+
 		return files;
 	}
-	
+
 	/**
-	 * 파일명 중복체크
-	 * @author SG.Lee
-	 * @Date 2017. 4
-	 * @param fileName
-	 * @return boolean
-	 * @throws
-	 * */
+	 * 파일명 중복체크 @author SG.Lee @Date 2017. 4 @param fileName @return
+	 * boolean @throws
+	 */
 	@RequestMapping(value = "/fileNameDupCheckAjax.ajax", method = RequestMethod.GET)
-	public @ResponseBody boolean fileNameDupCheck(HttpServletRequest request, @RequestParam(value="fileName", required=true) String fileName)
-	{
-		UserVO generalUser  = (UserVO) getSession(request,EnUserType.GENERAL.getTypeName());
-		if(generalUser==null){
+	public @ResponseBody boolean fileNameDupCheck(HttpServletRequest request,
+			@RequestParam(value = "fileName", required = true) String fileName) {
+		UserVO generalUser = (UserVO) getSession(request, EnUserType.GENERAL.getTypeName());
+		if (generalUser == null) {
 			return false;
 		}
 		boolean dupFlag = false;

@@ -52,15 +52,15 @@ public class ValidatorProgressServiceImpl implements ValidatorProgressService {
 		int cidx = 0;
 		if (fileType.equals("ngi")) {
 			NGIDBQueryManager qa20QueryManager = new NGIDBQueryManager();
-			cidx = qa20DAO.selectQA20LayerCollectionIdx(userVO,
+			cidx = qa20DAO.selectNGILayerCollectionIdx(userVO,
 					qa20QueryManager.getSelectQA20LayerCollectionIdx(collectionName));
 			HashMap<String, Object> insertQuery = queryManager.getInsertQA20RequestState(validateStart, collectionName,
 					fileType, cidx);
 			pIdx = progressDAO.insertQA20RequestState(userVO, insertQuery);
 		} else if (fileType.equals("dxf")) {
 			DXFDBQueryManager qa10QueryManager = new DXFDBQueryManager();
-			cidx = qa10DAO.selectQA10LayerCollectionIdx(userVO,
-					qa10QueryManager.getSelectLayerCollectionIdx(collectionName));
+			cidx = qa10DAO.selectDXFLayerCollectionIdx(userVO,
+					qa10QueryManager.getSelectDXFLayerCollectionIdxQuery(collectionName));
 			HashMap<String, Object> insertQuery = queryManager.getInsertQA10RequestState(validateStart, collectionName,
 					fileType, cidx);
 			pIdx = progressDAO.insertQA10RequestState(userVO, insertQuery);

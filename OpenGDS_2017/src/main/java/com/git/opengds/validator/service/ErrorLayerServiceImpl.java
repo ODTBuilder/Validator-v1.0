@@ -107,7 +107,7 @@ public class ErrorLayerServiceImpl implements ErrorLayerService {
 				Integer cIdx = null;
 				if (fileType.equals("ngi")) {
 					NGIDBQueryManager qa20dbQueryManager = new NGIDBQueryManager();
-					cIdx = qa20DAO.selectQA20LayerCollectionIdx(userVO,
+					cIdx = qa20DAO.selectNGILayerCollectionIdx(userVO,
 							qa20dbQueryManager.getSelectQA20LayerCollectionIdx(collectionName));
 					HashMap<String, Object> selectIdxQuery = queryManager
 							.selectQA20ErrorLayerTbNamesCountQuery(fileType, collectionName, cIdx);
@@ -121,8 +121,8 @@ public class ErrorLayerServiceImpl implements ErrorLayerService {
 				}
 				if (fileType.equals("dxf")) {
 					DXFDBQueryManager qa10dbQueryManager = new DXFDBQueryManager();
-					cIdx = qa10DAO.selectQA10LayerCollectionIdx(userVO,
-							qa10dbQueryManager.getSelectLayerCollectionIdx(collectionName));
+					cIdx = qa10DAO.selectDXFLayerCollectionIdx(userVO,
+							qa10dbQueryManager.getSelectDXFLayerCollectionIdxQuery(collectionName));
 					HashMap<String, Object> selectIdxQuery = queryManager
 							.selectQA10ErrorLayerTbNamesCountQuery(fileType, collectionName, cIdx);
 					Long errTbCount = progressDAO.selectQA10ErrorLayerTbNamesCount(userVO,selectIdxQuery);
@@ -182,7 +182,7 @@ public class ErrorLayerServiceImpl implements ErrorLayerService {
 			Integer cIdx = null;
 			if (fileType.equals("ngi")) {
 				NGIDBQueryManager qa20dbQueryManager = new NGIDBQueryManager();
-				cIdx = qa20DAO.selectQA20LayerCollectionIdx(userVO,
+				cIdx = qa20DAO.selectNGILayerCollectionIdx(userVO,
 						qa20dbQueryManager.getSelectQA20LayerCollectionIdx(collectionName));
 				HashMap<String, Object> selectIdxQuery = queryManager.selectQA20ErrorLayerTbNamesCountQuery(fileType,
 						collectionName, cIdx);
@@ -197,7 +197,7 @@ public class ErrorLayerServiceImpl implements ErrorLayerService {
 			if (fileType.equals("dxf")) {
 				DXFDBQueryManager qa10dbQueryManager = new DXFDBQueryManager();
 				cIdx = qa10DAO
-						.selectQA10LayerCollectionIdx(userVO,qa10dbQueryManager.getSelectLayerCollectionIdx(collectionName));
+						.selectDXFLayerCollectionIdx(userVO,qa10dbQueryManager.getSelectDXFLayerCollectionIdxQuery(collectionName));
 				HashMap<String, Object> selectIdxQuery = queryManager.selectQA10ErrorLayerTbNamesCountQuery(fileType,
 						collectionName, cIdx);
 				Long errTbCount = progressDAO.selectQA10ErrorLayerTbNamesCount(userVO,selectIdxQuery);

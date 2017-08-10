@@ -9,7 +9,6 @@ import com.git.gdsbuilder.FileRead.dxf.reader.DXFFileReader;
 import com.git.gdsbuilder.type.dxf.collection.DTDXFLayerCollection;
 import com.git.gdsbuilder.type.geoserver.layer.GeoLayerInfo;
 import com.git.opengds.geoserver.service.GeoserverService;
-import com.git.opengds.geoserver.service.GeoserverServiceImpl;
 import com.git.opengds.upload.domain.FileMeta;
 import com.git.opengds.user.domain.UserVO;
 
@@ -46,7 +45,7 @@ public class DXFFileUploadServiceImpl implements DXFFileUploadService {
 		layerInfo.setTransSrc("EPSG:3857");
 
 		// input DB layer
-		GeoLayerInfo returnInfo = dbmanagerService.insertQA10LayerCollection(userVO, collection, layerInfo);
+		GeoLayerInfo returnInfo = dbmanagerService.insertDXFLayerCollection(userVO, collection, layerInfo);
 		fileMeta.setDbInsertFlag(returnInfo.isDbInsertFlag());
 		// publish Layer
 		if (fileMeta.isDbInsertFlag()) {
@@ -55,7 +54,7 @@ public class DXFFileUploadServiceImpl implements DXFFileUploadService {
 			boolean isPublished = geoserverFileMeta.isServerPublishFlag();
 			fileMeta.setServerPublishFlag(isPublished);
 			if (!isPublished) {
-				GeoLayerInfo returnDropInfo = dbmanagerService.dropQA10LayerCollection(userVO,collection, layerInfo);
+				GeoLayerInfo returnDropInfo = dbmanagerService.dropDXFLayerCollection(userVO,collection, layerInfo);
 				fileMeta.setUploadFlag(returnDropInfo.isUploadFlag());
 			}
 		}

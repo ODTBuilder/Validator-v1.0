@@ -2,10 +2,10 @@
 <!DOCTYPE mapper
     PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.git.mappers.qa20Mappers.QA20LayerCollectionMapper">
+<mapper namespace="com.git.mappers.ngiMappers.NGILayerCollectionMapper">
 
 	<!-- qa20_LayerCollection -->
-	<insert id="insertQA20LayerCollection" parameterType="hashmap">
+	<insert id="insertNGILayerCollection" parameterType="hashmap">
 		${insertQuery}
 
 		<selectKey keyProperty="c_idx" resultType="int" order="AFTER">
@@ -13,49 +13,49 @@
 		</selectKey>
 	</insert>
 
-	<select id="selectLayerCollectionIdx" parameterType="hashMap"
+	<select id="selectNGILayerCollectionIdx" parameterType="hashMap"
 		resultType="hashMap">
 		${selectQuery}
 	</select>
 
 	<!-- qa20_layer -->
-	<select id="createQA20LayerTb" parameterType="hashMap">
+	<select id="createNGILayerTb" parameterType="hashMap">
 		${createQuery}
 	</select>
 
-	<insert id="insertQA20Layer" parameterType="hashmap">
+	<insert id="insertNGILayer" parameterType="hashmap">
 		${insertQuery}
 	</insert>
 
-	<update id="dropQA20Layer" parameterType="hashMap">
+	<update id="dropNGILayer" parameterType="hashMap">
 		${dropQuery}
 	</update>
 
-	<select id="selectAllfeatures" parameterType="hashMap"
+	<select id="selectAllNGIfeatures" parameterType="hashMap"
 		resultType="hashMap">
 		${selectAllQuery}
 	</select>
 
-	<select id="selectCountAllFeatures" parameterType="hashMap"
+	<select id="selectCountAllNGIFeatures" parameterType="hashMap"
 		resultType="hashMap">
 		${countQuery}
 	</select>
 
-	<insert id="insertFeature" parameterType="hashmap">
+	<insert id="insertNGIFeature" parameterType="hashmap">
 		${insertQuery}
 	</insert>
 
-	<select id="selectFeatureIdx" parameterType="hashMap"
+	<select id="selectNGIFeatureIdx" parameterType="hashMap"
 		resultType="hashMap">
 		${selectQuery}
 	</select>
 
-	<delete id="deleteFeature" parameterType="hashMap">
+	<delete id="deleteNGIFeature" parameterType="hashMap">
 		${deleteQuery}
 	</delete>
 
 	<!-- qa20_layer_metadata -->
-	<insert id="insertQA20LayerMetadata" parameterType="hashmap"
+	<insert id="insertNGILayerMetadata" parameterType="hashmap"
 		useGeneratedKeys="true">
 		${insertQuery}
 		<selectKey keyProperty="lm_idx" resultType="int" order="AFTER">
@@ -63,32 +63,32 @@
 		</selectKey>
 	</insert>
 
-	<select id="selectQA20LayerMetadataIdxs" parameterType="hashMap"
+	<select id="selectNGILayerMetadataIdxs" parameterType="hashMap"
 		resultType="hashMap">
 		${selectAllQuery}
 	</select>
 
-	<select id="selectQA20LayerMetadataIdx" parameterType="hashMap"
+	<select id="selectNGILayerMetadataIdx" parameterType="hashMap"
 		resultType="hashMap">
 		${selectQuery}
 	</select>
 
-	<select id="selectAllLayerMeata" parameterType="hashMap"
+	<select id="selectAllNGILayerMeata" parameterType="hashMap"
 		resultType="hashMap">
 		${selectAllQuery}
 	</select>
 
-	<select id="updateQA20LayerMetadataLayerName" parameterType="hashMap"
+	<select id="updateNGILayerMetadataLayerName" parameterType="hashMap"
 		resultType="hashMap">
 		${updateQuery}
 	</select>
 
-	<select id="updateQA20LayerMetadataBoundary" parameterType="hashMap"
+	<select id="updateNGILayerMetadataBoundary" parameterType="hashMap"
 		resultType="hashMap">
 		${updateQuery}
 	</select>
 
-	<select id="selectQA20LayerTableName" parameterType="hashMap"
+	<select id="selectNGILayerTableName" parameterType="hashMap"
 		resultType="hashMap">
 		${selectQuery}
 	</select>
@@ -151,7 +151,7 @@
 		${selectAllQuery}
 	</select>
 
-	<select id="deleteHeader" parameterType="hashMap">
+	<select id="deleteField" parameterType="hashMap">
 		${deleteQuery}
 	</select>
 

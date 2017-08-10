@@ -40,21 +40,25 @@ import com.git.opengds.user.domain.UserVO;
 @ContextConfiguration(locations = { "file:src/main/webapp/WEB-INF/spring/**/*.xml" })
 public class NGIDBManagerServiceImpl implements NGIDBManagerService {
 
-/*	@Inject
-	private DataSourceTransactionManager txManager;*/
+	/*
+	 * @Inject private DataSourceTransactionManager txManager;
+	 */
 
 	@Inject
 	private NGILayerCollectionDAO dao;
-	
-/*	public QA20DBManagerServiceImpl(UserVO userVO){
-		dao = new QA20LayerCollectionDAOImpl(userVO);
-	}
-*/
-	public GeoLayerInfo insertQA20LayerCollection(UserVO userVO, DTNGILayerCollection dtCollection, GeoLayerInfo layerInfo)
-			 throws RuntimeException{
-		/*DefaultTransactionDefinition def = new DefaultTransactionDefinition();
-		def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
-		TransactionStatus status = txManager.getTransaction(def);*/
+
+	/*
+	 * public QA20DBManagerServiceImpl(UserVO userVO){ dao = new
+	 * QA20LayerCollectionDAOImpl(userVO); }
+	 */
+	public GeoLayerInfo insertNGILayerCollection(UserVO userVO, DTNGILayerCollection dtCollection,
+			GeoLayerInfo layerInfo) throws RuntimeException {
+		/*
+		 * DefaultTransactionDefinition def = new
+		 * DefaultTransactionDefinition();
+		 * def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED
+		 * ); TransactionStatus status = txManager.getTransaction(def);
+		 */
 
 		try {
 			NGIDBQueryManager dbManager = new NGIDBQueryManager();
@@ -64,43 +68,43 @@ public class NGIDBManagerServiceImpl implements NGIDBManagerService {
 			String collectionName = dtCollection.getFileName();
 			String type = layerInfo.getFileType();
 
-			HashMap<String, Object> insertCollectionQuery = dbManager.getInsertQA20LayerCollectionQuery(collectionName);
-			int cIdx = dao.insertQA20LayerCollection(userVO, insertCollectionQuery);
+			HashMap<String, Object> insertCollectionQuery = dbManager.getInsertNGILayerCollectionQuery(collectionName);
+			int cIdx = dao.insertNGILayerCollection(userVO, insertCollectionQuery);
 
 			Map<String, Boolean> isFeaturesMap = new HashMap<String, Boolean>();
 
 			String src = layerInfo.getOriginSrc();
-			DTNGILayerList createLayerList = dtCollection.getQa20LayerList();
+			DTNGILayerList createLayerList = dtCollection.getNGILayerList();
 			for (int i = 0; i < createLayerList.size(); i++) {
-				DTNGILayer qa20Layer = createLayerList.get(i);
-				String layerName = qa20Layer.getLayerName();
+				DTNGILayer ngiLayer = createLayerList.get(i);
+				String layerName = ngiLayer.getLayerName();
 
 				// isFeature
-				if (qa20Layer.getFeatures().size() == 0) {
+				if (ngiLayer.getFeatures().size() == 0) {
 					isFeaturesMap.put(layerName, false);
 					continue;
 				} else {
 					isFeaturesMap.put(layerName, true);
 
 					// createQA20Layer
-					HashMap<String, Object> createQuery = dbManager.getQA20LayerTbCreateQuery(type, collectionName,
-							qa20Layer, src);
-					dao.createQA20LayerTb(userVO, createQuery);
+					HashMap<String, Object> createQuery = dbManager.getNGILayerTbCreateQuery(type, collectionName,
+							ngiLayer, src);
+					dao.createNGILayerTb(userVO, createQuery);
 
 					// insertQA20Layer
-					List<HashMap<String, Object>> inertLayerQuerys = dbManager.getQA20LayerInsertQuery(type,
-							collectionName, qa20Layer, src);
+					List<HashMap<String, Object>> inertLayerQuerys = dbManager.getNGILayerInsertQuery(type,
+							collectionName, ngiLayer, src);
 					for (int j = 0; j < inertLayerQuerys.size(); j++) {
 						HashMap<String, Object> insertLayerQuery = inertLayerQuerys.get(j);
-						dao.insertQA20Layer(userVO, insertLayerQuery);
+						dao.insertNGILayer(userVO, insertLayerQuery);
 					}
 
 					// insertLayerMedata
 					HashMap<String, Object> insertQueryMap = dbManager.getInsertQA20LayerMeataData(type, collectionName,
-							cIdx, qa20Layer);
-					int lmIdx = dao.insertQA20LayerMetadata(userVO, insertQueryMap);
+							cIdx, ngiLayer);
+					int lmIdx = dao.insertNGILayerMetadata(userVO, insertQueryMap);
 
-					NDAHeader ndaHeader = qa20Layer.getNdaHeader();
+					NDAHeader ndaHeader = ngiLayer.getNdaHeader();
 					// aspatial_field_def
 					List<HashMap<String, Object>> fieldDefs = dbManager.getAspatialFieldDefsInsertQuery(lmIdx,
 							ndaHeader);
@@ -109,7 +113,7 @@ public class NGIDBManagerServiceImpl implements NGIDBManagerService {
 							dao.insertNdaAspatialFieldDefs(userVO, fieldDefs.get(j));
 						}
 					}
-					NGIHeader ngiHeader = qa20Layer.getNgiHeader();
+					NGIHeader ngiHeader = ngiLayer.getNgiHeader();
 					// point_represent
 					List<HashMap<String, Object>> ptReps = dbManager.getPtRepresentInsertQuery(lmIdx,
 							ngiHeader.getPoint_represent());
@@ -144,47 +148,52 @@ public class NGIDBManagerServiceImpl implements NGIDBManagerService {
 					}
 					// geoLayerInfo
 					layerInfo.putLayerName(layerName);
-					String layerTypeStr = qa20Layer.getLayerType();
+					String layerTypeStr = ngiLayer.getLayerType();
 					String layerType = dbManager.getLayerType(layerTypeStr);
 					layerInfo.putLayerType(layerName, layerType);
-					List<String> columns = dbManager.getLayerCoulmns(qa20Layer);
+					List<String> columns = dbManager.getLayerCoulmns(ngiLayer);
 					layerInfo.putLayerColumns(layerName, columns);
 					// layerInfo.putLayerBoundary(layerName, boundryMap);
 				}
 			}
 			layerInfo.setIsFeatureMap(isFeaturesMap);
 		} catch (RuntimeException e) {
-//			txManager.rollback(status);
+			// txManager.rollback(status);
 			throw new RuntimeException();
 		}
 		if (layerInfo != null) {
-//			txManager.commit(status);
+			// txManager.commit(status);
 			layerInfo.setDbInsertFlag(true);
 		}
 		return layerInfo;
 	}
 
-	public GeoLayerInfo dropQA20LayerCollection(UserVO userVO, DTNGILayerCollection dtCollection, GeoLayerInfo layerInfo)  throws RuntimeException{
+	public GeoLayerInfo dropNGILayerCollection(UserVO userVO, DTNGILayerCollection dtCollection, GeoLayerInfo layerInfo)
+			throws RuntimeException {
 
 		NGIDBQueryManager dbManager = new NGIDBQueryManager();
-		/*DefaultTransactionDefinition def = new DefaultTransactionDefinition();
-		def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
-		TransactionStatus status = txManager.getTransaction(def);*/
+		/*
+		 * DefaultTransactionDefinition def = new
+		 * DefaultTransactionDefinition();
+		 * def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED
+		 * ); TransactionStatus status = txManager.getTransaction(def);
+		 */
 		try {
 			String collectionName = dtCollection.getFileName();
 			HashMap<String, Object> selectLayerCollectionIdxQuery = dbManager
 					.getSelectQA20LayerCollectionIdx(collectionName);
-			Integer cIdx = dao.selectQA20LayerCollectionIdx(userVO, selectLayerCollectionIdxQuery);
+			Integer cIdx = dao.selectNGILayerCollectionIdx(userVO, selectLayerCollectionIdxQuery);
 			if (cIdx != null) {
 				HashMap<String, Object> metadataIdxQuery = dbManager.getSelectQA20LayerMetaDataIdxQuery(cIdx);
-				List<HashMap<String, Object>> metadataIdxMapList = dao.selectQA20LayerMetadataIdxs(userVO, metadataIdxQuery);
+				List<HashMap<String, Object>> metadataIdxMapList = dao.selectNGILayerMetadataIdxs(userVO,
+						metadataIdxQuery);
 				for (int i = 0; i < metadataIdxMapList.size(); i++) {
 					HashMap<String, Object> metadataIdxMap = metadataIdxMapList.get(i);
 					Integer mIdx = (Integer) metadataIdxMap.get("lm_idx");
 
 					// get layerTb name
 					HashMap<String, Object> layerTbNameQuery = dbManager.getSelectQA20LayerTableNameQuery(mIdx);
-					HashMap<String, Object> layerTbNameMap = dao.selectQA20LayerTableName(userVO, layerTbNameQuery);
+					HashMap<String, Object> layerTbNameMap = dao.selectNGILayerTableName(userVO, layerTbNameQuery);
 
 					// layerTb drop
 					String layerTbName = (String) layerTbNameMap.get("layer_t_name");
@@ -215,10 +224,10 @@ public class NGIDBManagerServiceImpl implements NGIDBManagerService {
 			HashMap<String, Object> deleteLayerCollectionQuery = dbManager.getDeleteQA20LayerCollectionQuery(cIdx);
 			dao.deleteField(userVO, deleteLayerCollectionQuery);
 		} catch (RuntimeException e) {
-//			txManager.rollback(status);
+			// txManager.rollback(status);
 			throw new RuntimeException();
 		}
-//		txManager.commit(status);
+		// txManager.commit(status);
 		layerInfo.setDbInsertFlag(true);
 		return layerInfo;
 	}

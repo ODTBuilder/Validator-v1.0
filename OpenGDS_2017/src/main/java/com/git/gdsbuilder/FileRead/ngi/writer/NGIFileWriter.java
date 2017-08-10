@@ -52,7 +52,7 @@ public class NGIFileWriter {
 		this.ndaWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(ndaFileRoot), "euc-kr"));
 		
 		// fileLayer
-		DTNGILayerList layerList = qa20LayerCollection.getQa20LayerList();
+		DTNGILayerList layerList = qa20LayerCollection.getNGILayerList();
 		int size = layerList.size();
 		for (int i = 0; i < size; i++) {
 			DTNGILayer layer = layerList.get(i);

@@ -34,12 +34,10 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.git.opengds.file.dxf.service.DXFFileUploadService;
-import com.git.opengds.file.dxf.service.DXFFileUploadServiceImpl;
 import com.git.opengds.file.ngi.service.NGIFileUploadService;
-import com.git.opengds.file.ngi.service.NGIFileUploadServiceImpl;
+import com.git.opengds.file.shp.service.SHPFileUploadService;
 import com.git.opengds.upload.domain.FileMeta;
 import com.git.opengds.upload.persistence.FileDAO;
-import com.git.opengds.upload.persistence.FileDAOImpl;
 import com.git.opengds.user.domain.UserVO;
 
 @Service
@@ -49,23 +47,26 @@ public class FileServiceImpl implements FileService {
 	private static final String dirPath = "D:\\files";
 
 	@Autowired
-	private NGIFileUploadService qa20FileService;
+	private NGIFileUploadService ngiFileService;
 
 	@Autowired
-	private DXFFileUploadService qa10FileService;
+	private DXFFileUploadService dxfFileService;
+
+	@Autowired
+	private SHPFileUploadService shpFileService;
 
 	@Inject
 	private FileDAO fileDAO;
-	
-	/*public FileServiceImpl(UserVO userVO) {
-		// TODO Auto-generated constructor stub
-		id = userVO.getId();
-		qa20FileService = new QA20FileUploadServiceImpl(userVO);
-		qa10FileService = new QA10FileUploadServiceImpl(userVO);
-		fileDAO = new FileDAOImpl(userVO);
-	}*/
 
-	public LinkedList<FileMeta> filesUpload(UserVO userVO, MultipartHttpServletRequest request, HttpServletResponse response) {
+	/*
+	 * public FileServiceImpl(UserVO userVO) { // TODO Auto-generated
+	 * constructor stub id = userVO.getId(); qa20FileService = new
+	 * QA20FileUploadServiceImpl(userVO); qa10FileService = new
+	 * QA10FileUploadServiceImpl(userVO); fileDAO = new FileDAOImpl(userVO); }
+	 */
+
+	public LinkedList<FileMeta> filesUpload(UserVO userVO, MultipartHttpServletRequest request,
+			HttpServletResponse response) throws Throwable {
 		String fullDirPath = this.dirPath + "\\" + userVO.getId();
 		File dir = new File(dirPath);
 		File targetDir = new File(fullDirPath);
@@ -74,9 +75,9 @@ public class FileServiceImpl implements FileService {
 		if (!dir.exists()) {
 			dir.mkdirs();
 		}
-		
-		//사용자별 디렉토리 생성
-		if(!targetDir.exists()){
+
+		// 사용자별 디렉토리 생성
+		if (!targetDir.exists()) {
 			File ngiDir = new File(fullDirPath + "\\ngi");
 			File shpDir = new File(fullDirPath + "\\shp");
 			File dxfDir = new File(fullDirPath + "\\dxf");
@@ -123,9 +124,9 @@ public class FileServiceImpl implements FileService {
 				if (ext.endsWith("dxf") || ext.endsWith("ngi") || ext.endsWith("nda") || ext.endsWith("zip")) {
 					if (ext.endsWith("ngi") || ext.endsWith("nda")) {
 						saveFilePath = fullDirPath + "\\ngi\\" + mpf.getOriginalFilename();
-					} else if(ext.endsWith("dxf")){
+					} else if (ext.endsWith("dxf")) {
 						saveFilePath = fullDirPath + "\\dxf\\" + mpf.getOriginalFilename();
-					} else if(ext.endsWith("zip")){
+					} else if (ext.endsWith("zip")) {
 						saveFilePath = fullDirPath + "\\shp\\" + mpf.getOriginalFilename();
 					}
 				} else
@@ -147,10 +148,10 @@ public class FileServiceImpl implements FileService {
 		return files;
 	}
 
-	private LinkedList<FileMeta> filesPublish(UserVO userVO, LinkedList<FileMeta> fileMetaList) {
+	private LinkedList<FileMeta> filesPublish(UserVO userVO, LinkedList<FileMeta> fileMetaList) throws Throwable {
 		LinkedList<FileMeta> fileMetas = fileMetaList;
 
-		int a  = fileMetaList.size();
+		int a = fileMetaList.size();
 		for (int i = 0; i < fileMetas.size(); i++) {
 			FileMeta fileMeta = fileMetas.get(i);
 			int pos = fileMeta.getFilePath().lastIndexOf(".");
@@ -159,14 +160,14 @@ public class FileServiceImpl implements FileService {
 			if (ext.endsWith("ngi") || ext.endsWith("zip") || ext.endsWith("dxf")) {
 				FileMeta refileMeta = null;
 				try {
-					if(ext.equals("dxf")) {
-						refileMeta = qa10FileService.dxfUpload(userVO, fileMeta);
-					} else if(ext.equals("ngi")) {
-						refileMeta = qa20FileService.ngiUpload(userVO, fileMeta);
-					}
-					else if(ext.equals("zip")) {
-						//다연씨 여기다 코딩해요~~
-						
+					if (ext.equals("dxf")) {
+						refileMeta = dxfFileService.dxfUpload(userVO, fileMeta);
+					} else if (ext.equals("ngi")) {
+						refileMeta = ngiFileService.ngiUpload(userVO, fileMeta);
+					} else if (ext.equals("zip")) {
+						// 다연씨 여기다 코딩해요~~
+						fileMeta.setFileType("shp");
+						refileMeta = shpFileService.shpUpload(userVO, fileMeta);
 					}
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
@@ -177,9 +178,8 @@ public class FileServiceImpl implements FileService {
 		}
 		return fileMetas;
 	}
-	
-	
-//	private 
+
+	// private
 
 	public boolean fileNameDupCheck(UserVO userVO, String fileFullName) {
 		boolean dupFlag = false;
@@ -197,8 +197,9 @@ public class FileServiceImpl implements FileService {
 				} else if (fileType.endsWith("dxf")) {
 					dupFlag = fileDAO.selectDXFDuplicateCheck(userVO, fileName);
 				} else if (fileType.endsWith("zip")) {
-					//추후에 shp중복체크 추가
-//					dupFlag = fileDAO.selectDXFDuplicateCheck(userVO, fileName);
+					// 추후에 shp중복체크 추가
+					// dupFlag = fileDAO.selectDXFDuplicateCheck(userVO,
+					// fileName);
 				}
 			}
 		}

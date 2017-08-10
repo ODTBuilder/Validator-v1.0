@@ -101,7 +101,7 @@ public class DTNGILayerCollection {
 	 * QA20LayerList getter @author DY.Oh @Date 2017. 3. 11. 오후 2:30:18 @return
 	 * QA20LayerList @throws
 	 */
-	public DTNGILayerList getQa20LayerList() {
+	public DTNGILayerList getNGILayerList() {
 		return qa20LayerList;
 	}
 

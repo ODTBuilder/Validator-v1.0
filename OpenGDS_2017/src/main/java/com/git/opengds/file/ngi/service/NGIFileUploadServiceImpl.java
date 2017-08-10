@@ -17,15 +17,8 @@
 
 package com.git.opengds.file.ngi.service;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-
 import javax.inject.Inject;
 
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 import org.springframework.stereotype.Service;
 import org.springframework.test.context.ContextConfiguration;
 
@@ -33,7 +26,6 @@ import com.git.gdsbuilder.FileRead.ngi.reader.NGIFileReader;
 import com.git.gdsbuilder.type.geoserver.layer.GeoLayerInfo;
 import com.git.gdsbuilder.type.ngi.collection.DTNGILayerCollection;
 import com.git.opengds.geoserver.service.GeoserverService;
-import com.git.opengds.geoserver.service.GeoserverServiceImpl;
 import com.git.opengds.upload.domain.FileMeta;
 import com.git.opengds.user.domain.UserVO;
 
@@ -42,16 +34,17 @@ import com.git.opengds.user.domain.UserVO;
 public class NGIFileUploadServiceImpl implements NGIFileUploadService {
 
 	@Inject
-	private NGIDBManagerService qa20dbManagerService;
+	private NGIDBManagerService ngidbManagerService;
 
 	@Inject
 	private GeoserverService geoserverService;
-	
-/*	public QA20FileUploadServiceImpl(UserVO userVO) {
-		// TODO Auto-generated constructor stub
-		qa20dbManagerService = new QA20DBManagerServiceImpl(userVO);
-		geoserverService = new GeoserverServiceImpl(userVO);
-	}*/
+
+	/*
+	 * public QA20FileUploadServiceImpl(UserVO userVO) { // TODO Auto-generated
+	 * constructor stub qa20dbManagerService = new
+	 * QA20DBManagerServiceImpl(userVO); geoserverService = new
+	 * GeoserverServiceImpl(userVO); }
+	 */
 
 	public FileMeta ngiUpload(UserVO userVO, FileMeta fileMeta) throws Exception {
 
@@ -72,7 +65,7 @@ public class NGIFileUploadServiceImpl implements NGIFileUploadService {
 		layerInfo.setTransSrc("EPSG:3857");
 
 		// input DB layer
-		GeoLayerInfo returnInfo = qa20dbManagerService.insertQA20LayerCollection(userVO, dtCollection, layerInfo);
+		GeoLayerInfo returnInfo = ngidbManagerService.insertNGILayerCollection(userVO, dtCollection, layerInfo);
 		fileMeta.setDbInsertFlag(returnInfo.isDbInsertFlag());
 
 		// publish Layer
@@ -83,19 +76,11 @@ public class NGIFileUploadServiceImpl implements NGIFileUploadService {
 			fileMeta.setServerPublishFlag(isPublished);
 			if (!isPublished) {
 				// 다시 다 삭제
-				GeoLayerInfo returnDropInfo = qa20dbManagerService.dropQA20LayerCollection(userVO, dtCollection, layerInfo);
+				GeoLayerInfo returnDropInfo = ngidbManagerService.dropNGILayerCollection(userVO, dtCollection,
+						layerInfo);
 				fileMeta.setUploadFlag(returnDropInfo.isUploadFlag());
 			}
 		}
 		return fileMeta;
-	}
-
-	public void testReport() throws FileNotFoundException, IOException, ParseException {
-		JSONParser parser = new JSONParser();
-		Object obj = parser.parse(new FileReader("D:\\test3.txt"));
-		JSONObject jsonObject = (JSONObject) obj;
-
-		// errorReportService.getISOReport("33611044", jsonObject);
-		// errorReportService.getDetailsReport("33611044");
 	}
 }

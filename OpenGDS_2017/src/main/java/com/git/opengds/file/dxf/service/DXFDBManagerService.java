@@ -6,8 +6,8 @@ import com.git.opengds.user.domain.UserVO;
 
 public interface DXFDBManagerService {
 
-	public GeoLayerInfo insertQA10LayerCollection(UserVO userVO, DTDXFLayerCollection layerCollection, GeoLayerInfo layerInfo) throws RuntimeException;
+	public GeoLayerInfo insertDXFLayerCollection(UserVO userVO, DTDXFLayerCollection layerCollection, GeoLayerInfo layerInfo) throws RuntimeException;
 
-	public GeoLayerInfo dropQA10LayerCollection(UserVO userVO, DTDXFLayerCollection collection, GeoLayerInfo layerInfo) throws RuntimeException;
+	public GeoLayerInfo dropDXFLayerCollection(UserVO userVO, DTDXFLayerCollection collection, GeoLayerInfo layerInfo) throws RuntimeException;
 
 }

@@ -23,8 +23,8 @@ import com.git.opengds.user.domain.UserVO;
 
 public interface NGIDBManagerService {
 	
-	public GeoLayerInfo insertQA20LayerCollection(UserVO userVO, DTNGILayerCollection dtCollection, GeoLayerInfo layerInfo) throws Exception;
+	public GeoLayerInfo insertNGILayerCollection(UserVO userVO, DTNGILayerCollection dtCollection, GeoLayerInfo layerInfo) throws Exception;
 
-	public GeoLayerInfo dropQA20LayerCollection(UserVO userVO, DTNGILayerCollection dtCollection, GeoLayerInfo layerInfo);
+	public GeoLayerInfo dropNGILayerCollection(UserVO userVO, DTNGILayerCollection dtCollection, GeoLayerInfo layerInfo);
 
 }
