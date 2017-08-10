@@ -39,20 +39,26 @@ gitbuilder.ui.OptionDefinition = $
 						lwpolyline : [ "SelfEntity", "BSymbolOutSided", "BuildingOpen", "WaterOpen", "EntityNone", "EdgeMatchMiss",
 								"ConBreak", "ConIntersected", "ConOverDegree", "UselessEntity", "EntityDuplicated", "PointDuplicated",
 								"UselessPoint", "LayerMiss", "ZValueAmbiguous", "OverShoot", "UnderShoot", "RefLayerMiss", "RefZValueMiss" ],
-						text : [ "SelfEntity", "LayerMiss", "UselessEntity", "EntityDuplicated", "OverShoot", "UFIDLength" ],
+						text : [ "SelfEntity", "LayerMiss", "UselessEntity", "EntityDuplicated", "OverShoot", "UFIDLength",
+								"NumericalValue" ],
 						insert : [ "SelfEntity", "LayerMiss", "UselessEntity", "EntityDuplicated", "OverShoot" ],
 						point : [ "LayerMiss", "UselessEntity", "EntityDuplicated", "SelfEntity", "AttributeFix", "OutBoundary",
-								"CharacterAccuracy", "OverShoot", "UnderShoot", "UFIDLength" ],
+								"CharacterAccuracy", "OverShoot", "UnderShoot", "UFIDLength", "NumericalValue" ],
 						linestring : [ "RefAttributeMiss", "EdgeMatchMiss", "UselessEntity", "LayerMiss", "RefLayerMiss", "SmallLength",
 								"EntityDuplicated", "SelfEntity", "PointDuplicated", "ConIntersected", "ConOverDegree", "ConBreak",
 								"AttributeFix", "OutBoundary", "ZValueAmbiguous", "UselessPoint", "OverShoot", "UnderShoot",
-								"RefZValueMiss", "UFIDLength", "NeatLineAttribute" ],
+								"RefZValueMiss", "UFIDLength", "NeatLineAttribute", "NumericalValue" ],
 						polygon : [ "Admin", "CrossRoad", "RefAttributeMiss", "BridgeName", "NodeMiss", "EdgeMatchMiss", "UselessEntity",
 								"LayerMiss", "RefLayerMiss", "SmallArea", "EntityDuplicated", "SelfEntity", "PointDuplicated",
 								"AttributeFix", "OutBoundary", "OverShoot", "UnderShoot", "OneAcre", "OneStage", "BuildingSite",
-								"UFIDLength", "HouseAttribute", "CemeterySite" ]
+								"UFIDLength", "HouseAttribute", "CemeterySite", "NumericalValue" ]
 					},
 					optItem : {
+						"NumericalValue" : {
+							"title" : "Numerical Value Error",
+							"alias" : "NumericalValue",
+							"type" : "conditionalfigure"
+						},
 						"CemeterySite" : {
 							"title" : "Cemetery Site Error",
 							"alias" : "CemeterySite",
@@ -78,7 +84,7 @@ gitbuilder.ui.OptionDefinition = $
 							"title" : "Building Site Error",
 							"alias" : "BuildingSite",
 							"type" : "labelnrelation",
-							"multi" : true
+							"multi" : false
 						},
 						"OneAcre" : {
 							"title" : "Tributary Error",
@@ -262,6 +268,10 @@ gitbuilder.ui.OptionDefinition = $
 					addAttrBtn : undefined,
 					file : undefined,
 					emptyLayers : undefined,
+					radio : undefined,
+					conAttr : undefined,
+					conSelect : undefined,
+					conFigure : undefined,
 
 					setDefinition : function(obj) {
 						// console.log(obj);
@@ -511,27 +521,27 @@ gitbuilder.ui.OptionDefinition = $
 											that.getOptDefCopy()[that.selectedLayerNow] = {};
 										}
 										if (!that.getOptDefCopy()[that.selectedLayerNow].hasOwnProperty(that.selectedValidationNow)) {
-											that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow] = {
-												"relation" : []
-											};
+											that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow] = {};
 										}
-										if (that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]["relation"].indexOf($(
-												this).val()) === -1) {
-											that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]["relation"]
-													.push($(this).val());
-											that.updateRelation($(this).val(), "up");
-											console.log(that.emptyLayers);
+										if (!that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]
+												.hasOwnProperty("relation")) {
+											that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]["relation"] = [];
 										}
+										if (that.radio !== undefined) {
+											if (that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]["relation"]
+													.indexOf(that.radio) !== -1) {
+												that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]["relation"].splice(
+														that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]["relation"]
+																.indexOf(that.radio), 1);
+											}
+										}
+
+										that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]["relation"].push($(this)
+												.val());
+										that.updateRelation($(this).val(), "upradio");
+										that.radio = $(this).val();
+										console.log(that.emptyLayers);
 										that._toggleCheckbox(that.selectedValidationNow, true);
-									} else {
-										if (that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]["relation"].indexOf($(
-												this).val()) !== -1) {
-											that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]["relation"].splice(that
-													.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]["relation"]
-													.indexOf($(this).val()), 1);
-											that.updateRelation($(this).val(), "down");
-											console.log(that.emptyLayers);
-										}
 									}
 									var checks = $(this).parent().parent().parent().find("input:checked");
 									if (checks.length === 0) {
@@ -973,6 +983,150 @@ gitbuilder.ui.OptionDefinition = $
 											// that._toggleCheckbox(that.selectedValidationNow,
 											// flag);
 										});
+						$(document)
+								.on(
+										"input",
+										this.eventNamespace + " .optiondefinition-conditionalfigure-text",
+										function() {
+											console.log("attr");
+											if ($(that.conAttr).val() !== "" && $(that.conFigure).val() !== "") {
+												if (!that.getOptDefCopy().hasOwnProperty(that.selectedLayerNow)) {
+													that.getOptDefCopy()[that.selectedLayerNow] = {};
+												}
+												if (!that.getOptDefCopy()[that.selectedLayerNow].hasOwnProperty(that.selectedValidationNow)) {
+													that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow] = {};
+												}
+												that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]["attribute"] = $(
+														that.conAttr).val();
+												that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]["condition"] = $(
+														that.conSelect).val();
+												that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]["figure"] = $(
+														that.conFigure).val();
+											} else {
+												if (that.getOptDefCopy().hasOwnProperty(that.selectedLayerNow)) {
+													if (that.getOptDefCopy()[that.selectedLayerNow]
+															.hasOwnProperty(that.selectedValidationNow)) {
+														delete that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow];
+													}
+												}
+											}
+											if (that.getOptDefCopy().hasOwnProperty(that.selectedLayerNow)) {
+												if (that.getOptDefCopy()[that.selectedLayerNow].hasOwnProperty(that.selectedValidationNow)) {
+													var keys = Object
+															.keys(that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]);
+													var count = 0;
+													for (var i = 0; i < keys.length; i++) {
+														var length = Object
+																.keys(that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow][keys[i]]).length;
+														if (length === 0) {
+															delete that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow][keys[i]]
+														}
+														count = count + length;
+													}
+													if (!count) {
+														delete that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow];
+													}
+													that._toggleCheckbox(that.selectedValidationNow, !!count);
+												}
+											}
+
+										});
+						$(document)
+								.on(
+										"input",
+										this.eventNamespace + " .optiondefinition-conditionalfigure-select",
+										function() {
+											console.log("select");
+											if ($(that.conAttr).val() !== "" && $(that.conFigure).val() !== "") {
+												if (!that.getOptDefCopy().hasOwnProperty(that.selectedLayerNow)) {
+													that.getOptDefCopy()[that.selectedLayerNow] = {};
+												}
+												if (!that.getOptDefCopy()[that.selectedLayerNow].hasOwnProperty(that.selectedValidationNow)) {
+													that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow] = {};
+												}
+												that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]["attribute"] = $(
+														that.conAttr).val();
+												that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]["condition"] = $(
+														that.conSelect).val();
+												that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]["figure"] = $(
+														that.conFigure).val();
+											} else {
+												if (that.getOptDefCopy().hasOwnProperty(that.selectedLayerNow)) {
+													if (that.getOptDefCopy()[that.selectedLayerNow]
+															.hasOwnProperty(that.selectedValidationNow)) {
+														delete that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow];
+													}
+												}
+											}
+											if (that.getOptDefCopy().hasOwnProperty(that.selectedLayerNow)) {
+												if (that.getOptDefCopy()[that.selectedLayerNow].hasOwnProperty(that.selectedValidationNow)) {
+													var keys = Object
+															.keys(that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]);
+													var count = 0;
+													for (var i = 0; i < keys.length; i++) {
+														var length = Object
+																.keys(that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow][keys[i]]).length;
+														if (length === 0) {
+															delete that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow][keys[i]]
+														}
+														count = count + length;
+													}
+													if (!count) {
+														delete that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow];
+													}
+													that._toggleCheckbox(that.selectedValidationNow, !!count);
+												}
+											}
+										});
+						$(document)
+								.on(
+										"input",
+										this.eventNamespace + " .optiondefinition-conditionalfigure-figure",
+										function() {
+											console.log("figure");
+											if ($(that.conAttr).val() !== "" && $(that.conFigure).val() !== "") {
+												if (!that.getOptDefCopy().hasOwnProperty(that.selectedLayerNow)) {
+													that.getOptDefCopy()[that.selectedLayerNow] = {};
+												}
+												if (!that.getOptDefCopy()[that.selectedLayerNow].hasOwnProperty(that.selectedValidationNow)) {
+													that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow] = {};
+												}
+												that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]["attribute"] = $(
+														that.conAttr).val();
+												that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]["condition"] = $(
+														that.conSelect).val();
+												that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]["figure"] = $(
+														that.conFigure).val();
+											} else {
+												if (that.getOptDefCopy().hasOwnProperty(that.selectedLayerNow)) {
+													if (that.getOptDefCopy()[that.selectedLayerNow]
+															.hasOwnProperty(that.selectedValidationNow)) {
+														delete that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow];
+														that._toggleCheckbox(that.selectedValidationNow, false);
+													}
+												}
+											}
+											if (that.getOptDefCopy().hasOwnProperty(that.selectedLayerNow)) {
+												if (that.getOptDefCopy()[that.selectedLayerNow].hasOwnProperty(that.selectedValidationNow)) {
+													var keys = Object
+															.keys(that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]);
+													var count = 0;
+													for (var i = 0; i < keys.length; i++) {
+														var length = Object
+																.keys(that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow][keys[i]]).length;
+														if (length === 0) {
+															delete that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow][keys[i]]
+														}
+														count = count + length;
+													}
+													if (!count) {
+														delete that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow];
+													}
+													that._toggleCheckbox(that.selectedValidationNow, !!count);
+												}
+											}
+										});
+
 						this._addClass(this.pbody2, "panel-body");
 						var panel2 = $("<div>").append(phead2).append(this.pbody2);
 						this._addClass(panel2, "panel");
@@ -1230,6 +1384,16 @@ gitbuilder.ui.OptionDefinition = $
 							if (und === "up") {
 								this.emptyLayers[alias]++;
 							} else if (und === "down") {
+								this.emptyLayers[alias]--;
+							} else if (und === "upradio") {
+								if (this.radio !== undefined) {
+									this.emptyLayers[this.radio]--;
+								}
+								this.emptyLayers[alias]++;
+							} else if (und === "downradio") {
+								if (this.radio !== undefined) {
+									this.emptyLayers[this.radio]++;
+								}
 								this.emptyLayers[alias]--;
 							}
 						} else if (Array.isArray(alias)) {
@@ -1530,6 +1694,7 @@ gitbuilder.ui.OptionDefinition = $
 							}
 							break;
 						case "labelnrelation":
+							this.radio = undefined;
 							$(that.labelCodeSelect).empty();
 							var codes = that.getLayerDefinition()[that.selectedLayerNow].code;
 							var geom = that.getLayerDefinition()[that.selectedLayerNow].geom.toUpperCase();
@@ -1571,7 +1736,6 @@ gitbuilder.ui.OptionDefinition = $
 										}
 									}
 								}
-
 								var label = $("<label>").append(checkbox).append(keys[i]);
 								var li = $("<li>").css({
 									"margin-top" : 0
@@ -1579,6 +1743,65 @@ gitbuilder.ui.OptionDefinition = $
 								that._addClass(li, "list-group-item");
 								$(that.dOption).append(li);
 							}
+							// that.updateRelation($(this).val(), "upradio");
+							// that.radio = $(this).val();
+							break;
+						case "conditionalfigure":
+							var attr;
+							var select;
+							var figure;
+							if (that.getOptDefCopy().hasOwnProperty(that.selectedLayerNow)) {
+								if (that.getOptDefCopy()[that.selectedLayerNow].hasOwnProperty(vtem)) {
+									attr = that.getOptDefCopy()[that.selectedLayerNow][vtem]["attribute"];
+									select = that.getOptDefCopy()[that.selectedLayerNow][vtem]["condition"];
+									figure = that.getOptDefCopy()[that.selectedLayerNow][vtem]["figure"];
+								}
+							}
+							this.conAttr = $("<input>").attr({
+								"type" : "text",
+								"placeholder" : "Attribute"
+							}).val(attr ? attr : "");
+							that._addClass(this.conAttr, "optiondefinition-conditionalfigure-text");
+							that._addClass(this.conAttr, "form-control");
+							var div1 = $("<div>").css({
+								"width" : "90px",
+								"display" : "inline-block"
+							}).append(this.conAttr);
+							$(that.dOption).append(div1);
+
+							var over = $("<option>").attr({
+								"value" : "over"
+							}).text(">");
+							var under = $("<option>").attr({
+								"value" : "under"
+							}).text("<");
+							var equal = $("<option>").attr({
+								"value" : "equal"
+							}).text("=");
+							this.conSelect = $("<select>").addClass("form-control").addClass("optiondefinition-conditionalfigure-select")
+									.append(over).append(under).append(equal);
+							if (select) {
+								this.conSelect.val(select);
+							} else {
+								this.conSelect.val("over");
+							}
+							var div2 = $("<div>").css({
+								"width" : "55px",
+								"display" : "inline-block"
+							}).append(this.conSelect);
+							$(that.dOption).append(div2);
+
+							this.conFigure = $("<input>").attr({
+								"type" : "number",
+								"placeholder" : "figure"
+							}).val(figure ? figure : "");
+							that._addClass(this.conFigure, "optiondefinition-conditionalfigure-figure");
+							that._addClass(this.conFigure, "form-control");
+							var div3 = $("<div>").css({
+								"width" : "85px",
+								"display" : "inline-block"
+							}).append(this.conFigure);
+							$(that.dOption).append(div3);
 							break;
 						default:
 							var li = $("<li>").text("Unknown");
@@ -1708,7 +1931,8 @@ gitbuilder.ui.OptionDefinition = $
 						var attrs;
 						if (that.getOptDefCopy().hasOwnProperty(that.selectedLayerNow)) {
 							if (that.getOptDefCopy()[that.selectedLayerNow].hasOwnProperty(that.selectedValidationNow)) {
-								if (that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]["label"].hasOwnProperty(code)) {
+								if (that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow].hasOwnProperty("label")) {
+									// .hasOwnProperty(code)
 									attrs = that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]["label"][code];
 								}
 							}
