@@ -51,9 +51,14 @@ gitbuilder.ui.OptionDefinition = $
 						polygon : [ "Admin", "CrossRoad", "RefAttributeMiss", "BridgeName", "NodeMiss", "EdgeMatchMiss", "UselessEntity",
 								"LayerMiss", "RefLayerMiss", "SmallArea", "EntityDuplicated", "SelfEntity", "PointDuplicated",
 								"AttributeFix", "OutBoundary", "OverShoot", "UnderShoot", "OneAcre", "OneStage", "BuildingSite",
-								"UFIDLength", "HouseAttribute", "CemeterySite", "NumericalValue" ]
+								"UFIDLength", "HouseAttribute", "CemeterySite", "NumericalValue", "RiverBoundaryMiss" ]
 					},
 					optItem : {
+						"RiverBoundaryMiss" : {
+							"title" : "Missing River Boundary Error",
+							"alias" : "RiverBoundaryMiss",
+							"type" : "relation"
+						},
 						"NumericalValue" : {
 							"title" : "Numerical Value Error",
 							"alias" : "NumericalValue",

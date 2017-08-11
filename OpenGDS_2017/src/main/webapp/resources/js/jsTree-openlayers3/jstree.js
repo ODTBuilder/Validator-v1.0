@@ -10390,6 +10390,8 @@
 										if (!!info) {
 											inst._data.layerproperties.layerRecord.remove(info.getFormat(), info.getSheetNumber(), layer);
 										}
+										var layer = inst.get_LayerById(layers[i]);
+										inst._data.layerproperties.editingTool.removeFeatureFromUnmanaged(layer.get("id"));
 										inst.delete_node_layer(layers[i]);
 									}
 								} else {
