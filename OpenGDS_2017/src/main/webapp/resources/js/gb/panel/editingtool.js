@@ -1425,3 +1425,30 @@ gb.panel.EditingTool.prototype.setFeatures = function(newFeature) {
 gb.panel.EditingTool.prototype.getFeatures = function() {
 	return this.features;
 };
+/**
+ * 삭제한 레이어에 포함되는 피처를 임시 레이어에서 지운다
+ * 
+ * @param {String}
+ *            layer ID
+ */
+gb.panel.EditingTool.prototype.removeFeatureFromUnmanaged = function(layerId) {
+	var that = this;
+	this.tempVector.getSource().forEachFeature(function(feature) {
+		var id = feature.getId();
+		if (id.indexOf(layerId) !== -1) {
+			that.tempVector.getSource().removeFeature(feature);
+		}
+	});
+	this.tempVector.setMap(this.map);
+	return;
+};
+/**
+ * 임시 레이어에 있는 피처를 전부 삭제한다.
+ */
+gb.panel.EditingTool.prototype.clearUnmanaged = function() {
+	if (this.tempVector instanceof ol.layer.Vector) {
+		this.tempVector.clear();
+	}
+	this.tempVector.setMap(this.map);
+	return;
+};

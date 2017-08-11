@@ -97,8 +97,8 @@ html {
 			<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
 				aria-expanded="false" title="Save">Save</a>
 				<ul class="dropdown-menu" role="menu">
-					<li><a href="#">as a SHP</a></li>
-					<li><a href="#" id="save">to Server</a></li>
+					<li><a href="#">Save</a></li>
+					<li><a href="#" id="save">Save All</a></li>
 				</ul></li>
 
 			<li><a href="#" title="Edit" id="edit">Edit</a></li>
@@ -304,6 +304,23 @@ html {
 			nlayer.open();
 		});
 
+		var epan = new gb.panel.EditingTool({
+			width : "84px",
+			height : "145px",
+			positionX : 425,
+			positionY : 100,
+			autoOpen : false,
+			map : map,
+			featureRecord : frecord,
+			treeInstance : $('#builderClientLayer').jstreeol3(true),
+			selected : function() {
+				return $('#builderClientLayer').jstreeol3("get_selected_layer");
+			},
+			infoURL : "geoserver/getGeoLayerInfoList.ajax",
+			wmsURL : "geoserver/geoserverWMSLayerLoad.do",
+			wfsURL : "geoserver/geoserverWFSGetFeature.ajax"
+		});
+
 		$('#builderClientLayer').jstreeol3({
 			"core" : {
 				"map" : map,
@@ -314,7 +331,8 @@ html {
 			},
 			"layerproperties" : {
 				"properties" : lprop,
-				"layerRecord" : lrecord
+				"layerRecord" : lrecord,
+				"editingTool" : epan
 			},
 			plugins : [ "contextmenu", "dnd", "search", "state", "types", "sort", "visibility", "layerproperties" ]
 		});
@@ -405,23 +423,6 @@ html {
 			weightDefinition : function() {
 				return $("#weight").weightdefinition("getDefinition");
 			}
-		});
-
-		var epan = new gb.panel.EditingTool({
-			width : "84px",
-			height : "145px",
-			positionX : 425,
-			positionY : 100,
-			autoOpen : false,
-			map : map,
-			featureRecord : frecord,
-			treeInstance : $('#builderClientLayer').jstreeol3(true),
-			selected : function() {
-				return $('#builderClientLayer').jstreeol3("get_selected_layer");
-			},
-			infoURL : "geoserver/getGeoLayerInfoList.ajax",
-			wmsURL : "geoserver/geoserverWMSLayerLoad.do",
-			wfsURL : "geoserver/geoserverWFSGetFeature.ajax"
 		});
 
 		$("#qaedit").qaedit({
