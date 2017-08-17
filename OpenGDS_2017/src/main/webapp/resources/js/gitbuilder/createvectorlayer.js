@@ -54,7 +54,7 @@ gb.edit.CreateVectorLayer = function(obj) {
 		"type" : "text"
 	});
 	var div1 = $("<div>").css({
-		"margin-bottom" : "10px"
+		"margin-bottom" : "20px"
 	}).append(sheetNum).append(this.sheetNumInput);
 
 	var layerName = $("<p>").text("Layer Name");
@@ -62,20 +62,22 @@ gb.edit.CreateVectorLayer = function(obj) {
 		"type" : "text"
 	});
 	this.layerNameForm = $("<div>").css({
-		"margin-bottom" : "15px"
+		"margin-bottom" : "20px"
 	}).append(layerName).append(this.layerNameInput);
 
 	this.geomForm = $("<div>").css({
-		"margin-bottom" : "10px"
+		"margin-bottom" : "20px"
 	});
 
 	this.attrForm = $("<div>").css({
-		"margin-bottom" : "10px"
+		"margin-bottom" : "20px"
 	});
 
+	this.expertFormArea = $("<div>");
+
 	this.expertForm = $("<div>").css({
-		"margin-bottom" : "10px"
-	});
+		"margin-bottom" : "20px"
+	}).append(this.expertFormArea);
 
 	this.formatRadio1 = $("<input>").attr({
 		"type" : "radio",
@@ -100,8 +102,7 @@ gb.edit.CreateVectorLayer = function(obj) {
 	this.formatRadio3 = $("<input>").attr({
 		"type" : "radio",
 		"value" : "shp",
-		"name" : "gitbuilder-createvector-radio",
-		"disabled" : true
+		"name" : "gitbuilder-createvector-radio"
 	}).change(function() {
 		that.setForm("shp", "layer");
 	});
@@ -225,6 +226,7 @@ gb.edit.CreateVectorLayer.prototype.setForm = function(format, type) {
 			$(this.attrForm).show();
 			this.initExpertForm();
 			$(this.expertForm).show();
+			$(this.expertFormArea).hide();
 		} else if (format === "shp") {
 			this.initGeomForm("shp");
 			$(this.geomForm).show();
@@ -264,7 +266,8 @@ gb.edit.CreateVectorLayer.prototype.initAttrForm = function() {
 	var htd2 = $("<td>").text("Type");
 	var htd3 = $("<td>").text("Not Null");
 	var htd4 = $("<td>").text("Unique");
-	var thd = $("<thead>").append(htd1).append(htd2).append(htd3).append(htd4);
+	var htd5 = $("<td>").text("Delete");
+	var thd = $("<thead>").append(htd1).append(htd2).append(htd3).append(htd4).append(htd5);
 
 	var key = $("<input>").addClass("form-control").attr({
 		"type" : "text"
@@ -281,15 +284,26 @@ gb.edit.CreateVectorLayer.prototype.initAttrForm = function() {
 
 	var nullable = $("<input>").attr({
 		"type" : "checkbox"
+	}).css({
+		"vertical-align" : "-webkit-baseline-middle"
 	});
 	var td3 = $("<td>").append(nullable);
 
 	var unique = $("<input>").attr({
 		"type" : "checkbox"
+	}).css({
+		"vertical-align" : "-webkit-baseline-middle"
 	});
 	var td4 = $("<td>").append(unique);
 
-	var tr1 = $("<tr>").append(td1).append(td2).append(td3).append(td4);
+	var delIcon = $("<i>").attr({
+		"aria-hidden" : "true"
+	}).addClass("fa").addClass("fa-times");
+	var del = $("<button>").addClass("btn").addClass("btn-default").append(delIcon);
+
+	var td5 = $("<td>").append(del);
+
+	var tr1 = $("<tr>").append(td1).append(td2).append(td3).append(td4).append(td5);
 	this.geomFormBody = $("<tbody>").append(tr1);
 
 	var table = $("<table>").addClass("table").addClass("text-center").append(thd).append(this.geomFormBody);
@@ -385,8 +399,27 @@ gb.edit.CreateVectorLayer.prototype.initExpertForm = function() {
 	var table2 = $("<table>").addClass("table").addClass("text-center").append(thd2).append(this.expertFormBodyUnder);
 
 	$(this.expertForm).empty();
-	var tp = $("<p>").text("NGI Setting");
-	$(this.expertForm).append(tp).append(table).append(table2);
+
+	var caret = $("<i>").addClass("fa").addClass("fa-caret-down");
+	var exa = $("<a>").append("NGI Setting ").attr({
+		"href" : "#"
+	}).css({
+		"color" : "#333",
+		"cursor" : "point",
+		"text-decoration" : "none"
+	}).append(caret).click(function() {
+		if ($(that.expertFormArea).is(":visible")) {
+			$(that.expertFormArea).hide();
+			$(this).find("i").removeClass("fa-caret-up").addClass("fa-caret-down");
+		} else {
+			$(that.expertFormArea).show();
+			$(this).find("i").removeClass("fa-caret-down").addClass("fa-caret-up");
+		}
+	});
+	var tp = $("<p>").append(exa);
+	this.expertFormArea = $("<div>").append(table).append(table2);
+	$(this.expertForm).append(tp).append(this.expertFormArea);
+
 };
 gb.edit.CreateVectorLayer.prototype.getDefinitionForm = function() {
 	// var opt = {

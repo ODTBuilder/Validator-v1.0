@@ -40,20 +40,25 @@ gitbuilder.ui.OptionDefinition = $
 								"ConBreak", "ConIntersected", "ConOverDegree", "UselessEntity", "EntityDuplicated", "PointDuplicated",
 								"UselessPoint", "LayerMiss", "ZValueAmbiguous", "OverShoot", "UnderShoot", "RefLayerMiss", "RefZValueMiss" ],
 						text : [ "SelfEntity", "LayerMiss", "UselessEntity", "EntityDuplicated", "OverShoot", "UFIDLength",
-								"NumericalValue" ],
+								"NumericalValue", "UFIDRule" ],
 						insert : [ "SelfEntity", "LayerMiss", "UselessEntity", "EntityDuplicated", "OverShoot" ],
 						point : [ "LayerMiss", "UselessEntity", "EntityDuplicated", "SelfEntity", "AttributeFix", "OutBoundary",
-								"CharacterAccuracy", "OverShoot", "UnderShoot", "UFIDLength", "NumericalValue" ],
+								"CharacterAccuracy", "OverShoot", "UnderShoot", "UFIDLength", "NumericalValue", "UFIDRule" ],
 						linestring : [ "RefAttributeMiss", "EdgeMatchMiss", "UselessEntity", "LayerMiss", "RefLayerMiss", "SmallLength",
 								"EntityDuplicated", "SelfEntity", "PointDuplicated", "ConIntersected", "ConOverDegree", "ConBreak",
 								"AttributeFix", "OutBoundary", "ZValueAmbiguous", "UselessPoint", "OverShoot", "UnderShoot",
-								"RefZValueMiss", "UFIDLength", "NeatLineAttribute", "NumericalValue" ],
+								"RefZValueMiss", "UFIDLength", "NeatLineAttribute", "NumericalValue", "UFIDRule" ],
 						polygon : [ "Admin", "CrossRoad", "RefAttributeMiss", "BridgeName", "NodeMiss", "EdgeMatchMiss", "UselessEntity",
 								"LayerMiss", "RefLayerMiss", "SmallArea", "EntityDuplicated", "SelfEntity", "PointDuplicated",
 								"AttributeFix", "OutBoundary", "OverShoot", "UnderShoot", "OneAcre", "OneStage", "BuildingSite",
-								"UFIDLength", "HouseAttribute", "CemeterySite", "NumericalValue", "RiverBoundaryMiss" ]
+								"UFIDLength", "HouseAttribute", "CemeterySite", "NumericalValue", "RiverBoundaryMiss", "UFIDRule" ]
 					},
 					optItem : {
+						"UFIDRule" : {
+							"title" : "UFID Rule Violation",
+							"alias" : "UFIDRule",
+							"type" : "none"
+						},
 						"RiverBoundaryMiss" : {
 							"title" : "Missing River Boundary Error",
 							"alias" : "RiverBoundaryMiss",

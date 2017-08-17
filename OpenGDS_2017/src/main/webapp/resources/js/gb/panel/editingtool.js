@@ -487,7 +487,7 @@ gb.panel.EditingTool.prototype.select = function(layer) {
 			// console.log(JSON.stringify(arr));
 
 			$.ajax({
-				url : "geoserver/getGeoLayerInfoList.ajax",
+				url : this.infoURL,
 				method : "POST",
 				contentType : "application/json; charset=UTF-8",
 				cache : false,
@@ -501,7 +501,7 @@ gb.panel.EditingTool.prototype.select = function(layer) {
 					if (Array.isArray(data2)) {
 						for (var i = 0; i < data2.length; i++) {
 							var source = new ol.source.TileWMS({
-								url : "geoserver/geoserverWMSLayerLoad.do",
+								url : this.wmsURL,
 								params : {
 									'LAYERS' : data2[i].lName,
 									'TILED' : true,
@@ -586,49 +586,7 @@ gb.panel.EditingTool.prototype.select = function(layer) {
 		this.interaction.select.getFeatures().clear();
 	}
 	this.map.removeInteraction(this.interaction.select);
-	// var styles = [ new ol.style.Style({
-	// stroke : new ol.style.Stroke({
-	// color : 'rgba(0,153,255,1)',
-	// width : 2
-	// }),
-	// fill : new ol.style.Fill({
-	// color : 'rgba(255, 255, 255, 0.5)'
-	// })
-	// }), new ol.style.Style({
-	// image : new ol.style.Circle({
-	// radius : 10,
-	// fill : new ol.style.Fill({
-	// color : 'rgba(0,153,255,0.4)'
-	// })
-	// }),
-	// geometry : function(feature) {
-	//
-	// var coordinates;
-	// var geom;
-	//
-	// if (feature.getGeometry() instanceof ol.geom.MultiPolygon) {
-	// coordinates = feature.getGeometry().getCoordinates()[0][0];
-	// geom = new ol.geom.MultiPoint(coordinates);
-	// } else if (feature.getGeometry() instanceof ol.geom.Polygon) {
-	// coordinates = feature.getGeometry().getCoordinates()[0];
-	// geom = new ol.geom.MultiPoint(coordinates);
-	// } else if (feature.getGeometry() instanceof ol.geom.MultiLineString) {
-	// coordinates = feature.getGeometry().getCoordinates()[0];
-	// geom = new ol.geom.MultiPoint(coordinates);
-	// } else if (feature.getGeometry() instanceof ol.geom.LineString) {
-	// coordinates = feature.getGeometry().getCoordinates();
-	// geom = new ol.geom.MultiPoint(coordinates);
-	// } else if (feature.getGeometry() instanceof ol.geom.MultiPoint) {
-	// coordinates = feature.getGeometry().getCoordinates();
-	// geom = new ol.geom.MultiPoint(coordinates);
-	// } else if (feature.getGeometry() instanceof ol.geom.Point) {
-	// coordinates = [ feature.getGeometry().getCoordinates() ];
-	// geom = new ol.geom.MultiPoint(coordinates);
-	// }
-	//
-	// return geom;
-	// }
-	// }) ];
+
 	if (sourceLayer instanceof ol.layer.Vector) {
 		this.interaction.select = new ol.interaction.Select({
 			layers : [ sourceLayer ],
@@ -1203,6 +1161,8 @@ gb.panel.EditingTool.prototype.updateSelected = function() {
 			this.layer = this.layers[0];
 			result = this.layer;
 		}
+	} else {
+		result = this.layer;
 	}
 	return result;
 };
@@ -1216,206 +1176,24 @@ gb.panel.EditingTool.prototype.setFeatures = function(newFeature) {
 	if (this.isOn.select) {
 		if (!!this.interaction.selectWMS || !!this.interaction.select) {
 			this.interaction.select.getFeatures().clear();
-			this.deactiveIntrct([ "dragbox", "select", "selectWMS" ]);
+			this.deactiveIntrct_([ "dragbox", "select", "selectWMS" ]);
 		}
-		this.deactiveBtn("selectBtn");
+		this.deactiveBtn_("selectBtn");
 		this.isOn.select = false;
 	}
-	// var sourceLayer;
-	// if (Array.isArray(layer)) {
-	// if (layer.length > 1) {
-	// console.error("please, select 1 layer");
-	// return;
-	// } else if (layer.length < 1) {
-	// console.error("no selected layer");
-	// return;
-	// } else {
-	// sourceLayer = layer[0];
-	// }
-	// } else if (layer instanceof ol.layer.Tile) {
-	// sourceLayer = layer;
-	// } else {
-	// return;
-	// }
-
-	if (!this.tempSelectSource) {
-		this.tempSelectSource = new ol.source.Vector();
-	} else {
-		this.tempSelectSource.clear();
+	this.select(this.layer);
+	if (newFeature.length === 1) {
+		this.interaction.selectWMS.setFeatureId(newFeature[0].getId());
+		// this.interaction.select.getFeatures().extend(newFeature);
+		this.open();
+		this.attrPop.getPanel().position({
+			"my" : "left top",
+			"at" : "right top",
+			"of" : this.getPanel(),
+			"collision" : "fit"
+		});
 	}
-	if (this.interaction.select instanceof ol.interaction.Select) {
-		this.interaction.select.getFeatures().clear();
-	}
-	this.map.removeInteraction(this.interaction.select);
-	// var styles = [ new ol.style.Style({
-	// stroke : new ol.style.Stroke({
-	// color : 'rgba(0,153,255,1)',
-	// width : 2
-	// }),
-	// fill : new ol.style.Fill({
-	// color : 'rgba(255, 255, 255, 0.5)'
-	// })
-	// }), new ol.style.Style({
-	// image : new ol.style.Circle({
-	// radius : 10,
-	// fill : new ol.style.Fill({
-	// color : 'rgba(0,153,255,0.4)'
-	// })
-	// }),
-	// geometry : function(feature) {
-	//
-	// var coordinates;
-	// var geom;
-	//
-	// if (feature.getGeometry() instanceof ol.geom.MultiPolygon) {
-	// coordinates = feature.getGeometry().getCoordinates()[0][0];
-	// geom = new ol.geom.MultiPoint(coordinates);
-	// } else if (feature.getGeometry() instanceof ol.geom.Polygon) {
-	// coordinates = feature.getGeometry().getCoordinates()[0];
-	// geom = new ol.geom.MultiPoint(coordinates);
-	// } else if (feature.getGeometry() instanceof ol.geom.MultiLineString) {
-	// coordinates = feature.getGeometry().getCoordinates()[0];
-	// geom = new ol.geom.MultiPoint(coordinates);
-	// } else if (feature.getGeometry() instanceof ol.geom.LineString) {
-	// coordinates = feature.getGeometry().getCoordinates();
-	// geom = new ol.geom.MultiPoint(coordinates);
-	// } else if (feature.getGeometry() instanceof ol.geom.MultiPoint) {
-	// coordinates = feature.getGeometry().getCoordinates();
-	// geom = new ol.geom.MultiPoint(coordinates);
-	// } else if (feature.getGeometry() instanceof ol.geom.Point) {
-	// coordinates = [ feature.getGeometry().getCoordinates() ];
-	// geom = new ol.geom.MultiPoint(coordinates);
-	// }
-	//
-	// return geom;
-	// }
-	// }) ];
-	this.interaction.select = new ol.interaction.Select({
-		layers : [ this.tempVector ],
-		toggleCondition : ol.events.condition.platformModifierKeyOnly,
-		style : this.selectedStyles
-	});
-	this.map.addInteraction(this.interaction.select);
-	this.map.removeInteraction(this.interaction.dragbox);
 
-	this.interaction.select.getFeatures().on("change:length", function(evt) {
-		that.features = that.interaction.select.getFeatures();
-		$(that.featureTB).empty();
-		that.tempSelectSource.clear();
-		that.tempSelectSource.addFeatures(that.features.getArray());
-		if (that.features.getLength() > 1) {
-			that.featurePop.close();
-			for (var i = 0; i < that.features.getLength(); i++) {
-				var idx = that.features.item(i).getId().substring(that.features.item(i).getId().indexOf(".") + 1);
-				var td1 = $("<td>").text(idx);
-				var anc = $("<a>").addClass("gb-edit-sel-flist").css("cursor", "pointer").attr({
-					"value" : that.features.item(i).getId()
-				}).text("Selecting feature").click(function() {
-					var feature = that.tempSelectSource.getFeatureById($(this).attr("value"));
-					that.interaction.select.getFeatures().clear();
-					that.interaction.select.getFeatures().push(feature);
-					that.featurePop.close();
-					console.log(feature);
-				});
-				var td2 = $("<td>").append(anc).mouseenter(function() {
-					var fid = $(this).find("a").attr("value");
-					var feature = that.tempSelectSource.getFeatureById(fid);
-					that.map.getView().fit(feature.getGeometry().getExtent(), that.map.getSize());
-				});
-				var tr = $("<tr>").append(td1).append(td2);
-				$(that.featureTB).append(tr);
-			}
-
-			that.featurePop.open();
-			that.featurePop.getPanel().position({
-				"my" : "left top",
-				"at" : "right top",
-				"of" : that.getPanel(),
-				"collision" : "fit"
-			});
-			that.attrPop.close();
-		} else if (that.features.getLength() === 1) {
-			that.featurePop.close();
-			$(that.attrTB).empty();
-			that.setLayer(that.updateSelected());
-			var attrInfo = that.getLayer().get("git").attribute;
-			that.feature = that.features.item(0);
-			if (!!attrInfo) {
-				var attr = that.features.item(0).getProperties();
-				var keys = Object.keys(attrInfo);
-				for (var i = 0; i < keys.length; i++) {
-					if (keys[i] === "geometry") {
-						continue;
-					}
-					var td1 = $("<td>").text(keys[i]);
-					var tform = $("<input>").addClass("gb-edit-sel-alist").attr({
-						"type" : "text"
-					}).css({
-						"width" : "100%",
-						"border" : "none"
-					}).val(attr[keys[i]]).on("input", function() {
-						var obj = {};
-						obj[$(this).parent().prev().text()] = $(this).val();
-						that.feature.setProperties(obj);
-						that.featureRecord.update(that.getLayer(), that.feature);
-					});
-					var td2 = $("<td>").append(tform);
-					var tr = $("<tr>").append(td1).append(td2);
-					that.attrTB.append(tr);
-				}
-				that.attrPop.open();
-				that.attrPop.getPanel().position({
-					"my" : "left top",
-					"at" : "right top",
-					"of" : that.getPanel(),
-					"collision" : "fit"
-				});
-			} else {
-				// $(that.featurePop).hide();
-				that.attrPop.close();
-			}
-		} else {
-			that.featurePop.close();
-			that.attrPop.close();
-		}
-
-	});
-
-	var ids = [];
-	for (var i = 0; i < newFeature.length; i++) {
-		ids.push(newFeature[i].getId());
-	}
-	that.tempSource.addFeatures(newFeature);
-	that.tempVector.setMap(that.map);
-
-	var selFeatures = that.interaction.select.getFeatures();
-	var cFeatures = [];
-	for (var k = 0; k < selFeatures.getLength(); k++) {
-		if (selFeatures.item(k).getId().indexOf(".new") !== -1) {
-			cFeatures.push(selFeatures.item(k));
-		}
-		// else {
-		// if (!that.record.isRemoved(that.layer, selFeatures.item(k)))
-		// {
-		// cFeatures.push(selFeatures.item(k));
-		// }
-		// }
-	}
-	that.interaction.select.getFeatures().clear();
-	that.interaction.select.getFeatures().extend(cFeatures);
-	var newFeatures = [];
-	for (var j = 0; j < ids.length; j++) {
-		if (!that.options.featureRecord.isRemoved(ids[j].substring(0, ids[j].indexOf(".")), that.tempSource.getFeatureById(ids[j]))) {
-			newFeatures.push(that.tempSource.getFeatureById(ids[j]));
-		}
-	}
-	that.interaction.select.getFeatures().extend(newFeatures);
-
-	this.deactiveIntrct([ "draw", "move", "rotate", "modify" ]);
-	this.activeIntrct([ "select" ]);
-	this.activeBtn("selectBtn");
-	this.isOn.select = true;
-	this.open();
 };
 /**
  * 선택한 피처를 반환한다.
