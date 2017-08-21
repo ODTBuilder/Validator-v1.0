@@ -26,6 +26,7 @@ $.jstreeol3.plugins.layerproperties = function(options, parent) {
 		this._data.layerproperties.properties = this.settings.layerproperties.properties;
 		this._data.layerproperties.layerRecord = this.settings.layerproperties.layerRecord;
 		this._data.layerproperties.style = this.settings.layerproperties.style;
+		this._data.layerproperties.editingTool = this.settings.layerproperties.editingTool;
 	};
 
 };

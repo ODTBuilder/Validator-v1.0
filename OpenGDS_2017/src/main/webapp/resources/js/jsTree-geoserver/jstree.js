@@ -7461,32 +7461,6 @@
 
 							}
 						},
-						"properties" : {
-							"separator_before" : false,
-							"icon" : "fa fa-info-circle",
-							"separator_after" : false,
-							"_disabled" : false, // (this.check("rename_node",
-							// data.reference,
-							// this.get_parent(data.reference),
-							// "")),
-							"label" : "Properties",
-							/*
-							 * ! "shortcut" : 113, "shortcut_label" : 'F2',
-							 * "icon" : "glyphicon glyphicon-leaf",
-							 */
-							"action" : function(data) {
-								var inst = $.jstree.reference(data.reference), obj = inst.get_node(data.reference);
-								if (obj.type === "n_ngi_layer_pt" || obj.type === "n_ngi_layer_ln" || obj.type === "n_ngi_layer_pg"
-										|| obj.type === "n_ngi_layer_txt" || obj.type === "n_dxf_layer_arc"
-										|| obj.type === "n_dxf_layer_cir" || obj.type === "n_dxf_layer_ins"
-										|| obj.type === "n_dxf_layer_lpl" || obj.type === "n_dxf_layer_pl"
-										|| obj.type === "n_dxf_layer_txt" || obj.type === "e_dxf_layer" || obj.type === "e_ngi_layer"
-										|| obj.type === "e_shp_layer") {
-									inst._data.geoserver.layerInfo.setReference(inst);
-									inst._data.geoserver.layerInfo.load(obj.id, obj.text);
-								}
-							}
-						},
 						"download" : {
 							"separator_before" : true,
 							"icon" : "fa fa-files-o",
@@ -7924,6 +7898,63 @@
 												}
 											}
 										});
+									}
+								}
+							}
+						},
+						"properties" : {
+							"separator_before" : true,
+							"icon" : "fa fa-info-circle",
+							"separator_after" : true,
+							"label" : "Properties",
+							"action" : false,
+							"submenu" : {
+								"geoserver" : {
+									"separator_before" : false,
+									"icon" : "fa fa-server",
+									"separator_after" : false,
+									"_disabled" : function(data) {
+										return !($.jstree.reference(data.reference).get_node(
+												$.jstree.reference(data.reference).get_node(data.reference).parent).type === "n_ngi_group")
+									},
+									"label" : "Geoserver",
+									"action" : function(data) {
+										var inst = $.jstree.reference(data.reference), obj = inst.get_node(data.reference);
+										if (obj.type === "n_ngi_layer_pt" || obj.type === "n_ngi_layer_ln" || obj.type === "n_ngi_layer_pg"
+												|| obj.type === "n_ngi_layer_txt" || obj.type === "n_dxf_layer_arc"
+												|| obj.type === "n_dxf_layer_cir" || obj.type === "n_dxf_layer_ins"
+												|| obj.type === "n_dxf_layer_lpl" || obj.type === "n_dxf_layer_pl"
+												|| obj.type === "n_dxf_layer_txt" || obj.type === "e_dxf_layer"
+												|| obj.type === "e_ngi_layer" || obj.type === "e_shp_layer") {
+											inst._data.geoserver.layerInfo.setReference(inst);
+											inst._data.geoserver.layerInfo.load(obj.id, obj.text);
+										}
+									}
+								},
+								"ngi" : {
+									"separator_before" : false,
+									"icon" : "fa fa-file-excel-o",
+									"separator_after" : false,
+									"_disabled" : function(data) {
+										return !($.jstree.reference(data.reference).get_node(
+												$.jstree.reference(data.reference).get_node(data.reference).parent).type === "n_ngi_group")
+									},
+									"label" : "NGI",
+									"action" : function(data) {
+										var inst = $.jstree.reference(data.reference), obj = inst.get_node(data.reference);
+									}
+								},
+								"dxf" : {
+									"separator_before" : false,
+									"icon" : "fa fa-file-excel-o",
+									"separator_after" : false,
+									"_disabled" : function(data) {
+										return !($.jstree.reference(data.reference).get_node(data.reference).type === "n_ngi" || $.jstree
+												.reference(data.reference).get_node(data.reference).type === "n_dxf")
+									},
+									"label" : "DXF",
+									"action" : function(data) {
+										var inst = $.jstree.reference(data.reference), obj = inst.get_node(data.reference);
 									}
 								}
 							}

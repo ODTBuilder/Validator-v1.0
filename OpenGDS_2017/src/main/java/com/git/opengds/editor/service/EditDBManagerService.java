@@ -40,6 +40,8 @@ public interface EditDBManagerService {
 
 	public void deleteQA10LayerCollection(UserVO userVO, int cIdx) throws RuntimeException;
 	
+	public void deleteQA20LayerCollection(UserVO userVO, int cIdx) throws RuntimeException;
+	
 	public void insertQA20CreateFeature(UserVO userVO, String layerName, QA20Feature createFeature, String src) throws RuntimeException;
 
 	public void updateQA20ModifyFeature(UserVO userVO, String layerName, QA20Feature modifyFeature, String src) throws RuntimeException;

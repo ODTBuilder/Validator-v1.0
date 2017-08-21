@@ -761,7 +761,7 @@ gitbuilder.ui.QAEdit = $.widget("gitbuilder.qaedit",
 						}
 					}
 					instance.map.addLayer(vlayer);
-					instance.openNavigator();
+					// instance.openNavigator();
 					instance._initNavigator();
 					$("body").css("cursor", "default");
 				}
@@ -854,7 +854,12 @@ gitbuilder.ui.QAEdit = $.widget("gitbuilder.qaedit",
 				this.features = this.source.getFeatures();
 				this.count = 1;
 				this.lid = this.error.get("id");
+				if (!this.source.getFeatureById(this.lid + "." + this.count)) {
+					console.log("no feature. maybe there is no error");
+					return;
+				}
 				this.showFeatureInfo(this.source.getFeatureById(this.lid + "." + this.count));
+				this.openNavigator();
 			},
 			prevError : function() {
 				if (this.count > 1 && this.count < this.features.length + 1) {
@@ -935,6 +940,7 @@ gitbuilder.ui.QAEdit = $.widget("gitbuilder.qaedit",
 						var arr = {
 							"geoLayerList" : [ layer ]
 						}
+
 						$.ajax({
 							url : that.options.layerInfoURL,
 							method : "POST",
@@ -1002,15 +1008,16 @@ gitbuilder.ui.QAEdit = $.widget("gitbuilder.qaedit",
 										// wms.set("git", git);
 										// arra.push(wms);
 										// console.log(wms);
+
+										that.options.treeInstance.deselect_all();
+										that.options.treeInstance.select_node(sourceLayer.get("treeid"));
+										that.options.editingTool.setLayer(sourceLayer);
+										that.options.editingTool.setFeatures(features);
 									}
 								}
 							}
 						});
 
-						that.options.treeInstance.deselect_all();
-						that.options.treeInstance.select_node(sourceLayer.get("treeid"));
-						that.options.editingTool.setLayer(sourceLayer);
-						that.options.editingTool.setFeatures(features);
 					}
 				});
 			},

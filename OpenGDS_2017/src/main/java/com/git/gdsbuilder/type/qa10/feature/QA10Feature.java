@@ -123,5 +123,4 @@ public class QA10Feature {
 	public void setRotate(double rotate) {
 		this.rotate = rotate;
 	}
-
 }

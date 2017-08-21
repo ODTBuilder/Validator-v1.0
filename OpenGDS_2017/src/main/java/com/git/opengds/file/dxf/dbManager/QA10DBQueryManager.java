@@ -467,6 +467,23 @@ public class QA10DBQueryManager {
 		return selectIdxQuery;
 	}
 
+	public HashMap<String, Object> getDeleteBlockLine(Integer bcIdx) {
+		HashMap<String, Object> deleteQuery = new HashMap<String, Object>();
+		String tableName = "qa10_layercollection_block_line";
+		String deleteQueryStr = "delete from " + tableName + " where bc_idx = " + bcIdx;
+		deleteQuery.put("deleteQuery", deleteQueryStr);
+		return deleteQuery;
+	}
+
+	public HashMap<String, Object> getDeleteBlockLWPolyline(Integer bcIdx) {
+		HashMap<String, Object> deleteQuery = new HashMap<String, Object>();
+		String tableName = "qa10_layercollection_block_lwpolyline";
+		String deleteQueryStr = "delete from " + tableName + " where bc_idx = " + bcIdx;
+		deleteQuery.put("deleteQuery", deleteQueryStr);
+		return deleteQuery;
+	}
+	
+	
 	public HashMap<String, Object> getDeleteBlockArc(Integer bcIdx) {
 		HashMap<String, Object> deleteQuery = new HashMap<String, Object>();
 		String tableName = "qa10_layercollection_block_arc";
@@ -756,4 +773,6 @@ public class QA10DBQueryManager {
 		selectQuery.put("selectAllQuery", selectQueryStr);
 		return selectQuery;
 	}
+
+
 }
