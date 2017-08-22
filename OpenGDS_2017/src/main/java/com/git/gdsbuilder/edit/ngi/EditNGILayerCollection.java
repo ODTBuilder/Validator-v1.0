@@ -6,7 +6,7 @@ import java.util.Map;
 import com.git.gdsbuilder.type.ngi.layer.DTNGILayer;
 import com.git.gdsbuilder.type.ngi.layer.DTNGILayerList;
 
-public class EditNGICollection {
+public class EditNGILayerCollection {
 
 	String collectionName;
 	DTNGILayerList createLayerList;
@@ -20,7 +20,7 @@ public class EditNGICollection {
 
 	boolean isDeleteAll = false;
 
-	public EditNGICollection() {
+	public EditNGILayerCollection() {
 		this.collectionName = "";
 		this.createLayerList = new DTNGILayerList();
 		this.modifiedLayerList = new DTNGILayerList();

@@ -26,7 +26,8 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import com.git.gdsbuilder.edit.dxf.EditDXFLayer;
-import com.git.gdsbuilder.edit.ngi.EditNGI0Layer;
+import com.git.gdsbuilder.edit.ngi.EditNGILayer;
+import com.git.gdsbuilder.edit.shp.EditSHPLayer;
 import com.git.gdsbuilder.type.ngi.header.NDAField;
 import com.git.gdsbuilder.type.ngi.header.NDAHeader;
 import com.git.gdsbuilder.type.ngi.header.NGIHeader;
@@ -46,8 +47,9 @@ public class EditDTLayerParser {
 
 	JSONObject layerObj;
 	String originLayerType;
-	EditNGI0Layer editQA20Layer;
-	EditDXFLayer editQA10Layer;
+	EditNGILayer editNGILayer;
+	EditDXFLayer editDXFLayer;
+	EditSHPLayer editSHPLayer;
 
 	public static String getCreate() {
 		return create;
@@ -89,20 +91,28 @@ public class EditDTLayerParser {
 		this.originLayerType = type;
 	}
 
-	public EditNGI0Layer getEditQA20Layer() {
-		return editQA20Layer;
+	public EditNGILayer getEditNGILayer() {
+		return editNGILayer;
 	}
 
-	public void setEditQA20Layer(EditNGI0Layer editQA20Layer) {
-		this.editQA20Layer = editQA20Layer;
+	public void setEditNGILayer(EditNGILayer editQA20Layer) {
+		this.editNGILayer = editQA20Layer;
 	}
 
-	public EditDXFLayer getEditQA10Layer() {
-		return editQA10Layer;
+	public EditDXFLayer getEditDXFLayer() {
+		return editDXFLayer;
 	}
 
-	public void setEditQA10Layer(EditDXFLayer editQA10Layer) {
-		this.editQA10Layer = editQA10Layer;
+	public void setEditDXFLayer(EditDXFLayer editQA10Layer) {
+		this.editDXFLayer = editQA10Layer;
+	}
+
+	public EditSHPLayer getEditSHPLayer() {
+		return editSHPLayer;
+	}
+
+	public void setEditSHPLayer(EditSHPLayer editSHPLayer) {
+		this.editSHPLayer = editSHPLayer;
 	}
 
 	/**
@@ -129,6 +139,12 @@ public class EditDTLayerParser {
 			} else if (state.equals(modify)) {
 				dxfModifiedLayerParse();
 			}
+		} else if (type.equals("shp")) {
+			if (state.equals(create)) {
+				shpCreatedLayerParse();
+			} else if (state.equals(modify)) {
+				shpModifiedLayerParse();
+			}
 		}
 	}
 
@@ -150,28 +166,28 @@ public class EditDTLayerParser {
 		geoLayer.put("attChangeFlag", true);
 
 		if (type.equals("ngi")) {
-			this.editQA20Layer.setGeoServerLayer(geoLayer);
+			this.editNGILayer.setGeoServerLayer(geoLayer);
 		} else if (type.equals("dxf")) {
-			this.editQA10Layer.setGeoServerLayer(geoLayer);
+			this.editDXFLayer.setGeoServerLayer(geoLayer);
 		}
 	}
 
 	public void ngiModifiedLayerParse() {
 
-		editQA20Layer = new EditNGI0Layer();
+		editNGILayer = new EditNGILayer();
 		// name
 		String orignName = (String) layerObj.get("originLayerName");
 		String currentName = (String) layerObj.get("currentLayerName");
-		editQA20Layer.setOrignName(orignName);
-		editQA20Layer.setLayerName(currentName);
+		editNGILayer.setOrignName(orignName);
+		editNGILayer.setLayerName(currentName);
 
 		// attr
 		JSONArray updateAttrArray = (JSONArray) layerObj.get("updateAttr");
 
 		// ndaHeader
-		List<NDAField> updateAttr = parseAttrQA20Layer(currentName, updateAttrArray);
+		List<NDAField> updateAttr = parseAttrNGILayer(currentName, updateAttrArray);
 		NDAHeader ndaHeader = new NDAHeader("1", updateAttr);
-		editQA20Layer.setNdaHeader(ndaHeader);
+		editNGILayer.setNdaHeader(ndaHeader);
 
 		// // bound
 		// JSONArray boundArry = (JSONArray) layerObj.get("bound");
@@ -179,7 +195,7 @@ public class EditDTLayerParser {
 		// double minX = (Double) minArry.get(0);
 		// double minY = (Double) minArry.get(1);
 		//
-		
+
 		// JSONArray maxArry = (JSONArray) boundArry.get(1);
 		// double maxX = (Double) maxArry.get(0);
 		// double maxY = (Double) maxArry.get(1);
@@ -195,10 +211,10 @@ public class EditDTLayerParser {
 		// // ngiHeader
 		// editQA20Layer.setNgiHeader(ngiHeader);
 		modifiedGeoserverLayerParse("ngi");
-		editQA20Layer.setModified(true);
+		editNGILayer.setModified(true);
 	}
 
-	private List<NDAField> parseAttrQA20Layer(String layerName, JSONArray attrArry) {
+	private List<NDAField> parseAttrNGILayer(String layerName, JSONArray attrArry) {
 
 		List<NDAField> fieldList = new ArrayList<NDAField>();
 		for (int i = 0; i < attrArry.size(); i++) {
@@ -226,14 +242,14 @@ public class EditDTLayerParser {
 
 	public void ngiCreatedLayerParse() throws ParseException {
 
-		editQA20Layer = new EditNGI0Layer();
+		editNGILayer = new EditNGILayer();
 
 		String layerName = (String) layerObj.get("layerName");
-		editQA20Layer.setLayerName(layerName);
-		editQA20Layer.setOrignName(layerName);
+		editNGILayer.setLayerName(layerName);
+		editNGILayer.setOrignName(layerName);
 
 		String layerType = (String) layerObj.get("layerType");
-		editQA20Layer.setLayerType(layerType);
+		editNGILayer.setLayerType(layerType);
 
 		NGIHeader ngiHeader = new NGIHeader();
 		String mask = "MASK(" + layerType + ")";
@@ -276,32 +292,32 @@ public class EditDTLayerParser {
 		}
 		ndaHeader.setAspatial_field_def(fieldList);
 
-		editQA20Layer.setNgiHeader(ngiHeader);
-		editQA20Layer.setNdaHeader(ndaHeader);
+		editNGILayer.setNgiHeader(ngiHeader);
+		editNGILayer.setNdaHeader(ndaHeader);
 	}
 
 	public void dxfModifiedLayerParse() {
 
-		editQA10Layer = new EditDXFLayer();
+		editDXFLayer = new EditDXFLayer();
 
 		String originLayerName = (String) layerObj.get("originLayerName");
 		String currentLayerName = (String) layerObj.get("currentLayerName");
-		editQA10Layer.setLayerName(currentLayerName);
-		editQA10Layer.setOrignName(originLayerName);
+		editDXFLayer.setLayerName(currentLayerName);
+		editDXFLayer.setOrignName(originLayerName);
 
 		modifiedGeoserverLayerParse("dxf");
 	}
 
 	public void dxfCreatedLayerParse() {
 
-		editQA10Layer = new EditDXFLayer();
+		editDXFLayer = new EditDXFLayer();
 
 		String layerName = (String) layerObj.get("layerName");
-		editQA10Layer.setLayerName(layerName);
-		editQA10Layer.setOrignName(layerName);
+		editDXFLayer.setLayerName(layerName);
+		editDXFLayer.setOrignName(layerName);
 
 		String originLayerType = (String) layerObj.get("originLayerType");
-		editQA10Layer.setOriginLayerType(originLayerType);
+		editDXFLayer.setOriginLayerType(originLayerType);
 
 		String layerType = "";
 		if (originLayerType.equals("LINE")) {
@@ -321,6 +337,14 @@ public class EditDTLayerParser {
 		} else if (originLayerType.equals("ARC")) {
 			layerType = "LineString";
 		}
-		editQA10Layer.setLayerType(layerType);
+		editDXFLayer.setLayerType(layerType);
+	}
+
+	public void shpModifiedLayerParse() {
+
+	}
+
+	public void shpCreatedLayerParse() {
+
 	}
 }

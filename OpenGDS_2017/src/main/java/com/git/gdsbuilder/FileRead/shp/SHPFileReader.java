@@ -3,19 +3,14 @@ package com.git.gdsbuilder.FileRead.shp;
 import java.io.File;
 import java.nio.charset.Charset;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import org.geotools.data.DataStoreFinder;
 import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotools.data.simple.SimpleFeatureCollection;
-import org.geotools.data.simple.SimpleFeatureIterator;
 import org.geotools.data.simple.SimpleFeatureSource;
-import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
-import org.opengis.feature.type.AttributeDescriptor;
-import org.opengis.feature.type.AttributeType;
 import org.opengis.feature.type.GeometryType;
 import org.opengis.filter.Filter;
 
@@ -46,11 +41,14 @@ public class SHPFileReader {
 				if (collection != null) {
 					DTSHPLayer dtLayer = new DTSHPLayer();
 					dtLayer.setSimpleFeatureCollection(collection);
-					dtLayer.setLayerName(shpName);
 					SimpleFeatureType featureType = collection.getSchema();
 					GeometryType geometryType = featureType.getGeometryDescriptor().getType();
 					String geomType = geometryType.getName().toString();
+//					if (geomType.startsWith("Multi")) {
+//						geomType = geomType.replaceAll("Multi", "");
+//					}
 					dtLayer.setLayerType(geomType);
+					dtLayer.setLayerName(shpName + "_" + geomType.toUpperCase());
 					dtLayerList.add(dtLayer);
 				}
 			}

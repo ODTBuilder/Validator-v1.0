@@ -139,8 +139,8 @@ public class FeatureAttributeValidatorImpl implements FeatureAttributeValidator 
 								break;
 							}
 						}
-					}else{
-						
+					} else {
+
 						flag = false;
 						break;
 					}
@@ -197,7 +197,7 @@ public class FeatureAttributeValidatorImpl implements FeatureAttributeValidator 
 	}
 
 	public ErrorFeature validateAdmin(SimpleFeature simpleFeature) throws SchemaException {
-		
+
 		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
 		String title = simpleFeature.getAttribute("명칭").toString();
 		int titleLength = title.length();
@@ -236,28 +236,24 @@ public class FeatureAttributeValidatorImpl implements FeatureAttributeValidator 
 			}
 		}
 	}
-	
-	public ErrorFeature validateHouseAttribute(SimpleFeature simpleFeature){
+
+	public ErrorFeature validateHouseAttribute(SimpleFeature simpleFeature) {
 		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
 		String notNullAttr = simpleFeature.getAttribute("주기").toString();
 
 		String featureIdx = simpleFeature.getID();
 		Property featuerIDPro = simpleFeature.getProperty("feature_id");
 		String featureID = (String) featuerIDPro.getValue();
-		
+
 		if (notNullAttr != null) {
-			ErrorFeature errorFeature = new ErrorFeature(featureIdx, featureID, HouseAttribute.Type.HOUSEATTRIBUTE.errType(),
-					HouseAttribute.Type.HOUSEATTRIBUTE.errName(), geometry.getInteriorPoint());
+			ErrorFeature errorFeature = new ErrorFeature(featureIdx, featureID,
+					HouseAttribute.Type.HOUSEATTRIBUTE.errType(), HouseAttribute.Type.HOUSEATTRIBUTE.errName(),
+					geometry.getInteriorPoint());
 			return errorFeature;
-		}else{
+		} else {
 			return null;
 		}
 	}
-	
-	
-	
-	
-
 
 	public ErrorFeature validateEntityDuplicated(SimpleFeature simpleFeatureI, SimpleFeature simpleFeatureJ) {
 
@@ -269,9 +265,16 @@ public class FeatureAttributeValidatorImpl implements FeatureAttributeValidator 
 			Object attrI = attrIList.get(i);
 			breakOut: for (int j = 1; j < attrJList.size(); j++) {
 				Object attrJ = attrJList.get(j);
-				if (attrI.toString().equals(attrJ.toString())) {
-					equalsCount++;
-					break breakOut;
+				if (attrI != null && attrJ != null) {
+					if (attrI.toString().equals(attrJ.toString())) {
+						equalsCount++;
+						break breakOut;
+					}
+				} else if (attrI == null) {
+					if (attrJ == null) {
+						equalsCount++;
+						break breakOut;
+					}
 				}
 			}
 		}
@@ -280,17 +283,14 @@ public class FeatureAttributeValidatorImpl implements FeatureAttributeValidator 
 			Property featuerIDPro = simpleFeatureI.getProperty("feature_id");
 			String featureID = (String) featuerIDPro.getValue();
 			Geometry geometryI = (Geometry) simpleFeatureI.getDefaultGeometry();
-			ErrorFeature errFeature = new ErrorFeature(featureIdx, featureID, EntityDuplicated.Type.ENTITYDUPLICATED.errType(),
-					EntityDuplicated.Type.ENTITYDUPLICATED.errName(), geometryI.getInteriorPoint());
+			ErrorFeature errFeature = new ErrorFeature(featureIdx, featureID,
+					EntityDuplicated.Type.ENTITYDUPLICATED.errType(), EntityDuplicated.Type.ENTITYDUPLICATED.errName(),
+					geometryI.getInteriorPoint());
 
 			return errFeature;
 		} else {
 			return null;
 		}
 	}
-	
-	
-	
-	
-	
+
 }

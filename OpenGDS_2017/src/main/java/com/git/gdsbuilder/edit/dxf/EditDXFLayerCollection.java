@@ -6,7 +6,7 @@ import java.util.Map;
 import com.git.gdsbuilder.type.dxf.layer.DTDXFLayer;
 import com.git.gdsbuilder.type.dxf.layer.DTDXFLayerList;
 
-public class EditDXFCollection {
+public class EditDXFLayerCollection {
 
 	String collectionName;
 	DTDXFLayerList createLayerList;
@@ -17,10 +17,9 @@ public class EditDXFCollection {
 	boolean isCreated = false;
 	boolean isModified = false;
 	boolean isDeleted = false;
-
 	boolean isDeleteAll = false;
 
-	public EditDXFCollection() {
+	public EditDXFLayerCollection() {
 		this.collectionName = "";
 		this.createLayerList = new DTDXFLayerList();
 		this.modifiedLayerList = new DTDXFLayerList();

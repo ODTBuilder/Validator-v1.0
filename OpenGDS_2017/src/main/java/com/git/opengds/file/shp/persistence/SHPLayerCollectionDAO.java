@@ -14,4 +14,18 @@ public interface SHPLayerCollectionDAO {
 
 	public void insertSHPLayerMetadata(UserVO userVO, HashMap<String, Object> insertLayerMeteQuery);
 
+	public int selectSHPFeatureIdx(UserVO userVO, HashMap<String, Object> selectIdxqueryMap);
+
+	public void deleteSHPFeature(UserVO userVO, HashMap<String, Object> deleteFeatureMap);
+
+	public Integer selectSHPLayerCollectionIdx(UserVO userVO, HashMap<String, Object> queryMap);
+
+	public Integer selectSHPLayerMetadataIdx(UserVO userVO, HashMap<String, Object> metadataIdxQuery);
+
+	public void deleteSHPLayerMetadata(UserVO userVO, HashMap<String, Object> deleteLayerMetaQuery);
+
+	public void dropSHPLayer(UserVO userVO, HashMap<String, Object> dropQuery);
+
+	public void deleteSHPLayerCollection(UserVO userVO, HashMap<String, Object> deleteLayerCollectionQuery);
+
 }

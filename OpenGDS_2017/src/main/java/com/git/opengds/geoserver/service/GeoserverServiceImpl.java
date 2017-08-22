@@ -71,8 +71,8 @@ public class GeoserverServiceImpl implements GeoserverService {
 	private static DTGeoserverReader dtReader;
 	private static DTGeoserverPublisher dtPublisher;
 
-//	private final String workspace;
-	
+	// private final String workspace;
+
 	static {
 		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 		Properties properties = new Properties();
@@ -93,11 +93,11 @@ public class GeoserverServiceImpl implements GeoserverService {
 			e.printStackTrace();
 		}
 	}
-	
-/*	public GeoserverServiceImpl(UserVO userVO) {
-		// TODO Auto-generated constructor stub
-		workspace = userVO.getId();
-	}*/
+
+	/*
+	 * public GeoserverServiceImpl(UserVO userVO) { // TODO Auto-generated
+	 * constructor stub workspace = userVO.getId(); }
+	 */
 
 	/**
 	 * @since 2017. 5. 12.
@@ -109,7 +109,7 @@ public class GeoserverServiceImpl implements GeoserverService {
 	 * @see com.git.opengds.geoserver.service.GeoserverService#dbLayerPublishGeoserver(com.git.gdsbuilder.type.geoserver.layer.GeoLayerInfo)
 	 */
 	@SuppressWarnings("unused")
-	public FileMeta dbLayerPublishGeoserver(UserVO userVO, GeoLayerInfo layerInfo){
+	public FileMeta dbLayerPublishGeoserver(UserVO userVO, GeoLayerInfo layerInfo) {
 		String wsName = userVO.getId();
 		String dsName = userVO.getId();
 
@@ -122,15 +122,16 @@ public class GeoserverServiceImpl implements GeoserverService {
 
 		Collection<Geometry> geometryCollection = new ArrayList<Geometry>();
 		GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory();
-		
-		GeoserverSldTextType sldType = new GeoserverSldTextType(); //Geoserver TEXT 타입 
+
+		GeoserverSldTextType sldType = new GeoserverSldTextType(); // Geoserver
+																	// TEXT 타입
 
 		for (int i = 0; i < layerNameList.size(); i++) {
 
 			GSFeatureTypeEncoder fte = new GSFeatureTypeEncoder();
 			GSLayerEncoder layerEncoder = new GSLayerEncoder();
 			String layerName = layerNameList.get(i);
-							
+
 			String upperLayerName = layerName.toUpperCase();
 
 			int dash = layerName.indexOf("_");
@@ -145,68 +146,73 @@ public class GeoserverServiceImpl implements GeoserverService {
 			fte.setNativeCRS(originSrc);
 			fte.setNativeName(layerFullName); // nativeName
 			// fte.setLatLonBoundingBox(minx, miny, maxx, maxy, originSrc);
-			
-			//성능향상
+
+			// 성능향상
 			fte.addMetadata("cacheAgeMax", "604800");
 			fte.addMetadata("cachingEnabled", ("true"));
-			
-			//Style 적용
+
+			// Style 적용
 			String styleName = upperLayerName;
-			
-			if(layerType.equals("TEXT")){
+
+			if (layerType.equals("TEXT")) {
 				List<String> smallTextList = sldType.getSmallTextList();
 				List<String> mediumTextList = sldType.getMediumTextList();
 				List<String> largeTextList = sldType.getLargeTextList();
 				List<String> exceptTextList = sldType.getExceptTextList();
-				
-				
+
 				boolean isTextStyle = false;
-				
-				for(String stext : smallTextList){
-					if(cutLayerName.equals(stext)){
+
+				for (String stext : smallTextList) {
+					if (cutLayerName.equals(stext)) {
 						styleName = "SMALL_TEXT";
 						isTextStyle = true;
 					}
 				}
-				
-				if(!isTextStyle){
-					for(String mtext : mediumTextList){
-						if(cutLayerName.equals(mtext)){
+
+				if (!isTextStyle) {
+					for (String mtext : mediumTextList) {
+						if (cutLayerName.equals(mtext)) {
 							styleName = "MEDIUM_TEXT";
 							isTextStyle = true;
 							break;
 						}
 					}
-					if(!isTextStyle){
-						for(String ltext : largeTextList){
-							if(cutLayerName.equals(ltext)){
+					if (!isTextStyle) {
+						for (String ltext : largeTextList) {
+							if (cutLayerName.equals(ltext)) {
 								styleName = "LARGE_TEXT";
 								isTextStyle = true;
 							}
 						}
 					}
-					if(!isTextStyle){
-							if(cutLayerName.toUpperCase().equals("H0059153")){
-								if(fileType.equals("dxf")){
-									styleName = "DXF_"+ cutLayerName + "+_TEXT";
-									isTextStyle = true;
-								}
-								else if(fileType.equals("ngi")){
-									styleName = "NGI_"+ cutLayerName + "+_TEXT";
-									isTextStyle = true;
-								}
-							}
-							else if(cutLayerName.equals("H0040000")){
-								styleName = cutLayerName + "+_TEXT";
+					if (!isTextStyle) {
+						if (cutLayerName.toUpperCase().equals("H0059153")) {
+							if (fileType.equals("dxf")) {
+								styleName = "DXF_" + cutLayerName + "+_TEXT";
+								isTextStyle = true;
+							} else if (fileType.equals("ngi")) {
+								styleName = "NGI_" + cutLayerName + "+_TEXT";
 								isTextStyle = true;
 							}
+						} else if (cutLayerName.equals("H0040000")) {
+							styleName = cutLayerName + "+_TEXT";
+							isTextStyle = true;
+						}
 					}
 				}
 			}
-			
 
 			if (layerType.equals("LWPOLYLINE") || layerType.equals("POLYLINE") || layerType.equals("LINE")) {
 				styleName = cutLayerName.toUpperCase() + "_LWPOLYLINE";
+			}
+			if (layerType.equals("MULTILINESTRING")) {
+				styleName = cutLayerName.toUpperCase() + "_LINESTRING";
+			}
+			if (layerType.equals("MULTIPOLYGON")) {
+				styleName = cutLayerName.toUpperCase() + "_POLYGON";
+			}
+			if (layerType.equals("MULTIPOINT")) {
+				styleName = cutLayerName.toUpperCase() + "_POINT";
 			}
 
 			boolean styleFlag = dtReader.existsStyle(styleName);
@@ -247,11 +253,10 @@ public class GeoserverServiceImpl implements GeoserverService {
 				layerInfo.setServerPublishFlag(flag);
 				return layerInfo;
 			}
-			successLayerList.add(userVO.getId()+":"+layerFullName);
+			successLayerList.add(userVO.getId() + ":" + layerFullName);
 		}
 
-		
-		if(layerNameList.size()!=0){
+		if (layerNameList.size() != 0) {
 			GeometryCollection collection = (GeometryCollection) geometryFactory.buildGeometry(geometryCollection);
 			Geometry geometry = collection.union();
 			GSLayerGroupEncoder group = new GSLayerGroupEncoder();
@@ -259,34 +264,31 @@ public class GeoserverServiceImpl implements GeoserverService {
 				String layer = (String) successLayerList.get(i);
 				group.addLayer(layer);
 			}
-	
+
 			Coordinate[] coordinateArray = geometry.getEnvelope().getCoordinates();
 			Coordinate minCoordinate = new Coordinate();
 			Coordinate maxCoordinate = new Coordinate();
-	
+
 			minCoordinate = coordinateArray[0];
 			maxCoordinate = coordinateArray[2];
-	
+
 			double minx = minCoordinate.x;
 			double miny = minCoordinate.y;
 			double maxx = maxCoordinate.x;
 			double maxy = maxCoordinate.y;
-	
+
 			group.setBounds(originSrc, minx, maxx, miny, maxy);
-	
+
 			dtPublisher.createLayerGroup(wsName, "gro_" + fileType + "_" + fileName, group);
 		}
 		layerInfo.setServerPublishFlag(flag);
 
 		return layerInfo;
 	}
-	
-	
-	private void layerPublishTread(){
-		
+
+	private void layerPublishTread() {
+
 	}
-	
-	
 
 	/**
 	 * @since 2017. 5. 12.
@@ -357,38 +359,39 @@ public class GeoserverServiceImpl implements GeoserverService {
 	 * @see com.git.opengds.geoserver.service.GeoserverService#removeGeoserverLayer(java.lang.String)
 	 */
 	@Override
-	public boolean removeGeoserverLayer(UserVO userVO, String groupLayerName,String layerName) {
+	public boolean removeGeoserverLayer(UserVO userVO, String groupLayerName, String layerName) {
 		boolean isConfigureGroup = false;
 		boolean isRemoveLayer = false;
 		boolean isRemoveFeatureType = false;
 		DTGeoGroupLayer dtGeoGroupLayer = dtReader.getDTGeoGroupLayer(userVO.getId(), groupLayerName);
-		
-		if(dtGeoGroupLayer!=null){
+
+		if (dtGeoGroupLayer != null) {
 			List<String> layerList = dtGeoGroupLayer.getPublishedList().getNames();
 			layerList.remove(layerName);
-			
+
 			GSLayerGroupEncoder groupEncoder = new GSLayerGroupEncoder();
 			groupEncoder.setName(dtGeoGroupLayer.getName());
 			groupEncoder.setWorkspace(dtGeoGroupLayer.getWorkspace());
-			groupEncoder.setBounds(dtGeoGroupLayer.getCRS(), dtGeoGroupLayer.getMinX(), dtGeoGroupLayer.getMaxY(), dtGeoGroupLayer.getMinY(), dtGeoGroupLayer.getMaxY());
-			for(String name : layerList){
-				groupEncoder.addLayer(userVO.getId()+":"+name);
+			groupEncoder.setBounds(dtGeoGroupLayer.getCRS(), dtGeoGroupLayer.getMinX(), dtGeoGroupLayer.getMaxY(),
+					dtGeoGroupLayer.getMinY(), dtGeoGroupLayer.getMaxY());
+			for (String name : layerList) {
+				groupEncoder.addLayer(userVO.getId() + ":" + name);
 			}
-			
+
 			isConfigureGroup = dtPublisher.configureLayerGroup(userVO.getId(), groupLayerName, groupEncoder);
-			
+
 			isRemoveFeatureType = dtPublisher.unpublishFeatureType(userVO.getId(), userVO.getId(), layerName);
-//			isRemoveLayer = dtPublisher.removeLayer(userVO.getId(), layerName);
-		}
-		else{
+			// isRemoveLayer = dtPublisher.removeLayer(userVO.getId(),
+			// layerName);
+		} else {
 			isRemoveFeatureType = dtPublisher.unpublishFeatureType(userVO.getId(), userVO.getId(), layerName);
-			if(!isRemoveFeatureType){
+			if (!isRemoveFeatureType) {
 				return false;
 			}
 			return true;
 		}
-		
-		if(!isConfigureGroup&&!isRemoveFeatureType){
+
+		if (!isConfigureGroup && !isRemoveFeatureType) {
 			return false;
 		}
 		return true;
@@ -415,7 +418,7 @@ public class GeoserverServiceImpl implements GeoserverService {
 	 * @see com.git.opengds.geoserver.service.GeoserverService#removeGeoserverGroupLayer(java.lang.String)
 	 */
 	@Override
-	public boolean removeGeoserverGroupLayer(UserVO userVO,String groupLayerName) {
+	public boolean removeGeoserverGroupLayer(UserVO userVO, String groupLayerName) {
 		return dtPublisher.removeLayerGroup(userVO.getId(), groupLayerName);
 	}
 
@@ -474,8 +477,8 @@ public class GeoserverServiceImpl implements GeoserverService {
 	};
 
 	@Override
-	public boolean updateFeatureType(UserVO userVO, String orginalName, String name, String title, String abstractContent,
-			String style, boolean attChangeFlag) {
+	public boolean updateFeatureType(UserVO userVO, String orginalName, String name, String title,
+			String abstractContent, String style, boolean attChangeFlag) {
 		boolean updateFlag = false;
 		GSFeatureTypeEncoder fte = new GSFeatureTypeEncoder();
 		GSLayerEncoder layerEncoder = null;
@@ -506,7 +509,8 @@ public class GeoserverServiceImpl implements GeoserverService {
 
 		// boolean flag = dtPublisher.recalculate(workspace, storename,
 		// layerFullName, testFte, testLayerEncoder);
-		updateFlag = dtPublisher.updateFeatureType(userVO.getId(), userVO.getId(), orginalName, fte, layerEncoder, attChangeFlag);
+		updateFlag = dtPublisher.updateFeatureType(userVO.getId(), userVO.getId(), orginalName, fte, layerEncoder,
+				attChangeFlag);
 
 		return updateFlag;
 	}
@@ -523,7 +527,7 @@ public class GeoserverServiceImpl implements GeoserverService {
 	}
 
 	@Override
-	public boolean errLayerPublishGeoserver(UserVO userVO,GeoLayerInfo geoLayerInfo) {
+	public boolean errLayerPublishGeoserver(UserVO userVO, GeoLayerInfo geoLayerInfo) {
 		// TODO Auto-generated method stub
 		return dtPublisher.publishErrLayer(userVO.getId(), userVO.getId(), geoLayerInfo);
 	}

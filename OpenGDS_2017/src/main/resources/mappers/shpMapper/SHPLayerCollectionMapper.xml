@@ -12,6 +12,11 @@
 		</selectKey>
 	</insert>
 
+	<select id="selectSHPLayerCollectionIdx" parameterType="hashMap"
+		resultType="hashMap">
+		${selectQuery}
+	</select>
+
 	<!-- SHPLayer -->
 	<select id="createSHPLayerTb" parameterType="hashMap">
 		${createQuery}
@@ -21,10 +26,36 @@
 		${insertQuery}
 	</insert>
 
+	<select id="selectSHPFeatureIdx" parameterType="hashMap"
+		resultType="hashMap">
+		${selectQuery}
+	</select>
+
+	<delete id="deleteSHPFeature" parameterType="hashMap">
+		${deleteQuery}
+	</delete>
+
+	<update id="deleteSHPLayerCollection" parameterType="hashMap">
+		${deleteQuery}
+	</update>
+
 	<!-- SHPLayerMetadata -->
 	<insert id="insertSHPLayerMetadata" parameterType="hashmap"
 		useGeneratedKeys="true">
 		${insertQuery}
 	</insert>
+
+	<select id="selectSHPLayerMetadataIdx" parameterType="hashMap"
+		resultType="hashMap">
+		${selectQuery}
+	</select>
+
+	<select id="deleteSHPLayerMetedata" parameterType="hashMap">
+		${deleteQuery}
+	</select>
+
+	<update id="dropSHPLayer" parameterType="hashMap">
+		${dropQuery}
+	</update>
 
 </mapper>

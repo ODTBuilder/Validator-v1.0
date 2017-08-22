@@ -1,27 +1,39 @@
 package com.git.opengds.editor.service;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.json.simple.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import javax.inject.Inject;
 
-import com.git.gdsbuilder.edit.dxf.EditDXFCollection;
+import org.geotools.feature.SchemaException;
+import org.json.simple.JSONObject;
+import org.springframework.stereotype.Service;
+import org.springframework.test.context.ContextConfiguration;
+
+import com.git.gdsbuilder.edit.dxf.EditDXFLayerCollection;
 import com.git.gdsbuilder.edit.dxf.EditDXFLayerCollectionList;
-import com.git.gdsbuilder.edit.ngi.EditNGICollection;
+import com.git.gdsbuilder.edit.ngi.EditNGILayerCollection;
 import com.git.gdsbuilder.edit.ngi.EditNGILayerCollectionList;
+import com.git.gdsbuilder.edit.shp.EditSHPLayerCollection;
+import com.git.gdsbuilder.edit.shp.EditSHPLayerCollectionList;
 import com.git.gdsbuilder.type.dxf.layer.DTDXFLayer;
 import com.git.gdsbuilder.type.dxf.layer.DTDXFLayerList;
 import com.git.gdsbuilder.type.ngi.layer.DTNGILayer;
 import com.git.gdsbuilder.type.ngi.layer.DTNGILayerList;
+import com.git.gdsbuilder.type.shp.layer.DTSHPLayer;
+import com.git.gdsbuilder.type.shp.layer.DTSHPLayerList;
 import com.git.opengds.editor.EditDTLayerCondition;
 import com.git.opengds.geoserver.service.GeoserverService;
 import com.git.opengds.parser.json.BuilderJSONDXFParser;
 import com.git.opengds.parser.json.BuilderJSONNGIParser;
+import com.git.opengds.parser.json.BuilderJSONSHPParser;
 import com.git.opengds.user.domain.UserVO;
+import com.vividsolutions.jts.io.ParseException;
 
 @Service
+@ContextConfiguration(locations = { "file:src/main/webapp/WEB-INF/spring/**/*.xml" })
 public class EditDTLayerServiceImpl implements EditDTLayerService {
 
 	protected static final String none = "none";
@@ -33,10 +45,10 @@ public class EditDTLayerServiceImpl implements EditDTLayerService {
 	protected static final String isDxf = "dxf";
 	protected static final String isShp = "shp";
 
-	@Autowired
+	@Inject
 	EditDBManagerService editDBManager;
 
-	@Autowired
+	@Inject
 	GeoserverService geoserver;
 
 	/*
@@ -54,159 +66,207 @@ public class EditDTLayerServiceImpl implements EditDTLayerService {
 		while (layerIterator.hasNext()) {
 			String type = (String) layerIterator.next();
 			if (type.equals(isNgi)) {
-				EditNGILayerCollectionList edtQA20CollectionListObj = BuilderJSONNGIParser
-						.parseEditLayerObj(layerEditObj, type);
-				for (int i = 0; i < edtQA20CollectionListObj.size(); i++) {
-					EditNGICollection editCollection = edtQA20CollectionListObj.get(i);
-					String collectionName = editCollection.getCollectionName();
-					EditDTLayerCondition condition = new EditDTLayerCondition();
-					// collection 중복 여부 확인
-					Integer collectionIdx = editDBManager.checkNGILayerCollectionName(userVO, collectionName);
-					if (editCollection.isCreated()) {
-						if (collectionIdx != null) {
-							// 1. 중복되었을 시(이미 존재하는 collection에 레이어 테이블만
-							// create)
-							DTNGILayerList createLayerList = editCollection.getCreateLayerList();
-							for (int j = 0; j < createLayerList.size(); j++) {
-								DTNGILayer createLayer = createLayerList.get(j);
-								String layerName = createLayer.getLayerName();
-								boolean isSuccessed = editDBManager.createNGILayer(userVO, isNgi, collectionIdx,
-										collectionName, createLayer, src);
-								if (isSuccessed) {
-									condition.putSuccessedLayers(collectionName, layerName);
-								} else {
-									condition.putFailedLayers(collectionName, layerName);
-								}
-							}
-						} else {
-							// 2. 중복되지 않았을 시 collection insert 후 레이어 테이블
-							// create
-							Integer insertIdx = editDBManager.createNGILayerCollection(userVO, isNgi, editCollection);
-							DTNGILayerList createLayerList = editCollection.getCreateLayerList();
-							for (int j = 0; j < createLayerList.size(); j++) {
-								DTNGILayer createLayer = createLayerList.get(j);
-								String layerName = createLayer.getLayerName();
-								boolean isSuccessed = editDBManager.createNGILayer(userVO, isNgi, insertIdx,
-										collectionName, createLayer, src);
-								if (isSuccessed) {
-									condition.putSuccessedLayers(collectionName, layerName);
-								} else {
-									condition.putFailedLayers(collectionName, layerName);
-								}
-							}
-						}
-					}
-					if (editCollection.isModified()) {
-						// 1. 수정할 레이어
-						DTNGILayerList modifiedLayerList = editCollection.getModifiedLayerList();
-						for (int j = 0; j < modifiedLayerList.size(); j++) {
-							DTNGILayer modifiedLayer = modifiedLayerList.get(j);
-							String layerName = modifiedLayer.getLayerName();
-							String originName = modifiedLayer.getOriginLayerName();
-							Map<String, Object> geoLayerList = editCollection.getGeoLayerList();
-							Map<String, Object> geoLayer = (Map<String, Object>) geoLayerList.get(originName);
-							boolean isSuccessed = editDBManager.modifyNGILayer(userVO, isNgi, collectionIdx,
-									collectionName, modifiedLayer, geoLayer);
-							if (isSuccessed) {
-								condition.putSuccessedLayers(collectionName, layerName);
-							} else {
-								condition.putFailedLayers(collectionName, layerName);
-							}
-						}
-					}
-					if (editCollection.isDeleted()) {
-						if (editCollection.isDeleteAll()) {
-							String groupName = "gro" + "_" + type + "_" + collectionName;
-							geoserver.removeGeoserverGroupLayer(userVO, groupName);
-						}
-						DTNGILayerList layerList = editCollection.getDeletedLayerList();
-						for (int j = 0; j < layerList.size(); j++) {
-							DTNGILayer layer = layerList.get(j);
-							editDBManager.dropNGILayer(userVO, isNgi, collectionIdx, collectionName, layer);
-						}
-						if (editCollection.isDeleteAll()) {
-							editDBManager.deleteNGILayerCollection(userVO, collectionIdx);
-						}
-					}
-				}
+				editNGILayer(userVO, layerEditObj, type);
 			} else if (type.equals(isDxf)) {
-				EditDXFLayerCollectionList edtCollectionList = BuilderJSONDXFParser.parseEditLayerObj(layerEditObj,
-						type);
-				for (int i = 0; i < edtCollectionList.size(); i++) {
-					EditDXFCollection editCollection = edtCollectionList.get(i);
-					String collectionName = editCollection.getCollectionName();
-					EditDTLayerCondition condition = new EditDTLayerCondition();
-					Integer collectionIdx = editDBManager.checkDXFLayerCollectionName(userVO, collectionName);
-					if (editCollection.isCreated()) {
-						if (collectionIdx != null) {
-							// 1. 중복되었을 시(이미 존재하는 collection에 레이어 테이블만
-							// create)
-							DTDXFLayerList createLayerList = editCollection.getCreateLayerList();
-							for (int j = 0; j < createLayerList.size(); j++) {
-								DTDXFLayer createLayer = createLayerList.get(j);
-								String layerId = createLayer.getLayerID();
-								boolean isSuccessed = editDBManager.createDXFLayer(userVO, isDxf, collectionIdx,
-										collectionName, createLayer, src);
-								if (isSuccessed) {
-									condition.putSuccessedLayers(collectionName, layerId);
-								} else {
-									condition.putFailedLayers(collectionName, layerId);
-								}
-							}
+				editDXFLayer(userVO, layerEditObj, type);
+			} else if (type.equals(isShp)) {
+				editSHPLayer(userVO, layerEditObj, type);
+			}
+		}
+
+	}
+
+	private void editSHPLayer(UserVO userVO, JSONObject layerEditObj, String type)
+			throws FileNotFoundException, IOException, ParseException, SchemaException {
+		String src = "5186";
+		EditSHPLayerCollectionList edtCollectionList = BuilderJSONSHPParser.parseEditLayerObj(layerEditObj, type);
+		for (int i = 0; i < edtCollectionList.size(); i++) {
+			EditSHPLayerCollection editCollection = edtCollectionList.get(i);
+			String collectionName = editCollection.getCollectionName();
+			EditDTLayerCondition condition = new EditDTLayerCondition();
+			Integer collectionIdx = editDBManager.selectSHPLayerCollectionIdx(userVO, collectionName);
+			if (editCollection.isCreated()) {
+
+			}
+			if (editCollection.isModified()) {
+
+			}
+			if (editCollection.isDeleted()) {
+				if (editCollection.isDeleteAll()) {
+					String groupName = "gro" + "_" + type + "_" + collectionName;
+					geoserver.removeGeoserverGroupLayer(userVO, groupName);
+				}
+				DTSHPLayerList layerList = editCollection.getDeletedLayerList();
+				for (int j = 0; j < layerList.size(); j++) {
+					DTSHPLayer layer = layerList.get(j);
+					editDBManager.dropSHPLayer(userVO, isShp, collectionIdx, collectionName, layer);
+				}
+				if (editCollection.isDeleteAll()) {
+					editDBManager.deleteSHPLayerCollection(userVO, collectionIdx);
+				}
+			}
+		}
+	}
+
+	private void editDXFLayer(UserVO userVO, JSONObject layerEditObj, String type)
+			throws FileNotFoundException, IOException, ParseException, SchemaException {
+
+		String src = "5186";
+
+		EditDXFLayerCollectionList edtCollectionList = BuilderJSONDXFParser.parseEditLayerObj(layerEditObj, type);
+		for (int i = 0; i < edtCollectionList.size(); i++) {
+			EditDXFLayerCollection editCollection = edtCollectionList.get(i);
+			String collectionName = editCollection.getCollectionName();
+			EditDTLayerCondition condition = new EditDTLayerCondition();
+			Integer collectionIdx = editDBManager.selectDXFLayerCollectionIdx(userVO, collectionName);
+			if (editCollection.isCreated()) {
+				if (collectionIdx != null) {
+					// 1. 중복되었을 시(이미 존재하는 collection에 레이어 테이블만
+					// create)
+					DTDXFLayerList createLayerList = editCollection.getCreateLayerList();
+					for (int j = 0; j < createLayerList.size(); j++) {
+						DTDXFLayer createLayer = createLayerList.get(j);
+						String layerId = createLayer.getLayerID();
+						boolean isSuccessed = editDBManager.createDXFLayer(userVO, isDxf, collectionIdx, collectionName,
+								createLayer, src);
+						if (isSuccessed) {
+							condition.putSuccessedLayers(collectionName, layerId);
 						} else {
-							// 2. 중복되지 않았을 시 collection insert 후 레이어 테이블
-							// create
-							Integer insertIdx = editDBManager.createDXFLayerCollection(userVO, isDxf, editCollection);
-							DTDXFLayerList createLayerList = editCollection.getCreateLayerList();
-							for (int j = 0; j < createLayerList.size(); j++) {
-								DTDXFLayer createLayer = createLayerList.get(j);
-								String layerId = createLayer.getLayerID();
-								boolean isSuccessed = editDBManager.createDXFLayer(userVO, isDxf, insertIdx,
-										collectionName, createLayer, src);
-								if (isSuccessed) {
-									condition.putSuccessedLayers(collectionName, layerId);
-								} else {
-									condition.putFailedLayers(collectionName, layerId);
-								}
-							}
+							condition.putFailedLayers(collectionName, layerId);
 						}
 					}
-					if (editCollection.isModified()) {
-						// 1. 수정할 레이어
-						DTDXFLayerList modifiedLayerList = editCollection.getModifiedLayerList();
-						for (int j = 0; j < modifiedLayerList.size(); j++) {
-							DTDXFLayer modifiedLayer = modifiedLayerList.get(j);
-							String layerId = modifiedLayer.getLayerID();
-							String originID = modifiedLayer.getOriginLayerID();
-							Map<String, Object> geoLayerList = editCollection.getGeoLayerList();
-							Map<String, Object> geoLayer = (Map<String, Object>) geoLayerList.get(originID);
-							boolean isSuccessed = editDBManager.modifyDXFLayer(userVO, isDxf, collectionIdx,
-									collectionName, modifiedLayer, geoLayer);
-							if (isSuccessed) {
-								condition.putSuccessedLayers(collectionName, layerId);
-							} else {
-								condition.putFailedLayers(collectionName, layerId);
-							}
-						}
-					}
-					if (editCollection.isDeleted()) {
-						if (editCollection.isDeleteAll()) {
-							String groupName = "gro" + "_" + type + "_" + collectionName;
-							geoserver.removeGeoserverGroupLayer(userVO, groupName);
-						}
-						DTDXFLayerList layerList = editCollection.getDeletedLayerList();
-						for (int j = 0; j < layerList.size(); j++) {
-							DTDXFLayer layer = layerList.get(j);
-							editDBManager.dropDXFLayer(userVO, isDxf, collectionIdx, collectionName, layer);
-						}
-						if (editCollection.isDeleteAll()) {
-							editDBManager.deleteDXFLayerCollectionTablesCommon(userVO, collectionIdx);
-							editDBManager.deleteDXFLayerCollection(userVO, collectionIdx);
+				} else {
+					// 2. 중복되지 않았을 시 collection insert 후 레이어 테이블
+					// create
+					Integer insertIdx = editDBManager.createDXFLayerCollection(userVO, isDxf, editCollection);
+					DTDXFLayerList createLayerList = editCollection.getCreateLayerList();
+					for (int j = 0; j < createLayerList.size(); j++) {
+						DTDXFLayer createLayer = createLayerList.get(j);
+						String layerId = createLayer.getLayerID();
+						boolean isSuccessed = editDBManager.createDXFLayer(userVO, isDxf, insertIdx, collectionName,
+								createLayer, src);
+						if (isSuccessed) {
+							condition.putSuccessedLayers(collectionName, layerId);
+						} else {
+							condition.putFailedLayers(collectionName, layerId);
 						}
 					}
 				}
-			} else if (type.equals(isShp)) {
+			}
+			if (editCollection.isModified()) {
+				// 1. 수정할 레이어
+				DTDXFLayerList modifiedLayerList = editCollection.getModifiedLayerList();
+				for (int j = 0; j < modifiedLayerList.size(); j++) {
+					DTDXFLayer modifiedLayer = modifiedLayerList.get(j);
+					String layerId = modifiedLayer.getLayerID();
+					String originID = modifiedLayer.getOriginLayerID();
+					Map<String, Object> geoLayerList = editCollection.getGeoLayerList();
+					Map<String, Object> geoLayer = (Map<String, Object>) geoLayerList.get(originID);
+					boolean isSuccessed = editDBManager.modifyDXFLayer(userVO, isDxf, collectionIdx, collectionName,
+							modifiedLayer, geoLayer);
+					if (isSuccessed) {
+						condition.putSuccessedLayers(collectionName, layerId);
+					} else {
+						condition.putFailedLayers(collectionName, layerId);
+					}
+				}
+			}
+			if (editCollection.isDeleted()) {
+				if (editCollection.isDeleteAll()) {
+					String groupName = "gro" + "_" + type + "_" + collectionName;
+					geoserver.removeGeoserverGroupLayer(userVO, groupName);
+				}
+				DTDXFLayerList layerList = editCollection.getDeletedLayerList();
+				for (int j = 0; j < layerList.size(); j++) {
+					DTDXFLayer layer = layerList.get(j);
+					editDBManager.dropDXFLayer(userVO, isDxf, collectionIdx, collectionName, layer);
+				}
+				if (editCollection.isDeleteAll()) {
+					editDBManager.deleteDXFLayerCollectionTablesCommon(userVO, collectionIdx);
+					editDBManager.deleteDXFLayerCollection(userVO, collectionIdx);
+				}
+			}
+		}
+	}
 
+	private void editNGILayer(UserVO userVO, JSONObject layerEditObj, String type)
+			throws FileNotFoundException, IOException, ParseException, SchemaException {
+
+		String src = "5186";
+
+		EditNGILayerCollectionList edtQA20CollectionListObj = BuilderJSONNGIParser.parseEditLayerObj(layerEditObj,
+				type);
+		for (int i = 0; i < edtQA20CollectionListObj.size(); i++) {
+			EditNGILayerCollection editCollection = edtQA20CollectionListObj.get(i);
+			String collectionName = editCollection.getCollectionName();
+			EditDTLayerCondition condition = new EditDTLayerCondition();
+			// collection 중복 여부 확인
+			Integer collectionIdx = editDBManager.selectNGILayerCollectionIdx(userVO, collectionName);
+			if (editCollection.isCreated()) {
+				if (collectionIdx != null) {
+					// 1. 중복되었을 시(이미 존재하는 collection에 레이어 테이블만
+					// create)
+					DTNGILayerList createLayerList = editCollection.getCreateLayerList();
+					for (int j = 0; j < createLayerList.size(); j++) {
+						DTNGILayer createLayer = createLayerList.get(j);
+						String layerName = createLayer.getLayerName();
+						boolean isSuccessed = editDBManager.createNGILayer(userVO, isNgi, collectionIdx, collectionName,
+								createLayer, src);
+						if (isSuccessed) {
+							condition.putSuccessedLayers(collectionName, layerName);
+						} else {
+							condition.putFailedLayers(collectionName, layerName);
+						}
+					}
+				} else {
+					// 2. 중복되지 않았을 시 collection insert 후 레이어 테이블
+					// create
+					Integer insertIdx = editDBManager.createNGILayerCollection(userVO, isNgi, editCollection);
+					DTNGILayerList createLayerList = editCollection.getCreateLayerList();
+					for (int j = 0; j < createLayerList.size(); j++) {
+						DTNGILayer createLayer = createLayerList.get(j);
+						String layerName = createLayer.getLayerName();
+						boolean isSuccessed = editDBManager.createNGILayer(userVO, isNgi, insertIdx, collectionName,
+								createLayer, src);
+						if (isSuccessed) {
+							condition.putSuccessedLayers(collectionName, layerName);
+						} else {
+							condition.putFailedLayers(collectionName, layerName);
+						}
+					}
+				}
+			}
+			if (editCollection.isModified()) {
+				// 1. 수정할 레이어
+				DTNGILayerList modifiedLayerList = editCollection.getModifiedLayerList();
+				for (int j = 0; j < modifiedLayerList.size(); j++) {
+					DTNGILayer modifiedLayer = modifiedLayerList.get(j);
+					String layerName = modifiedLayer.getLayerName();
+					String originName = modifiedLayer.getOriginLayerName();
+					Map<String, Object> geoLayerList = editCollection.getGeoLayerList();
+					Map<String, Object> geoLayer = (Map<String, Object>) geoLayerList.get(originName);
+					boolean isSuccessed = editDBManager.modifyNGILayer(userVO, isNgi, collectionIdx, collectionName,
+							modifiedLayer, geoLayer);
+					if (isSuccessed) {
+						condition.putSuccessedLayers(collectionName, layerName);
+					} else {
+						condition.putFailedLayers(collectionName, layerName);
+					}
+				}
+			}
+			if (editCollection.isDeleted()) {
+				if (editCollection.isDeleteAll()) {
+					String groupName = "gro" + "_" + type + "_" + collectionName;
+					geoserver.removeGeoserverGroupLayer(userVO, groupName);
+				}
+				DTNGILayerList layerList = editCollection.getDeletedLayerList();
+				for (int j = 0; j < layerList.size(); j++) {
+					DTNGILayer layer = layerList.get(j);
+					editDBManager.dropNGILayer(userVO, isNgi, collectionIdx, collectionName, layer);
+				}
+				if (editCollection.isDeleteAll()) {
+					editDBManager.deleteNGILayerCollection(userVO, collectionIdx);
+				}
 			}
 		}
 	}

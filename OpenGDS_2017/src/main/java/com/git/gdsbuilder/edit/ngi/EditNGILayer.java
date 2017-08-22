@@ -6,7 +6,7 @@ import com.git.gdsbuilder.type.ngi.feature.DTNGIFeatureList;
 import com.git.gdsbuilder.type.ngi.header.NDAHeader;
 import com.git.gdsbuilder.type.ngi.header.NGIHeader;
 
-public class EditNGI0Layer {
+public class EditNGILayer {
 
 	String layerName;
 	String orignName;
@@ -23,7 +23,7 @@ public class EditNGI0Layer {
 	boolean isModified = false;
 	boolean isDeleted = false;
 
-	public EditNGI0Layer() {
+	public EditNGILayer() {
 
 	}
 

@@ -3,8 +3,9 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/aop
 http://www.springframework.org/schema/aop/spring-aop.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
-http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.2.xsd" xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx">
-<tx:annotation-driven />
+http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.2.xsd"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx">
+	<tx:annotation-driven />
 	<!-- Root Context: defines shared resources visible to all other web components -->
 
 	<!-- JDBC의 연결을 처리하는 기능을 가진 DataSource -->
@@ -33,32 +34,34 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
 		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
 		<property name="dataSource" ref="adminDataSource" />
 	</bean>
-	
+
 	<tx:advice id="txAdvice" transaction-manager="adminTransactionManager">
 		<tx:attributes>
 			<tx:method name="*" rollback-for="Exception" />
-			<!-- <tx:method name="insert*" rollback-for="Exception" />
-			<tx:method name="create*" rollback-for="Exception" />
-			<tx:method name="update*" rollback-for="Exception" />
-			<tx:method name="drop*" rollback-for="Exception" /> -->
+			<!-- <tx:method name="insert*" rollback-for="Exception" /> <tx:method 
+				name="create*" rollback-for="Exception" /> <tx:method name="update*" rollback-for="Exception" 
+				/> <tx:method name="drop*" rollback-for="Exception" /> -->
 		</tx:attributes>
 	</tx:advice>
-	
+
 	<aop:config proxy-target-class="true">
-<!-- 	    <aop:pointcut id="serviceOperation" expression="execution(* com.git.opengds..*.*(..))" /> -->
-<!-- 		<aop:pointcut id="serviceOperation" expression="execution(* com.git.opengds.file.*.service.*Service.*(a..))"/> -->
-		<aop:pointcut id="serviceOperation" expression="execution(* com.git.opengds.file.*.service.*DBManagerServiceImpl.*(..))||
+		<!-- <aop:pointcut id="serviceOperation" expression="execution(* com.git.opengds..*.*(..))" 
+			/> -->
+		<!-- <aop:pointcut id="serviceOperation" expression="execution(* com.git.opengds.file.*.service.*Service.*(a..))"/> -->
+		<aop:pointcut id="serviceOperation"
+			expression="execution(* com.git.opengds.file.*.service.*DBManagerServiceImpl.*(..))||
 	    												execution(* com.git.opengds.editor.service.*DBManagerServiceImpl.*(..))" />
-<!-- 			<aop:pointcut id="serviceOperation" expression="excution(* com.project.service.service..*.*(..))"/> -->
+		<!-- <aop:pointcut id="serviceOperation" expression="excution(* com.project.service.service..*.*(..))"/> -->
 
 
-	    <aop:advisor id="transactionAdvisor" pointcut-ref="serviceOperation" advice-ref="txAdvice"/>
+		<aop:advisor id="transactionAdvisor" pointcut-ref="serviceOperation"
+			advice-ref="txAdvice" />
 	</aop:config>
 
 
-	<!-- <aop:config proxy-target-class="true">
-		<aop:pointcut id="controllerOperation" expression="execution(public * com.git.opengds.file.*.controller.*Controller.*(..))" />
-	</aop:config> -->
+	<!-- <aop:config proxy-target-class="true"> <aop:pointcut id="controllerOperation" 
+		expression="execution(public * com.git.opengds.file.*.controller.*Controller.*(..))" 
+		/> </aop:config> -->
 
 
 
@@ -90,11 +93,13 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
 		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
 		<property name="dataSource" ref="admin2DataSource" />
 	</bean>
-	
+
 	<aop:config proxy-target-class="true">
-	    <aop:pointcut id="serviceOperation2" expression="execution(* com.git.opengds.file.*.service.*DBManagerServiceImpl.*(..))||
+		<aop:pointcut id="serviceOperation2"
+			expression="execution(* com.git.opengds.file.*.service.*DBManagerServiceImpl.*(..))||
 	    												execution(* com.git.opengds.editor.service.*DBManagerServiceImpl.*(..))" />
-	    <aop:advisor id="transactionAdvisor2" pointcut-ref="serviceOperation2" advice-ref="txAdvice2"/>
+		<aop:advisor id="transactionAdvisor2" pointcut-ref="serviceOperation2"
+			advice-ref="txAdvice2" />
 	</aop:config>
 
 	<tx:advice id="txAdvice2" transaction-manager="admin2TransactionManager">
@@ -134,9 +139,11 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
 	</bean>
 
 	<aop:config proxy-target-class="true">
-	    <aop:pointcut id="serviceOperation3" expression="execution(* com.git.opengds.file.*.service.*DBManagerServiceImpl.*(..))||
+		<aop:pointcut id="serviceOperation3"
+			expression="execution(* com.git.opengds.file.*.service.*DBManagerServiceImpl.*(..))||
 	    												execution(* com.git.opengds.editor.service.*DBManagerServiceImpl.*(..))" />
-	    <aop:advisor id="transactionAdvisor3" pointcut-ref="serviceOperation3" advice-ref="txAdvice3"/>
+		<aop:advisor id="transactionAdvisor3" pointcut-ref="serviceOperation3"
+			advice-ref="txAdvice3" />
 	</aop:config>
 
 	<tx:advice id="txAdvice3" transaction-manager="admin3TransactionManager">
@@ -173,11 +180,13 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
 		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
 		<property name="dataSource" ref="userDataSource" />
 	</bean>
-	
+
 	<aop:config proxy-target-class="true">
-	    <aop:pointcut id="userServiceOperation" expression="execution(* com.git.opengds.file.*.service.*DBManagerServiceImpl.*(..))||
+		<aop:pointcut id="userServiceOperation"
+			expression="execution(* com.git.opengds.file.*.service.*DBManagerServiceImpl.*(..))||
 	    												execution(* com.git.opengds.editor.service.*DBManagerServiceImpl.*(..))" />
-	    <aop:advisor id="userTransactionAdvisor" pointcut-ref="userServiceOperation" advice-ref="txAdviceUser"/>
+		<aop:advisor id="userTransactionAdvisor" pointcut-ref="userServiceOperation"
+			advice-ref="txAdviceUser" />
 	</aop:config>
 
 	<tx:advice id="txAdviceUser" transaction-manager="userTransactionManager">
@@ -192,14 +201,15 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
 
 
 	<!-- 예제 test -->
-	<!-- <context:component-scan base-package="com.git.opengds"> 
-		<context:exclude-filter expression="org.springframework.stereotype.Controller" type="annotation" /> 
-	</context:component-scan>-->
+	<context:component-scan base-package="com.git.opengds">
+		<context:exclude-filter expression="org.springframework.stereotype.Controller"
+			type="annotation" />
+	</context:component-scan>
 	<!-- <context:component-scan base-package="com.git.opengds" use-default-filters="false"> 
-		<context:include-filter expression="org.springframework.stereotype.Service" type="annotation" />
-		<context:include-filter expression="org.springframework.stereotype.Repository" type="annotation" />
-	</context:component-scan> -->
+		<context:include-filter expression="org.springframework.stereotype.Service" 
+		type="annotation" /> <context:include-filter expression="org.springframework.stereotype.Repository" 
+		type="annotation" /> </context:component-scan> -->
 
 
-	
+
 </beans>

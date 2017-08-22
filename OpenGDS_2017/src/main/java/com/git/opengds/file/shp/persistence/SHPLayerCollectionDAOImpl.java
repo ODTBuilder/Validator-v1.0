@@ -39,4 +39,52 @@ public class SHPLayerCollectionDAOImpl extends DataSourceFactory implements SHPL
 		sqlSession = super.getSqlSession(userVO.getId());
 		sqlSession.insert(namespace + ".insertSHPLayerMetadata", insertLayerMeteQuery);
 	}
+
+	@Override
+	public int selectSHPFeatureIdx(UserVO userVO, HashMap<String, Object> selectIdxquery) {
+		sqlSession = super.getSqlSession(userVO.getId());
+		HashMap<String, Object> idxMap = sqlSession.selectOne(namespace + ".selectSHPFeatureIdx", selectIdxquery);
+		int idx = (Integer) idxMap.get("f_idx");
+		return idx;
+	}
+
+	@Override
+	public void deleteSHPFeature(UserVO userVO, HashMap<String, Object> deleteFeature) {
+		sqlSession = super.getSqlSession(userVO.getId());
+		sqlSession.delete(namespace + ".deleteSHPFeature", deleteFeature);
+	}
+
+	@Override
+	public Integer selectSHPLayerCollectionIdx(UserVO userVO, HashMap<String, Object> selectLayerCollectionIdxQuery) {
+		sqlSession = super.getSqlSession(userVO.getId());
+		HashMap<String, Object> idxMap = sqlSession.selectOne(namespace + ".selectSHPLayerCollectionIdx",
+				selectLayerCollectionIdxQuery);
+		return (Integer) idxMap.get("c_idx");
+	}
+
+	@Override
+	public Integer selectSHPLayerMetadataIdx(UserVO userVO, HashMap<String, Object> metadataIdxQuery) {
+		sqlSession = super.getSqlSession(userVO.getId());
+		HashMap<String, Object> idxMap = sqlSession.selectOne(namespace + ".selectSHPLayerMetadataIdx",
+				metadataIdxQuery);
+		return (Integer) idxMap.get("lm_idx");
+	}
+
+	@Override
+	public void deleteSHPLayerMetadata(UserVO userVO, HashMap<String, Object> deleteLayerMetaQuery) {
+		sqlSession = super.getSqlSession(userVO.getId());
+		sqlSession.delete(namespace + ".deleteSHPLayerMetedata", deleteLayerMetaQuery);
+	}
+
+	@Override
+	public void dropSHPLayer(UserVO userVO, HashMap<String, Object> dropQuery) {
+		sqlSession = super.getSqlSession(userVO.getId());
+		sqlSession.update(namespace + ".dropSHPLayer", dropQuery);
+	}
+
+	@Override
+	public void deleteSHPLayerCollection(UserVO userVO, HashMap<String, Object> deleteLayerCollectionQuery) {
+		sqlSession = super.getSqlSession(userVO.getId());
+		sqlSession.delete(namespace + ".deleteSHPLayerCollection", deleteLayerCollectionQuery);
+	}
 }

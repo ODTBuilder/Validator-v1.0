@@ -17,14 +17,22 @@
 
 package com.git.opengds.editor.service;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
+
+import javax.inject.Inject;
+
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.test.context.ContextConfiguration;
 
 import com.git.opengds.user.domain.UserVO;
 
 @Service
+@ContextConfiguration(locations = { "file:src/main/webapp/WEB-INF/spring/**/*.xml" })
 public class EditServiceImpl implements EditService {
 
 	protected static final String none = "none";
@@ -36,18 +44,16 @@ public class EditServiceImpl implements EditService {
 	protected static final String isDxf = "dxf";
 	protected static final String isShp = "shp";
 
-	@Autowired
+	@Inject
 	private EditDTLayerService editLayerService;
 
-	@Autowired
+	@Inject
 	private EditDTFeatureService editFeatureService;
-/*	
-	public EditServiceImpl(UserVO userVO) {
-		// TODO Auto-generated constructor stub
-		editLayerService = new EditLayerServiceImpl(userVO);
-		editFeatureService = new EditFeatureServiceImpl(userVO);
-	}*/
-	
+	/*
+	 * public EditServiceImpl(UserVO userVO) { // TODO Auto-generated
+	 * constructor stub editLayerService = new EditLayerServiceImpl(userVO);
+	 * editFeatureService = new EditFeatureServiceImpl(userVO); }
+	 */
 
 	@Override
 	public void editLayerCollection(UserVO userVO, String editJSONStr) throws Exception {
@@ -55,19 +61,25 @@ public class EditServiceImpl implements EditService {
 		JSONParser jsonParser = new JSONParser();
 		JSONObject editJSONObject = (JSONObject) jsonParser.parse(editJSONStr);
 
+//		BufferedReader reader = new BufferedReader(
+//				new InputStreamReader(new FileInputStream(new File("d:\\editNGIFinal.txt")), "euc-kr"));
+//
+//		JSONParser parser = new JSONParser();
+//		Object obj = parser.parse(reader);
+//		JSONObject editJSONObject = (JSONObject) obj;
+
 		// layerEdit
-		Object layerEditObj = editJSONObject.get("layer");
-		if (layerEditObj != null) {
-			JSONObject layerEdit = (JSONObject) layerEditObj;
-			editLayerService.editLayer(userVO,layerEdit);
-		}
+//		Object layerEditObj = editJSONObject.get("layer");
+//		if (layerEditObj != null) {
+//			JSONObject layerEdit = (JSONObject) layerEditObj;
+//			editLayerService.editLayer(userVO, layerEdit);
+//		}
 
 		// featureEdit
 		Object featureEditObj = editJSONObject.get("feature");
 		if (featureEditObj != null) {
 			JSONObject featureEdit = (JSONObject) featureEditObj;
-			editFeatureService.editFeature(userVO,featureEdit);
+			editFeatureService.editFeature(userVO, featureEdit);
 		}
 	}
-
 }

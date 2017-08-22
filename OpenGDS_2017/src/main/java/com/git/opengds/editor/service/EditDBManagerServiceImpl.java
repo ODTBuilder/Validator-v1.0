@@ -23,12 +23,12 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.opengis.feature.simple.SimpleFeature;
 import org.springframework.stereotype.Service;
 import org.springframework.test.context.ContextConfiguration;
 
-import com.git.gdsbuilder.edit.dxf.EditDXFCollection;
-import com.git.gdsbuilder.edit.ngi.EditNGICollection;
+import com.git.gdsbuilder.edit.dxf.EditDXFLayerCollection;
+import com.git.gdsbuilder.edit.ngi.EditNGILayerCollection;
 import com.git.gdsbuilder.type.dxf.feature.DTDXFFeature;
 import com.git.gdsbuilder.type.dxf.layer.DTDXFLayer;
 import com.git.gdsbuilder.type.dxf.structure.DTDXFTables;
@@ -39,10 +39,13 @@ import com.git.gdsbuilder.type.ngi.header.NDAHeader;
 import com.git.gdsbuilder.type.ngi.header.NGIHeader;
 import com.git.gdsbuilder.type.ngi.layer.DTNGILayer;
 import com.git.gdsbuilder.type.ngi.layer.DTNGILayerList;
+import com.git.gdsbuilder.type.shp.layer.DTSHPLayer;
 import com.git.opengds.file.dxf.dbManager.DXFDBQueryManager;
 import com.git.opengds.file.dxf.persistence.DXFLayerCollectionDAO;
 import com.git.opengds.file.ngi.dbManager.NGIDBQueryManager;
 import com.git.opengds.file.ngi.persistence.NGILayerCollectionDAO;
+import com.git.opengds.file.shp.dbManager.SHPDBQueryManager;
+import com.git.opengds.file.shp.persistence.SHPLayerCollectionDAO;
 import com.git.opengds.geoserver.service.GeoserverService;
 import com.git.opengds.user.domain.UserVO;
 
@@ -60,19 +63,13 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 	@Inject
 	private DXFLayerCollectionDAO dxfDAO;
 
-	@Autowired
+	@Inject
+	private SHPLayerCollectionDAO shpDAO;
+
+	@Inject
 	private GeoserverService geoserverService;
 
-	/*
-	 * public EditDBManagerServiceImpl(UserVO userVO) { // TODO Auto-generated
-	 * constructor stub qa20DAO = new QA20LayerCollectionDAOImpl(userVO);
-	 * qa10DAO = new QA10LayerCollectionDAOImpl(userVO); qa20DBManager = new
-	 * QA20DBManagerServiceImpl(userVO); qa10DBManager = new
-	 * QA10DBManagerServiceImpl(userVO); geoserverService = new
-	 * GeoserverServiceImpl(userVO); }
-	 */
-
-	public Integer checkNGILayerCollectionName(UserVO userVO, String collectionName) throws RuntimeException {
+	public Integer selectNGILayerCollectionIdx(UserVO userVO, String collectionName) throws RuntimeException {
 
 		NGIDBQueryManager queryManager = new NGIDBQueryManager();
 		HashMap<String, Object> queryMap = queryManager.getSelectNGILayerCollectionIdx(collectionName);
@@ -85,7 +82,7 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 	}
 
 	@Override
-	public Integer createNGILayerCollection(UserVO userVO, String type, EditNGICollection editCollection)
+	public Integer createNGILayerCollection(UserVO userVO, String type, EditNGILayerCollection editCollection)
 			throws RuntimeException {
 
 		String collectionName = editCollection.getCollectionName();
@@ -103,7 +100,7 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 	}
 
 	@Override
-	public Integer createDXFLayerCollection(UserVO userVO, String type, EditDXFCollection editCollection)
+	public Integer createDXFLayerCollection(UserVO userVO, String type, EditDXFLayerCollection editCollection)
 			throws RuntimeException {
 
 		String collectionName = editCollection.getCollectionName();
@@ -157,8 +154,8 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 			NGIDBQueryManager queryManager = new NGIDBQueryManager();
 
 			// createQA20Layer
-			HashMap<String, Object> createQuery = queryManager.getNGILayerTbCreateQuery(type, collectionName,
-					qa20Layer, src);
+			HashMap<String, Object> createQuery = queryManager.getNGILayerTbCreateQuery(type, collectionName, qa20Layer,
+					src);
 			ngiDAO.createNGILayerTb(userVO, createQuery);
 
 			// insertLayerMedata
@@ -270,8 +267,7 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 		NGIDBQueryManager queryManager = new NGIDBQueryManager();
 		try {
 			String orignName = qa20Layer.getOriginLayerName();
-			HashMap<String, Object> queryMap = queryManager.getSelectNGILayerMetaDataIdxQuery(collectionIdx,
-					orignName);
+			HashMap<String, Object> queryMap = queryManager.getSelectNGILayerMetaDataIdxQuery(collectionIdx, orignName);
 			Integer lmIdx = ngiDAO.selectNGILayerMetadataIdx(userVO, queryMap);
 
 			// meta Tb - layerName update
@@ -509,7 +505,7 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 	}
 
 	@Override
-	public Integer checkDXFLayerCollectionName(UserVO userVO, String collectionName) throws RuntimeException {
+	public Integer selectDXFLayerCollectionIdx(UserVO userVO, String collectionName) throws RuntimeException {
 
 		DXFDBQueryManager queryManager = new DXFDBQueryManager();
 		HashMap<String, Object> queryMap = queryManager.getSelectDXFLayerCollectionIdxQuery(collectionName);
@@ -535,8 +531,8 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 		 */
 
 		try {
-			HashMap<String, Object> createQuery = queryManager.getDXFLayerTbCreateQuery(type, collectionName, createLayer,
-					src);
+			HashMap<String, Object> createQuery = queryManager.getDXFLayerTbCreateQuery(type, collectionName,
+					createLayer, src);
 			dxfDAO.createDXFLayerTb(userVO, createQuery);
 
 			// insertQA10Layer
@@ -589,8 +585,6 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 		// String id = typeSplit[0] + "_" + typeSplit[1];
 		String id = typeSplit[0];
 
-		System.out.println(layerId);
-
 		boolean isSuccessed = false;
 
 		try {
@@ -627,7 +621,8 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 						HashMap<String, Object> deleteBlocksVertexQuery = dbManager.getDeleteBlockVertexQuery(bcIdx);
 						int vertex = dxfDAO.deleteField(userVO, deleteBlocksVertexQuery);
 						// blocks - polyline
-						HashMap<String, Object> deleteBlocksPolylineQuery = dbManager.getDeleteBlockPolylineQuery(bcIdx);
+						HashMap<String, Object> deleteBlocksPolylineQuery = dbManager
+								.getDeleteBlockPolylineQuery(bcIdx);
 						int polyline = dxfDAO.deleteField(userVO, deleteBlocksPolylineQuery);
 						// blocks - text
 						HashMap<String, Object> deleteBlocksTextQuery = dbManager.getDeleteBlockTextQuery(bcIdx);
@@ -642,7 +637,8 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 						HashMap<String, Object> deleteBlocksLineQuery = dbManager.getDeleteBlockLineQuery(bcIdx);
 						int line = dxfDAO.deleteField(userVO, deleteBlocksLineQuery);
 						// blocks - lwpolyline
-						HashMap<String, Object> deleteBlocksLWPolylineQuery = dbManager.getDeleteBlockLWPolylineQuery(bcIdx);
+						HashMap<String, Object> deleteBlocksLWPolylineQuery = dbManager
+								.getDeleteBlockLWPolylineQuery(bcIdx);
 						int lwpolyline = dxfDAO.deleteField(userVO, deleteBlocksLWPolylineQuery);
 						// blocks - commons
 						HashMap<String, Object> deleteBlocksCommonsQuery = dbManager.getDeleteBlocksQuery(bcIdx);
@@ -737,5 +733,96 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 		DXFDBQueryManager queryManager = new DXFDBQueryManager();
 		HashMap<String, Object> deleteQuery = queryManager.getDeleteTablesQuery(cIdx);
 		dxfDAO.deleteField(userVO, deleteQuery);
+	}
+
+	@Override
+	public void insertSHPCreateFeature(UserVO userVO, String tableName, SimpleFeature createFeature, String src) {
+		SHPDBQueryManager queryManager = new SHPDBQueryManager();
+		HashMap<String, Object> insertLayerQuery = queryManager.getInsertSHPFeatureQuery(tableName, createFeature, src);
+		shpDAO.insertSHPLayer(userVO, insertLayerQuery);
+	}
+
+	@Override
+	public void deleteSHPRemovedFeature(UserVO userVO, String tableName, String featureId) {
+
+		SHPDBQueryManager queryManager = new SHPDBQueryManager();
+		HashMap<String, Object> selectIdxqueryMap = queryManager.getSelectSHPFeatureIdxQuery(tableName, featureId);
+		int fIdx = shpDAO.selectSHPFeatureIdx(userVO, selectIdxqueryMap);
+		HashMap<String, Object> deleteFeatureMap = queryManager.getDeleteSHPFeatureQuery(tableName, fIdx);
+		shpDAO.deleteSHPFeature(userVO, deleteFeatureMap);
+	}
+
+	@Override
+	public void updateSHPModifyFeature(UserVO userVO, String tableName, SimpleFeature modifiedFeature, String src) {
+
+		SHPDBQueryManager queryManager = new SHPDBQueryManager();
+		// 1. featureID 조회
+		String featureID = modifiedFeature.getID();
+		HashMap<String, Object> selectIdxqueryMap = queryManager.getSelectSHPFeatureIdxQuery(tableName, featureID);
+		int fIdx = shpDAO.selectSHPFeatureIdx(userVO, selectIdxqueryMap);
+
+		// 2. 해당 feature 삭제
+		HashMap<String, Object> deleteFeatureMap = queryManager.getDeleteSHPFeatureQuery(tableName, fIdx);
+		shpDAO.deleteSHPFeature(userVO, deleteFeatureMap);
+
+		// 3. 다시 insert
+		HashMap<String, Object> insertFeatureMap = queryManager.getInsertSHPFeatureQuery(tableName, modifiedFeature,
+				src);
+		shpDAO.insertSHPLayer(userVO, insertFeatureMap);
+	}
+
+	@Override
+	public Integer selectSHPLayerCollectionIdx(UserVO userVO, String collectionName) {
+		SHPDBQueryManager queryManager = new SHPDBQueryManager();
+		HashMap<String, Object> queryMap = queryManager.getSelectSHPLayerCollectionIdx(collectionName);
+		Integer cIdx = shpDAO.selectSHPLayerCollectionIdx(userVO, queryMap);
+		if (cIdx == null) {
+			return null;
+		} else {
+			return cIdx;
+		}
+	}
+
+	@Override
+	public boolean dropSHPLayer(UserVO userVO, String type, Integer collectionIdx, String collectionName,
+			DTSHPLayer layer) {
+
+		try {
+			boolean isSuccessed = false;
+
+			SHPDBQueryManager queryManager = new SHPDBQueryManager();
+			String layerName = layer.getLayerName();
+
+			HashMap<String, Object> metadataIdxQuery = queryManager.getSelectSHPLayerMetaDataIdxQuery(collectionIdx,
+					layerName);
+			Integer mIdx = shpDAO.selectSHPLayerMetadataIdx(userVO, metadataIdxQuery);
+
+			// layerMetadata 삭제
+			HashMap<String, Object> deleteLayerMetaQuery = queryManager.getDeleteSHPLayerMetaQuery(mIdx);
+			shpDAO.deleteSHPLayerMetadata(userVO, deleteLayerMetaQuery);
+
+			HashMap<String, Object> dropQuery = queryManager.getDropSHPLayerQuery(type, collectionName, layerName);
+			shpDAO.dropSHPLayer(userVO, dropQuery);
+
+			String layerTableName = "geo" + "_" + type + "_" + collectionName + "_" + layerName;
+			String groupName = "gro" + "_" + type + "_" + collectionName;
+			isSuccessed = geoserverService.removeGeoserverLayer(userVO, groupName, layerTableName);
+			if (isSuccessed) {
+				return true;
+			} else {
+				throw new RuntimeException();
+			}
+		} catch (RuntimeException e) {
+			// txManager.rollback(status);
+			throw new RuntimeException();
+		}
+	}
+
+	@Override
+	public void deleteSHPLayerCollection(UserVO userVO, Integer cIdx) {
+
+		SHPDBQueryManager queryManager = new SHPDBQueryManager();
+		HashMap<String, Object> deleteLayerCollectionQuery = queryManager.getDeleteSHPLayerCollectionQuery(cIdx);
+		shpDAO.deleteSHPLayerCollection(userVO, deleteLayerCollectionQuery);
 	}
 }

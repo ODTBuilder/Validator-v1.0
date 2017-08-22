@@ -69,11 +69,11 @@ public class BuilderJSONNGIParser {
 		JSONObject collectionListObj = (JSONObject) editLayerObj.get(type);
 		EditDTLayerCollectionListParser editLayerCollectionListParser = new EditDTLayerCollectionListParser(type,
 				collectionListObj);
-		EditNGILayerCollectionList edtCollectionList = editLayerCollectionListParser.getEdtQA20CollectionList();
+		EditNGILayerCollectionList edtCollectionList = editLayerCollectionListParser.getEdtNGICollectionList();
 		return edtCollectionList;
 	}
 	public static Map<String, Object> parseNGIFeature(JSONObject stateObj, String layerType)
-			throws ParseException, com.vividsolutions.jts.io.ParseException {
+			throws ParseException, com.vividsolutions.jts.io.ParseException, SchemaException {
 
 		JSONParser jsonParser = new JSONParser();
 
@@ -89,7 +89,7 @@ public class BuilderJSONNGIParser {
 					String geoStr = (String) featuresArry.get(i);
 					JSONObject featureObj = (JSONObject) jsonParser.parse(geoStr);
 					EditDTFeatureParser featureParser = new EditDTFeatureParser("ngi", featureObj, state);
-					DTNGIFeature feature = featureParser.getQa20Feature();
+					DTNGIFeature feature = featureParser.getNGIFeature();
 					feature.setFeatureType(layerType);
 					featureList.add(feature);
 				}
@@ -102,7 +102,7 @@ public class BuilderJSONNGIParser {
 					String geoStr = (String) featuresArry.get(i);
 					JSONObject featureObj = (JSONObject) jsonParser.parse(geoStr);
 					EditDTFeatureParser featureParser = new EditDTFeatureParser("ngi", featureObj, state);
-					DTNGIFeature feature = featureParser.getQa20Feature();
+					DTNGIFeature feature = featureParser.getNGIFeature();
 					feature.setFeatureType(layerType);
 					featureList.add(feature);
 				}

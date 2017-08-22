@@ -104,7 +104,7 @@ public class BuilderJSONParser {
 //	}
 
 	public static Map<String, Object> parseEditFeatureObj(JSONObject editFeatureObj)
-			throws com.vividsolutions.jts.io.ParseException, ParseException {
+			throws com.vividsolutions.jts.io.ParseException, ParseException, SchemaException {
 
 		// feature 편집
 		Map<String, Object> editFeatureListMap = new HashMap<String, Object>();
@@ -120,6 +120,9 @@ public class BuilderJSONParser {
 			}
 			if (collectionType.equals(isDxf)) {
 				editFeatureMap = BuilderJSONDXFParser.parseDXFFeature(stateObj, layerType);
+			}
+			if (collectionType.equals(isShp)) {
+				editFeatureMap = BuilderJSONSHPParser.parseSHPFeature(stateObj, layerType);
 			}
 			editFeatureListMap.put(tableName, editFeatureMap);
 		}

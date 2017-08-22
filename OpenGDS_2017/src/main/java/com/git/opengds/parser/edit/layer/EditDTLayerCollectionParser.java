@@ -44,14 +44,18 @@ import org.geotools.feature.SchemaException;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
-import com.git.gdsbuilder.edit.dxf.EditDXFCollection;
 import com.git.gdsbuilder.edit.dxf.EditDXFLayer;
-import com.git.gdsbuilder.edit.ngi.EditNGI0Layer;
-import com.git.gdsbuilder.edit.ngi.EditNGICollection;
+import com.git.gdsbuilder.edit.dxf.EditDXFLayerCollection;
+import com.git.gdsbuilder.edit.ngi.EditNGILayer;
+import com.git.gdsbuilder.edit.ngi.EditNGILayerCollection;
+import com.git.gdsbuilder.edit.shp.EditSHPLayer;
+import com.git.gdsbuilder.edit.shp.EditSHPLayerCollection;
 import com.git.gdsbuilder.type.dxf.layer.DTDXFLayer;
 import com.git.gdsbuilder.type.dxf.layer.DTDXFLayerList;
 import com.git.gdsbuilder.type.ngi.layer.DTNGILayer;
 import com.git.gdsbuilder.type.ngi.layer.DTNGILayerList;
+import com.git.gdsbuilder.type.shp.layer.DTSHPLayer;
+import com.git.gdsbuilder.type.shp.layer.DTSHPLayerList;
 import com.vividsolutions.jts.io.ParseException;
 
 /**
@@ -64,8 +68,9 @@ public class EditDTLayerCollectionParser {
 
 	JSONObject collectionObj;
 	String type;
-	EditNGICollection editQA20Collection;
-	EditDXFCollection editQA10Collection;
+	EditNGILayerCollection editNGICollection;
+	EditDXFLayerCollection editDXFCollection;
+	EditSHPLayerCollection editSHPCollection;
 
 	/**
 	 * EditLayerCollectionParser 생성자
@@ -88,6 +93,8 @@ public class EditDTLayerCollectionParser {
 			ngiCollectionParser();
 		} else if (type.equals("dxf")) {
 			dxfCollectionParser();
+		} else if (type.equals("shp")) {
+			shpCollectionParser();
 		}
 	}
 
@@ -107,25 +114,73 @@ public class EditDTLayerCollectionParser {
 		this.collectionObj = collectionObj;
 	}
 
-	public EditNGICollection getEditQA20Collection() {
-		return editQA20Collection;
+	public EditNGILayerCollection getEditNGICollection() {
+		return editNGICollection;
 	}
 
-	public void setEditQA20Collection(EditNGICollection editQA20Collection) {
-		this.editQA20Collection = editQA20Collection;
+	public void setEditNGICollection(EditNGILayerCollection editNGICollection) {
+		this.editNGICollection = editNGICollection;
 	}
 
-	public EditDXFCollection getEditQA10Collection() {
-		return editQA10Collection;
+	public EditDXFLayerCollection getEditDXFCollection() {
+		return editDXFCollection;
 	}
 
-	public void setEditQA10Collection(EditDXFCollection editQA10Collection) {
-		this.editQA10Collection = editQA10Collection;
+	public void setEditDXFCollection(EditDXFLayerCollection editDXFCollection) {
+		this.editDXFCollection = editDXFCollection;
+	}
+
+	public EditSHPLayerCollection getEditSHPCollection() {
+		return editSHPCollection;
+	}
+
+	public void setEditSHPCollection(EditSHPLayerCollection editSHPCollection) {
+		this.editSHPCollection = editSHPCollection;
+	}
+
+	public void shpCollectionParser() throws ParseException {
+
+		this.editSHPCollection = new EditSHPLayerCollection();
+		Iterator iterator = collectionObj.keySet().iterator();
+		while (iterator.hasNext()) {
+			String state = (String) iterator.next();
+			if (state.equals("create")) {
+				DTSHPLayerList createLayerList = new DTSHPLayerList();
+				JSONArray layerArr = (JSONArray) collectionObj.get(state);
+				for (int i = 0; i < layerArr.size(); i++) {
+					JSONObject layerObj = (JSONObject) layerArr.get(i);
+					EditDTLayerParser layerParser = new EditDTLayerParser(type, layerObj, state);
+					EditSHPLayer layer = layerParser.getEditSHPLayer();
+					DTSHPLayer createLayer = new DTSHPLayer(layer.getLayerName(), layer.getLayerType());
+					createLayerList.add(createLayer);
+				}
+				editSHPCollection.addAllCreateLayer(createLayerList);
+				editSHPCollection.setCreated(true);
+			} else if (state.equals("remove")) {
+				JSONObject removeObj = (JSONObject) collectionObj.get(state);
+				JSONArray layerNames = (JSONArray) removeObj.get("layer");
+				String scope = (String) removeObj.get("scope");
+				if (scope.equals("all")) {
+					editSHPCollection.setDeleteAll(true);
+				}
+				DTSHPLayerList deletedLayerList = new DTSHPLayerList();
+				for (int i = 0; i < layerNames.size(); i++) {
+					String layerName = (String) layerNames.get(i);
+					DTSHPLayer deleteLayer = new DTSHPLayer();
+					deleteLayer.setLayerName(layerName);
+					deletedLayerList.add(deleteLayer);
+				}
+				editSHPCollection.addAllDeleteLayer(deletedLayerList);
+				editSHPCollection.setDeleted(true);
+			} else if (state.equals("modify")) {
+				// 잠시 보류
+			}
+		}
 	}
 
 	public void dxfCollectionParser() throws ParseException {
 
-		this.editQA10Collection = new EditDXFCollection();
+		this.editDXFCollection = new EditDXFLayerCollection();
 		Iterator iterator = collectionObj.keySet().iterator();
 		while (iterator.hasNext()) {
 			String state = (String) iterator.next();
@@ -135,20 +190,19 @@ public class EditDTLayerCollectionParser {
 				for (int i = 0; i < layerArr.size(); i++) {
 					JSONObject layerObj = (JSONObject) layerArr.get(i);
 					EditDTLayerParser layerParser = new EditDTLayerParser(type, layerObj, state);
-					EditDXFLayer layer = layerParser.getEditQA10Layer();
+					EditDXFLayer layer = layerParser.getEditDXFLayer();
 					DTDXFLayer createLayer = new DTDXFLayer(layer.getLayerName(), layer.getOrignName(),
 							layer.getLayerType(), layer.getOriginLayerType());
 					createLayerList.add(createLayer);
 				}
-				editQA10Collection.addAllCreateLayer(createLayerList);
-				editQA10Collection.setCreated(true);
-
+				editDXFCollection.addAllCreateLayer(createLayerList);
+				editDXFCollection.setCreated(true);
 			} else if (state.equals("remove")) {
 				JSONObject removeObj = (JSONObject) collectionObj.get(state);
 				JSONArray layerNames = (JSONArray) removeObj.get("layer");
 				String scope = (String) removeObj.get("scope");
 				if (scope.equals("all")) {
-					editQA10Collection.setDeleteAll(true);
+					editDXFCollection.setDeleteAll(true);
 				}
 				DTDXFLayerList deletedLayerList = new DTDXFLayerList();
 				for (int i = 0; i < layerNames.size(); i++) {
@@ -157,33 +211,33 @@ public class EditDTLayerCollectionParser {
 					deleteLayer.setLayerID(layerName);
 					deletedLayerList.add(deleteLayer);
 				}
-				editQA10Collection.addAllDeleteLayer(deletedLayerList);
-				editQA10Collection.setDeleted(true);
-
+				editDXFCollection.addAllDeleteLayer(deletedLayerList);
+				editDXFCollection.setDeleted(true);
 			} else if (state.equals("modify")) {
+				// 잠시 보류
 				DTDXFLayerList modifiedLayerList = new DTDXFLayerList();
 				JSONArray layerArr = (JSONArray) collectionObj.get(state);
 				for (int i = 0; i < layerArr.size(); i++) {
 					JSONObject layerObj = (JSONObject) layerArr.get(i);
 					EditDTLayerParser layerParser = new EditDTLayerParser(type, layerObj, state);
-					EditDXFLayer layer = layerParser.getEditQA10Layer();
+					EditDXFLayer layer = layerParser.getEditDXFLayer();
 					// layerName : currentName
 					DTDXFLayer modifiedLayer = new DTDXFLayer(layer.getLayerName(), layer.getOrignName());
 					modifiedLayerList.add(modifiedLayer);
 
 					Map<String, Object> geoLayerMap = new HashMap<String, Object>();
 					geoLayerMap.put(layer.getOrignName(), layer.getGeoServerLayer());
-					editQA10Collection.putGeoLayer(geoLayerMap);
+					editDXFCollection.putGeoLayer(geoLayerMap);
 				}
-				editQA10Collection.addAllmodifiedLayer(modifiedLayerList);
-				editQA10Collection.setModified(true);
+				editDXFCollection.addAllmodifiedLayer(modifiedLayerList);
+				editDXFCollection.setModified(true);
 			}
 		}
 	}
 
 	public void ngiCollectionParser() throws ParseException {
 
-		this.editQA20Collection = new EditNGICollection();
+		this.editNGICollection = new EditNGILayerCollection();
 		Iterator iterator = collectionObj.keySet().iterator();
 		while (iterator.hasNext()) {
 			String state = (String) iterator.next();
@@ -193,19 +247,19 @@ public class EditDTLayerCollectionParser {
 				for (int i = 0; i < layerArr.size(); i++) {
 					JSONObject layerObj = (JSONObject) layerArr.get(i);
 					EditDTLayerParser layerParser = new EditDTLayerParser(type, layerObj, state);
-					EditNGI0Layer layer = layerParser.getEditQA20Layer();
-					DTNGILayer createLayer = new DTNGILayer(String.valueOf(i), layer.getLayerName(), layer.getNgiHeader(),
-							layer.getNdaHeader(), layer.getLayerType(), null);
+					EditNGILayer layer = layerParser.getEditNGILayer();
+					DTNGILayer createLayer = new DTNGILayer(String.valueOf(i), layer.getLayerName(),
+							layer.getNgiHeader(), layer.getNdaHeader(), layer.getLayerType(), null);
 					qa20LayerList.add(createLayer);
 				}
-				editQA20Collection.addAllCreateLayer(qa20LayerList);
-				editQA20Collection.setCreated(true);
+				editNGICollection.addAllCreateLayer(qa20LayerList);
+				editNGICollection.setCreated(true);
 			} else if (state.equals("remove")) {
 				JSONObject removeObj = (JSONObject) collectionObj.get(state);
 				JSONArray layerNames = (JSONArray) removeObj.get("layer");
 				String scope = (String) removeObj.get("scope");
 				if (scope.equals("all")) {
-					editQA20Collection.setDeleteAll(true);
+					editNGICollection.setDeleteAll(true);
 				}
 				DTNGILayerList deletedLayerList = new DTNGILayerList();
 				for (int i = 0; i < layerNames.size(); i++) {
@@ -214,15 +268,16 @@ public class EditDTLayerCollectionParser {
 					deleteLayer.setLayerName(layerName);
 					deletedLayerList.add(deleteLayer);
 				}
-				editQA20Collection.addAllDeleteLayer(deletedLayerList);
-				editQA20Collection.setDeleted(true);
+				editNGICollection.addAllDeleteLayer(deletedLayerList);
+				editNGICollection.setDeleted(true);
 			} else if (state.equals("modify")) {
+				// 잠시 보류
 				DTNGILayerList modifiedLayerList = new DTNGILayerList();
 				JSONArray layerArr = (JSONArray) collectionObj.get(state);
 				for (int i = 0; i < layerArr.size(); i++) {
 					JSONObject layerObj = (JSONObject) layerArr.get(i);
 					EditDTLayerParser layerParser = new EditDTLayerParser(type, layerObj, state);
-					EditNGI0Layer layer = layerParser.getEditQA20Layer();
+					EditNGILayer layer = layerParser.getEditNGILayer();
 					String layerName = layer.getLayerName();
 					DTNGILayer modifiedLayer = new DTNGILayer(String.valueOf(i), layerName, layer.getNgiHeader(),
 							layer.getNdaHeader(), layer.getLayerType(), null);
@@ -231,10 +286,10 @@ public class EditDTLayerCollectionParser {
 
 					Map<String, Object> geoLayerMap = new HashMap<String, Object>();
 					geoLayerMap.put(layerName, layer.getGeoServerLayer());
-					editQA20Collection.putGeoLayer(geoLayerMap);
+					editNGICollection.putGeoLayer(geoLayerMap);
 				}
-				editQA20Collection.addAllmodifiedLayer(modifiedLayerList);
-				editQA20Collection.setModified(true);
+				editNGICollection.addAllmodifiedLayer(modifiedLayerList);
+				editNGICollection.setModified(true);
 			}
 		}
 	}

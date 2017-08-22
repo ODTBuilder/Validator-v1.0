@@ -17,9 +17,9 @@
 
 package com.git.opengds.editor.controller;
 
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,17 +32,16 @@ import com.git.opengds.user.domain.UserVO.EnUserType;
 
 @Controller("editController")
 @RequestMapping("/editLayerCollection")
-public class EditController extends AbstractController{
+public class EditController extends AbstractController {
 
-	@Autowired
+	@Inject
 	private EditService editService;
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/editLayerCollection.ajax")
 	@ResponseBody
 	public void editLayerCollection(HttpServletRequest request, @RequestBody String geo) throws Exception {
-		UserVO generalUser  = (UserVO) getSession(request,EnUserType.GENERAL.getTypeName());
+		UserVO generalUser = (UserVO) getSession(request, EnUserType.GENERAL.getTypeName());
 		editService.editLayerCollection(generalUser, geo);
 	}
 }
-

@@ -8,6 +8,23 @@ public class DTSHPLayer {
 	String layerType;
 	SimpleFeatureCollection simpleFeatureCollection;
 
+	public DTSHPLayer() {
+		super();
+	}
+
+	public DTSHPLayer(String layerName, String layerType, SimpleFeatureCollection simpleFeatureCollection) {
+		super();
+		this.layerName = layerName;
+		this.layerType = layerType;
+		this.simpleFeatureCollection = simpleFeatureCollection;
+	}
+
+	public DTSHPLayer(String layerName, String layerType) {
+		super();
+		this.layerName = layerName;
+		this.layerType = layerType;
+	}
+
 	public String getLayerName() {
 		return layerName;
 	}

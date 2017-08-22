@@ -13,16 +13,17 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.opengis.feature.simple.SimpleFeature;
 
 import com.git.gdsbuilder.edit.dxf.EditDXFLayerCollectionList;
-import com.git.gdsbuilder.type.dxf.feature.DTDXFFeature;
-import com.git.gdsbuilder.type.dxf.feature.DTDXFFeatureList;
+import com.git.gdsbuilder.edit.shp.EditSHPLayerCollectionList;
+import com.git.gdsbuilder.type.shp.feature.DTSHPFeatureList;
 import com.git.opengds.parser.edit.feature.EditDTFeatureParser;
 import com.git.opengds.parser.edit.layer.EditDTLayerCollectionListParser;
 
-public class BuilderJSONDXFParser {
+public class BuilderJSONSHPParser {
 
-	public static EditDXFLayerCollectionList parseEditLayerObj(JSONObject editLayerObj, String type)
+	public static EditSHPLayerCollectionList parseEditLayerObj(JSONObject editLayerObj, String type)
 			throws FileNotFoundException, IOException, com.vividsolutions.jts.io.ParseException, SchemaException {
 
 		// layer 편집
@@ -30,10 +31,12 @@ public class BuilderJSONDXFParser {
 		EditDTLayerCollectionListParser editLayerCollectionListParser = new EditDTLayerCollectionListParser(type,
 				collectionListObj);
 		EditDXFLayerCollectionList edtCollectionList = editLayerCollectionListParser.getEdtDXFCollectionList();
-		return edtCollectionList;
+
+		return null;
+
 	}
 
-	public static Map<String, Object> parseDXFFeature(JSONObject stateObj, String layerType)
+	public static Map<String, Object> parseSHPFeature(JSONObject stateObj, String layerType)
 			throws ParseException, com.vividsolutions.jts.io.ParseException, SchemaException {
 
 		JSONParser jsonParser = new JSONParser();
@@ -43,28 +46,24 @@ public class BuilderJSONDXFParser {
 		while (stateIterator.hasNext()) {
 			String state = (String) stateIterator.next();
 			if (state.equals("created")) {
-				DTDXFFeatureList featureList = new DTDXFFeatureList();
+				DTSHPFeatureList featureList = new DTSHPFeatureList();
 				JSONObject featuresObj = (JSONObject) stateObj.get(state);
 				JSONArray featuresArry = (JSONArray) featuresObj.get("features");
 				for (int i = 0; i < featuresArry.size(); i++) {
-					String geoStr = (String) featuresArry.get(i);
-					JSONObject featureObj = (JSONObject) jsonParser.parse(geoStr);
-					EditDTFeatureParser featureParser = new EditDTFeatureParser("dxf", featureObj, state);
-					DTDXFFeature feature = featureParser.getDXFFeature();
-					feature.setFeatureType(layerType);
+					JSONObject featureObj = (JSONObject) featuresArry.get(i);
+					EditDTFeatureParser featureParser = new EditDTFeatureParser("shp", featureObj, state);
+					SimpleFeature feature = featureParser.getSHPFeature();
 					featureList.add(feature);
 				}
 				editFeatureMap.put("created", featureList);
 			} else if (state.equals("modified")) {
-				DTDXFFeatureList featureList = new DTDXFFeatureList();
+				DTSHPFeatureList featureList = new DTSHPFeatureList();
 				JSONObject featuresObj = (JSONObject) stateObj.get(state);
 				JSONArray featuresArry = (JSONArray) featuresObj.get("features");
 				for (int i = 0; i < featuresArry.size(); i++) {
-					String geoStr = (String) featuresArry.get(i);
-					JSONObject featureObj = (JSONObject) jsonParser.parse(geoStr);
-					EditDTFeatureParser featureParser = new EditDTFeatureParser("dxf", featureObj, state);
-					DTDXFFeature feature = featureParser.getDXFFeature();
-					feature.setFeatureType(layerType);
+					JSONObject featureObj = (JSONObject) featuresArry.get(i);
+					EditDTFeatureParser featureParser = new EditDTFeatureParser("shp", featureObj, state);
+					SimpleFeature feature = featureParser.getSHPFeature();
 					featureList.add(feature);
 				}
 				editFeatureMap.put("modified", featureList);

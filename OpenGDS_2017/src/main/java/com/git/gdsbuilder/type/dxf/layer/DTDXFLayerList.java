@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class DTDXFLayerList extends ArrayList<DTDXFLayer> {
 
-	public DTDXFLayer getQA10Layer(String layerID) {
+	public DTDXFLayer getDXFLayer(String layerID) {
 
 		for (int i = 0; i < this.size(); i++) {
 			DTDXFLayer layer = this.get(i);
@@ -14,5 +14,4 @@ public class DTDXFLayerList extends ArrayList<DTDXFLayer> {
 		}
 		return null;
 	}
-
 }

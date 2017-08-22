@@ -19,8 +19,14 @@ package com.git.opengds.parser.edit.feature;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Set;
 
+import org.geotools.data.DataUtilities;
+import org.geotools.feature.SchemaException;
+import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.json.simple.JSONObject;
+import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.simple.SimpleFeatureType;
 
 import com.git.gdsbuilder.type.dxf.feature.DTDXFFeature;
 import com.git.gdsbuilder.type.ngi.feature.DTNGIFeature;
@@ -38,32 +44,91 @@ import com.vividsolutions.jts.io.geojson.GeoJsonReader;
 public class EditDTFeatureParser {
 
 	JSONObject featureObj;
-	DTNGIFeature qa20Feature;
-	DTDXFFeature qa10Feature;
+	DTNGIFeature ngiFeature;
+	DTDXFFeature dxfFeature;
+	SimpleFeature shpFeature;
 
-	public EditDTFeatureParser(String type, JSONObject featureObj, String state) throws ParseException {
+	public EditDTFeatureParser(String type, JSONObject featureObj, String state)
+			throws ParseException, SchemaException {
 		this.featureObj = featureObj;
 		if (type.equals("dxf")) {
 			dxfFeatureParse();
 		} else if (type.equals("ngi")) {
 			ngiFeatureParse();
+		} else if (type.equals("shp")) {
+			shpFeatureParse();
 		}
 	}
 
-	public DTNGIFeature getQa20Feature() {
-		return qa20Feature;
+	public DTNGIFeature getNGIFeature() {
+		return ngiFeature;
 	}
 
-	public void setQa20Feature(DTNGIFeature qa20Feature) {
-		this.qa20Feature = qa20Feature;
+	public void setNGIFeature(DTNGIFeature ngiFeature) {
+		this.ngiFeature = ngiFeature;
 	}
 
-	public DTDXFFeature getQa10Feature() {
-		return qa10Feature;
+	public DTDXFFeature getDXFFeature() {
+		return dxfFeature;
 	}
 
-	public void setQa10Feature(DTDXFFeature qa10Feature) {
-		this.qa10Feature = qa10Feature;
+	public void setDXFFeature(DTDXFFeature dxfFeature) {
+		this.dxfFeature = dxfFeature;
+	}
+
+	public SimpleFeature getSHPFeature() {
+		return shpFeature;
+	}
+
+	public void setSHPFeature(SimpleFeature shpFeature) {
+		this.shpFeature = shpFeature;
+	}
+
+	private void shpFeatureParse() throws ParseException, SchemaException {
+
+		// SimpleFeature
+		SimpleFeatureType simpleFeatureType = null;
+
+		String featureID = (String) featureObj.get("id");
+		GeoJsonReader re = new GeoJsonReader();
+		JSONObject geomObj = (JSONObject) featureObj.get("geometry");
+		String geomStr = geomObj.toJSONString();
+		Geometry geom = re.read(geomStr);
+
+		JSONObject propertiesObj = (JSONObject) featureObj.get("properties");
+		Set keySet = propertiesObj.keySet();
+		int keySize = keySet.size();
+
+		String keysStr = "";
+		Object[] values = new Object[keySize + 1];
+
+		// geometry
+		keysStr += "geom:" + geom.getGeometryType() + ",";
+		values[0] = geom;
+
+		int i = 1;
+		Iterator iterator = keySet.iterator();
+		while (iterator.hasNext()) {
+			String key = (String) iterator.next();
+			// if (!key.equals("feature_id") && !key.equals("feature_type")) {
+			Object value = propertiesObj.get(key);
+			String typeStr = value.getClass().getSimpleName();
+
+			if (typeStr.equals("Long")) {
+				typeStr = "String";
+				values[i] = value.toString();
+				keysStr += key + ":" + typeStr + ",";
+				i++;
+			} else {
+				values[i] = value;
+				keysStr += key + ":" + typeStr + ",";
+				i++;
+			}
+			// }
+		}
+
+		simpleFeatureType = DataUtilities.createType(featureID.toString(), keysStr.substring(0, keysStr.length() - 1));
+		this.shpFeature = SimpleFeatureBuilder.build(simpleFeatureType, values, featureID);
 	}
 
 	public void dxfFeatureParse() throws ParseException {
@@ -74,7 +139,7 @@ public class EditDTFeatureParser {
 		String geomStr = geomObj.toJSONString();
 		Geometry geom = re.read(geomStr);
 
-		qa10Feature = new DTDXFFeature(featureID, "", geom);
+		dxfFeature = new DTDXFFeature(featureID, "", geom);
 	}
 
 	public void ngiFeatureParse() throws ParseException {
@@ -107,9 +172,9 @@ public class EditDTFeatureParser {
 					properties.put(key, value);
 				}
 			}
-			qa20Feature = new DTNGIFeature(featureID, featureType, numparts, coorSize, geom, null, properties);
+			ngiFeature = new DTNGIFeature(featureID, featureType, numparts, coorSize, geom, null, properties);
 		} else {
-			qa20Feature = new DTNGIFeature(featureID, featureType, numparts, coorSize, geom, null, null);
+			ngiFeature = new DTNGIFeature(featureID, featureType, numparts, coorSize, geom, null, null);
 		}
 	}
 }
