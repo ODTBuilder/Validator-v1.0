@@ -123,5 +123,4 @@ public class DTDXFFeature {
 	public void setRotate(double rotate) {
 		this.rotate = rotate;
 	}
-
 }

@@ -389,6 +389,23 @@ public class GeoserverLayerCollectionTree extends JSONArray {
 								}
 							} else if (fileType.equals("shp")) {
 								if (shpFileNames.contains(fileName)) {
+									if (layerType.equals("POINT")) {
+										suLayerType = "pt";
+									} else if (layerType.equals("LINESTRING")) {
+										suLayerType = "ln";
+									} else if (layerType.equals("POLYGON")) {
+										suLayerType = "pg";
+									} else if (layerType.equals("MULTIPOINT")) {
+										suLayerType = "mpt";
+									} else if (layerType.equals("MULTILINESTRING")) {
+										suLayerType = "mln";
+									} else if (layerType.equals("MULTIPOLYGON")) {
+										suLayerType = "mpg";
+									} else {
+										suLayerType = "defalut";
+										layerJson.put("type", suLayerType);
+									}
+
 									layerJson.put("id", layerName);
 									layerJson.put("parent", groupName);
 									layerJson.put("text", exTypelayerName);
@@ -397,19 +414,39 @@ public class GeoserverLayerCollectionTree extends JSONArray {
 									}
 									super.add(layerJson);
 								}
-							} else {
-								shpFileNames.add(fileName);
-								fileNameJson.put("id", groupName);
-								fileNameJson.put("parent", "n_shp");
-								fileNameJson.put("text", fileName);
-								fileNameJson.put("type", "n_" + fileType + "_group");
-								layerJson.put("id", layerName);
-								layerJson.put("parent", groupName);
-								layerJson.put("text", exTypelayerName);
-								layerJson.put("type", "n_" + fileType + "_layer_" + suLayerType);
-								super.add(fileNameJson);
-								super.add(layerJson);
+							    else {
+							    	if (layerType.equals("POINT")) {
+										suLayerType = "pt";
+									} else if (layerType.equals("LINESTRING")) {
+										suLayerType = "ln";
+									} else if (layerType.equals("POLYGON")) {
+										suLayerType = "pg";
+									} else if (layerType.equals("MULTIPOINT")) {
+										suLayerType = "mpt";
+									} else if (layerType.equals("MULTILINESTRING")) {
+										suLayerType = "mln";
+									} else if (layerType.equals("MULTIPOLYGON")) {
+										suLayerType = "mpg";
+									} else {
+										suLayerType = "defalut";
+										layerJson.put("type", suLayerType);
+									}
+
+							    	shpFileNames.add(fileName);
+									fileNameJson.put("id", groupName);
+									fileNameJson.put("parent", "n_shp");
+									fileNameJson.put("text", fileName);
+									fileNameJson.put("type", "n_" + fileType + "_group");
+									layerJson.put("id", layerName);
+									layerJson.put("parent", groupName);
+									layerJson.put("text", exTypelayerName);
+									if (!suLayerType.equals("defalut")) {
+										layerJson.put("type", "n_" + fileType + "_layer_" + suLayerType);
+									}
+									super.add(fileNameJson);
+									super.add(layerJson);
 							}
+							} 
 						}
 					}
 				}

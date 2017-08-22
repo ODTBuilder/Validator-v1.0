@@ -156,6 +156,7 @@
       dictInvalidFileNameByte: "File name must be 30 bytes or less in length", //파일이름 길이 에러메세지 추가
       dictInvalidFileDuplicate : "The file exists on the server", //파일 중복 메세지
       dictInvalidFilePublish : "Failed to publish layer.",
+      dictNdaFilePublish : "The Nda is not an target of publication.",
       dictResponseError: "Server responded with {{statusCode}} code.",
       dictCancelUpload: "Cancel upload",
       dictCancelUploadConfirmation: "Are you sure you want to cancel this upload?",
@@ -1602,6 +1603,7 @@
         fileResponse.uploadFlag = responseText[0].uploadFlag;
         fileResponse.dbInsertFlag = responseText[0].dbInsertFlag;
         fileResponse.serverPublishFlag = responseText[0].serverPublishFlag;
+        fileResponse.fileType = responseText[0].fileType;
             if(fileResponse.uploadFlag&&fileResponse.dbInsertFlag&&fileResponse.serverPublishFlag){
 	        	file.status = Dropzone.SUCCESS;
 	        	this.emit("success", file, responseText, this.options.dictSuccessMessage, e); // success 메세지 추가
@@ -1609,7 +1611,13 @@
 	        else{
 	        	file.status = Dropzone.ERROR;
 	        	file.previewElement.classList.add("dz-success"); //프로그래스바 없애기
-	        	this.emit("error", file, this.options.dictInvalidFilePublish);
+	        	if(fileResponse.fileType =='nda'){
+	        		this.emit("error", file, this.options.dictNdaFilePublish);
+	        	} else{
+		        	this.emit("error", file, this.options.dictInvalidFilePublish);
+	        	}
+	        	
+	        	
 	        }
         }else{
         	file.status = Dropzone.ERROR;
