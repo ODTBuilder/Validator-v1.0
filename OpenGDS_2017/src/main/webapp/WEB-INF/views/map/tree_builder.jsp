@@ -202,18 +202,31 @@ html {
 
 		var gitrnd = {
 			resize : function() {
+				//현재 보이는 브라우저 내부 영역의 높이
 				var winHeight = $(window).innerHeight();
+				//컨텐츠 영역의 높이 지정
+				//#mainHeader -> 헤더1
+				//#builderHeader -> 헤더2
+				//#builderFooter -> 푸터
+				// 없으면 삭제한다.
 				var conHeight = winHeight
 						- ($("#mainHeader").outerHeight(true) + $("#builderHeader").outerHeight(true) + $("#builderFooter").outerHeight(
 								true));
+				//현재 보이는 브라우저 내부 영역의 너비
 				var winWidth = $(window).innerWidth();
+				//컨텐츠 (지도) 영역의 너비 지정
+				//#builderLayer -> 사이드바
 				var mapWidth = winWidth - ($("#builderLayer").outerWidth(true));
+				//사이드바의 높이 지정
 				$("#builderLayer").outerHeight(conHeight);
+				//컨텐츠 영역의 너비 지정
 				$("#bind").outerWidth(mapWidth).outerHeight(conHeight);
 				$("#builderMap").outerWidth(mapWidth).outerHeight(conHeight);
 				$("#builderBaseMap").outerWidth(mapWidth).outerHeight(conHeight);
+				//컨텐츠 영역(겹친 지도 부분, 베이스맵과 편집영역을 겹쳐서 베이스맵이 편집에 영향이 없도록하기 위함)의 위치를 같게함
 				var str = "-" + conHeight + "px";
 				$("#builderBaseMap").css("top", str);
+				//편집영역이 베이스맵 위로 오도록 겹친 영역의 z-index를 조정
 				$("#builderBaseMap").find(".ol-viewport").css("z-index", 1);
 				$("#builderMap").find(".ol-viewport").css("z-index", 2);
 				//16은 아래 마진, 1은 위 아래 보더 
@@ -223,6 +236,7 @@ html {
 				$(".gitbuilder-layer-panel").outerHeight(treeHeight);
 				$("#builderLayerGeoServerPanel").outerHeight(listHeight);
 				$("#builderLayerClientPanel").outerHeight(listHeight);
+				//현재 컨텐츠 사이즈를 오픈레이어스에 반영
 				map.updateSize();
 				map2.updateSize();
 			},
