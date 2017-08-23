@@ -52,9 +52,14 @@ gitbuilder.ui.OptionDefinition = $
 								"LayerMiss", "RefLayerMiss", "SmallArea", "EntityDuplicated", "SelfEntity", "PointDuplicated",
 								"AttributeFix", "OutBoundary", "OverShoot", "UnderShoot", "OneAcre", "OneStage", "BuildingSite",
 								"UFIDLength", "HouseAttribute", "CemeterySite", "NumericalValue", "RiverBoundaryMiss", "UFIDRule",
-								"HoleMisplacement", "CenterLineMiss" ]
+								"HoleMisplacement", "CenterLineMiss", "EntityInHole" ]
 					},
 					optItem : {
+						"EntityInHole" : {
+							"title" : "Entity In Hole",
+							"alias" : "EntityInHole",
+							"type" : "relation"
+						},
 						"HoleMisplacement" : {
 							"title" : "Misplaced Hole Error",
 							"alias" : "HoleMisplacement",
