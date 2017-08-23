@@ -48,7 +48,7 @@ public class SHPFileReader {
 //						geomType = geomType.replaceAll("Multi", "");
 //					}
 					dtLayer.setLayerType(geomType);
-					dtLayer.setLayerName(shpName + "_" + geomType.toUpperCase());
+					dtLayer.setLayerName(shpName.toUpperCase() + "_" + geomType.toUpperCase());
 					dtLayerList.add(dtLayer);
 				}
 			}

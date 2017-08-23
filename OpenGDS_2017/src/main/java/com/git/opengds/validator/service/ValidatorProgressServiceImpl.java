@@ -60,7 +60,7 @@ public class ValidatorProgressServiceImpl implements ValidatorProgressService {
 			HashMap<String, Object> insertQuery = queryManager.getInsertDXFRequestState(validateStart, collectionName,
 					fileType, cidx);
 			pIdx = progressDAO.insertDXFRequestState(userVO, insertQuery);
-		}
+		} 
 		return pIdx;
 	}
 
