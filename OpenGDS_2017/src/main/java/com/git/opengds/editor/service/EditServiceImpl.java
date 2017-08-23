@@ -17,11 +17,6 @@
 
 package com.git.opengds.editor.service;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
-
 import javax.inject.Inject;
 
 import org.json.simple.JSONObject;
@@ -69,11 +64,11 @@ public class EditServiceImpl implements EditService {
 //		JSONObject editJSONObject = (JSONObject) obj;
 
 		// layerEdit
-//		Object layerEditObj = editJSONObject.get("layer");
-//		if (layerEditObj != null) {
-//			JSONObject layerEdit = (JSONObject) layerEditObj;
-//			editLayerService.editLayer(userVO, layerEdit);
-//		}
+		Object layerEditObj = editJSONObject.get("layer");
+		if (layerEditObj != null) {
+			JSONObject layerEdit = (JSONObject) layerEditObj;
+			editLayerService.editLayer(userVO, layerEdit);
+		}
 
 		// featureEdit
 		Object featureEditObj = editJSONObject.get("feature");

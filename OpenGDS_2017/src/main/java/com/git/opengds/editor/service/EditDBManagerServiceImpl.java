@@ -29,6 +29,7 @@ import org.springframework.test.context.ContextConfiguration;
 
 import com.git.gdsbuilder.edit.dxf.EditDXFLayerCollection;
 import com.git.gdsbuilder.edit.ngi.EditNGILayerCollection;
+import com.git.gdsbuilder.edit.shp.EditSHPLayerCollection;
 import com.git.gdsbuilder.type.dxf.feature.DTDXFFeature;
 import com.git.gdsbuilder.type.dxf.layer.DTDXFLayer;
 import com.git.gdsbuilder.type.dxf.structure.DTDXFTables;
@@ -39,7 +40,9 @@ import com.git.gdsbuilder.type.ngi.header.NDAHeader;
 import com.git.gdsbuilder.type.ngi.header.NGIHeader;
 import com.git.gdsbuilder.type.ngi.layer.DTNGILayer;
 import com.git.gdsbuilder.type.ngi.layer.DTNGILayerList;
+import com.git.gdsbuilder.type.shp.collection.DTSHPLayerCollection;
 import com.git.gdsbuilder.type.shp.layer.DTSHPLayer;
+import com.git.gdsbuilder.type.shp.layer.DTSHPLayerList;
 import com.git.opengds.file.dxf.dbManager.DXFDBQueryManager;
 import com.git.opengds.file.dxf.persistence.DXFLayerCollectionDAO;
 import com.git.opengds.file.ngi.dbManager.NGIDBQueryManager;
@@ -824,5 +827,49 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 		SHPDBQueryManager queryManager = new SHPDBQueryManager();
 		HashMap<String, Object> deleteLayerCollectionQuery = queryManager.getDeleteSHPLayerCollectionQuery(cIdx);
 		shpDAO.deleteSHPLayerCollection(userVO, deleteLayerCollectionQuery);
+	}
+
+	@Override
+	public boolean createSHPLayer(UserVO userVO, String type, Integer cIdx, String collectionName,
+			DTSHPLayer createLayer, String src) {
+
+		try {
+			boolean isSuccessed = false;
+			SHPDBQueryManager queryManager = new SHPDBQueryManager();
+
+			// createQA20Layer
+			HashMap<String, Object> createQuery = queryManager.getSHPLayerTbCreateQuery(type, collectionName,
+					createLayer, src);
+			shpDAO.createSHPLayerTb(userVO, createQuery);
+
+			// insertLayerMedata
+			HashMap<String, Object> insertQueryMap = queryManager.getSHPLayerMetaInertQuery(type, collectionName,
+					createLayer, cIdx);
+			shpDAO.insertSHPLayerMetadata(userVO, insertQueryMap);
+			if (isSuccessed) {
+				return true;
+			} else {
+				throw new RuntimeException();
+			}
+		} catch (RuntimeException e) {
+			// txManager.rollback(status);
+			throw new RuntimeException();
+		}
+	}
+
+	@Override
+	public Integer createSHPLayerCollection(UserVO userVO, String isdxf, EditSHPLayerCollection editCollection) {
+
+		String collectionName = editCollection.getCollectionName();
+
+		DTSHPLayerList createLayerList = editCollection.getCreateLayerList();
+		DTSHPLayerCollection createCollection = new DTSHPLayerCollection();
+		createCollection.setCollectionName(collectionName);
+		createCollection.setShpLayerList(createLayerList);
+
+		SHPDBQueryManager queryManager = new SHPDBQueryManager();
+		HashMap<String, Object> insertCollectionQuery = queryManager.getInsertSHPLayerCollectionQuery(collectionName);
+		int cIdx = shpDAO.insertSHPLayerCollection(userVO, insertCollectionQuery);
+		return cIdx;
 	}
 }

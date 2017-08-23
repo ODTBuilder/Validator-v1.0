@@ -23,21 +23,21 @@ public class SHPLayerCollectionDAOImpl extends DataSourceFactory implements SHPL
 	}
 
 	@Override
-	public void createSHPLayerTb(UserVO userVO, HashMap<String, Object> createLayerQuery) {
+	public int createSHPLayerTb(UserVO userVO, HashMap<String, Object> createLayerQuery) {
 		sqlSession = super.getSqlSession(userVO.getId());
-		sqlSession.update(namespace + ".createSHPLayerTb", createLayerQuery);
+		return sqlSession.update(namespace + ".createSHPLayerTb", createLayerQuery);
 	}
 
 	@Override
-	public void insertSHPLayer(UserVO userVO, HashMap<String, Object> insertLayerQuery) {
+	public int insertSHPLayer(UserVO userVO, HashMap<String, Object> insertLayerQuery) {
 		sqlSession = super.getSqlSession(userVO.getId());
-		sqlSession.insert(namespace + ".insertSHPLayer", insertLayerQuery);
+		return sqlSession.insert(namespace + ".insertSHPLayer", insertLayerQuery);
 	}
 
 	@Override
-	public void insertSHPLayerMetadata(UserVO userVO, HashMap<String, Object> insertLayerMeteQuery) {
+	public int insertSHPLayerMetadata(UserVO userVO, HashMap<String, Object> insertLayerMeteQuery) {
 		sqlSession = super.getSqlSession(userVO.getId());
-		sqlSession.insert(namespace + ".insertSHPLayerMetadata", insertLayerMeteQuery);
+		return sqlSession.insert(namespace + ".insertSHPLayerMetadata", insertLayerMeteQuery);
 	}
 
 	@Override
@@ -49,9 +49,9 @@ public class SHPLayerCollectionDAOImpl extends DataSourceFactory implements SHPL
 	}
 
 	@Override
-	public void deleteSHPFeature(UserVO userVO, HashMap<String, Object> deleteFeature) {
+	public int deleteSHPFeature(UserVO userVO, HashMap<String, Object> deleteFeature) {
 		sqlSession = super.getSqlSession(userVO.getId());
-		sqlSession.delete(namespace + ".deleteSHPFeature", deleteFeature);
+		return sqlSession.delete(namespace + ".deleteSHPFeature", deleteFeature);
 	}
 
 	@Override
@@ -71,20 +71,20 @@ public class SHPLayerCollectionDAOImpl extends DataSourceFactory implements SHPL
 	}
 
 	@Override
-	public void deleteSHPLayerMetadata(UserVO userVO, HashMap<String, Object> deleteLayerMetaQuery) {
+	public int deleteSHPLayerMetadata(UserVO userVO, HashMap<String, Object> deleteLayerMetaQuery) {
 		sqlSession = super.getSqlSession(userVO.getId());
-		sqlSession.delete(namespace + ".deleteSHPLayerMetedata", deleteLayerMetaQuery);
+		return sqlSession.delete(namespace + ".deleteSHPLayerMetedata", deleteLayerMetaQuery);
 	}
 
 	@Override
-	public void dropSHPLayer(UserVO userVO, HashMap<String, Object> dropQuery) {
+	public int dropSHPLayer(UserVO userVO, HashMap<String, Object> dropQuery) {
 		sqlSession = super.getSqlSession(userVO.getId());
-		sqlSession.update(namespace + ".dropSHPLayer", dropQuery);
+		return sqlSession.update(namespace + ".dropSHPLayer", dropQuery);
 	}
 
 	@Override
-	public void deleteSHPLayerCollection(UserVO userVO, HashMap<String, Object> deleteLayerCollectionQuery) {
+	public int deleteSHPLayerCollection(UserVO userVO, HashMap<String, Object> deleteLayerCollectionQuery) {
 		sqlSession = super.getSqlSession(userVO.getId());
-		sqlSession.delete(namespace + ".deleteSHPLayerCollection", deleteLayerCollectionQuery);
+		return sqlSession.delete(namespace + ".deleteSHPLayerCollection", deleteLayerCollectionQuery);
 	}
 }

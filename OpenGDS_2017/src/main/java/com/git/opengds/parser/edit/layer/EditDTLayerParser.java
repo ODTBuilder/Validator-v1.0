@@ -255,10 +255,10 @@ public class EditDTLayerParser {
 		String mask = "MASK(" + layerType + ")";
 		ngiHeader.setGeometric_metadata(mask);
 
-		String version = (String) layerObj.get("version");
+		String version = layerObj.get("version").toString();
 		ngiHeader.setVersion(version);
 
-		String dim = (String) layerObj.get("dim");
+		String dim = layerObj.get("dim").toString();
 		ngiHeader.setDim("DIM(" + dim + ")");
 
 		JSONArray boundArr = (JSONArray) layerObj.get("bound");

@@ -86,7 +86,38 @@ public class EditDTLayerServiceImpl implements EditDTLayerService {
 			EditDTLayerCondition condition = new EditDTLayerCondition();
 			Integer collectionIdx = editDBManager.selectSHPLayerCollectionIdx(userVO, collectionName);
 			if (editCollection.isCreated()) {
-
+				if (collectionIdx != null) {
+					// 1. 중복되었을 시(이미 존재하는 collection에 레이어 테이블만
+					// create)
+					DTSHPLayerList createLayerList = editCollection.getCreateLayerList();
+					for (int j = 0; j < createLayerList.size(); j++) {
+						DTSHPLayer createLayer = createLayerList.get(j);
+						String layerName = createLayer.getLayerName();
+						boolean isSuccessed = editDBManager.createSHPLayer(userVO, isDxf, collectionIdx, collectionName,
+								createLayer, src);
+						if (isSuccessed) {
+							condition.putSuccessedLayers(collectionName, layerName);
+						} else {
+							condition.putFailedLayers(collectionName, layerName);
+						}
+					}
+				} else {
+					// 2. 중복되지 않았을 시 collection insert 후 레이어 테이블
+					// create
+					Integer insertIdx = editDBManager.createSHPLayerCollection(userVO, isDxf, editCollection);
+					DTSHPLayerList createLayerList = editCollection.getCreateLayerList();
+					for (int j = 0; j < createLayerList.size(); j++) {
+						DTSHPLayer createLayer = createLayerList.get(j);
+						String layerName = createLayer.getLayerName();
+						boolean isSuccessed = editDBManager.createSHPLayer(userVO, isDxf, insertIdx, collectionName,
+								createLayer, src);
+						if (isSuccessed) {
+							condition.putSuccessedLayers(collectionName, layerName);
+						} else {
+							condition.putFailedLayers(collectionName, layerName);
+						}
+					}
+				}
 			}
 			if (editCollection.isModified()) {
 

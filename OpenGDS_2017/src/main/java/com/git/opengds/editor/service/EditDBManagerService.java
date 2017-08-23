@@ -25,6 +25,7 @@ import org.opengis.feature.simple.SimpleFeature;
 
 import com.git.gdsbuilder.edit.dxf.EditDXFLayerCollection;
 import com.git.gdsbuilder.edit.ngi.EditNGILayerCollection;
+import com.git.gdsbuilder.edit.shp.EditSHPLayerCollection;
 import com.git.gdsbuilder.type.dxf.feature.DTDXFFeature;
 import com.git.gdsbuilder.type.dxf.layer.DTDXFLayer;
 import com.git.gdsbuilder.type.ngi.feature.DTNGIFeature;
@@ -99,5 +100,10 @@ public interface EditDBManagerService {
 			DTSHPLayer layer);
 
 	public void deleteSHPLayerCollection(UserVO userVO, Integer collectionIdx);
+
+	public boolean createSHPLayer(UserVO userVO, String isdxf, Integer collectionIdx, String collectionName,
+			DTSHPLayer createLayer, String src);
+
+	public Integer createSHPLayerCollection(UserVO userVO, String isdxf, EditSHPLayerCollection editCollection);
 
 }
