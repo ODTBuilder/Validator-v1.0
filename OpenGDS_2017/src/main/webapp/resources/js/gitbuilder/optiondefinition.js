@@ -51,9 +51,20 @@ gitbuilder.ui.OptionDefinition = $
 						polygon : [ "Admin", "CrossRoad", "RefAttributeMiss", "BridgeName", "NodeMiss", "EdgeMatchMiss", "UselessEntity",
 								"LayerMiss", "RefLayerMiss", "SmallArea", "EntityDuplicated", "SelfEntity", "PointDuplicated",
 								"AttributeFix", "OutBoundary", "OverShoot", "UnderShoot", "OneAcre", "OneStage", "BuildingSite",
-								"UFIDLength", "HouseAttribute", "CemeterySite", "NumericalValue", "RiverBoundaryMiss", "UFIDRule" ]
+								"UFIDLength", "HouseAttribute", "CemeterySite", "NumericalValue", "RiverBoundaryMiss", "UFIDRule",
+								"HoleMisplacement", "CenterLineMiss" ]
 					},
 					optItem : {
+						"HoleMisplacement" : {
+							"title" : "Misplaced Hole Error",
+							"alias" : "HoleMisplacement",
+							"type" : "none"
+						},
+						"CenterLineMiss" : {
+							"title" : "Missing Centerline Error",
+							"alias" : "CenterLineMiss",
+							"type" : "relation"
+						},
 						"UFIDRule" : {
 							"title" : "UFID Rule Violation",
 							"alias" : "UFIDRule",
