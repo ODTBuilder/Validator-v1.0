@@ -104,7 +104,7 @@ gitbuilder.ui.Validation = $.widget("gitbuilder.validation", {
 		$(this.tree).on('deselect_node.jstree', function(e, data) {
 			var r = [];
 			for (var i = 0; i < data.selected.length; i++) {
-				if (data.instance.get_node(data.selected[i]).type === "n_ngi_group" || data.instance.get_node(data.selected[i]).type === "n_dxf_group") {
+				if (data.instance.get_node(data.selected[i]).type === "n_ngi_group" || data.instance.get_node(data.selected[i]).type === "n_dxf_group" || data.instance.get_node(data.selected[i]).type === "n_shp_group") {
 					if (r.length === 0 && data.instance.get_node(data.selected[i]).type === "n_ngi_group") {
 						r.push(data.instance.get_node(data.selected[i]));
 						that.fileType = "ngi";
@@ -112,6 +112,10 @@ gitbuilder.ui.Validation = $.widget("gitbuilder.validation", {
 					} else if (r.length === 0 && data.instance.get_node(data.selected[i]).type === "n_dxf_group") {
 						r.push(data.instance.get_node(data.selected[i]));
 						that.fileType = "dxf";
+						continue;
+					}else if (r.length === 0 && data.instance.get_node(data.selected[i]).type === "n_shp_group") {
+						r.push(data.instance.get_node(data.selected[i]));
+						that.fileType = "shp";
 						continue;
 					}
 
@@ -121,10 +125,15 @@ gitbuilder.ui.Validation = $.widget("gitbuilder.validation", {
 					} else if (r.length > 0 && that.fileType === "dxf" && data.instance.get_node(data.selected[i]).type === "n_dxf_group") {
 						r.push(data.instance.get_node(data.selected[i]));
 						continue;
+					}else if (r.length > 0 && that.fileType === "shp" && data.instance.get_node(data.selected[i]).type === "n_shp_group") {
+						r.push(data.instance.get_node(data.selected[i]));
+						continue;
 					}
 					if(that.fileType === "ngi" && data.instance.get_node(data.selected[i]).type === "n_dxf_group") {
 						data.instance.deselect_node(data.instance.get_node(data.selected[i]));
 					} else if(that.fileType === "dxf" && data.instance.get_node(data.selected[i]).type === "n_ngi_group") {
+						data.instance.deselect_node(data.instance.get_node(data.selected[i]));
+					}else if(that.fileType === "shp" && data.instance.get_node(data.selected[i]).type === "n_shp_group") {
 						data.instance.deselect_node(data.instance.get_node(data.selected[i]));
 					}
 				} else {
@@ -140,7 +149,7 @@ gitbuilder.ui.Validation = $.widget("gitbuilder.validation", {
 		$(this.tree).on('select_node.jstree', function(e, data) {
 			var r = [];
 			for (var i = 0; i < data.selected.length; i++) {
-				if (data.instance.get_node(data.selected[i]).type === "n_ngi_group" || data.instance.get_node(data.selected[i]).type === "n_dxf_group") {
+				if (data.instance.get_node(data.selected[i]).type === "n_ngi_group" || data.instance.get_node(data.selected[i]).type === "n_dxf_group"|| data.instance.get_node(data.selected[i]).type === "n_shp_group") {
 					if (r.length === 0 && data.instance.get_node(data.selected[i]).type === "n_ngi_group") {
 						r.push(data.instance.get_node(data.selected[i]));
 						that.fileType = "ngi";
@@ -149,7 +158,11 @@ gitbuilder.ui.Validation = $.widget("gitbuilder.validation", {
 						r.push(data.instance.get_node(data.selected[i]));
 						that.fileType = "dxf";
 						continue;
-					}
+					} else if (r.length === 0 && data.instance.get_node(data.selected[i]).type === "n_shp_group") {
+						r.push(data.instance.get_node(data.selected[i]));
+						that.fileType = "shp";
+						continue;
+					} 
 
 					if (r.length > 0 && that.fileType === "ngi" && data.instance.get_node(data.selected[i]).type === "n_ngi_group") {
 						r.push(data.instance.get_node(data.selected[i]));
@@ -157,10 +170,16 @@ gitbuilder.ui.Validation = $.widget("gitbuilder.validation", {
 					} else if (r.length > 0 && that.fileType === "dxf" && data.instance.get_node(data.selected[i]).type === "n_dxf_group") {
 						r.push(data.instance.get_node(data.selected[i]));
 						continue;
+					}else if (r.length > 0 && that.fileType === "shp" && data.instance.get_node(data.selected[i]).type === "n_shp_group") {
+						r.push(data.instance.get_node(data.selected[i]));
+						continue;
 					}
+					
 					if(that.fileType === "ngi" && data.instance.get_node(data.selected[i]).type === "n_dxf_group") {
 						data.instance.deselect_node(data.instance.get_node(data.selected[i]));
 					} else if(that.fileType === "dxf" && data.instance.get_node(data.selected[i]).type === "n_ngi_group") {
+						data.instance.deselect_node(data.instance.get_node(data.selected[i]));
+					}else if(that.fileType === "shp" && data.instance.get_node(data.selected[i]).type === "n_shp_group") {
 						data.instance.deselect_node(data.instance.get_node(data.selected[i]));
 					}
 				} else {
@@ -586,7 +605,7 @@ gitbuilder.ui.Validation = $.widget("gitbuilder.validation", {
 		var r = [];
 
 		for (var i = 0; i < arr.length; i++) {
-			if ($(this.tree).jstree("get_node", arr[i]).type === "n_ngi_group" || $(this.tree).jstree("get_node", arr[i]).type === "n_dxf_group") {
+			if ($(this.tree).jstree("get_node", arr[i]).type === "n_ngi_group" || $(this.tree).jstree("get_node", arr[i]).type === "n_dxf_group"|| $(this.tree).jstree("get_node", arr[i]).type === "n_shp_group") {
 				if (r.length === 0 && $(this.tree).jstree("get_node", arr[i]).type === "n_ngi_group") {
 					r.push($(this.tree).jstree("get_node", arr[i]));
 					this.fileType = "ngi";
@@ -594,6 +613,10 @@ gitbuilder.ui.Validation = $.widget("gitbuilder.validation", {
 				} else if (r.length === 0 && $(this.tree).jstree("get_node", arr[i]).type === "n_dxf_group") {
 					r.push($(this.tree).jstree("get_node", arr[i]));
 					this.fileType = "dxf";
+					continue;
+				}else if (r.length === 0 && $(this.tree).jstree("get_node", arr[i]).type === "n_shp_group") {
+					r.push($(this.tree).jstree("get_node", arr[i]));
+					this.fileType = "shp";
 					continue;
 				}
 
@@ -604,6 +627,12 @@ gitbuilder.ui.Validation = $.widget("gitbuilder.validation", {
 					$(this.tree).jstree("deselect_node", $(this.tree).jstree("get_node", arr[i]));
 				}
 				if (r.length > 0 && this.fileType === "dxf" && $(this.tree).jstree("get_node", arr[i]).type === "n_dxf_group") {
+					r.push($(this.tree).jstree("get_node", arr[i]));
+					continue;
+				} else {
+					$(this.tree).jstree("deselect_node", $(this.tree).jstree("get_node", arr[i]));
+				}
+				if (r.length > 0 && this.fileType === "shp" && $(this.tree).jstree("get_node", arr[i]).type === "n_shp_group") {
 					r.push($(this.tree).jstree("get_node", arr[i]));
 					continue;
 				} else {
