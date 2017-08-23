@@ -227,9 +227,11 @@ gb.panel.EditingTool = function(obj) {
 	var fth2 = $("<th>").text("Description");
 	var ftr = $("<tr>").append(fth1).append(fth2);
 	var fhd = $("<thead>").append(ftr);
-	this.featureTB = $("<tbody>").mouseleave(function() {
-		that.map.getView().fit(that.tempSelectSource.getExtent(), that.map.getSize());
-	});
+	this.featureTB = $("<tbody>");
+	// .mouseleave(function() {
+	// that.map.getView().fit(that.tempSelectSource.getExtent(),
+	// that.map.getSize());
+	// });
 	var ftb = $("<table>").addClass("gb-table").append(fhd).append(this.featureTB);
 
 	this.featurePop = new gb.panel.Base({
@@ -671,7 +673,8 @@ gb.panel.EditingTool.prototype.select = function(layer) {
 						that.count++;
 						console.log("hi");
 					}, 500);
-					that.map.getView().fit(feature.getGeometry().getExtent(), that.map.getSize());
+					// that.map.getView().fit(feature.getGeometry().getExtent(),
+					// that.map.getSize());
 					console.log("in");
 				}).mouseleave(function() {
 					var fid = $(this).find("a").attr("value");
@@ -1183,6 +1186,7 @@ gb.panel.EditingTool.prototype.setFeatures = function(newFeature) {
 	}
 	this.select(this.layer);
 	if (newFeature.length === 1) {
+		this.interaction.selectWMS.setLayer(this.layer);
 		this.interaction.selectWMS.setFeatureId(newFeature[0].getId());
 		// this.interaction.select.getFeatures().extend(newFeature);
 		this.open();

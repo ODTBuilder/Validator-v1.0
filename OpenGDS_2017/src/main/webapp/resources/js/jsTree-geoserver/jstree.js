@@ -7250,7 +7250,20 @@
 												// inst.import_fake_image(wmsInfo);
 												inst.import_fake_image_notload(wmsInfo);
 											}
-										} else if (obj.type === "n_ngi_group" || obj.type === "n_dxf_group") {
+										} else if (obj.type === "n_shp_layer_pt" || obj.type === "n_shp_layer_ln"
+												|| obj.type === "n_shp_layer_pg" || obj.type === "n_shp_layer_mpt"
+												|| obj.type === "n_shp_layer_mln" || obj.type === "n_shp_layer_mpg") {
+											var arr = inst.get_selected();
+											if (inst.get_node(inst.get_parent(obj)).type === "n_shp_group") {
+												var wmsInfo = {
+													"refer" : inst,
+													"arr" : arr,
+													"parent" : inst.get_parent(obj)
+												}
+												// inst.import_fake_image(wmsInfo);
+												inst.import_fake_image_notload(wmsInfo);
+											}
+										} else if (obj.type === "n_ngi_group" || obj.type === "n_dxf_group" || obj.type === "n_shp_group") {
 											var arr = inst.get_selected();
 											// var arr2 = [];
 											// for (var i = 0; i < arr.length;
@@ -10330,7 +10343,7 @@
 				},
 				"n_shp" : {
 					"icon" : "fa fa-folder-o",
-					"valid_children" : [ "n_shp_layer" ]
+					"valid_children" : [ "n_shp_group" ]
 				},
 				// "ngi" : {
 				// "icon" : "fa fa-folder-o",
@@ -10353,6 +10366,11 @@
 					"icon" : "fa fa-map-o",
 					"valid_children" : [ "n_dxf_layer_arc", "n_dxf_layer_cir", "n_dxf_layer_ins", "n_dxf_layer_lpl", "n_dxf_layer_pl",
 							"n_dxf_layer_txt" ]
+				},
+				"n_shp_group" : {
+					"icon" : "fa fa-map-o",
+					"valid_children" : [ "n_shp_layer_pt", "n_shp_layer_ln", "n_shp_layer_pg", "n_shp_layer_mpt", "n_shp_layer_mln",
+							"n_shp_layer_mpg" ]
 				},
 				// "n_ngi_layer" : {
 				// "icon" : "fa fa-file-image-o",
@@ -10427,6 +10445,18 @@
 					"valid_children" : []
 				},
 				"n_shp_layer_pg" : {
+					"icon" : "fa fa-square",
+					"valid_children" : []
+				},
+				"n_shp_layer_mpt" : {
+					"icon" : "fa fa-circle",
+					"valid_children" : []
+				},
+				"n_shp_layer_mln" : {
+					"icon" : "fa fa-minus",
+					"valid_children" : []
+				},
+				"n_shp_layer_mpg" : {
 					"icon" : "fa fa-square",
 					"valid_children" : []
 				},

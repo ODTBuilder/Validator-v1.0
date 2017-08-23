@@ -128,7 +128,7 @@ gitbuilder.ui.QAEdit = $.widget("gitbuilder.qaedit",
 									 */
 									"action" : function(data) {
 										var inst = $.jstree.reference(data.reference), obj = inst.get_node(data.reference);
-										if (obj.type === "n_ngi_group" || obj.type === "n_dxf_group") {
+										if (obj.type === "n_ngi_group" || obj.type === "n_dxf_group" || obj.type === "n_shp_group") {
 											that.assign_center(obj);
 										}
 									}
@@ -149,7 +149,7 @@ gitbuilder.ui.QAEdit = $.widget("gitbuilder.qaedit",
 									 */
 									"action" : function(data) {
 										var inst = $.jstree.reference(data.reference), obj = inst.get_node(data.reference);
-										if (obj.type === "n_ngi_group" || obj.type === "n_dxf_group") {
+										if (obj.type === "n_ngi_group" || obj.type === "n_dxf_group" || obj.type === "n_shp_group") {
 											that.assign_up(obj);
 										}
 									}
@@ -170,7 +170,7 @@ gitbuilder.ui.QAEdit = $.widget("gitbuilder.qaedit",
 									 */
 									"action" : function(data) {
 										var inst = $.jstree.reference(data.reference), obj = inst.get_node(data.reference);
-										if (obj.type === "n_ngi_group" || obj.type === "n_dxf_group") {
+										if (obj.type === "n_ngi_group" || obj.type === "n_dxf_group" || obj.type === "n_shp_group") {
 											that.assign_down(obj);
 										}
 									}
@@ -191,7 +191,7 @@ gitbuilder.ui.QAEdit = $.widget("gitbuilder.qaedit",
 									 */
 									"action" : function(data) {
 										var inst = $.jstree.reference(data.reference), obj = inst.get_node(data.reference);
-										if (obj.type === "n_ngi_group" || obj.type === "n_dxf_group") {
+										if (obj.type === "n_ngi_group" || obj.type === "n_dxf_group" || obj.type === "n_shp_group") {
 											that.assign_left(obj);
 										}
 									}
@@ -212,7 +212,7 @@ gitbuilder.ui.QAEdit = $.widget("gitbuilder.qaedit",
 									 */
 									"action" : function(data) {
 										var inst = $.jstree.reference(data.reference), obj = inst.get_node(data.reference);
-										if (obj.type === "n_ngi_group" || obj.type === "n_dxf_group") {
+										if (obj.type === "n_ngi_group" || obj.type === "n_dxf_group" || obj.type === "n_shp_group") {
 											that.assign_right(obj);
 										}
 									}
@@ -233,7 +233,7 @@ gitbuilder.ui.QAEdit = $.widget("gitbuilder.qaedit",
 									 */
 									"action" : function(data) {
 										var inst = $.jstree.reference(data.reference), obj = inst.get_node(data.reference);
-										if (obj.type === "e_ngi_layer" || obj.type === "e_dxf_layer") {
+										if (obj.type === "e_ngi_layer" || obj.type === "e_dxf_layer" || obj.type === "e_shp_layer") {
 											that.assign_error(obj);
 										}
 									}
@@ -821,19 +821,50 @@ gitbuilder.ui.QAEdit = $.widget("gitbuilder.qaedit",
 						prevIcon), btnNext = $("<button>").addClass("gitbuilder-qaedit-navigator-next").addClass("btn").addClass(
 						"btn-default").append(nextIcon);
 				$(document).on("click", this.eventNamespace + " .gitbuilder-qaedit-navigator-prev", function() {
+					that.options.editingTool.attrPop.close();
 					that.prevError();
 				});
 				$(document).on("click", this.eventNamespace + " .gitbuilder-qaedit-navigator-next", function() {
+					that.options.editingTool.attrPop.close();
 					that.nextError();
 				});
-				var td1 = $("<td>").append(btnPrev), td3 = $("<td>").append(btnNext);
-				this.td2 = $("<td>");
-				var tr1 = $("<tr>").addClass("text-center").append(td1).append(this.td2).append(td3);
-				var thead = $("<thead>").append(tr1);
+				var td1 = $("<div>").css({
+					"width" : "100px",
+					"display" : "inline-block"
+				}).append(btnPrev), td3 = $("<div>").css({
+					"width" : "100px",
+					"display" : "inline-block"
+				}).append(btnNext);
+				this.td2 = $("<div>").css({
+					"display" : "inline-block"
+				});
+				var tr1 = $("<div>").addClass("text-center").append(td1).append(this.td2).append(td3);
+				var thead = $("<div>").css({
+					"margin-bottom" : "10px"
+				}).append(tr1);
+				var xSpan = $("<span>").attr({
+					"aria-hidden" : "true"
+				}).append("&times;");
+				var xBtn = $("<button>").attr({
+					"data-dismiss" : "modal",
+					"aria-label" : "Close"
+				}).css({
+					"display" : "inline-block",
+					"float" : "right",
+					"padding" : "0",
+					"margin" : "0",
+					"color" : "#ccc",
+					"border" : "none",
+					"background-color" : "transparent",
+					"cursor" : "pointer",
+					"outline" : "none",
+					"color" : "#ccc"
+				}).append(xSpan);
+				var title = $("<span>").text("Error Navigator");
 				this.tbody = $("<tbody>");
-				var tb = $("<table>").addClass("table").append(thead).append(this.tbody);
-				var pbd = $("<div>").addClass("panel-body").append(tb);
-				var phd = $("<div>").addClass("panel-heading").text("Error Navigator");
+				var tb = $("<table>").addClass("table").append(this.tbody);
+				var pbd = $("<div>").addClass("panel-body").append(thead).append(tb);
+				var phd = $("<div>").addClass("panel-heading").append(title).append(xBtn);
 				var pdf = $("<div>").addClass("panel").addClass("panel-default").append(phd).append(pbd);
 				this.naviWindow = $("<div>").css({
 					"max-width" : "500px",
