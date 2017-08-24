@@ -5,7 +5,7 @@ package com.git.gdsbuilder.type.validate.option;
 
 /** 
  * @ClassName: NeatLineAttribute 
- * @Description: 
+ * @Description: NeatLineAttribute 정보를 담고 있는 클래스
  * @author JY.Kim 
  * @date 2017. 8. 4. 오후 3:37:05 
  *  

@@ -8,7 +8,7 @@ import java.util.List;
 
 /** 
  * @ClassName: CemeterySite 
- * @Description: 
+ * @Description: CemeterySite 정보를 담고 있는 클래스
  * @author JY.Kim 
  * @date 2017. 8. 2. 오후 2:55:07 
  *  

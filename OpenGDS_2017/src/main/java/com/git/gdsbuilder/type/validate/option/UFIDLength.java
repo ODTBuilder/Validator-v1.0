@@ -5,7 +5,7 @@ package com.git.gdsbuilder.type.validate.option;
 
 /** 
  * @ClassName: UFIDLength 
- * @Description: 
+ * @Description: UFIDLength 정보를 담고 있는 클래스
  * @author JY.Kim 
  * @date 2017. 8. 1. 오후 5:03:10 
  *  

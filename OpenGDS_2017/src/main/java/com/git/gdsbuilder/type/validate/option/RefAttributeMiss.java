@@ -3,13 +3,18 @@ package com.git.gdsbuilder.type.validate.option;
 import java.util.HashMap;
 import java.util.List;
 
+/** 
+* @ClassName: RefAttributeMiss 
+* @Description: RefAttributeMiss 정보를 담고 있는 클래스
+* @author JY.Kim 
+* @date 2017. 8. 16. 오후 2:06:42 
+*  
+*/
 public class RefAttributeMiss extends ValidatorOption {
 	
 	HashMap<String,List<String>> refAttributeMaissOpts;
 	
 	public enum Type {
-
-		
 		
 		RefAttributeMiss("RefAttributeMiss", "CloseCollectionError");
 

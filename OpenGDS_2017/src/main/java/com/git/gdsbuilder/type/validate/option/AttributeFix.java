@@ -21,6 +21,13 @@ import java.util.HashMap;
 
 import org.json.simple.JSONObject;
 
+/** 
+* @ClassName: AttributeFix 
+* @Description: AttributeFix 정보를 담고 있는 클래스
+* @author JY.Kim 
+* @date 2017. 8. 16. 오후 2:08:58 
+*  
+*/
 public class AttributeFix extends ValidatorOption {
 
 	HashMap<String, Object> attributeKey;
