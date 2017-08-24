@@ -211,3 +211,95 @@ gb.edit.FeatureRecord.prototype.getStructure = function() {
 	}
 	return obj;
 }
+
+gb.edit.FeatureRecord.prototype.getPartStructure = function(bringLayer) {
+	if (!Array.isArray(bringLayer)) {
+		console.error("type error");
+		return;
+	}
+	var format = new ol.format.GeoJSON();
+	var obj = {};
+
+	var cLayers = Object.keys(this.created);
+	var bringC = [];
+	for (var i = 0; i < cLayers.length; i++) {
+		if (bringLayer.indexOf(cLayers[i]) !== -1) {
+			bringC.push(cLayers[i]);
+		} else {
+			continue;
+		}
+		if (Object.keys(this.created[cLayers[i]]).length < 1) {
+			continue;
+		}
+		obj[cLayers[i]] = {};
+	}
+
+	for (var j = 0; j < bringC.length; j++) {
+		var names = Object.keys(this.created[bringC[j]]);
+		for (var k = 0; k < names.length; k++) {
+			if (!obj[bringC[j]].hasOwnProperty("created")) {
+				obj[bringC[j]]["created"] = {};
+			}
+			if (!obj[bringC[j]]["created"].hasOwnProperty("features")) {
+				obj[bringC[j]]["created"]["features"] = [];
+			}
+			obj[bringC[j]]["created"]["features"].push(format.writeFeature(this.created[bringC[j]][names[k]]));
+		}
+	}
+
+	var mLayers = Object.keys(this.modified);
+	var bringM = [];
+	for (var i = 0; i < mLayers.length; i++) {
+		if (bringLayer.indexOf(mLayers[i]) !== -1) {
+			bringM.push(mLayers[i]);
+		} else {
+			continue;
+		}
+		if (Object.keys(this.modified[mLayers[i]]).length < 1 || obj.hasOwnProperty(mLayers[i])) {
+			continue;
+		}
+		obj[mLayers[i]] = {};
+	}
+
+	for (var j = 0; j < bringM.length; j++) {
+		var names = Object.keys(this.modified[bringM[j]]);
+		for (var k = 0; k < names.length; k++) {
+			if (!obj[bringM[j]].hasOwnProperty("modified")) {
+				obj[bringM[j]]["modified"] = {};
+			}
+			if (!obj[bringM[j]]["modified"].hasOwnProperty("features")) {
+				obj[bringM[j]]["modified"]["features"] = [];
+			}
+			var clone = this.modified[bringM[j]][names[k]];
+			if (this.id) {
+				clone.setId(clone.get(this.id));
+			}
+			obj[bringM[j]]["modified"]["features"].push(format.writeFeature(clone));
+		}
+	}
+
+	var rLayers = Object.keys(this.removed);
+	var bringR = [];
+	for (var i = 0; i < rLayers.length; i++) {
+		if (bringLayer.indexOf(rLayers[i]) !== -1) {
+			bringR.push(rLayers[i]);
+		} else {
+			continue;
+		}
+		if (Object.keys(this.removed[rLayers[i]]).length < 1 || obj.hasOwnProperty(rLayers[i])) {
+			continue;
+		}
+		obj[rLayers[i]] = {};
+	}
+
+	for (var j = 0; j < bringR.length; j++) {
+		var names = Object.keys(this.removed[bringR[j]]);
+		for (var k = 0; k < names.length; k++) {
+			if (!obj[bringR[j]].hasOwnProperty("removed")) {
+				obj[bringR[j]]["removed"] = [];
+			}
+			obj[bringR[j]]["removed"].push(names[k]);
+		}
+	}
+	return obj;
+}

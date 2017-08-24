@@ -97,8 +97,8 @@ html {
 			<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
 				aria-expanded="false" title="Save">Save</a>
 				<ul class="dropdown-menu" role="menu">
-					<li><a href="#">Save</a></li>
-					<li><a href="#" id="save">Save All</a></li>
+					<li><a href="#" id="savePart">Save</a></li>
+					<li><a href="#" id="saveAll">Save All</a></li>
 				</ul></li>
 
 			<li><a href="#" title="Edit" id="edit">Edit</a></li>
@@ -357,7 +357,21 @@ html {
 			feature : frecord
 		});
 
-		$("#save").click(function() {
+		$("#savePart").click(function() {
+			// 			transfer.sendStructure();
+			var selected = $('#builderClientLayer').jstreeol3(true).get_selected();
+			var olselected = [];
+			for (var i = 0; i < selected.length; i++) {
+				olselected.push($('#builderClientLayer').jstreeol3(true).get_LayerById(selected[i]).get("id"));
+			}
+			console.log(olselected);
+			if (olselected.length > 0) {
+				transfer.sendPartStructure(olselected);
+			}
+
+		});
+
+		$("#saveAll").click(function() {
 			transfer.sendStructure();
 		});
 
