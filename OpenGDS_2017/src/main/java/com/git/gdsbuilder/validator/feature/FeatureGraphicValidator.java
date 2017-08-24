@@ -35,6 +35,7 @@
 package com.git.gdsbuilder.validator.feature;
 
 import java.util.List;
+import java.util.Map;
 
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.feature.SchemaException;
@@ -44,6 +45,7 @@ import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.operation.TransformException;
 
 import com.git.gdsbuilder.type.validate.error.ErrorFeature;
+import com.google.common.util.concurrent.ForwardingListenableFuture.SimpleForwardingListenableFuture;
 
 /**
  * SimpleFeatureCollection를 그래픽 검수하는 클래스
@@ -245,4 +247,70 @@ public interface FeatureGraphicValidator {
 
 	public List<ErrorFeature> validateOneStage(SimpleFeatureCollection simpleFeatureCollection,
 			SimpleFeatureCollection relaSimpleFeatureCollection);
+	
+	/**
+	 * 검수 항목 중 "묘지계 오류(CemeterySite)" 검수
+	 * @author JY.Kim
+	 * @Date 2017. 8. 16. 오후 2:22:12
+	 * @param simpleFeature
+	 * @param relationSfc
+	 * @return ErrorFeature
+	 * @throws
+	 * */
+	public ErrorFeature validateCemeterySite(SimpleFeature simpleFeature, SimpleFeatureCollection relationSfc);
+	
+	/**
+	 * 검수 항목 중 "건물 부지 오류(BuildingSite)" 검수
+	 * @author JY.Kim
+	 * @Date 2017. 8. 17. 오전 10:38:15
+	 * @param simpleFeature
+	 * @param relationSfc
+	 * @param attributes
+	 * @return ErrorFeature
+	 * @throws
+	 * */
+	public ErrorFeature validateBuildingSite(SimpleFeature simpleFeature, SimpleFeatureCollection relationSfc, Map<String, List<String>> attributes);
+	
+	/**
+	 * 검수 항목 중 "하천경계 오류(RiverBoundaryMiss)" 검수
+	 * @author JY.Kim
+	 * @Date 2017. 8. 17. 오전 10:38:15
+	 * @param simpleFeature
+	 * @param relationSfc
+	 * @return ErrorFeature
+	 * @throws
+	 * */
+	public ErrorFeature validateRiverBoundaryMiss(SimpleFeature simpleFeature, SimpleFeatureCollection relationSfc);
+	
+	/**
+	 * 검수 항목 중 "중심선누락 오류(CenterLineMiss)" 검수
+	 * @author JY.Kim
+	 * @Date 2017. 8. 18. 오전 11:23:49
+	 * @param simpleFeature
+	 * @param relationSfc
+	 * @return ErrorFeature
+	 * @throws
+	 * */
+	public ErrorFeature validateCenterLineMiss(SimpleFeature simpleFeature, SimpleFeatureCollection relationSfc, double lineInvadedTolorence);
+	
+	/**
+	 * 검수 항목 중 "홀 존재 오류(HoleMisplacement)" 검수
+	 * @author JY.Kim
+	 * @Date 2017. 8. 18. 오후 5:24:48
+	 * @param simpleFeature
+	 * @return ErrorFeature
+	 * @throws
+	 * */
+	public List<ErrorFeature> validateHoleMisplacement(SimpleFeature simpleFeature);
+	
+	/**
+	 * 검수 항목 중 "홀 내부 객체 오류(EntityInHole)" 검수
+	 * @author JY.Kim
+	 * @Date 2017. 8. 22. 오전 11:01:35
+	 * @param simpleFeature
+	 * @param relationSfc
+	 * @return List<ErrorFeature>
+	 * @throws
+	 * */
+	public List<ErrorFeature> validateEntityInHole(SimpleFeature simpleFeature, SimpleFeatureCollection relationSfc);
 }

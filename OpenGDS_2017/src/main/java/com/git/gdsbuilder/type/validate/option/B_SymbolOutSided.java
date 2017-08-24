@@ -19,7 +19,7 @@ public class B_SymbolOutSided extends ValidatorOption{
 	
 	public enum Type{
 
-		B_SYMBOLOUTSIDED("B_SymbolOutSided", "GeometricError");
+		B_SYMBOLOUTSIDED("BSymbolOutSided", "GeometricError");
 
 		String errName;
 		String errType;

@@ -3,6 +3,13 @@ package com.git.gdsbuilder.type.validate.option;
 import java.util.HashMap;
 import java.util.List;
 
+/** 
+* @ClassName: RefZValueMiss 
+* @Description: RefZValueMiss 정보를 담고 있는 클래스
+* @author JY.Kim 
+* @date 2017. 8. 11. 오후 3:37:23 
+*  
+*/
 public class RefZValueMiss extends ValidatorOption {
 
 	HashMap<String, List<String>> refZValueMissOpts;

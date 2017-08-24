@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import org.geotools.xml.impl.MismatchedBindingFinder;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -32,16 +33,23 @@ import com.git.gdsbuilder.type.validate.option.AttributeFix;
 import com.git.gdsbuilder.type.validate.option.B_SymbolOutSided;
 import com.git.gdsbuilder.type.validate.option.BridgeName;
 import com.git.gdsbuilder.type.validate.option.BuildingOpen;
+import com.git.gdsbuilder.type.validate.option.BuildingSite;
+import com.git.gdsbuilder.type.validate.option.CemeterySite;
+import com.git.gdsbuilder.type.validate.option.CenterLineMiss;
 import com.git.gdsbuilder.type.validate.option.ConBreak;
 import com.git.gdsbuilder.type.validate.option.ConIntersected;
 import com.git.gdsbuilder.type.validate.option.ConOverDegree;
 import com.git.gdsbuilder.type.validate.option.CrossRoad;
 import com.git.gdsbuilder.type.validate.option.EdgeMatchMiss;
 import com.git.gdsbuilder.type.validate.option.EntityDuplicated;
+import com.git.gdsbuilder.type.validate.option.EntityInHole;
 import com.git.gdsbuilder.type.validate.option.EntityNone;
+import com.git.gdsbuilder.type.validate.option.HoleMisplacement;
 import com.git.gdsbuilder.type.validate.option.HouseAttribute;
 import com.git.gdsbuilder.type.validate.option.LayerMiss;
+import com.git.gdsbuilder.type.validate.option.NeatLineAttribute;
 import com.git.gdsbuilder.type.validate.option.NodeMiss;
+import com.git.gdsbuilder.type.validate.option.NumericalValue;
 import com.git.gdsbuilder.type.validate.option.OneAcre;
 import com.git.gdsbuilder.type.validate.option.OneStage;
 import com.git.gdsbuilder.type.validate.option.OutBoundary;
@@ -49,9 +57,12 @@ import com.git.gdsbuilder.type.validate.option.OverShoot;
 import com.git.gdsbuilder.type.validate.option.PointDuplicated;
 import com.git.gdsbuilder.type.validate.option.RefAttributeMiss;
 import com.git.gdsbuilder.type.validate.option.RefZValueMiss;
+import com.git.gdsbuilder.type.validate.option.RiverBoundaryMiss;
 import com.git.gdsbuilder.type.validate.option.SelfEntity;
 import com.git.gdsbuilder.type.validate.option.SmallArea;
 import com.git.gdsbuilder.type.validate.option.SmallLength;
+import com.git.gdsbuilder.type.validate.option.UFIDLength;
+import com.git.gdsbuilder.type.validate.option.UFIDRule;
 import com.git.gdsbuilder.type.validate.option.UnderShoot;
 import com.git.gdsbuilder.type.validate.option.UselessEntity;
 import com.git.gdsbuilder.type.validate.option.UselessPoint;
@@ -386,7 +397,7 @@ public class ValidateTypeParser {
 			}
 
 			if (optionName.equalsIgnoreCase(B_SymbolOutSided.Type.B_SYMBOLOUTSIDED.errName())) {
-				Object b_SymbolOutSidedObj = qaOptions.get("B_SymbolOutSided");
+				Object b_SymbolOutSidedObj = qaOptions.get("BSymbolOutSided");
 				if (b_SymbolOutSidedObj == null) {
 					continue;
 				} else {
@@ -496,6 +507,157 @@ public class ValidateTypeParser {
 				}
 			}
 			
+			if(optionName.equalsIgnoreCase(UFIDLength.Type.UFIDLENGTH.errName())){
+				Object ufidLengthObj = qaOptions.get("UFIDLength");
+				if(ufidLengthObj == null){
+					continue;
+				}else{
+					String lengthStr = (String) ((JSONObject) ufidLengthObj).get("figure");
+					double length = Double.parseDouble(lengthStr);
+					ValidatorOption ufidLength = new UFIDLength(length);
+					optionList.add(ufidLength);
+				}
+			}
+			
+			if(optionName.equalsIgnoreCase(CemeterySite.Type.CEMETERYSITE.errName())){
+				Object cemeterySiteObj = qaOptions.get("CemeterySite");
+				if(cemeterySiteObj == null){
+					continue;
+				}else{
+					List<String> relations = new ArrayList<>();
+					JSONObject cemeterySiteValue = (JSONObject) cemeterySiteObj;
+					JSONArray relationValues = (JSONArray) cemeterySiteValue.get("relation");
+					int valueSize = relationValues.size();
+					for (int i = 0; i < valueSize; i++) {
+						String relationID = (String) relationValues.get(i);
+						relations.add(relationID);
+					}
+					ValidatorOption cemeterySite = new CemeterySite(relations);
+					optionList.add(cemeterySite);
+				}
+			}
+			
+			if(optionName.equalsIgnoreCase(BuildingSite.Type.BUILDINGSITE.errName())){
+				Object buildingSiteObj = qaOptions.get("BuildingSite");
+				if(buildingSiteObj == null){
+					continue;
+				}else{
+					HashMap<String, Object> hashMap = new HashMap<String, Object>();
+					List<String> relations = new ArrayList<String>();
+					JSONObject buildingSiteJson = (JSONObject) buildingSiteObj;
+					JSONObject label = (JSONObject) buildingSiteJson.get("label");
+					JSONArray relation = (JSONArray) buildingSiteJson.get("relation");
+					
+					Iterator iterator = label.keySet().iterator();
+					while (iterator.hasNext()) {
+						String layerName = (String) iterator.next();
+						JSONObject attributeObj = (JSONObject) label.get(layerName);
+						hashMap.put(layerName, attributeObj);
+					}
+					
+					for (int i = 0; i < relation.size(); i++) {
+						String relationID = (String) relation.get(i);
+						relations.add(relationID);
+					}
+					ValidatorOption buildingSite = new BuildingSite(hashMap, relations);
+					optionList.add(buildingSite);
+				}
+			}
+			
+			if(optionName.equalsIgnoreCase(NeatLineAttribute.Type.NEATLINEATTRIBUTE.errName())){
+				Boolean isTrue = (Boolean) qaOptions.get("NeatLineAttribute");
+				if(isTrue){
+					NeatLineAttribute neatLineAttribute = new NeatLineAttribute();
+					optionList.add(neatLineAttribute);
+				}
+			}
+			
+			if(optionName.equalsIgnoreCase(NumericalValue.Type.NUMERICALVALUE.errName())){
+				Object numericalValueObj = qaOptions.get("NumericalValue");
+				if(numericalValueObj == null){
+					continue;
+				}else{
+					JSONObject numericalValueJson = (JSONObject) numericalValueObj;
+					String attribute = (String) numericalValueJson.get("attribute");
+					String condition = (String) numericalValueJson.get("condition");
+					String figureStr = (String) numericalValueJson.get("figure");
+					double figure = Double.parseDouble(figureStr);
+					
+					NumericalValue numericalValue = new NumericalValue(attribute, condition, figure);
+					optionList.add(numericalValue);
+				}
+			}
+			
+			if(optionName.equals(RiverBoundaryMiss.Type.RIVERBOUNDARYMISS.errName())){
+				//
+				Object selfEntityObj = qaOptions.get("RiverBoundaryMiss");
+				if (selfEntityObj == null) {
+					continue;
+				} else {
+					List<String> relations = new ArrayList<String>();
+					JSONObject selfEntityValue = (JSONObject) selfEntityObj;
+					JSONArray relationValues = (JSONArray) selfEntityValue.get("relation");
+					int valueSize = relationValues.size();
+					for (int i = 0; i < valueSize; i++) {
+						String relationID = (String) relationValues.get(i);
+						relations.add(relationID);
+					}
+					ValidatorOption riverBoundaryMiss = new RiverBoundaryMiss(relations);
+					optionList.add(riverBoundaryMiss);
+				}
+			}
+			
+			if(optionName.equalsIgnoreCase(UFIDRule.Type.UFIDRULE.errName())){
+				Boolean isTrue = (Boolean) qaOptions.get("UFIDRule");
+				if(isTrue){
+					UFIDRule ufidRule = new UFIDRule();
+					optionList.add(ufidRule);
+				}
+			}
+			
+			if(optionName.equalsIgnoreCase(CenterLineMiss.Type.CENTERLINEMISS.errName())){
+				Object centerLineMissObj = qaOptions.get("CenterLineMiss");
+				if(centerLineMissObj == null){
+					continue;
+				}else{
+					List<String> relations = new ArrayList<>();
+					JSONObject centerLineMissValue = (JSONObject) centerLineMissObj;
+					JSONArray relationValues = (JSONArray) centerLineMissValue.get("relation");
+					int valueSize = relationValues.size();
+					for (int i = 0; i < valueSize; i++) {
+						String relationID = (String) relationValues.get(i);
+						relations.add(relationID);
+					}
+					ValidatorOption centerLineMiss = new CenterLineMiss(relations);
+					optionList.add(centerLineMiss);
+				}
+			}
+			
+			if(optionName.equalsIgnoreCase(HoleMisplacement.Type.HOLEMISPLACEMENT.errName())){
+				Boolean isTrue = (Boolean) qaOptions.get("HoleMisplacement");
+				if(isTrue){
+					HoleMisplacement holeMisplacement = new HoleMisplacement();
+					optionList.add(holeMisplacement);
+				}
+			}
+			
+			if(optionName.equalsIgnoreCase(EntityInHole.Type.ENTITYINHOLE.errName())){
+				Object entityInHoleObj = qaOptions.get("EntityInHole");
+				if(entityInHoleObj == null){
+					continue;
+				}else{
+					List<String> relations = new ArrayList<>();
+					JSONObject entityInHoleValue = (JSONObject) entityInHoleObj;
+					JSONArray relationValues = (JSONArray) entityInHoleValue.get("relation");
+					int valueSize = relationValues.size();
+					for (int i = 0; i < valueSize ; i++) {
+						String relationID = (String) relationValues.get(i);
+						relations.add(relationID);
+					}
+					ValidatorOption entityInHole = new EntityInHole(relations);
+					optionList.add(entityInHole);
+				}
+			}
 			
 			if (optionName.equalsIgnoreCase(EntityNone.Type.ENTITYNONE.errName())) {
 				Boolean isTrue = (Boolean) qaOptions.get("EntityNone");

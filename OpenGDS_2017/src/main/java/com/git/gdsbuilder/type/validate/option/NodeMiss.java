@@ -8,7 +8,7 @@ import java.util.List;
 
 /** 
 * @ClassName: NodeMiss 
-* @Description: 
+* @Description: NodeMiss 정보를 담고 있는 클래스
 * @author JY.Kim 
 * @date 2017. 6. 21. 오후 8:06:33 
 *  
