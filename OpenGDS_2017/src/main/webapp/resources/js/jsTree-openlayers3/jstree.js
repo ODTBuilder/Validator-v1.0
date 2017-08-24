@@ -5732,7 +5732,7 @@
 					if (pLayer instanceof ol.layer.Group) {
 						var group = pLayer.getLayers();
 						layer = this.get_LayerById(obj.id, group);
-						this._data.layerproperties.editingTool.removeFeatureFromUnmanaged(layer.get("id"));
+						this._data.layerproperties.editingTool.removeFeatureFromUnmanaged(layer);
 						var subVal = 0;
 						subVal = this.sum_Layers(layer, subVal);
 						group.remove(layer);
@@ -5744,7 +5744,7 @@
 								if (git.fake === "parent") {
 									var group = pLayer.get("git").layers;
 									layer = this.get_LayerById(obj.id, group);
-									this._data.layerproperties.editingTool.removeFeatureFromUnmanaged(layer.get("id"));
+									this._data.layerproperties.editingTool.removeFeatureFromUnmanaged(layer);
 									var subVal = 0;
 									subVal = this.sum_Layers(layer, subVal);
 									group.remove(layer);
@@ -5752,7 +5752,7 @@
 									hide_child_layer(pLayer, layer.get("id"));
 								} else if (git.fake === "child") {
 									layer = this.get_LayerById(obj.id);
-									this._data.layerproperties.editingTool.removeFeatureFromUnmanaged(layer.get("id"));
+									this._data.layerproperties.editingTool.removeFeatureFromUnmanaged(layer);
 									var subVal = 0;
 									subVal = this.sum_Layers(layer, subVal);
 									this.git.isContextmenu = true;
@@ -5763,7 +5763,7 @@
 							}
 						} else {
 							layer = this.get_LayerById(obj.id);
-							this._data.layerproperties.editingTool.removeFeatureFromUnmanaged(layer.get("id"));
+							this._data.layerproperties.editingTool.removeFeatureFromUnmanaged(layer);
 							var subVal = 0;
 							subVal = this.sum_Layers(layer, subVal);
 							this.git.isContextmenu = true;
@@ -5773,7 +5773,7 @@
 						}
 					} else {
 						layer = this.get_LayerById(obj.id);
-						this._data.layerproperties.editingTool.removeFeatureFromUnmanaged(layer.get("id"));
+						this._data.layerproperties.editingTool.removeFeatureFromUnmanaged(layer);
 						var subVal = 0;
 						subVal = this.sum_Layers(layer, subVal);
 						this.git.isContextmenu = true;
@@ -10396,7 +10396,6 @@
 											inst._data.layerproperties.layerRecord.remove(info.getFormat(), info.getSheetNumber(), layer);
 										}
 										var layer = inst.get_LayerById(layers[i]);
-//										inst._data.layerproperties.editingTool.removeFeatureFromUnmanaged(layer.get("id"));
 										inst.delete_node_layer(layers[i]);
 									}
 								} else {
