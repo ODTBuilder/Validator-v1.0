@@ -1210,11 +1210,13 @@ gb.panel.EditingTool.prototype.getFeatures = function() {
 /**
  * 삭제한 레이어에 포함되는 피처를 임시 레이어에서 지운다
  * 
- * @param {String}
- *            layer ID
+ * @param {ol.layer.Base}
+ *            layer
  */
-gb.panel.EditingTool.prototype.removeFeatureFromUnmanaged = function(layerId) {
+gb.panel.EditingTool.prototype.removeFeatureFromUnmanaged = function(layer) {
 	var that = this;
+	var layerId = layer.get("id");
+
 	this.tempVector.getSource().forEachFeature(function(feature) {
 		var id = feature.getId();
 		if (id.indexOf(layerId) !== -1) {
@@ -1222,8 +1224,31 @@ gb.panel.EditingTool.prototype.removeFeatureFromUnmanaged = function(layerId) {
 		}
 	});
 	this.tempVector.setMap(this.map);
+
+	if (layer instanceof ol.layer.Group) {
+		var layers = layer.getLayers();
+		for (var i = 0; i < layers.getLength(); i++) {
+			this.removeFeatureFromUnmanaged(layers.item(i));
+		}
+	} else if (layer instanceof ol.layer.Base) {
+		var git = layer.get("git");
+		if (git) {
+			// git 변수가 있음
+			if (git.hasOwnProperty("fake")) {
+				// 가짜 레이어임
+				if (git["fake"] === "parent") {
+					// 가짜 그룹 레이어임
+					var layers = git["layers"];
+					for (var i = 0; i < layers.getLength(); i++) {
+						this.removeFeatureFromUnmanaged(layers.item(i));
+					}
+				}
+			}
+		}
+	}
 	return;
 };
+
 /**
  * 임시 레이어에 있는 피처를 전부 삭제한다.
  */
