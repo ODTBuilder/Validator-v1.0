@@ -66,6 +66,7 @@ import com.git.gdsbuilder.type.validate.option.OneStage;
 import com.git.gdsbuilder.type.validate.option.OutBoundary;
 import com.git.gdsbuilder.type.validate.option.OverShoot;
 import com.git.gdsbuilder.type.validate.option.PointDuplicated;
+import com.git.gdsbuilder.type.validate.option.RiverBoundaryMiss;
 import com.git.gdsbuilder.type.validate.option.SelfEntity;
 import com.git.gdsbuilder.type.validate.option.SmallArea;
 import com.git.gdsbuilder.type.validate.option.SmallLength;
@@ -81,11 +82,8 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.LinearRing;
-import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
-
-import net.opengis.ows11.validation.DocumentRootValidator;
 
 public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 
@@ -1173,4 +1171,43 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 			return null;
 		}
 	}
+	
+	public ErrorFeature validateRiverBoundaryMiss(SimpleFeature simpleFeature, SimpleFeatureCollection relationSfc){
+		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
+		SimpleFeatureIterator relationSimpleFeatureIterator = relationSfc.features();
+		String featureIdx = simpleFeature.getID();
+		Property featuerIDPro = simpleFeature.getProperty("feature_id");
+		String featureID = (String) featuerIDPro.getValue();
+		
+		boolean isTrue = false;
+		while (relationSimpleFeatureIterator.hasNext()) {
+			SimpleFeature relationSimpleFeature = relationSimpleFeatureIterator.next();
+			Geometry relationGeometry = (Geometry) relationSimpleFeature.getDefaultGeometry();
+			if(geometry.intersects(relationGeometry)){
+				isTrue = true;
+				if(geometry.equals(relationGeometry)){
+					//오류
+					ErrorFeature errorFeature = new ErrorFeature(featureIdx, featureID, RiverBoundaryMiss.Type.RIVERBOUNDARYMISS.errType(),
+							RiverBoundaryMiss.Type.RIVERBOUNDARYMISS.errName(), geometry.getInteriorPoint());
+					return errorFeature;
+				}else{
+					if(!relationGeometry.contains(geometry) || !geometry.within(relationGeometry)){
+						// 오류
+						ErrorFeature errorFeature = new ErrorFeature(featureIdx, featureID, RiverBoundaryMiss.Type.RIVERBOUNDARYMISS.errType(),
+								RiverBoundaryMiss.Type.RIVERBOUNDARYMISS.errName(), geometry.getInteriorPoint());
+						return errorFeature;
+					}
+				}
+			}
+		}
+		if(!isTrue){
+			// 오류
+			ErrorFeature errorFeature = new ErrorFeature(featureIdx, featureID, RiverBoundaryMiss.Type.RIVERBOUNDARYMISS.errType(),
+					RiverBoundaryMiss.Type.RIVERBOUNDARYMISS.errName(), geometry.getInteriorPoint());
+			return errorFeature;
+		}else{
+			return null;
+		}
+	}
+	
 }

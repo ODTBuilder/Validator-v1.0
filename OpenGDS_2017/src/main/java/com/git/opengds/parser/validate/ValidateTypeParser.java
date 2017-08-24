@@ -49,6 +49,7 @@ import com.git.gdsbuilder.type.validate.option.OverShoot;
 import com.git.gdsbuilder.type.validate.option.PointDuplicated;
 import com.git.gdsbuilder.type.validate.option.RefAttributeMiss;
 import com.git.gdsbuilder.type.validate.option.RefZValueMiss;
+import com.git.gdsbuilder.type.validate.option.RiverBoundaryMiss;
 import com.git.gdsbuilder.type.validate.option.SelfEntity;
 import com.git.gdsbuilder.type.validate.option.SmallArea;
 import com.git.gdsbuilder.type.validate.option.SmallLength;
@@ -493,6 +494,25 @@ public class ValidateTypeParser {
 				if(isTrue){
 					HouseAttribute houseAttribute = new HouseAttribute();
 					optionList.add(houseAttribute);
+				}
+			}
+			
+			if(optionName.equals(RiverBoundaryMiss.Type.RIVERBOUNDARYMISS.errName())){
+				//
+				Object selfEntityObj = qaOptions.get("RiverBoundaryMiss");
+				if (selfEntityObj == null) {
+					continue;
+				} else {
+					List<String> relations = new ArrayList<String>();
+					JSONObject selfEntityValue = (JSONObject) selfEntityObj;
+					JSONArray relationValues = (JSONArray) selfEntityValue.get("relation");
+					int valueSize = relationValues.size();
+					for (int i = 0; i < valueSize; i++) {
+						String relationID = (String) relationValues.get(i);
+						relations.add(relationID);
+					}
+					ValidatorOption selfEntity = new SelfEntity(relations);
+					optionList.add(selfEntity);
 				}
 			}
 			

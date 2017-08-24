@@ -201,6 +201,8 @@ public interface LayerValidator {
 	
 	public ErrorLayer valildateHouseAttribute();
 	
+	public ErrorLayer validateRiverBoundaryMiss(List<GeoLayer> relationLayers);
+	
 	public ErrorLayer validateCloseCollection(ValidateCloseCollectionLayer closeCollectionLayer, String geomColunm);
 
 }

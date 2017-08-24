@@ -245,4 +245,7 @@ public interface FeatureGraphicValidator {
 
 	public List<ErrorFeature> validateOneStage(SimpleFeatureCollection simpleFeatureCollection,
 			SimpleFeatureCollection relaSimpleFeatureCollection);
+	
+	public ErrorFeature validateRiverBoundaryMiss(SimpleFeature simpleFeature, SimpleFeatureCollection relationSfc);
+	
 }

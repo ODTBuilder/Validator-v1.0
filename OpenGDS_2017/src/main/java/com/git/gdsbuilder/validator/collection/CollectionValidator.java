@@ -35,15 +35,10 @@
 
 package com.git.gdsbuilder.validator.collection;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadPoolExecutor;
 
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureIterator;
@@ -58,10 +53,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.git.gdsbuilder.type.geoserver.collection.GeoLayerCollection;
-import com.git.gdsbuilder.type.geoserver.collection.GeoLayerCollectionList;
 import com.git.gdsbuilder.type.geoserver.layer.GeoLayer;
 import com.git.gdsbuilder.type.geoserver.layer.GeoLayerList;
-import com.git.gdsbuilder.type.validate.collection.ValidateLayerCollectionList;
 import com.git.gdsbuilder.type.validate.collection.close.ValidateCloseCollectionLayer;
 import com.git.gdsbuilder.type.validate.error.ErrorLayer;
 import com.git.gdsbuilder.type.validate.error.ErrorLayerList;
@@ -89,6 +82,7 @@ import com.git.gdsbuilder.type.validate.option.OverShoot;
 import com.git.gdsbuilder.type.validate.option.PointDuplicated;
 import com.git.gdsbuilder.type.validate.option.RefAttributeMiss;
 import com.git.gdsbuilder.type.validate.option.RefZValueMiss;
+import com.git.gdsbuilder.type.validate.option.RiverBoundaryMiss;
 import com.git.gdsbuilder.type.validate.option.SelfEntity;
 import com.git.gdsbuilder.type.validate.option.SmallArea;
 import com.git.gdsbuilder.type.validate.option.SmallLength;
@@ -555,6 +549,18 @@ public class CollectionValidator {
 								errorLayer.mergeErrorLayer(typeErrorLayer);
 							}
 						}
+						
+						if(option instanceof RiverBoundaryMiss){
+							List<String> relationNames = ((RiverBoundaryMiss) option).getRelationType();
+							for (int r = 0; r < relationNames.size(); r++) {
+								typeErrorLayer = layerValidator.validateRiverBoundaryMiss
+										(types.getTypeLayers(relationNames.get(r), layerCollection));
+								if (typeErrorLayer != null) {
+									errorLayer.mergeErrorLayer(typeErrorLayer);
+								}
+							}
+						}
+						
 					}
 				}
 			} else {

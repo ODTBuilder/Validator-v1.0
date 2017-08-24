@@ -947,6 +947,33 @@ public class LayerValidatorImpl implements LayerValidator {
 		}
 	}
 	
+	public ErrorLayer validateRiverBoundaryMiss(List<GeoLayer> relationLayers){
+		
+		ErrorLayer errorLayer = new ErrorLayer();
+		SimpleFeatureCollection sfc = validatorLayer.getSimpleFeatureCollection();
+		SimpleFeatureIterator simpleFeatureIterator = sfc.features();
+		
+		for (int i = 0; i < relationLayers.size(); i++) {
+			GeoLayer relationLayer = relationLayers.get(i);
+			SimpleFeatureCollection relationSfc = relationLayer.getSimpleFeatureCollection();
+			while (simpleFeatureIterator.hasNext()) {
+				SimpleFeature simpleFeature = simpleFeatureIterator.next();
+				ErrorFeature errorFeature = graphicValidator.validateRiverBoundaryMiss(simpleFeature, relationSfc);
+				if (errorFeature != null) {
+					errorFeature.setLayerName(validatorLayer.getLayerName());
+					errorLayer.addErrorFeature(errorFeature);
+				} else {
+					continue;
+				}
+			}
+		}
+		
+		if(errorLayer.getErrFeatureList().size() > 0){
+			return errorLayer;
+		}else{
+			return null;
+		}
+	}
 	
 
 	public ErrorLayer validateCloseCollection(ValidateCloseCollectionLayer closeCollectionLayer, String geomColunm) {
