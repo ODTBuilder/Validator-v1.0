@@ -49,8 +49,8 @@ public class ErrorReportParser {
 			String featureID = (String) errFeature.get("feature_id");
 			String errorType = (String) errFeature.get("err_type");
 			String errorName = (String) errFeature.get("err_name");
-			double errorCoordinateX = (Double) errFeature.get("x_coordinate");
-			double errorCoordinateY = (Double) errFeature.get("y_coordinate");
+			double errorCoordinateX = Double.parseDouble(errFeature.get("x_coordinate").toString());
+			double errorCoordinateY = Double.parseDouble(errFeature.get("y_coordinate").toString());
 
 			DetailsValidationResult dtValidateResult = new DetailsValidationResult(collectionName, layerName, featureID,
 					errorType, errorName, errorCoordinateX, errorCoordinateY);

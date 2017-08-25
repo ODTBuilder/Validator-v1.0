@@ -120,7 +120,7 @@ public class ErrorReportServiceImpl implements ErrorReportService {
 				.selectAllErrorFeaturesQuery(layerCollectionName);
 
 	/*	DefaultTransactionDefinition def = new DefaultTransactionDefinition();
-		def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+		def.setPropagationBehavior(TransactionDefinition.PROPAGA9ION_REQUIRED);
 		TransactionStatus status = txManager.getTransaction(def);*/
 		try {
 			List<HashMap<String, Object>> errAllFeatures = errLayerDAO.selectAllErrorFeatures(userVO, selectAllQuery);

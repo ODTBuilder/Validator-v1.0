@@ -113,7 +113,7 @@ public class ErrorLayerDBQueryManager {
 	public HashMap<String, Object> selectAllErrorFeaturesQuery(String tableName) {
 
 		String selectQuery = " select "
-				+ "err_idx, collection_name, layer_name, feature_id, err_type, err_name, ST_X(geom) as x_Coordinate, ST_Y(geom) as y_Coordinate "
+				+ "err_idx, collection_name, layer_name, feature_id, err_type, err_name, round(cast(ST_X(geom) AS numeric), 2) as x_Coordinate, round(cast(ST_Y(geom) AS numeric), 2) as y_Coordinate "
 				+ "from " + "\"" + tableName + "\"";
 
 		HashMap<String, Object> selectQueryMap = new HashMap<String, Object>();
@@ -133,7 +133,7 @@ public class ErrorLayerDBQueryManager {
 		// feature_id, err_type, err_name, ST_AsText(geom) as geom " + "from " +
 		// tableName + " where ";
 		String selectQuery = " select "
-				+ "collection_name, layer_name, feature_id, err_type, err_name, ST_X(geom) as x_Coordinate, ST_Y(geom) as y_Coordinate "
+				+ "collection_name, layer_name, feature_id, err_type, err_name, round(cast(ST_X(geom) AS numeric), 2) as x_Coordinate, round(cast(ST_Y(geom) AS numeric), 2) as y_Coordinate "
 				+ "from " + tableName + " where ";
 		for (int i = 0; i < layerNames.size(); i++) {
 			String layerName = layerNames.get(i);
