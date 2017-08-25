@@ -113,15 +113,15 @@ gb.edit.FeatureRecord.prototype.remove = function(layer, feature) {
 	console.log(this.created);
 	console.log(this.modified);
 }
-gb.edit.FeatureRecord.prototype.removeByLayer = function(layer) {
-	if (this.removed.hasOwnProperty(layer.get("id"))) {
-		delete this.removed[layer.get("id")];
+gb.edit.FeatureRecord.prototype.removeByLayer = function(layerId) {
+	if (this.removed.hasOwnProperty(layerId)) {
+		delete this.removed[layerId];
 	}
-	if (this.created.hasOwnProperty(layer.get("id"))) {
-		delete this.created[layer.get("id")];
+	if (this.created.hasOwnProperty(layerId)) {
+		delete this.created[layerId];
 	}
-	if (this.modified.hasOwnProperty(layer.get("id"))) {
-		delete this.modified[layer.get("id")];
+	if (this.modified.hasOwnProperty(layerId)) {
+		delete this.modified[layerId];
 	}
 	console.log(this.removed);
 	console.log(this.created);

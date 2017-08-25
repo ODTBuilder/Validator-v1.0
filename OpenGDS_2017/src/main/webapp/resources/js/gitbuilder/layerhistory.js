@@ -425,10 +425,17 @@ gb.edit.LayerRecord.prototype.getStructure = function() {
 	return obj;
 }
 gb.edit.LayerRecord.prototype.getPartStructure = function(bringLayer) {
+	if (!Array.isArray(bringLayer)) {
+		console.error("type error");
+		return;
+	}
 	var obj = {};
 	var created = this.getCreated();
 	var cFormat = Object.keys(created);
 	for (var i = 0; i < cFormat.length; i++) {
+		if (bringLayer.indexOf(cFormat[i]) === -1) {
+			continue;
+		}
 		if (!obj.hasOwnProperty(cFormat[i])) {
 			obj[cFormat[i]] = {};
 		}
@@ -474,6 +481,9 @@ gb.edit.LayerRecord.prototype.getPartStructure = function(bringLayer) {
 	var modified = this.getModified();
 	var mFormat = Object.keys(modified);
 	for (var i = 0; i < mFormat.length; i++) {
+		if (bringLayer.indexOf(mFormat[i]) === -1) {
+			continue;
+		}
 		if (!obj.hasOwnProperty(mFormat[i])) {
 			obj[mFormat[i]] = {};
 		}
@@ -514,6 +524,9 @@ gb.edit.LayerRecord.prototype.getPartStructure = function(bringLayer) {
 	var removed = this.getRemoved();
 	var rFormat = Object.keys(removed);
 	for (var i = 0; i < rFormat.length; i++) {
+		if (bringLayer.indexOf(rFormat[i]) === -1) {
+			continue;
+		}
 		if (!obj.hasOwnProperty(rFormat[i])) {
 			obj[rFormat[i]] = {};
 		}

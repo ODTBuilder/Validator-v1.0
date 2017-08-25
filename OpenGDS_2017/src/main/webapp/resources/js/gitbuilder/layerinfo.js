@@ -92,7 +92,7 @@ gb.layer.LayerInfo.prototype.setName = function(name) {
 	this.name = name;
 };
 gb.layer.LayerInfo.prototype.getName = function() {
-	return this.name;
+	return this.name === null ? this.getOldName() : this.name;
 };
 
 gb.layer.LayerInfo.prototype.setId = function(id) {
