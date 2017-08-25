@@ -7,19 +7,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 /** 
- * @ClassName: CemeterySite 
- * @Description: CemeterySite 정보를 담고 있는 클래스
- * @author JY.Kim 
- * @date 2017. 8. 2. 오후 2:55:07 
- *  
- */
-public class CemeterySite extends ValidatorOption {
-	
+* @ClassName: EntityInHole 
+* @Description: EntityInHole 정보를 담고 있는 클래스
+* @author JY.Kim 
+* @date 2017. 8. 21. 오후 4:45:27 
+*  
+*/
+public class EntityInHole extends ValidatorOption{
 	List<String> relationType;
 	
 	public enum Type{
 
-		CEMETERYSITE("CemeterySite", "GeometricError");
+		ENTITYINHOLE("EntityInHole", "GeometricError");
 
 		String errName;
 		String errType;
@@ -47,12 +46,12 @@ public class CemeterySite extends ValidatorOption {
 	/**
 	 * @param relationType
 	 */
-	public CemeterySite(List<String> relationType) {
+	public EntityInHole(List<String> relationType) {
 		super();
 		this.relationType = relationType;
 	}
 	
-	public CemeterySite(){
+	public EntityInHole(){
 		super();
 		this.relationType = new ArrayList<String>();
 	}
@@ -74,5 +73,4 @@ public class CemeterySite extends ValidatorOption {
 	public void addRelationLayerType(String layerTypeName){
 		relationType.add(layerTypeName);
 	}
-
 }

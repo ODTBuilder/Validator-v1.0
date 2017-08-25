@@ -8,7 +8,7 @@ import java.util.List;
 
 /** 
 * @ClassName: RiverBoundaryMiss 
-* @Description: 
+* @Description: RiverBoundaryMiss 정보를 담고 있는 클래스
 * @author JY.Kim 
 * @date 2017. 8. 10. 오전 9:56:32 
 *  
@@ -43,19 +43,12 @@ public class RiverBoundaryMiss extends ValidatorOption{
 			return errType;
 		}
 	}
-	
-	/**
-	 * SelfEntity 생성자
-	 * @param relationLayerID
-	 */
+
 	public RiverBoundaryMiss(List<String> relationLayerID) {
 		super();
 		this.relationType = relationLayerID;
 	}
 
-	/**
-	 * SelfEntity 생성자
-	 */
 	public RiverBoundaryMiss() {
 		super();
 		this.relationType = new ArrayList<String>();

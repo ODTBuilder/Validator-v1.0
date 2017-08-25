@@ -5,7 +5,7 @@ package com.git.gdsbuilder.type.validate.option;
 
 /** 
 * @ClassName: NumericalValue 
-* @Description: 
+* @Description: NumericalValue 정보를 담고 있는 클래스
 * @author JY.Kim 
 * @date 2017. 8. 8. 오후 4:23:07 
 *  

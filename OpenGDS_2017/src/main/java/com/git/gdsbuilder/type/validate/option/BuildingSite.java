@@ -11,7 +11,7 @@ import org.json.simple.JSONObject;
 
 /** 
 * @ClassName: BuildingSite 
-* @Description: 
+* @Description: BuildingSite 정보를 담고 있는 클래스
 * @author JY.Kim 
 * @date 2017. 8. 3. 오전 11:43:00 
 *  

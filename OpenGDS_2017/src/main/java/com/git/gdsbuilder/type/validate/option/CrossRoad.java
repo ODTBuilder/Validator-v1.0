@@ -8,7 +8,7 @@ import java.util.List;
 
 /** 
 * @ClassName: CrossRoad 
-* @Description: 
+* @Description: CrossRoad 정보를 담고 있는 클래스
 * @author JY.Kim 
 * @date 2017. 6. 14. 오후 3:22:42 
 *  

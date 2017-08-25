@@ -4,17 +4,16 @@
 package com.git.gdsbuilder.type.validate.option;
 
 /** 
- * @ClassName: NeatLineAttribute 
- * @Description: NeatLineAttribute 정보를 담고 있는 클래스
- * @author JY.Kim 
- * @date 2017. 8. 4. 오후 3:37:05 
- *  
- */
-public class NeatLineAttribute extends ValidatorOption {
-
+* @ClassName: HoleMisplacement 
+* @Description: 
+* @author JY.Kim 
+* @date 2017. 8. 18. 오후 4:56:11 
+*  
+*/
+public class HoleMisplacement extends ValidatorOption{
 	public enum Type{
 
-		NEATLINEATTRIBUTE("NeatLineAttribute", "GeometricError");
+		HOLEMISPLACEMENT("HoleMisplacement", "GeometricError");
 
 		String errName;
 		String errType;
@@ -38,5 +37,4 @@ public class NeatLineAttribute extends ValidatorOption {
 			return errType;
 		}
 	}
-
 }
