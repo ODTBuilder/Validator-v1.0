@@ -284,8 +284,37 @@ html {
 					}
 					gitrnd.setProjection(null, null, null, null);
 				});
+			},
+			recallFunc : function(layer, arr) {
+				if (layer instanceof ol.layer.Group) {
+					arr.push(layer.get("id"));
+					var layers = layer.getLayers();
+					for (var i = 0; i < layers.getLength(); i++) {
+						gitrnd.recallFunc(layers.item(i), arr);
+					}
+				} else if (layer instanceof ol.layer.Base) {
+					var git = layer.get("git");
+					if (git) {
+						var fake = git.fake;
+						if (fake) {
+							if (fake === "parent") {
+								arr.push(layer.get("id"));
+								var layers = layer.get("git").layers;
+								for (var i = 0; i < layers.getLength(); i++) {
+									gitrnd.recallFunc(layers.item(i), arr);
+								}
+							} else if (fake === "child") {
+								arr.push(layer.get("id"));
+							}
+						} else {
+							arr.push(layer.get("id"));
+						}
+					} else {
+						arr.push(layer.get("id"));
+					}
+				}
+				return arr;
 			}
-
 		}
 
 		gitrnd.search("5186");
@@ -360,14 +389,22 @@ html {
 
 		$("#savePart").click(function() {
 			// 			transfer.sendStructure();
+			// gitrnd.recallFunc(layer, arr);
 			var selected = $('#builderClientLayer').jstreeol3(true).get_selected();
 			var olselected = [];
 			for (var i = 0; i < selected.length; i++) {
-				olselected.push($('#builderClientLayer').jstreeol3(true).get_LayerById(selected[i]).get("id"));
+				var layer = $('#builderClientLayer').jstreeol3(true).get_LayerById(selected[i]);
+				gitrnd.recallFunc(layer, olselected);
 			}
 			console.log(olselected);
-			if (olselected.length > 0) {
-				transfer.sendPartStructure(olselected);
+			var nodupliobj = {};
+			for (var i = 0; i < olselected.length; i++) {
+				nodupliobj[olselected[i]] = true;
+			}
+			var nodupliarr = Object.keys(nodupliobj);
+			console.log(nodupliarr);
+			if (nodupliarr.length > 0) {
+				transfer.sendPartStructure(nodupliarr);
 			}
 
 		});

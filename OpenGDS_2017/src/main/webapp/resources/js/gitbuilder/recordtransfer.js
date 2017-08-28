@@ -48,6 +48,8 @@ gb.edit.RecordTransfer.prototype.getStructure = function() {
 };
 
 gb.edit.RecordTransfer.prototype.sendStructure = function() {
+	var featureObj = this.getFeatureRecord();
+
 	$.ajax({
 		url : this.url,
 		type : "POST",
@@ -62,6 +64,7 @@ gb.edit.RecordTransfer.prototype.sendStructure = function() {
 		},
 		success : function(data) {
 			console.log(data);
+			featureObj.clearAll();
 		}
 	});
 };
@@ -70,7 +73,7 @@ gb.edit.RecordTransfer.prototype.sendPartStructure = function(layers) {
 	console.log(this.getPartStructure(layers));
 	var featureObj = this.getFeatureRecord();
 
-	console.log(featureObj);
+	console.log(this.getPartStructure(layers));
 	$.ajax({
 		url : this.url,
 		type : "POST",
