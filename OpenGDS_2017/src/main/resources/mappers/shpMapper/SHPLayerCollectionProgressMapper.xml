@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.git.mappers.shpMappers.SHPLayerCollectionProgressMapper">
+
+	<insert id="insertSHPRequestState" parameterType="hashMap">
+		${insertQuery}
+
+		<selectKey keyProperty="p_idx" resultType="int" order="AFTER">
+			select currval('shp_layercollection_qa_progress_p_idx_seq')
+		</selectKey>
+	</insert>
+
+	<select id="selectSHPValidateProgressPid" parameterType="hashMap"
+		resultType="hashMap">
+		${selectQuery}
+	</select>
+
+	<select id="updateSHPProgressingState" parameterType="hashMap"
+		resultType="hashMap">
+		${updateQuery}
+	</select>
+
+	<select id="updateSHPValidateSuccessState" parameterType="hashMap"
+		resultType="hashMap">
+		${updateQuery}
+	</select>
+
+	<select id="updateSHPValidateFailState" parameterType="hashMap"
+		resultType="hashMap">
+		${updateQuery}
+	</select>
+
+	<select id="updateSHPValidateErrLayerFail" parameterType="hashMap"
+		resultType="hashMap">
+		${updateQuery}
+	</select>
+
+	<select id="updateSHPValidateErrLayerSuccess" parameterType="hashMap"
+		resultType="hashMap">
+		${updateQuery}
+	</select>
+
+	<select id="updateSHPResponseState" parameterType="hashMap"
+		resultType="hashMap">
+		${updateQuery}
+	</select>
+
+	<select id="updateSHPErrorTableName" parameterType="hashMap"
+		resultType="hashMap">
+		${updateQuery}
+	</select>
+
+	<select id="selectSHPErrorLayerTbNamesCount" parameterType="hashMap"
+		resultType="hashMap">
+		${selectQuery}
+	</select>
+
+	<select id="selectAllSHPValidateProgress" parameterType="hashMap"
+		resultType="hashMap">
+		${selectAllQuery}
+	</select>
+
+</mapper>

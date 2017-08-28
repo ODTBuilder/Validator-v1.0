@@ -11,9 +11,13 @@ public interface ValidateProgressDAO {
 
 	public Integer insertDXFRequestState(UserVO userVO, HashMap<String, Object> insertQuery);
 
+	public Integer insertSHPRequestState(UserVO userVO, HashMap<String, Object> insertQuery);
+
 	public int selectNGIValidateProgressPid(UserVO userVO, HashMap<String, Object> selectQA20ValidateProgressPid);
 
 	public int selectDXFValidateProgressPid(UserVO userVO, HashMap<String, Object> selectQA10ValidateProgressPid);
+
+	public int selectSHPValidateProgressPid(UserVO userVO, HashMap<String, Object> selectQA10ValidateProgressPid);
 
 	public void updateNGIProgressingState(UserVO userVO, HashMap<String, Object> insertProgressingState);
 
@@ -43,18 +47,37 @@ public interface ValidateProgressDAO {
 
 	public void insertDXFErrorTableName(UserVO userVO, HashMap<String, Object> insertErrorTableName);
 
+	public void updateSHPProgressingState(UserVO userVO, HashMap<String, Object> insertProgressingState);
+
+	public void updateSHPValidateSuccessState(UserVO userVO, HashMap<String, Object> insertProgressingState);
+
+	public void updateSHPValidateFailState(UserVO userVO, HashMap<String, Object> insertProgressingState);
+
+	public void updateSHPValidateErrLayerSuccess(UserVO userVO, HashMap<String, Object> updateProgressingState);
+
+	public void updateSHPValidateErrLayerFail(UserVO userVO, HashMap<String, Object> updateProgressingState);
+
+	public void insertSHPResponseState(UserVO userVO, HashMap<String, Object> insertQuery);
+
+	public void insertSHPErrorTableName(UserVO userVO, HashMap<String, Object> insertErrorTableName);
+
 	public Long selectNGIErrorLayerTbNamesCount(UserVO userVO, HashMap<String, Object> selectIdxQuery);
 
 	public Long selectDXFErrorLayerTbNamesCount(UserVO userVO, HashMap<String, Object> selectIdxQuery);
 
-	public List<HashMap<String, Object>> selectAllDXFValidateProgress(
-			UserVO userVO, HashMap<String, Object> selectAllQA10ValidateProgress);
+	public List<HashMap<String, Object>> selectAllDXFValidateProgress(UserVO userVO,
+			HashMap<String, Object> selectAllQA10ValidateProgress);
 
-	public List<HashMap<String, Object>> selectAllNGIValidateProgress(
-			UserVO userVO, HashMap<String, Object> selectAllQA20ValidateProgress);
+	public List<HashMap<String, Object>> selectAllNGIValidateProgress(UserVO userVO,
+			HashMap<String, Object> selectAllQA20ValidateProgress);
 
 	public void deleteDXFProgress(HashMap<String, Object> deleteValidateProgressQuery);
 
 	public void deleteNGIProgress(HashMap<String, Object> deleteValidateProgressQuery);
+
+	public List<HashMap<String, Object>> selectAllSHPValidateProgress(UserVO userVO,
+			Object selectAllSHPValidateProgress);
+
+	public Long selectSHPErrorLayerTbNamesCount(UserVO userVO, HashMap<String, Object> selectIdxQuery);
 
 }

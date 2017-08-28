@@ -13,6 +13,8 @@ import com.git.opengds.file.dxf.dbManager.DXFDBQueryManager;
 import com.git.opengds.file.dxf.persistence.DXFLayerCollectionDAO;
 import com.git.opengds.file.ngi.dbManager.NGIDBQueryManager;
 import com.git.opengds.file.ngi.persistence.NGILayerCollectionDAO;
+import com.git.opengds.file.shp.dbManager.SHPDBQueryManager;
+import com.git.opengds.file.shp.persistence.SHPLayerCollectionDAO;
 import com.git.opengds.user.domain.UserVO;
 import com.git.opengds.validator.dbManager.ValidateProgressDBQueryManager;
 import com.git.opengds.validator.persistence.ValidateProgressDAO;
@@ -29,6 +31,9 @@ public class ValidatorProgressServiceImpl implements ValidatorProgressService {
 
 	@Inject
 	private NGILayerCollectionDAO ngiDAO;
+
+	@Inject
+	private SHPLayerCollectionDAO shpDAO;
 
 	@Inject
 	private ValidateProgressDAO progressDAO;
@@ -60,7 +65,14 @@ public class ValidatorProgressServiceImpl implements ValidatorProgressService {
 			HashMap<String, Object> insertQuery = queryManager.getInsertDXFRequestState(validateStart, collectionName,
 					fileType, cidx);
 			pIdx = progressDAO.insertDXFRequestState(userVO, insertQuery);
-		} 
+		} else if (fileType.equals("shp")) {
+			SHPDBQueryManager shpdbQueryManager = new SHPDBQueryManager();
+			cidx = shpDAO.selectSHPLayerCollectionIdx(userVO,
+					shpdbQueryManager.getSelectSHPLayerCollectionIdx(collectionName));
+			HashMap<String, Object> insertQuery = shpdbQueryManager.getInsertSHPRequestState(validateStart,
+					collectionName, fileType, cidx);
+			pIdx = progressDAO.insertSHPRequestState(userVO, insertQuery);
+		}
 		return pIdx;
 	}
 
@@ -73,6 +85,9 @@ public class ValidatorProgressServiceImpl implements ValidatorProgressService {
 		} else if (fileType.equals("dxf")) {
 			progressDAO.updateDXFProgressingState(userVO,
 					queryManager.getUpdateDXFProgressingState(pIdx, validateStart));
+		} else if (fileType.equals("shp")) {
+			progressDAO.updateSHPProgressingState(userVO,
+					queryManager.getUpdateSHPProgressingState(pIdx, validateStart));
 		}
 	}
 
@@ -85,6 +100,9 @@ public class ValidatorProgressServiceImpl implements ValidatorProgressService {
 		} else if (fileType.equals("dxf")) {
 			progressDAO.updateDXFValidateSuccessState(userVO,
 					queryManager.getUpdateDXFProgressingState(pIdx, validateSuccess));
+		} else if (fileType.equals("shp")) {
+			progressDAO.updateSHPValidateSuccessState(userVO,
+					queryManager.getUpdateSHPProgressingState(pIdx, validateSuccess));
 		}
 	}
 
@@ -97,6 +115,9 @@ public class ValidatorProgressServiceImpl implements ValidatorProgressService {
 		} else if (fileType.equals("dxf")) {
 			progressDAO.updateDXFValidateFailState(userVO,
 					queryManager.getUpdateDXFProgressingState(pIdx, validateFail));
+		} else if (fileType.equals("shp")) {
+			progressDAO.updateSHPValidateFailState(userVO,
+					queryManager.getUpdateSHPProgressingState(pIdx, validateFail));
 		}
 	}
 
@@ -111,7 +132,11 @@ public class ValidatorProgressServiceImpl implements ValidatorProgressService {
 		} else if (fileType.equals("dxf")) {
 			progressDAO.updateDXFValidateErrLayerSuccess(userVO,
 					queryManager.getUpdateDXFProgressingState(pIdx, errLayerSuccess));
-			progressDAO.insertDXFErrorTableName(userVO, queryManager.getInsertQA10ErrorTableName(pIdx, tableName));
+			progressDAO.insertDXFErrorTableName(userVO, queryManager.getInsertDXFErrorTableName(pIdx, tableName));
+		} else if (fileType.equals("shp")) {
+			progressDAO.updateSHPValidateErrLayerSuccess(userVO,
+					queryManager.getUpdateSHPProgressingState(pIdx, errLayerSuccess));
+			progressDAO.insertSHPErrorTableName(userVO, queryManager.getInsertSHPErrorTableName(pIdx, tableName));
 		}
 	}
 
@@ -124,6 +149,9 @@ public class ValidatorProgressServiceImpl implements ValidatorProgressService {
 		} else if (fileType.equals("dxf")) {
 			progressDAO.updateDXFValidateErrLayerFail(userVO,
 					queryManager.getUpdateDXFProgressingState(pIdx, errLayerFail));
+		} else if (fileType.equals("shp")) {
+			progressDAO.updateSHPValidateErrLayerFail(userVO,
+					queryManager.getUpdateSHPProgressingState(pIdx, errLayerFail));
 		}
 	}
 
@@ -135,8 +163,11 @@ public class ValidatorProgressServiceImpl implements ValidatorProgressService {
 			HashMap<String, Object> insertQuery = queryManager.getInsertNGIResponseState(pIdx);
 			progressDAO.insertNGIResponseState(userVO, insertQuery);
 		} else if (fileType.equals("dxf")) {
-			HashMap<String, Object> insertQuery = queryManager.getInsertQA10ResponseState(pIdx);
+			HashMap<String, Object> insertQuery = queryManager.getInsertDXFResponseState(pIdx);
 			progressDAO.insertDXFResponseState(userVO, insertQuery);
+		} else if (fileType.equals("shp")) {
+			HashMap<String, Object> insertQuery = queryManager.getInsertSHPResponseState(pIdx);
+			progressDAO.insertSHPResponseState(userVO, insertQuery);
 		}
 	}
 
@@ -146,10 +177,13 @@ public class ValidatorProgressServiceImpl implements ValidatorProgressService {
 		List<HashMap<String, Object>> progressListMap = null;
 		if (type.equals("ngi")) {
 			progressListMap = progressDAO.selectAllNGIValidateProgress(userVO,
-					queryManager.getSelectAllQA20ValidateProgress());
+					queryManager.getSelectAllNGIValidateProgress());
 		} else if (type.equals("dxf")) {
 			progressListMap = progressDAO.selectAllDXFValidateProgress(userVO,
-					queryManager.getSelectAllQA10ValidateProgress());
+					queryManager.getSelectAllDXFValidateProgress());
+		} else if (type.equals("shp")) {
+			progressListMap = progressDAO.selectAllSHPValidateProgress(userVO,
+					queryManager.getSelectAllSHPValidateProgress());
 		}
 		ValidateProgressList progressList = new ValidateProgressList();
 		for (int i = 0; i < progressListMap.size(); i++) {

@@ -36,7 +36,6 @@ import org.opengis.referencing.operation.TransformException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import com.git.gdsbuilder.type.geoserver.collection.GeoLayerCollection;
@@ -81,8 +80,6 @@ public class ValidatorServiceImpl implements ValidatorService {
 	@SuppressWarnings("unchecked")
 	@Override
 	public void validate(final UserVO userVO, String jsonObject) throws Exception {
-
-		System.out.println(jsonObject);
 
 		JSONParser parser = new JSONParser();
 		JSONObject jsonObj = (JSONObject) parser.parse(jsonObject);

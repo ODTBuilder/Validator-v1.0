@@ -78,7 +78,7 @@ public class ValidateProgressDBQueryManager {
 		return updateQueryQueryMap;
 	}
 
-	public HashMap<String, Object> getInsertQA10ErrorTableName(int pIdx, String errTableName) {
+	public HashMap<String, Object> getInsertDXFErrorTableName(int pIdx, String errTableName) {
 		String tableName = "\"" + "qa10_layercollection_qa_progress" + "\"";
 		String updateQueryStr = "update " + tableName + " set err_layer_name = '" + errTableName + "' where p_idx = "
 				+ pIdx;
@@ -87,7 +87,7 @@ public class ValidateProgressDBQueryManager {
 		return updateQueryQueryMap;
 	}
 
-	public HashMap<String, Object> getInsertQA10ResponseState(int pIdx) {
+	public HashMap<String, Object> getInsertDXFResponseState(int pIdx) {
 		String tableName = "\"" + "qa10_layercollection_qa_progress" + "\"";
 		String updateQueryStr = "update " + tableName + " set response_time = " + "CURRENT_TIMESTAMP"
 				+ " where p_idx = " + pIdx;
@@ -96,7 +96,7 @@ public class ValidateProgressDBQueryManager {
 		return updateQueryQueryMap;
 	}
 
-	public HashMap<String, Object> getSelectAllQA10ValidateProgress() {
+	public HashMap<String, Object> getSelectAllDXFValidateProgress() {
 		String tableName = "\"" + "qa10_layercollection_qa_progress" + "\"";
 		String selectQuery = "select * from " + tableName + " order by request_time DESC";
 		HashMap<String, Object> selectQueryMap = new HashMap<String, Object>();
@@ -104,8 +104,42 @@ public class ValidateProgressDBQueryManager {
 		return selectQueryMap;
 	}
 
-	public HashMap<String, Object> getSelectAllQA20ValidateProgress() {
+	public HashMap<String, Object> getSelectAllNGIValidateProgress() {
 		String tableName = "\"" + "qa20_layercollection_qa_progress" + "\"";
+		String selectQuery = "select * from " + tableName + " order by request_time DESC";
+		HashMap<String, Object> selectQueryMap = new HashMap<String, Object>();
+		selectQueryMap.put("selectAllQuery", selectQuery);
+		return selectQueryMap;
+	}
+
+	public HashMap<String, Object> getUpdateSHPProgressingState(int pIdx, int validateStart) {
+		String tableName = "\"" + "shp_layercollection_qa_progress" + "\"";
+		String updateQueryStr = "update " + tableName + " set state = " + validateStart + " where p_idx = " + pIdx;
+		HashMap<String, Object> updateQueryQueryMap = new HashMap<String, Object>();
+		updateQueryQueryMap.put("updateQuery", updateQueryStr);
+		return updateQueryQueryMap;
+	}
+
+	public HashMap<String, Object> getInsertSHPErrorTableName(int pIdx, String errTableName) {
+		String tableName = "\"" + "shp_layercollection_qa_progress" + "\"";
+		String updateQueryStr = "update " + tableName + " set err_layer_name = '" + errTableName + "' where p_idx = "
+				+ pIdx;
+		HashMap<String, Object> updateQueryQueryMap = new HashMap<String, Object>();
+		updateQueryQueryMap.put("updateQuery", updateQueryStr);
+		return updateQueryQueryMap;
+	}
+
+	public HashMap<String, Object> getInsertSHPResponseState(int pIdx) {
+		String tableName = "\"" + "shp_layercollection_qa_progress" + "\"";
+		String updateQueryStr = "update " + tableName + " set response_time = " + "CURRENT_TIMESTAMP"
+				+ " where p_idx = " + pIdx;
+		HashMap<String, Object> updateQueryQueryMap = new HashMap<String, Object>();
+		updateQueryQueryMap.put("updateQuery", updateQueryStr);
+		return updateQueryQueryMap;
+	}
+
+	public Object getSelectAllSHPValidateProgress() {
+		String tableName = "\"" + "shp_layercollection_qa_progress" + "\"";
 		String selectQuery = "select * from " + tableName + " order by request_time DESC";
 		HashMap<String, Object> selectQueryMap = new HashMap<String, Object>();
 		selectQueryMap.put("selectAllQuery", selectQuery);

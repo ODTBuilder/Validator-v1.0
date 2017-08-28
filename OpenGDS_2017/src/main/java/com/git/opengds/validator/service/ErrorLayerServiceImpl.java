@@ -25,12 +25,8 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.stereotype.Service;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.transaction.TransactionDefinition;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.git.gdsbuilder.type.geoserver.layer.GeoLayerInfo;
 import com.git.gdsbuilder.type.geoserver.layer.GeoLayerInfoList;
@@ -38,18 +34,15 @@ import com.git.gdsbuilder.type.validate.error.ErrorLayer;
 import com.git.gdsbuilder.type.validate.error.ErrorLayerList;
 import com.git.opengds.file.dxf.dbManager.DXFDBQueryManager;
 import com.git.opengds.file.dxf.persistence.DXFLayerCollectionDAO;
-import com.git.opengds.file.dxf.persistence.DXFLayerCollectionDAOImpl;
 import com.git.opengds.file.ngi.dbManager.NGIDBQueryManager;
 import com.git.opengds.file.ngi.persistence.NGILayerCollectionDAO;
-import com.git.opengds.file.ngi.persistence.NGILayerCollectionDAOImpl;
+import com.git.opengds.file.shp.dbManager.SHPDBQueryManager;
+import com.git.opengds.file.shp.persistence.SHPLayerCollectionDAO;
 import com.git.opengds.geoserver.service.GeoserverService;
-import com.git.opengds.geoserver.service.GeoserverServiceImpl;
 import com.git.opengds.user.domain.UserVO;
 import com.git.opengds.validator.dbManager.ErrorLayerDBQueryManager;
 import com.git.opengds.validator.persistence.ErrorLayerDAO;
-import com.git.opengds.validator.persistence.ErrorLayerDAOImpl;
 import com.git.opengds.validator.persistence.ValidateProgressDAO;
-import com.git.opengds.validator.persistence.ValidateProgressDAOImpl;
 
 @Service
 @ContextConfiguration(locations = { "file:src/main/webapp/WEB-INF/spring/**/*.xml" })
@@ -58,9 +51,9 @@ public class ErrorLayerServiceImpl implements ErrorLayerService {
 	@Inject
 	private ErrorLayerDAO errLayerDAO;
 
-/*	@Autowired
-	private DataSourceTransactionManager txManager;
-*/
+	/*
+	 * @Autowired private DataSourceTransactionManager txManager;
+	 */
 	@Inject
 	private DXFLayerCollectionDAO qa10DAO;
 
@@ -68,31 +61,33 @@ public class ErrorLayerServiceImpl implements ErrorLayerService {
 	private NGILayerCollectionDAO qa20DAO;
 
 	@Inject
+	private SHPLayerCollectionDAO shpDAO;
+
+	@Inject
 	private ValidateProgressDAO progressDAO;
 
 	@Autowired
 	private GeoserverService geoserverService;
 
-	@Autowired
-	private ErrorReportService errorReportService;
-	
-	
-/*	public ErrorLayerServiceImpl(UserVO userVO) {
-		// TODO Auto-generated constructor stub
-		errLayerDAO = new ErrorLayerDAOImpl(userVO);
-		qa10DAO = new QA10LayerCollectionDAOImpl(userVO);
-		qa20DAO = new QA20LayerCollectionDAOImpl(userVO);
-		progressDAO = new ValidateProgressDAOImpl(userVO);
-		geoserverService = new GeoserverServiceImpl(userVO);
-		errorReportService = new ErrorReportServiceImpl(userVO);
-	}*/
+	/*
+	 * public ErrorLayerServiceImpl(UserVO userVO) { // TODO Auto-generated
+	 * constructor stub errLayerDAO = new ErrorLayerDAOImpl(userVO); qa10DAO =
+	 * new QA10LayerCollectionDAOImpl(userVO); qa20DAO = new
+	 * QA20LayerCollectionDAOImpl(userVO); progressDAO = new
+	 * ValidateProgressDAOImpl(userVO); geoserverService = new
+	 * GeoserverServiceImpl(userVO); errorReportService = new
+	 * ErrorReportServiceImpl(userVO); }
+	 */
 
 	public boolean publishErrorLayerList(UserVO userVO, ErrorLayerList errLayers)
 			throws IllegalArgumentException, MalformedURLException {
 
-	/*	DefaultTransactionDefinition def = new DefaultTransactionDefinition();
-		def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
-		TransactionStatus status = txManager.getTransaction(def);*/
+		/*
+		 * DefaultTransactionDefinition def = new
+		 * DefaultTransactionDefinition();
+		 * def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED
+		 * ); TransactionStatus status = txManager.getTransaction(def);
+		 */
 		GeoLayerInfoList geoLayerInfoList = new GeoLayerInfoList();
 
 		try {
@@ -105,19 +100,14 @@ public class ErrorLayerServiceImpl implements ErrorLayerService {
 
 				String errTableName = "\"" + "err_" + fileType + "_";
 				Integer cIdx = null;
+				Long errTbCount = null;
 				if (fileType.equals("ngi")) {
 					NGIDBQueryManager qa20dbQueryManager = new NGIDBQueryManager();
 					cIdx = qa20DAO.selectNGILayerCollectionIdx(userVO,
 							qa20dbQueryManager.getSelectNGILayerCollectionIdx(collectionName));
 					HashMap<String, Object> selectIdxQuery = queryManager
 							.selectQA20ErrorLayerTbNamesCountQuery(fileType, collectionName, cIdx);
-					Long errTbCount = progressDAO.selectNGIErrorLayerTbNamesCount(userVO,selectIdxQuery);
-					if (errTbCount == null) {
-						errTableName += collectionName;
-					} else {
-						Long count = errTbCount + 1;
-						errTableName += collectionName + "_" + count;
-					}
+					errTbCount = progressDAO.selectNGIErrorLayerTbNamesCount(userVO, selectIdxQuery);
 				}
 				if (fileType.equals("dxf")) {
 					DXFDBQueryManager qa10dbQueryManager = new DXFDBQueryManager();
@@ -125,24 +115,31 @@ public class ErrorLayerServiceImpl implements ErrorLayerService {
 							qa10dbQueryManager.getSelectDXFLayerCollectionIdxQuery(collectionName));
 					HashMap<String, Object> selectIdxQuery = queryManager
 							.selectQA10ErrorLayerTbNamesCountQuery(fileType, collectionName, cIdx);
-					Long errTbCount = progressDAO.selectDXFErrorLayerTbNamesCount(userVO,selectIdxQuery);
-					if (errTbCount == null) {
-						errTableName += collectionName;
-					} else {
-						Long count = errTbCount + 1;
-						errTableName += collectionName + "_" + count;
-					}
+					errTbCount = progressDAO.selectDXFErrorLayerTbNamesCount(userVO, selectIdxQuery);
 				}
-				errTableName += "\"";
+				if (fileType.equals("shp")) {
+					SHPDBQueryManager shpdbQueryManager = new SHPDBQueryManager();
+					cIdx = shpDAO.selectSHPLayerCollectionIdx(userVO,
+							shpdbQueryManager.getSelectSHPLayerCollectionIdxQuery(collectionName));
+					HashMap<String, Object> selectIdxQuery = queryManager.selectSHPErrorLayerTbNamesCountQuery(fileType,
+							collectionName, cIdx);
+					errTbCount = progressDAO.selectSHPErrorLayerTbNamesCount(userVO, selectIdxQuery);
+				}
+				if (errTbCount == null) {
+					errTableName += collectionName + "\"";
+				} else {
+					Long count = errTbCount + 1;
+					errTableName += collectionName + "_" + count + "\"";
+				}
 
 				// create
 				HashMap<String, Object> createQuery = queryManager.createErrorLayerTbQuery(errTableName);
-				errLayerDAO.createErrorLayerTb(userVO,createQuery);
+				errLayerDAO.createErrorLayerTb(userVO, createQuery);
 				// insert
 				List<HashMap<String, Object>> insertQuerys = queryManager.insertErrorLayerQuery(errTableName);
 				for (int j = 0; j < insertQuerys.size(); j++) {
 					HashMap<String, Object> insertQuery = insertQuerys.get(j);
-					errLayerDAO.insertErrorFeature(userVO,insertQuery);
+					errLayerDAO.insertErrorFeature(userVO, insertQuery);
 				}
 				GeoLayerInfo layerInfo = new GeoLayerInfo();
 				layerInfo.setFileName(errTableName);
@@ -152,10 +149,10 @@ public class ErrorLayerServiceImpl implements ErrorLayerService {
 				geoLayerInfoList.add(layerInfo);
 			}
 		} catch (Exception e) {
-//			txManager.rollback(status);
+			// txManager.rollback(status);
 			return false;
 		}
-//		txManager.commit(status);
+		// txManager.commit(status);
 		boolean isSuccessed = geoserverService.errLayerListPublishGeoserver(geoLayerInfoList);
 		if (isSuccessed) {
 			return true;
@@ -168,9 +165,12 @@ public class ErrorLayerServiceImpl implements ErrorLayerService {
 	public Map<String, Object> publishErrorLayer(UserVO userVO, ErrorLayer errLayer)
 			throws IllegalArgumentException, MalformedURLException {
 
-		/*DefaultTransactionDefinition def = new DefaultTransactionDefinition();
-		def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
-		TransactionStatus status = txManager.getTransaction(def);*/
+		/*
+		 * DefaultTransactionDefinition def = new
+		 * DefaultTransactionDefinition();
+		 * def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED
+		 * ); TransactionStatus status = txManager.getTransaction(def);
+		 */
 		GeoLayerInfo layerInfo = new GeoLayerInfo();
 		ErrorLayerDBQueryManager queryManager = new ErrorLayerDBQueryManager(errLayer);
 		Map<String, Object> returnMap = new HashMap<String, Object>();
@@ -180,54 +180,57 @@ public class ErrorLayerServiceImpl implements ErrorLayerService {
 			String collectionName = errLayer.getCollectionName();
 			String errTableName = "err_" + fileType + "_";
 			Integer cIdx = null;
+			Long errTbCount = null;
 			if (fileType.equals("ngi")) {
 				NGIDBQueryManager qa20dbQueryManager = new NGIDBQueryManager();
 				cIdx = qa20DAO.selectNGILayerCollectionIdx(userVO,
 						qa20dbQueryManager.getSelectNGILayerCollectionIdx(collectionName));
 				HashMap<String, Object> selectIdxQuery = queryManager.selectQA20ErrorLayerTbNamesCountQuery(fileType,
 						collectionName, cIdx);
-				Long errTbCount = progressDAO.selectNGIErrorLayerTbNamesCount(userVO,selectIdxQuery);
-				if (errTbCount == null) {
-					errTableName += collectionName;
-				} else {
-					errTableName += collectionName + "_" + errTbCount;
-
-				}
+				errTbCount = progressDAO.selectNGIErrorLayerTbNamesCount(userVO, selectIdxQuery);
 			}
 			if (fileType.equals("dxf")) {
 				DXFDBQueryManager qa10dbQueryManager = new DXFDBQueryManager();
-				cIdx = qa10DAO
-						.selectDXFLayerCollectionIdx(userVO,qa10dbQueryManager.getSelectDXFLayerCollectionIdxQuery(collectionName));
+				cIdx = qa10DAO.selectDXFLayerCollectionIdx(userVO,
+						qa10dbQueryManager.getSelectDXFLayerCollectionIdxQuery(collectionName));
 				HashMap<String, Object> selectIdxQuery = queryManager.selectQA10ErrorLayerTbNamesCountQuery(fileType,
 						collectionName, cIdx);
-				Long errTbCount = progressDAO.selectDXFErrorLayerTbNamesCount(userVO,selectIdxQuery);
-				if (errTbCount == null) {
-					errTableName += collectionName;
-				} else {
-					errTableName += collectionName +  "_" + errTbCount;
-				}
+				errTbCount = progressDAO.selectDXFErrorLayerTbNamesCount(userVO, selectIdxQuery);
 			}
+			if (fileType.equals("shp")) {
+				SHPDBQueryManager shpdbQueryManager = new SHPDBQueryManager();
+				cIdx = shpDAO.selectSHPLayerCollectionIdx(userVO,
+						shpdbQueryManager.getSelectSHPLayerCollectionIdxQuery(collectionName));
+				HashMap<String, Object> selectIdxQuery = queryManager.selectSHPErrorLayerTbNamesCountQuery(fileType,
+						collectionName, cIdx);
+				errTbCount = progressDAO.selectSHPErrorLayerTbNamesCount(userVO, selectIdxQuery);
+			}
+			if (errTbCount == null) {
+				errTableName += collectionName;
+			} else {
+				errTableName += collectionName + "_" + errTbCount;
 
+			}
 			// create
 			HashMap<String, Object> createQuery = queryManager.createErrorLayerTbQuery(errTableName);
-			errLayerDAO.createErrorLayerTb(userVO,createQuery);
+			errLayerDAO.createErrorLayerTb(userVO, createQuery);
 			// insert
 			List<HashMap<String, Object>> insertQuerys = queryManager.insertErrorLayerQuery(errTableName);
 			for (int j = 0; j < insertQuerys.size(); j++) {
 				HashMap<String, Object> insertQuery = insertQuerys.get(j);
-				errLayerDAO.insertErrorFeature(userVO,insertQuery);
+				errLayerDAO.insertErrorFeature(userVO, insertQuery);
 			}
 			layerInfo.setFileName(errTableName);
 			layerInfo.setOriginSrc("EPSG:5186");
 			layerInfo.setTransSrc("EPSG:3857");
 			layerInfo.setFileType(fileType);
 		} catch (Exception e) {
-//			txManager.rollback(status);
+			// txManager.rollback(status);
 			returnMap.put("flag", false);
 			return returnMap;
 		}
-//		txManager.commit(status);
-		boolean isSuccessed = geoserverService.errLayerPublishGeoserver(userVO,layerInfo);
+		// txManager.commit(status);
+		boolean isSuccessed = geoserverService.errLayerPublishGeoserver(userVO, layerInfo);
 		String errTableName = layerInfo.getFileName();
 		if (isSuccessed) {
 			returnMap.put("flag", true);
@@ -235,7 +238,7 @@ public class ErrorLayerServiceImpl implements ErrorLayerService {
 			return returnMap;
 		} else {
 			HashMap<String, Object> dropQuery = queryManager.dropjErrorLayerTbQuery(errTableName);
-			errLayerDAO.dropErrorLayerTb(userVO,dropQuery);
+			errLayerDAO.dropErrorLayerTb(userVO, dropQuery);
 			returnMap.put("flag", false);
 			return returnMap;
 		}

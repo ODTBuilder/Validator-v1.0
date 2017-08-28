@@ -201,4 +201,13 @@ public class ErrorLayerDBQueryManager {
 		dropQueryMap.put("dropQuery", queryStr);
 		return dropQueryMap;
 	}
+
+	public HashMap<String, Object> selectSHPErrorLayerTbNamesCountQuery(String fileType, String collectionName,
+			Integer cIdx) {
+		String tableName = "\"" + "shp_layercollection_qa_progress" + "\"";
+		String countQueryStr = "select count (*) from " + tableName + "where c_idx = " + cIdx + "and state = " + 4;
+		HashMap<String, Object> selectQueryMap = new HashMap<String, Object>();
+		selectQueryMap.put("selectQuery", countQueryStr);
+		return selectQueryMap;
+	}
 }

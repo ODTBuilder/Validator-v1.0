@@ -116,7 +116,7 @@ public class SHPDBQueryManager {
 		String tableName = "geo" + "_" + type + "_" + collectionName + "_" + layerName;
 
 		String insertQueryColumn = "insert into shp_layer_metadata(layer_name, layer_t_name, c_idx, current_layer_name)";
-		String insertQueryValues = "values('" + layerName + "', " + "'" + tableName + "', " + cIdx + "'" + layerName
+		String insertQueryValues = "values('" + layerName + "', " + "'" + tableName + "', " + cIdx + ", '" + layerName
 				+ "')";
 
 		HashMap<String, Object> insertQueryMap = new HashMap<String, Object>();
@@ -224,5 +224,26 @@ public class SHPDBQueryManager {
 		String deleteQueryStr = "delete from " + tableName + " where c_idx = " + cIdx;
 		deleteQuery.put("deleteQuery", deleteQueryStr);
 		return deleteQuery;
+	}
+
+	public HashMap<String, Object> getInsertSHPRequestState(int validateStart, String collectionName, String fileType,
+			int cidx) {
+		String tableName = "\"" + "shp_layercollection_qa_progress" + "\"";
+		String insertQueryStr = " insert into " + tableName
+				+ "(c_name, file_type, state, request_time , c_idx) values ('" + collectionName + "'," + "'" + fileType
+				+ "', " + validateStart + ", " + "CURRENT_TIMESTAMP" + ", " + cidx + ")";
+		HashMap<String, Object> insertQueryMap = new HashMap<String, Object>();
+		insertQueryMap.put("insertQuery", insertQueryStr);
+		return insertQueryMap;
+	}
+
+	public HashMap<String, Object> getSelectSHPLayerCollectionIdxQuery(String collectionName) {
+		
+		String tableName = "\"" + "shp_layercollection" + "\"";
+		String selectQuery = "select c_idx from " + tableName + " where c_name = '" + collectionName + "'";
+		HashMap<String, Object> selectQueryMap = new HashMap<String, Object>();
+		selectQueryMap.put("selectQuery", selectQuery);
+
+		return selectQueryMap;
 	}
 }
