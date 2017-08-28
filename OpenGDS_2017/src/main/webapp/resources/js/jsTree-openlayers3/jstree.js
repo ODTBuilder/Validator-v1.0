@@ -10477,10 +10477,11 @@
 											inst._data.layerproperties.properties.setRefer(inst);
 											if (obj.type === "ImageTile") {
 												console.log("image tile");
-												inst._data.layerproperties.properties.getImageTileInfo("geoserver/getGeoLayerInfoList.ajax", layer);
+												inst._data.layerproperties.properties.getImageTileInfo(
+														"geoserver/getGeoLayerInfoList.ajax", layer);
 											}
 											inst._data.layerproperties.properties.setLayer(layer);
-											
+
 											inst._data.layerproperties.properties.open();
 										}
 									}

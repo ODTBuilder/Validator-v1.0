@@ -346,6 +346,7 @@ html {
 			"layerproperties" : {
 				"properties" : lprop,
 				"layerRecord" : lrecord,
+				"featureRecord" : frecord,
 				"editingTool" : epan
 			},
 			plugins : [ "contextmenu", "dnd", "search", "state", "types", "sort", "visibility", "layerproperties" ]
