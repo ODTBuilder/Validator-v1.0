@@ -390,25 +390,25 @@ gb.panel.EditingTool.prototype.deactiveIntrct_ = function(intrct) {
 			if (!!this.interaction[intrct[j]]) {
 				this.interaction[intrct[j]].setActive(false);
 			}
-			if (intrct[j] === "select" || intrct[j] === "selectWMS") {
+			if (intrct[j] === "select" || intrct[j] === "selectWMS" || intrct[j] === "dragbox") {
 				this.isOn["select"] = false;
 				this.featurePop.close();
 			} else {
 				this.isOn[intrct[j]] = false;
 				this.tempVector.setMap(this.map);
-				this.map.removeLayer(this.managed);
+				// this.map.removeLayer(this.managed);
 			}
 		}
 	} else if (typeof intrct === "string") {
 		if (!!this.interaction[intrct]) {
 			this.interaction[intrct].setActive(false);
 		}
-		if (intrct === "select" || intrct === "selectWMS") {
+		if (intrct === "select" || intrct === "selectWMS" || intrct === "dragbox") {
 			this.isOn["select"] = false;
 		} else {
 			this.isOn[intrct] = false;
 			this.tempVector.setMap(this.map);
-			this.map.removeLayer(this.managed);
+			// this.map.removeLayer(this.managed);
 		}
 	}
 	// this.map.removeLayer(this.managed);
@@ -760,14 +760,16 @@ gb.panel.EditingTool.prototype.select = function(layer) {
  *            layer - 편집할 레이어
  */
 gb.panel.EditingTool.prototype.draw = function(layer) {
-	var that = this;
+
 	if (this.isOn.draw) {
 		if (!!this.interaction.draw || !!this.interaction.updateDraw) {
 			this.deactiveIntrct_("draw");
 			this.deactiveBtn_("drawBtn");
+			this.map.removeLayer(this.managed);
 		}
 		return;
 	}
+	var that = this;
 	if (!!this.interaction.select) {
 		this.interaction.select.getFeatures().clear();
 		this.deactiveIntrct_([ "dragbox", "select", "selectWMS" ]);
@@ -861,8 +863,9 @@ gb.panel.EditingTool.prototype.draw = function(layer) {
 			});
 			this.managed.set("name", "temp_vector");
 			this.managed.set("id", "temp_vector");
-			this.map.addLayer(this.managed);
+
 		}
+		this.map.addLayer(this.managed);
 
 		this.interaction.draw = new ol.interaction.Draw({
 			source : this.tempSource,
@@ -918,17 +921,17 @@ gb.panel.EditingTool.prototype.move = function(layer) {
 	if (this.interaction.select === undefined) {
 		return;
 	}
+	if (this.isOn.move) {
+		if (this.interaction.move) {
+			this.interaction.select.getFeatures().clear();
+			this.deactiveIntrct_("move");
+			this.deactiveBtn_("moveBtn");
+			this.map.removeLayer(this.managed);
+		}
+		return;
+	}
 	var that = this;
 	if (this.interaction.select.getFeatures().getLength() > 0) {
-		if (this.isOn.move) {
-			if (!!this.interaction.move) {
-				this.interaction.select.getFeatures().clear();
-				this.deactiveIntrct_("move");
-				this.deactiveBtn_("moveBtn");
-				this.map.removeLayer(this.managed);
-			}
-			return;
-		}
 		if (!(layer instanceof ol.layer.Vector)) {
 			if (!this.managed) {
 				this.managed = new ol.layer.Vector({
@@ -936,8 +939,8 @@ gb.panel.EditingTool.prototype.move = function(layer) {
 				});
 				this.managed.set("name", "temp_vector");
 				this.managed.set("id", "temp_vector");
-				this.map.addLayer(this.managed);
 			}
+			this.map.addLayer(this.managed);
 		}
 
 		this.interaction.move = new ol.interaction.Translate({
@@ -974,16 +977,17 @@ gb.panel.EditingTool.prototype.rotate = function(layer) {
 	if (this.interaction.select === undefined) {
 		return;
 	}
+	if (this.isOn.rotate) {
+		if (!!this.interaction.rotate) {
+			this.interaction.select.getFeatures().clear();
+			this.deactiveIntrct_("rotate");
+			this.deactiveBtn_("rotateBtn");
+		}
+		return;
+	}
 	var that = this;
 	if (this.interaction.select.getFeatures().getLength() > 0) {
-		if (this.isOn.rotate) {
-			if (!!this.interaction.rotate) {
-				this.interaction.select.getFeatures().clear();
-				this.deactiveIntrct_("rotate");
-				this.deactiveBtn_("rotateBtn");
-			}
-			return;
-		}
+
 		if (this.interaction.select.getFeatures().getLength() !== 1) {
 			console.error("select 1 feature");
 			return;
@@ -994,8 +998,8 @@ gb.panel.EditingTool.prototype.rotate = function(layer) {
 			});
 			this.managed.set("name", "temp_vector");
 			this.managed.set("id", "temp_vector");
-			this.map.addLayer(this.managed);
 		}
+		this.map.addLayer(this.managed);
 		this.interaction.rotate = new gb.interaction.MultiTransform({
 			features : this.interaction.select.getFeatures()
 		});
@@ -1028,25 +1032,27 @@ gb.panel.EditingTool.prototype.modify = function(layer) {
 	if (this.interaction.select === undefined) {
 		return;
 	}
+	if (this.isOn.modify) {
+		if (!!this.interaction.modify) {
+			this.interaction.select.getFeatures().clear();
+			this.deactiveIntrct_("modify");
+			this.deactiveBtn_("modiBtn");
+			this.map.removeLayer(this.managed);
+		}
+		return;
+	}
 	var that = this;
 	if (this.interaction.select.getFeatures().getLength() > 0) {
-		if (this.isOn.modify) {
-			if (!!this.interaction.modify) {
-				this.interaction.select.getFeatures().clear();
-				this.deactiveIntrct_("modify");
-				this.deactiveBtn_("modiBtn");
-				this.map.removeLayer(this.managed);
-			}
-			return;
-		}
+
 		if (!this.managed) {
 			this.managed = new ol.layer.Vector({
 				source : this.tempSource
 			});
 			this.managed.set("name", "temp_vector");
 			this.managed.set("id", "temp_vector");
-			this.map.addLayer(this.managed);
+
 		}
+		this.map.addLayer(this.managed);
 		this.interaction.modify = new ol.interaction.Modify({
 			features : this.interaction.select.getFeatures()
 		});
@@ -1081,16 +1087,17 @@ gb.panel.EditingTool.prototype.remove = function(layer) {
 	if (this.interaction.select === undefined) {
 		return;
 	}
+	// if (this.isOn.remove) {
+	// if (!!this.interaction.remove) {
+	// this.interaction.select.getFeatures().clear();
+	// this.deactiveBtn_("removeBtn");
+	// this.map.removeLayer(this.managed);
+	// }
+	// return;
+	// }
 	var that = this;
 	if (this.interaction.select.getFeatures().getLength() > 0) {
-		if (this.isOn.remove) {
-			if (!!this.interaction.remove) {
-				this.interaction.select.getFeatures().clear();
-				this.deactiveBtn_("removeBtn");
-				this.map.removeLayer(this.managed);
-			}
-			return;
-		}
+
 		// if (!this.managed) {
 		// this.managed = new ol.layer.Vector({
 		// source : this.tempSource

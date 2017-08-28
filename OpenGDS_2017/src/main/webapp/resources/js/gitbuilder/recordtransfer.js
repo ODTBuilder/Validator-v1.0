@@ -49,48 +49,48 @@ gb.edit.RecordTransfer.prototype.getStructure = function() {
 
 gb.edit.RecordTransfer.prototype.sendStructure = function() {
 	var featureObj = this.getFeatureRecord();
-
-	$.ajax({
-		url : this.url,
-		type : "POST",
-		data : JSON.stringify(this.getStructure()),
-		contentType : "application/json; charset=UTF-8",
-		dataType : 'json',
-		beforeSend : function() {
-			$("body").css("cursor", "wait");
-		},
-		complete : function() {
-			$("body").css("cursor", "default");
-		},
-		success : function(data) {
-			console.log(data);
-			featureObj.clearAll();
-		}
-	});
+	console.log(this.getStructure());
+//	$.ajax({
+//		url : this.url,
+//		type : "POST",
+//		data : JSON.stringify(this.getStructure()),
+//		contentType : "application/json; charset=UTF-8",
+//		dataType : 'json',
+//		beforeSend : function() {
+//			$("body").css("cursor", "wait");
+//		},
+//		complete : function() {
+//			$("body").css("cursor", "default");
+//		},
+//		success : function(data) {
+//			console.log(data);
+//			featureObj.clearAll();
+//		}
+//	});
 };
 
 gb.edit.RecordTransfer.prototype.sendPartStructure = function(layers) {
 	console.log(this.getPartStructure(layers));
 	var featureObj = this.getFeatureRecord();
-
 	console.log(this.getPartStructure(layers));
-	$.ajax({
-		url : this.url,
-		type : "POST",
-		data : JSON.stringify(this.getPartStructure(layers)),
-		contentType : "application/json; charset=UTF-8",
-		dataType : 'json',
-		beforeSend : function() {
-			$("body").css("cursor", "wait");
-		},
-		complete : function() {
-			$("body").css("cursor", "default");
-		},
-		success : function(data) {
-			console.log(data);
-			for (var i = 0; i < layers.length; i++) {
-				featureObj.removeByLayer(layers[i]);
-			}
-		}
-	});
+	
+//	$.ajax({
+//		url : this.url,
+//		type : "POST",
+//		data : JSON.stringify(this.getPartStructure(layers)),
+//		contentType : "application/json; charset=UTF-8",
+//		dataType : 'json',
+//		beforeSend : function() {
+//			$("body").css("cursor", "wait");
+//		},
+//		complete : function() {
+//			$("body").css("cursor", "default");
+//		},
+//		success : function(data) {
+//			console.log(data);
+//			for (var i = 0; i < layers.length; i++) {
+//				featureObj.removeByLayer(layers[i]);
+//			}
+//		}
+//	});
 };
