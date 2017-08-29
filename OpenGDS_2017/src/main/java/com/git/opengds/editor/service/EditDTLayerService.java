@@ -12,7 +12,7 @@ import com.vividsolutions.jts.io.ParseException;
 
 public interface EditDTLayerService {
 
-	public void editLayer(UserVO userVO, JSONObject layerEditObj)
+	public boolean editLayer(UserVO userVO, JSONObject layerEditObj)
 			throws FileNotFoundException, IOException, ParseException, SchemaException, PSQLException, Exception;
 
 }

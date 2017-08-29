@@ -21,6 +21,6 @@ import com.git.opengds.user.domain.UserVO;
 
 public interface EditService {
 
-	public void editLayerCollection(UserVO userVO, String editJSON) throws Exception;
+	public boolean editLayerCollection(UserVO userVO, String editJSON) throws Exception;
 
 }

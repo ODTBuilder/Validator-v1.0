@@ -10,6 +10,6 @@ import com.git.opengds.user.domain.UserVO;
 import com.vividsolutions.jts.io.ParseException;
 
 public interface EditDTFeatureService {
-	public void editFeature(UserVO userVO, JSONObject featureEditObj) throws ParseException,
+	public boolean editFeature(UserVO userVO, JSONObject featureEditObj) throws ParseException,
 			org.json.simple.parser.ParseException, SchemaException, FileNotFoundException, IOException;
 }
