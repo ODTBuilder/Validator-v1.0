@@ -47,9 +47,9 @@ gb.edit.RecordTransfer.prototype.getStructure = function() {
 	return obj;
 };
 
-gb.edit.RecordTransfer.prototype.sendStructure = function() {
+gb.edit.RecordTransfer.prototype.sendStructure = function(ollayers, editingTool) {
 	var featureObj = this.getFeatureRecord();
-
+	console.log(this.getStructure());
 	$.ajax({
 		url : this.url,
 		type : "POST",
@@ -65,15 +65,23 @@ gb.edit.RecordTransfer.prototype.sendStructure = function() {
 		success : function(data) {
 			console.log(data);
 			featureObj.clearAll();
+			for (var i = 0; i < ollayers.getLength(); i++) {
+				if (ollayers.item(i) instanceof ol.layer.Tile) {
+					// var params = ollayers.item(i).getSource().getParams();
+					// params["time"] = Date.now();
+					// ollayers.item(i).getSource().updateParams(params);
+					ollayers.item(i).getSource().refresh();
+					// editingTool.removeFeatureFromUnmanaged(ollayers.item(i));
+				}
+			}
 		}
 	});
 };
 
-gb.edit.RecordTransfer.prototype.sendPartStructure = function(layers) {
+gb.edit.RecordTransfer.prototype.sendPartStructure = function(layers, ollayers, editingTool) {
 	console.log(this.getPartStructure(layers));
 	var featureObj = this.getFeatureRecord();
 
-	console.log(this.getPartStructure(layers));
 	$.ajax({
 		url : this.url,
 		type : "POST",
@@ -91,6 +99,27 @@ gb.edit.RecordTransfer.prototype.sendPartStructure = function(layers) {
 			for (var i = 0; i < layers.length; i++) {
 				featureObj.removeByLayer(layers[i]);
 			}
+			for (var i = 0; i < ollayers.getLength(); i++) {
+				if (ollayers.item(i) instanceof ol.layer.Tile) {
+					// var params = ollayers.item(i).getSource().getParams();
+					// params["time"] = Date.now();
+					// ollayers.item(i).getSource().updateParams(params);
+					ollayers.item(i).getSource().refresh();
+					// editingTool.removeFeatureFromUnmanaged(ollayers.item(i));
+				}
+			}
 		}
 	});
+	for (var i = 0; i < layers.length; i++) {
+		featureObj.removeByLayer(layers[i]);
+	}
+	for (var i = 0; i < ollayers.getLength(); i++) {
+		if (ollayers.item(i) instanceof ol.layer.Tile) {
+			// var params = ollayers.item(i).getSource().getParams();
+			// params["time"] = Date.now();
+			// ollayers.item(i).getSource().updateParams(params);
+			ollayers.item(i).getSource().refresh();
+			// editingTool.removeFeatureFromUnmanaged(ollayers.item(i));
+		}
+	}
 };
