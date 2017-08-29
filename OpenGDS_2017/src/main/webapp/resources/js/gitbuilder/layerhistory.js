@@ -424,3 +424,130 @@ gb.edit.LayerRecord.prototype.getStructure = function() {
 	}
 	return obj;
 }
+gb.edit.LayerRecord.prototype.getPartStructure = function(bringLayer) {
+	if (!Array.isArray(bringLayer)) {
+		console.error("type error");
+		return;
+	}
+	var obj = {};
+	var created = this.getCreated();
+	var cFormat = Object.keys(created);
+	for (var i = 0; i < cFormat.length; i++) {
+		if (bringLayer.indexOf(cFormat[i]) === -1) {
+			continue;
+		}
+		if (!obj.hasOwnProperty(cFormat[i])) {
+			obj[cFormat[i]] = {};
+		}
+		var cSheetNum = Object.keys(created[cFormat[i]]);
+		for (var j = 0; j < cSheetNum.length; j++) {
+			if (!obj[cFormat[i]].hasOwnProperty(cSheetNum[j])) {
+				obj[cFormat[i]][cSheetNum[j]] = {};
+				obj[cFormat[i]][cSheetNum[j]]["create"] = [];
+			}
+			var cLayers = Object.keys(created[cFormat[i]][cSheetNum[j]]);
+			for (var k = 0; k < cLayers.length; k++) {
+				var cLayer = created[cFormat[i]][cSheetNum[j]][cLayers[k]];
+				var cInfo = cLayer.get("git").information;
+				var cObj;
+				if (cInfo.getFormat() === "ngi") {
+					cObj = {
+						"layerName" : cInfo.getName() + "_" + (cInfo.getGeometry().toUpperCase()),
+						"layerType" : cInfo.getGeometry(),
+						"version" : cInfo.getNGIVersion(),
+						"dim" : cInfo.getNGIDim(),
+						"bound" : cInfo.getMbound(),
+						"represent" : cInfo.getNGIRep()
+					};
+					var attrs = [];
+					var cAttrs = cInfo.getAttributes();
+					if (!!cAttrs) {
+						for (var l = 0; l < cAttrs.length; l++) {
+							attrs.push(cAttrs[l].getStructure());
+						}
+						cObj["attr"] = attrs;
+					}
+				} else if (cInfo.getFormat() === "dxf") {
+					cObj = {
+						"layerName" : cInfo.getName() + "_" + (cInfo.getGeometry().toUpperCase()),
+						"layerType" : cInfo.getGeometry()
+					};
+				}
+				obj[cFormat[i]][cSheetNum[j]]["create"].push(cObj);
+			}
+		}
+	}
+
+	var modified = this.getModified();
+	var mFormat = Object.keys(modified);
+	for (var i = 0; i < mFormat.length; i++) {
+		if (bringLayer.indexOf(mFormat[i]) === -1) {
+			continue;
+		}
+		if (!obj.hasOwnProperty(mFormat[i])) {
+			obj[mFormat[i]] = {};
+		}
+		var mSheetNum = Object.keys(modified[mFormat[i]]);
+		for (var j = 0; j < mSheetNum.length; j++) {
+			if (!obj[mFormat[i]].hasOwnProperty(mSheetNum[j])) {
+				obj[mFormat[i]][mSheetNum[j]] = {};
+				obj[mFormat[i]][mSheetNum[j]]["modify"] = [];
+			}
+			var mLayers = Object.keys(modified[mFormat[i]][mSheetNum[j]]);
+			for (var k = 0; k < mLayers.length; k++) {
+				var mLayer = modified[mFormat[i]][mSheetNum[j]][mLayers[k]];
+				var mInfo = mLayer.get("git").information;
+
+				var mObj = {
+					"nativeName" : mInfo.getId(),
+					"originLayerName" : mInfo.getOldName() + "_" + (mInfo.getGeometry().toUpperCase()),
+					"currentLayerName" : mInfo.getName() + "_" + (mInfo.getGeometry().toUpperCase()),
+					// "layerType" : mInfo.getGeometry(),
+					// "version" : mInfo.getNGIVersion(),
+					// "dim" : mInfo.getNGIDim(),
+					"bound" : mInfo.getMbound(),
+					"represent" : mInfo.getNGIRep()
+				};
+				var attrs = [];
+				var mAttrs = mInfo.getAttributes();
+				if (!!mAttrs) {
+					for (var l = 0; l < mAttrs.length; l++) {
+						attrs.push(mAttrs[l].getStructure());
+					}
+					mObj["updateAttr"] = attrs;
+				}
+				obj[mFormat[i]][mSheetNum[j]]["modify"].push(mObj);
+			}
+		}
+	}
+
+	var removed = this.getRemoved();
+	var rFormat = Object.keys(removed);
+	for (var i = 0; i < rFormat.length; i++) {
+		if (bringLayer.indexOf(rFormat[i]) === -1) {
+			continue;
+		}
+		if (!obj.hasOwnProperty(rFormat[i])) {
+			obj[rFormat[i]] = {};
+		}
+		var rSheetNum = Object.keys(removed[rFormat[i]]);
+		for (var j = 0; j < rSheetNum.length; j++) {
+			if (!obj[rFormat[i]].hasOwnProperty(rSheetNum[j])) {
+				obj[rFormat[i]][rSheetNum[j]] = {};
+				obj[rFormat[i]][rSheetNum[j]]["remove"] = {};
+			}
+			var scope = "part";
+			var layer = [];
+			var rLayers = Object.keys(removed[rFormat[i]][rSheetNum[j]]);
+			for (var k = 0; k < rLayers.length; k++) {
+				var rLayer = removed[rFormat[i]][rSheetNum[j]][rLayers[k]];
+				var rInfo = rLayer.get("git").information;
+				var name = info.rInfo.getOldName() + "_" + (rInfo.getGeometry().toUpperCase());
+				layer.push(name);
+			}
+			obj[rFormat[i]][rSheetNum[j]]["remove"]["scope"] = scope;
+			obj[rFormat[i]][rSheetNum[j]]["remove"]["layer"] = layer;
+		}
+	}
+	return obj;
+}

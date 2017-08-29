@@ -487,3 +487,84 @@ gb.edit.ModifyLayerProperties.prototype.getDefinitionForm = function() {
 		this.getLayerRecord().update(info.getFormat(), info.getSheetNumber(), layer, oldLayerId);
 	}
 };
+gb.edit.ModifyLayerProperties.prototype.getImageTileInfo = function(url, layer) {
+	var that = this;
+	var arr = {
+		"geoLayerList" : [ layer.get("id") ]
+	}
+	var names = [];
+	// console.log(JSON.stringify(arr));
+	var info;
+	$.ajax({
+		url : url,
+		method : "POST",
+		contentType : "application/json; charset=UTF-8",
+		cache : false,
+		data : JSON.stringify(arr),
+		beforeSend : function() { // 호출전실행
+			$("body").css("cursor", "wait");
+		},
+		complete : function() {
+			$("body").css("cursor", "default");
+		},
+		traditional : true,
+		success : function(data2, textStatus, jqXHR) {
+			console.log(data2);
+			if (Array.isArray(data2)) {
+				if (data2.length === 1) {
+					var arra = [];
+					info = new gb.layer.LayerInfo({
+						oldName : that.getRefer().get_node(data2[0].lName).text,
+						id : data2[0].lName,
+						sheetNum : that.getRefer().get_node(refer.get_node(data2[0].lName).parent).text,
+						attributes : 5,
+						format : 6,
+						epsg : 7,
+						ngi : {
+							"version" : 8,
+							"dim" : 9,
+							"represent" : 10
+						},
+						mbound : 11,
+						lbound : 12,
+						isNew : 13,
+						geometry : 14
+					});
+//					var wms = new ol.layer.Tile({
+//						source : new ol.source.TileWMS({
+//							url : that._data.geoserver.WMSLayerURL,
+//							params : {
+//								'LAYERS' : data2[0].lName,
+//								'TILED' : true,
+//								'FORMAT' : 'image/png8',
+//								'VERSION' : '1.0.0',
+//								'CRS' : 'EPSG:5186',
+//								'SRS' : 'EPSG:5186',
+//								'BBOX' : data2[0].nbBox.minx.toString() + "," + data2[0].nbBox.miny.toString() + ","
+//										+ data2[0].nbBox.maxx.toString() + "," + data2[0].nbBox.maxy.toString()
+//							},
+//							serverType : 'geoserver'
+//						})
+//					});
+					// var git = {
+					// "validation" : false,
+					// "geometry" : data2[0].geomType,
+					// "editable" : true,
+					// "attribute" : data2[0].attInfo,
+					// "fake" : "child"
+					// }
+					// wms.set("name", obj.refer.get_node(data2[i].lName).text);
+					// wms.set("id", data2[i].lName);
+					// // wms.setVisible(false);
+					// console.log(wms.get("id"));
+					// // wms.set("type", "ImageTile");
+					// wms.set("git", git);
+					// arra.push(wms);
+					// console.log(wms);
+				}
+
+				$("body").css("cursor", "default");
+			}
+		}
+	});
+};

@@ -1229,6 +1229,7 @@ gb.panel.EditingTool.prototype.removeFeatureFromUnmanaged = function(layer) {
 		var layers = layer.getLayers();
 		for (var i = 0; i < layers.getLength(); i++) {
 			this.removeFeatureFromUnmanaged(layers.item(i));
+			this.featureRecord.removeByLayer(layers.item(i).get("id"));
 		}
 	} else if (layer instanceof ol.layer.Base) {
 		var git = layer.get("git");
@@ -1241,6 +1242,7 @@ gb.panel.EditingTool.prototype.removeFeatureFromUnmanaged = function(layer) {
 					var layers = git["layers"];
 					for (var i = 0; i < layers.getLength(); i++) {
 						this.removeFeatureFromUnmanaged(layers.item(i));
+						this.featureRecord.removeByLayer(layers.item(i).get("id"));
 					}
 				}
 			}
