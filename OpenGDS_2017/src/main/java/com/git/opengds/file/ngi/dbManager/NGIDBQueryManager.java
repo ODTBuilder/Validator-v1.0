@@ -683,9 +683,17 @@ public class NGIDBQueryManager {
 		return selectQuery;
 	}
 
-	public HashMap<String, Object> getDeleteDXFProgressQuery(int cIdx) {
+	public HashMap<String, Object> getDeleteNGIProgressQuery(int cIdx) {
 		HashMap<String, Object> deleteQuery = new HashMap<String, Object>();
 		String tableName = "qa20_layercollection_qa_progress";
+		String deleteQueryStr = "delete from " + tableName + " where c_idx = " + cIdx;
+		deleteQuery.put("deleteQuery", deleteQueryStr);
+		return deleteQuery;
+	}
+
+	public HashMap<String, Object> getDeleteDXFProgressQuery(int cIdx) {
+		HashMap<String, Object> deleteQuery = new HashMap<String, Object>();
+		String tableName = "qa10_layercollection_qa_progress";
 		String deleteQueryStr = "delete from " + tableName + " where c_idx = " + cIdx;
 		deleteQuery.put("deleteQuery", deleteQueryStr);
 		return deleteQuery;
@@ -698,4 +706,5 @@ public class NGIDBQueryManager {
 		deleteQuery.put("deleteQuery", deleteQueryStr);
 		return deleteQuery;
 	}
+
 }

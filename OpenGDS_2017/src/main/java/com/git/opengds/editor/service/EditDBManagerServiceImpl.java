@@ -51,6 +51,7 @@ import com.git.opengds.file.shp.dbManager.SHPDBQueryManager;
 import com.git.opengds.file.shp.persistence.SHPLayerCollectionDAO;
 import com.git.opengds.geoserver.service.GeoserverService;
 import com.git.opengds.user.domain.UserVO;
+import com.git.opengds.validator.persistence.ValidateProgressDAO;
 
 @Service
 @ContextConfiguration(locations = { "file:src/main/webapp/WEB-INF/spring/**/*.xml" })
@@ -68,6 +69,9 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 
 	@Inject
 	private SHPLayerCollectionDAO shpDAO;
+
+	@Inject
+	private ValidateProgressDAO progressDAO;
 
 	@Inject
 	private GeoserverService geoserverService;
@@ -122,9 +126,8 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 		HashMap<String, Object> deleteTableCommonsQuery = queryManager.getDeleteTablesQuery(cIdx);
 		dxfDAO.deleteField(userVO, deleteTableCommonsQuery);
 
-		// HashMap<String, Object> deleteValidateProgressQuery =
-		// queryManager.getDeleteQA10ProgressQuery(cIdx);
-		// progressDAO.deleteQA10Progress(deleteValidateProgressQuery);
+		HashMap<String, Object> deleteValidateProgressQuery = queryManager.getDeleteDXFProgressQuery(cIdx);
+		progressDAO.deleteDXFProgress(deleteValidateProgressQuery);
 
 		HashMap<String, Object> deleteLayerCollectionQuery = queryManager.getDeleteDXFLayerCollectionQuery(cIdx);
 		dxfDAO.deleteField(userVO, deleteLayerCollectionQuery);
@@ -134,9 +137,8 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 
 		NGIDBQueryManager queryManager = new NGIDBQueryManager();
 
-		// HashMap<String, Object> deleteValidateProgressQuery =
-		// queryManager.getDeleteQA10ProgressQuery(cIdx);
-		// progressDAO.deleteQA20Progress(deleteValidateProgressQuery);
+		HashMap<String, Object> deleteValidateProgressQuery = queryManager.getDeleteNGIProgressQuery(cIdx);
+		progressDAO.deleteNGIProgress(deleteValidateProgressQuery);
 
 		HashMap<String, Object> deleteLayerCollectionQuery = queryManager.getDeleteNGILayerCollection(cIdx);
 		ngiDAO.deleteField(userVO, deleteLayerCollectionQuery);
@@ -614,7 +616,7 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 				if (tcIdx != null) {
 					// tables - layer
 					HashMap<String, Object> deleteTableLayersQuery = dbManager.getDeleteTableLayersQuery(tcIdx, id);
-					dxfDAO.deleteField(userVO, deleteTableLayersQuery);
+					int t = dxfDAO.deleteField(userVO, deleteTableLayersQuery);
 
 					// blocks - commonIdx
 					HashMap<String, Object> blocksIdxQuery = dbManager.getSelectBlockCommonIdxQuery(cIdx, id);

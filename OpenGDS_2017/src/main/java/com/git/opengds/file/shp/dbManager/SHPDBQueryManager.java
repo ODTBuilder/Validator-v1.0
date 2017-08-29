@@ -84,8 +84,8 @@ public class SHPDBQueryManager {
 			SimpleFeature feature = iterator.next();
 			Geometry geom = (Geometry) feature.getDefaultGeometry();
 			String insertColumns = "insert into " + tableName + "(feature_id,  feature_type, geom, ";
-			String insertValues = "values('" + feature.getID() + "', '" + geom.getGeometryType() + "', "
-					+ "ST_GeomFromText('" + geom.toString() + "', " + src + "), ";
+			String insertValues = "values('" + layerName + "', '" + geom.getGeometryType() + "', " + "ST_GeomFromText('"
+					+ geom.toString() + "', " + src + "), ";
 			for (int i = 0; i < attriKeyList.size(); i++) {
 				String attriKey = attriKeyList.get(i);
 				Object attriValue = feature.getAttribute(attriKey);
@@ -238,7 +238,7 @@ public class SHPDBQueryManager {
 	}
 
 	public HashMap<String, Object> getSelectSHPLayerCollectionIdxQuery(String collectionName) {
-		
+
 		String tableName = "\"" + "shp_layercollection" + "\"";
 		String selectQuery = "select c_idx from " + tableName + " where c_name = '" + collectionName + "'";
 		HashMap<String, Object> selectQueryMap = new HashMap<String, Object>();

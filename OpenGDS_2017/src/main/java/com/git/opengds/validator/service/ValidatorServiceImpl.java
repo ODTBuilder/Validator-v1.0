@@ -81,6 +81,9 @@ public class ValidatorServiceImpl implements ValidatorService {
 	@Override
 	public void validate(final UserVO userVO, String jsonObject) throws Exception {
 
+		
+		System.out.println(jsonObject);
+		
 		JSONParser parser = new JSONParser();
 		JSONObject jsonObj = (JSONObject) parser.parse(jsonObject);
 

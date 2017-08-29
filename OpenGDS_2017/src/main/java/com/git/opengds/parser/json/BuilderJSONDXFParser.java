@@ -51,7 +51,7 @@ public class BuilderJSONDXFParser {
 					JSONObject featureObj = (JSONObject) jsonParser.parse(geoStr);
 					EditDTFeatureParser featureParser = new EditDTFeatureParser("dxf", featureObj, state);
 					DTDXFFeature feature = featureParser.getDXFFeature();
-					feature.setFeatureType(layerType);
+				//	feature.setFeatureType(layerType);
 					featureList.add(feature);
 				}
 				editFeatureMap.put("created", featureList);
@@ -64,7 +64,6 @@ public class BuilderJSONDXFParser {
 					JSONObject featureObj = (JSONObject) jsonParser.parse(geoStr);
 					EditDTFeatureParser featureParser = new EditDTFeatureParser("dxf", featureObj, state);
 					DTDXFFeature feature = featureParser.getDXFFeature();
-					feature.setFeatureType(layerType);
 					featureList.add(feature);
 				}
 				editFeatureMap.put("modified", featureList);

@@ -56,6 +56,8 @@ public class EditDTFeatureServiceImpl implements EditDTFeatureService {
 	public void editFeature(UserVO userVO, JSONObject featureEditObj) throws ParseException,
 			org.json.simple.parser.ParseException, SchemaException, FileNotFoundException, IOException {
 
+		System.out.println(featureEditObj);
+		
 		Map<String, Object> edtFeatureListObj = BuilderJSONParser.parseEditFeatureObj(featureEditObj);
 		Iterator edtFeatureIterator = edtFeatureListObj.keySet().iterator();
 		while (edtFeatureIterator.hasNext()) {

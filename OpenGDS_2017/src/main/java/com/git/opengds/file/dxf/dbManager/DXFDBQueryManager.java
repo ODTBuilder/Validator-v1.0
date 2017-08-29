@@ -116,13 +116,35 @@ public class DXFDBQueryManager {
 
 	public HashMap<String, Object> getInertDXFFeatureQuery(String tableName, DTDXFFeature createFeature) {
 
-		String insertDefaultQuery = "insert into \"" + tableName + "\"" + "(feature_id, geom, feature_type)";
-		String insertDefaultValues = " values('" + createFeature.getFeatureID() + "'," + "ST_GeomFromText('"
-				+ createFeature.getGeom().toString() + "', 5186)" + ",'" + createFeature.getFeatureType() + "')";
+		String src = "5186";
+		String featureType = createFeature.getFeatureType();
 
-		HashMap<String, Object> insertQuery = new HashMap<String, Object>();
-		insertQuery.put("insertQuery", insertDefaultQuery + insertDefaultValues);
-		return insertQuery;
+		String defaultInsertColumns = "insert into \"" + tableName + "\"(feature_id, geom, feature_type ";
+		String values = "values ('" + createFeature.getFeatureID() + "', " + "ST_GeomFromText('"
+				+ createFeature.getGeom().toString() + "'," + src + "), '" + createFeature.getFeatureType() + "'";
+
+		if (featureType.equals("TEXT")) {
+			defaultInsertColumns += ", text_value, height, rotate";
+			values += ", '" + createFeature.getTextValue() + "'" + ", '" + createFeature.getHeight() + "'" + ", '"
+					+ createFeature.getRotate() + "'";
+		}
+
+		if (featureType.equals("LWPOLYLINE") || featureType.equals("POLYLINE")) {
+			defaultInsertColumns += ", elevation, flag";
+			values += "," + createFeature.getElevation() + ", " + createFeature.getFlag();
+		}
+
+		if (featureType.equals("INSERT")) {
+			defaultInsertColumns += ", rotate";
+			values += "," + createFeature.getRotate();
+		}
+
+		defaultInsertColumns += ")";
+		values += ")";
+		HashMap<String, Object> query = new HashMap<String, Object>();
+		query.put("insertQuery", defaultInsertColumns + values);
+
+		return query;
 	}
 
 	public HashMap<String, Object> getSelectDXFFeatureIdxQuery(String tableName, String featureID) {
@@ -208,7 +230,8 @@ public class DXFDBQueryManager {
 		return layerQuerys;
 	}
 
-	public List<HashMap<String, Object>> getInsertBlocksCommonQuery(int cIdx, List<LinkedHashMap<String, Object>> blocks) {
+	public List<HashMap<String, Object>> getInsertBlocksCommonQuery(int cIdx,
+			List<LinkedHashMap<String, Object>> blocks) {
 
 		List<HashMap<String, Object>> blockQuerys = new ArrayList<HashMap<String, Object>>();
 

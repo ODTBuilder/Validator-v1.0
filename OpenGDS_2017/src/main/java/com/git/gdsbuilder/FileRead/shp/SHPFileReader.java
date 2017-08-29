@@ -9,14 +9,19 @@ import java.util.Map;
 import org.geotools.data.DataStoreFinder;
 import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotools.data.simple.SimpleFeatureCollection;
+import org.geotools.data.simple.SimpleFeatureIterator;
 import org.geotools.data.simple.SimpleFeatureSource;
+import org.geotools.feature.DefaultFeatureCollection;
+import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.feature.type.GeometryType;
 import org.opengis.filter.Filter;
 
 import com.git.gdsbuilder.type.shp.collection.DTSHPLayerCollection;
 import com.git.gdsbuilder.type.shp.layer.DTSHPLayer;
 import com.git.gdsbuilder.type.shp.layer.DTSHPLayerList;
+import com.vividsolutions.jts.geom.Geometry;
 
 public class SHPFileReader {
 
@@ -44,12 +49,29 @@ public class SHPFileReader {
 					SimpleFeatureType featureType = collection.getSchema();
 					GeometryType geometryType = featureType.getGeometryDescriptor().getType();
 					String geomType = geometryType.getName().toString();
-//					if (geomType.startsWith("Multi")) {
-//						geomType = geomType.replaceAll("Multi", "");
-//					}
-					dtLayer.setLayerType(geomType);
-					dtLayer.setLayerName(shpName.toUpperCase() + "_" + geomType.toUpperCase());
-					dtLayerList.add(dtLayer);
+					if (geomType.startsWith("Multi")) {
+						DefaultFeatureCollection newCollection = new DefaultFeatureCollection();
+						SimpleFeatureIterator it = collection.features();
+						while (it.hasNext()) {
+							SimpleFeature sf = it.next();
+							Geometry geom = (Geometry) sf.getDefaultGeometry();
+							int geomNum = geom.getNumGeometries();
+							if (geomNum == 1) {
+								Geometry singleGeom = geom.getGeometryN(0);
+								GeometryDescriptor dec = featureType.getGeometryDescriptor();
+								geomType = geomType.replaceAll("Multi", "");
+								newCollection.add(sf);
+							}
+						}
+						dtLayer.setLayerType(geomType);
+						dtLayer.setSimpleFeatureCollection(newCollection);
+						dtLayer.setLayerName(shpName.toUpperCase() + "_" + geomType.toUpperCase());
+						dtLayerList.add(dtLayer);
+					} else {
+						dtLayer.setLayerType(geomType);
+						dtLayer.setLayerName(shpName.toUpperCase() + "_" + geomType.toUpperCase());
+						dtLayerList.add(dtLayer);
+					}
 				}
 			}
 		}

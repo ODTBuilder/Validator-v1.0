@@ -35,6 +35,8 @@ import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.geojson.GeoJsonReader;
 
+import junit.framework.Protectable;
+
 /**
  * JSONObject를 QA20Feature 객체로 파싱하는 클래스
  * 
@@ -133,13 +135,46 @@ public class EditDTFeatureParser {
 
 	public void dxfFeatureParse() throws ParseException {
 
-		String featureID = (String) featureObj.get("id");
+		dxfFeature = new DTDXFFeature();
+
 		GeoJsonReader re = new GeoJsonReader();
 		JSONObject geomObj = (JSONObject) featureObj.get("geometry");
 		String geomStr = geomObj.toJSONString();
 		Geometry geom = re.read(geomStr);
+		dxfFeature.setGeom(geom);
 
-		dxfFeature = new DTDXFFeature(featureID, "", geom);
+		String featureID = (String) featureObj.get("id");
+		dxfFeature.setFeatureID(featureID);
+
+		JSONObject properties = (JSONObject) featureObj.get("properties");
+		Iterator iterator = properties.keySet().iterator();
+		while (iterator.hasNext()) {
+			String propertyKey = (String) iterator.next();
+			if (propertyKey.equals("feature_type")) {
+				Object value = properties.get(propertyKey);
+				dxfFeature.setFeatureType(value.toString());
+			}
+			if (propertyKey.equals("elevation")) {
+				Object value = properties.get(propertyKey);
+				dxfFeature.setElevation(Double.parseDouble(value.toString()));
+			}
+			if (propertyKey.equals("rotate")) {
+				Object value = properties.get(propertyKey);
+				dxfFeature.setRotate((Double) value);
+			}
+			if (propertyKey.equals("width")) {
+				Object value = properties.get(propertyKey);
+				dxfFeature.setWidth((Double) value);
+			}
+			if (propertyKey.equals("height")) {
+				Object value = properties.get(propertyKey);
+				dxfFeature.setHeight((Double) value);
+			}
+			if (propertyKey.equals("textValue")) {
+				Object value = properties.get(propertyKey);
+				dxfFeature.setTextValue(value.toString());
+			}
+		}
 	}
 
 	public void ngiFeatureParse() throws ParseException {
