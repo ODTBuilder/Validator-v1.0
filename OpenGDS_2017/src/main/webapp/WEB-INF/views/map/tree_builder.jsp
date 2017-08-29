@@ -97,8 +97,8 @@ html {
 			<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
 				aria-expanded="false" title="Save">Save</a>
 				<ul class="dropdown-menu" role="menu">
-					<li><a href="#">Save</a></li>
-					<li><a href="#" id="save">Save All</a></li>
+					<li><a href="#" id="savePart">Save</a></li>
+					<li><a href="#" id="saveAll">Save All</a></li>
 				</ul></li>
 
 			<li><a href="#" title="Edit" id="edit">Edit</a></li>
@@ -284,8 +284,37 @@ html {
 					}
 					gitrnd.setProjection(null, null, null, null);
 				});
+			},
+			recallFunc : function(layer, arr) {
+				if (layer instanceof ol.layer.Group) {
+					arr.push(layer.get("id"));
+					var layers = layer.getLayers();
+					for (var i = 0; i < layers.getLength(); i++) {
+						gitrnd.recallFunc(layers.item(i), arr);
+					}
+				} else if (layer instanceof ol.layer.Base) {
+					var git = layer.get("git");
+					if (git) {
+						var fake = git.fake;
+						if (fake) {
+							if (fake === "parent") {
+								arr.push(layer.get("id"));
+								var layers = layer.get("git").layers;
+								for (var i = 0; i < layers.getLength(); i++) {
+									gitrnd.recallFunc(layers.item(i), arr);
+								}
+							} else if (fake === "child") {
+								arr.push(layer.get("id"));
+							}
+						} else {
+							arr.push(layer.get("id"));
+						}
+					} else {
+						arr.push(layer.get("id"));
+					}
+				}
+				return arr;
 			}
-
 		}
 
 		gitrnd.search("5186");
@@ -346,6 +375,7 @@ html {
 			"layerproperties" : {
 				"properties" : lprop,
 				"layerRecord" : lrecord,
+				"featureRecord" : frecord,
 				"editingTool" : epan
 			},
 			plugins : [ "contextmenu", "dnd", "search", "state", "types", "sort", "visibility", "layerproperties" ]
@@ -357,7 +387,29 @@ html {
 			feature : frecord
 		});
 
-		$("#save").click(function() {
+		$("#savePart").click(function() {
+			// 			transfer.sendStructure();
+			// gitrnd.recallFunc(layer, arr);
+			var selected = $('#builderClientLayer').jstreeol3(true).get_selected();
+			var olselected = [];
+			for (var i = 0; i < selected.length; i++) {
+				var layer = $('#builderClientLayer').jstreeol3(true).get_LayerById(selected[i]);
+				gitrnd.recallFunc(layer, olselected);
+			}
+			console.log(olselected);
+			var nodupliobj = {};
+			for (var i = 0; i < olselected.length; i++) {
+				nodupliobj[olselected[i]] = true;
+			}
+			var nodupliarr = Object.keys(nodupliobj);
+			console.log(nodupliarr);
+			if (nodupliarr.length > 0) {
+				transfer.sendPartStructure(nodupliarr);
+			}
+
+		});
+
+		$("#saveAll").click(function() {
 			transfer.sendStructure();
 		});
 
