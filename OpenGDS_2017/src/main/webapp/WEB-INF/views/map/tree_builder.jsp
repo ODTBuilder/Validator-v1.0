@@ -392,8 +392,10 @@ html {
 			// gitrnd.recallFunc(layer, arr);
 			var selected = $('#builderClientLayer').jstreeol3(true).get_selected();
 			var olselected = [];
+			var ollayers = new ol.Collection();
 			for (var i = 0; i < selected.length; i++) {
 				var layer = $('#builderClientLayer').jstreeol3(true).get_LayerById(selected[i]);
+				ollayers.push(layer);
 				gitrnd.recallFunc(layer, olselected);
 			}
 			console.log(olselected);
@@ -404,13 +406,13 @@ html {
 			var nodupliarr = Object.keys(nodupliobj);
 			console.log(nodupliarr);
 			if (nodupliarr.length > 0) {
-				transfer.sendPartStructure(nodupliarr);
+				transfer.sendPartStructure(nodupliarr, ollayers, epan);
 			}
 
 		});
 
 		$("#saveAll").click(function() {
-			transfer.sendStructure();
+			transfer.sendStructure(map.getLayers(), epan);
 		});
 
 		// 		$("#edit").editingtool({
