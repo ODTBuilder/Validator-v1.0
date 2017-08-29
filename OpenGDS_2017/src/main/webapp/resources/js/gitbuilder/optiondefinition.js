@@ -47,7 +47,7 @@ gitbuilder.ui.OptionDefinition = $
 						linestring : [ "RefAttributeMiss", "EdgeMatchMiss", "UselessEntity", "LayerMiss", "RefLayerMiss", "SmallLength",
 								"EntityDuplicated", "SelfEntity", "PointDuplicated", "ConIntersected", "ConOverDegree", "ConBreak",
 								"AttributeFix", "OutBoundary", "ZValueAmbiguous", "UselessPoint", "OverShoot", "UnderShoot",
-								"RefZValueMiss", "UFIDLength", "NeatLineAttribute", "NumericalValue", "UFIDRule" ],
+								"RefZValueMiss", "UFIDLength", "NeatLineAttribute", "NumericalValue", "UFIDRule", "LinearDisconnection" ],
 						polygon : [ "Admin", "CrossRoad", "RefAttributeMiss", "BridgeName", "NodeMiss", "EdgeMatchMiss", "UselessEntity",
 								"LayerMiss", "RefLayerMiss", "SmallArea", "EntityDuplicated", "SelfEntity", "PointDuplicated",
 								"AttributeFix", "OutBoundary", "OverShoot", "UnderShoot", "OneAcre", "OneStage", "BuildingSite",
@@ -55,6 +55,11 @@ gitbuilder.ui.OptionDefinition = $
 								"HoleMisplacement", "CenterLineMiss", "EntityInHole" ]
 					},
 					optItem : {
+						"LinearDisconnection" : {
+							"title" : "Linear Disconnection",
+							"alias" : "LinearDisconnection",
+							"type" : "relation"
+						},
 						"EntityInHole" : {
 							"title" : "Entity In Hole",
 							"alias" : "EntityInHole",
