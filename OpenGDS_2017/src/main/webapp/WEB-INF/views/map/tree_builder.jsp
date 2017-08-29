@@ -285,12 +285,12 @@ html {
 					gitrnd.setProjection(null, null, null, null);
 				});
 			},
-			recallFunc : function(layer, arr) {
+			addRemoveHistoryList : function(layer, arr) {
 				if (layer instanceof ol.layer.Group) {
 					arr.push(layer.get("id"));
 					var layers = layer.getLayers();
 					for (var i = 0; i < layers.getLength(); i++) {
-						gitrnd.recallFunc(layers.item(i), arr);
+						gitrnd.addRemoveHistoryList(layers.item(i), arr);
 					}
 				} else if (layer instanceof ol.layer.Base) {
 					var git = layer.get("git");
@@ -301,7 +301,7 @@ html {
 								arr.push(layer.get("id"));
 								var layers = layer.get("git").layers;
 								for (var i = 0; i < layers.getLength(); i++) {
-									gitrnd.recallFunc(layers.item(i), arr);
+									gitrnd.addRemoveHistoryList(layers.item(i), arr);
 								}
 							} else if (fake === "child") {
 								arr.push(layer.get("id"));
@@ -312,6 +312,22 @@ html {
 					} else {
 						arr.push(layer.get("id"));
 					}
+				}
+				return arr;
+			},
+			addRefreshWMSList : function(node, arr) {
+				var clayer = $('#builderClientLayer').jstreeol3(true).get_LayerById(node);
+				if (clayer instanceof ol.layer.Group) {
+					var children = $('#builderClientLayer').jstreeol3(true).get_node(node).children;
+					for (var i = 0; i < children.length; i++) {
+						gitrnd.addRefreshWMSList(children[i], arr);
+					}
+				} else if (clayer instanceof ol.layer.Tile) {
+					arr.push(clayer);
+				} else if (clayer instanceof ol.layer.Base) {
+					var cnode = $('#builderClientLayer').jstreeol3(true).get_node(node);
+					var parent = cnode.parent;
+					gitrnd.addRefreshWMSList(parent, arr);
 				}
 				return arr;
 			}
@@ -389,14 +405,14 @@ html {
 
 		$("#savePart").click(function() {
 			// 			transfer.sendStructure();
-			// gitrnd.recallFunc(layer, arr);
+			// gitrnd.addRemoveHistoryList(layer, arr);
 			var selected = $('#builderClientLayer').jstreeol3(true).get_selected();
 			var olselected = [];
 			var ollayers = new ol.Collection();
 			for (var i = 0; i < selected.length; i++) {
 				var layer = $('#builderClientLayer').jstreeol3(true).get_LayerById(selected[i]);
-				ollayers.push(layer);
-				gitrnd.recallFunc(layer, olselected);
+				gitrnd.addRefreshWMSList(selected[i], ollayers);
+				gitrnd.addRemoveHistoryList(layer, olselected);
 			}
 			console.log(olselected);
 			var nodupliobj = {};
