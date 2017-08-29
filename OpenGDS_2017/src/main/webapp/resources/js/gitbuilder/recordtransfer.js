@@ -101,25 +101,13 @@ gb.edit.RecordTransfer.prototype.sendPartStructure = function(layers, ollayers, 
 			}
 			for (var i = 0; i < ollayers.getLength(); i++) {
 				if (ollayers.item(i) instanceof ol.layer.Tile) {
-					// var params = ollayers.item(i).getSource().getParams();
-					// params["time"] = Date.now();
-					// ollayers.item(i).getSource().updateParams(params);
+					var params = ollayers.item(i).getSource().getParams();
+					params["time"] = Date.now();
+					ollayers.item(i).getSource().updateParams(params);
 					ollayers.item(i).getSource().refresh();
-					// editingTool.removeFeatureFromUnmanaged(ollayers.item(i));
+					editingTool.removeFeatureFromUnmanaged(ollayers.item(i));
 				}
 			}
 		}
 	});
-	for (var i = 0; i < layers.length; i++) {
-		featureObj.removeByLayer(layers[i]);
-	}
-	for (var i = 0; i < ollayers.getLength(); i++) {
-		if (ollayers.item(i) instanceof ol.layer.Tile) {
-			// var params = ollayers.item(i).getSource().getParams();
-			// params["time"] = Date.now();
-			// ollayers.item(i).getSource().updateParams(params);
-			ollayers.item(i).getSource().refresh();
-			// editingTool.removeFeatureFromUnmanaged(ollayers.item(i));
-		}
-	}
 };
