@@ -49,29 +49,33 @@ public class SHPFileReader {
 					SimpleFeatureType featureType = collection.getSchema();
 					GeometryType geometryType = featureType.getGeometryDescriptor().getType();
 					String geomType = geometryType.getName().toString();
-					if (geomType.startsWith("Multi")) {
-						DefaultFeatureCollection newCollection = new DefaultFeatureCollection();
-						SimpleFeatureIterator it = collection.features();
-						while (it.hasNext()) {
-							SimpleFeature sf = it.next();
-							Geometry geom = (Geometry) sf.getDefaultGeometry();
-							int geomNum = geom.getNumGeometries();
-							if (geomNum == 1) {
-								Geometry singleGeom = geom.getGeometryN(0);
-								GeometryDescriptor dec = featureType.getGeometryDescriptor();
-								geomType = geomType.replaceAll("Multi", "");
-								newCollection.add(sf);
-							}
-						}
-						dtLayer.setLayerType(geomType);
-						dtLayer.setSimpleFeatureCollection(newCollection);
-						dtLayer.setLayerName(shpName.toUpperCase() + "_" + geomType.toUpperCase());
-						dtLayerList.add(dtLayer);
-					} else {
-						dtLayer.setLayerType(geomType);
-						dtLayer.setLayerName(shpName.toUpperCase() + "_" + geomType.toUpperCase());
-						dtLayerList.add(dtLayer);
-					}
+//					if (geomType.startsWith("Multi")) {
+//						DefaultFeatureCollection newCollection = new DefaultFeatureCollection();
+//						SimpleFeatureIterator it = collection.features();
+//						while (it.hasNext()) {
+//							SimpleFeature sf = it.next();
+//							Geometry geom = (Geometry) sf.getDefaultGeometry();
+//							int geomNum = geom.getNumGeometries();
+//							if (geomNum == 1) {
+//								Geometry singleGeom = geom.getGeometryN(0);
+//								GeometryDescriptor dec = featureType.getGeometryDescriptor();
+//								geomType = geomType.replaceAll("Multi", "");
+//								newCollection.add(sf);
+//							}
+//						}
+//						dtLayer.setLayerType(geomType);
+//						dtLayer.setSimpleFeatureCollection(newCollection);
+//						dtLayer.setLayerName(shpName.toUpperCase() + "_" + geomType.toUpperCase());
+//						dtLayerList.add(dtLayer);
+//					} else {
+//						dtLayer.setLayerType(geomType);
+//						dtLayer.setLayerName(shpName.toUpperCase() + "_" + geomType.toUpperCase());
+//						dtLayerList.add(dtLayer);
+//					}
+					
+					dtLayer.setLayerType(geomType);
+					dtLayer.setLayerName(shpName.toUpperCase() + "_" + geomType.toUpperCase());
+					dtLayerList.add(dtLayer);
 				}
 			}
 		}
