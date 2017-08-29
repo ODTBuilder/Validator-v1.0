@@ -42,6 +42,7 @@ public class EditController extends AbstractController {
 	@ResponseBody
 	public boolean editLayerCollection(HttpServletRequest request, @RequestBody String geo) throws Exception {
 		UserVO generalUser = (UserVO) getSession(request, EnUserType.GENERAL.getTypeName());
-		return editService.editLayerCollection(generalUser, geo);
+		boolean isSuccessed =  editService.editLayerCollection(generalUser, geo);
+		return isSuccessed;
 	}
 }
