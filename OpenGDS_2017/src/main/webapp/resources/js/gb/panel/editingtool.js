@@ -460,6 +460,7 @@ gb.panel.EditingTool.prototype.select = function(layer) {
 		this.isOn.select = false;
 		return;
 	}
+	this.map.removeLayer(this.managed);
 	var sourceLayer;
 	if (Array.isArray(layer)) {
 		if (layer.length > 1) {
@@ -769,8 +770,9 @@ gb.panel.EditingTool.prototype.draw = function(layer) {
 		}
 		return;
 	}
+	this.map.removeLayer(this.managed);
 	var that = this;
-	if (!!this.interaction.select) {
+	if (this.interaction.select) {
 		this.interaction.select.getFeatures().clear();
 		this.deactiveIntrct_([ "dragbox", "select", "selectWMS" ]);
 	}
@@ -930,6 +932,7 @@ gb.panel.EditingTool.prototype.move = function(layer) {
 		}
 		return;
 	}
+	this.map.removeLayer(this.managed);
 	var that = this;
 	if (this.interaction.select.getFeatures().getLength() > 0) {
 		if (!(layer instanceof ol.layer.Vector)) {
@@ -985,6 +988,7 @@ gb.panel.EditingTool.prototype.rotate = function(layer) {
 		}
 		return;
 	}
+	this.map.removeLayer(this.managed);
 	var that = this;
 	if (this.interaction.select.getFeatures().getLength() > 0) {
 
@@ -1041,6 +1045,7 @@ gb.panel.EditingTool.prototype.modify = function(layer) {
 		}
 		return;
 	}
+	this.map.removeLayer(this.managed);
 	var that = this;
 	if (this.interaction.select.getFeatures().getLength() > 0) {
 
@@ -1222,21 +1227,13 @@ gb.panel.EditingTool.prototype.getFeatures = function() {
  */
 gb.panel.EditingTool.prototype.removeFeatureFromUnmanaged = function(layer) {
 	var that = this;
-	var layerId = layer.get("id");
-
-	this.tempVector.getSource().forEachFeature(function(feature) {
-		var id = feature.getId();
-		if (id.indexOf(layerId) !== -1) {
-			that.tempVector.getSource().removeFeature(feature);
-		}
-	});
-	this.tempVector.setMap(this.map);
 
 	if (layer instanceof ol.layer.Group) {
 		var layers = layer.getLayers();
 		for (var i = 0; i < layers.getLength(); i++) {
-			this.removeFeatureFromUnmanaged(layers.item(i));
 			this.featureRecord.removeByLayer(layers.item(i).get("id"));
+			that.tempVector.setMap(this.map);
+			this.removeFeatureFromUnmanaged(layers.item(i));
 		}
 	} else if (layer instanceof ol.layer.Base) {
 		var git = layer.get("git");
@@ -1248,11 +1245,39 @@ gb.panel.EditingTool.prototype.removeFeatureFromUnmanaged = function(layer) {
 					// 가짜 그룹 레이어임
 					var layers = git["layers"];
 					for (var i = 0; i < layers.getLength(); i++) {
-						this.removeFeatureFromUnmanaged(layers.item(i));
 						this.featureRecord.removeByLayer(layers.item(i).get("id"));
+						that.tempVector.setMap(this.map);
+						this.removeFeatureFromUnmanaged(layers.item(i));
 					}
+				} else if (git["fake"] === "child") {
+					var layerId = layer.get("id");
+					this.tempVector.getSource().forEachFeature(function(feature) {
+						var id = feature.getId();
+						if (id.indexOf(layerId) !== -1) {
+							that.tempVector.getSource().removeFeature(feature);
+							that.tempVector.setMap(this.map);
+						}
+					});
 				}
+			} else {
+				var layerId = layer.get("id");
+				this.tempVector.getSource().forEachFeature(function(feature) {
+					var id = feature.getId();
+					if (id.indexOf(layerId) !== -1) {
+						that.tempVector.getSource().removeFeature(feature);
+						that.tempVector.setMap(this.map);
+					}
+				});
 			}
+		} else {
+			var layerId = layer.get("id");
+			this.tempVector.getSource().forEachFeature(function(feature) {
+				var id = feature.getId();
+				if (id.indexOf(layerId) !== -1) {
+					that.tempVector.getSource().removeFeature(feature);
+					that.tempVector.setMap(this.map);
+				}
+			});
 		}
 	}
 	return;
