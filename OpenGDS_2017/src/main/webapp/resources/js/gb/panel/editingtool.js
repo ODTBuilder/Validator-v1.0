@@ -35,6 +35,12 @@ gb.panel.EditingTool = function(obj) {
 		source : this.tempSource
 	});
 
+	this.managed = new ol.layer.Vector({
+		source : this.tempSource
+	});
+	this.managed.set("name", "temp_vector");
+	this.managed.set("id", "temp_vector");
+
 	this.styles = [ new ol.style.Style({
 		stroke : new ol.style.Stroke({
 			color : 'rgba(0,153,255,1)',
@@ -859,14 +865,14 @@ gb.panel.EditingTool.prototype.draw = function(layer) {
 		this.activeBtn_("drawBtn");
 	} else if (git.editable === true && sourceLayer instanceof ol.layer.Base) {
 
-		if (!this.managed) {
-			this.managed = new ol.layer.Vector({
-				source : this.tempSource
-			});
-			this.managed.set("name", "temp_vector");
-			this.managed.set("id", "temp_vector");
-
-		}
+		// if (!this.managed) {
+		// this.managed = new ol.layer.Vector({
+		// source : this.tempSource
+		// });
+		// this.managed.set("name", "temp_vector");
+		// this.managed.set("id", "temp_vector");
+		//
+		// }
 		this.map.addLayer(this.managed);
 
 		this.interaction.draw = new ol.interaction.Draw({
@@ -936,13 +942,13 @@ gb.panel.EditingTool.prototype.move = function(layer) {
 	var that = this;
 	if (this.interaction.select.getFeatures().getLength() > 0) {
 		if (!(layer instanceof ol.layer.Vector)) {
-			if (!this.managed) {
-				this.managed = new ol.layer.Vector({
-					source : this.tempSource
-				});
-				this.managed.set("name", "temp_vector");
-				this.managed.set("id", "temp_vector");
-			}
+			// if (!this.managed) {
+			// this.managed = new ol.layer.Vector({
+			// source : this.tempSource
+			// });
+			// this.managed.set("name", "temp_vector");
+			// this.managed.set("id", "temp_vector");
+			// }
 			this.map.addLayer(this.managed);
 		}
 
@@ -996,13 +1002,13 @@ gb.panel.EditingTool.prototype.rotate = function(layer) {
 			console.error("select 1 feature");
 			return;
 		}
-		if (!this.managed) {
-			this.managed = new ol.layer.Vector({
-				source : this.tempSource
-			});
-			this.managed.set("name", "temp_vector");
-			this.managed.set("id", "temp_vector");
-		}
+		// if (!this.managed) {
+		// this.managed = new ol.layer.Vector({
+		// source : this.tempSource
+		// });
+		// this.managed.set("name", "temp_vector");
+		// this.managed.set("id", "temp_vector");
+		// }
 		this.map.addLayer(this.managed);
 		this.interaction.rotate = new gb.interaction.MultiTransform({
 			features : this.interaction.select.getFeatures()
@@ -1049,14 +1055,14 @@ gb.panel.EditingTool.prototype.modify = function(layer) {
 	var that = this;
 	if (this.interaction.select.getFeatures().getLength() > 0) {
 
-		if (!this.managed) {
-			this.managed = new ol.layer.Vector({
-				source : this.tempSource
-			});
-			this.managed.set("name", "temp_vector");
-			this.managed.set("id", "temp_vector");
-
-		}
+		// if (!this.managed) {
+		// this.managed = new ol.layer.Vector({
+		// source : this.tempSource
+		// });
+		// this.managed.set("name", "temp_vector");
+		// this.managed.set("id", "temp_vector");
+		//
+		// }
 		this.map.addLayer(this.managed);
 		this.interaction.modify = new ol.interaction.Modify({
 			features : this.interaction.select.getFeatures()
@@ -1232,7 +1238,7 @@ gb.panel.EditingTool.prototype.removeFeatureFromUnmanaged = function(layer) {
 		var layers = layer.getLayers();
 		for (var i = 0; i < layers.getLength(); i++) {
 			this.featureRecord.removeByLayer(layers.item(i).get("id"));
-			that.tempVector.setMap(this.map);
+			// that.tempVector.setMap(this.map);
 			this.removeFeatureFromUnmanaged(layers.item(i));
 		}
 	} else if (layer instanceof ol.layer.Base) {
@@ -1246,7 +1252,7 @@ gb.panel.EditingTool.prototype.removeFeatureFromUnmanaged = function(layer) {
 					var layers = git["layers"];
 					for (var i = 0; i < layers.getLength(); i++) {
 						this.featureRecord.removeByLayer(layers.item(i).get("id"));
-						that.tempVector.setMap(this.map);
+						// that.tempVector.setMap(this.map);
 						this.removeFeatureFromUnmanaged(layers.item(i));
 					}
 				} else if (git["fake"] === "child") {
@@ -1255,7 +1261,7 @@ gb.panel.EditingTool.prototype.removeFeatureFromUnmanaged = function(layer) {
 						var id = feature.getId();
 						if (id.indexOf(layerId) !== -1) {
 							that.tempVector.getSource().removeFeature(feature);
-							that.tempVector.setMap(this.map);
+							// that.tempVector.setMap(this.map);
 						}
 					});
 				}
@@ -1265,7 +1271,7 @@ gb.panel.EditingTool.prototype.removeFeatureFromUnmanaged = function(layer) {
 					var id = feature.getId();
 					if (id.indexOf(layerId) !== -1) {
 						that.tempVector.getSource().removeFeature(feature);
-						that.tempVector.setMap(this.map);
+						// that.tempVector.setMap(this.map);
 					}
 				});
 			}
@@ -1275,11 +1281,12 @@ gb.panel.EditingTool.prototype.removeFeatureFromUnmanaged = function(layer) {
 				var id = feature.getId();
 				if (id.indexOf(layerId) !== -1) {
 					that.tempVector.getSource().removeFeature(feature);
-					that.tempVector.setMap(this.map);
+					// that.tempVector.setMap(this.map);
 				}
 			});
 		}
 	}
+	that.tempVector.setMap(this.map);
 	return;
 };
 

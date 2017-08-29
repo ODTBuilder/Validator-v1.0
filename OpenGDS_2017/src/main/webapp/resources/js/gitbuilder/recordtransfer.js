@@ -67,10 +67,11 @@ gb.edit.RecordTransfer.prototype.sendStructure = function(ollayers, editingTool)
 			featureObj.clearAll();
 			for (var i = 0; i < ollayers.getLength(); i++) {
 				if (ollayers.item(i) instanceof ol.layer.Tile) {
-					var params = ollayers.item(i).getSource().getParams();
-					params["time"] = Date.now();
-					ollayers.item(i).getSource().updateParams(params);
-//					editingTool.removeFeatureFromUnmanaged(ollayers.item(i));
+					// var params = ollayers.item(i).getSource().getParams();
+					// params["time"] = Date.now();
+					// ollayers.item(i).getSource().updateParams(params);
+					ollayers.item(i).getSource().refresh();
+					// editingTool.removeFeatureFromUnmanaged(ollayers.item(i));
 				}
 			}
 		}
@@ -80,7 +81,6 @@ gb.edit.RecordTransfer.prototype.sendStructure = function(ollayers, editingTool)
 gb.edit.RecordTransfer.prototype.sendPartStructure = function(layers, ollayers, editingTool) {
 	console.log(this.getPartStructure(layers));
 	var featureObj = this.getFeatureRecord();
-	console.log(this.getPartStructure(layers));
 
 	$.ajax({
 		url : this.url,
@@ -101,10 +101,11 @@ gb.edit.RecordTransfer.prototype.sendPartStructure = function(layers, ollayers, 
 			}
 			for (var i = 0; i < ollayers.getLength(); i++) {
 				if (ollayers.item(i) instanceof ol.layer.Tile) {
-					var params = ollayers.item(i).getSource().getParams();
-					params["time"] = Date.now();
-					ollayers.item(i).getSource().updateParams(params);
-//					editingTool.removeFeatureFromUnmanaged(ollayers.item(i));
+					// var params = ollayers.item(i).getSource().getParams();
+					// params["time"] = Date.now();
+					// ollayers.item(i).getSource().updateParams(params);
+					ollayers.item(i).getSource().refresh();
+					// editingTool.removeFeatureFromUnmanaged(ollayers.item(i));
 				}
 			}
 		}
