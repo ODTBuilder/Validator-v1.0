@@ -423,12 +423,14 @@ html {
 			console.log(nodupliarr);
 			if (nodupliarr.length > 0) {
 				transfer.sendPartStructure(nodupliarr, ollayers, epan);
+				swal('Saved!', 'Layers have been saved.', 'success');
 			}
 
 		});
 
 		$("#saveAll").click(function() {
 			transfer.sendStructure(map.getLayers(), epan);
+			swal('Saved!', 'Layers have been saved.', 'success');
 		});
 
 		// 		$("#edit").editingtool({
