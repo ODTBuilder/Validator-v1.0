@@ -398,6 +398,9 @@ html {
 				"featureRecord" : frecord,
 				"editingTool" : epan
 			},
+			"search" : {
+				show_only_matches : true
+			},
 			plugins : [ "contextmenu", "dnd", "search", "state", "types", "sort", "visibility", "layerproperties" ]
 		});
 
@@ -564,6 +567,9 @@ html {
 				"downloadGeoserver" : "geoserver/downloadRequest.do",
 				"clientRefer" : $('#builderClientLayer').jstreeol3(true)
 			},
+			"search" : {
+				show_only_matches : true
+			},
 			"plugins" : [ "contextmenu", "search", "state", "types", "geoserver" ]
 		});
 
@@ -597,7 +603,7 @@ html {
 					$('#builderServerLayer').jstree(true).search(v);
 				}, 250);
 			});
-			
+
 			var to2 = false;
 			$('#inputSearchClient').keyup(function() {
 				if (to) {
