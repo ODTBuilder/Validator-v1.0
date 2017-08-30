@@ -916,6 +916,11 @@ gitbuilder.ui.QAEdit = $.widget("gitbuilder.qaedit",
 				this.lid = this.error.get("id");
 				if (!this.source.getFeatureById(this.lid + "." + this.count)) {
 					console.log("no feature. maybe there is no error");
+					swal(
+							  'No Errors!',
+							  'There is no error feature!',
+							  'success'
+							)
 					return;
 				}
 				this.showFeatureInfo(this.source.getFeatureById(this.lid + "." + this.count));
