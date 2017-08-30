@@ -104,7 +104,7 @@ public interface GeoserverService {
 	 * @param layerName 삭제할 레이어 이름
 	 * @return boolean - 삭제여부
 	 * */
-	public boolean removeGeoserverLayer(UserVO userVO, final String groupLayerName,final String layerName);
+	public boolean removeDTGeoserverLayer(UserVO userVO, final String groupLayerName,final String layerName);
 	
 	/**
 	 * 다중 레이어를 삭제한다.
@@ -113,7 +113,7 @@ public interface GeoserverService {
 	 * @param layerNameList 삭제할 레이어 이름 리스트
 	 * @return boolean - 삭제여부
 	 * */
-	public boolean removeGeoserverLayers(UserVO userVO, List<String> layerNameList);
+	public boolean removeDTGeoserverLayers(UserVO userVO, List<String> layerNameList);
 	
 	/**
 	 *
@@ -122,7 +122,7 @@ public interface GeoserverService {
 	 * @param groupLayerName 삭제할 그룹레이어
 	 * @return boolean - 삭제여부
 	 * */
-	public boolean removeGeoserverGroupLayer(UserVO userVO, final String groupLayerName);
+	public boolean removeDTGeoserverAllLayer(UserVO userVO, final String groupLayerName);
 	
 	
 	
