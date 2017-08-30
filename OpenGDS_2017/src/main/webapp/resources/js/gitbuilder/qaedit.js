@@ -505,7 +505,8 @@ gitbuilder.ui.QAEdit = $.widget("gitbuilder.qaedit",
 											'CRS' : 'EPSG:5186',
 											'SRS' : 'EPSG:5186',
 											'BBOX' : data[i].bbox.minx.toString() + "," + data[i].bbox.miny.toString() + ","
-													+ data[i].bbox.maxx.toString() + "," + data[i].bbox.maxy.toString()
+													+ data[i].bbox.maxx.toString() + "," + data[i].bbox.maxy.toString(),
+											"time" : Date.now()
 										},
 										serverType : 'geoserver'
 									})
