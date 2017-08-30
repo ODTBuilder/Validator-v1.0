@@ -489,6 +489,9 @@ gitbuilder.ui.QAEdit = $.widget("gitbuilder.qaedit",
 					traditional : true,
 					success : function(data, textStatus, jqXHR) {
 						console.log(data);
+						var getPosition = function(str, subString, index) {
+							return str.split(subString, index).join(subString).length;
+						};
 						if (Array.isArray(data)) {
 							for (var i = 0; i < data.length; i++) {
 								var wms = new ol.layer.Tile({
@@ -515,7 +518,33 @@ gitbuilder.ui.QAEdit = $.widget("gitbuilder.qaedit",
 									});
 									var id = data[i].publishedList.names[j];
 									var name = id.substring((id.split("_", 3).join("_").length) + 1, id.split("_", 4).join("_").length);
+									var geom = id.substring(getPosition(id, "_", 4) + 1);
+									var realGeom;
+									switch (geom) {
+									case "POINT":
+										realGeom = "Point";
+										break;
+									case "LINESTRING":
+										realGeom = "LineString";
+										break;
+									case "POLYGON":
+										realGeom = "Polygon";
+										break;
+									case "MULTIPOINT":
+										realGeom = "MultiPoint";
+										break;
+									case "MULTILINESTRING":
+										realGeom = "MultiLineString";
+										break;
+									case "MULTIPOLYGON":
+										realGeom = "MultiPolygon";
+										break;
+
+									default:
+										break;
+									}
 									var gchild = {
+										"geometry" : realGeom,
 										"validation" : false,
 										"editable" : true,
 										"fake" : "child"
