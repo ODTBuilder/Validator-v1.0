@@ -428,7 +428,7 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 
 			String layerTableName = "geo" + "_" + type + "_" + collectionName + "_" + layerName;
 			String groupName = "gro" + "_" + type + "_" + collectionName;
-			isSuccessed = geoserverService.removeGeoserverLayer(userVO, groupName, layerTableName);
+			isSuccessed = geoserverService.removeDTGeoserverLayer(userVO, groupName, layerTableName);
 			// HashMap<String, Object> deleteLayerCollectionQuery = queryManager
 			// .getDeleteQA20LayerCollectionQuery(collectionIdx);
 			// qa20DAO.deleteField(deleteLayerCollectionQuery);
@@ -656,7 +656,7 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 			}
 			String layerTableName = "geo" + "_" + type + "_" + collectionName + "_" + layerId;
 			String groupName = "gro" + "_" + type + "_" + collectionName;
-			isSuccessed = geoserverService.removeGeoserverLayer(userVO, groupName, layerTableName);
+			isSuccessed = geoserverService.removeDTGeoserverLayer(userVO, groupName, layerTableName);
 			// HashMap<String, Object> deleteLayerCollectionQuery = queryManager
 			// .getDeleteQA20LayerCollectionQuery(collectionIdx);
 			// qa20DAO.deleteField(deleteLayerCollectionQuery);
@@ -811,7 +811,7 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 
 			String layerTableName = "geo" + "_" + type + "_" + collectionName + "_" + layerName;
 			String groupName = "gro" + "_" + type + "_" + collectionName;
-			isSuccessed = geoserverService.removeGeoserverLayer(userVO, groupName, layerTableName);
+			isSuccessed = geoserverService.removeDTGeoserverLayer(userVO, groupName, layerTableName);
 			if (isSuccessed) {
 				return true;
 			} else {
