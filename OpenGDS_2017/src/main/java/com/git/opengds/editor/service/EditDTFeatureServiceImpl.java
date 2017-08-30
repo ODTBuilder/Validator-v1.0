@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
+import javax.swing.plaf.basic.BasicLabelUI;
 
 import org.geotools.feature.SchemaException;
 import org.json.simple.JSONObject;
@@ -53,11 +54,11 @@ public class EditDTFeatureServiceImpl implements EditDTFeatureService {
 	 */
 
 	@Override
-	public void editFeature(UserVO userVO, JSONObject featureEditObj) throws ParseException,
+	public boolean editFeature(UserVO userVO, JSONObject featureEditObj) throws ParseException,
 			org.json.simple.parser.ParseException, SchemaException, FileNotFoundException, IOException {
 
-		System.out.println(featureEditObj);
-		
+		boolean isSuccessed = false;
+
 		Map<String, Object> edtFeatureListObj = BuilderJSONParser.parseEditFeatureObj(featureEditObj);
 		Iterator edtFeatureIterator = edtFeatureListObj.keySet().iterator();
 		while (edtFeatureIterator.hasNext()) {
@@ -65,96 +66,112 @@ public class EditDTFeatureServiceImpl implements EditDTFeatureService {
 			HashMap<String, Object> editMap = (HashMap<String, Object>) edtFeatureListObj.get(tableName);
 			String collectionType = BuilderJSONParser.getCollectionType(tableName);
 			if (collectionType.equals(isDxf)) {
-				editDxfFeature(userVO, tableName, editMap);
+				isSuccessed = editDxfFeature(userVO, tableName, editMap);
 			}
 			if (collectionType.equals(isNgi)) {
-				editNgiFeature(userVO, tableName, editMap);
+				isSuccessed = editNgiFeature(userVO, tableName, editMap);
 			}
 			if (collectionType.equals(isShp)) {
-				editShpFeature(userVO, tableName, editMap);
+				isSuccessed = editShpFeature(userVO, tableName, editMap);
 			}
 		}
+		return isSuccessed;
 	}
 
-	private void editShpFeature(UserVO userVO, String tableName, HashMap<String, Object> editMap) {
+	private boolean editShpFeature(UserVO userVO, String tableName, HashMap<String, Object> editMap) {
 
-		Iterator stataIterator = editMap.keySet().iterator();
-		while (stataIterator.hasNext()) {
-			String state = (String) stataIterator.next();
-			if (state.equals(isCreated)) {
-				DTSHPFeatureList createFeatureList = (DTSHPFeatureList) editMap.get(state);
-				for (int i = 0; i < createFeatureList.size(); i++) {
-					SimpleFeature createFeature = createFeatureList.get(i);
-					editDBManager.insertSHPCreateFeature(userVO, tableName, createFeature, src);
-				}
-			} else if (state.equals(isModified)) {
-				DTSHPFeatureList modifiedFeatureList = (DTSHPFeatureList) editMap.get(state);
-				for (int i = 0; i < modifiedFeatureList.size(); i++) {
-					SimpleFeature modifiedFeature = modifiedFeatureList.get(i);
-					editDBManager.updateSHPModifyFeature(userVO, tableName, modifiedFeature, src);
-				}
-			} else if (state.equals(isDeleted)) {
-				List<String> featureIdList = (List<String>) editMap.get(state);
-				for (int i = 0; i < featureIdList.size(); i++) {
-					String featureId = featureIdList.get(i);
-					editDBManager.deleteSHPRemovedFeature(userVO, tableName, featureId);
+		try {
+			Iterator stataIterator = editMap.keySet().iterator();
+			while (stataIterator.hasNext()) {
+				String state = (String) stataIterator.next();
+				if (state.equals(isCreated)) {
+					DTSHPFeatureList createFeatureList = (DTSHPFeatureList) editMap.get(state);
+					for (int i = 0; i < createFeatureList.size(); i++) {
+						SimpleFeature createFeature = createFeatureList.get(i);
+						editDBManager.insertSHPCreateFeature(userVO, tableName, createFeature, src);
+					}
+				} else if (state.equals(isModified)) {
+					DTSHPFeatureList modifiedFeatureList = (DTSHPFeatureList) editMap.get(state);
+					for (int i = 0; i < modifiedFeatureList.size(); i++) {
+						SimpleFeature modifiedFeature = modifiedFeatureList.get(i);
+						editDBManager.updateSHPModifyFeature(userVO, tableName, modifiedFeature, src);
+					}
+				} else if (state.equals(isDeleted)) {
+					List<String> featureIdList = (List<String>) editMap.get(state);
+					for (int i = 0; i < featureIdList.size(); i++) {
+						String featureId = featureIdList.get(i);
+						editDBManager.deleteSHPRemovedFeature(userVO, tableName, featureId);
+					}
 				}
 			}
+		} catch (Exception e) {
+			return false;
 		}
+		return true;
 	}
 
-	private void editNgiFeature(UserVO userVO, String tableName, HashMap<String, Object> editMap) {
+	private boolean editNgiFeature(UserVO userVO, String tableName, HashMap<String, Object> editMap) {
 
-		Iterator stataIterator = editMap.keySet().iterator();
-		while (stataIterator.hasNext()) {
-			String state = (String) stataIterator.next();
-			if (state.equals(isCreated)) {
-				DTNGIFeatureList createFeatureList = (DTNGIFeatureList) editMap.get(state);
-				for (int i = 0; i < createFeatureList.size(); i++) {
-					DTNGIFeature createFeature = createFeatureList.get(i);
-					editDBManager.insertNGICreateFeature(userVO, tableName, createFeature, src);
-				}
-			} else if (state.equals(isModified)) {
-				DTNGIFeatureList modifyFeatureList = (DTNGIFeatureList) editMap.get(state);
-				for (int i = 0; i < modifyFeatureList.size(); i++) {
-					DTNGIFeature modifyFeature = modifyFeatureList.get(i);
-					editDBManager.updateNGIModifyFeature(userVO, tableName, modifyFeature, src);
-				}
-			} else if (state.equals(isDeleted)) {
-				List<String> featureIdList = (List<String>) editMap.get(state);
-				for (int i = 0; i < featureIdList.size(); i++) {
-					String featureId = featureIdList.get(i);
-					editDBManager.deleteNGIRemovedFeature(userVO, tableName, featureId);
+		try {
+
+			Iterator stataIterator = editMap.keySet().iterator();
+			while (stataIterator.hasNext()) {
+				String state = (String) stataIterator.next();
+				if (state.equals(isCreated)) {
+					DTNGIFeatureList createFeatureList = (DTNGIFeatureList) editMap.get(state);
+					for (int i = 0; i < createFeatureList.size(); i++) {
+						DTNGIFeature createFeature = createFeatureList.get(i);
+						editDBManager.insertNGICreateFeature(userVO, tableName, createFeature, src);
+					}
+				} else if (state.equals(isModified)) {
+					DTNGIFeatureList modifyFeatureList = (DTNGIFeatureList) editMap.get(state);
+					for (int i = 0; i < modifyFeatureList.size(); i++) {
+						DTNGIFeature modifyFeature = modifyFeatureList.get(i);
+						editDBManager.updateNGIModifyFeature(userVO, tableName, modifyFeature, src);
+					}
+				} else if (state.equals(isDeleted)) {
+					List<String> featureIdList = (List<String>) editMap.get(state);
+					for (int i = 0; i < featureIdList.size(); i++) {
+						String featureId = featureIdList.get(i);
+						editDBManager.deleteNGIRemovedFeature(userVO, tableName, featureId);
+					}
 				}
 			}
+		} catch (Exception e) {
+			return false;
 		}
+		return true;
 	}
 
-	private void editDxfFeature(UserVO userVO, String tableName, HashMap<String, Object> editMap) {
+	private boolean editDxfFeature(UserVO userVO, String tableName, HashMap<String, Object> editMap) {
 
-		Iterator stataIterator = editMap.keySet().iterator();
-		while (stataIterator.hasNext()) {
-			String state = (String) stataIterator.next();
-			if (state.equals(isCreated)) {
-				DTDXFFeatureList createFeatureList = (DTDXFFeatureList) editMap.get(state);
-				for (int i = 0; i < createFeatureList.size(); i++) {
-					DTDXFFeature createFeature = createFeatureList.get(i);
-					editDBManager.insertDXFCreateFeature(userVO, tableName, createFeature);
-				}
-			} else if (state.equals(isModified)) {
-				DTDXFFeatureList modifyFeatureList = (DTDXFFeatureList) editMap.get(state);
-				for (int i = 0; i < modifyFeatureList.size(); i++) {
-					DTDXFFeature modifyFeature = modifyFeatureList.get(i);
-					editDBManager.updateDXFModifyFeature(userVO, tableName, modifyFeature);
-				}
-			} else if (state.equals(isDeleted)) {
-				List<String> featureIdList = (List<String>) editMap.get(state);
-				for (int i = 0; i < featureIdList.size(); i++) {
-					String featureId = featureIdList.get(i);
-					editDBManager.deleteDXFRemovedFeature(userVO, tableName, featureId);
+		try {
+			Iterator stataIterator = editMap.keySet().iterator();
+			while (stataIterator.hasNext()) {
+				String state = (String) stataIterator.next();
+				if (state.equals(isCreated)) {
+					DTDXFFeatureList createFeatureList = (DTDXFFeatureList) editMap.get(state);
+					for (int i = 0; i < createFeatureList.size(); i++) {
+						DTDXFFeature createFeature = createFeatureList.get(i);
+						editDBManager.insertDXFCreateFeature(userVO, tableName, createFeature);
+					}
+				} else if (state.equals(isModified)) {
+					DTDXFFeatureList modifyFeatureList = (DTDXFFeatureList) editMap.get(state);
+					for (int i = 0; i < modifyFeatureList.size(); i++) {
+						DTDXFFeature modifyFeature = modifyFeatureList.get(i);
+						editDBManager.updateDXFModifyFeature(userVO, tableName, modifyFeature);
+					}
+				} else if (state.equals(isDeleted)) {
+					List<String> featureIdList = (List<String>) editMap.get(state);
+					for (int i = 0; i < featureIdList.size(); i++) {
+						String featureId = featureIdList.get(i);
+						editDBManager.deleteDXFRemovedFeature(userVO, tableName, featureId);
+					}
 				}
 			}
+		} catch (Exception e) {
+			return false;
 		}
+		return true;
 	}
-
 }

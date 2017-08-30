@@ -50,7 +50,8 @@ public class BuilderJSONSHPParser {
 				JSONObject featuresObj = (JSONObject) stateObj.get(state);
 				JSONArray featuresArry = (JSONArray) featuresObj.get("features");
 				for (int i = 0; i < featuresArry.size(); i++) {
-					JSONObject featureObj = (JSONObject) featuresArry.get(i);
+					String geoStr = (String) featuresArry.get(i);
+					JSONObject featureObj = (JSONObject) jsonParser.parse(geoStr);
 					EditDTFeatureParser featureParser = new EditDTFeatureParser("shp", featureObj, state);
 					SimpleFeature feature = featureParser.getSHPFeature();
 					featureList.add(feature);
@@ -61,7 +62,8 @@ public class BuilderJSONSHPParser {
 				JSONObject featuresObj = (JSONObject) stateObj.get(state);
 				JSONArray featuresArry = (JSONArray) featuresObj.get("features");
 				for (int i = 0; i < featuresArry.size(); i++) {
-					JSONObject featureObj = (JSONObject) featuresArry.get(i);
+					String geoStr = (String) featuresArry.get(i);
+					JSONObject featureObj = (JSONObject) jsonParser.parse(geoStr);
 					EditDTFeatureParser featureParser = new EditDTFeatureParser("shp", featureObj, state);
 					SimpleFeature feature = featureParser.getSHPFeature();
 					featureList.add(feature);

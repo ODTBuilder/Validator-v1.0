@@ -151,8 +151,10 @@ html {
 						<i class="fa fa-refresh" aria-hidden="true"></i>
 					</button>
 				</div>
-				<div class="panel-body gitbuilder-layer-panel">
-					<div id="builderServerLayer"></div>
+
+				<div class="panel-body" style="padding: 0;">
+					<input type="text" class="form-control builder-tree-search" id="inputSearchServer" />
+					<div id="builderServerLayer" class="gitbuilder-layer-panel"></div>
 				</div>
 			</div>
 			<div id="builderLayerClientPanel" class="panel panel-default">
@@ -162,8 +164,9 @@ html {
 						<i class="fa fa-refresh" aria-hidden="true"></i>
 					</button>
 				</div>
-				<div class="panel-body gitbuilder-layer-panel">
-					<div id="builderClientLayer"></div>
+				<div class="panel-body" style="padding: 0;">
+					<input type="text" class="form-control builder-tree-search" id="inputSearchClient" />
+					<div id="builderClientLayer" class="gitbuilder-layer-panel"></div>
 				</div>
 			</div>
 		</div>
@@ -233,7 +236,8 @@ html {
 				var listHeight = $("#builderLayer").innerHeight() / 2 - (16 + 1 + 1);
 				// 				41은 패널 헤더의 높이
 				var treeHeight = listHeight - (41);
-				$(".gitbuilder-layer-panel").outerHeight(treeHeight);
+				var searchHeight = $(".builder-tree-search").outerHeight();
+				$(".gitbuilder-layer-panel").outerHeight(treeHeight - searchHeight);
 				$("#builderLayerGeoServerPanel").outerHeight(listHeight);
 				$("#builderLayerClientPanel").outerHeight(listHeight);
 				//현재 컨텐츠 사이즈를 오픈레이어스에 반영
@@ -285,12 +289,12 @@ html {
 					gitrnd.setProjection(null, null, null, null);
 				});
 			},
-			recallFunc : function(layer, arr) {
+			addRemoveHistoryList : function(layer, arr) {
 				if (layer instanceof ol.layer.Group) {
 					arr.push(layer.get("id"));
 					var layers = layer.getLayers();
 					for (var i = 0; i < layers.getLength(); i++) {
-						gitrnd.recallFunc(layers.item(i), arr);
+						gitrnd.addRemoveHistoryList(layers.item(i), arr);
 					}
 				} else if (layer instanceof ol.layer.Base) {
 					var git = layer.get("git");
@@ -301,7 +305,7 @@ html {
 								arr.push(layer.get("id"));
 								var layers = layer.get("git").layers;
 								for (var i = 0; i < layers.getLength(); i++) {
-									gitrnd.recallFunc(layers.item(i), arr);
+									gitrnd.addRemoveHistoryList(layers.item(i), arr);
 								}
 							} else if (fake === "child") {
 								arr.push(layer.get("id"));
@@ -312,6 +316,22 @@ html {
 					} else {
 						arr.push(layer.get("id"));
 					}
+				}
+				return arr;
+			},
+			addRefreshWMSList : function(node, arr) {
+				var clayer = $('#builderClientLayer').jstreeol3(true).get_LayerById(node);
+				if (clayer instanceof ol.layer.Group) {
+					var children = $('#builderClientLayer').jstreeol3(true).get_node(node).children;
+					for (var i = 0; i < children.length; i++) {
+						gitrnd.addRefreshWMSList(children[i], arr);
+					}
+				} else if (clayer instanceof ol.layer.Tile) {
+					arr.push(clayer);
+				} else if (clayer instanceof ol.layer.Base) {
+					var cnode = $('#builderClientLayer').jstreeol3(true).get_node(node);
+					var parent = cnode.parent;
+					gitrnd.addRefreshWMSList(parent, arr);
 				}
 				return arr;
 			}
@@ -378,6 +398,9 @@ html {
 				"featureRecord" : frecord,
 				"editingTool" : epan
 			},
+			"search" : {
+				show_only_matches : true
+			},
 			plugins : [ "contextmenu", "dnd", "search", "state", "types", "sort", "visibility", "layerproperties" ]
 		});
 
@@ -389,12 +412,14 @@ html {
 
 		$("#savePart").click(function() {
 			// 			transfer.sendStructure();
-			// gitrnd.recallFunc(layer, arr);
+			// gitrnd.addRemoveHistoryList(layer, arr);
 			var selected = $('#builderClientLayer').jstreeol3(true).get_selected();
 			var olselected = [];
+			var ollayers = new ol.Collection();
 			for (var i = 0; i < selected.length; i++) {
 				var layer = $('#builderClientLayer').jstreeol3(true).get_LayerById(selected[i]);
-				gitrnd.recallFunc(layer, olselected);
+				gitrnd.addRefreshWMSList(selected[i], ollayers);
+				gitrnd.addRemoveHistoryList(layer, olselected);
 			}
 			console.log(olselected);
 			var nodupliobj = {};
@@ -404,13 +429,15 @@ html {
 			var nodupliarr = Object.keys(nodupliobj);
 			console.log(nodupliarr);
 			if (nodupliarr.length > 0) {
-				transfer.sendPartStructure(nodupliarr);
+				transfer.sendPartStructure(nodupliarr, ollayers, epan);
+				swal('Saved!', 'Layers have been saved.', 'success');
 			}
 
 		});
 
 		$("#saveAll").click(function() {
-			transfer.sendStructure();
+			transfer.sendStructure(map.getLayers(), epan);
+			swal('Saved!', 'Layers have been saved.', 'success');
 		});
 
 		// 		$("#edit").editingtool({
@@ -540,6 +567,9 @@ html {
 				"downloadGeoserver" : "geoserver/downloadRequest.do",
 				"clientRefer" : $('#builderClientLayer').jstreeol3(true)
 			},
+			"search" : {
+				show_only_matches : true
+			},
 			"plugins" : [ "contextmenu", "search", "state", "types", "geoserver" ]
 		});
 
@@ -560,6 +590,30 @@ html {
 
 		$("#edit").click(function() {
 			epan.open();
+		});
+
+		$(function() {
+			var to = false;
+			$('#inputSearchServer').keyup(function() {
+				if (to) {
+					clearTimeout(to);
+				}
+				to = setTimeout(function() {
+					var v = $('#inputSearchServer').val();
+					$('#builderServerLayer').jstree(true).search(v);
+				}, 250);
+			});
+
+			var to2 = false;
+			$('#inputSearchClient').keyup(function() {
+				if (to) {
+					clearTimeout(to);
+				}
+				to2 = setTimeout(function() {
+					var v = $('#inputSearchClient').val();
+					$('#builderClientLayer').jstreeol3(true).search(v);
+				}, 250);
+			});
 		});
 	</script>
 

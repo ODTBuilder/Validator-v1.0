@@ -84,7 +84,7 @@ public class SHPDBQueryManager {
 			SimpleFeature feature = iterator.next();
 			Geometry geom = (Geometry) feature.getDefaultGeometry();
 			String insertColumns = "insert into " + tableName + "(feature_id,  feature_type, geom, ";
-			String insertValues = "values('" + layerName + "', '" + geom.getGeometryType() + "', " + "ST_GeomFromText('"
+			String insertValues = "values('" + feature.getID() + "', '" + geom.getGeometryType() + "', " + "ST_GeomFromText('"
 					+ geom.toString() + "', " + src + "), ";
 			for (int i = 0; i < attriKeyList.size(); i++) {
 				String attriKey = attriKeyList.get(i);

@@ -35,6 +35,12 @@ gb.panel.EditingTool = function(obj) {
 		source : this.tempSource
 	});
 
+	this.managed = new ol.layer.Vector({
+		source : this.tempSource
+	});
+	this.managed.set("name", "temp_vector");
+	this.managed.set("id", "temp_vector");
+
 	this.styles = [ new ol.style.Style({
 		stroke : new ol.style.Stroke({
 			color : 'rgba(0,153,255,1)',
@@ -145,7 +151,8 @@ gb.panel.EditingTool = function(obj) {
 		move : false,
 		remove : false,
 		modify : false,
-		rotate : false
+		rotate : false,
+		snap : false
 	};
 	this.interaction = {
 		select : undefined,
@@ -156,6 +163,7 @@ gb.panel.EditingTool = function(obj) {
 		move : undefined,
 		rotate : undefined,
 		modify : undefined,
+		snap : undefined,
 		remove : undefined
 	};
 
@@ -390,25 +398,25 @@ gb.panel.EditingTool.prototype.deactiveIntrct_ = function(intrct) {
 			if (!!this.interaction[intrct[j]]) {
 				this.interaction[intrct[j]].setActive(false);
 			}
-			if (intrct[j] === "select" || intrct[j] === "selectWMS") {
+			if (intrct[j] === "select" || intrct[j] === "selectWMS" || intrct[j] === "dragbox") {
 				this.isOn["select"] = false;
 				this.featurePop.close();
 			} else {
 				this.isOn[intrct[j]] = false;
 				this.tempVector.setMap(this.map);
-				this.map.removeLayer(this.managed);
+				// this.map.removeLayer(this.managed);
 			}
 		}
 	} else if (typeof intrct === "string") {
 		if (!!this.interaction[intrct]) {
 			this.interaction[intrct].setActive(false);
 		}
-		if (intrct === "select" || intrct === "selectWMS") {
+		if (intrct === "select" || intrct === "selectWMS" || intrct === "dragbox") {
 			this.isOn["select"] = false;
 		} else {
 			this.isOn[intrct] = false;
 			this.tempVector.setMap(this.map);
-			this.map.removeLayer(this.managed);
+			// this.map.removeLayer(this.managed);
 		}
 	}
 	// this.map.removeLayer(this.managed);
@@ -460,6 +468,7 @@ gb.panel.EditingTool.prototype.select = function(layer) {
 		this.isOn.select = false;
 		return;
 	}
+	this.map.removeLayer(this.managed);
 	var sourceLayer;
 	if (Array.isArray(layer)) {
 		if (layer.length > 1) {
@@ -760,15 +769,19 @@ gb.panel.EditingTool.prototype.select = function(layer) {
  *            layer - 편집할 레이어
  */
 gb.panel.EditingTool.prototype.draw = function(layer) {
-	var that = this;
+
 	if (this.isOn.draw) {
 		if (!!this.interaction.draw || !!this.interaction.updateDraw) {
+			this.deactiveIntrct_("snap");
 			this.deactiveIntrct_("draw");
 			this.deactiveBtn_("drawBtn");
+			this.map.removeLayer(this.managed);
 		}
 		return;
 	}
-	if (!!this.interaction.select) {
+	this.map.removeLayer(this.managed);
+	var that = this;
+	if (this.interaction.select) {
 		this.interaction.select.getFeatures().clear();
 		this.deactiveIntrct_([ "dragbox", "select", "selectWMS" ]);
 	}
@@ -795,7 +808,9 @@ gb.panel.EditingTool.prototype.draw = function(layer) {
 			source : sourceLayer.getSource(),
 			type : git.geometry
 		});
-
+		this.interaction.snap = new ol.interaction.Snap({
+			source : sourceLayer.getSource()
+		});
 		this.interaction.draw.selectedType = function() {
 			var irreGeom = that.updateSelected().get("git").geometry;
 			var geom;
@@ -851,22 +866,28 @@ gb.panel.EditingTool.prototype.draw = function(layer) {
 		});
 		this.deactiveIntrct_([ "move", "modify", "rotate" ]);
 		this.map.addInteraction(this.interaction.draw);
+		this.map.addInteraction(this.interaction.snap);
 		this.activeIntrct_("draw");
+		this.activeIntrct_("snap");
 		this.activeBtn_("drawBtn");
 	} else if (git.editable === true && sourceLayer instanceof ol.layer.Base) {
 
-		if (!this.managed) {
-			this.managed = new ol.layer.Vector({
-				source : this.tempSource
-			});
-			this.managed.set("name", "temp_vector");
-			this.managed.set("id", "temp_vector");
-			this.map.addLayer(this.managed);
-		}
+		// if (!this.managed) {
+		// this.managed = new ol.layer.Vector({
+		// source : this.tempSource
+		// });
+		// this.managed.set("name", "temp_vector");
+		// this.managed.set("id", "temp_vector");
+		//
+		// }
+		this.map.addLayer(this.managed);
 
 		this.interaction.draw = new ol.interaction.Draw({
 			source : this.tempSource,
 			type : git.geometry
+		});
+		this.interaction.snap = new ol.interaction.Snap({
+			source : this.tempSource
 		});
 		this.interaction.draw.selectedType = function() {
 			return that.updateSelected().get("git").geometry;
@@ -903,7 +924,9 @@ gb.panel.EditingTool.prototype.draw = function(layer) {
 		});
 		this.deactiveIntrct_([ "move", "modify", "rotate" ]);
 		this.map.addInteraction(this.interaction.draw);
+		this.map.addInteraction(this.interaction.snap);
 		this.activeIntrct_("draw");
+		this.activeIntrct_("snap");
 		this.activeBtn_("drawBtn");
 	}
 
@@ -918,26 +941,27 @@ gb.panel.EditingTool.prototype.move = function(layer) {
 	if (this.interaction.select === undefined) {
 		return;
 	}
+	if (this.isOn.move) {
+		if (this.interaction.move) {
+			this.interaction.select.getFeatures().clear();
+			this.deactiveIntrct_("move");
+			this.deactiveBtn_("moveBtn");
+			this.map.removeLayer(this.managed);
+		}
+		return;
+	}
+	this.map.removeLayer(this.managed);
 	var that = this;
 	if (this.interaction.select.getFeatures().getLength() > 0) {
-		if (this.isOn.move) {
-			if (!!this.interaction.move) {
-				this.interaction.select.getFeatures().clear();
-				this.deactiveIntrct_("move");
-				this.deactiveBtn_("moveBtn");
-				this.map.removeLayer(this.managed);
-			}
-			return;
-		}
 		if (!(layer instanceof ol.layer.Vector)) {
-			if (!this.managed) {
-				this.managed = new ol.layer.Vector({
-					source : this.tempSource
-				});
-				this.managed.set("name", "temp_vector");
-				this.managed.set("id", "temp_vector");
-				this.map.addLayer(this.managed);
-			}
+			// if (!this.managed) {
+			// this.managed = new ol.layer.Vector({
+			// source : this.tempSource
+			// });
+			// this.managed.set("name", "temp_vector");
+			// this.managed.set("id", "temp_vector");
+			// }
+			this.map.addLayer(this.managed);
 		}
 
 		this.interaction.move = new ol.interaction.Translate({
@@ -974,28 +998,30 @@ gb.panel.EditingTool.prototype.rotate = function(layer) {
 	if (this.interaction.select === undefined) {
 		return;
 	}
+	if (this.isOn.rotate) {
+		if (!!this.interaction.rotate) {
+			this.interaction.select.getFeatures().clear();
+			this.deactiveIntrct_("rotate");
+			this.deactiveBtn_("rotateBtn");
+		}
+		return;
+	}
+	this.map.removeLayer(this.managed);
 	var that = this;
 	if (this.interaction.select.getFeatures().getLength() > 0) {
-		if (this.isOn.rotate) {
-			if (!!this.interaction.rotate) {
-				this.interaction.select.getFeatures().clear();
-				this.deactiveIntrct_("rotate");
-				this.deactiveBtn_("rotateBtn");
-			}
-			return;
-		}
+
 		if (this.interaction.select.getFeatures().getLength() !== 1) {
 			console.error("select 1 feature");
 			return;
 		}
-		if (!this.managed) {
-			this.managed = new ol.layer.Vector({
-				source : this.tempSource
-			});
-			this.managed.set("name", "temp_vector");
-			this.managed.set("id", "temp_vector");
-			this.map.addLayer(this.managed);
-		}
+		// if (!this.managed) {
+		// this.managed = new ol.layer.Vector({
+		// source : this.tempSource
+		// });
+		// this.managed.set("name", "temp_vector");
+		// this.managed.set("id", "temp_vector");
+		// }
+		this.map.addLayer(this.managed);
 		this.interaction.rotate = new gb.interaction.MultiTransform({
 			features : this.interaction.select.getFeatures()
 		});
@@ -1028,25 +1054,28 @@ gb.panel.EditingTool.prototype.modify = function(layer) {
 	if (this.interaction.select === undefined) {
 		return;
 	}
+	if (this.isOn.modify) {
+		if (!!this.interaction.modify) {
+			this.interaction.select.getFeatures().clear();
+			this.deactiveIntrct_("modify");
+			this.deactiveBtn_("modiBtn");
+			this.map.removeLayer(this.managed);
+		}
+		return;
+	}
+	this.map.removeLayer(this.managed);
 	var that = this;
 	if (this.interaction.select.getFeatures().getLength() > 0) {
-		if (this.isOn.modify) {
-			if (!!this.interaction.modify) {
-				this.interaction.select.getFeatures().clear();
-				this.deactiveIntrct_("modify");
-				this.deactiveBtn_("modiBtn");
-				this.map.removeLayer(this.managed);
-			}
-			return;
-		}
-		if (!this.managed) {
-			this.managed = new ol.layer.Vector({
-				source : this.tempSource
-			});
-			this.managed.set("name", "temp_vector");
-			this.managed.set("id", "temp_vector");
-			this.map.addLayer(this.managed);
-		}
+
+		// if (!this.managed) {
+		// this.managed = new ol.layer.Vector({
+		// source : this.tempSource
+		// });
+		// this.managed.set("name", "temp_vector");
+		// this.managed.set("id", "temp_vector");
+		//
+		// }
+		this.map.addLayer(this.managed);
 		this.interaction.modify = new ol.interaction.Modify({
 			features : this.interaction.select.getFeatures()
 		});
@@ -1081,16 +1110,17 @@ gb.panel.EditingTool.prototype.remove = function(layer) {
 	if (this.interaction.select === undefined) {
 		return;
 	}
+	// if (this.isOn.remove) {
+	// if (!!this.interaction.remove) {
+	// this.interaction.select.getFeatures().clear();
+	// this.deactiveBtn_("removeBtn");
+	// this.map.removeLayer(this.managed);
+	// }
+	// return;
+	// }
 	var that = this;
 	if (this.interaction.select.getFeatures().getLength() > 0) {
-		if (this.isOn.remove) {
-			if (!!this.interaction.remove) {
-				this.interaction.select.getFeatures().clear();
-				this.deactiveBtn_("removeBtn");
-				this.map.removeLayer(this.managed);
-			}
-			return;
-		}
+
 		// if (!this.managed) {
 		// this.managed = new ol.layer.Vector({
 		// source : this.tempSource
@@ -1215,21 +1245,13 @@ gb.panel.EditingTool.prototype.getFeatures = function() {
  */
 gb.panel.EditingTool.prototype.removeFeatureFromUnmanaged = function(layer) {
 	var that = this;
-	var layerId = layer.get("id");
-
-	this.tempVector.getSource().forEachFeature(function(feature) {
-		var id = feature.getId();
-		if (id.indexOf(layerId) !== -1) {
-			that.tempVector.getSource().removeFeature(feature);
-		}
-	});
-	this.tempVector.setMap(this.map);
 
 	if (layer instanceof ol.layer.Group) {
 		var layers = layer.getLayers();
 		for (var i = 0; i < layers.getLength(); i++) {
-			this.removeFeatureFromUnmanaged(layers.item(i));
 			this.featureRecord.removeByLayer(layers.item(i).get("id"));
+			// that.tempVector.setMap(this.map);
+			this.removeFeatureFromUnmanaged(layers.item(i));
 		}
 	} else if (layer instanceof ol.layer.Base) {
 		var git = layer.get("git");
@@ -1241,13 +1263,42 @@ gb.panel.EditingTool.prototype.removeFeatureFromUnmanaged = function(layer) {
 					// 가짜 그룹 레이어임
 					var layers = git["layers"];
 					for (var i = 0; i < layers.getLength(); i++) {
-						this.removeFeatureFromUnmanaged(layers.item(i));
 						this.featureRecord.removeByLayer(layers.item(i).get("id"));
+						// that.tempVector.setMap(this.map);
+						this.removeFeatureFromUnmanaged(layers.item(i));
 					}
+				} else if (git["fake"] === "child") {
+					var layerId = layer.get("id");
+					this.tempVector.getSource().forEachFeature(function(feature) {
+						var id = feature.getId();
+						if (id.indexOf(layerId) !== -1) {
+							that.tempVector.getSource().removeFeature(feature);
+							// that.tempVector.setMap(this.map);
+						}
+					});
 				}
+			} else {
+				var layerId = layer.get("id");
+				this.tempVector.getSource().forEachFeature(function(feature) {
+					var id = feature.getId();
+					if (id.indexOf(layerId) !== -1) {
+						that.tempVector.getSource().removeFeature(feature);
+						// that.tempVector.setMap(this.map);
+					}
+				});
 			}
+		} else {
+			var layerId = layer.get("id");
+			this.tempVector.getSource().forEachFeature(function(feature) {
+				var id = feature.getId();
+				if (id.indexOf(layerId) !== -1) {
+					that.tempVector.getSource().removeFeature(feature);
+					// that.tempVector.setMap(this.map);
+				}
+			});
 		}
 	}
+	that.tempVector.setMap(this.map);
 	return;
 };
 

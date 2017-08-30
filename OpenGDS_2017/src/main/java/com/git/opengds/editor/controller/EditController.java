@@ -40,8 +40,9 @@ public class EditController extends AbstractController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/editLayerCollection.ajax")
 	@ResponseBody
-	public void editLayerCollection(HttpServletRequest request, @RequestBody String geo) throws Exception {
+	public boolean editLayerCollection(HttpServletRequest request, @RequestBody String geo) throws Exception {
 		UserVO generalUser = (UserVO) getSession(request, EnUserType.GENERAL.getTypeName());
-		editService.editLayerCollection(generalUser, geo);
+		boolean isSuccessed =  editService.editLayerCollection(generalUser, geo);
+		return isSuccessed;
 	}
 }

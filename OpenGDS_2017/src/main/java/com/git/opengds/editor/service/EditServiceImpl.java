@@ -51,30 +51,35 @@ public class EditServiceImpl implements EditService {
 	 */
 
 	@Override
-	public void editLayerCollection(UserVO userVO, String editJSONStr) throws Exception {
+	public boolean editLayerCollection(UserVO userVO, String editJSONStr) throws Exception {
 
 		JSONParser jsonParser = new JSONParser();
 		JSONObject editJSONObject = (JSONObject) jsonParser.parse(editJSONStr);
 
-//		BufferedReader reader = new BufferedReader(
-//				new InputStreamReader(new FileInputStream(new File("d:\\editNGIFinal.txt")), "euc-kr"));
-//
-//		JSONParser parser = new JSONParser();
-//		Object obj = parser.parse(reader);
-//		JSONObject editJSONObject = (JSONObject) obj;
+		// BufferedReader reader = new BufferedReader(
+		// new InputStreamReader(new FileInputStream(new
+		// File("d:\\editNGIFinal.txt")), "euc-kr"));
+		//
+		// JSONParser parser = new JSONParser();
+		// Object obj = parser.parse(reader);
+		// JSONObject editJSONObject = (JSONObject) obj;
+
+		boolean isSuccessed = false;
 
 		// layerEdit
 		Object layerEditObj = editJSONObject.get("layer");
 		if (layerEditObj != null) {
 			JSONObject layerEdit = (JSONObject) layerEditObj;
-			editLayerService.editLayer(userVO, layerEdit);
+			isSuccessed = editLayerService.editLayer(userVO, layerEdit);
 		}
 
 		// featureEdit
 		Object featureEditObj = editJSONObject.get("feature");
 		if (featureEditObj != null) {
 			JSONObject featureEdit = (JSONObject) featureEditObj;
-			editFeatureService.editFeature(userVO, featureEdit);
+			isSuccessed = editFeatureService.editFeature(userVO, featureEdit);
 		}
+		
+		return isSuccessed;
 	}
 }
