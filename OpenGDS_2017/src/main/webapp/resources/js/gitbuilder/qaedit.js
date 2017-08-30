@@ -874,7 +874,9 @@ gitbuilder.ui.QAEdit = $.widget("gitbuilder.qaedit",
 				var xSpan = $("<span>").attr({
 					"aria-hidden" : "true"
 				}).append("&times;");
-				var xBtn = $("<button>").attr({
+				var xBtn = $("<button>").click(function() {
+					$(that.naviWindow).hide();
+				}).attr({
 					"data-dismiss" : "modal",
 					"aria-label" : "Close"
 				}).css({
@@ -889,6 +891,7 @@ gitbuilder.ui.QAEdit = $.widget("gitbuilder.qaedit",
 					"outline" : "none",
 					"color" : "#ccc"
 				}).append(xSpan);
+
 				var title = $("<span>").text("Error Navigator");
 				this.tbody = $("<tbody>");
 				var tb = $("<table>").addClass("table").append(this.tbody);
@@ -916,11 +919,7 @@ gitbuilder.ui.QAEdit = $.widget("gitbuilder.qaedit",
 				this.lid = this.error.get("id");
 				if (!this.source.getFeatureById(this.lid + "." + this.count)) {
 					console.log("no feature. maybe there is no error");
-					swal(
-							  'No Errors!',
-							  'There is no error feature!',
-							  'success'
-							)
+					swal('No Errors!', 'There is no error feature!', 'success')
 					return;
 				}
 				this.showFeatureInfo(this.source.getFeatureById(this.lid + "." + this.count));
