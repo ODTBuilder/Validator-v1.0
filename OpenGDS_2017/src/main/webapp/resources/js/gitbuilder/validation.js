@@ -74,7 +74,13 @@ gitbuilder.ui.Validation = $.widget("gitbuilder.validation", {
 		 * 
 		 * 
 		 */
-		var listhead = $("<div>").text("Layer List");
+		var icls = $("<i>").addClass("fa").addClass("fa-refresh").attr({
+			"aria-hidden" : "true"
+		});
+		var refBtn = $("<button>").addClass("pull-right").addClass("gitbuilder-clearbtn").append(icls).click(function(){
+			$(that.tree).jstree("refresh");
+		});
+		var listhead = $("<div>").append("Layer List").append(refBtn);
 		this._addClass(listhead, "panel-heading");
 		this.tree = $("<div>").attr({
 			"id" : "gitlayers"
@@ -312,7 +318,7 @@ gitbuilder.ui.Validation = $.widget("gitbuilder.validation", {
 		var that = this;
 		this.setMessage('Select map sheets for QA');
 		this.setProgress(0);
-		$(this.tree).jstree("refesh");
+		$(this.tree).jstree("refresh");
 		$(this.okBtn).prop("disabled", false);
 		$(this.warning).hide();
 	},
@@ -600,7 +606,7 @@ gitbuilder.ui.Validation = $.widget("gitbuilder.validation", {
 	open : function() {
 		this.window.modal('show');
 		this._init();
-		$(this.tree).jstree("refesh");
+		$(this.tree).jstree("refresh");
 		var arr = $(this.tree).jstree("get_selected");
 		var r = [];
 

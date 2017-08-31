@@ -151,7 +151,8 @@ gb.panel.EditingTool = function(obj) {
 		move : false,
 		remove : false,
 		modify : false,
-		rotate : false
+		rotate : false,
+		snap : false
 	};
 	this.interaction = {
 		select : undefined,
@@ -162,6 +163,7 @@ gb.panel.EditingTool = function(obj) {
 		move : undefined,
 		rotate : undefined,
 		modify : undefined,
+		snap : undefined,
 		remove : undefined
 	};
 
@@ -770,6 +772,7 @@ gb.panel.EditingTool.prototype.draw = function(layer) {
 
 	if (this.isOn.draw) {
 		if (!!this.interaction.draw || !!this.interaction.updateDraw) {
+			this.deactiveIntrct_("snap");
 			this.deactiveIntrct_("draw");
 			this.deactiveBtn_("drawBtn");
 			this.map.removeLayer(this.managed);
@@ -805,7 +808,9 @@ gb.panel.EditingTool.prototype.draw = function(layer) {
 			source : sourceLayer.getSource(),
 			type : git.geometry
 		});
-
+		this.interaction.snap = new ol.interaction.Snap({
+			source : sourceLayer.getSource()
+		});
 		this.interaction.draw.selectedType = function() {
 			var irreGeom = that.updateSelected().get("git").geometry;
 			var geom;
@@ -861,7 +866,9 @@ gb.panel.EditingTool.prototype.draw = function(layer) {
 		});
 		this.deactiveIntrct_([ "move", "modify", "rotate" ]);
 		this.map.addInteraction(this.interaction.draw);
+		this.map.addInteraction(this.interaction.snap);
 		this.activeIntrct_("draw");
+		this.activeIntrct_("snap");
 		this.activeBtn_("drawBtn");
 	} else if (git.editable === true && sourceLayer instanceof ol.layer.Base) {
 
@@ -878,6 +885,9 @@ gb.panel.EditingTool.prototype.draw = function(layer) {
 		this.interaction.draw = new ol.interaction.Draw({
 			source : this.tempSource,
 			type : git.geometry
+		});
+		this.interaction.snap = new ol.interaction.Snap({
+			source : this.tempSource
 		});
 		this.interaction.draw.selectedType = function() {
 			return that.updateSelected().get("git").geometry;
@@ -914,7 +924,9 @@ gb.panel.EditingTool.prototype.draw = function(layer) {
 		});
 		this.deactiveIntrct_([ "move", "modify", "rotate" ]);
 		this.map.addInteraction(this.interaction.draw);
+		this.map.addInteraction(this.interaction.snap);
 		this.activeIntrct_("draw");
+		this.activeIntrct_("snap");
 		this.activeBtn_("drawBtn");
 	}
 
@@ -1082,6 +1094,37 @@ gb.panel.EditingTool.prototype.modify = function(layer) {
 		});
 		this.deactiveIntrct_([ "select", "selectWMS", "dragbox", "draw", "move", "rotate" ]);
 		this.map.addInteraction(this.interaction.modify);
+		
+		// hochul's code start
+		var sourceLayer;
+		if (Array.isArray(layer)) {
+			if (layer.length > 1) {
+				console.error("please, select 1 layer");
+				return;
+			} else if (layer.length < 1) {
+				console.error("no selected layer");
+				return;
+			} else {
+				sourceLayer = layer[0];
+			}
+		} else if (layer instanceof ol.layer.Base) {
+			sourceLayer = layer;
+		} else {
+			return;
+		}
+		if ( sourceLayer instanceof ol.layer.Vector ) {
+			this.interaction.snap = new ol.interaction.Snap({
+				source : sourceLayer.getSource()
+			});
+		} else if ( sourceLayer instanceof ol.layer.Base ) {
+			this.interaction.snap = new ol.interaction.Snap({
+				source : this.tempSource
+			});
+		}
+		this.map.addInteraction(this.interaction.snap);
+		this.activeIntrct_("snap");
+		// hochul''s code end
+		
 		this.activeIntrct_("modify");
 		this.activeBtn_("modiBtn");
 	} else {

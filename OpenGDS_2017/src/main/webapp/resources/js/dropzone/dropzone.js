@@ -1136,14 +1136,14 @@
 							$("input[id=epsgtext]").attr("readonly",true);
 							dropzone.options.params = {"epsg":$('#epsgtext').val()};
 							dropzone.initFileTypeChange();
-							alertPopup('success','성공','지원하는 좌표체계 코드입니다.')
+							alertPopup('success','SUCCESS','Supported coordinate system codes.')
 //							gitrnd.setProjection(code, name, proj4def, bbox);
 							return;
 						}
 					}
 				}
 			}
-			alertPopup('warning','다시시도해주세요.','지원하지 않는 좌표코드입니다.')
+			alertPopup('warning','Please try again.','Unsupported coordinate code.')
 		});
 	}
     

@@ -50,7 +50,6 @@ import org.geotools.referencing.CRS;
 import org.json.simple.JSONArray;
 import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CRSAuthorityFactory;
@@ -87,7 +86,6 @@ import com.git.gdsbuilder.type.validate.option.UnderShoot;
 import com.git.gdsbuilder.type.validate.option.UselessEntity;
 import com.git.gdsbuilder.type.validate.option.UselessPoint;
 import com.git.gdsbuilder.type.validate.option.WaterOpen;
-import com.google.common.util.concurrent.ForwardingListenableFuture.SimpleForwardingListenableFuture;
 import com.vividsolutions.jts.algorithm.Angle;
 import com.vividsolutions.jts.algorithm.CentroidPoint;
 import com.vividsolutions.jts.geom.Coordinate;
@@ -296,8 +294,8 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 	}
 
 	@Override
-	public List<ErrorFeature> validateSelfEntity(SimpleFeature simpleFeatureI, SimpleFeature simpleFeatureJ, double selfEntityTolerance, double polygonInvadedTolorence)
-			throws SchemaException {
+	public List<ErrorFeature> validateSelfEntity(SimpleFeature simpleFeatureI, SimpleFeature simpleFeatureJ,
+			double selfEntityTolerance, double polygonInvadedTolorence) throws SchemaException {
 
 		List<ErrorFeature> errFeatures = new ArrayList<ErrorFeature>();
 		GeometryFactory geometryFactory = new GeometryFactory();
@@ -317,31 +315,33 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 		}
 		if (returnGeom != null) {
 			String returnGeomType = returnGeom.getGeometryType().toUpperCase();
-			if(returnGeomType.equals("LINESTRING")){
-				if(returnGeom.getLength() == 0.0 || returnGeom.getLength() == 0){
+			if (returnGeomType.equals("LINESTRING")) {
+				if (returnGeom.getLength() == 0.0 || returnGeom.getLength() == 0) {
 					Coordinate[] coordinates = returnGeom.getCoordinates();
 					Point startPoint = geometryFactory.createPoint(coordinates[0]);
 					String featureIdx = simpleFeatureI.getID();
 					Property featureIDPro = simpleFeatureI.getProperty("feature_id");
 					String featureID = (String) featureIDPro.getValue();
-					ErrorFeature errFeature = new ErrorFeature(featureIdx, featureID, SelfEntity.Type.SELFENTITY.errType(),
-							SelfEntity.Type.SELFENTITY.errName(), startPoint);
+					ErrorFeature errFeature = new ErrorFeature(featureIdx, featureID,
+							SelfEntity.Type.SELFENTITY.errType(), SelfEntity.Type.SELFENTITY.errName(), startPoint);
 					errFeatures.add(errFeature);
-				}else{
+				} else {
 					String featureIdx = simpleFeatureI.getID();
 					Property featureIDPro = simpleFeatureI.getProperty("feature_id");
 					String featureID = (String) featureIDPro.getValue();
-					ErrorFeature errFeature = new ErrorFeature(featureIdx, featureID, SelfEntity.Type.SELFENTITY.errType(),
-							SelfEntity.Type.SELFENTITY.errName(), returnGeom.getInteriorPoint());
+					ErrorFeature errFeature = new ErrorFeature(featureIdx, featureID,
+							SelfEntity.Type.SELFENTITY.errType(), SelfEntity.Type.SELFENTITY.errName(),
+							returnGeom.getInteriorPoint());
 					errFeatures.add(errFeature);
 				}
-			}else{
+			} else {
 				for (int i = 0; i < returnGeom.getNumGeometries(); i++) {
 					String featureIdx = simpleFeatureI.getID();
 					Property featuerIDPro = simpleFeatureI.getProperty("feature_id");
 					String featureID = (String) featuerIDPro.getValue();
-					ErrorFeature errFeature = new ErrorFeature(featureIdx, featureID, SelfEntity.Type.SELFENTITY.errType(),
-							SelfEntity.Type.SELFENTITY.errName(), returnGeom.getGeometryN(i).getInteriorPoint());
+					ErrorFeature errFeature = new ErrorFeature(featureIdx, featureID,
+							SelfEntity.Type.SELFENTITY.errType(), SelfEntity.Type.SELFENTITY.errName(),
+							returnGeom.getGeometryN(i).getInteriorPoint());
 					errFeatures.add(errFeature);
 				}
 			}
@@ -374,7 +374,8 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 		return returnGeom;
 	}
 
-	private Geometry selfEntityLineString(Geometry geometryI, Geometry geometryJ, double selfEntityTolerance, double polygonInvadedTolorence) {
+	private Geometry selfEntityLineString(Geometry geometryI, Geometry geometryJ, double selfEntityTolerance,
+			double polygonInvadedTolorence) {
 		GeometryFactory geometryFactory = new GeometryFactory();
 		String typeJ = geometryJ.getGeometryType();
 		Geometry returnGeom = null;
@@ -397,71 +398,73 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 				Point lastPoint = geometryFactory.createPoint(lastCoor);
 				Coordinate[] coorsJ = geometryJ.getCoordinates();
 				Coordinate firstCoorJ = coorsJ[0];
-				Coordinate lastCoorJ = coorsJ[coorsJ.length -1];
+				Coordinate lastCoorJ = coorsJ[coorsJ.length - 1];
 				Point firstPointJ = geometryFactory.createPoint(firstCoorJ);
 				Point lastPointJ = geometryFactory.createPoint(lastCoorJ);
 
-				if(upperType.equals("POINT")){
+				if (upperType.equals("POINT")) {
 					double firstDistance = firstPoint.distance(lineReturnGeom);
 					double lastDistance = lastPoint.distance(lineReturnGeom);
 					double firstDistanceJ = firstPointJ.distance(lineReturnGeom);
 					double lastDistanceJ = lastPointJ.distance(lineReturnGeom);
-					if(firstPoint.equals(lastPoint) && !firstPointJ.equals(lastPointJ)){
-						if(firstDistanceJ > selfEntityTolerance && lastDistanceJ > selfEntityTolerance){
+					if (firstPoint.equals(lastPoint) && !firstPointJ.equals(lastPointJ)) {
+						if (firstDistanceJ > selfEntityTolerance && lastDistanceJ > selfEntityTolerance) {
 							returnGeom = lineReturnGeom;
 						}
-					}else if(!firstPoint.equals(lastPoint) && firstPointJ.equals(lastPointJ)){
-						if(firstDistance > selfEntityTolerance && lastDistance > selfEntityTolerance){
+					} else if (!firstPoint.equals(lastPoint) && firstPointJ.equals(lastPointJ)) {
+						if (firstDistance > selfEntityTolerance && lastDistance > selfEntityTolerance) {
 							returnGeom = lineReturnGeom;
 						}
-					}else if(!firstPoint.equals(lastPoint) && !firstPointJ.equals(lastPointJ)){
-						if(firstDistance > selfEntityTolerance && lastDistance > selfEntityTolerance
-								&& firstDistanceJ > selfEntityTolerance && lastDistanceJ > selfEntityTolerance){
+					} else if (!firstPoint.equals(lastPoint) && !firstPointJ.equals(lastPointJ)) {
+						if (firstDistance > selfEntityTolerance && lastDistance > selfEntityTolerance
+								&& firstDistanceJ > selfEntityTolerance && lastDistanceJ > selfEntityTolerance) {
 							returnGeom = lineReturnGeom;
 						}
 					}
 
-				}else{
-					if(firstPoint.equals(lastPoint) && firstPointJ.equals(lastPointJ)){
-						LinearRing  ringI = geometryFactory.createLinearRing(coors);
+				} else {
+					if (firstPoint.equals(lastPoint) && firstPointJ.equals(lastPointJ)) {
+						LinearRing ringI = geometryFactory.createLinearRing(coors);
 						LinearRing holesI[] = null;
 						Polygon polygonI = geometryFactory.createPolygon(ringI, holesI);
-						LinearRing  ringJ = geometryFactory.createLinearRing(coorsJ);
+						LinearRing ringJ = geometryFactory.createLinearRing(coorsJ);
 						LinearRing holesJ[] = null;
 						Polygon polygonJ = geometryFactory.createPolygon(ringJ, holesJ);
 						Geometry intersectPolygon = polygonI.intersection(polygonJ);
-						if(intersectPolygon.getArea() > polygonInvadedTolorence){
+						if (intersectPolygon.getArea() > polygonInvadedTolorence) {
 							returnGeom = lineReturnGeom;
 						}
-					}else if(firstPoint.equals(lastPoint) && !firstPointJ.equals(lastPointJ)){
+					} else if (firstPoint.equals(lastPoint) && !firstPointJ.equals(lastPointJ)) {
 						List<Point> points = new ArrayList<Point>();
 						Coordinate[] lineReturnCoor = lineReturnGeom.getCoordinates();
 						for (int i = 0; i < lineReturnCoor.length; i++) {
 							Point returnPoint = geometryFactory.createPoint(lineReturnCoor[i]);
-							if(returnPoint.distance(firstPointJ)>selfEntityTolerance&&returnPoint.distance(lastPointJ)>selfEntityTolerance){
+							if (returnPoint.distance(firstPointJ) > selfEntityTolerance
+									&& returnPoint.distance(lastPointJ) > selfEntityTolerance) {
 								points.add(returnPoint);
 							}
 						}
-						if(points.size()!=0){
+						if (points.size() != 0) {
 							Point[] pointList = new Point[points.size()];
-							for(int j=0;j<points.size();j++){
+							for (int j = 0; j < points.size(); j++) {
 								pointList[j] = points.get(j);
 							}
 							returnGeom = geometryFactory.createMultiPoint(pointList);
 						}
 
-					}else if(!firstPoint.equals(lastPoint) && firstPointJ.equals(lastPointJ)){
+					} else if (!firstPoint.equals(lastPoint) && firstPointJ.equals(lastPointJ)) {
 						List<Point> points = new ArrayList<Point>();
 						Coordinate[] lineReturnCoor = lineReturnGeom.getCoordinates();
 						for (int i = 0; i < lineReturnCoor.length; i++) {
 							Point returnPoint = geometryFactory.createPoint(lineReturnCoor[i]);
-							if(returnPoint.distance(firstPoint)>selfEntityTolerance&&returnPoint.distance(lastPoint)>selfEntityTolerance){
+							if (returnPoint.distance(firstPoint) > selfEntityTolerance
+									&& returnPoint.distance(lastPoint) > selfEntityTolerance) {
 								points.add(returnPoint);
 							}
 						}
-						if(points.size()!=0){
+						if (points.size() != 0) {
 							Point[] pointList = new Point[points.size()];
-							for(int j=0;j<points.size();j++){
+							for (int j = 0; j < points.size(); j++) {
 								pointList[j] = points.get(j);
 							}
 							returnGeom = geometryFactory.createMultiPoint(pointList);
@@ -473,13 +476,13 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 		if (typeJ.equals("Polygon") || typeJ.equals("MultiPolygon")) {
 
 			if (geometryI.crosses(geometryJ.getBoundary()) || geometryI.within(geometryJ)) {
-				Geometry geometry =geometryI.intersection(geometryJ);
+				Geometry geometry = geometryI.intersection(geometryJ);
 				String upperType = geometry.getGeometryType().toUpperCase();
-				if(upperType.equals("LINESTRING") || upperType.equals("MULTILINESTRING")){
-					if(geometryI.within(geometryJ)){
+				if (upperType.equals("LINESTRING") || upperType.equals("MULTILINESTRING")) {
+					if (geometryI.within(geometryJ)) {
 						returnGeom = geometry;
-					}else{
-						if(geometry.getLength() > selfEntityTolerance){
+					} else {
+						if (geometry.getLength() > selfEntityTolerance) {
 							returnGeom = geometryI.intersection(geometryJ.getBoundary());
 						}
 					}
@@ -489,7 +492,8 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 		return returnGeom;
 	}
 
-	private Geometry selfEntityPolygon(Geometry geometryI, Geometry geometryJ, double selfEntityTolerance, double polygonInvadedTolorence) {
+	private Geometry selfEntityPolygon(Geometry geometryI, Geometry geometryJ, double selfEntityTolerance,
+			double polygonInvadedTolorence) {
 
 		String typeJ = geometryJ.getGeometryType();
 		Geometry returnGeom = null;
@@ -502,11 +506,11 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 			if (typeJ.equals("LineString") || typeJ.equals("MultiLineString")) {
 				Geometry geom = geometryI.intersection(geometryJ);
 				String upperType = geom.getGeometryType().toUpperCase();
-				if(upperType.equals("LINESTRING") || upperType.equals("MULTILINESTRING")){
-					if(geom.getLength() > selfEntityTolerance ){
-						if(geometryI.contains(geometryJ)){
+				if (upperType.equals("LINESTRING") || upperType.equals("MULTILINESTRING")) {
+					if (geom.getLength() > selfEntityTolerance) {
+						if (geometryI.contains(geometryJ)) {
 							returnGeom = geometryI.intersection(geometryJ);
-						}else{
+						} else {
 							returnGeom = geometryI.intersection(geometryJ.getBoundary());
 						}
 					}
@@ -517,8 +521,8 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 					if (geometryI.overlaps(geometryJ) || geometryI.within(geometryJ) || geometryI.contains(geometryJ)) {
 						Geometry geometry = geometryI.intersection(geometryJ);
 						String upperType = geometry.getGeometryType().toUpperCase();
-						if(upperType.equals("POLYGON") || upperType.equals("MULTIPOLYGON")){
-							if(geometry.getArea() > polygonInvadedTolorence){
+						if (upperType.equals("POLYGON") || upperType.equals("MULTIPOLYGON")) {
+							if (geometry.getArea() > polygonInvadedTolorence) {
 								returnGeom = geometry;
 							}
 						}
@@ -559,21 +563,22 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 		GeometryFactory geometryFactory = new GeometryFactory();
 		double length = geometry.getLength();
 		if (length <= inputLength) {
-			if(length == 0.0 || length == 0){
+			if (length == 0.0 || length == 0) {
 				Coordinate[] coordinates = geometry.getCoordinates();
-				Point errPoint = geometryFactory.createPoint(coordinates[0]); 
+				Point errPoint = geometryFactory.createPoint(coordinates[0]);
 				String featureIdx = simpleFeature.getID();
 				Property featuerIDPro = simpleFeature.getProperty("feature_id");
 				String featureID = (String) featuerIDPro.getValue();
-				ErrorFeature errFeature = new ErrorFeature(featureIdx, featureID, SmallLength.Type.SMALLLENGTH.errType(),
-						SmallLength.Type.SMALLLENGTH.errName(), errPoint);
+				ErrorFeature errFeature = new ErrorFeature(featureIdx, featureID,
+						SmallLength.Type.SMALLLENGTH.errType(), SmallLength.Type.SMALLLENGTH.errName(), errPoint);
 				return errFeature;
-			}else{
+			} else {
 				String featureIdx = simpleFeature.getID();
 				Property featuerIDPro = simpleFeature.getProperty("feature_id");
 				String featureID = (String) featuerIDPro.getValue();
-				ErrorFeature errFeature = new ErrorFeature(featureIdx, featureID, SmallLength.Type.SMALLLENGTH.errType(),
-						SmallLength.Type.SMALLLENGTH.errName(), geometry.getInteriorPoint());
+				ErrorFeature errFeature = new ErrorFeature(featureIdx, featureID,
+						SmallLength.Type.SMALLLENGTH.errType(), SmallLength.Type.SMALLLENGTH.errName(),
+						geometry.getInteriorPoint());
 				return errFeature;
 			}
 		} else {
@@ -661,10 +666,19 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 			SimpleFeature relationSimpleFeature = iterator.next();
 			Geometry geometryRelation = (Geometry) relationSimpleFeature.getDefaultGeometry(); // aop
 			Geometry aopBuffer = geometryRelation.buffer(tolerence); // tolerence
+
+			Polygon aopBufferPg = (Polygon) aopBuffer;
+			LineString ring = aopBufferPg.getInteriorRingN(0);
+			Coordinate[] coors = ring.getCoordinates();
+			GeometryFactory factory = new GeometryFactory();
+			for (int i = 0; i < coors.length; i++) {
+				
+			}
+			System.out.println("");
+
 			// : 사용자
 			// 입력 파라미터
 			Geometry envelope = geometryRelation.getEnvelope();
-			GeometryFactory factory = new GeometryFactory();
 
 			if (envelope.contains(geometry)) {
 				Coordinate[] featureCoor = geometry.getCoordinates();
@@ -1185,8 +1199,8 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 		}
 	}
 
-	public ErrorFeature validateCemeterySite(SimpleFeature simpleFeature, SimpleFeatureCollection relationSfc){
-		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry(); 
+	public ErrorFeature validateCemeterySite(SimpleFeature simpleFeature, SimpleFeatureCollection relationSfc) {
+		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
 
 		SimpleFeatureIterator relationSimpleFeatureIterator = relationSfc.features();
 		Boolean isTrue = false;
@@ -1194,7 +1208,7 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 		while (relationSimpleFeatureIterator.hasNext()) {
 			SimpleFeature relationSimpleFeature = relationSimpleFeatureIterator.next();
 			Geometry relationGeometry = (Geometry) relationSimpleFeature.getDefaultGeometry();
-			if(geometry.intersects(relationGeometry) || geometry.contains(relationGeometry)){
+			if (geometry.intersects(relationGeometry) || geometry.contains(relationGeometry)) {
 				isTrue = true;
 				Geometry errorPoint = geometry.intersection(relationGeometry);
 				errPoint = errorPoint;
@@ -1202,57 +1216,57 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 			}
 		}
 
-		if(isTrue){
+		if (isTrue) {
 			Property featuerIDPro = simpleFeature.getProperty("feature_id");
 			String featureID = (String) featuerIDPro.getValue();
 			String featureIdx = simpleFeature.getID();
-			
-			ErrorFeature errorFeature = new ErrorFeature(featureIdx, featureID, CemeterySite.Type.CEMETERYSITE.errType(),
-					CemeterySite.Type.CEMETERYSITE.errName(), errPoint);
+
+			ErrorFeature errorFeature = new ErrorFeature(featureIdx, featureID,
+					CemeterySite.Type.CEMETERYSITE.errType(), CemeterySite.Type.CEMETERYSITE.errName(), errPoint);
 			return errorFeature;
-		}else{
+		} else {
 			return null;
 		}
 	}
 
-
-	public ErrorFeature validateBuildingSite(SimpleFeature simpleFeature, SimpleFeatureCollection relationSfc, Map<String, List<String>> attributes){   	
+	public ErrorFeature validateBuildingSite(SimpleFeature simpleFeature, SimpleFeatureCollection relationSfc,
+			Map<String, List<String>> attributes) {
 		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
 		SimpleFeatureIterator simpleFeatureIterator = relationSfc.features();
 
-		if(attributes != null){
+		if (attributes != null) {
 			Iterator iterator = attributes.keySet().iterator();
 			while (iterator.hasNext()) {
 				String attributeKey = (String) iterator.next();
 				Object attributeObj = simpleFeature.getAttribute(attributeKey);
 				JSONArray attributeArray = (JSONArray) attributes.get(attributeKey);
 
-				if(attributeObj != null){
+				if (attributeObj != null) {
 					String attribute = attributeObj.toString();
 					Iterator iteratorArray = attributeArray.iterator();
 					Boolean flag = false;
 					while (iteratorArray.hasNext()) {
 						String attributeValue = (String) iteratorArray.next();
-						if(attribute.equals(attributeValue)){
+						if (attribute.equals(attributeValue)) {
 							flag = true;
 							break;
 						}
 					}
-					if(flag == true){
+					if (flag == true) {
 						Boolean isTrue = false;
 						while (simpleFeatureIterator.hasNext()) {
 							SimpleFeature relationSimpleFeature = simpleFeatureIterator.next();
 							Geometry relationGeometry = (Geometry) relationSimpleFeature.getDefaultGeometry();
-							if(relationGeometry.contains(geometry) || geometry.within(relationGeometry)){
+							if (relationGeometry.contains(geometry) || geometry.within(relationGeometry)) {
 								isTrue = true;
 								break;
 							}
 						}
-						if(isTrue == false){
+						if (isTrue == false) {
 							String featureIdx = simpleFeature.getID();
 							Property featuerIDPro = simpleFeature.getProperty("feature_id");
 							String featureID = (String) featuerIDPro.getValue();
-							ErrorFeature errorFeature = new ErrorFeature(featureIdx, featureID, 
+							ErrorFeature errorFeature = new ErrorFeature(featureIdx, featureID,
 									BuildingSite.Type.BUILDINGSITE.errType(), BuildingSite.Type.BUILDINGSITE.errName(),
 									geometry.getInteriorPoint());
 							return errorFeature;
@@ -1264,43 +1278,45 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 		return null;
 	}
 
-	public ErrorFeature validateRiverBoundaryMiss(SimpleFeature simpleFeature, SimpleFeatureCollection relationSfc){
+	public ErrorFeature validateRiverBoundaryMiss(SimpleFeature simpleFeature, SimpleFeatureCollection relationSfc) {
 		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
 		String ufid = simpleFeature.getAttribute("feature_id").toString();
-		if(ufid.equals("RECORD 2201")){
+		if (ufid.equals("RECORD 2201")) {
 			System.out.println();
 		}
 		SimpleFeatureIterator relationSimpleFeatureIterator = relationSfc.features();
 		String featureIdx = simpleFeature.getID();
 		Property featuerIDPro = simpleFeature.getProperty("feature_id");
 		String featureID = (String) featuerIDPro.getValue();
-		
+
 		List<SimpleFeature> relationSimpleFeatureList = new ArrayList<SimpleFeature>();
 		while (relationSimpleFeatureIterator.hasNext()) {
 			SimpleFeature relationSimpleFeature = relationSimpleFeatureIterator.next();
 			Geometry relationGeometry = (Geometry) relationSimpleFeature.getDefaultGeometry();
-			if(geometry.intersects(relationGeometry)){
+			if (geometry.intersects(relationGeometry)) {
 				relationSimpleFeatureList.add(relationSimpleFeature);
 			}
 		}
-		
-		if(relationSimpleFeatureList.size() == 0){
-			//error
-			ErrorFeature errorFeature = new ErrorFeature(featureIdx, featureID, RiverBoundaryMiss.Type.RIVERBOUNDARYMISS.errType(),
+
+		if (relationSimpleFeatureList.size() == 0) {
+			// error
+			ErrorFeature errorFeature = new ErrorFeature(featureIdx, featureID,
+					RiverBoundaryMiss.Type.RIVERBOUNDARYMISS.errType(),
 					RiverBoundaryMiss.Type.RIVERBOUNDARYMISS.errName(), geometry.getInteriorPoint());
 			return errorFeature;
-		}else if(relationSimpleFeatureList.size() == 1){
+		} else if (relationSimpleFeatureList.size() == 1) {
 			for (int i = 0; i < relationSimpleFeatureList.size(); i++) {
 				SimpleFeature relationSimplfeature = relationSimpleFeatureList.get(i);
 				Geometry relationGeometry = (Geometry) relationSimplfeature.getDefaultGeometry();
-				if(!geometry.contains(relationGeometry) || !relationGeometry.within(geometry)){
-					//error
-					ErrorFeature errorFeature = new ErrorFeature(featureIdx, featureID, RiverBoundaryMiss.Type.RIVERBOUNDARYMISS.errType(),
+				if (!geometry.contains(relationGeometry) || !relationGeometry.within(geometry)) {
+					// error
+					ErrorFeature errorFeature = new ErrorFeature(featureIdx, featureID,
+							RiverBoundaryMiss.Type.RIVERBOUNDARYMISS.errType(),
 							RiverBoundaryMiss.Type.RIVERBOUNDARYMISS.errName(), geometry.getInteriorPoint());
 					return errorFeature;
 				}
 			}
-		}else{
+		} else {
 			SimpleFeature relationSimFeature = relationSimpleFeatureList.get(0);
 			Geometry relationGeom = (Geometry) relationSimFeature.getDefaultGeometry();
 			for (int i = 1; i < relationSimpleFeatureList.size(); i++) {
@@ -1308,77 +1324,82 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 				Geometry relationGeometry = (Geometry) relationSimpleFeature.getDefaultGeometry();
 				Geometry union = relationGeom.union(relationGeometry);
 				relationGeom = union;
-			} 
-			
+			}
+
 			Geometry buffer = relationGeom.buffer(1);
 			Geometry intersection = buffer.intersection(geometry);
 			System.out.println(geometry.equals(intersection));
-			
-			if(!buffer.within(geometry)){
-				//error
-				ErrorFeature errorFeature = new ErrorFeature(featureIdx, featureID, RiverBoundaryMiss.Type.RIVERBOUNDARYMISS.errType(),
+
+			if (!buffer.within(geometry)) {
+				// error
+				ErrorFeature errorFeature = new ErrorFeature(featureIdx, featureID,
+						RiverBoundaryMiss.Type.RIVERBOUNDARYMISS.errType(),
 						RiverBoundaryMiss.Type.RIVERBOUNDARYMISS.errName(), geometry.getInteriorPoint());
 				return errorFeature;
 			}
 		}
-		
+
 		return null;
 	}
-	
-	public ErrorFeature validateCenterLineMiss(SimpleFeature simpleFeature, SimpleFeatureCollection relationSfc, double lineInvadedTolorence){
+
+	public ErrorFeature validateCenterLineMiss(SimpleFeature simpleFeature, SimpleFeatureCollection relationSfc,
+			double lineInvadedTolorence) {
 		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
 		String featureIdx = simpleFeature.getID();
 		Property featureIDPro = simpleFeature.getProperty("feature_id");
 		String featureID = (String) featureIDPro.getValue();
 		SimpleFeatureIterator relationSfcIterator = relationSfc.features();
-		
+
 		Geometry bufferGeom = geometry.buffer(lineInvadedTolorence);
-		
+
 		boolean isTrue = false;
 		while (relationSfcIterator.hasNext()) {
 			SimpleFeature relationSimpleFeature = relationSfcIterator.next();
 			Geometry relationGeometry = (Geometry) relationSimpleFeature.getDefaultGeometry();
-			if(geometry.intersects(relationGeometry)){
+			if (geometry.intersects(relationGeometry)) {
 				isTrue = true;
-				if(bufferGeom.contains(relationGeometry) || relationGeometry.within(bufferGeom)){
+				if (bufferGeom.contains(relationGeometry) || relationGeometry.within(bufferGeom)) {
 					break;
-				}else{
-					//error
-					ErrorFeature errorFeature = new ErrorFeature(featureIdx, featureID, CenterLineMiss.Type.CENTERLINEMISS.errType(), 
-							CenterLineMiss.Type.CENTERLINEMISS.errName(), geometry.getInteriorPoint());
+				} else {
+					// error
+					ErrorFeature errorFeature = new ErrorFeature(featureIdx, featureID,
+							CenterLineMiss.Type.CENTERLINEMISS.errType(), CenterLineMiss.Type.CENTERLINEMISS.errName(),
+							geometry.getInteriorPoint());
 					return errorFeature;
 				}
 			}
 		}
-		
-		if(!isTrue){
-			//error
-			ErrorFeature errorFeature = new ErrorFeature(featureIdx, featureID, CenterLineMiss.Type.CENTERLINEMISS.errType(), 
-					CenterLineMiss.Type.CENTERLINEMISS.errName(), geometry.getInteriorPoint());
+
+		if (!isTrue) {
+			// error
+			ErrorFeature errorFeature = new ErrorFeature(featureIdx, featureID,
+					CenterLineMiss.Type.CENTERLINEMISS.errType(), CenterLineMiss.Type.CENTERLINEMISS.errName(),
+					geometry.getInteriorPoint());
 			return errorFeature;
-		}else{
+		} else {
 			return null;
 		}
 	}
 
 	@SuppressWarnings("unused")
-	public List<ErrorFeature> validateHoleMisplacement(SimpleFeature simpleFeature){
-		
+	public List<ErrorFeature> validateHoleMisplacement(SimpleFeature simpleFeature) {
+
 		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
 		String geomType = geometry.getGeometryType().toUpperCase();
 		String featureIdx = simpleFeature.getID();
 		Property featureIDPro = simpleFeature.getProperty("feature_id");
 		String featureID = (String) featureIDPro.getValue();
 		List<ErrorFeature> errorFeatures = new ArrayList<>();
-		
-		if(geomType.equals("POLYGON")){
+
+		if (geomType.equals("POLYGON")) {
 			Polygon polygon = (Polygon) geometry;
 			int holeNum = polygon.getNumInteriorRing();
 			boolean hasHoles = holeNum > 0;
-			if(hasHoles){
+			if (hasHoles) {
 				for (int i = 0; i < holeNum; i++) {
 					LineString lineString = polygon.getInteriorRingN(i);
-					ErrorFeature errorFeature = new ErrorFeature(featureIdx, featureID, HoleMisplacement.Type.HOLEMISPLACEMENT.errType(),
+					ErrorFeature errorFeature = new ErrorFeature(featureIdx, featureID,
+							HoleMisplacement.Type.HOLEMISPLACEMENT.errType(),
 							HoleMisplacement.Type.HOLEMISPLACEMENT.errName(), lineString.getInteriorPoint());
 					errorFeatures.add(errorFeature);
 					return errorFeatures;
@@ -1389,45 +1410,48 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 	}
 	
 	public List<ErrorFeature> validateEntityInHole(SimpleFeature simpleFeature, SimpleFeatureCollection relationSfc){
+
 		List<ErrorFeature> errorFeatures = new ArrayList<ErrorFeature>();
 		GeometryFactory geometryFactory = new GeometryFactory();
 		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
 		String geomType = geometry.getGeometryType().toUpperCase();
 		SimpleFeatureIterator relationSfcIterator = relationSfc.features();
-		
+
 		String featureIdx = simpleFeature.getID();
 		Property featureIDPro = simpleFeature.getProperty("feature_id");
 		String featureID = (String) featureIDPro.getValue();
-		
-		if(geomType.equals("POLYGON")){
+
+		if (geomType.equals("POLYGON")) {
 			Polygon polygon = (Polygon) geometry;
 			int holeNum = polygon.getNumInteriorRing();
-			if(holeNum > 0){
+			if (holeNum > 0) {
 				for (int i = 0; i < holeNum; i++) {
-					LinearRing interiorRing  = (LinearRing) polygon.getInteriorRingN(i);
+					LinearRing interiorRing = (LinearRing) polygon.getInteriorRingN(i);
 					LinearRing holes[] = null;
 					Polygon interiorPolygon = geometryFactory.createPolygon(interiorRing, holes);
-					
+
 					while (relationSfcIterator.hasNext()) {
 						SimpleFeature relationSimpleFeature = relationSfcIterator.next();
 						Geometry relationGeometry = (Geometry) relationSimpleFeature.getDefaultGeometry();
-						if(interiorPolygon.intersects(relationGeometry)){
-							if(interiorPolygon.equals(relationGeometry)){
-								//error
-								ErrorFeature errorFeature = new ErrorFeature(featureIdx, featureID, 
-										EntityInHole.Type.ENTITYINHOLE.errType(), EntityInHole.Type.ENTITYINHOLE.errName(),
-										interiorPolygon.getInteriorPoint());
+						if (interiorPolygon.intersects(relationGeometry)) {
+							if (interiorPolygon.equals(relationGeometry)) {
+								// error
+								ErrorFeature errorFeature = new ErrorFeature(featureIdx, featureID,
+										EntityInHole.Type.ENTITYINHOLE.errType(),
+										EntityInHole.Type.ENTITYINHOLE.errName(), interiorPolygon.getInteriorPoint());
 								errorFeatures.add(errorFeature);
 							}else{
 								if(relationGeometry.contains(interiorPolygon) || interiorPolygon.within(relationGeometry)){
 									//error
 									ErrorFeature errorFeature = new ErrorFeature(featureIdx, featureID, 
 											EntityInHole.Type.ENTITYINHOLE.errType(), EntityInHole.Type.ENTITYINHOLE.errName(),
+
 											interiorPolygon.getInteriorPoint());
 									errorFeatures.add(errorFeature);
 								}
 							}
 						}
+
 					}
 				}
 			}
@@ -1497,5 +1521,5 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 		
 		return errorFeatures;
 	}
-	
+
 }

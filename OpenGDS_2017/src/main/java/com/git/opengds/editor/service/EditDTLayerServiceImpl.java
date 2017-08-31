@@ -124,13 +124,8 @@ public class EditDTLayerServiceImpl implements EditDTLayerService {
 					}
 				}
 				if (editCollection.isModified()) {
-
 				}
 				if (editCollection.isDeleted()) {
-					if (editCollection.isDeleteAll()) {
-						String groupName = "gro" + "_" + type + "_" + collectionName;
-						geoserver.removeGeoserverGroupLayer(userVO, groupName);
-					}
 					DTSHPLayerList layerList = editCollection.getDeletedLayerList();
 					for (int j = 0; j < layerList.size(); j++) {
 						DTSHPLayer layer = layerList.get(j);
@@ -139,6 +134,10 @@ public class EditDTLayerServiceImpl implements EditDTLayerService {
 					if (editCollection.isDeleteAll()) {
 						editDBManager.deleteSHPLayerCollection(userVO, collectionIdx);
 					}
+				}
+				if (editCollection.isDeleteAll()) {
+					String groupName = "gro" + "_" + type + "_" + collectionName;
+					geoserver.removeDTGeoserverAllLayer(userVO, groupName);
 				}
 			}
 		} catch (Exception e) {
@@ -211,11 +210,8 @@ public class EditDTLayerServiceImpl implements EditDTLayerService {
 						}
 					}
 				}
+
 				if (editCollection.isDeleted()) {
-					if (editCollection.isDeleteAll()) {
-						String groupName = "gro" + "_" + type + "_" + collectionName;
-						geoserver.removeGeoserverGroupLayer(userVO, groupName);
-					}
 					DTDXFLayerList layerList = editCollection.getDeletedLayerList();
 					for (int j = 0; j < layerList.size(); j++) {
 						DTDXFLayer layer = layerList.get(j);
@@ -224,6 +220,11 @@ public class EditDTLayerServiceImpl implements EditDTLayerService {
 					if (editCollection.isDeleteAll()) {
 						editDBManager.deleteDXFLayerCollectionTablesCommon(userVO, collectionIdx);
 						editDBManager.deleteDXFLayerCollection(userVO, collectionIdx);
+					}
+					if (editCollection.isDeleteAll()) {
+						String groupName = "gro" + "_" + type + "_" + collectionName;
+						geoserver.removeDTGeoserverAllLayer(userVO, groupName);
+
 					}
 				}
 			}
@@ -300,10 +301,6 @@ public class EditDTLayerServiceImpl implements EditDTLayerService {
 					}
 				}
 				if (editCollection.isDeleted()) {
-					if (editCollection.isDeleteAll()) {
-						String groupName = "gro" + "_" + type + "_" + collectionName;
-						geoserver.removeGeoserverGroupLayer(userVO, groupName);
-					}
 					DTNGILayerList layerList = editCollection.getDeletedLayerList();
 					for (int j = 0; j < layerList.size(); j++) {
 						DTNGILayer layer = layerList.get(j);
@@ -311,6 +308,10 @@ public class EditDTLayerServiceImpl implements EditDTLayerService {
 					}
 					if (editCollection.isDeleteAll()) {
 						editDBManager.deleteNGILayerCollection(userVO, collectionIdx);
+					}
+					if (editCollection.isDeleteAll()) {
+						String groupName = "gro" + "_" + type + "_" + collectionName;
+						geoserver.removeDTGeoserverAllLayer(userVO, groupName);
 					}
 				}
 			}

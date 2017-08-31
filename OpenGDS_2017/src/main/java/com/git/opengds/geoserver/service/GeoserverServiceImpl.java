@@ -359,9 +359,8 @@ public class GeoserverServiceImpl implements GeoserverService {
 	 * @see com.git.opengds.geoserver.service.GeoserverService#removeGeoserverLayer(java.lang.String)
 	 */
 	@Override
-	public boolean removeGeoserverLayer(UserVO userVO, String groupLayerName, String layerName) {
+	public boolean removeDTGeoserverLayer(UserVO userVO, String groupLayerName, String layerName) {
 		boolean isConfigureGroup = false;
-		boolean isRemoveLayer = false;
 		boolean isRemoveFeatureType = false;
 		DTGeoGroupLayer dtGeoGroupLayer = dtReader.getDTGeoGroupLayer(userVO.getId(), groupLayerName);
 
@@ -377,9 +376,7 @@ public class GeoserverServiceImpl implements GeoserverService {
 			for (String name : layerList) {
 				groupEncoder.addLayer(userVO.getId() + ":" + name);
 			}
-
 			isConfigureGroup = dtPublisher.configureLayerGroup(userVO.getId(), groupLayerName, groupEncoder);
-
 			isRemoveFeatureType = dtPublisher.unpublishFeatureType(userVO.getId(), userVO.getId(), layerName);
 			// isRemoveLayer = dtPublisher.removeLayer(userVO.getId(),
 			// layerName);
@@ -390,7 +387,6 @@ public class GeoserverServiceImpl implements GeoserverService {
 			}
 			return true;
 		}
-
 		if (!isConfigureGroup && !isRemoveFeatureType) {
 			return false;
 		}
@@ -405,7 +401,7 @@ public class GeoserverServiceImpl implements GeoserverService {
 	 * @see com.git.opengds.geoserver.service.GeoserverService#removeGeoserverLayers(java.util.List)
 	 */
 	@Override
-	public boolean removeGeoserverLayers(UserVO userVO, List<String> layerNameList) {
+	public boolean removeDTGeoserverLayers(UserVO userVO, List<String> layerNameList) {
 		return dtPublisher.removeLayers(userVO.getId(), layerNameList);
 	}
 
@@ -418,8 +414,34 @@ public class GeoserverServiceImpl implements GeoserverService {
 	 * @see com.git.opengds.geoserver.service.GeoserverService#removeGeoserverGroupLayer(java.lang.String)
 	 */
 	@Override
-	public boolean removeGeoserverGroupLayer(UserVO userVO, String groupLayerName) {
-		return dtPublisher.removeLayerGroup(userVO.getId(), groupLayerName);
+	public boolean removeDTGeoserverAllLayer(UserVO userVO, String groupLayerName) {
+		boolean isRemoveFlag = false;
+		DTGeoGroupLayer dtGeoGroupLayer = dtReader.getDTGeoGroupLayer(userVO.getId(), groupLayerName);
+
+		int flagVal = 0;
+		
+		if (dtGeoGroupLayer != null) {
+			List<String> layerList = dtGeoGroupLayer.getPublishedList().getNames();
+
+			dtPublisher.removeLayerGroup(userVO.getId(), groupLayerName);
+			
+			for(String layerName : layerList){
+				boolean isRemoveFeatureType = dtPublisher.unpublishFeatureType(userVO.getId(), userVO.getId(), layerName);
+				if(isRemoveFeatureType){
+					flagVal++;
+				}
+			}
+			
+			
+			if(layerList.size()==flagVal){
+				isRemoveFlag = true;
+			}
+			else
+				isRemoveFlag = false;
+		}
+		else
+			isRemoveFlag = false;
+		return isRemoveFlag;
 	}
 
 	/**

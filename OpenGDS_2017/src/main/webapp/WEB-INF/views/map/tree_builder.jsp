@@ -151,8 +151,10 @@ html {
 						<i class="fa fa-refresh" aria-hidden="true"></i>
 					</button>
 				</div>
-				<div class="panel-body gitbuilder-layer-panel">
-					<div id="builderServerLayer"></div>
+
+				<div class="panel-body" style="padding: 0;">
+<!-- 					<input type="text" class="form-control builder-tree-search" id="inputSearchServer" /> -->
+					<div id="builderServerLayer" class="gitbuilder-layer-panel"></div>
 				</div>
 			</div>
 			<div id="builderLayerClientPanel" class="panel panel-default">
@@ -162,8 +164,9 @@ html {
 						<i class="fa fa-refresh" aria-hidden="true"></i>
 					</button>
 				</div>
-				<div class="panel-body gitbuilder-layer-panel">
-					<div id="builderClientLayer"></div>
+				<div class="panel-body" style="padding: 0;">
+<!-- 					<input type="text" class="form-control builder-tree-search" id="inputSearchClient" /> -->
+					<div id="builderClientLayer" class="gitbuilder-layer-panel"></div>
 				</div>
 			</div>
 		</div>
@@ -233,6 +236,7 @@ html {
 				var listHeight = $("#builderLayer").innerHeight() / 2 - (16 + 1 + 1);
 				// 				41은 패널 헤더의 높이
 				var treeHeight = listHeight - (41);
+// 				var searchHeight = $(".builder-tree-search").outerHeight();
 				$(".gitbuilder-layer-panel").outerHeight(treeHeight);
 				$("#builderLayerGeoServerPanel").outerHeight(listHeight);
 				$("#builderLayerClientPanel").outerHeight(listHeight);
@@ -393,6 +397,9 @@ html {
 				"layerRecord" : lrecord,
 				"featureRecord" : frecord,
 				"editingTool" : epan
+			},
+			"search" : {
+				show_only_matches : true
 			},
 			plugins : [ "contextmenu", "dnd", "search", "state", "types", "sort", "visibility", "layerproperties" ]
 		});
@@ -560,6 +567,9 @@ html {
 				"downloadGeoserver" : "geoserver/downloadRequest.do",
 				"clientRefer" : $('#builderClientLayer').jstreeol3(true)
 			},
+			"search" : {
+				show_only_matches : true
+			},
 			"plugins" : [ "contextmenu", "search", "state", "types", "geoserver" ]
 		});
 
@@ -580,6 +590,30 @@ html {
 
 		$("#edit").click(function() {
 			epan.open();
+		});
+
+		$(function() {
+			var to = false;
+			$('#inputSearchServer').keyup(function() {
+				if (to) {
+					clearTimeout(to);
+				}
+				to = setTimeout(function() {
+					var v = $('#inputSearchServer').val();
+					$('#builderServerLayer').jstree(true).search(v);
+				}, 250);
+			});
+
+			var to2 = false;
+			$('#inputSearchClient').keyup(function() {
+				if (to) {
+					clearTimeout(to);
+				}
+				to2 = setTimeout(function() {
+					var v = $('#inputSearchClient').val();
+					$('#builderClientLayer').jstreeol3(true).search(v);
+				}, 250);
+			});
 		});
 	</script>
 

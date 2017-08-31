@@ -79,8 +79,14 @@ gitbuilder.ui.QAEdit = $.widget("gitbuilder.qaedit",
 				 * 
 				 * 
 				 */
-				var serverTitle = $("<h3>").addClass("panel-title").text("GeoServer");
-				var serverHead = $("<div>").addClass("panel-heading").append(serverTitle);
+				var icls = $("<i>").addClass("fa").addClass("fa-refresh").attr({
+					"aria-hidden" : "true"
+				});
+				var refBtn = $("<button>").addClass("pull-right").addClass("gitbuilder-clearbtn").append(icls).click(function() {
+					$(that.list).jstree("refresh");
+				});
+//				var serverTitle = $("<h3>").addClass("panel-title").text("GeoServer");
+				var serverHead = $("<div>").addClass("panel-heading").append("GeoServer").append(refBtn);
 				this.list = $("<div>").attr({
 					"id" : "geoserverList"
 				});
@@ -489,6 +495,9 @@ gitbuilder.ui.QAEdit = $.widget("gitbuilder.qaedit",
 					traditional : true,
 					success : function(data, textStatus, jqXHR) {
 						console.log(data);
+						var getPosition = function(str, subString, index) {
+							return str.split(subString, index).join(subString).length;
+						};
 						if (Array.isArray(data)) {
 							for (var i = 0; i < data.length; i++) {
 								var wms = new ol.layer.Tile({
@@ -502,7 +511,8 @@ gitbuilder.ui.QAEdit = $.widget("gitbuilder.qaedit",
 											'CRS' : 'EPSG:5186',
 											'SRS' : 'EPSG:5186',
 											'BBOX' : data[i].bbox.minx.toString() + "," + data[i].bbox.miny.toString() + ","
-													+ data[i].bbox.maxx.toString() + "," + data[i].bbox.maxy.toString()
+													+ data[i].bbox.maxx.toString() + "," + data[i].bbox.maxy.toString(),
+											"time" : Date.now()
 										},
 										serverType : 'geoserver'
 									})
@@ -515,7 +525,33 @@ gitbuilder.ui.QAEdit = $.widget("gitbuilder.qaedit",
 									});
 									var id = data[i].publishedList.names[j];
 									var name = id.substring((id.split("_", 3).join("_").length) + 1, id.split("_", 4).join("_").length);
+									var geom = id.substring(getPosition(id, "_", 4) + 1);
+									var realGeom;
+									switch (geom) {
+									case "POINT":
+										realGeom = "Point";
+										break;
+									case "LINESTRING":
+										realGeom = "LineString";
+										break;
+									case "POLYGON":
+										realGeom = "Polygon";
+										break;
+									case "MULTIPOINT":
+										realGeom = "MultiPoint";
+										break;
+									case "MULTILINESTRING":
+										realGeom = "MultiLineString";
+										break;
+									case "MULTIPOLYGON":
+										realGeom = "MultiPolygon";
+										break;
+
+									default:
+										break;
+									}
 									var gchild = {
+										"geometry" : realGeom,
 										"validation" : false,
 										"editable" : true,
 										"fake" : "child"
@@ -845,7 +881,9 @@ gitbuilder.ui.QAEdit = $.widget("gitbuilder.qaedit",
 				var xSpan = $("<span>").attr({
 					"aria-hidden" : "true"
 				}).append("&times;");
-				var xBtn = $("<button>").attr({
+				var xBtn = $("<button>").click(function() {
+					$(that.naviWindow).hide();
+				}).attr({
 					"data-dismiss" : "modal",
 					"aria-label" : "Close"
 				}).css({
@@ -860,6 +898,7 @@ gitbuilder.ui.QAEdit = $.widget("gitbuilder.qaedit",
 					"outline" : "none",
 					"color" : "#ccc"
 				}).append(xSpan);
+
 				var title = $("<span>").text("Error Navigator");
 				this.tbody = $("<tbody>");
 				var tb = $("<table>").addClass("table").append(this.tbody);
@@ -887,6 +926,7 @@ gitbuilder.ui.QAEdit = $.widget("gitbuilder.qaedit",
 				this.lid = this.error.get("id");
 				if (!this.source.getFeatureById(this.lid + "." + this.count)) {
 					console.log("no feature. maybe there is no error");
+					swal('No Errors!', 'There is no error feature!', 'success')
 					return;
 				}
 				this.showFeatureInfo(this.source.getFeatureById(this.lid + "." + this.count));
