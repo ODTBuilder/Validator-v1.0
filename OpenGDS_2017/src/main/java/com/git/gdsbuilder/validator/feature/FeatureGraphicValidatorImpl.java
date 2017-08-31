@@ -35,9 +35,11 @@
 package com.git.gdsbuilder.validator.feature;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeSet;
 
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureIterator;
@@ -69,6 +71,7 @@ import com.git.gdsbuilder.type.validate.option.EntityDuplicated;
 import com.git.gdsbuilder.type.validate.option.EntityInHole;
 import com.git.gdsbuilder.type.validate.option.HoleMisplacement;
 import com.git.gdsbuilder.type.validate.option.LayerMiss;
+import com.git.gdsbuilder.type.validate.option.LinearDisconnection;
 import com.git.gdsbuilder.type.validate.option.NodeMiss;
 import com.git.gdsbuilder.type.validate.option.OneAcre;
 import com.git.gdsbuilder.type.validate.option.OneStage;
@@ -1386,7 +1389,6 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 	}
 	
 	public List<ErrorFeature> validateEntityInHole(SimpleFeature simpleFeature, SimpleFeatureCollection relationSfc){
-		
 		List<ErrorFeature> errorFeatures = new ArrayList<ErrorFeature>();
 		GeometryFactory geometryFactory = new GeometryFactory();
 		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
@@ -1417,7 +1419,7 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 										interiorPolygon.getInteriorPoint());
 								errorFeatures.add(errorFeature);
 							}else{
-								if(interiorPolygon.contains(relationGeometry) || relationGeometry.within(interiorPolygon)){
+								if(relationGeometry.contains(interiorPolygon) || interiorPolygon.within(relationGeometry)){
 									//error
 									ErrorFeature errorFeature = new ErrorFeature(featureIdx, featureID, 
 											EntityInHole.Type.ENTITYINHOLE.errType(), EntityInHole.Type.ENTITYINHOLE.errName(),
@@ -1426,49 +1428,74 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 								}
 							}
 						}
-						
+					}
+				}
+			}
+		}
+		return errorFeatures;
+	}
+	
+	public List<ErrorFeature> validateLinearDisconnection(SimpleFeature simpleFeature, SimpleFeatureCollection relationSfc){
+
+		GeometryFactory geometryFactory = new GeometryFactory();
+		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
+		SimpleFeatureIterator simpleFeatureIterator = relationSfc.features();
+		String featureIdx = simpleFeature.getID();
+		Property featuerIDPro = simpleFeature.getProperty("feature_id");
+		String featureID = (String) featuerIDPro.getValue();
+		if(featureID.equals("RECORD 912")){
+			System.out.println();
+		}
+		List<SimpleFeature> relationSimpleFeatures = new ArrayList<>();
+		List<Geometry> geometries = new ArrayList<>();
+		List<ErrorFeature> errorFeatures = new ArrayList<>();
+	
+		while (simpleFeatureIterator.hasNext()) {
+			SimpleFeature relationSimpleFeatrue = simpleFeatureIterator.next();
+			Geometry relationGeometry = (Geometry) relationSimpleFeatrue.getDefaultGeometry();
+			if(geometry.intersects(relationGeometry)){
+				Geometry intersection = geometry.intersection(relationGeometry);
+				String intersectionType = intersection.getGeometryType().toUpperCase();
+				if(!intersectionType.equals("POINT")|| !intersectionType.equals("NULTIPOINT")){
+					if(intersectionType.equals("LINESTRING")){
+						double length = intersection.getLength();
+						if(length > 0.01){
+							relationSimpleFeatures.add(relationSimpleFeatrue);
+						}
+					}
+				}
+			}
+		}
+
+		if(relationSimpleFeatures.size() > 1){
+			for (int i = 0; i < relationSimpleFeatures.size(); i++) {
+				SimpleFeature relationSimpleFeature = relationSimpleFeatures.get(i);
+				Geometry relationGeometry = (Geometry) relationSimpleFeature.getDefaultGeometry();
+				Geometry intersection = geometry.getBoundary().intersection(relationGeometry);
+				String intersectionType = intersection.getGeometryType().toUpperCase();
+				if(intersectionType.equals("MULTIPOINT") || intersectionType.equals("POINT")){
+					Coordinate[] coordinates = intersection.getCoordinates();
+					for (int j = 0; j < coordinates.length; j++) {
+						Coordinate coordinate = coordinates[j];
+						Point point = geometryFactory.createPoint(coordinate);
+						geometries.add(point);
 					}
 				}
 			}
 		}
 		
+		HashSet<Geometry> distinctData = new HashSet<>(geometries);
+		geometries.clear();
+		geometries.addAll(distinctData);
+		for (int i = 0; i < geometries.size(); i++) {
+			Geometry point = geometries.get(i);
+			ErrorFeature errorFeature = new ErrorFeature(featureIdx, featureID,
+					LinearDisconnection.Type.LINEARDISCONNECTION.errType(),
+					LinearDisconnection.Type.LINEARDISCONNECTION.errName(), point);
+			errorFeatures.add(errorFeature);
+		}
 		
-		/*
-		if(geomType.equals("POLYGON")){
-			Polygon polygon = (Polygon) geometry;
-			int holeNum = polygon.getNumInteriorRing();
-			boolean hasHoles = holeNum > 0;
-			if(hasHoles){
-				for (int i = 0; i < holeNum; i++) {
-					LineString lineString = polygon.getInteriorRingN(i);
-					Coordinate[] coordinates = lineString.getCoordinates();
-					LinearRing ring = geometryFactory.createLinearRing(coordinates);
-					LinearRing holes[] = null;
-					Polygon holePolygon = geometryFactory.createPolygon(ring, holes);
-					
-					while (relationSfcIterator.hasNext()) {
-						SimpleFeature relationSimFeature = relationSfcIterator.next();
-						Geometry relationGeometry = (Geometry) relationSimFeature.getDefaultGeometry();
-						if(lineString.intersects(relationGeometry)){
-							if(lineString.equals(relationGeometry.getBoundary())){
-								ErrorFeature errorFeature = new ErrorFeature(featureIdx, featureID, EntityInHole.Type.ENTITYINHOLE.errType(),
-										EntityInHole.Type.ENTITYINHOLE.errName(), holePolygon.getInteriorPoint());
-								errorFeatures.add(errorFeature);
-							}else{
-								if(lineString.contains(relationGeometry) || relationGeometry.within(lineString)){
-									// error
-									ErrorFeature errorFeature = new ErrorFeature(featureIdx, featureID, EntityInHole.Type.ENTITYINHOLE.errType(),
-											EntityInHole.Type.ENTITYINHOLE.errName(), holePolygon.getInteriorPoint());
-									errorFeatures.add(errorFeature);
-								}
-							}
-						}
-					}
-				}
-			}
-		}*/
 		return errorFeatures;
 	}
-	
 	
 }

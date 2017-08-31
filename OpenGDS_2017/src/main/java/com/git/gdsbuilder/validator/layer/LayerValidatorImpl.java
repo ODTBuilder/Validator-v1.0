@@ -1184,11 +1184,44 @@ public class LayerValidatorImpl implements LayerValidator {
 				}
 			}
 		}
-		
-		
-		
-		return null;
+		if(errorLayer.getErrFeatureList().size() > 0){
+			return errorLayer;
+		}else{
+			return null;
+		}
 	}
+	
+	public ErrorLayer valildateLinearDisconnection(List<GeoLayer> relationLayers){
+		ErrorLayer errorLayer = new ErrorLayer();
+		SimpleFeatureCollection sfc = validatorLayer.getSimpleFeatureCollection();
+		SimpleFeatureIterator simpleFeatureIterator = sfc.features();
+		List<SimpleFeature> simpleFeatures = new ArrayList<>();
+		for (int i = 0; i < relationLayers.size(); i++) {
+			GeoLayer geoLayer = relationLayers.get(i);
+			SimpleFeatureCollection relationSfc = geoLayer.getSimpleFeatureCollection();
+
+			while (simpleFeatureIterator.hasNext()) {
+				SimpleFeature simpleFeature = simpleFeatureIterator.next();
+				List<ErrorFeature> errorFeatures = graphicValidator.validateLinearDisconnection(simpleFeature, relationSfc);
+				if(errorFeatures != null){
+					for (ErrorFeature errFeature : errorFeatures) {
+						errFeature.setLayerName(validatorLayer.getLayerName());
+						errorLayer.addErrorFeature(errFeature);
+					}
+				}else{
+					continue;
+				}
+			}
+			
+		}
+		
+		if(errorLayer.getErrFeatureList().size() > 0){
+			return errorLayer;
+		}else{
+			return null;
+		}
+	}
+	
 
 	public ErrorLayer validateCloseCollection(ValidateCloseCollectionLayer closeCollectionLayer, String geomColunm) {
 		FilterFactory2 ff = CommonFactoryFinder.getFilterFactory2();

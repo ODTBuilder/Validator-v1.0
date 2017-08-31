@@ -343,6 +343,17 @@ public interface LayerValidator {
 	 * */
 	public ErrorLayer validateHoleMisplacement();
 	
+	/**
+	 * 검수항목 중 "선형 단락 오류(LinearDisconnection)" 검수를 수행
+	 * @author JY.Kim
+	 * @author JY.Kim
+	 * @Date 2017. 8. 24. 오후 5:30:09
+	 * @param relationLayers
+	 * @return ErrorLayer
+	 * @throws
+	 * */
+	public ErrorLayer valildateLinearDisconnection(List<GeoLayer> relationLayers);
+	
 	public ErrorLayer validateEntityInHole(List<GeoLayer> relationLayers);
 	
 	public ErrorLayer validateCloseCollection(ValidateCloseCollectionLayer closeCollectionLayer, String geomColunm);
