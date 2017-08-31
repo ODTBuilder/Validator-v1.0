@@ -1094,6 +1094,37 @@ gb.panel.EditingTool.prototype.modify = function(layer) {
 		});
 		this.deactiveIntrct_([ "select", "selectWMS", "dragbox", "draw", "move", "rotate" ]);
 		this.map.addInteraction(this.interaction.modify);
+		
+		// hochul's code start
+		var sourceLayer;
+		if (Array.isArray(layer)) {
+			if (layer.length > 1) {
+				console.error("please, select 1 layer");
+				return;
+			} else if (layer.length < 1) {
+				console.error("no selected layer");
+				return;
+			} else {
+				sourceLayer = layer[0];
+			}
+		} else if (layer instanceof ol.layer.Base) {
+			sourceLayer = layer;
+		} else {
+			return;
+		}
+		if ( sourceLayer instanceof ol.layer.Vector ) {
+			this.interaction.snap = new ol.interaction.Snap({
+				source : sourceLayer.getSource()
+			});
+		} else if ( sourceLayer instanceof ol.layer.Base ) {
+			this.interaction.snap = new ol.interaction.Snap({
+				source : this.tempSource
+			});
+		}
+		this.map.addInteraction(this.interaction.snap);
+		this.activeIntrct_("snap");
+		// hochul''s code end
+		
 		this.activeIntrct_("modify");
 		this.activeBtn_("modiBtn");
 	} else {

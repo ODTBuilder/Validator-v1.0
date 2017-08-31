@@ -79,8 +79,14 @@ gitbuilder.ui.QAEdit = $.widget("gitbuilder.qaedit",
 				 * 
 				 * 
 				 */
-				var serverTitle = $("<h3>").addClass("panel-title").text("GeoServer");
-				var serverHead = $("<div>").addClass("panel-heading").append(serverTitle);
+				var icls = $("<i>").addClass("fa").addClass("fa-refresh").attr({
+					"aria-hidden" : "true"
+				});
+				var refBtn = $("<button>").addClass("pull-right").addClass("gitbuilder-clearbtn").append(icls).click(function() {
+					$(that.list).jstree("refresh");
+				});
+//				var serverTitle = $("<h3>").addClass("panel-title").text("GeoServer");
+				var serverHead = $("<div>").addClass("panel-heading").append("GeoServer").append(refBtn);
 				this.list = $("<div>").attr({
 					"id" : "geoserverList"
 				});
