@@ -1477,6 +1477,11 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 		while (simpleFeatureIterator.hasNext()) {
 			SimpleFeature relationSimpleFeatrue = simpleFeatureIterator.next();
 			Geometry relationGeometry = (Geometry) relationSimpleFeatrue.getDefaultGeometry();
+			Property featuerIDPro2 = simpleFeature.getProperty("feature_id");
+			String featureID2 = (String) featuerIDPro2.getValue();
+			if(featureID2.equals("RECORD 250")){
+				System.out.println();
+			}
 			if(geometry.intersects(relationGeometry)){
 				Geometry intersection = geometry.intersection(relationGeometry);
 				String intersectionType = intersection.getGeometryType().toUpperCase();
@@ -1495,7 +1500,7 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 			for (int i = 0; i < relationSimpleFeatures.size(); i++) {
 				SimpleFeature relationSimpleFeature = relationSimpleFeatures.get(i);
 				Geometry relationGeometry = (Geometry) relationSimpleFeature.getDefaultGeometry();
-				Geometry intersection = geometry.getBoundary().intersection(relationGeometry);
+				Geometry intersection = geometry.intersection(relationGeometry.getBoundary());
 				String intersectionType = intersection.getGeometryType().toUpperCase();
 				if(intersectionType.equals("MULTIPOINT") || intersectionType.equals("POINT")){
 					Coordinate[] coordinates = intersection.getCoordinates();
