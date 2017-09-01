@@ -127,6 +127,10 @@ public class EditDTLayerServiceImpl implements EditDTLayerService {
 				}
 				if (editCollection.isDeleted()) {
 					DTSHPLayerList layerList = editCollection.getDeletedLayerList();
+					if (editCollection.isDeleteAll()) {
+						String groupName = "gro" + "_" + type + "_" + collectionName;
+						geoserver.removeDTGeoserverAllLayer(userVO, groupName);
+					}
 					for (int j = 0; j < layerList.size(); j++) {
 						DTSHPLayer layer = layerList.get(j);
 						editDBManager.dropSHPLayer(userVO, isShp, collectionIdx, collectionName, layer);
@@ -134,10 +138,6 @@ public class EditDTLayerServiceImpl implements EditDTLayerService {
 					if (editCollection.isDeleteAll()) {
 						editDBManager.deleteSHPLayerCollection(userVO, collectionIdx);
 					}
-				}
-				if (editCollection.isDeleteAll()) {
-					String groupName = "gro" + "_" + type + "_" + collectionName;
-					geoserver.removeDTGeoserverAllLayer(userVO, groupName);
 				}
 			}
 		} catch (Exception e) {
@@ -213,6 +213,10 @@ public class EditDTLayerServiceImpl implements EditDTLayerService {
 
 				if (editCollection.isDeleted()) {
 					DTDXFLayerList layerList = editCollection.getDeletedLayerList();
+					if (editCollection.isDeleteAll()) {
+						String groupName = "gro" + "_" + type + "_" + collectionName;
+						geoserver.removeDTGeoserverAllLayer(userVO, groupName);
+					}
 					for (int j = 0; j < layerList.size(); j++) {
 						DTDXFLayer layer = layerList.get(j);
 						editDBManager.dropDXFLayer(userVO, isDxf, collectionIdx, collectionName, layer);
@@ -221,11 +225,7 @@ public class EditDTLayerServiceImpl implements EditDTLayerService {
 						editDBManager.deleteDXFLayerCollectionTablesCommon(userVO, collectionIdx);
 						editDBManager.deleteDXFLayerCollection(userVO, collectionIdx);
 					}
-					if (editCollection.isDeleteAll()) {
-						String groupName = "gro" + "_" + type + "_" + collectionName;
-						geoserver.removeDTGeoserverAllLayer(userVO, groupName);
-
-					}
+					
 				}
 			}
 		} catch (Exception e) {
@@ -302,16 +302,16 @@ public class EditDTLayerServiceImpl implements EditDTLayerService {
 				}
 				if (editCollection.isDeleted()) {
 					DTNGILayerList layerList = editCollection.getDeletedLayerList();
+					if (editCollection.isDeleteAll()) {
+						String groupName = "gro" + "_" + type + "_" + collectionName;
+						geoserver.removeDTGeoserverAllLayer(userVO, groupName);
+					}
 					for (int j = 0; j < layerList.size(); j++) {
 						DTNGILayer layer = layerList.get(j);
 						editDBManager.dropNGILayer(userVO, isNgi, collectionIdx, collectionName, layer);
 					}
 					if (editCollection.isDeleteAll()) {
 						editDBManager.deleteNGILayerCollection(userVO, collectionIdx);
-					}
-					if (editCollection.isDeleteAll()) {
-						String groupName = "gro" + "_" + type + "_" + collectionName;
-						geoserver.removeDTGeoserverAllLayer(userVO, groupName);
 					}
 				}
 			}

@@ -316,8 +316,8 @@ public class EditDTLayerParser {
 		editDXFLayer.setLayerName(layerName);
 		editDXFLayer.setOrignName(layerName);
 
-		String originLayerType = (String) layerObj.get("originLayerType");
-		editDXFLayer.setOriginLayerType(originLayerType);
+		String originLayerType = (String) layerObj.get("layerType");
+		editDXFLayer.setOriginLayerType(originLayerType.toUpperCase());
 
 		String layerType = "";
 		if (originLayerType.equals("LINE")) {

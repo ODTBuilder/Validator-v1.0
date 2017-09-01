@@ -131,12 +131,6 @@ public class DXFDBManagerServiceImpl implements DXFDBManagerService {
 			for (int i = 0; i < createLayerList.size(); i++) {
 				DTDXFLayer qa10Layer = createLayerList.get(i);
 				String layerId = qa10Layer.getLayerID();
-				
-				if(layerId.equals("A0023119_LWPOLYLINE")) {
-					System.out.println("");
-				}
-				
-
 				// isFeature
 				if (qa10Layer.getQa10FeatureList().size() == 0) {
 					isFeaturesMap.put(layerId, false);
