@@ -47,6 +47,7 @@ import com.git.gdsbuilder.type.validate.option.EntityNone;
 import com.git.gdsbuilder.type.validate.option.HoleMisplacement;
 import com.git.gdsbuilder.type.validate.option.HouseAttribute;
 import com.git.gdsbuilder.type.validate.option.LayerMiss;
+import com.git.gdsbuilder.type.validate.option.LinearDisconnection;
 import com.git.gdsbuilder.type.validate.option.NeatLineAttribute;
 import com.git.gdsbuilder.type.validate.option.NodeMiss;
 import com.git.gdsbuilder.type.validate.option.NumericalValue;
@@ -656,6 +657,24 @@ public class ValidateTypeParser {
 					}
 					ValidatorOption entityInHole = new EntityInHole(relations);
 					optionList.add(entityInHole);
+				}
+			}
+			
+			if(optionName.equalsIgnoreCase(LinearDisconnection.Type.LINEARDISCONNECTION.errName())){
+				Object linearDisconnectionObj = qaOptions.get("LinearDisconnection");
+				if(linearDisconnectionObj == null){
+					continue;
+				}else{
+					List<String> relations = new ArrayList<>();
+					JSONObject linearDisconnectionValue = (JSONObject) linearDisconnectionObj;
+					JSONArray relationValues = (JSONArray) linearDisconnectionValue.get("relation");
+					int valueSize = relationValues.size();
+					for (int i = 0; i < valueSize; i++) {
+						String relationID = (String) relationValues.get(i);
+						relations.add(relationID);
+					}
+					ValidatorOption linearDisconnection = new LinearDisconnection(relations);
+					optionList.add(linearDisconnection);
 				}
 			}
 			

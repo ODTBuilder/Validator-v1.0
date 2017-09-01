@@ -313,4 +313,16 @@ public interface FeatureGraphicValidator {
 	 * @throws
 	 * */
 	public List<ErrorFeature> validateEntityInHole(SimpleFeature simpleFeature, SimpleFeatureCollection relationSfc);
+	
+	/**
+	 * 검수 항목 중 "선형단락 오류(LinearDisconnection)" 검수
+	 * @author JY.Kim
+	 * @Date 2017. 8. 24. 오후 5:47:29
+	 * @param simpleFeature
+	 * @param relationSfc
+	 * @return List<ErrorFeature>
+	 * @throws
+	 * */
+	public List<ErrorFeature> validateLinearDisconnection(SimpleFeature simpleFeature, SimpleFeatureCollection relationSfc);
+	
 }
