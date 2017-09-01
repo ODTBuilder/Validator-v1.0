@@ -230,6 +230,28 @@ public class DXFDBQueryManager {
 		return layerQuerys;
 	}
 
+	public HashMap<String, Object> getInsertTablesLayerQuery(int tbIdx, Map<String, Object> tables) {
+
+		String tableName = "\"" + "qa10_layercollection_table_layer" + "\"";
+		String layerColumnQuery = "insert into " + tableName + "(";
+		String layerValuesQuery = "values(";
+		Iterator layerIt = tables.keySet().iterator();
+		while (layerIt.hasNext()) {
+			String code = (String) layerIt.next();
+			Object value = tables.get(code);
+			layerColumnQuery += "\"" + code + "\"" + ",";
+			layerValuesQuery += "'" + value + "', ";
+		}
+		layerColumnQuery += "tc_idx" + ")";
+		layerValuesQuery += tbIdx + ")";
+
+		String returnQuery = layerColumnQuery + layerValuesQuery;
+		HashMap<String, Object> query = new HashMap<String, Object>();
+		query.put("insertQuery", returnQuery);
+
+		return query;
+	}
+
 	public List<HashMap<String, Object>> getInsertBlocksCommonQuery(int cIdx,
 			List<LinkedHashMap<String, Object>> blocks) {
 

@@ -2,7 +2,6 @@ package com.git.gdsbuilder.FileRead.shp;
 
 import java.io.File;
 import java.nio.charset.Charset;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,11 +14,9 @@ import org.geotools.data.simple.SimpleFeatureIterator;
 import org.geotools.data.simple.SimpleFeatureSource;
 import org.geotools.feature.DefaultFeatureCollection;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
-import org.geotools.feature.simple.SimpleFeatureTypeImpl;
 import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
-import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.feature.type.GeometryType;
 import org.opengis.filter.Filter;
 
@@ -97,12 +94,12 @@ public class SHPFileReader {
 								newCollection.add(sf);
 							}
 						}
-						dtLayer.setLayerType(geomType);
+						dtLayer.setLayerType(geomType.toUpperCase());
 						dtLayer.setSimpleFeatureCollection(newCollection);
 						dtLayer.setLayerName(shpName.toUpperCase() + "_" + geomType.toUpperCase());
 						dtLayerList.add(dtLayer);
 					} else {
-						dtLayer.setLayerType(geomType);
+						dtLayer.setLayerType(geomType.toUpperCase());
 						dtLayer.setLayerName(shpName.toUpperCase() + "_" + geomType.toUpperCase());
 						dtLayerList.add(dtLayer);
 					}

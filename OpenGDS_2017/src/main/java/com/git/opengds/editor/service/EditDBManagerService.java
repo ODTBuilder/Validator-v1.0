@@ -17,6 +17,7 @@
 
 package com.git.opengds.editor.service;
 
+import java.net.MalformedURLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -80,7 +81,7 @@ public interface EditDBManagerService {
 			DTNGILayer layer) throws RuntimeException;
 
 	public boolean createDXFLayer(UserVO userVO, String type, Integer collectionIdx, String collectionName,
-			DTDXFLayer createLayer, String src) throws RuntimeException;
+			DTDXFLayer createLayer, String src) throws RuntimeException, MalformedURLException;
 
 	public boolean dropDXFLayer(UserVO userVO, String type, Integer collectionIdx, String collectionName,
 			DTDXFLayer layer) throws RuntimeException;

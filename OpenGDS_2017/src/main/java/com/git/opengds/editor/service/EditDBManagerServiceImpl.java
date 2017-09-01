@@ -17,6 +17,7 @@
 
 package com.git.opengds.editor.service;
 
+import java.net.MalformedURLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +34,7 @@ import com.git.gdsbuilder.edit.shp.EditSHPLayerCollection;
 import com.git.gdsbuilder.type.dxf.feature.DTDXFFeature;
 import com.git.gdsbuilder.type.dxf.layer.DTDXFLayer;
 import com.git.gdsbuilder.type.dxf.structure.DTDXFTables;
+import com.git.gdsbuilder.type.geoserver.layer.GeoLayerInfo;
 import com.git.gdsbuilder.type.ngi.collection.DTNGILayerCollection;
 import com.git.gdsbuilder.type.ngi.feature.DTNGIFeature;
 import com.git.gdsbuilder.type.ngi.header.NDAField;
@@ -524,7 +526,7 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 
 	@Override
 	public boolean createDXFLayer(UserVO userVO, String type, Integer collectionIdx, String collectionName,
-			DTDXFLayer createLayer, String src) throws RuntimeException {
+			DTDXFLayer createLayer, String src) throws RuntimeException, MalformedURLException {
 
 		DXFDBQueryManager queryManager = new DXFDBQueryManager();
 
@@ -558,19 +560,29 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 			// tablesLayer
 			DTDXFTables tables = new DTDXFTables();
 			Map<String, Object> tbLayers = tables.getLayerValues(createLayer);
-			HashMap<String, Object> tablesQuery = queryManager.getInsertTablesQuery(collectionIdx, tbLayers);
-			int tbIdx = dxfDAO.insertDXFLayerCollectionTableCommon(userVO, tablesQuery);
+			tables.setLayers(true);
+			HashMap<String, Object> tablesQuery = queryManager.getSelectTableCommonQuery(collectionIdx);
+			int tbIdx = dxfDAO.selectTableCommonIdx(userVO, tablesQuery);
 			if (tables.isLayers()) {
-				List<HashMap<String, Object>> layersQuery = queryManager.getInsertTablesLayersQuery(tbIdx, tbLayers);
-				for (int i = 0; i < layersQuery.size(); i++) {
-					dxfDAO.insertDXFLayerCollectionTableLayers(userVO, layersQuery.get(i));
-				}
+				HashMap<String, Object> layerQuery = queryManager.getInsertTablesLayerQuery(tbIdx, tbLayers);
+				dxfDAO.insertDXFLayerCollectionTableLayers(userVO, layerQuery);
 			}
 		} catch (Exception e) {
 			// txManager.rollback(status);
 			return false;
 		}
-		// txManager.commit(status);
+		GeoLayerInfo layerInfo = new GeoLayerInfo();
+		layerInfo.setOriginSrc(src);
+		layerInfo.setTransSrc(src);
+		layerInfo.setFileType("dxf");
+		layerInfo.setFileName(collectionName);
+		String layerId = createLayer.getLayerID();
+		layerInfo.putLayerName(layerId);
+		String layerType = createLayer.getLayerType();
+		layerInfo.putLayerType(layerId, layerType);
+		List<String> columns = queryManager.getLayerColumns();
+		layerInfo.putLayerColumns(layerId, columns);
+		geoserverService.dbLayerPublishGeoserver(userVO, layerInfo);
 		return true;
 	}
 
@@ -724,7 +736,6 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 		boolean isSuccessed = geoserverService.updateFeatureType(userVO, tableName, tableNameCurrent, title, summary,
 				"", attChangeFlag);
 		if (isSuccessed) {
-			// txManager.commit(status);
 			return true;
 		} else {
 			return false;

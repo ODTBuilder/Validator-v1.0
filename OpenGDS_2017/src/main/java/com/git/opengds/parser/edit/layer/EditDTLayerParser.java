@@ -320,24 +320,25 @@ public class EditDTLayerParser {
 		editDXFLayer.setOriginLayerType(originLayerType.toUpperCase());
 
 		String layerType = "";
-		if (originLayerType.equals("LINE")) {
+		if (originLayerType.equals("LineString")) {
 			layerType = "LineString";
-		} else if (originLayerType.equals("POLYLINE")) {
+		} else if (originLayerType.equals("Polyline")) {
 			layerType = "LineString";
-		} else if (originLayerType.equals("LWPOLYLINE")) {
+		} else if (originLayerType.equals("LWPolyline")) {
 			layerType = "LineString";
-		} else if (originLayerType.equals("INSERT")) {
+		} else if (originLayerType.equals("Insert")) {
 			layerType = "Point";
-		} else if (originLayerType.equals("TEXT")) {
+		} else if (originLayerType.equals("Text")) {
 			layerType = "Point";
-		} else if (originLayerType.equals("SOLID")) {
+		} else if (originLayerType.equals("Solid")) {
 			layerType = "Polygon";
-		} else if (originLayerType.equals("CIRCLE")) {
+		} else if (originLayerType.equals("Circle")) {
 			layerType = "Polygon";
-		} else if (originLayerType.equals("ARC")) {
+		} else if (originLayerType.equals("Arc")) {
 			layerType = "LineString";
 		}
-		editDXFLayer.setLayerType(layerType);
+		editDXFLayer.setLayerType(layerType.toUpperCase());
+		System.out.println("");
 	}
 
 	public void shpModifiedLayerParse() {
