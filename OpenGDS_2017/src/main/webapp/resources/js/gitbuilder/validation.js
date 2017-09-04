@@ -564,12 +564,18 @@ gitbuilder.ui.Validation = $.widget("gitbuilder.validation", {
 		var notDupObj = {};
 		for (var i = 0; i < keys.length; i++) {
 			var type = "default";
-			if ($(this.tree).jstree("get_node", keys[i]).type === "n_ngi_layer_pt") {
+			if ($(this.tree).jstree("get_node", keys[i]).type === "n_ngi_layer_pt" || $(this.tree).jstree("get_node", keys[i]).type === "n_shp_layer_pt") {
 				type = "POINT";
-			} else if ($(this.tree).jstree("get_node", keys[i]).type === "n_ngi_layer_ln") {
+			} else if ($(this.tree).jstree("get_node", keys[i]).type === "n_ngi_layer_ln" || $(this.tree).jstree("get_node", keys[i]).type === "n_shp_layer_ln") {
 				type = "LINESTRING";
-			} else if ($(this.tree).jstree("get_node", keys[i]).type === "n_ngi_layer_pg") {
+			} else if ($(this.tree).jstree("get_node", keys[i]).type === "n_ngi_layer_pg" || $(this.tree).jstree("get_node", keys[i]).type === "n_shp_layer_pg") {
 				type = "POLYGON";
+			} else if ($(this.tree).jstree("get_node", keys[i]).type === "n_ngi_layer_mpt" || $(this.tree).jstree("get_node", keys[i]).type === "n_shp_layer_mpt") {
+				type = "MULTIPOINT";
+			} else if ($(this.tree).jstree("get_node", keys[i]).type === "n_ngi_layer_mln" || $(this.tree).jstree("get_node", keys[i]).type === "n_shp_layer_mln") {
+				type = "MULTILINESTRING";
+			} else if ($(this.tree).jstree("get_node", keys[i]).type === "n_ngi_layer_mpg" || $(this.tree).jstree("get_node", keys[i]).type === "n_shp_layer_mpg") {
+				type = "MULTIPOLYGON";
 			} else if ($(this.tree).jstree("get_node", keys[i]).type === "n_ngi_layer_txt") {
 				type = "TEXT";
 			} else if ($(this.tree).jstree("get_node", keys[i]).type === "n_dxf_layer_arc") {
