@@ -153,7 +153,8 @@ html {
 				</div>
 
 				<div class="panel-body" style="padding: 0;">
-					<input type="text" class="form-control builder-tree-search" id="inputSearchServer" />
+					<input type="text" class="form-control builder-tree-search" id="inputSearchServer"
+						style="font-family: fontAwesome;" placeholder="&#xF002;" />
 					<div id="builderServerLayer" class="gitbuilder-layer-panel"></div>
 				</div>
 			</div>
@@ -165,7 +166,8 @@ html {
 					</button>
 				</div>
 				<div class="panel-body" style="padding: 0;">
-					<input type="text" class="form-control builder-tree-search" id="inputSearchClient" />
+					<input type="text" class="form-control builder-tree-search" id="inputSearchClient"
+						style="font-family: fontAwesome;" placeholder="&#xF002;" />
 					<div id="builderClientLayer" class="gitbuilder-layer-panel"></div>
 				</div>
 			</div>
@@ -390,7 +392,7 @@ html {
 				"animation" : 0,
 				"themes" : {
 					"stripes" : true
-				},
+				}
 			},
 			"layerproperties" : {
 				"properties" : lprop,
@@ -400,6 +402,12 @@ html {
 			},
 			"search" : {
 				show_only_matches : true
+			},
+			"legends" : {
+				"url" : "http://175.116.181.42:9990/geoserver/wms",
+				"width" : "15",
+				"height" : "15",
+				"format" : "image/png"
 			},
 			plugins : [ "contextmenu", "dnd", "search", "state", "types", "sort", "visibility", "layerproperties" ]
 		});
