@@ -132,9 +132,6 @@ public class ErrorLayerExportServiceImpl implements ErrorLayerExportService {
 					aspatialField = qa20LayerCollectionDAO.selectNdaAspatialField(userVO, selectNdaAspatialFieldQuery);
 					// layerTB
 					String layerTbName = (String) metaMap.get("layer_t_name");
-					if(layerTbName.equals("\"geo_ngi_37712002_H0040000_TEXT\"")) {
-						System.out.println("");
-					}
 					HashMap<String, Object> selectAllFeaturesQuery = qa20dbManager
 							.getSelectAllNGIFeaturesQuery(layerTbName, aspatialField);
 					List<HashMap<String, Object>> featuresMapList = qa20LayerCollectionDAO.selectAllNGIFeatures(userVO,

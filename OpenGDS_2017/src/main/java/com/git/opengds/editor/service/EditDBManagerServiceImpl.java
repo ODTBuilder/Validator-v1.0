@@ -34,10 +34,8 @@ import com.git.gdsbuilder.edit.shp.EditSHPLayerCollection;
 import com.git.gdsbuilder.type.dxf.feature.DTDXFFeature;
 import com.git.gdsbuilder.type.dxf.layer.DTDXFLayer;
 import com.git.gdsbuilder.type.dxf.structure.DTDXFTables;
-import com.git.gdsbuilder.type.geoserver.layer.GeoLayerInfo;
 import com.git.gdsbuilder.type.ngi.collection.DTNGILayerCollection;
 import com.git.gdsbuilder.type.ngi.feature.DTNGIFeature;
-import com.git.gdsbuilder.type.ngi.header.NDAField;
 import com.git.gdsbuilder.type.ngi.header.NDAHeader;
 import com.git.gdsbuilder.type.ngi.header.NGIHeader;
 import com.git.gdsbuilder.type.ngi.layer.DTNGILayer;
@@ -51,17 +49,12 @@ import com.git.opengds.file.ngi.dbManager.NGIDBQueryManager;
 import com.git.opengds.file.ngi.persistence.NGILayerCollectionDAO;
 import com.git.opengds.file.shp.dbManager.SHPDBQueryManager;
 import com.git.opengds.file.shp.persistence.SHPLayerCollectionDAO;
-import com.git.opengds.geoserver.service.GeoserverService;
 import com.git.opengds.user.domain.UserVO;
 import com.git.opengds.validator.persistence.ValidateProgressDAO;
 
 @Service
 @ContextConfiguration(locations = { "file:src/main/webapp/WEB-INF/spring/**/*.xml" })
 public class EditDBManagerServiceImpl implements EditDBManagerService {
-
-	/*
-	 * @Inject private DataSourceTransactionManager txManager;
-	 */
 
 	@Inject
 	private NGILayerCollectionDAO ngiDAO;
@@ -74,9 +67,6 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 
 	@Inject
 	private ValidateProgressDAO progressDAO;
-
-	@Inject
-	private GeoserverService geoserverService;
 
 	public Integer selectNGILayerCollectionIdx(UserVO userVO, String collectionName) throws RuntimeException {
 
@@ -147,8 +137,8 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 	}
 
 	@Override
-	public boolean createNGILayer(UserVO userVO, String type, Integer idx, String collectionName, DTNGILayer qa20Layer,
-			String src) throws RuntimeException {
+	public boolean createNGILayer(UserVO userVO, String type, Integer idx, String collectionName,
+			DTNGILayer createLayer, String src) throws RuntimeException, MalformedURLException {
 
 		/*
 		 * DefaultTransactionDefinition def = new
@@ -156,21 +146,19 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 		 * def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED
 		 * ); TransactionStatus status = txManager.getTransaction(def);
 		 */
-
+		NGIDBQueryManager queryManager = new NGIDBQueryManager();
 		try {
-			NGIDBQueryManager queryManager = new NGIDBQueryManager();
-
 			// createQA20Layer
-			HashMap<String, Object> createQuery = queryManager.getNGILayerTbCreateQuery(type, collectionName, qa20Layer,
-					src);
+			HashMap<String, Object> createQuery = queryManager.getNGILayerTbCreateQuery(type, collectionName,
+					createLayer, src);
 			ngiDAO.createNGILayerTb(userVO, createQuery);
 
 			// insertLayerMedata
 			HashMap<String, Object> insertQueryMap = queryManager.getInsertNGILayerMeataData(type, collectionName, idx,
-					qa20Layer);
+					createLayer);
 			int lmIdx = ngiDAO.insertNGILayerMetadata(userVO, insertQueryMap);
 
-			NDAHeader ndaHeader = qa20Layer.getNdaHeader();
+			NDAHeader ndaHeader = createLayer.getNdaHeader();
 			// aspatial_field_def
 			List<HashMap<String, Object>> fieldDefs = queryManager.getAspatialFieldDefsInsertQuery(lmIdx, ndaHeader);
 			if (fieldDefs != null) {
@@ -178,7 +166,7 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 					ngiDAO.insertNdaAspatialFieldDefs(userVO, fieldDefs.get(j));
 				}
 			}
-			NGIHeader ngiHeader = qa20Layer.getNgiHeader();
+			NGIHeader ngiHeader = createLayer.getNgiHeader();
 			// point_represent
 			List<HashMap<String, Object>> ptReps = queryManager.getPtRepresentInsertQuery(lmIdx,
 					ngiHeader.getPoint_represent());
@@ -260,92 +248,102 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 		// txManager.commit(status);
 	}
 
-	@Override
-	public boolean modifyNGILayer(UserVO userVO, String type, Integer collectionIdx, String collectionName,
-			DTNGILayer qa20Layer, Map<String, Object> geoLayer) throws RuntimeException {
-
-		/*
-		 * DefaultTransactionDefinition def = new
-		 * DefaultTransactionDefinition();
-		 * def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED
-		 * ); TransactionStatus status = txManager.getTransaction(def);
-		 */
-
-		NGIDBQueryManager queryManager = new NGIDBQueryManager();
-		try {
-			String orignName = qa20Layer.getOriginLayerName();
-			HashMap<String, Object> queryMap = queryManager.getSelectNGILayerMetaDataIdxQuery(collectionIdx, orignName);
-			Integer lmIdx = ngiDAO.selectNGILayerMetadataIdx(userVO, queryMap);
-
-			// meta Tb - layerName update
-			String currentName = qa20Layer.getLayerName();
-			if (!currentName.equals(orignName)) {
-				HashMap<String, Object> updateLayerNameQuery = queryManager.getUpdateNGILayerMeataLayerNameQuery(lmIdx,
-						currentName);
-				ngiDAO.updateNGILayerMetadataLayerName(userVO, updateLayerNameQuery);
-			}
-
-			NGIHeader ngiHeader = qa20Layer.getNgiHeader();
-			// meta Tb - boundary update
-			// String boundary = ngiHeader.getBound();
-			// HashMap<String, Object> updateBoundaryQuery =
-			// queryManager.getUpdateQA20LayerMeataBoundaryQuery(lmIdx,
-			// boundary);
-			// qa20DAO.updateQA20LayerMetadataBoundary(userVO,updateBoundaryQuery);
-
-			// ngi_point_rep Tb update
-
-			// ngi_linestring_rep Tb update
-
-			// ngi_region_rep Tb update
-
-			// ngi_text_rep Tb update
-
-			// nda_aspatial Tb update
-			NDAHeader ndaHeader = qa20Layer.getNdaHeader();
-			List<NDAField> fields = ndaHeader.getAspatial_field_def();
-			for (int j = 0; j < fields.size(); j++) {
-				// updated
-				NDAField modifiedfield = fields.get(j);
-				String originFieldName = modifiedfield.getOriginFieldName();
-
-				// origin
-				HashMap<String, Object> selectNadFieldsQuery = queryManager.getNdaAspatialFieldFidxQuery(lmIdx,
-						originFieldName);
-				HashMap<String, Object> fIdxMap = ngiDAO.selectNdaAspatialFieldFidxs(userVO, selectNadFieldsQuery);
-				if (fIdxMap != null) {
-					// update
-					int fIdx = (Integer) fIdxMap.get("f_idx");
-					HashMap<String, Object> updateFieldQuery = queryManager.updateNdaAspatialFieldQuery(fIdx,
-							modifiedfield);
-					ngiDAO.updateNdaAspatialField(userVO, updateFieldQuery);
-				} else {
-					// insert
-					HashMap<String, Object> insertFieldQuery = queryManager.getAspatialFieldDefsInsertQuery(lmIdx,
-							modifiedfield);
-					ngiDAO.insertNdaAspatialFieldDefs(userVO, insertFieldQuery);
-				}
-			}
-		} catch (Exception e) {
-			// txManager.rollback(status);
-			return false;
-		}
-		// update Geoserver
-		String originalName = (String) geoLayer.get("orignalName");
-		String name = (String) geoLayer.get("name");
-		String title = (String) geoLayer.get("title");
-		String summary = (String) geoLayer.get("summary");
-		boolean attChangeFlag = (Boolean) geoLayer.get("attChangeFlag");
-		String tableName = "geo_" + type + "_" + collectionName + "_" + originalName;
-		boolean isSuccessed = geoserverService.updateFeatureType(userVO, tableName, name, title, summary, "",
-				attChangeFlag);
-		if (isSuccessed) {
-			// txManager.commit(status);
-			return true;
-		} else {
-			return false;
-		}
-	}
+	// @Override
+	// public boolean modifyNGILayer(UserVO userVO, String type, Integer
+	// collectionIdx, String collectionName,
+	// DTNGILayer qa20Layer, Map<String, Object> geoLayer) throws
+	// RuntimeException {
+	//
+	// /*
+	// * DefaultTransactionDefinition def = new
+	// * DefaultTransactionDefinition();
+	// * def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED
+	// * ); TransactionStatus status = txManager.getTransaction(def);
+	// */
+	//
+	// NGIDBQueryManager queryManager = new NGIDBQueryManager();
+	// try {
+	// String orignName = qa20Layer.getOriginLayerName();
+	// HashMap<String, Object> queryMap =
+	// queryManager.getSelectNGILayerMetaDataIdxQuery(collectionIdx, orignName);
+	// Integer lmIdx = ngiDAO.selectNGILayerMetadataIdx(userVO, queryMap);
+	//
+	// // meta Tb - layerName update
+	// String currentName = qa20Layer.getLayerName();
+	// if (!currentName.equals(orignName)) {
+	// HashMap<String, Object> updateLayerNameQuery =
+	// queryManager.getUpdateNGILayerMeataLayerNameQuery(lmIdx,
+	// currentName);
+	// ngiDAO.updateNGILayerMetadataLayerName(userVO, updateLayerNameQuery);
+	// }
+	//
+	// NGIHeader ngiHeader = qa20Layer.getNgiHeader();
+	// // meta Tb - boundary update
+	// // String boundary = ngiHeader.getBound();
+	// // HashMap<String, Object> updateBoundaryQuery =
+	// // queryManager.getUpdateQA20LayerMeataBoundaryQuery(lmIdx,
+	// // boundary);
+	// // qa20DAO.updateQA20LayerMetadataBoundary(userVO,updateBoundaryQuery);
+	//
+	// // ngi_point_rep Tb update
+	//
+	// // ngi_linestring_rep Tb update
+	//
+	// // ngi_region_rep Tb update
+	//
+	// // ngi_text_rep Tb update
+	//
+	// // nda_aspatial Tb update
+	// NDAHeader ndaHeader = qa20Layer.getNdaHeader();
+	// List<NDAField> fields = ndaHeader.getAspatial_field_def();
+	// for (int j = 0; j < fields.size(); j++) {
+	// // updated
+	// NDAField modifiedfield = fields.get(j);
+	// String originFieldName = modifiedfield.getOriginFieldName();
+	//
+	// // origin
+	// HashMap<String, Object> selectNadFieldsQuery =
+	// queryManager.getNdaAspatialFieldFidxQuery(lmIdx,
+	// originFieldName);
+	// HashMap<String, Object> fIdxMap =
+	// ngiDAO.selectNdaAspatialFieldFidxs(userVO, selectNadFieldsQuery);
+	// if (fIdxMap != null) {
+	// // update
+	// int fIdx = (Integer) fIdxMap.get("f_idx");
+	// HashMap<String, Object> updateFieldQuery =
+	// queryManager.updateNdaAspatialFieldQuery(fIdx,
+	// modifiedfield);
+	// ngiDAO.updateNdaAspatialField(userVO, updateFieldQuery);
+	// } else {
+	// // insert
+	// HashMap<String, Object> insertFieldQuery =
+	// queryManager.getAspatialFieldDefsInsertQuery(lmIdx,
+	// modifiedfield);
+	// ngiDAO.insertNdaAspatialFieldDefs(userVO, insertFieldQuery);
+	// }
+	// }
+	// } catch (Exception e) {
+	// // txManager.rollback(status);
+	// return false;
+	// }
+	// // update Geoserver
+	// String originalName = (String) geoLayer.get("orignalName");
+	// String name = (String) geoLayer.get("name");
+	// String title = (String) geoLayer.get("title");
+	// String summary = (String) geoLayer.get("summary");
+	// boolean attChangeFlag = (Boolean) geoLayer.get("attChangeFlag");
+	// String tableName = "geo_" + type + "_" + collectionName + "_" +
+	// originalName;
+	// boolean isSuccessed = geoserverService.updateFeatureType(userVO,
+	// tableName, name, title, summary, "",
+	// attChangeFlag);
+	// if (isSuccessed) {
+	// // txManager.commit(status);
+	// return true;
+	// } else {
+	// return false;
+	// }
+	// }
 
 	@Override
 	public List<HashMap<String, Object>> getNGILayerMetadataIdx(UserVO userVO, Integer collectionIdx)
@@ -427,22 +425,11 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 
 			HashMap<String, Object> dropQuery = queryManager.getDropNGILayerQuery(type, collectionName, layerName);
 			ngiDAO.dropLayer(userVO, dropQuery);
-
-			String layerTableName = "geo" + "_" + type + "_" + collectionName + "_" + layerName;
-			String groupName = "gro" + "_" + type + "_" + collectionName;
-			isSuccessed = geoserverService.removeDTGeoserverLayer(userVO, groupName, layerTableName);
-			// HashMap<String, Object> deleteLayerCollectionQuery = queryManager
-			// .getDeleteQA20LayerCollectionQuery(collectionIdx);
-			// qa20DAO.deleteField(deleteLayerCollectionQuery);
-			if (isSuccessed) {
-				return true;
-			} else {
-				throw new RuntimeException();
-			}
 		} catch (RuntimeException e) {
 			// txManager.rollback(status);
 			throw new RuntimeException();
 		}
+		return true;
 	}
 
 	@Override
@@ -459,13 +446,6 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 			throws RuntimeException {
 
 		DXFDBQueryManager queryManager = new DXFDBQueryManager();
-
-		/*
-		 * DefaultTransactionDefinition def = new
-		 * DefaultTransactionDefinition();
-		 * def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED
-		 * ); TransactionStatus status = txManager.getTransaction(def);
-		 */
 		try {
 			// 1. featureID 조회
 			String featureID = modifyFeature.getFeatureID();
@@ -481,9 +461,8 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 			HashMap<String, Object> insertFeatureMap = queryManager.getInertDXFFeatureQuery(tableName, modifyFeature);
 			dxfDAO.insertDXFFeature(userVO, insertFeatureMap);
 		} catch (Exception e) {
-			// txManager.rollback(status);
+			
 		}
-		// txManager.commit(status);
 	}
 
 	@Override
@@ -491,12 +470,6 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 
 		DXFDBQueryManager queryManager = new DXFDBQueryManager();
 
-		/*
-		 * DefaultTransactionDefinition def = new
-		 * DefaultTransactionDefinition();
-		 * def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED
-		 * ); TransactionStatus status = txManager.getTransaction(def);
-		 */
 		try {
 			HashMap<String, Object> selectIdxqueryMap = queryManager.getSelectDXFFeatureIdxQuery(tableName, featureId);
 			HashMap<String, Object> idxMap = dxfDAO.selectDXFFeatureIdx(userVO, selectIdxqueryMap);
@@ -530,27 +503,10 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 
 		DXFDBQueryManager queryManager = new DXFDBQueryManager();
 
-		/*
-		 * DefaultTransactionDefinition def = new
-		 * DefaultTransactionDefinition();
-		 * def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED
-		 * ); TransactionStatus status = txManager.getTransaction(def);
-		 */
-
 		try {
 			HashMap<String, Object> createQuery = queryManager.getDXFLayerTbCreateQuery(type, collectionName,
 					createLayer, src);
 			dxfDAO.createDXFLayerTb(userVO, createQuery);
-
-			// insertQA10Layer
-			/*
-			 * List<HashMap<String, Object>> inertLayerQuerys =
-			 * queryManager.qa10LayerTbInsertQuery(type, collectionName,
-			 * createLayer, src); for (int j = 0; j < inertLayerQuerys.size();
-			 * j++) { HashMap<String, Object> insertLayerQuery =
-			 * inertLayerQuerys.get(j);
-			 * qa10DAO.insertQA10Layer(insertLayerQuery); }
-			 */
 
 			// insertLayerMetadata
 			HashMap<String, Object> insertQueryMap = queryManager.getInsertDXFLayerMeataDataQuery(type, collectionName,
@@ -560,42 +516,32 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 			// tablesLayer
 			DTDXFTables tables = new DTDXFTables();
 			Map<String, Object> tbLayers = tables.getLayerValues(createLayer);
-			tables.setLayers(true);
+			if (tbLayers.size() != 0) {
+				tables.setLayers(true);
+			}
 			HashMap<String, Object> tablesQuery = queryManager.getSelectTableCommonQuery(collectionIdx);
-			int tbIdx = dxfDAO.selectTableCommonIdx(userVO, tablesQuery);
-			if (tables.isLayers()) {
-				HashMap<String, Object> layerQuery = queryManager.getInsertTablesLayerQuery(tbIdx, tbLayers);
+			Integer tbIdx = dxfDAO.selectTableCommonIdx(userVO, tablesQuery);
+			if (tbIdx != null) {
+				if (tables.isLayers()) {
+					HashMap<String, Object> layerQuery = queryManager.getInsertTablesLayerQuery(tbIdx, tbLayers);
+					dxfDAO.insertDXFLayerCollectionTableLayers(userVO, layerQuery);
+				}
+			} else {
+				Map<String, Object> tbCommons = tables.getTableCommonsValue();
+				HashMap<String, Object> tableCommonQuery = queryManager.getInsertTablesQuery(collectionIdx, tbCommons);
+				int insertTbIdx = dxfDAO.insertDXFLayerCollectionTableCommon(userVO, tableCommonQuery);
+				HashMap<String, Object> layerQuery = queryManager.getInsertTablesLayerQuery(insertTbIdx, tbLayers);
 				dxfDAO.insertDXFLayerCollectionTableLayers(userVO, layerQuery);
 			}
 		} catch (Exception e) {
-			// txManager.rollback(status);
 			return false;
 		}
-		GeoLayerInfo layerInfo = new GeoLayerInfo();
-		layerInfo.setOriginSrc(src);
-		layerInfo.setTransSrc(src);
-		layerInfo.setFileType("dxf");
-		layerInfo.setFileName(collectionName);
-		String layerId = createLayer.getLayerID();
-		layerInfo.putLayerName(layerId);
-		String layerType = createLayer.getLayerType();
-		layerInfo.putLayerType(layerId, layerType);
-		List<String> columns = queryManager.getLayerColumns();
-		layerInfo.putLayerColumns(layerId, columns);
-		geoserverService.dbLayerPublishGeoserver(userVO, layerInfo);
 		return true;
 	}
 
 	@Override
 	public boolean dropDXFLayer(UserVO userVO, String type, Integer collectionIdx, String collectionName,
 			DTDXFLayer layer) throws RuntimeException {
-
-		/*
-		 * DefaultTransactionDefinition def = new
-		 * DefaultTransactionDefinition();
-		 * def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED
-		 * ); TransactionStatus status = txManager.getTransaction(def);
-		 */
 
 		String layerId = layer.getLayerID();
 		String[] typeSplit = layerId.split("_");
@@ -666,33 +612,16 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 				HashMap<String, Object> deleteLayerMetaQuery = dbManager.getDeleteDXFLayerMetaQuery(mIdx);
 				int layerMetadata = dxfDAO.deleteField(userVO, deleteLayerMetaQuery);
 			}
-			String layerTableName = "geo" + "_" + type + "_" + collectionName + "_" + layerId;
-			String groupName = "gro" + "_" + type + "_" + collectionName;
-			isSuccessed = geoserverService.removeDTGeoserverLayer(userVO, groupName, layerTableName);
-			// HashMap<String, Object> deleteLayerCollectionQuery = queryManager
-			// .getDeleteQA20LayerCollectionQuery(collectionIdx);
-			// qa20DAO.deleteField(deleteLayerCollectionQuery);
-			if (isSuccessed) {
-				return true;
-			} else {
-				throw new RuntimeException();
-			}
 		} catch (RuntimeException e) {
 			// txManager.rollback(status);
 			throw new RuntimeException();
 		}
+		return true;
 	}
 
 	@Override
 	public boolean modifyDXFLayer(UserVO userVO, String type, Integer collectionIdx, String collectionName,
 			DTDXFLayer qa10Layer, Map<String, Object> geoLayer) throws RuntimeException {
-
-		/*
-		 * DefaultTransactionDefinition def = new
-		 * DefaultTransactionDefinition();
-		 * def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED
-		 * ); TransactionStatus status = txManager.getTransaction(def);
-		 */
 
 		DXFDBQueryManager queryManager = new DXFDBQueryManager();
 
@@ -721,26 +650,9 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 			HashMap<String, Object> updateTlIdQuery = queryManager.getUpdateTableLayerIdQuery(tlIdx, currentId);
 			dxfDAO.updateTableLayerId(userVO, updateTlIdQuery);
 		} catch (Exception e) {
-			// txManager.rollback(status);
 			return false;
 		}
-		// txManager.commit(status);
-		// update Geoserver
-		String originalName = (String) geoLayer.get("orignalName");
-		String name = (String) geoLayer.get("name");
-		String title = (String) geoLayer.get("title");
-		String summary = (String) geoLayer.get("summary");
-		boolean attChangeFlag = (Boolean) geoLayer.get("attChangeFlag");
-		String tableName = "geo_" + type + "_" + collectionName + "_" + originalName;
-		String tableNameCurrent = "geo_" + type + "_" + collectionName + "_" + currentId;
-		boolean isSuccessed = geoserverService.updateFeatureType(userVO, tableName, tableNameCurrent, title, summary,
-				"", attChangeFlag);
-		if (isSuccessed) {
-			return true;
-		} else {
-			return false;
-		}
-		// return true;
+		 return true;
 	}
 
 	@Override
@@ -819,19 +731,10 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 
 			HashMap<String, Object> dropQuery = queryManager.getDropSHPLayerQuery(type, collectionName, layerName);
 			shpDAO.dropSHPLayer(userVO, dropQuery);
-
-			String layerTableName = "geo" + "_" + type + "_" + collectionName + "_" + layerName;
-			String groupName = "gro" + "_" + type + "_" + collectionName;
-			isSuccessed = geoserverService.removeDTGeoserverLayer(userVO, groupName, layerTableName);
-			if (isSuccessed) {
-				return true;
-			} else {
-				throw new RuntimeException();
-			}
 		} catch (RuntimeException e) {
-			// txManager.rollback(status);
 			throw new RuntimeException();
 		}
+		return true;
 	}
 
 	@Override
@@ -844,7 +747,7 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 
 	@Override
 	public boolean createSHPLayer(UserVO userVO, String type, Integer cIdx, String collectionName,
-			DTSHPLayer createLayer, String src) {
+			DTSHPLayer createLayer, String src) throws MalformedURLException {
 
 		try {
 			boolean isSuccessed = false;
@@ -859,15 +762,11 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 			HashMap<String, Object> insertQueryMap = queryManager.getSHPLayerMetaInertQuery(type, collectionName,
 					createLayer, cIdx);
 			shpDAO.insertSHPLayerMetadata(userVO, insertQueryMap);
-			if (isSuccessed) {
-				return true;
-			} else {
-				throw new RuntimeException();
-			}
 		} catch (RuntimeException e) {
 			// txManager.rollback(status);
 			throw new RuntimeException();
 		}
+		return true;
 	}
 
 	@Override

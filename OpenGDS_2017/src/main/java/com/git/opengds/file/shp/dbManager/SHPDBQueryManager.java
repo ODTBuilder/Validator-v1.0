@@ -246,4 +246,18 @@ public class SHPDBQueryManager {
 
 		return selectQueryMap;
 	}
+
+	public List<String> getLayerCoulmns(DTSHPLayer createLayer) {
+
+		List<String> columns = new ArrayList<>();
+		SimpleFeatureCollection sfc = createLayer.getSimpleFeatureCollection();
+		SimpleFeatureType sft = sfc.getSchema();
+		List<AttributeDescriptor> attriDescriptros = sft.getAttributeDescriptors();
+		for (int j = 0; j < attriDescriptros.size(); j++) {
+			AttributeDescriptor attriDescriptor = attriDescriptros.get(j);
+			String attriName = attriDescriptor.getName().toString();
+			columns.add(attriName);
+		}
+		return columns;
+	}
 }

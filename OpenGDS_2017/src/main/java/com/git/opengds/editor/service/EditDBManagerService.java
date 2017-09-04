@@ -68,14 +68,14 @@ public interface EditDBManagerService {
 
 	public void deleteDXFRemovedFeature(UserVO userVO, String layerName, String featureId) throws RuntimeException;
 
-	public boolean modifyNGILayer(UserVO userVO, String type, Integer collectionIdx, String collectionName,
-			DTNGILayer qa20Laye, Map<String, Object> geoLayer) throws RuntimeException;
+//	public boolean modifyNGILayer(UserVO userVO, String type, Integer collectionIdx, String collectionName,
+//			DTNGILayer qa20Laye, Map<String, Object> geoLayer) throws RuntimeException;
 
 	public List<HashMap<String, Object>> getNGILayerMetadataIdx(UserVO userVO, Integer collectionIdx)
 			throws RuntimeException;
 
 	public boolean createNGILayer(UserVO userVO, String type, Integer collectionIdx, String collectionName,
-			DTNGILayer layer, String src) throws RuntimeException;
+			DTNGILayer layer, String src) throws RuntimeException, MalformedURLException;
 
 	public boolean dropNGILayer(UserVO userVO, String type, Integer collectionIdx, String collectionName,
 			DTNGILayer layer) throws RuntimeException;
@@ -103,7 +103,7 @@ public interface EditDBManagerService {
 	public void deleteSHPLayerCollection(UserVO userVO, Integer collectionIdx);
 
 	public boolean createSHPLayer(UserVO userVO, String isdxf, Integer collectionIdx, String collectionName,
-			DTSHPLayer createLayer, String src);
+			DTSHPLayer createLayer, String src) throws MalformedURLException;
 
 	public Integer createSHPLayerCollection(UserVO userVO, String isdxf, EditSHPLayerCollection editCollection);
 

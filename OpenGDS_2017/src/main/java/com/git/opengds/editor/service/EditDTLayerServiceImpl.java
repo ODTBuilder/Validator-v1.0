@@ -20,6 +20,7 @@ import com.git.gdsbuilder.edit.shp.EditSHPLayerCollection;
 import com.git.gdsbuilder.edit.shp.EditSHPLayerCollectionList;
 import com.git.gdsbuilder.type.dxf.layer.DTDXFLayer;
 import com.git.gdsbuilder.type.dxf.layer.DTDXFLayerList;
+import com.git.gdsbuilder.type.geoserver.layer.GeoLayerInfo;
 import com.git.gdsbuilder.type.ngi.layer.DTNGILayer;
 import com.git.gdsbuilder.type.ngi.layer.DTNGILayerList;
 import com.git.gdsbuilder.type.shp.layer.DTSHPLayer;
@@ -49,13 +50,7 @@ public class EditDTLayerServiceImpl implements EditDTLayerService {
 	EditDBManagerService editDBManager;
 
 	@Inject
-	GeoserverService geoserver;
-
-	/*
-	 * public EditLayerServiceImpl(UserVO userVO) { // TODO Auto-generated
-	 * constructor stub editDBManager = new EditDBManagerServiceImpl(userVO);
-	 * geoserver = new GeoserverServiceImpl(userVO); }
-	 */
+	GeoserverService geoserverService;
 
 	@Override
 	public boolean editLayer(UserVO userVO, JSONObject layerEditObj) throws Exception {
@@ -97,25 +92,44 @@ public class EditDTLayerServiceImpl implements EditDTLayerService {
 						for (int j = 0; j < createLayerList.size(); j++) {
 							DTSHPLayer createLayer = createLayerList.get(j);
 							String layerName = createLayer.getLayerName();
-							boolean isSuccessed = editDBManager.createSHPLayer(userVO, isDxf, collectionIdx,
+							boolean isSuccessed = editDBManager.createSHPLayer(userVO, isShp, collectionIdx,
 									collectionName, createLayer, src);
 							if (isSuccessed) {
+								GeoLayerInfo layerInfo = new GeoLayerInfo();
+								layerInfo.setOriginSrc(src);
+								layerInfo.setTransSrc(src);
+								layerInfo.setFileType("shp");
+								layerInfo.setFileName(collectionName);
+								String layerType = createLayer.getLayerType();
+								String layerId = createLayer.getLayerName();
+								layerInfo.putLayerName(layerId + "_" + layerType);
+								layerInfo.putLayerType(layerId, layerType);
+								geoserverService.dbLayerPublishGeoserver(userVO, layerInfo);
 								condition.putSuccessedLayers(collectionName, layerName);
-							} else {
 								condition.putFailedLayers(collectionName, layerName);
 							}
 						}
 					} else {
 						// 2. 중복되지 않았을 시 collection insert 후 레이어 테이블
 						// create
-						Integer insertIdx = editDBManager.createSHPLayerCollection(userVO, isDxf, editCollection);
+						Integer insertIdx = editDBManager.createSHPLayerCollection(userVO, isShp, editCollection);
 						DTSHPLayerList createLayerList = editCollection.getCreateLayerList();
 						for (int j = 0; j < createLayerList.size(); j++) {
 							DTSHPLayer createLayer = createLayerList.get(j);
 							String layerName = createLayer.getLayerName();
-							boolean isSuccessed = editDBManager.createSHPLayer(userVO, isDxf, insertIdx, collectionName,
+							boolean isSuccessed = editDBManager.createSHPLayer(userVO, isShp, insertIdx, collectionName,
 									createLayer, src);
 							if (isSuccessed) {
+								GeoLayerInfo layerInfo = new GeoLayerInfo();
+								layerInfo.setOriginSrc(src);
+								layerInfo.setTransSrc(src);
+								layerInfo.setFileType("shp");
+								layerInfo.setFileName(collectionName);
+								String layerType = createLayer.getLayerType();
+								String layerId = createLayer.getLayerName();
+								layerInfo.putLayerName(layerId + "_" + layerType);
+								layerInfo.putLayerType(layerId, layerType);
+								geoserverService.dbLayerPublishGeoserver(userVO, layerInfo);
 								condition.putSuccessedLayers(collectionName, layerName);
 							} else {
 								condition.putFailedLayers(collectionName, layerName);
@@ -129,11 +143,18 @@ public class EditDTLayerServiceImpl implements EditDTLayerService {
 					DTSHPLayerList layerList = editCollection.getDeletedLayerList();
 					if (editCollection.isDeleteAll()) {
 						String groupName = "gro" + "_" + type + "_" + collectionName;
-						geoserver.removeDTGeoserverAllLayer(userVO, groupName);
+						geoserverService.removeDTGeoserverAllLayer(userVO, groupName);
 					}
 					for (int j = 0; j < layerList.size(); j++) {
 						DTSHPLayer layer = layerList.get(j);
-						editDBManager.dropSHPLayer(userVO, isShp, collectionIdx, collectionName, layer);
+						String layerName = layer.getLayerName();
+						boolean isSuccessed = editDBManager.dropSHPLayer(userVO, isShp, collectionIdx, collectionName,
+								layer);
+						if (isSuccessed) {
+							String layerTableName = "geo" + "_" + type + "_" + collectionName + "_" + layerName;
+							String groupName = "gro" + "_" + type + "_" + collectionName;
+							isSuccessed = geoserverService.removeDTGeoserverLayer(userVO, groupName, layerTableName);
+						}
 					}
 					if (editCollection.isDeleteAll()) {
 						editDBManager.deleteSHPLayerCollection(userVO, collectionIdx);
@@ -169,6 +190,15 @@ public class EditDTLayerServiceImpl implements EditDTLayerService {
 							boolean isSuccessed = editDBManager.createDXFLayer(userVO, isDxf, collectionIdx,
 									collectionName, createLayer, src);
 							if (isSuccessed) {
+								GeoLayerInfo layerInfo = new GeoLayerInfo();
+								layerInfo.setOriginSrc(src);
+								layerInfo.setTransSrc(src);
+								layerInfo.setFileType(isDxf);
+								layerInfo.setFileName(collectionName);
+								String layerType = createLayer.getLayerType();
+								layerInfo.putLayerName(layerId);
+								layerInfo.putLayerType(layerId, layerType);
+								geoserverService.dbLayerPublishGeoserver(userVO, layerInfo);
 								condition.putSuccessedLayers(collectionName, layerId);
 							} else {
 								condition.putFailedLayers(collectionName, layerId);
@@ -185,6 +215,15 @@ public class EditDTLayerServiceImpl implements EditDTLayerService {
 							boolean isSuccessed = editDBManager.createDXFLayer(userVO, isDxf, insertIdx, collectionName,
 									createLayer, src);
 							if (isSuccessed) {
+								GeoLayerInfo layerInfo = new GeoLayerInfo();
+								layerInfo.setOriginSrc(src);
+								layerInfo.setTransSrc(src);
+								layerInfo.setFileType(isDxf);
+								layerInfo.setFileName(collectionName);
+								String layerType = createLayer.getLayerType();
+								layerInfo.putLayerName(layerId);
+								layerInfo.putLayerType(layerId, layerType);
+								geoserverService.dbLayerPublishGeoserver(userVO, layerInfo);
 								condition.putSuccessedLayers(collectionName, layerId);
 							} else {
 								condition.putFailedLayers(collectionName, layerId);
@@ -204,6 +243,14 @@ public class EditDTLayerServiceImpl implements EditDTLayerService {
 						boolean isSuccessed = editDBManager.modifyDXFLayer(userVO, isDxf, collectionIdx, collectionName,
 								modifiedLayer, geoLayer);
 						if (isSuccessed) {
+							String originalName = (String) geoLayer.get("orignalName");
+							String title = (String) geoLayer.get("title");
+							String summary = (String) geoLayer.get("summary");
+							boolean attChangeFlag = (Boolean) geoLayer.get("attChangeFlag");
+							String tableName = "geo_" + type + "_" + collectionName + "_" + originalName;
+							String tableNameCurrent = "geo_" + type + "_" + collectionName + "_" + layerId;
+							geoserverService.updateFeatureType(userVO, tableName, tableNameCurrent, title, summary, "",
+									attChangeFlag);
 							condition.putSuccessedLayers(collectionName, layerId);
 						} else {
 							condition.putFailedLayers(collectionName, layerId);
@@ -215,17 +262,24 @@ public class EditDTLayerServiceImpl implements EditDTLayerService {
 					DTDXFLayerList layerList = editCollection.getDeletedLayerList();
 					if (editCollection.isDeleteAll()) {
 						String groupName = "gro" + "_" + type + "_" + collectionName;
-						geoserver.removeDTGeoserverAllLayer(userVO, groupName);
+						geoserverService.removeDTGeoserverAllLayer(userVO, groupName);
 					}
 					for (int j = 0; j < layerList.size(); j++) {
 						DTDXFLayer layer = layerList.get(j);
-						editDBManager.dropDXFLayer(userVO, isDxf, collectionIdx, collectionName, layer);
+						String layerId = layer.getLayerID();
+						boolean isSuccessed = editDBManager.dropDXFLayer(userVO, isDxf, collectionIdx, collectionName,
+								layer);
+						if (isSuccessed) {
+							String layerTableName = "geo" + "_" + type + "_" + collectionName + "_" + layerId;
+							String groupName = "gro" + "_" + type + "_" + collectionName;
+							isSuccessed = geoserverService.removeDTGeoserverLayer(userVO, groupName, layerTableName);
+						}
 					}
 					if (editCollection.isDeleteAll()) {
 						editDBManager.deleteDXFLayerCollectionTablesCommon(userVO, collectionIdx);
 						editDBManager.deleteDXFLayerCollection(userVO, collectionIdx);
 					}
-					
+
 				}
 			}
 		} catch (Exception e) {
@@ -259,6 +313,15 @@ public class EditDTLayerServiceImpl implements EditDTLayerService {
 							boolean isSuccessed = editDBManager.createNGILayer(userVO, isNgi, collectionIdx,
 									collectionName, createLayer, src);
 							if (isSuccessed) {
+								GeoLayerInfo layerInfo = new GeoLayerInfo();
+								layerInfo.setOriginSrc(src);
+								layerInfo.setTransSrc(src);
+								layerInfo.setFileType(isNgi);
+								layerInfo.setFileName(collectionName);
+								String layerType = createLayer.getLayerType();
+								layerInfo.putLayerName(layerName);
+								layerInfo.putLayerType(layerName, layerType);
+								geoserverService.dbLayerPublishGeoserver(userVO, layerInfo);
 								condition.putSuccessedLayers(collectionName, layerName);
 							} else {
 								condition.putFailedLayers(collectionName, layerName);
@@ -275,6 +338,15 @@ public class EditDTLayerServiceImpl implements EditDTLayerService {
 							boolean isSuccessed = editDBManager.createNGILayer(userVO, isNgi, insertIdx, collectionName,
 									createLayer, src);
 							if (isSuccessed) {
+								GeoLayerInfo layerInfo = new GeoLayerInfo();
+								layerInfo.setOriginSrc(src);
+								layerInfo.setTransSrc(src);
+								layerInfo.setFileType(isNgi);
+								layerInfo.setFileName(collectionName);
+								String layerType = createLayer.getLayerType();
+								layerInfo.putLayerName(layerName);
+								layerInfo.putLayerType(layerName, layerType);
+								geoserverService.dbLayerPublishGeoserver(userVO, layerInfo);
 								condition.putSuccessedLayers(collectionName, layerName);
 							} else {
 								condition.putFailedLayers(collectionName, layerName);
@@ -284,31 +356,43 @@ public class EditDTLayerServiceImpl implements EditDTLayerService {
 				}
 				if (editCollection.isModified()) {
 					// 1. 수정할 레이어
-					DTNGILayerList modifiedLayerList = editCollection.getModifiedLayerList();
-					for (int j = 0; j < modifiedLayerList.size(); j++) {
-						DTNGILayer modifiedLayer = modifiedLayerList.get(j);
-						String layerName = modifiedLayer.getLayerName();
-						String originName = modifiedLayer.getOriginLayerName();
-						Map<String, Object> geoLayerList = editCollection.getGeoLayerList();
-						Map<String, Object> geoLayer = (Map<String, Object>) geoLayerList.get(originName);
-						boolean isSuccessed = editDBManager.modifyNGILayer(userVO, isNgi, collectionIdx, collectionName,
-								modifiedLayer, geoLayer);
-						if (isSuccessed) {
-							condition.putSuccessedLayers(collectionName, layerName);
-						} else {
-							condition.putFailedLayers(collectionName, layerName);
-						}
-					}
+					// DTNGILayerList modifiedLayerList =
+					// editCollection.getModifiedLayerList();
+					// for (int j = 0; j < modifiedLayerList.size(); j++) {
+					// DTNGILayer modifiedLayer = modifiedLayerList.get(j);
+					// String layerName = modifiedLayer.getLayerName();
+					// String originName = modifiedLayer.getOriginLayerName();
+					// Map<String, Object> geoLayerList =
+					// editCollection.getGeoLayerList();
+					// Map<String, Object> geoLayer = (Map<String, Object>)
+					// geoLayerList.get(originName);
+					// boolean isSuccessed =
+					// editDBManager.modifyNGILayer(userVO, isNgi,
+					// collectionIdx, collectionName,
+					// modifiedLayer, geoLayer);
+					// if (isSuccessed) {
+					// condition.putSuccessedLayers(collectionName, layerName);
+					// } else {
+					// condition.putFailedLayers(collectionName, layerName);
+					// }
+					// }
 				}
 				if (editCollection.isDeleted()) {
 					DTNGILayerList layerList = editCollection.getDeletedLayerList();
 					if (editCollection.isDeleteAll()) {
 						String groupName = "gro" + "_" + type + "_" + collectionName;
-						geoserver.removeDTGeoserverAllLayer(userVO, groupName);
+						geoserverService.removeDTGeoserverAllLayer(userVO, groupName);
 					}
 					for (int j = 0; j < layerList.size(); j++) {
 						DTNGILayer layer = layerList.get(j);
-						editDBManager.dropNGILayer(userVO, isNgi, collectionIdx, collectionName, layer);
+						String layerName = layer.getLayerName();
+						boolean isSuccess = editDBManager.dropNGILayer(userVO, isNgi, collectionIdx, collectionName,
+								layer);
+						if (isSuccess) {
+							String layerTableName = "geo" + "_" + type + "_" + collectionName + "_" + layerName;
+							String groupName = "gro" + "_" + type + "_" + collectionName;
+							geoserverService.removeDTGeoserverLayer(userVO, groupName, layerTableName);
+						}
 					}
 					if (editCollection.isDeleteAll()) {
 						editDBManager.deleteNGILayerCollection(userVO, collectionIdx);

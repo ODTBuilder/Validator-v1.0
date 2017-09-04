@@ -245,11 +245,11 @@ public class EditDTLayerParser {
 		editNGILayer = new EditNGILayer();
 
 		String layerName = (String) layerObj.get("layerName");
-		editNGILayer.setLayerName(layerName);
-		editNGILayer.setOrignName(layerName);
-
 		String layerType = (String) layerObj.get("layerType");
-		editNGILayer.setLayerType(layerType);
+		String upLayerType = layerType.toUpperCase();
+		editNGILayer.setLayerType(upLayerType);
+		editNGILayer.setLayerName(layerName + "_" + upLayerType);
+		editNGILayer.setOrignName(layerName + "_" + upLayerType);
 
 		NGIHeader ngiHeader = new NGIHeader();
 		String mask = "MASK(" + layerType + ")";
@@ -285,8 +285,10 @@ public class EditDTLayerParser {
 			}
 			long size = (long) attrObj.get("size");
 			String sizeStr = String.valueOf(size);
+			sizeStr = "0";
 			boolean isUnique = (boolean) attrObj.get("isUnique");
-			boolean isNotNull = (boolean) attrObj.get("nullable");
+			// boolean isNotNull = (boolean) attrObj.get("nullable");
+			boolean isNotNull = true;
 			NDAField fied = new NDAField(fieldName, type, sizeStr, decimalStr, isUnique, isNotNull);
 			fieldList.add(fied);
 		}
@@ -312,10 +314,6 @@ public class EditDTLayerParser {
 
 		editDXFLayer = new EditDXFLayer();
 
-		String layerName = (String) layerObj.get("layerName");
-		editDXFLayer.setLayerName(layerName);
-		editDXFLayer.setOrignName(layerName);
-
 		String originLayerType = (String) layerObj.get("layerType");
 		editDXFLayer.setOriginLayerType(originLayerType.toUpperCase());
 
@@ -336,9 +334,14 @@ public class EditDTLayerParser {
 			layerType = "Polygon";
 		} else if (originLayerType.equals("Arc")) {
 			layerType = "LineString";
+		} else if (originLayerType.equals("Point")) {
+			layerType = "Point";
 		}
-		editDXFLayer.setLayerType(layerType.toUpperCase());
-		System.out.println("");
+		String upLayerType = layerType.toUpperCase();
+		String layerName = (String) layerObj.get("layerName");
+		editDXFLayer.setLayerName(layerName + "_" + upLayerType);
+		editDXFLayer.setOrignName(layerName + "_" + upLayerType);
+		editDXFLayer.setLayerType(upLayerType);
 	}
 
 	public void shpModifiedLayerParse() {

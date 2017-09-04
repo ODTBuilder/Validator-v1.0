@@ -48,12 +48,16 @@ public class NGILayerCollectionDAOImpl extends DataSourceFactory implements NGIL
 	}
 
 	@Override
-	public int selectNGILayerCollectionIdx(UserVO userVO, HashMap<String, Object> selectLayerCollectionIdxQuery)
+	public Integer selectNGILayerCollectionIdx(UserVO userVO, HashMap<String, Object> selectLayerCollectionIdxQuery)
 			throws RuntimeException {
 		sqlSession = super.getSqlSession(userVO.getId());
 		HashMap<String, Object> idxMap = sqlSession.selectOne(namespace + ".selectNGILayerCollectionIdx",
 				selectLayerCollectionIdxQuery);
-		return (Integer) idxMap.get("c_idx");
+		if(idxMap == null) {
+			return null;
+ 		} else{
+ 			return (Integer) idxMap.get("c_idx");	
+ 		}
 	}
 
 	// qa20_Layer

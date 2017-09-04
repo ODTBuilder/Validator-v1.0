@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
-import javax.swing.plaf.basic.BasicLabelUI;
 
 import org.geotools.feature.SchemaException;
 import org.json.simple.JSONObject;
@@ -46,12 +45,6 @@ public class EditDTFeatureServiceImpl implements EditDTFeatureService {
 	GeoserverService geoserver;
 
 	String src = "5186";
-
-	/*
-	 * public EditFeatureServiceImpl(UserVO userVO) { // TODO Auto-generated
-	 * constructor stub editDBManager = new EditDBManagerServiceImpl(userVO);
-	 * geoserver = new GeoserverServiceImpl(userVO); }
-	 */
 
 	@Override
 	public boolean editFeature(UserVO userVO, JSONObject featureEditObj) throws ParseException,

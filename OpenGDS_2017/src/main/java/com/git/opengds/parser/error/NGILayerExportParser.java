@@ -1,5 +1,6 @@
 package com.git.opengds.parser.error;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -83,9 +84,9 @@ public class NGILayerExportParser {
 		for (int i = 0; i < errFeatureList.size(); i++) {
 			HashMap<String, Object> errFeature = errFeatureList.get(i);
 			String idx = String.valueOf(errFeature.get(errIdx));
-			double x = (Double) errFeature.get(coorX);
-			double y = (Double) errFeature.get(coorY);
-			Geometry errGeom = gf.createPoint(new Coordinate(x, y));
+			BigDecimal x = (BigDecimal) errFeature.get(coorX);
+			BigDecimal y = (BigDecimal) errFeature.get(coorY);
+			Geometry errGeom = gf.createPoint(new Coordinate(x.doubleValue(), y.doubleValue()));
 
 			HashMap<String, Object> properties = new HashMap<String, Object>();
 			properties.put(collectionName, errFeature.get(collectionName));

@@ -24,19 +24,10 @@ import com.git.opengds.user.domain.UserVO;
 @ContextConfiguration(locations = { "file:src/main/webapp/WEB-INF/spring/**/*.xml" })
 public class DXFDBManagerServiceImpl implements DXFDBManagerService {
 
-	/*
-	 * @Inject private DataSourceTransactionManager txManager;
-	 */
-
 	@Inject
 	private DXFLayerCollectionDAO dao;
 
-	/*
-	 * public QA10DBManagerServiceImpl(UserVO userVO){ dao = new
-	 * QA10LayerCollectionDAOImpl(userVO); }
-	 */
 	@Override
-	// @Transactional
 	public GeoLayerInfo insertDXFLayerCollection(UserVO userVO, DTDXFLayerCollection layerCollection,
 			GeoLayerInfo layerInfo) throws RuntimeException {
 		try {
