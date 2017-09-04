@@ -305,6 +305,7 @@ gb.panel.EditingTool.prototype.constructor = gb.panel.EditingTool;
 /**
  * 피처목록을 생성한다.
  * 
+ * @method setFeatureList_
  */
 gb.panel.EditingTool.prototype.setFeatureList_ = function() {
 	return this.interaction;
@@ -312,6 +313,7 @@ gb.panel.EditingTool.prototype.setFeatureList_ = function() {
 /**
  * 내부 인터랙션 구조를 반환한다.
  * 
+ * @method getInteractions_
  * @return {Mixed Obj} {select : ol.interaction.Select..}
  */
 gb.panel.EditingTool.prototype.getInteractions_ = function() {
@@ -320,6 +322,7 @@ gb.panel.EditingTool.prototype.getInteractions_ = function() {
 /**
  * 내부 인터랙션 하나를 반환한다.
  * 
+ * @method getInteraction_
  * @return {Mixed Obj} {select : ol.interaction.Select..}
  */
 gb.panel.EditingTool.prototype.getInteraction_ = function(key) {
@@ -328,6 +331,7 @@ gb.panel.EditingTool.prototype.getInteraction_ = function(key) {
 /**
  * 내부 인터랙션 구조를 설정한다.
  * 
+ * @method setInteraction_
  * @param {String}
  *            key - interaction name
  * @param {ol.interaction.Interaction}
@@ -339,15 +343,28 @@ gb.panel.EditingTool.prototype.setInteraction_ = function(key, val) {
 /**
  * 편집할 레이어를 설정한다.
  * 
+ * @method setLayer
  * @param {ol.layer.Base}
  *            layer - layer to edit
  */
 gb.panel.EditingTool.prototype.setLayer = function(layer) {
-	this.layer = layer;
+	if (layer instanceof ol.layer.Group) {
+		console.error("group layer can not edit");
+	} else if (layer instanceof ol.layer.Tile) {
+		var git = layer.get("git");
+		if (git) {
+			console.error("fake parent layer can not edit");
+		} else {
+			this.layer = layer;
+		}
+	} else if (layer instanceof ol.layer.Base) {
+		this.layer = layer;
+	}
 };
 /**
  * 편집중인 레이어를 반환한다.
  * 
+ * @method getLayer
  * @return {ol.layer.Base}
  */
 gb.panel.EditingTool.prototype.getLayer = function() {
@@ -357,6 +374,7 @@ gb.panel.EditingTool.prototype.getLayer = function() {
 /**
  * 해당 인터랙션을 활성화 시킨다.
  * 
+ * @method activeIntrct_
  * @param {String ||
  *            Array<String>} 활성화 시킬 인터랙션 이름
  */
@@ -389,6 +407,7 @@ gb.panel.EditingTool.prototype.activeIntrct_ = function(intrct) {
 /**
  * 해당 인터랙션을 비활성화 시킨다.
  * 
+ * @method deactiveIntrct_
  * @param {String ||
  *            Array<String>} 인터랙션의 이름 또는 인터랙션 이름의 배열
  */
@@ -424,6 +443,7 @@ gb.panel.EditingTool.prototype.deactiveIntrct_ = function(intrct) {
 /**
  * 버튼을 누른상태로 만든다
  * 
+ * @method activeBtn_
  * @param {String}
  *            button name
  */
@@ -443,6 +463,7 @@ gb.panel.EditingTool.prototype.activeBtn_ = function(btn) {
 /**
  * 버튼을 안 누른 상태로 만든다
  * 
+ * @method deactiveBtn_
  * @param {String}
  *            button name
  */
@@ -454,6 +475,7 @@ gb.panel.EditingTool.prototype.deactiveBtn_ = function(btn) {
 /**
  * 피처 선택을 활성화 한다
  * 
+ * @method select
  * @param {ol.layer.Base}
  *            layer - 편집할 레이어
  */
@@ -765,6 +787,7 @@ gb.panel.EditingTool.prototype.select = function(layer) {
 /**
  * 피처 그리기를 활성화 한다
  * 
+ * @method draw
  * @param {ol.layer.Base}
  *            layer - 편집할 레이어
  */
@@ -934,6 +957,7 @@ gb.panel.EditingTool.prototype.draw = function(layer) {
 /**
  * 피처 이동을 활성화 한다
  * 
+ * @method move
  * @param {ol.layer.Base}
  *            layer - 편집할 레이어
  */
@@ -991,6 +1015,7 @@ gb.panel.EditingTool.prototype.move = function(layer) {
 /**
  * 피처 멀티편집을 활성화 한다
  * 
+ * @method rotate
  * @param {ol.layer.Base}
  *            layer - 편집할 레이어
  */
@@ -1047,6 +1072,7 @@ gb.panel.EditingTool.prototype.rotate = function(layer) {
 /**
  * 피처 수정을 활성화 한다
  * 
+ * @method modify
  * @param {ol.layer.Base}
  *            layer - 편집할 레이어
  */
@@ -1094,6 +1120,37 @@ gb.panel.EditingTool.prototype.modify = function(layer) {
 		});
 		this.deactiveIntrct_([ "select", "selectWMS", "dragbox", "draw", "move", "rotate" ]);
 		this.map.addInteraction(this.interaction.modify);
+
+		// hochul's code start
+		var sourceLayer;
+		if (Array.isArray(layer)) {
+			if (layer.length > 1) {
+				console.error("please, select 1 layer");
+				return;
+			} else if (layer.length < 1) {
+				console.error("no selected layer");
+				return;
+			} else {
+				sourceLayer = layer[0];
+			}
+		} else if (layer instanceof ol.layer.Base) {
+			sourceLayer = layer;
+		} else {
+			return;
+		}
+		if (sourceLayer instanceof ol.layer.Vector) {
+			this.interaction.snap = new ol.interaction.Snap({
+				source : sourceLayer.getSource()
+			});
+		} else if (sourceLayer instanceof ol.layer.Base) {
+			this.interaction.snap = new ol.interaction.Snap({
+				source : this.tempSource
+			});
+		}
+		this.map.addInteraction(this.interaction.snap);
+		this.activeIntrct_("snap");
+		// hochul''s code end
+
 		this.activeIntrct_("modify");
 		this.activeBtn_("modiBtn");
 	} else {
@@ -1103,6 +1160,7 @@ gb.panel.EditingTool.prototype.modify = function(layer) {
 /**
  * 피처를 삭제한다
  * 
+ * @method remove
  * @param {ol.layer.Base}
  *            layer - 편집할 레이어
  */
@@ -1184,6 +1242,7 @@ gb.panel.EditingTool.prototype.remove = function(layer) {
 /**
  * 선택한 레이어를 업데이트한다
  * 
+ * @method updateSelected
  * @return {ol.layer.Base}
  */
 gb.panel.EditingTool.prototype.updateSelected = function() {
@@ -1191,17 +1250,35 @@ gb.panel.EditingTool.prototype.updateSelected = function() {
 	if (typeof this.selected === "function") {
 		this.layers = this.selected();
 		if (Array.isArray(this.layers)) {
-			this.layer = this.layers[0];
-			result = this.layer;
+			var layer = this.layers[0];
+
+			if (layer instanceof ol.layer.Group) {
+				console.error("group layer can not edit");
+			} else if (layer instanceof ol.layer.Tile) {
+				var git = layer.get("git");
+				if (git.hasOwnProperty("fake")) {
+					if (git.fake === "parent") {
+						console.error("fake parent layer can not edit");
+					} else {
+						this.setLayer(layer);
+						result = layer;
+					}
+				} else {
+					this.setLayer(layer);
+					result = layer;
+				}
+			} else if (layer instanceof ol.layer.Base) {
+				this.setLayer(layer);
+				result = layer;
+			}
 		}
-	} else {
-		result = this.layer;
 	}
 	return result;
 };
 /**
  * 선택한 피처를 업데이트한다
  * 
+ * @method setFeatures
  * @param {ol.Feature}
  */
 gb.panel.EditingTool.prototype.setFeatures = function(newFeature) {
@@ -1232,6 +1309,7 @@ gb.panel.EditingTool.prototype.setFeatures = function(newFeature) {
 /**
  * 선택한 피처를 반환한다.
  * 
+ * @method getFeatures
  * @return {ol.Collection<ol.Feature>}
  */
 gb.panel.EditingTool.prototype.getFeatures = function() {
@@ -1240,6 +1318,7 @@ gb.panel.EditingTool.prototype.getFeatures = function() {
 /**
  * 삭제한 레이어에 포함되는 피처를 임시 레이어에서 지운다
  * 
+ * @method removeFeatureFromUnmanaged
  * @param {ol.layer.Base}
  *            layer
  */
@@ -1304,6 +1383,8 @@ gb.panel.EditingTool.prototype.removeFeatureFromUnmanaged = function(layer) {
 
 /**
  * 임시 레이어에 있는 피처를 전부 삭제한다.
+ * 
+ * @method clearUnmanaged
  */
 gb.panel.EditingTool.prototype.clearUnmanaged = function() {
 	if (this.tempVector instanceof ol.layer.Vector) {
@@ -1311,4 +1392,30 @@ gb.panel.EditingTool.prototype.clearUnmanaged = function() {
 	}
 	this.tempVector.setMap(this.map);
 	return;
+};
+
+/**
+ * 패널을 나타낸다.
+ * 
+ * @method open
+ */
+gb.panel.EditingTool.prototype.open = function() {
+	var layer = this.updateSelected();
+	if (layer instanceof ol.layer.Group) {
+		console.error("group layer can not edit");
+	} else if (layer instanceof ol.layer.Tile) {
+		var git = layer.get("git");
+		if (git.hasOwnProperty("fake")) {
+			if (git.fake === "parent") {
+				console.error("fake parent layer can not edit");
+			} else {
+				this.panel.css("display", "block");
+			}
+		} else {
+			this.panel.css("display", "block");
+		}
+	} else if (layer instanceof ol.layer.Base) {
+		this.panel.css("display", "block");
+	}
+
 };

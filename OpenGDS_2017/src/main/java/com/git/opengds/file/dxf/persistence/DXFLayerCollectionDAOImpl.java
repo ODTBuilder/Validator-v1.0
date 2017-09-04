@@ -136,7 +136,11 @@ public class DXFLayerCollectionDAOImpl extends DataSourceFactory implements DXFL
 	public Integer selectTableCommonIdx(UserVO userVO, HashMap<String, Object> tableIdxQuery) throws RuntimeException {
 		sqlSession = super.getSqlSession(userVO.getId());
 		HashMap<String, Object> idxMap = sqlSession.selectOne(namespace + ".selectTableCommonIdx", tableIdxQuery);
-		return (Integer) idxMap.get("tc_idx");
+		if (idxMap == null) {
+			return null;
+		} else {
+			return (Integer) idxMap.get("tc_idx");
+		}
 	}
 
 	@Override

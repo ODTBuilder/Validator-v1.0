@@ -27,7 +27,8 @@ public interface NGILayerCollectionDAO {
 
 	public int insertNGILayerCollection(UserVO userVO, Map<String, Object> collection) throws RuntimeException;
 
-	public int selectNGILayerCollectionIdx(UserVO userVO, HashMap<String, Object> selectLayerCollectionIdxQuery) throws RuntimeException;
+	public Integer selectNGILayerCollectionIdx(UserVO userVO, HashMap<String, Object> selectLayerCollectionIdxQuery)
+			throws RuntimeException;
 
 	public void createNGILayerTb(UserVO userVO, HashMap<String, Object> hashMap) throws RuntimeException;
 
@@ -47,43 +48,56 @@ public interface NGILayerCollectionDAO {
 
 	public void insertTextRepresent(UserVO userVO, HashMap<String, Object> hashMap) throws RuntimeException;
 
-	public HashMap<String, Object> selectCountAllNGIFeatures(UserVO userVO, HashMap<String, Object> countquery)throws RuntimeException;
+	public HashMap<String, Object> selectCountAllNGIFeatures(UserVO userVO, HashMap<String, Object> countquery)
+			throws RuntimeException;
 
-	public HashMap<String, Object> selectNGIFeatureIdx(UserVO userVO, HashMap<String, Object> selectQuery)throws RuntimeException;
+	public HashMap<String, Object> selectNGIFeatureIdx(UserVO userVO, HashMap<String, Object> selectQuery)
+			throws RuntimeException;
 
 	public int deleteNGIFeature(UserVO userVO, HashMap<String, Object> deleteQuery) throws RuntimeException;
 
 	public void insertNGIFeature(UserVO userVO, HashMap<String, Object> insertQuery) throws RuntimeException;
 
-	public List<HashMap<String, Object>> selectNGILayerMetadataIdxs(UserVO userVO, HashMap<String, Object> metadataIdxQuery) throws RuntimeException;
+	public List<HashMap<String, Object>> selectNGILayerMetadataIdxs(UserVO userVO,
+			HashMap<String, Object> metadataIdxQuery) throws RuntimeException;
 
-	public int selectNGILayerMetadataIdx(UserVO userVO, HashMap<String, Object> metadataIdxQuery) throws RuntimeException;
+	public int selectNGILayerMetadataIdx(UserVO userVO, HashMap<String, Object> metadataIdxQuery)
+			throws RuntimeException;
 
-	public HashMap<String, Object> selectNGILayerTableName(UserVO userVO, HashMap<String, Object> layerTbNameQuery) throws RuntimeException;
+	public HashMap<String, Object> selectNGILayerTableName(UserVO userVO, HashMap<String, Object> layerTbNameQuery)
+			throws RuntimeException;
 
 	public void deleteField(UserVO userVO, HashMap<String, Object> deleteTextRepQuery) throws RuntimeException;
 
-	public void updateNGILayerMetadataLayerName(UserVO userVO, HashMap<String, Object> updateLayerNameQuery) throws RuntimeException;
+	public void updateNGILayerMetadataLayerName(UserVO userVO, HashMap<String, Object> updateLayerNameQuery)
+			throws RuntimeException;
 
-	public void updateNGILayerMetadataBoundary(UserVO userVO, HashMap<String, Object> updateBoundaryQuery) throws RuntimeException;
+	public void updateNGILayerMetadataBoundary(UserVO userVO, HashMap<String, Object> updateBoundaryQuery)
+			throws RuntimeException;
 
-	public HashMap<String, Object> selectNdaAspatialFieldFidxs(UserVO userVO, HashMap<String, Object> selectNadFieldsQuery) throws RuntimeException;
+	public HashMap<String, Object> selectNdaAspatialFieldFidxs(UserVO userVO,
+			HashMap<String, Object> selectNadFieldsQuery) throws RuntimeException;
 
 	public void updateNdaAspatialField(UserVO userVO, HashMap<String, Object> updateFieldQuery) throws RuntimeException;
 
 	public HashMap<String, Object> selectNGILayerMeata(UserVO userVO, HashMap<String, Object> selectAllMetaIdxQuery);
 
-	public List<HashMap<String, Object>> selectTextRepresent(UserVO userVO, HashMap<String, Object> selectTextRepresentQuery) throws RuntimeException;
+	public List<HashMap<String, Object>> selectTextRepresent(UserVO userVO,
+			HashMap<String, Object> selectTextRepresentQuery) throws RuntimeException;
 
-	public List<HashMap<String, Object>> selectResionRepresent(UserVO userVO, HashMap<String, Object> selectResionRepresentQuery) throws RuntimeException;
+	public List<HashMap<String, Object>> selectResionRepresent(UserVO userVO,
+			HashMap<String, Object> selectResionRepresentQuery) throws RuntimeException;
 
-	public List<HashMap<String, Object>> selectPointRepresent(UserVO userVO, HashMap<String, Object> selectPointRepresentQuery) throws RuntimeException;
+	public List<HashMap<String, Object>> selectPointRepresent(UserVO userVO,
+			HashMap<String, Object> selectPointRepresentQuery) throws RuntimeException;
 
-	public List<HashMap<String, Object>> selectLineStringRepresent(
-			UserVO userVO, HashMap<String, Object> selectLineStringRepresentQuery) throws RuntimeException;
+	public List<HashMap<String, Object>> selectLineStringRepresent(UserVO userVO,
+			HashMap<String, Object> selectLineStringRepresentQuery) throws RuntimeException;
 
-	public List<HashMap<String, Object>> selectNdaAspatialField(UserVO userVO, HashMap<String, Object> selectNdaAspatialFieldQuery) throws RuntimeException;
+	public List<HashMap<String, Object>> selectNdaAspatialField(UserVO userVO,
+			HashMap<String, Object> selectNdaAspatialFieldQuery) throws RuntimeException;
 
-	public List<HashMap<String, Object>> selectAllNGIFeatures(UserVO userVO, HashMap<String, Object> selectAllFeaturesQuery) throws RuntimeException;
+	public List<HashMap<String, Object>> selectAllNGIFeatures(UserVO userVO,
+			HashMap<String, Object> selectAllFeaturesQuery) throws RuntimeException;
 
 }

@@ -74,7 +74,13 @@ gitbuilder.ui.Validation = $.widget("gitbuilder.validation", {
 		 * 
 		 * 
 		 */
-		var listhead = $("<div>").text("Layer List");
+		var icls = $("<i>").addClass("fa").addClass("fa-refresh").attr({
+			"aria-hidden" : "true"
+		});
+		var refBtn = $("<button>").addClass("pull-right").addClass("gitbuilder-clearbtn").append(icls).click(function(){
+			$(that.tree).jstree("refresh");
+		});
+		var listhead = $("<div>").append("Layer List").append(refBtn);
 		this._addClass(listhead, "panel-heading");
 		this.tree = $("<div>").attr({
 			"id" : "gitlayers"
@@ -312,7 +318,7 @@ gitbuilder.ui.Validation = $.widget("gitbuilder.validation", {
 		var that = this;
 		this.setMessage('Select map sheets for QA');
 		this.setProgress(0);
-		$(this.tree).jstree("refesh");
+		$(this.tree).jstree("refresh");
 		$(this.okBtn).prop("disabled", false);
 		$(this.warning).hide();
 	},
@@ -558,12 +564,18 @@ gitbuilder.ui.Validation = $.widget("gitbuilder.validation", {
 		var notDupObj = {};
 		for (var i = 0; i < keys.length; i++) {
 			var type = "default";
-			if ($(this.tree).jstree("get_node", keys[i]).type === "n_ngi_layer_pt") {
+			if ($(this.tree).jstree("get_node", keys[i]).type === "n_ngi_layer_pt" || $(this.tree).jstree("get_node", keys[i]).type === "n_shp_layer_pt") {
 				type = "POINT";
-			} else if ($(this.tree).jstree("get_node", keys[i]).type === "n_ngi_layer_ln") {
+			} else if ($(this.tree).jstree("get_node", keys[i]).type === "n_ngi_layer_ln" || $(this.tree).jstree("get_node", keys[i]).type === "n_shp_layer_ln") {
 				type = "LINESTRING";
-			} else if ($(this.tree).jstree("get_node", keys[i]).type === "n_ngi_layer_pg") {
+			} else if ($(this.tree).jstree("get_node", keys[i]).type === "n_ngi_layer_pg" || $(this.tree).jstree("get_node", keys[i]).type === "n_shp_layer_pg") {
 				type = "POLYGON";
+			} else if ($(this.tree).jstree("get_node", keys[i]).type === "n_ngi_layer_mpt" || $(this.tree).jstree("get_node", keys[i]).type === "n_shp_layer_mpt") {
+				type = "MULTIPOINT";
+			} else if ($(this.tree).jstree("get_node", keys[i]).type === "n_ngi_layer_mln" || $(this.tree).jstree("get_node", keys[i]).type === "n_shp_layer_mln") {
+				type = "MULTILINESTRING";
+			} else if ($(this.tree).jstree("get_node", keys[i]).type === "n_ngi_layer_mpg" || $(this.tree).jstree("get_node", keys[i]).type === "n_shp_layer_mpg") {
+				type = "MULTIPOLYGON";
 			} else if ($(this.tree).jstree("get_node", keys[i]).type === "n_ngi_layer_txt") {
 				type = "TEXT";
 			} else if ($(this.tree).jstree("get_node", keys[i]).type === "n_dxf_layer_arc") {
@@ -600,7 +612,7 @@ gitbuilder.ui.Validation = $.widget("gitbuilder.validation", {
 	open : function() {
 		this.window.modal('show');
 		this._init();
-		$(this.tree).jstree("refesh");
+		$(this.tree).jstree("refresh");
 		var arr = $(this.tree).jstree("get_selected");
 		var r = [];
 

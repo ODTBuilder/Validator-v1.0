@@ -24,19 +24,10 @@ import com.git.opengds.user.domain.UserVO;
 @ContextConfiguration(locations = { "file:src/main/webapp/WEB-INF/spring/**/*.xml" })
 public class DXFDBManagerServiceImpl implements DXFDBManagerService {
 
-	/*
-	 * @Inject private DataSourceTransactionManager txManager;
-	 */
-
 	@Inject
 	private DXFLayerCollectionDAO dao;
 
-	/*
-	 * public QA10DBManagerServiceImpl(UserVO userVO){ dao = new
-	 * QA10LayerCollectionDAOImpl(userVO); }
-	 */
 	@Override
-	// @Transactional
 	public GeoLayerInfo insertDXFLayerCollection(UserVO userVO, DTDXFLayerCollection layerCollection,
 			GeoLayerInfo layerInfo) throws RuntimeException {
 		try {
@@ -131,12 +122,6 @@ public class DXFDBManagerServiceImpl implements DXFDBManagerService {
 			for (int i = 0; i < createLayerList.size(); i++) {
 				DTDXFLayer qa10Layer = createLayerList.get(i);
 				String layerId = qa10Layer.getLayerID();
-				
-				if(layerId.equals("A0023119_LWPOLYLINE")) {
-					System.out.println("");
-				}
-				
-
 				// isFeature
 				if (qa10Layer.getQa10FeatureList().size() == 0) {
 					isFeaturesMap.put(layerId, false);

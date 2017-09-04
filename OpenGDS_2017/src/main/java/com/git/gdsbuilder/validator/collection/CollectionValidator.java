@@ -79,6 +79,7 @@ import com.git.gdsbuilder.type.validate.option.EntityNone;
 import com.git.gdsbuilder.type.validate.option.HoleMisplacement;
 import com.git.gdsbuilder.type.validate.option.HouseAttribute;
 import com.git.gdsbuilder.type.validate.option.LayerMiss;
+import com.git.gdsbuilder.type.validate.option.LinearDisconnection;
 import com.git.gdsbuilder.type.validate.option.NeatLineAttribute;
 import com.git.gdsbuilder.type.validate.option.NodeMiss;
 import com.git.gdsbuilder.type.validate.option.NumericalValue;
@@ -597,9 +598,8 @@ public class CollectionValidator {
 						if(option instanceof CemeterySite){
 							List<String> relationNames = ((CemeterySite) option).getRelationType();
 							for (int j = 0; j < relationNames.size(); j++) {
-//								typeErrorLayer = layerValidator.validateCemeterySite(
-//										types.getTypeLayers(relationNames.get(j), layerCollection));
-								typeErrorLayer = layerValidator.validateEntityInHole(types.getTypeLayers(relationNames.get(j), layerCollection));
+								typeErrorLayer = layerValidator.validateCemeterySite(
+										types.getTypeLayers(relationNames.get(j), layerCollection));
 								if(typeErrorLayer != null){
 									errorLayer.mergeErrorLayer(typeErrorLayer);
 								}
@@ -654,6 +654,16 @@ public class CollectionValidator {
 							List<String> relationNames = ((EntityInHole) option).getRelationType();
 							for (int j = 0; j < relationNames.size(); j++) {
 								typeErrorLayer = layerValidator.validateEntityInHole(types.getTypeLayers(relationNames.get(j), layerCollection));
+								if(typeErrorLayer != null){
+									errorLayer.mergeErrorLayer(typeErrorLayer);
+								}
+							}
+						}
+						
+						if(option instanceof LinearDisconnection){
+							List<String> relationNames = ((LinearDisconnection) option).getRelationType();
+							for (int j = 0; j < relationNames.size(); j++) {
+								typeErrorLayer = layerValidator.valildateLinearDisconnection(types.getTypeLayers(relationNames.get(j), layerCollection));
 								if(typeErrorLayer != null){
 									errorLayer.mergeErrorLayer(typeErrorLayer);
 								}

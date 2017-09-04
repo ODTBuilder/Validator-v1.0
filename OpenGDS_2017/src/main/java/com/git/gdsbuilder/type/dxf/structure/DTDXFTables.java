@@ -158,6 +158,16 @@ public class DTDXFTables {
 		return layer;
 	}
 
+	public static Map<String, Object> getTableCommonsValue() {
+
+		Map<String, Object> variabliesMap = new LinkedHashMap<String, Object>();
+		LinkedHashMap<String, Object> commons = new LinkedHashMap<String, Object>();
+		commons.put("2", "LAYER");
+		commons.put("70", "99");
+		variabliesMap.put("common", commons);
+		return variabliesMap;
+	}
+
 	public void setStyleValues(Iterator styleIterator) {
 
 		Map<String, Object> variabliesMap = new LinkedHashMap<String, Object>();

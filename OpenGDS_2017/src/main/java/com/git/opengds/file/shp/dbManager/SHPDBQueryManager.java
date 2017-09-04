@@ -84,8 +84,8 @@ public class SHPDBQueryManager {
 			SimpleFeature feature = iterator.next();
 			Geometry geom = (Geometry) feature.getDefaultGeometry();
 			String insertColumns = "insert into " + tableName + "(feature_id,  feature_type, geom, ";
-			String insertValues = "values('" + feature.getID() + "', '" + geom.getGeometryType() + "', " + "ST_GeomFromText('"
-					+ geom.toString() + "', " + src + "), ";
+			String insertValues = "values('" + feature.getID() + "', '" + geom.getGeometryType().toUpperCase() + "', "
+					+ "ST_GeomFromText('" + geom.toString() + "', " + src + "), ";
 			for (int i = 0; i < attriKeyList.size(); i++) {
 				String attriKey = attriKeyList.get(i);
 				Object attriValue = feature.getAttribute(attriKey);
@@ -245,5 +245,19 @@ public class SHPDBQueryManager {
 		selectQueryMap.put("selectQuery", selectQuery);
 
 		return selectQueryMap;
+	}
+
+	public List<String> getLayerCoulmns(DTSHPLayer createLayer) {
+
+		List<String> columns = new ArrayList<>();
+		SimpleFeatureCollection sfc = createLayer.getSimpleFeatureCollection();
+		SimpleFeatureType sft = sfc.getSchema();
+		List<AttributeDescriptor> attriDescriptros = sft.getAttributeDescriptors();
+		for (int j = 0; j < attriDescriptros.size(); j++) {
+			AttributeDescriptor attriDescriptor = attriDescriptros.get(j);
+			String attriName = attriDescriptor.getName().toString();
+			columns.add(attriName);
+		}
+		return columns;
 	}
 }
