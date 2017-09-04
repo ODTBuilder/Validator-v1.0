@@ -45,6 +45,7 @@
 <script type="text/javascript" src="${ctx}/resources/js/jsTree-openlayers3/jstree.js"></script>
 <link rel="stylesheet" type="text/css" href="${ctx}/resources/js/jsTree-openlayers3/themes/default/style.css" />
 <script type="text/javascript" src="${ctx}/resources/js/jsTree-openlayers3/jstree-layerproperties.js"></script>
+<script type="text/javascript" src="${ctx}/resources/js/jsTree-openlayers3/jstree-legend.js"></script>
 
 <%-- jsTree geoserver--%>
 <script type="text/javascript" src="${ctx}/resources/js/jsTree-geoserver/jstree.js"></script>
