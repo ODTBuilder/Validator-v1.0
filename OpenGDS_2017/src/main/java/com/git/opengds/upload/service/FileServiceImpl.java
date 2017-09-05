@@ -165,7 +165,6 @@ public class FileServiceImpl implements FileService {
 					} else if (ext.equals("ngi")) {
 						refileMeta = ngiFileService.ngiUpload(userVO, fileMeta);
 					} else if (ext.equals("zip")) {
-						// 다연씨 여기다 코딩해요~~
 						fileMeta.setFileType("shp");
 						refileMeta = shpFileService.shpUpload(userVO, fileMeta);
 					}
@@ -197,9 +196,7 @@ public class FileServiceImpl implements FileService {
 				} else if (fileType.endsWith("dxf")) {
 					dupFlag = fileDAO.selectDXFDuplicateCheck(userVO, fileName);
 				} else if (fileType.endsWith("zip")) {
-					// 추후에 shp중복체크 추가
-					// dupFlag = fileDAO.selectDXFDuplicateCheck(userVO,
-					// fileName);
+					dupFlag = fileDAO.selectSHPDuplicateCheck(userVO, fileName);
 				}
 			}
 		}

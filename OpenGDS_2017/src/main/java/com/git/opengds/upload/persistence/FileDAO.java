@@ -32,4 +32,6 @@ public interface FileDAO {
 	public boolean selectNGIDuplicateCheck(UserVO userVO, String fileName);
 	
 	public boolean selectDXFDuplicateCheck(UserVO userVO, String fileName);
+	
+	public boolean selectSHPDuplicateCheck(UserVO userVO, String fileName);
 }
