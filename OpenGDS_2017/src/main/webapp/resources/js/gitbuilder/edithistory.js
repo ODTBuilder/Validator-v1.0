@@ -184,9 +184,9 @@ gb.edit.FeatureRecord.prototype.getStructure = function() {
 			if (!obj[mLayers[j]]["modified"].hasOwnProperty("features")) {
 				obj[mLayers[j]]["modified"]["features"] = [];
 			}
-			var clone = this.modified[mLayers[j]][names[k]];
+			var clone = this.modified[mLayers[j]][names[k]].clone();
 			if (this.id) {
-				clone.setId(clone.get(this.id));
+				clone.setId(this.modified[mLayers[j]][names[k]].get(this.id));
 			}
 			obj[mLayers[j]]["modified"]["features"].push(format.writeFeature(clone));
 		}
@@ -270,9 +270,9 @@ gb.edit.FeatureRecord.prototype.getPartStructure = function(bringLayer) {
 			if (!obj[bringM[j]]["modified"].hasOwnProperty("features")) {
 				obj[bringM[j]]["modified"]["features"] = [];
 			}
-			var clone = this.modified[bringM[j]][names[k]];
+			var clone = this.modified[bringM[j]][names[k]].clone();
 			if (this.id) {
-				clone.setId(clone.get(this.id));
+				clone.setId(this.modified[bringM[j]][names[k]].get(this.id));
 			}
 			obj[bringM[j]]["modified"]["features"].push(format.writeFeature(clone));
 		}

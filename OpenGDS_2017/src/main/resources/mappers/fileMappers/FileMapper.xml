@@ -13,4 +13,9 @@
 		select count(collection_name) from public.qa10_layercollection
 		where collection_name = #{fileName};
 	</select>
+	
+	<select id="selectSHPDuplicateCheck" resultType="int">
+		select count(c_name) from public.shp_layercollection
+		where c_name = #{fileName};
+	</select>
 </mapper>

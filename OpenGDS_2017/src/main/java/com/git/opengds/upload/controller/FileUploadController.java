@@ -55,9 +55,10 @@ public class FileUploadController extends AbstractController {
 	private FileService fileService;
 
 	/**
-	 * @throws Throwable 파일업로드 @author SG.Lee @Date 2017. 4 @param
-	 * request @param response @return @throws Exception
-	 * LinkedList<FileMeta> @throws
+	 * @throws Throwable
+	 *             파일업로드 @author SG.Lee @Date 2017. 4 @param request @param
+	 *             response @return @throws Exception
+	 *             LinkedList<FileMeta> @throws
 	 */
 	@RequestMapping(value = "/fileUpload.do", method = RequestMethod.POST)
 	public @ResponseBody LinkedList<FileMeta> fileUploadRequest(MultipartHttpServletRequest request,

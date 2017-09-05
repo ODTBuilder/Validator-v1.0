@@ -1092,7 +1092,10 @@
     		    	else{
     		       	 return dropZone.options.accept.call(dropZone, file, done);
     		       	}
-    		    }
+    		    },
+    		    error : function(request, status, error ) {   // 오류가 발생했을 때 호출된다. 
+    		    	console.log("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+    		    	}
     		});
 		}
     }

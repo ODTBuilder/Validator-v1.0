@@ -87,4 +87,25 @@ public class FileDAOImpl extends DataSourceFactory implements FileDAO {
 		}
 		return dupFlag;
 	}
+	
+	@Override
+	public boolean selectSHPDuplicateCheck(UserVO userVO, String fileName){
+		sqlSession = super.getSqlSession(userVO.getId());
+		int duplicateNums = 0;
+		try{
+			duplicateNums = sqlSession.selectOne(namespace + ".selectSHPDuplicateCheck", fileName);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+		boolean dupFlag = true;
+		
+		if(duplicateNums>0){
+			dupFlag = true;
+		}
+		else{
+			dupFlag = false;
+		}
+		return dupFlag;
+	}
 }
