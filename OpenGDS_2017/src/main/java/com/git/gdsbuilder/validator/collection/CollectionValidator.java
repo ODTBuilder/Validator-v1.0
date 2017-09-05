@@ -236,7 +236,7 @@ public class CollectionValidator {
 	 * 
 	 * @throws IOException
 	 */
-	public void collectionValidate(){
+	public void collectionValidate() {
 
 		this.errLayerList = new ErrorLayerList();
 
@@ -247,11 +247,15 @@ public class CollectionValidator {
 		try {
 			ErrorLayer errorLayer = new ErrorLayer();
 			errorLayer.setCollectionName(collection.getCollectionName());
-
 			errorLayer.setCollectionType(this.collectionType);
 
+			GeoLayer neatLineLayer = collection.getNeatLine();
+	
+			// neatLineMiss 검수
+			if (neatLineLayer == null) {
+				throw new Exception();
+			}
 			// layerMiss 검수
-
 			layerMissValidate(types, collection, errorLayer);
 
 			// geometric 검수
@@ -266,36 +270,12 @@ public class CollectionValidator {
 			}
 			errLayerList.add(errorLayer);
 			progress.put(collection.getCollectionName(), 2);
-
 		} catch (Exception e) {
 			e.printStackTrace();
 			progress.put(collection.getCollectionName(), 3);
-
 		}
 		System.out.println("검수완료");
-		// execService.shutdown();
 	}
-
-	/*
-	 * private void testtread(GeoLayerCollection collection,
-	 * ValidateLayerTypeList types,MapSystemRule mapSystemRule,int j) throws
-	 * SchemaException, NoSuchAuthorityCodeException, FactoryException,
-	 * TransformException, IOException{ System.out.println("쓰레드" + j); String
-	 * collectionName = collection.getCollectionName(); // try { ErrorLayer
-	 * errorLayer = new ErrorLayer();
-	 * errorLayer.setCollectionName(collectionName);
-	 * errorLayer.setCollectionType(this.collectionType);
-	 * 
-	 * // layerMiss 검수 layerMissValidate(types, collection, errorLayer);
-	 * 
-	 * // geometric 검수 geometricValidate(types, collection, errorLayer);
-	 * 
-	 * // attribute 검수 attributeValidate(types, collection, errorLayer);
-	 * 
-	 * // 인접도엽 검수 closeCollectionValidate(types, mapSystemRule, collection, "",
-	 * errorLayer); errLayerList.add(errorLayer);
-	 * progress.put(collection.getCollectionName(), 2); }
-	 */
 
 	@SuppressWarnings("unused")
 	private void attributeValidate(ValidateLayerTypeList types, GeoLayerCollection layerCollection,
@@ -350,44 +330,43 @@ public class CollectionValidator {
 								errorLayer.mergeErrorLayer(typeErrorLayer);
 							}
 						}
-						if(option instanceof HouseAttribute){
+						if (option instanceof HouseAttribute) {
 							typeErrorLayer = layerValidator.valildateHouseAttribute();
 							if (typeErrorLayer != null) {
 								errorLayer.mergeErrorLayer(typeErrorLayer);
 							}
 						}
-						if(option instanceof UFIDLength){
+						if (option instanceof UFIDLength) {
 							double length = ((UFIDLength) option).getLength();
 							typeErrorLayer = layerValidator.validateUFIDLength(length);
-							if(typeErrorLayer != null){
+							if (typeErrorLayer != null) {
 								errorLayer.mergeErrorLayer(typeErrorLayer);
 							}
 						}
-						
-						if(option instanceof NeatLineAttribute){
+
+						if (option instanceof NeatLineAttribute) {
 							typeErrorLayer = layerValidator.validateNeatLineAttribute();
 							if (typeErrorLayer != null) {
 								errorLayer.mergeErrorLayer(typeErrorLayer);
 							}
 						}
-						
-						if(option instanceof NumericalValue){
-							String attribute = ((NumericalValue) option).getAttribute(); 
+
+						if (option instanceof NumericalValue) {
+							String attribute = ((NumericalValue) option).getAttribute();
 							String condition = ((NumericalValue) option).getCondition();
 							double figure = ((NumericalValue) option).getFigure();
 							typeErrorLayer = layerValidator.validateNumericalValue(attribute, condition, figure);
-							if(typeErrorLayer != null){
+							if (typeErrorLayer != null) {
 								errorLayer.mergeErrorLayer(typeErrorLayer);
 							}
 						}
-						
-						if(option instanceof UFIDRule){
+
+						if (option instanceof UFIDRule) {
 							typeErrorLayer = layerValidator.validateUFIDRule();
 							if (typeErrorLayer != null) {
 								errorLayer.mergeErrorLayer(typeErrorLayer);
 							}
 						}
-						
 					}
 				}
 			}
@@ -399,8 +378,7 @@ public class CollectionValidator {
 			throws SchemaException, NoSuchAuthorityCodeException, FactoryException, TransformException, IOException {
 
 		GeoLayer neatLayer = layerCollection.getNeatLine();
-		
-		
+
 		for (int i = 0; i < types.size(); i++) {
 			// getType
 			ValidateLayerType type = types.get(i);
@@ -531,13 +509,16 @@ public class CollectionValidator {
 								errorLayer.mergeErrorLayer(typeErrorLayer);
 							}
 						}
-						if (option instanceof UnderShoot) {
-							double tolerence = ((UnderShoot) option).getTolerence();
-							typeErrorLayer = layerValidator.validateUnderShoot(neatLayer, tolerence);
-							if (typeErrorLayer != null) {
-								errorLayer.mergeErrorLayer(typeErrorLayer);
-							}
-						}
+						// if (option instanceof UnderShoot) {
+						// double tolerence = ((UnderShoot)
+						// option).getTolerence();
+						// typeErrorLayer =
+						// layerValidator.validateUnderShoot(neatLayer,
+						// tolerence);
+						// if (typeErrorLayer != null) {
+						// errorLayer.mergeErrorLayer(typeErrorLayer);
+						// }
+						// }
 						if (option instanceof UselessEntity) {
 							typeErrorLayer = layerValidator.validateUselessEntity();
 							if (typeErrorLayer != null) {
@@ -595,82 +576,85 @@ public class CollectionValidator {
 								errorLayer.mergeErrorLayer(typeErrorLayer);
 							}
 						}
-						if(option instanceof CemeterySite){
+						if (option instanceof CemeterySite) {
 							List<String> relationNames = ((CemeterySite) option).getRelationType();
 							for (int j = 0; j < relationNames.size(); j++) {
 								typeErrorLayer = layerValidator.validateCemeterySite(
 										types.getTypeLayers(relationNames.get(j), layerCollection));
-								if(typeErrorLayer != null){
-									errorLayer.mergeErrorLayer(typeErrorLayer);
-								}
-							}
-						}
-						
-						if(option instanceof BuildingSite){
-							HashMap<String, Object> attributeNames = ((BuildingSite) option).getAttributeKey();
-							List<String> relationNames = ((BuildingSite) option).getRelationType();
-							String typeLayerName = typeLayer.getLayerName();
-							JSONObject attrJson = (JSONObject) attributeNames.get(typeLayerName);
-							
-							for (int j = 0; j < relationNames.size(); j++) {
-								List<GeoLayer> relationName = types.getTypeLayers(relationNames.get(j), layerCollection);
-								typeErrorLayer = layerValidator.validateBuildingSite(attrJson, relationName);
-							}
-							if(typeErrorLayer != null){
-								errorLayer.mergeErrorLayer(typeErrorLayer);
-							}
-						}
-						
-						if(option instanceof RiverBoundaryMiss){
-							List<String> relationNames = ((RiverBoundaryMiss) option).getRelationType();
-							for (int r = 0; r < relationNames.size(); r++) {
-								typeErrorLayer = layerValidator.validateRiverBoundaryMiss
-										(types.getTypeLayers(relationNames.get(r), layerCollection));
 								if (typeErrorLayer != null) {
 									errorLayer.mergeErrorLayer(typeErrorLayer);
 								}
 							}
 						}
-						
-						if(option instanceof CenterLineMiss){
-							List<String> relationNames = ((CenterLineMiss) option).getRelationType();
+
+						if (option instanceof BuildingSite) {
+							HashMap<String, Object> attributeNames = ((BuildingSite) option).getAttributeKey();
+							List<String> relationNames = ((BuildingSite) option).getRelationType();
+							String typeLayerName = typeLayer.getLayerName();
+							JSONObject attrJson = (JSONObject) attributeNames.get(typeLayerName);
+
 							for (int j = 0; j < relationNames.size(); j++) {
-								typeErrorLayer = layerValidator.validateCenterLineMiss
-										(types.getTypeLayers(relationNames.get(j), layerCollection), lineInvadedTolorence);
-								if(typeErrorLayer != null){
+								List<GeoLayer> relationName = types.getTypeLayers(relationNames.get(j),
+										layerCollection);
+								typeErrorLayer = layerValidator.validateBuildingSite(attrJson, relationName);
+							}
+							if (typeErrorLayer != null) {
+								errorLayer.mergeErrorLayer(typeErrorLayer);
+							}
+						}
+
+						if (option instanceof RiverBoundaryMiss) {
+							List<String> relationNames = ((RiverBoundaryMiss) option).getRelationType();
+							for (int r = 0; r < relationNames.size(); r++) {
+								typeErrorLayer = layerValidator.validateRiverBoundaryMiss(
+										types.getTypeLayers(relationNames.get(r), layerCollection));
+								if (typeErrorLayer != null) {
 									errorLayer.mergeErrorLayer(typeErrorLayer);
 								}
 							}
 						}
-						
-						if(option instanceof HoleMisplacement){
+
+						if (option instanceof CenterLineMiss) {
+							List<String> relationNames = ((CenterLineMiss) option).getRelationType();
+							for (int j = 0; j < relationNames.size(); j++) {
+								typeErrorLayer = layerValidator.validateCenterLineMiss(
+										types.getTypeLayers(relationNames.get(j), layerCollection),
+										lineInvadedTolorence);
+								if (typeErrorLayer != null) {
+									errorLayer.mergeErrorLayer(typeErrorLayer);
+								}
+							}
+						}
+
+						if (option instanceof HoleMisplacement) {
 							typeErrorLayer = layerValidator.validateHoleMisplacement();
 							if (typeErrorLayer != null) {
 								errorLayer.mergeErrorLayer(typeErrorLayer);
 							}
 						}
-						
-						if(option instanceof EntityInHole){
+
+						if (option instanceof EntityInHole) {
 							List<String> relationNames = ((EntityInHole) option).getRelationType();
 							for (int j = 0; j < relationNames.size(); j++) {
-								typeErrorLayer = layerValidator.validateEntityInHole(types.getTypeLayers(relationNames.get(j), layerCollection));
-								if(typeErrorLayer != null){
+								typeErrorLayer = layerValidator.validateEntityInHole(
+										types.getTypeLayers(relationNames.get(j), layerCollection));
+								if (typeErrorLayer != null) {
 									errorLayer.mergeErrorLayer(typeErrorLayer);
 								}
 							}
 						}
-						
-						if(option instanceof LinearDisconnection){
+
+						if (option instanceof LinearDisconnection) {
 							List<String> relationNames = ((LinearDisconnection) option).getRelationType();
 							for (int j = 0; j < relationNames.size(); j++) {
-								typeErrorLayer = layerValidator.valildateLinearDisconnection(types.getTypeLayers(relationNames.get(j), layerCollection));
-								if(typeErrorLayer != null){
+								typeErrorLayer = layerValidator.valildateLinearDisconnection(
+										types.getTypeLayers(relationNames.get(j), layerCollection));
+								if (typeErrorLayer != null) {
 									errorLayer.mergeErrorLayer(typeErrorLayer);
 								}
 							}
 						}
-						
-							
+
 					}
 				}
 			} else {
@@ -706,15 +690,12 @@ public class CollectionValidator {
 								errorLayer.mergeErrorLayer(typeErrorLayer);
 								collectionList.remove(typeLayer);
 							}
-
 						}
 					}
 				}
 			}
 		}
 	}
-
-	// closeValidate
 
 	private void closeCollectionValidate(ValidateLayerTypeList types, MapSystemRule mapSystemRule,
 			GeoLayerCollection layerCollection, String geomColumn, ErrorLayer errorLayer) throws SchemaException {

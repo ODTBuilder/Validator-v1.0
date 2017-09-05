@@ -22,7 +22,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-import org.geotools.xml.impl.MismatchedBindingFinder;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -49,6 +48,7 @@ import com.git.gdsbuilder.type.validate.option.HouseAttribute;
 import com.git.gdsbuilder.type.validate.option.LayerMiss;
 import com.git.gdsbuilder.type.validate.option.LinearDisconnection;
 import com.git.gdsbuilder.type.validate.option.NeatLineAttribute;
+import com.git.gdsbuilder.type.validate.option.NeatLineMiss;
 import com.git.gdsbuilder.type.validate.option.NodeMiss;
 import com.git.gdsbuilder.type.validate.option.NumericalValue;
 import com.git.gdsbuilder.type.validate.option.OneAcre;
@@ -499,32 +499,32 @@ public class ValidateTypeParser {
 					optionList.add(nodeMiss);
 				}
 			}
-			
-			if(optionName.equalsIgnoreCase(HouseAttribute.Type.HOUSEATTRIBUTE.errName())){
+
+			if (optionName.equalsIgnoreCase(HouseAttribute.Type.HOUSEATTRIBUTE.errName())) {
 				Boolean isTrue = (Boolean) qaOptions.get("HouseAttribute");
-				if(isTrue){
+				if (isTrue) {
 					HouseAttribute houseAttribute = new HouseAttribute();
 					optionList.add(houseAttribute);
 				}
 			}
-			
-			if(optionName.equalsIgnoreCase(UFIDLength.Type.UFIDLENGTH.errName())){
+
+			if (optionName.equalsIgnoreCase(UFIDLength.Type.UFIDLENGTH.errName())) {
 				Object ufidLengthObj = qaOptions.get("UFIDLength");
-				if(ufidLengthObj == null){
+				if (ufidLengthObj == null) {
 					continue;
-				}else{
+				} else {
 					String lengthStr = (String) ((JSONObject) ufidLengthObj).get("figure");
 					double length = Double.parseDouble(lengthStr);
 					ValidatorOption ufidLength = new UFIDLength(length);
 					optionList.add(ufidLength);
 				}
 			}
-			
-			if(optionName.equalsIgnoreCase(CemeterySite.Type.CEMETERYSITE.errName())){
+
+			if (optionName.equalsIgnoreCase(CemeterySite.Type.CEMETERYSITE.errName())) {
 				Object cemeterySiteObj = qaOptions.get("CemeterySite");
-				if(cemeterySiteObj == null){
+				if (cemeterySiteObj == null) {
 					continue;
-				}else{
+				} else {
 					List<String> relations = new ArrayList<>();
 					JSONObject cemeterySiteValue = (JSONObject) cemeterySiteObj;
 					JSONArray relationValues = (JSONArray) cemeterySiteValue.get("relation");
@@ -537,25 +537,25 @@ public class ValidateTypeParser {
 					optionList.add(cemeterySite);
 				}
 			}
-			
-			if(optionName.equalsIgnoreCase(BuildingSite.Type.BUILDINGSITE.errName())){
+
+			if (optionName.equalsIgnoreCase(BuildingSite.Type.BUILDINGSITE.errName())) {
 				Object buildingSiteObj = qaOptions.get("BuildingSite");
-				if(buildingSiteObj == null){
+				if (buildingSiteObj == null) {
 					continue;
-				}else{
+				} else {
 					HashMap<String, Object> hashMap = new HashMap<String, Object>();
 					List<String> relations = new ArrayList<String>();
 					JSONObject buildingSiteJson = (JSONObject) buildingSiteObj;
 					JSONObject label = (JSONObject) buildingSiteJson.get("label");
 					JSONArray relation = (JSONArray) buildingSiteJson.get("relation");
-					
+
 					Iterator iterator = label.keySet().iterator();
 					while (iterator.hasNext()) {
 						String layerName = (String) iterator.next();
 						JSONObject attributeObj = (JSONObject) label.get(layerName);
 						hashMap.put(layerName, attributeObj);
 					}
-					
+
 					for (int i = 0; i < relation.size(); i++) {
 						String relationID = (String) relation.get(i);
 						relations.add(relationID);
@@ -564,32 +564,32 @@ public class ValidateTypeParser {
 					optionList.add(buildingSite);
 				}
 			}
-			
-			if(optionName.equalsIgnoreCase(NeatLineAttribute.Type.NEATLINEATTRIBUTE.errName())){
+
+			if (optionName.equalsIgnoreCase(NeatLineAttribute.Type.NEATLINEATTRIBUTE.errName())) {
 				Boolean isTrue = (Boolean) qaOptions.get("NeatLineAttribute");
-				if(isTrue){
+				if (isTrue) {
 					NeatLineAttribute neatLineAttribute = new NeatLineAttribute();
 					optionList.add(neatLineAttribute);
 				}
 			}
-			
-			if(optionName.equalsIgnoreCase(NumericalValue.Type.NUMERICALVALUE.errName())){
+
+			if (optionName.equalsIgnoreCase(NumericalValue.Type.NUMERICALVALUE.errName())) {
 				Object numericalValueObj = qaOptions.get("NumericalValue");
-				if(numericalValueObj == null){
+				if (numericalValueObj == null) {
 					continue;
-				}else{
+				} else {
 					JSONObject numericalValueJson = (JSONObject) numericalValueObj;
 					String attribute = (String) numericalValueJson.get("attribute");
 					String condition = (String) numericalValueJson.get("condition");
 					String figureStr = (String) numericalValueJson.get("figure");
 					double figure = Double.parseDouble(figureStr);
-					
+
 					NumericalValue numericalValue = new NumericalValue(attribute, condition, figure);
 					optionList.add(numericalValue);
 				}
 			}
-			
-			if(optionName.equals(RiverBoundaryMiss.Type.RIVERBOUNDARYMISS.errName())){
+
+			if (optionName.equals(RiverBoundaryMiss.Type.RIVERBOUNDARYMISS.errName())) {
 				//
 				Object selfEntityObj = qaOptions.get("RiverBoundaryMiss");
 				if (selfEntityObj == null) {
@@ -607,20 +607,20 @@ public class ValidateTypeParser {
 					optionList.add(riverBoundaryMiss);
 				}
 			}
-			
-			if(optionName.equalsIgnoreCase(UFIDRule.Type.UFIDRULE.errName())){
+
+			if (optionName.equalsIgnoreCase(UFIDRule.Type.UFIDRULE.errName())) {
 				Boolean isTrue = (Boolean) qaOptions.get("UFIDRule");
-				if(isTrue){
+				if (isTrue) {
 					UFIDRule ufidRule = new UFIDRule();
 					optionList.add(ufidRule);
 				}
 			}
-			
-			if(optionName.equalsIgnoreCase(CenterLineMiss.Type.CENTERLINEMISS.errName())){
+
+			if (optionName.equalsIgnoreCase(CenterLineMiss.Type.CENTERLINEMISS.errName())) {
 				Object centerLineMissObj = qaOptions.get("CenterLineMiss");
-				if(centerLineMissObj == null){
+				if (centerLineMissObj == null) {
 					continue;
-				}else{
+				} else {
 					List<String> relations = new ArrayList<>();
 					JSONObject centerLineMissValue = (JSONObject) centerLineMissObj;
 					JSONArray relationValues = (JSONArray) centerLineMissValue.get("relation");
@@ -633,25 +633,25 @@ public class ValidateTypeParser {
 					optionList.add(centerLineMiss);
 				}
 			}
-			
-			if(optionName.equalsIgnoreCase(HoleMisplacement.Type.HOLEMISPLACEMENT.errName())){
+
+			if (optionName.equalsIgnoreCase(HoleMisplacement.Type.HOLEMISPLACEMENT.errName())) {
 				Boolean isTrue = (Boolean) qaOptions.get("HoleMisplacement");
-				if(isTrue){
+				if (isTrue) {
 					HoleMisplacement holeMisplacement = new HoleMisplacement();
 					optionList.add(holeMisplacement);
 				}
 			}
-			
-			if(optionName.equalsIgnoreCase(EntityInHole.Type.ENTITYINHOLE.errName())){
+
+			if (optionName.equalsIgnoreCase(EntityInHole.Type.ENTITYINHOLE.errName())) {
 				Object entityInHoleObj = qaOptions.get("EntityInHole");
-				if(entityInHoleObj == null){
+				if (entityInHoleObj == null) {
 					continue;
-				}else{
+				} else {
 					List<String> relations = new ArrayList<>();
 					JSONObject entityInHoleValue = (JSONObject) entityInHoleObj;
 					JSONArray relationValues = (JSONArray) entityInHoleValue.get("relation");
 					int valueSize = relationValues.size();
-					for (int i = 0; i < valueSize ; i++) {
+					for (int i = 0; i < valueSize; i++) {
 						String relationID = (String) relationValues.get(i);
 						relations.add(relationID);
 					}
@@ -659,12 +659,12 @@ public class ValidateTypeParser {
 					optionList.add(entityInHole);
 				}
 			}
-			
-			if(optionName.equalsIgnoreCase(LinearDisconnection.Type.LINEARDISCONNECTION.errName())){
+
+			if (optionName.equalsIgnoreCase(LinearDisconnection.Type.LINEARDISCONNECTION.errName())) {
 				Object linearDisconnectionObj = qaOptions.get("LinearDisconnection");
-				if(linearDisconnectionObj == null){
+				if (linearDisconnectionObj == null) {
 					continue;
-				}else{
+				} else {
 					List<String> relations = new ArrayList<>();
 					JSONObject linearDisconnectionValue = (JSONObject) linearDisconnectionObj;
 					JSONArray relationValues = (JSONArray) linearDisconnectionValue.get("relation");
@@ -677,7 +677,7 @@ public class ValidateTypeParser {
 					optionList.add(linearDisconnection);
 				}
 			}
-			
+
 			if (optionName.equalsIgnoreCase(EntityNone.Type.ENTITYNONE.errName())) {
 				Boolean isTrue = (Boolean) qaOptions.get("EntityNone");
 				if (isTrue) {
@@ -693,20 +693,6 @@ public class ValidateTypeParser {
 					optionList.add(edgeMatchMiss);
 				}
 			}
-
-			/*
-			 * if(optionName.equalsIgnoreCase(RefZValueMiss.Type.REFZVALUEMISS.
-			 * errName())){ Object refZValueMissObj =
-			 * qaOptions.get("RefZValueMiss"); if (refZValueMissObj == null) {
-			 * continue; } else { HashMap<String, String> optMap = new
-			 * HashMap<String, String>(); JSONObject refZValueMissJSON =
-			 * (JSONObject) refZValueMissObj; Iterator iterator =
-			 * refZValueMissJSON.keySet().iterator(); while(iterator.hasNext()){
-			 * String layerName = (String) iterator.next(); String attValue =
-			 * ""; attValue = (String) refZValueMissJSON.get(layerName);
-			 * optMap.put(layerName, attValue); } ValidatorOption refZValueMiss
-			 * = new RefZValueMiss(optMap); optionList.add(refZValueMiss); } }
-			 */
 
 			if (optionName.equalsIgnoreCase(RefAttributeMiss.Type.RefAttributeMiss.errName())) {
 				Object refAttributeMissObj = qaOptions.get("RefAttributeMiss");
@@ -742,6 +728,15 @@ public class ValidateTypeParser {
 					}
 					ValidatorOption refZvalueMiss = new RefZValueMiss(optMap);
 					optionList.add(refZvalueMiss);
+				}
+			}
+			if (optionName.equalsIgnoreCase(NeatLineMiss.Type.NEATLINEMISS.errName())) {
+				Object neatLineMissObj = qaOptions.get("NeatLineMiss");
+				if (neatLineMissObj == null) {
+					continue;
+				} else {
+					NeatLineMiss neatLineMiss = new NeatLineMiss();
+					optionList.add(neatLineMiss);
 				}
 			}
 		}

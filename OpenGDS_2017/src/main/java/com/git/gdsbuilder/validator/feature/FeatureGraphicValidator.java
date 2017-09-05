@@ -45,7 +45,6 @@ import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.operation.TransformException;
 
 import com.git.gdsbuilder.type.validate.error.ErrorFeature;
-import com.google.common.util.concurrent.ForwardingListenableFuture.SimpleForwardingListenableFuture;
 
 /**
  * SimpleFeatureCollection를 그래픽 검수하는 클래스
@@ -280,7 +279,7 @@ public interface FeatureGraphicValidator {
 	 * @return ErrorFeature
 	 * @throws
 	 * */
-	public ErrorFeature validateRiverBoundaryMiss(SimpleFeature simpleFeature, SimpleFeatureCollection relationSfc);
+	public List<ErrorFeature> validateRiverBoundaryMiss(SimpleFeature simpleFeature, SimpleFeatureCollection relationSfc);
 	
 	/**
 	 * 검수 항목 중 "중심선누락 오류(CenterLineMiss)" 검수
