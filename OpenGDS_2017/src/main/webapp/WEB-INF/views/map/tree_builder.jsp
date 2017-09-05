@@ -436,8 +436,27 @@ html {
 		});
 
 		$("#saveAll").click(function() {
-			transfer.sendStructure(map.getLayers(), epan);
-			swal('Saved!', 'Layers have been saved.', 'success');
+			// 			var selected = $('#builderClientLayer').jstreeol3(true).get_selected();
+			var root = $('#builderClientLayer').jstreeol3(true).get_node("#");
+			var children = root.children;
+			var olselected = [];
+			var ollayers = new ol.Collection();
+			for (var i = 0; i < children.length; i++) {
+				var layer = $('#builderClientLayer').jstreeol3(true).get_LayerById(children[i]);
+				gitrnd.addRefreshWMSList(children[i], ollayers);
+				gitrnd.addRemoveHistoryList(layer, olselected);
+			}
+			console.log(olselected);
+			var nodupliobj = {};
+			for (var i = 0; i < olselected.length; i++) {
+				nodupliobj[olselected[i]] = true;
+			}
+			var nodupliarr = Object.keys(nodupliobj);
+			console.log(nodupliarr);
+			if (nodupliarr.length > 0) {
+				transfer.sendStructure(map.getLayers(), epan);
+				swal('Saved!', 'Layers have been saved.', 'success');
+			}
 		});
 
 		// 		$("#edit").editingtool({

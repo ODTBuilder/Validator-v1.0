@@ -11,11 +11,6 @@ if (!gb)
 if (!gb.interaction)
 	gb.interaction = {};
 
-gb.interaction.DeleteVertex = function() {
-	ol.interaction.Modify.call(this, {
-		condition : gb.interaction.DeleteVertex.prototype.condition
-	});
-};
 /**
  * 드로우 인터렉션에 그리는중에 타입을 바꾸는 함수 추가5
  */
