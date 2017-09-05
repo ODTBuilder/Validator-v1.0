@@ -33,10 +33,12 @@ public class ValidateProgressController extends AbstractController {
 
 		ValidateProgressList ngiList = progressService.selectProgressOfCollection(generalUser, "ngi");
 		ValidateProgressList dxfList = progressService.selectProgressOfCollection(generalUser, "dxf");
+		ValidateProgressList shpList = progressService.selectProgressOfCollection(generalUser, "shp");
 
 		JSONObject returnList = new JSONObject();
-		returnList.put("QA20", ngiList);
-		returnList.put("QA10", dxfList);
+		returnList.put("ngi", ngiList);
+		returnList.put("dxf", dxfList);
+		returnList.put("shp", shpList);
 
 		return returnList;
 	}
