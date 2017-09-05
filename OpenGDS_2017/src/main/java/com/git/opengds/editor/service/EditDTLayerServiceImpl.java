@@ -141,20 +141,23 @@ public class EditDTLayerServiceImpl implements EditDTLayerService {
 				}
 				if (editCollection.isDeleted()) {
 					DTSHPLayerList layerList = editCollection.getDeletedLayerList();
-					if (editCollection.isDeleteAll()) {
-						String groupName = "gro" + "_" + type + "_" + collectionName;
-						geoserverService.removeDTGeoserverAllLayer(userVO, groupName);
-					}
+					
 					for (int j = 0; j < layerList.size(); j++) {
 						DTSHPLayer layer = layerList.get(j);
 						String layerName = layer.getLayerName();
 						boolean isSuccessed = editDBManager.dropSHPLayer(userVO, isShp, collectionIdx, collectionName,
 								layer);
-						if (isSuccessed) {
-							String layerTableName = "geo" + "_" + type + "_" + collectionName + "_" + layerName;
-							String groupName = "gro" + "_" + type + "_" + collectionName;
-							isSuccessed = geoserverService.removeDTGeoserverLayer(userVO, groupName, layerTableName);
+						if(!editCollection.isDeleted()){
+							if (isSuccessed) {
+								String layerTableName = "geo" + "_" + type + "_" + collectionName + "_" + layerName;
+								String groupName = "gro" + "_" + type + "_" + collectionName;
+								isSuccessed = geoserverService.removeDTGeoserverLayer(userVO, groupName, layerTableName);
+							}
 						}
+					}
+					if (editCollection.isDeleteAll()) {
+						String groupName = "gro" + "_" + type + "_" + collectionName;
+						geoserverService.removeDTGeoserverAllLayer(userVO, groupName);
 					}
 					if (editCollection.isDeleteAll()) {
 						editDBManager.deleteSHPLayerCollection(userVO, collectionIdx);
@@ -260,20 +263,23 @@ public class EditDTLayerServiceImpl implements EditDTLayerService {
 
 				if (editCollection.isDeleted()) {
 					DTDXFLayerList layerList = editCollection.getDeletedLayerList();
-					if (editCollection.isDeleteAll()) {
-						String groupName = "gro" + "_" + type + "_" + collectionName;
-						geoserverService.removeDTGeoserverAllLayer(userVO, groupName);
-					}
+					
 					for (int j = 0; j < layerList.size(); j++) {
 						DTDXFLayer layer = layerList.get(j);
 						String layerId = layer.getLayerID();
 						boolean isSuccessed = editDBManager.dropDXFLayer(userVO, isDxf, collectionIdx, collectionName,
 								layer);
-						if (isSuccessed) {
-							String layerTableName = "geo" + "_" + type + "_" + collectionName + "_" + layerId;
-							String groupName = "gro" + "_" + type + "_" + collectionName;
-							isSuccessed = geoserverService.removeDTGeoserverLayer(userVO, groupName, layerTableName);
+						if(!editCollection.isDeleted()){
+							if (isSuccessed) {
+								String layerTableName = "geo" + "_" + type + "_" + collectionName + "_" + layerId;
+								String groupName = "gro" + "_" + type + "_" + collectionName;
+								isSuccessed = geoserverService.removeDTGeoserverLayer(userVO, groupName, layerTableName);
+							}
 						}
+					}
+					if (editCollection.isDeleteAll()) {
+						String groupName = "gro" + "_" + type + "_" + collectionName;
+						geoserverService.removeDTGeoserverAllLayer(userVO, groupName);
 					}
 					if (editCollection.isDeleteAll()) {
 						editDBManager.deleteDXFLayerCollectionTablesCommon(userVO, collectionIdx);
@@ -379,20 +385,23 @@ public class EditDTLayerServiceImpl implements EditDTLayerService {
 				}
 				if (editCollection.isDeleted()) {
 					DTNGILayerList layerList = editCollection.getDeletedLayerList();
-					if (editCollection.isDeleteAll()) {
-						String groupName = "gro" + "_" + type + "_" + collectionName;
-						geoserverService.removeDTGeoserverAllLayer(userVO, groupName);
-					}
+					
 					for (int j = 0; j < layerList.size(); j++) {
 						DTNGILayer layer = layerList.get(j);
 						String layerName = layer.getLayerName();
 						boolean isSuccess = editDBManager.dropNGILayer(userVO, isNgi, collectionIdx, collectionName,
 								layer);
-						if (isSuccess) {
-							String layerTableName = "geo" + "_" + type + "_" + collectionName + "_" + layerName;
-							String groupName = "gro" + "_" + type + "_" + collectionName;
-							geoserverService.removeDTGeoserverLayer(userVO, groupName, layerTableName);
+						if(!editCollection.isDeleted()){
+							if (isSuccess) {
+								String layerTableName = "geo" + "_" + type + "_" + collectionName + "_" + layerName;
+								String groupName = "gro" + "_" + type + "_" + collectionName;
+								geoserverService.removeDTGeoserverLayer(userVO, groupName, layerTableName);
+							}
 						}
+					}
+					if (editCollection.isDeleteAll()) {
+						String groupName = "gro" + "_" + type + "_" + collectionName;
+						geoserverService.removeDTGeoserverAllLayer(userVO, groupName);
 					}
 					if (editCollection.isDeleteAll()) {
 						editDBManager.deleteNGILayerCollection(userVO, collectionIdx);
