@@ -1513,7 +1513,7 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 	@Override
 	public List<ErrorFeature> validateMultiPart(SimpleFeature simpleFeature) {
 
-		List<ErrorFeature> errorFeatures = new ArrayList<>();
+		ArrayList<ErrorFeature> errorFeatures = new ArrayList<ErrorFeature>();
 		
 		String featureIdx = simpleFeature.getID();
 		Property featuerIDPro = simpleFeature.getProperty("feature_id");
@@ -1532,9 +1532,7 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 			Coordinate coorI = coors[i];
 			for(int j = i + 1; j < size; j++) {
 				Coordinate coorJ = coors[j];
-				System.out.println("I : " + coorI.toString());
-				System.out.println("J : " + coorJ.toString());
-				if(coorI.equals3D(coorJ)) {
+				if(coorI.equals2D(coorJ)) {
 					ErrorFeature errorFeature = new ErrorFeature(featureIdx, featureID,
 							MultiPart.Type.MULTIPART.errType(),
 							MultiPart.Type.MULTIPART.errName(), new GeometryFactory().createPoint(coorJ));
