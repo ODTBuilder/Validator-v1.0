@@ -1455,9 +1455,6 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 		String featureIdx = simpleFeature.getID();
 		Property featuerIDPro = simpleFeature.getProperty("feature_id");
 		String featureID = (String) featuerIDPro.getValue();
-		if (featureID.equals("RECORD 912")) {
-			System.out.println();
-		}
 		List<SimpleFeature> relationSimpleFeatures = new ArrayList<>();
 		List<Geometry> geometries = new ArrayList<>();
 		List<ErrorFeature> errorFeatures = new ArrayList<>();
@@ -1467,9 +1464,6 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 			Geometry relationGeometry = (Geometry) relationSimpleFeatrue.getDefaultGeometry();
 			Property featuerIDPro2 = simpleFeature.getProperty("feature_id");
 			String featureID2 = (String) featuerIDPro2.getValue();
-			if (featureID2.equals("RECORD 250")) {
-				System.out.println();
-			}
 			if (geometry.intersects(relationGeometry)) {
 				Geometry intersection = geometry.intersection(relationGeometry);
 				String intersectionType = intersection.getGeometryType().toUpperCase();
@@ -1515,4 +1509,21 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 		return errorFeatures;
 	}
 
+	@Override
+	public List<ErrorFeature> validateMultiPart(SimpleFeature simpleFeature) {
+
+		List<ErrorFeature> errFeatures = new ArrayList<>();
+
+		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
+		Coordinate[] coordinates = geometry.getCoordinates();
+		GeometryFactory geometryFactory = new GeometryFactory();
+		boolean isEquals = false;
+		for (int i = 0; i < coordinates.length - 1; i++) {
+			Coordinate coorI = coordinates[i];
+			for (int j = i + 1; j < coordinates.length - 1; j++) {
+				Coordinate coorJ = coordinates[j];
+			}
+		}
+		return errFeatures;
+	}
 }

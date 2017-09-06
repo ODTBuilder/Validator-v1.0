@@ -51,11 +51,20 @@ public class ValidateProgressDBQueryManager {
 		return updateQueryQueryMap;
 	}
 
-	public HashMap<String, Object> getSelectDXFValidateProgressPid(String collectionName) {
+	public HashMap<String, Object> getSelectDXFValidateProgressPIdx(String collectionName) {
 		String tableName = "\"" + "qa10_layercollection_qa_progress" + "\"";
 		String selectQuery = "select p_idx from " + tableName + " where collection_name = '" + collectionName + "'";
 		HashMap<String, Object> selectQueryMap = new HashMap<String, Object>();
 		selectQueryMap.put("selectQuery", selectQuery);
+		return selectQueryMap;
+	}
+
+	public HashMap<String, Object> getSelectDXFValidateProgressIdx(int cIdx) {
+
+		HashMap<String, Object> selectQueryMap = new HashMap<String, Object>();
+		String tableName = "\"qa10_layercollection_qa_progress\"";
+		String selectQuertStr = "select p_idx from " + tableName + "where c_idx = " + cIdx;
+		selectQueryMap.put("selectQuery", selectQuertStr);
 		return selectQueryMap;
 	}
 
@@ -143,6 +152,14 @@ public class ValidateProgressDBQueryManager {
 		String selectQuery = "select * from " + tableName + " order by request_time DESC";
 		HashMap<String, Object> selectQueryMap = new HashMap<String, Object>();
 		selectQueryMap.put("selectAllQuery", selectQuery);
+		return selectQueryMap;
+	}
+
+	public HashMap<String, Object> getSelectNGIValidateProgressIdx(int cIdx) {
+		HashMap<String, Object> selectQueryMap = new HashMap<String, Object>();
+		String tableName = "\"qa20_layercollection_qa_progress\"";
+		String selectQuertStr = "select p_idx from " + tableName + "where c_idx = " + cIdx;
+		selectQueryMap.put("selectQuery", selectQuertStr);
 		return selectQueryMap;
 	}
 

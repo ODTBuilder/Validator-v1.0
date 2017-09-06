@@ -22,6 +22,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.swing.plaf.multi.MultiPanelUI;
+
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -47,6 +49,7 @@ import com.git.gdsbuilder.type.validate.option.HoleMisplacement;
 import com.git.gdsbuilder.type.validate.option.HouseAttribute;
 import com.git.gdsbuilder.type.validate.option.LayerMiss;
 import com.git.gdsbuilder.type.validate.option.LinearDisconnection;
+import com.git.gdsbuilder.type.validate.option.MultiPart;
 import com.git.gdsbuilder.type.validate.option.NeatLineAttribute;
 import com.git.gdsbuilder.type.validate.option.NeatLineMiss;
 import com.git.gdsbuilder.type.validate.option.NodeMiss;
@@ -737,6 +740,14 @@ public class ValidateTypeParser {
 				} else {
 					NeatLineMiss neatLineMiss = new NeatLineMiss();
 					optionList.add(neatLineMiss);
+				}
+			}
+
+			if (optionName.equalsIgnoreCase(MultiPart.Type.MULTIPART.errName())) {
+				Boolean isTrue = (Boolean) qaOptions.get("MultiPart");
+				if (isTrue) {
+					MultiPart multiPart = new MultiPart();
+					optionList.add(multiPart);
 				}
 			}
 		}

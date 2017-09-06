@@ -90,8 +90,8 @@ public interface FeatureGraphicValidator {
 	 * 4. 18. 오후 3:35:06 @param simpleFeatureI @param simpleFeatureJ @return
 	 * List<ErrorFeature> @throws SchemaException @throws
 	 */
-	public List<ErrorFeature> validateSelfEntity(SimpleFeature simpleFeatureI, SimpleFeature simpleFeatureJ, double selfEntityTolerance, double polygonInvadedTolorence)
-			throws SchemaException;
+	public List<ErrorFeature> validateSelfEntity(SimpleFeature simpleFeatureI, SimpleFeature simpleFeatureJ,
+			double selfEntityTolerance, double polygonInvadedTolorence) throws SchemaException;
 
 	/**
 	 * 검수 항목 중 “허용 범위 이하 면적 (Small Area)” 검수 @author DY.Oh @Date 2017. 4. 18. 오후
@@ -181,147 +181,99 @@ public interface FeatureGraphicValidator {
 	public ErrorFeature validateLayerMiss(SimpleFeature simpleFeature, List<String> typeNames) throws SchemaException;
 
 	/**
-	 * 검수 항목 중 "건물기호위치오류(B_SymbolOutSided)" 검수
-	 * @author JY.Kim
-	 * @Date 2017. 7. 28. 오후 5:49:27
-	 * @param simpleFeatures
-	 * @param relationSimpleFeature
-	 * @return ErrorFeature
-	 * @throws SchemaException 
-	 * @throws
-	 * */
+	 * 검수 항목 중 "건물기호위치오류(B_SymbolOutSided)" 검수 @author JY.Kim @Date 2017. 7. 28.
+	 * 오후 5:49:27 @param simpleFeatures @param relationSimpleFeature @return
+	 * ErrorFeature @throws SchemaException @throws
+	 */
 	public ErrorFeature validateB_SymbolOutSided(List<SimpleFeature> simpleFeatures,
 			SimpleFeature relationSimpleFeature) throws SchemaException;
 
 	/**
-	 * 검수 항목 중 "교차로 오류(CrossRoad)" 검수
-	 * @author JY.Kim
-	 * @Date 2017. 7. 28. 오후 5:50:13
-	 * @param simpleFeature
-	 * @param relationSimpleFeatures
-	 * @param tolerence
-	 * @return List<ErrorFeature>
-	 * @throws SchemaException 
-	 * @throws
-	 * */
+	 * 검수 항목 중 "교차로 오류(CrossRoad)" 검수 @author JY.Kim @Date 2017. 7. 28. 오후
+	 * 5:50:13 @param simpleFeature @param relationSimpleFeatures @param
+	 * tolerence @return List<ErrorFeature> @throws SchemaException @throws
+	 */
 	public List<ErrorFeature> validateCrossRoad(SimpleFeature simpleFeature, List<SimpleFeature> relationSimpleFeatures,
 			double tolerence) throws SchemaException;
 
 	/**
-	 * 검수 항목 중 "꼬인객체(TwistedPolygon)" 검수
-	 * @author JY.Kim
-	 * @Date 2017. 7. 28. 오후 5:51:10
-	 * @param simpleFeature
-	 * @return ErrorFeature
-	 * @throws SchemaException 
-	 * @throws
-	 * */
+	 * 검수 항목 중 "꼬인객체(TwistedPolygon)" 검수 @author JY.Kim @Date 2017. 7. 28. 오후
+	 * 5:51:10 @param simpleFeature @return ErrorFeature @throws
+	 * SchemaException @throws
+	 */
 	public ErrorFeature validateTwistedPolygon(SimpleFeature simpleFeature) throws SchemaException;
-	
+
 	/**
-	 * 검수 항목 중 "노드오류(NodeMiss)" 검수
-	 * @author JY.Kim
-	 * @Date 2017. 7. 28. 오후 5:53:08
-	 * @param simpleFeature
-	 * @param relationSimpleFeature
-	 * @param tolerence
-	 * @return List<ErrorFeature>
-	 * @throws SchemaException 
-	 * @throws
-	 * */
+	 * 검수 항목 중 "노드오류(NodeMiss)" 검수 @author JY.Kim @Date 2017. 7. 28. 오후
+	 * 5:53:08 @param simpleFeature @param relationSimpleFeature @param
+	 * tolerence @return List<ErrorFeature> @throws SchemaException @throws
+	 */
 	public List<ErrorFeature> validateNodeMiss(SimpleFeature simpleFeature, List<SimpleFeature> relationSimpleFeature,
 			double tolerence) throws SchemaException;
-	
+
 	/**
-	 * 검수 항목 중 "등고선 교차오류(ConIntersected)" 검수
-	 * @author JY.Kim
-	 * @Date 2017. 7. 28. 오후 5:53:36
-	 * @param tmpSimpleFeatureI
-	 * @return List<ErrorFeature>
-	 * @throws
-	 * */
+	 * 검수 항목 중 "등고선 교차오류(ConIntersected)" 검수 @author JY.Kim @Date 2017. 7. 28.
+	 * 오후 5:53:36 @param tmpSimpleFeatureI @return List<ErrorFeature> @throws
+	 */
 	public List<ErrorFeature> validateConIntersected(SimpleFeature tmpSimpleFeatureI);
-	
+
 	public ErrorFeature validateOneAcre(SimpleFeature simpleFeature, SimpleFeatureCollection relationSfc);
 
 	public List<ErrorFeature> validateOneStage(SimpleFeatureCollection simpleFeatureCollection,
 			SimpleFeatureCollection relaSimpleFeatureCollection);
-	
+
 	/**
-	 * 검수 항목 중 "묘지계 오류(CemeterySite)" 검수
-	 * @author JY.Kim
-	 * @Date 2017. 8. 16. 오후 2:22:12
-	 * @param simpleFeature
-	 * @param relationSfc
-	 * @return ErrorFeature
-	 * @throws
-	 * */
+	 * 검수 항목 중 "묘지계 오류(CemeterySite)" 검수 @author JY.Kim @Date 2017. 8. 16. 오후
+	 * 2:22:12 @param simpleFeature @param relationSfc @return
+	 * ErrorFeature @throws
+	 */
 	public ErrorFeature validateCemeterySite(SimpleFeature simpleFeature, SimpleFeatureCollection relationSfc);
-	
+
 	/**
-	 * 검수 항목 중 "건물 부지 오류(BuildingSite)" 검수
-	 * @author JY.Kim
-	 * @Date 2017. 8. 17. 오전 10:38:15
-	 * @param simpleFeature
-	 * @param relationSfc
-	 * @param attributes
-	 * @return ErrorFeature
-	 * @throws
-	 * */
-	public ErrorFeature validateBuildingSite(SimpleFeature simpleFeature, SimpleFeatureCollection relationSfc, Map<String, List<String>> attributes);
-	
+	 * 검수 항목 중 "건물 부지 오류(BuildingSite)" 검수 @author JY.Kim @Date 2017. 8. 17. 오전
+	 * 10:38:15 @param simpleFeature @param relationSfc @param
+	 * attributes @return ErrorFeature @throws
+	 */
+	public ErrorFeature validateBuildingSite(SimpleFeature simpleFeature, SimpleFeatureCollection relationSfc,
+			Map<String, List<String>> attributes);
+
 	/**
-	 * 검수 항목 중 "하천경계 오류(RiverBoundaryMiss)" 검수
-	 * @author JY.Kim
-	 * @Date 2017. 8. 17. 오전 10:38:15
-	 * @param simpleFeature
-	 * @param relationSfc
-	 * @return ErrorFeature
-	 * @throws
-	 * */
-	public List<ErrorFeature> validateRiverBoundaryMiss(SimpleFeature simpleFeature, SimpleFeatureCollection relationSfc);
-	
+	 * 검수 항목 중 "하천경계 오류(RiverBoundaryMiss)" 검수 @author JY.Kim @Date 2017. 8. 17.
+	 * 오전 10:38:15 @param simpleFeature @param relationSfc @return
+	 * ErrorFeature @throws
+	 */
+	public List<ErrorFeature> validateRiverBoundaryMiss(SimpleFeature simpleFeature,
+			SimpleFeatureCollection relationSfc);
+
 	/**
-	 * 검수 항목 중 "중심선누락 오류(CenterLineMiss)" 검수
-	 * @author JY.Kim
-	 * @Date 2017. 8. 18. 오전 11:23:49
-	 * @param simpleFeature
-	 * @param relationSfc
-	 * @return ErrorFeature
-	 * @throws
-	 * */
-	public ErrorFeature validateCenterLineMiss(SimpleFeature simpleFeature, SimpleFeatureCollection relationSfc, double lineInvadedTolorence);
-	
+	 * 검수 항목 중 "중심선누락 오류(CenterLineMiss)" 검수 @author JY.Kim @Date 2017. 8. 18.
+	 * 오전 11:23:49 @param simpleFeature @param relationSfc @return
+	 * ErrorFeature @throws
+	 */
+	public ErrorFeature validateCenterLineMiss(SimpleFeature simpleFeature, SimpleFeatureCollection relationSfc,
+			double lineInvadedTolorence);
+
 	/**
-	 * 검수 항목 중 "홀 존재 오류(HoleMisplacement)" 검수
-	 * @author JY.Kim
-	 * @Date 2017. 8. 18. 오후 5:24:48
-	 * @param simpleFeature
-	 * @return ErrorFeature
-	 * @throws
-	 * */
+	 * 검수 항목 중 "홀 존재 오류(HoleMisplacement)" 검수 @author JY.Kim @Date 2017. 8. 18.
+	 * 오후 5:24:48 @param simpleFeature @return ErrorFeature @throws
+	 */
 	public List<ErrorFeature> validateHoleMisplacement(SimpleFeature simpleFeature);
-	
+
 	/**
-	 * 검수 항목 중 "홀 내부 객체 오류(EntityInHole)" 검수
-	 * @author JY.Kim
-	 * @Date 2017. 8. 22. 오전 11:01:35
-	 * @param simpleFeature
-	 * @param relationSfc
-	 * @return List<ErrorFeature>
-	 * @throws
-	 * */
+	 * 검수 항목 중 "홀 내부 객체 오류(EntityInHole)" 검수 @author JY.Kim @Date 2017. 8. 22.
+	 * 오전 11:01:35 @param simpleFeature @param relationSfc @return
+	 * List<ErrorFeature> @throws
+	 */
 	public List<ErrorFeature> validateEntityInHole(SimpleFeature simpleFeature, SimpleFeatureCollection relationSfc);
-	
+
 	/**
-	 * 검수 항목 중 "선형단락 오류(LinearDisconnection)" 검수
-	 * @author JY.Kim
-	 * @Date 2017. 8. 24. 오후 5:47:29
-	 * @param simpleFeature
-	 * @param relationSfc
-	 * @return List<ErrorFeature>
-	 * @throws
-	 * */
-	public List<ErrorFeature> validateLinearDisconnection(SimpleFeature simpleFeature, SimpleFeatureCollection relationSfc);
-	
+	 * 검수 항목 중 "선형단락 오류(LinearDisconnection)" 검수 @author JY.Kim @Date 2017. 8.
+	 * 24. 오후 5:47:29 @param simpleFeature @param relationSfc @return
+	 * List<ErrorFeature> @throws
+	 */
+	public List<ErrorFeature> validateLinearDisconnection(SimpleFeature simpleFeature,
+			SimpleFeatureCollection relationSfc);
+
+	public List<ErrorFeature> validateMultiPart(SimpleFeature simpleFeature);
+
 }

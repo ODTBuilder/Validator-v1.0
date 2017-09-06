@@ -560,6 +560,32 @@ public class LayerValidatorImpl implements LayerValidator {
 		}
 	}
 
+	@Override
+	public ErrorLayer validateMultiPart() {
+
+		ErrorLayer errLayer = new ErrorLayer();
+		SimpleFeatureCollection sfc = validatorLayer.getSimpleFeatureCollection();
+
+		SimpleFeatureIterator simpleFeatureIterator = sfc.features();
+		while (simpleFeatureIterator.hasNext()) {
+			SimpleFeature simpleFeature = simpleFeatureIterator.next();
+			List<ErrorFeature> errFeatures = graphicValidator.validateMultiPart(simpleFeature);
+			if (errFeatures != null) {
+				for (ErrorFeature errFeature : errFeatures) {
+					errFeature.setLayerName(validatorLayer.getLayerName());
+					errLayer.addErrorFeature(errFeature);
+				}
+			} else {
+				continue;
+			}
+		}
+		if (errLayer.getErrFeatureList().size() > 0) {
+			return errLayer;
+		} else {
+			return null;
+		}
+	}
+
 	public ErrorLayer validateBuildingOpen(GeoLayer neatLayer, double tolerence) throws SchemaException {
 		ErrorLayer errorLayer = new ErrorLayer();
 		SimpleFeatureCollection neatLineSfc = neatLayer.getSimpleFeatureCollection();

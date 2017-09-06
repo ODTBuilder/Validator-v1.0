@@ -46,27 +46,39 @@ public class ValidateProgressDAOImpl extends DataSourceFactory implements Valida
 	}
 
 	@Override
-	public int selectNGIValidateProgressPid(UserVO userVO, HashMap<String, Object> selectQA20ValidateProgressPid) {
+	public Integer selectNGIValidateProgressPid(UserVO userVO, HashMap<String, Object> selectQA20ValidateProgressPid) {
 		sqlSession = super.getSqlSession(userVO.getId());
 		HashMap<String, Object> idxMap = sqlSession.selectOne(ngiNamespace + ".selectQA20ValidateProgressPid",
 				selectQA20ValidateProgressPid);
-		return (Integer) idxMap.get("p_idx");
+		if (idxMap != null) {
+			return (Integer) idxMap.get("p_idx");
+		} else {
+			return null;
+		}
 	}
 
 	@Override
-	public int selectDXFValidateProgressPid(UserVO userVO, HashMap<String, Object> selectQA10ValidateProgressPid) {
+	public Integer selectDXFValidateProgressPid(UserVO userVO, HashMap<String, Object> selectQA10ValidateProgressPid) {
 		sqlSession = super.getSqlSession(userVO.getId());
 		HashMap<String, Object> idxMap = sqlSession.selectOne(dxfNamespace + ".selectQA10ValidateProgressPid",
 				selectQA10ValidateProgressPid);
-		return (Integer) idxMap.get("p_idx");
+		if (idxMap != null) {
+			return (Integer) idxMap.get("p_idx");
+		} else {
+			return null;
+		}
 	}
 
 	@Override
-	public int selectSHPValidateProgressPid(UserVO userVO, HashMap<String, Object> selectSHPValidateProgressPid) {
+	public Integer selectSHPValidateProgressPid(UserVO userVO, HashMap<String, Object> selectSHPValidateProgressPid) {
 		sqlSession = super.getSqlSession(userVO.getId());
 		HashMap<String, Object> idxMap = sqlSession.selectOne(shpNamespace + ".selectSHPValidateProgressPid",
 				selectSHPValidateProgressPid);
-		return (Integer) idxMap.get("p_idx");
+		if (idxMap != null) {
+			return (Integer) idxMap.get("p_idx");
+		} else {
+			return null;
+		}
 	}
 
 	@Override

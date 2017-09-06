@@ -80,6 +80,7 @@ import com.git.gdsbuilder.type.validate.option.HoleMisplacement;
 import com.git.gdsbuilder.type.validate.option.HouseAttribute;
 import com.git.gdsbuilder.type.validate.option.LayerMiss;
 import com.git.gdsbuilder.type.validate.option.LinearDisconnection;
+import com.git.gdsbuilder.type.validate.option.MultiPart;
 import com.git.gdsbuilder.type.validate.option.NeatLineAttribute;
 import com.git.gdsbuilder.type.validate.option.NodeMiss;
 import com.git.gdsbuilder.type.validate.option.NumericalValue;
@@ -627,7 +628,11 @@ public class CollectionValidator {
 						}
 
 						if (option instanceof HoleMisplacement) {
-							typeErrorLayer = layerValidator.validateHoleMisplacement();
+//							typeErrorLayer = layerValidator.validateHoleMisplacement();
+//							if (typeErrorLayer != null) {
+//								errorLayer.mergeErrorLayer(typeErrorLayer);
+//							}
+							typeErrorLayer = layerValidator.validateMultiPart();
 							if (typeErrorLayer != null) {
 								errorLayer.mergeErrorLayer(typeErrorLayer);
 							}
@@ -655,6 +660,12 @@ public class CollectionValidator {
 							}
 						}
 
+						if (option instanceof MultiPart) {
+							typeErrorLayer = layerValidator.validateMultiPart();
+							if (typeErrorLayer != null) {
+								errorLayer.mergeErrorLayer(typeErrorLayer);
+							}
+						}
 					}
 				}
 			} else {

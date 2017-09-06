@@ -120,7 +120,7 @@ public class DTDXFTables {
 	public void setLayerValues(Iterator layerIterator) {
 
 		Map<String, Object> variabliesMap = new LinkedHashMap<String, Object>();
-
+		
 		LinkedHashMap<String, Object> commons = new LinkedHashMap<String, Object>();
 		commons.put("2", "LAYER");
 		commons.put("70", "99");
@@ -130,7 +130,7 @@ public class DTDXFTables {
 		while (layerIterator.hasNext()) {
 			DXFLayer dxfLayer = (DXFLayer) layerIterator.next();
 			String layerName = dxfLayer.getName();
-			if (layerName.equals("0")) {
+			if (layerName.equals("0") || !layerName.matches("[0-9|a-z|A-Z|ㄱ-ㅎ|ㅏ-ㅣ|가-힝]*")) {
 				continue;
 			}
 			LinkedHashMap<String, Object> layer = new LinkedHashMap<String, Object>();
