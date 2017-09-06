@@ -210,6 +210,8 @@ gb.geoserver.CreateLayer.prototype.setForm = function(format, type, sheetNum) {
 			$(this.htag).text("Create a map sheet (DXF)");
 		} else if (format === "ngi") {
 			$(this.htag).text("Create a map sheet (NGI)");
+		} else if (format === "shp") {
+			$(this.htag).text("Create a map sheet (SHP)");
 		}
 		$(this.sheetNumInput).val("");
 		$(this.layerNameForm).hide();
@@ -233,7 +235,13 @@ gb.geoserver.CreateLayer.prototype.setForm = function(format, type, sheetNum) {
 			$(this.attrForm).show();
 			this.initExpertForm();
 			$(this.expertForm).show();
-		}
+		} else if (format === "shp") {
+			this.initTypeForm("shp");
+			$(this.typeForm).show();
+			this.initAttrForm();
+			$(this.attrForm).show();
+			$(this.expertForm).hide();
+		} 
 	}
 };
 gb.geoserver.CreateLayer.prototype.initTypeForm = function(type) {

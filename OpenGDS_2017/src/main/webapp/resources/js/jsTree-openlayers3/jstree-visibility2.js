@@ -76,7 +76,7 @@ $.jstreeol3.plugins.visibility = function(options, parent) {
 	this.bind = function() {
 		parent.bind.call(this);
 		this._data.visibility.uto = false;
-		this._data.visibility.showing = [];
+		this._data.visibility.hiding = [];
 		if (this.settings.visibility.three_state) {
 			this.settings.visibility.cascade = 'up+down+undetermined';
 		}
@@ -109,10 +109,10 @@ $.jstreeol3.plugins.visibility = function(options, parent) {
 		this.element.on('model.jstreeol3', $.proxy(function(e, data) {
 			var m = this._model.data, p = m[data.parent], dpc = data.nodes, i, j;
 			for (i = 0, j = dpc.length; i < j; i++) {
-				m[dpc[i]].state.showing = m[dpc[i]].state.showing
-						|| (m[dpc[i]].original && m[dpc[i]].original.state && m[dpc[i]].original.state.showing);
-				if (m[dpc[i]].state.showing) {
-					this._data.visibility.showing.push(dpc[i]);
+				m[dpc[i]].state.hiding = m[dpc[i]].state.hiding
+						|| (m[dpc[i]].original && m[dpc[i]].original.state && m[dpc[i]].original.state.hiding);
+				if (m[dpc[i]].state.hiding) {
+					this._data.visibility.hiding.push(dpc[i]);
 				}
 			}
 		}, this));
@@ -128,9 +128,9 @@ $.jstreeol3.plugins.visibility = function(options, parent) {
 
 												if (s.indexOf('down') !== -1) {
 													// apply down
-													if (p.state["showing"]) {
+													if (p.state["hiding"]) {
 														for (i = 0, j = dpc.length; i < j; i++) {
-															m[dpc[i]].state["showing"] = true;
+															m[dpc[i]].state["hiding"] = true;
 														}
 														// this._data[t ? 'core'
 														// :
@@ -141,9 +141,9 @@ $.jstreeol3.plugins.visibility = function(options, parent) {
 														// .concat(dpc);
 													} else {
 														for (i = 0, j = dpc.length; i < j; i++) {
-															if (m[dpc[i]].state["showing"]) {
+															if (m[dpc[i]].state["hiding"]) {
 																for (k = 0, l = m[dpc[i]].children_d.length; k < l; k++) {
-																	m[m[dpc[i]].children_d[k]].state["showing"] = true;
+																	m[m[dpc[i]].children_d[k]].state["hiding"] = true;
 																}
 																// this._data[t
 																// ? 'core' :
@@ -171,10 +171,10 @@ $.jstreeol3.plugins.visibility = function(options, parent) {
 														while (p && p.id !== $.jstreeol3.root) {
 															c = 0;
 															for (i = 0, j = p.children.length; i < j; i++) {
-																c += m[p.children[i]].state["showing"];
+																c += m[p.children[i]].state["hiding"];
 															}
 															if (c === j) {
-																p.state["showing"] = true;
+																p.state["hiding"] = true;
 																// this._data[t
 																// ? 'core' :
 																// 'visibility'].selected.push(p.id);
@@ -191,7 +191,7 @@ $.jstreeol3.plugins.visibility = function(options, parent) {
 													}
 												}
 
-												this._data['visibility'].showing = $.vakata.array_unique(this._data['visibility'].showing);
+												this._data['visibility'].hiding = $.vakata.array_unique(this._data['visibility'].hiding);
 											}, this))
 					.on(
 							'check_node.jstreeol3',
@@ -201,7 +201,7 @@ $.jstreeol3.plugins.visibility = function(options, parent) {
 												obj, true), i, j, c, tmp, s = this.settings.visibility.cascade;
 										// t =
 										// this.settings.visibility.tie_selection,
-										var sel = {}, cur = this._data['visibility'].showing;
+										var sel = {}, cur = this._data['visibility'].hiding;
 
 										for (i = 0, j = cur.length; i < j; i++) {
 											sel[cur[i]] = true;
@@ -219,7 +219,7 @@ $.jstreeol3.plugins.visibility = function(options, parent) {
 											for (i = 0, j = obj.children_d.length; i < j; i++) {
 												sel[obj.children_d[i]] = true;
 												tmp = m[obj.children_d[i]];
-												tmp.state["showing"] = true;
+												tmp.state["hiding"] = true;
 												if (tmp && tmp.original && tmp.original.state && tmp.original.state.undetermined) {
 													tmp.original.state.undetermined = false;
 												}
@@ -231,10 +231,10 @@ $.jstreeol3.plugins.visibility = function(options, parent) {
 											while (par && par.id !== $.jstreeol3.root) {
 												c = 0;
 												for (i = 0, j = par.children.length; i < j; i++) {
-													c += m[par.children[i]].state["showing"];
+													c += m[par.children[i]].state["hiding"];
 												}
 												if (c === j) {
-													par.state["showing"] = true;
+													par.state["hiding"] = true;
 													sel[par.id] = true;
 													// this._data[
 													// t ?
@@ -260,7 +260,7 @@ $.jstreeol3.plugins.visibility = function(options, parent) {
 												cur.push(i);
 											}
 										}
-										this._data['visibility'].showing = cur;
+										this._data['visibility'].hiding = cur;
 
 										// apply down
 										// (process
@@ -288,7 +288,7 @@ $.jstreeol3.plugins.visibility = function(options, parent) {
 												var obj = data.node, dom = this.get_node(obj, true), i, j, tmp, s = this.settings.visibility.cascade;
 												// t =
 												// this.settings.visibility.tie_selection,
-												var cur = this._data['visibility'].showing, sel = {};
+												var cur = this._data['visibility'].hiding, sel = {};
 												if (obj && obj.original && obj.original.state && obj.original.state.undetermined) {
 													obj.original.state.undetermined = false;
 												}
@@ -297,7 +297,7 @@ $.jstreeol3.plugins.visibility = function(options, parent) {
 												if (s.indexOf('down') !== -1) {
 													for (i = 0, j = obj.children_d.length; i < j; i++) {
 														tmp = this._model.data[obj.children_d[i]];
-														tmp.state["showing"] = false;
+														tmp.state["hiding"] = false;
 														if (tmp && tmp.original && tmp.original.state && tmp.original.state.undetermined) {
 															tmp.original.state.undetermined = false;
 														}
@@ -308,7 +308,7 @@ $.jstreeol3.plugins.visibility = function(options, parent) {
 												if (s.indexOf('up') !== -1) {
 													for (i = 0, j = obj.parents.length; i < j; i++) {
 														tmp = this._model.data[obj.parents[i]];
-														tmp.state["showing"] = false;
+														tmp.state["hiding"] = false;
 														if (tmp && tmp.original && tmp.original.state && tmp.original.state.undetermined) {
 															tmp.original.state.undetermined = false;
 														}
@@ -334,7 +334,7 @@ $.jstreeol3.plugins.visibility = function(options, parent) {
 														cur.push(i);
 													}
 												}
-												this._data['visibility'].showing = cur;
+												this._data['visibility'].hiding = cur;
 
 												// apply down
 												// (process
@@ -352,14 +352,14 @@ $.jstreeol3.plugins.visibility = function(options, parent) {
 				// handler)
 				var p = this.get_node(data.parent), m = this._model.data, i, j, c, tmp;
 				// t = this.settings.visibility.tie_selection;
-				while (p && p.id !== $.jstreeol3.root && !p.state["showing"]) {
+				while (p && p.id !== $.jstreeol3.root && !p.state["hiding"]) {
 					c = 0;
 					for (i = 0, j = p.children.length; i < j; i++) {
-						c += m[p.children[i]].state["showing"];
+						c += m[p.children[i]].state["hiding"];
 					}
 					if (j > 0 && c === j) {
-						p.state["showing"] = true;
-						this._data['visibility'].showing.push(p.id);
+						p.state["hiding"] = true;
+						this._data['visibility'].hiding.push(p.id);
 						tmp = this.get_node(p, true);
 						if (tmp && tmp.length) {
 							tmp.attr('aria-selected', true).children('.jstreeol3-anchor').addClass('jstreeol3-checked');
@@ -383,14 +383,14 @@ $.jstreeol3.plugins.visibility = function(options, parent) {
 												// this.settings.visibility.tie_selection;
 												if (!is_multi) {
 													p = this.get_node(old_par);
-													while (p && p.id !== $.jstreeol3.root && !p.state["showing"]) {
+													while (p && p.id !== $.jstreeol3.root && !p.state["hiding"]) {
 														c = 0;
 														for (i = 0, j = p.children.length; i < j; i++) {
-															c += m[p.children[i]].state["showing"];
+															c += m[p.children[i]].state["hiding"];
 														}
 														if (j > 0 && c === j) {
-															p.state["showing"] = true;
-															this._data['visibility'].showing.push(p.id);
+															p.state["hiding"] = true;
+															this._data['visibility'].hiding.push(p.id);
 															tmp = this.get_node(p, true);
 															if (tmp && tmp.length) {
 																tmp.attr('aria-selected', true).children('.jstreeol3-anchor').addClass(
@@ -406,12 +406,12 @@ $.jstreeol3.plugins.visibility = function(options, parent) {
 												while (p && p.id !== $.jstreeol3.root) {
 													c = 0;
 													for (i = 0, j = p.children.length; i < j; i++) {
-														c += m[p.children[i]].state["showing"];
+														c += m[p.children[i]].state["hiding"];
 													}
 													if (c === j) {
-														if (!p.state["showing"]) {
-															p.state["showing"] = true;
-															this._data['visibility'].showing.push(p.id);
+														if (!p.state["hiding"]) {
+															p.state["hiding"] = true;
+															this._data['visibility'].hiding.push(p.id);
 															tmp = this.get_node(p, true);
 															if (tmp && tmp.length) {
 																tmp.attr('aria-selected', true).children('.jstreeol3-anchor').addClass(
@@ -419,10 +419,10 @@ $.jstreeol3.plugins.visibility = function(options, parent) {
 															}
 														}
 													} else {
-														if (p.state["showing"]) {
-															p.state["showing"] = false;
-															this._data['visibility'].showing = $.vakata.array_remove_item(
-																	this._data['visibility'].showing, p.id);
+														if (p.state["hiding"]) {
+															p.state["hiding"] = false;
+															this._data['visibility'].hiding = $.vakata.array_remove_item(
+																	this._data['visibility'].hiding, p.id);
 															tmp = this.get_node(p, true);
 															if (tmp && tmp.length) {
 																tmp.attr('aria-selected', false).children('.jstreeol3-anchor').removeClass(
@@ -450,7 +450,7 @@ $.jstreeol3.plugins.visibility = function(options, parent) {
 		}
 		var i, j, k, l, o = {}, m = this._model.data;
 		// t = this.settings.visibility.tie_selection,
-		var s = this._data['visibility'].showing, p = [], tt = this;
+		var s = this._data['visibility'].hiding, p = [], tt = this;
 		for (i = 0, j = s.length; i < j; i++) {
 			if (m[s[i]] && m[s[i]].parents) {
 				for (k = 0, l = m[s[i]].parents.length; k < l; k++) {
@@ -504,8 +504,11 @@ $.jstreeol3.plugins.visibility = function(options, parent) {
 
 		this.element.find('.jstreeol3-undetermined').removeClass('jstreeol3-undetermined');
 		for (i = 0, j = p.length; i < j; i++) {
-			if (!m[p[i]].state["showing"]) {
+			if (!m[p[i]].state["hiding"]) {
+				var nobj = this.get_node(p[i]);
+				console.log(nobj);
 				s = this.get_node(p[i], true);
+				console.log(s);
 				if (s && s.length) {
 					s.children('.jstreeol3-anchor').children('.jstreeol3-visibility').addClass('jstreeol3-undetermined');
 				}
@@ -523,7 +526,7 @@ $.jstreeol3.plugins.visibility = function(options, parent) {
 				}
 			}
 			if (tmp) {
-				if (this._model.data[obj.id].state.showing) {
+				if (this._model.data[obj.id].state.hiding) {
 					tmp.className += ' jstreeol3-checked';
 				}
 				icon = _v.cloneNode(false);
@@ -586,8 +589,8 @@ $.jstreeol3.plugins.visibility = function(options, parent) {
 		obj = this.get_node(obj);
 		var s = this.settings.visibility.cascade, i, j;
 		// t = this.settings.visibility.tie_selection,
-		var d = this._data['visibility'].showing, m = this._model.data;
-		if (!obj || obj.state["showing"] === true || s.indexOf('undetermined') === -1
+		var d = this._data['visibility'].hiding, m = this._model.data;
+		if (!obj || obj.state["hiding"] === true || s.indexOf('undetermined') === -1
 				|| (s.indexOf('down') === -1 && s.indexOf('up') === -1)) {
 			return false;
 		}
@@ -711,9 +714,8 @@ $.jstreeol3.plugins.visibility = function(options, parent) {
 	};
 
 	/**
-	 * 안보이게 한다.
-	 * check a node (only if tie_selection in visibility settings is false,
-	 * otherwise select_node will be called internally)
+	 * 안보이게 한다. check a node (only if tie_selection in visibility settings is
+	 * false, otherwise select_node will be called internally)
 	 * 
 	 * @name check_node(obj)
 	 * @param {mixed}
@@ -739,9 +741,26 @@ $.jstreeol3.plugins.visibility = function(options, parent) {
 			return false;
 		}
 		dom = this.get_node(obj, true);
-		if (obj.state.showing) {
-			console.log(obj);
-			obj.state.showing = false;
+		if (!obj.state.hiding) {
+//			console.log(obj);
+//			var layer = this.get_LayerById(obj.id);
+//			console.log(layer);
+//			var git = layer.get("git");
+//			if (layer instanceof ol.layer.Tile && git) {
+//				if (git.hasOwnProperty("fake")) {
+//					if (git.fake === "parent") {
+//						
+//					}
+//				}
+//			} else if (layer instanceof ol.layer.Base && git) {
+//				if (git.hasOwnProperty("fake")) {
+//					if (git.fake === "child") {
+//						
+//					}
+//				}
+//			}
+			
+			obj.state.hiding = true;
 			this._data.visibility.hiding.push(obj.id);
 			if (dom && dom.length) {
 				dom.children('.jstreeol3-anchor').addClass('jstreeol3-checked');
@@ -763,15 +782,14 @@ $.jstreeol3.plugins.visibility = function(options, parent) {
 			 */
 			this.trigger('check_node', {
 				'node' : obj,
-				'selected' : this._data.visibility.showing,
+				'selected' : this._data.visibility.hiding,
 				'event' : e
 			});
 		}
 	};
 	/**
-	 * 보이게 한다.
-	 * uncheck a node (only if tie_selection in visibility settings is false,
-	 * otherwise deselect_node will be called internally)
+	 * 보이게 한다. uncheck a node (only if tie_selection in visibility settings is
+	 * false, otherwise deselect_node will be called internally)
 	 * 
 	 * @name uncheck_node(obj)
 	 * @param {mixed}
@@ -797,10 +815,10 @@ $.jstreeol3.plugins.visibility = function(options, parent) {
 			return false;
 		}
 		dom = this.get_node(obj, true);
-		if (obj.state.showing) {
+		if (obj.state.hiding) {
 			console.log(obj);
-			obj.state.showing = false;
-			this._data.visibility.showing = $.vakata.array_remove_item(this._data.visibility.showing, obj.id);
+			obj.state.hiding = false;
+			this._data.visibility.hiding = $.vakata.array_remove_item(this._data.visibility.hiding, obj.id);
 			if (dom.length) {
 				dom.children('.jstreeol3-anchor').removeClass('jstreeol3-checked');
 			}
@@ -821,7 +839,7 @@ $.jstreeol3.plugins.visibility = function(options, parent) {
 			 */
 			this.trigger('uncheck_node', {
 				'node' : obj,
-				'selected' : this._data.visibility.showing,
+				'selected' : this._data.visibility.hiding,
 				'event' : e
 			});
 		}
@@ -838,11 +856,11 @@ $.jstreeol3.plugins.visibility = function(options, parent) {
 		// if (this.settings.visibility.tie_selection) {
 		// return this.select_all();
 		// }
-		var tmp = this._data.visibility.showing.concat([]), i, j;
-		this._data.visibility.showing = this._model.data[$.jstreeol3.root].children_d.concat();
-		for (i = 0, j = this._data.visibility.showing.length; i < j; i++) {
-			if (this._model.data[this._data.visibility.showing[i]]) {
-				this._model.data[this._data.visibility.showing[i]].state.showing = true;
+		var tmp = this._data.visibility.hiding.concat([]), i, j;
+		this._data.visibility.hiding = this._model.data[$.jstreeol3.root].children_d.concat();
+		for (i = 0, j = this._data.visibility.hiding.length; i < j; i++) {
+			if (this._model.data[this._data.visibility.hiding[i]]) {
+				this._model.data[this._data.visibility.hiding[i]].state.hiding = true;
 			}
 		}
 		this.redraw(true);
@@ -857,7 +875,7 @@ $.jstreeol3.plugins.visibility = function(options, parent) {
 		 * @plugin visibility
 		 */
 		this.trigger('check_all', {
-			'selected' : this._data.visibility.showing
+			'selected' : this._data.visibility.hiding
 		});
 	};
 	/**
@@ -872,13 +890,13 @@ $.jstreeol3.plugins.visibility = function(options, parent) {
 		// if (this.settings.visibility.tie_selection) {
 		// return this.deselect_all();
 		// }
-		var tmp = this._data.visibility.showing.concat([]), i, j;
-		for (i = 0, j = this._data.visibility.showing.length; i < j; i++) {
-			if (this._model.data[this._data.visibility.showing[i]]) {
-				this._model.data[this._data.visibility.showing[i]].state.showing = false;
+		var tmp = this._data.visibility.hiding.concat([]), i, j;
+		for (i = 0, j = this._data.visibility.hiding.length; i < j; i++) {
+			if (this._model.data[this._data.visibility.hiding[i]]) {
+				this._model.data[this._data.visibility.hiding[i]].state.hiding = false;
 			}
 		}
-		this._data.visibility.showing = [];
+		this._data.visibility.hiding = [];
 		this.element.find('.jstreeol3-checked').removeClass('jstreeol3-checked');
 		/**
 		 * triggered when all nodes are unchecked (only if tie_selection in
@@ -893,7 +911,7 @@ $.jstreeol3.plugins.visibility = function(options, parent) {
 		 * @plugin visibility
 		 */
 		this.trigger('uncheck_all', {
-			'selected' : this._data.visibility.showing,
+			'selected' : this._data.visibility.hiding,
 			'node' : tmp
 		});
 	};
@@ -915,7 +933,7 @@ $.jstreeol3.plugins.visibility = function(options, parent) {
 		if (!obj || obj.id === $.jstreeol3.root) {
 			return false;
 		}
-		return obj.state.showing;
+		return obj.state.hiding;
 	};
 	/**
 	 * get an array of all checked nodes (if tie_selection is on in the settings
@@ -932,9 +950,9 @@ $.jstreeol3.plugins.visibility = function(options, parent) {
 		// if (this.settings.visibility.tie_selection) {
 		// return this.get_selected(full);
 		// }
-		return full ? $.map(this._data.visibility.showing, $.proxy(function(i) {
+		return full ? $.map(this._data.visibility.hiding, $.proxy(function(i) {
 			return this.get_node(i);
-		}, this)) : this._data.visibility.showing;
+		}, this)) : this._data.visibility.hiding;
 	};
 	/**
 	 * get an array of all top level checked nodes (ignoring children of checked
@@ -1005,9 +1023,9 @@ $.jstreeol3.plugins.visibility = function(options, parent) {
 			tmp = this.get_node(obj);
 			if (tmp && tmp.state.loaded) {
 				for (k = 0, l = tmp.children_d.length; k < l; k++) {
-					if (this._model.data[tmp.children_d[k]].state.showing) {
+					if (this._model.data[tmp.children_d[k]].state.hiding) {
 						c = true;
-						this._data.visibility.showing = $.vakata.array_remove_item(this._data.visibility.showing, tmp.children_d[k]);
+						this._data.visibility.hiding = $.vakata.array_remove_item(this._data.visibility.hiding, tmp.children_d[k]);
 					}
 				}
 			}
@@ -1019,7 +1037,7 @@ $.jstreeol3.plugins.visibility = function(options, parent) {
 		// if (this.settings.visibility.tie_selection) {
 		// return state;
 		// }
-		state.visibility = this._data.visibility.showing.slice();
+		state.visibility = this._data.visibility.hiding.slice();
 		return state;
 	};
 	this.set_state = function(state, callback) {
