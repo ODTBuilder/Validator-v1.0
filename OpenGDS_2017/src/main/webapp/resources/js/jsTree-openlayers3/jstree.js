@@ -1873,7 +1873,7 @@
 						text : text,
 						type : undefined,
 						state : {
-							vanished : van
+							hiding : van
 						}
 					};
 					if (layer instanceof ol.layer.Vector) {
@@ -6248,7 +6248,7 @@
 										});
 										var names = [];
 										for (var i = 0; i < inner.length; i++) {
-											if (this.get_node(inner[i].get("treeid")).state.vanished === false) {
+											if (this.get_node(inner[i].get("treeid")).state.hiding === false) {
 												names.push(inner[i].get("id"));
 											}
 										}
