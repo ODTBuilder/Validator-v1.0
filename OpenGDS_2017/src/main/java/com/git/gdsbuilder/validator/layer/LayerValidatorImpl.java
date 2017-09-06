@@ -541,7 +541,7 @@ public class LayerValidatorImpl implements LayerValidator {
 	public ErrorLayer validateUselessEntity() throws SchemaException {
 		ErrorLayer errLayer = new ErrorLayer();
 		SimpleFeatureCollection sfc = validatorLayer.getSimpleFeatureCollection();
-
+System.out.println(sfc.size());
 		SimpleFeatureIterator simpleFeatureIterator = sfc.features();
 		while (simpleFeatureIterator.hasNext()) {
 			SimpleFeature simpleFeature = simpleFeatureIterator.next();
@@ -565,7 +565,6 @@ public class LayerValidatorImpl implements LayerValidator {
 
 		ErrorLayer errLayer = new ErrorLayer();
 		SimpleFeatureCollection sfc = validatorLayer.getSimpleFeatureCollection();
-
 		SimpleFeatureIterator simpleFeatureIterator = sfc.features();
 		while (simpleFeatureIterator.hasNext()) {
 			SimpleFeature simpleFeature = simpleFeatureIterator.next();
@@ -797,7 +796,6 @@ public class LayerValidatorImpl implements LayerValidator {
 		SimpleFeatureCollection sfc = validatorLayer.getSimpleFeatureCollection();
 		DefaultFeatureCollection featureCollection = new DefaultFeatureCollection();
 		SimpleFeatureIterator simpleFeatureIterator = sfc.features();
-
 		while (simpleFeatureIterator.hasNext()) {
 			SimpleFeature simpleFeature = simpleFeatureIterator.next();
 			ErrorFeature errorFeature = graphicValidator.validateTwistedPolygon(simpleFeature);

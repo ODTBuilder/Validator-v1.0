@@ -403,13 +403,14 @@ public class CollectionValidator {
 						String layerType = layerFullName.substring(dash + 1);
 						String upperLayerType = layerType.toUpperCase();
 						LayerValidator layerValidator = new LayerValidatorImpl(typeLayer);
-						if (upperLayerType.equals("POLYGON")) {
-							// twistedFeature
-							typeErrorLayer = layerValidator.validateTwistedPolygon();
-							if (typeErrorLayer != null) {
-								errorLayer.mergeErrorLayer(typeErrorLayer);
-							}
-						}
+//						
+//						if (upperLayerType.equals("POLYGON")) {
+//							// twistedFeature
+//							typeErrorLayer = layerValidator.validateTwistedPolygon();
+//							if (typeErrorLayer != null) {
+//								errorLayer.mergeErrorLayer(typeErrorLayer);
+//							}
+//						}
 
 						if (option instanceof OneAcre) {
 							List<String> relationNames = ((OneAcre) option).getRelationType();
@@ -541,7 +542,6 @@ public class CollectionValidator {
 						if (option instanceof B_SymbolOutSided) {
 							List<String> relationNames = ((B_SymbolOutSided) option).getRelationType();
 							for (int l = 0; l < relationNames.size(); l++) {
-								System.out.println();
 								typeErrorLayer = layerValidator.vallidateB_SymbolOutSided(
 										types.getTypeLayers(relationNames.get(l), layerCollection));
 								if (typeErrorLayer != null) {

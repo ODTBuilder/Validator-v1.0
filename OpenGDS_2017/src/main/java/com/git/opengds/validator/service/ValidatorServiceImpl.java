@@ -17,6 +17,7 @@
 
 package com.git.opengds.validator.service;
 
+import java.io.FileReader;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
@@ -27,6 +28,7 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.feature.SchemaException;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -38,8 +40,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.git.gdsbuilder.convertor.impl.GeoJsonToSimpleImpl;
 import com.git.gdsbuilder.type.geoserver.collection.GeoLayerCollection;
 import com.git.gdsbuilder.type.geoserver.collection.GeoLayerCollectionList;
+import com.git.gdsbuilder.type.geoserver.layer.GeoLayer;
 import com.git.gdsbuilder.type.validate.collection.ValidateLayerCollectionList;
 import com.git.gdsbuilder.type.validate.error.ErrorLayer;
 import com.git.gdsbuilder.type.validate.error.ErrorLayerList;
@@ -81,6 +85,14 @@ public class ValidatorServiceImpl implements ValidatorService {
 	@Override
 	public void validate(final UserVO userVO, String jsonObject) throws Exception {
 
+		JSONParser parser1 = new JSONParser();
+		Object obj = parser1.parse(new FileReader("d:\\test.txt"));
+		JSONObject jsonObject1 = (JSONObject) obj;
+
+		
+		GeoJsonToSimpleImpl f = new GeoJsonToSimpleImpl();
+		SimpleFeatureCollection sf = f.converToSimpleFeatureCollection(jsonObject1);
+		
 		
 		System.out.println(jsonObject);
 		
@@ -115,6 +127,15 @@ public class ValidatorServiceImpl implements ValidatorService {
 				validateLayerTypeList);
 
 		GeoLayerCollectionList geoLayerCollectionList = validateLayerCollection.getLayerCollectionList();
+		for(int i = 0 ; i < geoLayerCollectionList.size(); i++) {
+			GeoLayerCollection c = geoLayerCollectionList.get(i);
+			List<GeoLayer> layers = c.getLayers();
+			for(int j = 0; j < layers.size(); j++) {
+				GeoLayer z = layers.get(j);
+				System.out.println(z.getLayerName());
+				System.out.println(z.getSimpleFeatureCollection().size());
+			}
+		}
 		final ValidateLayerTypeList layerTypeList = validateLayerCollection.getValidateLayerTypeList();
 		final MapSystemRule mapSystemRule = new MapSystemRule(-10, 10, -1, 1); // 도곽설정
 

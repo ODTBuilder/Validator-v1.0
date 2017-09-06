@@ -70,6 +70,7 @@ import com.git.gdsbuilder.type.validate.option.EntityInHole;
 import com.git.gdsbuilder.type.validate.option.HoleMisplacement;
 import com.git.gdsbuilder.type.validate.option.LayerMiss;
 import com.git.gdsbuilder.type.validate.option.LinearDisconnection;
+import com.git.gdsbuilder.type.validate.option.MultiPart;
 import com.git.gdsbuilder.type.validate.option.NodeMiss;
 import com.git.gdsbuilder.type.validate.option.OneAcre;
 import com.git.gdsbuilder.type.validate.option.OneStage;
@@ -1512,16 +1513,33 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 	@Override
 	public List<ErrorFeature> validateMultiPart(SimpleFeature simpleFeature) {
 
+		List<ErrorFeature> errorFeatures = new ArrayList<>();
+		
+		String featureIdx = simpleFeature.getID();
+		Property featuerIDPro = simpleFeature.getProperty("feature_id");
+		String featureID = (String) featuerIDPro.getValue();
+		
 		List<ErrorFeature> errFeatures = new ArrayList<>();
-
 		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
-		Coordinate[] coordinates = geometry.getCoordinates();
-		GeometryFactory geometryFactory = new GeometryFactory();
-		boolean isEquals = false;
-		for (int i = 0; i < coordinates.length - 1; i++) {
-			Coordinate coorI = coordinates[i];
-			for (int j = i + 1; j < coordinates.length - 1; j++) {
-				Coordinate coorJ = coordinates[j];
+		
+		String geomType = geometry.getGeometryType();
+		int size = geometry.getNumPoints();
+		if(geomType.equals("Polygon")) {
+			size = size - 1;
+		}
+		Coordinate[] coors = geometry.getCoordinates();
+		for(int i = 0 ; i < size - 1; i++) {
+			Coordinate coorI = coors[i];
+			for(int j = i + 1; j < size; j++) {
+				Coordinate coorJ = coors[j];
+				System.out.println("I : " + coorI.toString());
+				System.out.println("J : " + coorJ.toString());
+				if(coorI.equals3D(coorJ)) {
+					ErrorFeature errorFeature = new ErrorFeature(featureIdx, featureID,
+							MultiPart.Type.MULTIPART.errType(),
+							MultiPart.Type.MULTIPART.errName(), new GeometryFactory().createPoint(coorJ));
+					errorFeatures.add(errorFeature);
+				}
 			}
 		}
 		return errFeatures;
