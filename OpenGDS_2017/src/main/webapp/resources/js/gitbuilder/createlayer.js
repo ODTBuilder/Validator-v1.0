@@ -241,7 +241,7 @@ gb.geoserver.CreateLayer.prototype.setForm = function(format, type, sheetNum) {
 			this.initAttrForm();
 			$(this.attrForm).show();
 			$(this.expertForm).hide();
-		} 
+		}
 	}
 };
 gb.geoserver.CreateLayer.prototype.initTypeForm = function(type) {
@@ -423,6 +423,15 @@ gb.geoserver.CreateLayer.prototype.getDefinitionForm = function() {
 			layerObj["dim"] = 2;
 			layerObj["bound"] = [ [ 122.6019287109375, 49.73690656023088 ], [ 122.14874267578125, 49.40918616182351 ] ];
 			layerObj["represent"] = "255;0;102";
+		} else if (this.format === "shp") {
+			var attr = {
+				"fieldName" : "UFID",
+				"type" : "String",
+				"nullable" : true
+			}
+			layerObj["attr"] = [ attr ];
+			// layerObj["bound"] = [ [ 122.6019287109375, 49.73690656023088 ], [
+			// 122.14874267578125, 49.40918616182351 ] ];
 		}
 		this.futureId = "gro_" + this.format + "_" + $(this.sheetNumInput).val().replace(/(\s*)/g, '');
 	} else if (this.type === "layer") {
