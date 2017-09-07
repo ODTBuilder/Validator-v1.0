@@ -6,5 +6,4 @@ import com.git.opengds.user.domain.UserVO;
 public interface DXFFileUploadService {
 
 	public FileMeta dxfUpload(UserVO userVO, FileMeta fileMeta) throws Exception;
-
 }
