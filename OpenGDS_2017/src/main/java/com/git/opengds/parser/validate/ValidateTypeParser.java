@@ -65,6 +65,8 @@ import com.git.gdsbuilder.type.validate.option.RiverBoundaryMiss;
 import com.git.gdsbuilder.type.validate.option.SelfEntity;
 import com.git.gdsbuilder.type.validate.option.SmallArea;
 import com.git.gdsbuilder.type.validate.option.SmallLength;
+import com.git.gdsbuilder.type.validate.option.TwistedPolygon;
+import com.git.gdsbuilder.type.validate.option.UFIDDuplicated;
 import com.git.gdsbuilder.type.validate.option.UFIDLength;
 import com.git.gdsbuilder.type.validate.option.UFIDRule;
 import com.git.gdsbuilder.type.validate.option.UnderShoot;
@@ -680,7 +682,6 @@ public class ValidateTypeParser {
 					optionList.add(linearDisconnection);
 				}
 			}
-
 			if (optionName.equalsIgnoreCase(EntityNone.Type.ENTITYNONE.errName())) {
 				Boolean isTrue = (Boolean) qaOptions.get("EntityNone");
 				if (isTrue) {
@@ -688,7 +689,6 @@ public class ValidateTypeParser {
 					optionList.add(entityNone);
 				}
 			}
-
 			if (optionName.equalsIgnoreCase(EdgeMatchMiss.Type.EDGEMATCHMISS.errName())) {
 				Boolean isTrue = (Boolean) qaOptions.get("EdgeMatchMiss");
 				if (isTrue) {
@@ -696,7 +696,6 @@ public class ValidateTypeParser {
 					optionList.add(edgeMatchMiss);
 				}
 			}
-
 			if (optionName.equalsIgnoreCase(RefAttributeMiss.Type.RefAttributeMiss.errName())) {
 				Object refAttributeMissObj = qaOptions.get("RefAttributeMiss");
 				if (refAttributeMissObj == null) {
@@ -742,12 +741,25 @@ public class ValidateTypeParser {
 					optionList.add(neatLineMiss);
 				}
 			}
-
 			if (optionName.equalsIgnoreCase(MultiPart.Type.MULTIPART.errName())) {
 				Boolean isTrue = (Boolean) qaOptions.get("MultiPart");
 				if (isTrue) {
 					MultiPart multiPart = new MultiPart();
 					optionList.add(multiPart);
+				}
+			}
+			if (optionName.equalsIgnoreCase(UFIDDuplicated.Type.UFIDDUPLICATED.errName())) {
+				Boolean isTrue = (Boolean) qaOptions.get("UFIDDuplicated");
+				if (isTrue) {
+					UFIDDuplicated ufidDuplicated = new UFIDDuplicated();
+					optionList.add(ufidDuplicated);
+				}
+			}
+			if (optionName.equalsIgnoreCase(TwistedPolygon.Type.TWISTEDPOLYGON.errName())) {
+				Boolean isTrue = (Boolean) qaOptions.get("TwistedPolygon");
+				if (isTrue) {
+					TwistedPolygon twistedPolygon = new TwistedPolygon();
+					optionList.add(twistedPolygon);
 				}
 			}
 		}

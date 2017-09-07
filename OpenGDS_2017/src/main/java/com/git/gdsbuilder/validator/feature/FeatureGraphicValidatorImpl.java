@@ -1344,27 +1344,29 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 			Geometry relationGeometry = (Geometry) relationSimpleFeature.getDefaultGeometry();
 			if (geometry.intersects(relationGeometry)) {
 				isTrue = true;
-				if (bufferGeom.contains(relationGeometry) || relationGeometry.within(bufferGeom)) {
-					break;
-				} else {
-					// error
-					ErrorFeature errorFeature = new ErrorFeature(featureIdx, featureID,
-							CenterLineMiss.Type.CENTERLINEMISS.errType(), CenterLineMiss.Type.CENTERLINEMISS.errName(),
-							geometry.getInteriorPoint());
-					return errorFeature;
-				}
+				// if (bufferGeom.contains(relationGeometry) ||
+				// relationGeometry.within(bufferGeom)) {
+				// break;
+				// } else {
+				// // error
+				// ErrorFeature errorFeature = new ErrorFeature(featureIdx,
+				// featureID,
+				// CenterLineMiss.Type.CENTERLINEMISS.errType(),
+				// CenterLineMiss.Type.CENTERLINEMISS.errName(),
+				// geometry.getInteriorPoint());
+				// return errorFeature;
+				// }
 			}
-		}
-
-		if (!isTrue) {
-			// error
-			ErrorFeature errorFeature = new ErrorFeature(featureIdx, featureID,
-					CenterLineMiss.Type.CENTERLINEMISS.errType(), CenterLineMiss.Type.CENTERLINEMISS.errName(),
-					geometry.getInteriorPoint());
-			return errorFeature;
-		} else {
-			return null;
-		}
+			}
+			if (!isTrue) {
+				// error
+				ErrorFeature errorFeature = new ErrorFeature(featureIdx, featureID,
+						CenterLineMiss.Type.CENTERLINEMISS.errType(), CenterLineMiss.Type.CENTERLINEMISS.errName(),
+						geometry.getInteriorPoint());
+				return errorFeature;
+			} else {
+				return null;
+			}
 	}
 
 	@SuppressWarnings("unused")

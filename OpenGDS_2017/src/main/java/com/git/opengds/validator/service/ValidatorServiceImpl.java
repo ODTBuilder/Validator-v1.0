@@ -85,17 +85,6 @@ public class ValidatorServiceImpl implements ValidatorService {
 	@Override
 	public void validate(final UserVO userVO, String jsonObject) throws Exception {
 
-		JSONParser parser1 = new JSONParser();
-		Object obj = parser1.parse(new FileReader("d:\\test.txt"));
-		JSONObject jsonObject1 = (JSONObject) obj;
-
-		
-		GeoJsonToSimpleImpl f = new GeoJsonToSimpleImpl();
-		SimpleFeatureCollection sf = f.converToSimpleFeatureCollection(jsonObject1);
-		
-		
-		System.out.println(jsonObject);
-		
 		JSONParser parser = new JSONParser();
 		JSONObject jsonObj = (JSONObject) parser.parse(jsonObject);
 
@@ -125,17 +114,8 @@ public class ValidatorServiceImpl implements ValidatorService {
 		// 검수수행
 		ValidateLayerCollectionList validateLayerCollection = new ValidateLayerCollectionList(collectionList,
 				validateLayerTypeList);
-
 		GeoLayerCollectionList geoLayerCollectionList = validateLayerCollection.getLayerCollectionList();
-		for(int i = 0 ; i < geoLayerCollectionList.size(); i++) {
-			GeoLayerCollection c = geoLayerCollectionList.get(i);
-			List<GeoLayer> layers = c.getLayers();
-			for(int j = 0; j < layers.size(); j++) {
-				GeoLayer z = layers.get(j);
-				System.out.println(z.getLayerName());
-				System.out.println(z.getSimpleFeatureCollection().size());
-			}
-		}
+		
 		final ValidateLayerTypeList layerTypeList = validateLayerCollection.getValidateLayerTypeList();
 		final MapSystemRule mapSystemRule = new MapSystemRule(-10, 10, -1, 1); // 도곽설정
 
