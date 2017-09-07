@@ -269,7 +269,7 @@ public class EditDTLayerServiceImpl implements EditDTLayerService {
 						String layerId = layer.getLayerID();
 						boolean isSuccessed = editDBManager.dropDXFLayer(userVO, isDxf, collectionIdx, collectionName,
 								layer);
-						if(!editCollection.isDeleted()){
+						if(!editCollection.isDeleteAll()){
 							if (isSuccessed) {
 								String layerTableName = "geo" + "_" + type + "_" + collectionName + "_" + layerId;
 								String groupName = "gro" + "_" + type + "_" + collectionName;
