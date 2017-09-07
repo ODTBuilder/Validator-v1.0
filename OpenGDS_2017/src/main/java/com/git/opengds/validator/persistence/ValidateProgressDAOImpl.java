@@ -193,7 +193,8 @@ public class ValidateProgressDAOImpl extends DataSourceFactory implements Valida
 	public List<HashMap<String, Object>> selectAllNGIValidateProgress(UserVO userVO,
 			HashMap<String, Object> selectAllQA20ValidateProgress) {
 		sqlSession = super.getSqlSession(userVO.getId());
-		return sqlSession.selectList(ngiNamespace + ".selectAllQA20ValidateProgress", selectAllQA20ValidateProgress);
+		
+		return  sqlSession.selectList(ngiNamespace + ".selectAllQA20ValidateProgress", selectAllQA20ValidateProgress);
 	}
 
 	@Override
