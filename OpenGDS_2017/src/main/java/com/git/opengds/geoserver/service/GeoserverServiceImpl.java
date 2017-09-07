@@ -155,9 +155,6 @@ public class GeoserverServiceImpl implements GeoserverService {
 				 * 
 				 * result.addValue(sum);
 				 */
-				
-				System.out.println(layerName+" 레이어 발행 시작");
-				
 				GSFeatureTypeEncoder fte = new GSFeatureTypeEncoder();
 				GSLayerEncoder layerEncoder = new GSLayerEncoder();
 				String upperLayerName = layerName.toUpperCase();
@@ -301,7 +298,6 @@ public class GeoserverServiceImpl implements GeoserverService {
 		
 		for(Future<Result> future : futures){
 			try {
-				System.out.println("레이어 발행완료");
 				result = future.get();
 			} catch (Exception e) {
 				e.printStackTrace();
