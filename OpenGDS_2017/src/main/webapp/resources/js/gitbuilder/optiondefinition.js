@@ -43,18 +43,35 @@ gitbuilder.ui.OptionDefinition = $
 								"NumericalValue", "UFIDRule" ],
 						insert : [ "SelfEntity", "LayerMiss", "UselessEntity", "EntityDuplicated", "OverShoot" ],
 						point : [ "LayerMiss", "UselessEntity", "EntityDuplicated", "SelfEntity", "AttributeFix", "OutBoundary",
-								"CharacterAccuracy", "OverShoot", "UnderShoot", "UFIDLength", "NumericalValue", "UFIDRule" ],
+								"CharacterAccuracy", "OverShoot", "UnderShoot", "UFIDLength", "NumericalValue", "UFIDRule",
+								"UFIDDuplicated" ],
 						linestring : [ "RefAttributeMiss", "EdgeMatchMiss", "UselessEntity", "LayerMiss", "RefLayerMiss", "SmallLength",
 								"EntityDuplicated", "SelfEntity", "PointDuplicated", "ConIntersected", "ConOverDegree", "ConBreak",
 								"AttributeFix", "OutBoundary", "ZValueAmbiguous", "UselessPoint", "OverShoot", "UnderShoot",
-								"RefZValueMiss", "UFIDLength", "NeatLineAttribute", "NumericalValue", "UFIDRule", "LinearDisconnection" ],
+								"RefZValueMiss", "UFIDLength", "NeatLineAttribute", "NumericalValue", "UFIDRule", "LinearDisconnection",
+								"MultiPart", "UFIDDuplicated" ],
 						polygon : [ "Admin", "CrossRoad", "RefAttributeMiss", "BridgeName", "NodeMiss", "EdgeMatchMiss", "UselessEntity",
 								"LayerMiss", "RefLayerMiss", "SmallArea", "EntityDuplicated", "SelfEntity", "PointDuplicated",
 								"AttributeFix", "OutBoundary", "OverShoot", "UnderShoot", "OneAcre", "OneStage", "BuildingSite",
 								"UFIDLength", "HouseAttribute", "CemeterySite", "NumericalValue", "RiverBoundaryMiss", "UFIDRule",
-								"HoleMisplacement", "CenterLineMiss", "EntityInHole" ]
+								"HoleMisplacement", "CenterLineMiss", "EntityInHole", "TwistedPolygon", "MultiPart", "UFIDDuplicated" ]
 					},
 					optItem : {
+						"UFIDDuplicated" : {
+							"title" : "UFID Duplication",
+							"alias" : "UFIDDuplicated",
+							"type" : "none"
+						},
+						"MultiPart" : {
+							"title" : "Entity Looking Like Multipart",
+							"alias" : "MultiPart",
+							"type" : "none"
+						},
+						"TwistedPolygon" : {
+							"title" : "Twisted Polygon",
+							"alias" : "TwistedPolygon",
+							"type" : "none"
+						},
 						"LinearDisconnection" : {
 							"title" : "Linear Disconnection",
 							"alias" : "LinearDisconnection",
