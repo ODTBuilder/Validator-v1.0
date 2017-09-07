@@ -7309,8 +7309,9 @@
 								"mapsheet" : {
 									"separator_before" : false,
 									"_disabled" : function(data) {
-										return !($.jstree.reference(data.reference).get_node(data.reference).type === "n_ngi" || $.jstree
-												.reference(data.reference).get_node(data.reference).type === "n_dxf")
+										return !($.jstree.reference(data.reference).get_node(data.reference).type === "n_ngi"
+												|| $.jstree.reference(data.reference).get_node(data.reference).type === "n_dxf" || $.jstree
+												.reference(data.reference).get_node(data.reference).type === "n_shp")
 									},
 									"icon" : "fa fa-file-image-o",
 									"separator_after" : false,
@@ -7335,6 +7336,9 @@
 											inst._data.geoserver.createLayer.open();
 										} else if (obj.type === "n_dxf") {
 											inst._data.geoserver.createLayer.setForm("dxf", "mapsheet");
+											inst._data.geoserver.createLayer.open();
+										} else if (obj.type === "n_shp") {
+											inst._data.geoserver.createLayer.setForm("shp", "mapsheet");
 											inst._data.geoserver.createLayer.open();
 										}
 									}

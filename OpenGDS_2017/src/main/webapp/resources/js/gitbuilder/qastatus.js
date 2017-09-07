@@ -195,12 +195,13 @@ gb.qa.QAStatus.prototype.setList = function() {
 		traditional : true,
 		success : function(data, textStatus, jqXHR) {
 			console.log(data);
-			var qa1 = data["QA10"];
-			var qa2 = data["QA20"];
+			var dxf = data["dxf"];
+			var ngi = data["ngi"];
+			var shp = data["shp"];
 			var total = [];
-			if (Array.isArray(qa1)) {
-				for (var i = 0; i < qa1.length; i++) {
-					var stat = qa1[i].state;
+			if (Array.isArray(dxf)) {
+				for (var i = 0; i < dxf.length; i++) {
+					var stat = dxf[i].state;
 					var statText;
 					switch (stat) {
 					case 0:
@@ -225,15 +226,15 @@ gb.qa.QAStatus.prototype.setList = function() {
 						break;
 					}
 
-					var tbData = [ qa1[i].fileType, qa1[i].collectionName, qa1[i].errLayerName, statText, qa1[i].requestTime,
-							qa1[i].responseTime ];
+					var tbData = [ dxf[i].fileType, dxf[i].collectionName, dxf[i].errLayerName, statText, dxf[i].requestTime,
+							dxf[i].responseTime ];
 					total.push(tbData);
 
 				}
 			}
-			if (Array.isArray(qa2)) {
-				for (var i = 0; i < qa2.length; i++) {
-					var stat = qa2[i].state;
+			if (Array.isArray(ngi)) {
+				for (var i = 0; i < ngi.length; i++) {
+					var stat = ngi[i].state;
 					var statText;
 					switch (stat) {
 					case 0:
@@ -258,8 +259,40 @@ gb.qa.QAStatus.prototype.setList = function() {
 						break;
 					}
 
-					var tbData = [ qa2[i].fileType, qa2[i].collectionName, qa2[i].errLayerName, statText, qa2[i].requestTime,
-							qa2[i].responseTime ];
+					var tbData = [ ngi[i].fileType, ngi[i].collectionName, ngi[i].errLayerName, statText, ngi[i].requestTime,
+							ngi[i].responseTime ];
+					total.push(tbData);
+				}
+			}
+			if (Array.isArray(shp)) {
+				for (var i = 0; i < shp.length; i++) {
+					var stat = shp[i].state;
+					var statText;
+					switch (stat) {
+					case 0:
+						statText = "Request successful";
+						break;
+					case 1:
+						statText = "Validating";
+						break;
+					case 2:
+						statText = "Validation successful";
+						break;
+					case 3:
+						statText = "Validation failure";
+						break;
+					case 4:
+						statText = "Error layer created";
+						break;
+					case 5:
+						statText = "Error layer failed";
+						break;
+					default:
+						break;
+					}
+
+					var tbData = [ shp[i].fileType, shp[i].collectionName, shp[i].errLayerName, statText, shp[i].requestTime,
+							shp[i].responseTime ];
 					total.push(tbData);
 				}
 			}
