@@ -303,5 +303,7 @@ public interface LayerValidator {
 	public ErrorLayer validateCloseCollection(ValidateCloseCollectionLayer closeCollectionLayer, String geomColunm);
 
 	public ErrorLayer validateMultiPart();
+	
+	public ErrorLayer validateUFIDDuplicated();
 
 }

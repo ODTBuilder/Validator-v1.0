@@ -541,7 +541,7 @@ public class LayerValidatorImpl implements LayerValidator {
 	public ErrorLayer validateUselessEntity() throws SchemaException {
 		ErrorLayer errLayer = new ErrorLayer();
 		SimpleFeatureCollection sfc = validatorLayer.getSimpleFeatureCollection();
-System.out.println(sfc.size());
+		System.out.println(sfc.size());
 		SimpleFeatureIterator simpleFeatureIterator = sfc.features();
 		while (simpleFeatureIterator.hasNext()) {
 			SimpleFeature simpleFeature = simpleFeatureIterator.next();
@@ -794,7 +794,8 @@ System.out.println(sfc.size());
 	public ErrorLayer validateTwistedPolygon() throws SchemaException {
 		ErrorLayer errorLayer = new ErrorLayer();
 		SimpleFeatureCollection sfc = validatorLayer.getSimpleFeatureCollection();
-		DefaultFeatureCollection featureCollection = new DefaultFeatureCollection();
+		// DefaultFeatureCollection featureCollection = new
+		// DefaultFeatureCollection();
 		SimpleFeatureIterator simpleFeatureIterator = sfc.features();
 		while (simpleFeatureIterator.hasNext()) {
 			SimpleFeature simpleFeature = simpleFeatureIterator.next();
@@ -803,11 +804,11 @@ System.out.println(sfc.size());
 				errorFeature.setLayerName(validatorLayer.getLayerName());
 				errorLayer.addErrorFeature(errorFeature);
 			} else {
-				featureCollection.add(simpleFeature);
+				// featureCollection.add(simpleFeature);
 				continue;
 			}
 		}
-		validatorLayer.setSimpleFeatureCollection(featureCollection);
+		// validatorLayer.setSimpleFeatureCollection(featureCollection);
 		if (errorLayer.getErrFeatureList().size() > 0) {
 			return errorLayer;
 		} else {
@@ -1518,6 +1519,40 @@ System.out.println(sfc.size());
 		}
 		if (errorLayer.getErrFeatureList().size() > 0) {
 			return errorLayer;
+		} else {
+			return null;
+		}
+	}
+
+	public ErrorLayer validateUFIDDuplicated() {
+
+		ErrorLayer errLayer = new ErrorLayer();
+
+		SimpleFeatureCollection sfc = validatorLayer.getSimpleFeatureCollection();
+		List<SimpleFeature> tmpsSimpleFeatures = new ArrayList<SimpleFeature>();
+		SimpleFeatureIterator simpleFeatureIterator = sfc.features();
+		while (simpleFeatureIterator.hasNext()) {
+			SimpleFeature simpleFeature = simpleFeatureIterator.next();
+			tmpsSimpleFeatures.add(simpleFeature);
+		}
+
+		int tmpSize = tmpsSimpleFeatures.size();
+		for (int i = 0; i < tmpSize - 1; i++) {
+			SimpleFeature tmpSimpleFeatureI = tmpsSimpleFeatures.get(i);
+			for (int j = i + 1; j < tmpSize; j++) {
+				SimpleFeature tmpSimpleFeatureJ = tmpsSimpleFeatures.get(j);
+				ErrorFeature errFeature = attributeValidator.validateUFIDDuplicated(tmpSimpleFeatureI,
+						tmpSimpleFeatureJ);
+				if (errFeature != null) {
+					errFeature.setLayerName(validatorLayer.getLayerName());
+					errLayer.addErrorFeature(errFeature);
+				} else {
+					continue;
+				}
+			}
+		}
+		if (errLayer.getErrFeatureList().size() > 0) {
+			return errLayer;
 		} else {
 			return null;
 		}

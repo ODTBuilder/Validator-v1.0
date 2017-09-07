@@ -1513,30 +1513,28 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 	@Override
 	public List<ErrorFeature> validateMultiPart(SimpleFeature simpleFeature) {
 
-		ArrayList<ErrorFeature> errorFeatures = new ArrayList<ErrorFeature>();
-		
 		String featureIdx = simpleFeature.getID();
 		Property featuerIDPro = simpleFeature.getProperty("feature_id");
 		String featureID = (String) featuerIDPro.getValue();
-		
+
 		List<ErrorFeature> errFeatures = new ArrayList<>();
 		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
-		
+
 		String geomType = geometry.getGeometryType();
 		int size = geometry.getNumPoints();
-		if(geomType.equals("Polygon")) {
+		if (geomType.equals("Polygon")) {
 			size = size - 1;
 		}
 		Coordinate[] coors = geometry.getCoordinates();
-		for(int i = 0 ; i < size - 1; i++) {
-			Coordinate coorI = coors[i];
-			for(int j = i + 1; j < size; j++) {
-				Coordinate coorJ = coors[j];
-				if(coorI.equals2D(coorJ)) {
+		for (int i = 0; i < size - 1; i++) {
+			Coordinate coorI1 = coors[i];
+			for (int j = i + 1; j < size; j++) {
+				Coordinate coorJ1 = coors[j];
+				if (coorI1.equals2D(coorJ1)) {
 					ErrorFeature errorFeature = new ErrorFeature(featureIdx, featureID,
-							MultiPart.Type.MULTIPART.errType(),
-							MultiPart.Type.MULTIPART.errName(), new GeometryFactory().createPoint(coorJ));
-					errorFeatures.add(errorFeature);
+							MultiPart.Type.MULTIPART.errType(), MultiPart.Type.MULTIPART.errName(),
+							new GeometryFactory().createPoint(coorJ1));
+					errFeatures.add(errorFeature);
 				}
 			}
 		}

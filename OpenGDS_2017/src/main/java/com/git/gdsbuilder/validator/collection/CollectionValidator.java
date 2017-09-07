@@ -95,6 +95,8 @@ import com.git.gdsbuilder.type.validate.option.RiverBoundaryMiss;
 import com.git.gdsbuilder.type.validate.option.SelfEntity;
 import com.git.gdsbuilder.type.validate.option.SmallArea;
 import com.git.gdsbuilder.type.validate.option.SmallLength;
+import com.git.gdsbuilder.type.validate.option.TwistedPolygon;
+import com.git.gdsbuilder.type.validate.option.UFIDDuplicated;
 import com.git.gdsbuilder.type.validate.option.UFIDLength;
 import com.git.gdsbuilder.type.validate.option.UFIDRule;
 import com.git.gdsbuilder.type.validate.option.UnderShoot;
@@ -251,7 +253,7 @@ public class CollectionValidator {
 			errorLayer.setCollectionType(this.collectionType);
 
 			GeoLayer neatLineLayer = collection.getNeatLine();
-	
+
 			// neatLineMiss 검수
 			if (neatLineLayer == null) {
 				throw new Exception();
@@ -368,6 +370,13 @@ public class CollectionValidator {
 								errorLayer.mergeErrorLayer(typeErrorLayer);
 							}
 						}
+						
+						if (option instanceof UFIDDuplicated) {
+							typeErrorLayer = layerValidator.validateUFIDDuplicated();
+							if (typeErrorLayer != null) {
+								errorLayer.mergeErrorLayer(typeErrorLayer);
+							}
+						}
 					}
 				}
 			}
@@ -400,17 +409,15 @@ public class CollectionValidator {
 						}
 						String layerFullName = typeLayer.getLayerName();
 						int dash = layerFullName.indexOf("_");
-						String layerType = layerFullName.substring(dash + 1);
-						String upperLayerType = layerType.toUpperCase();
 						LayerValidator layerValidator = new LayerValidatorImpl(typeLayer);
-//						
-//						if (upperLayerType.equals("POLYGON")) {
-//							// twistedFeature
-//							typeErrorLayer = layerValidator.validateTwistedPolygon();
-//							if (typeErrorLayer != null) {
-//								errorLayer.mergeErrorLayer(typeErrorLayer);
-//							}
-//						}
+
+						if (option instanceof TwistedPolygon) {
+							// twistedFeature
+							typeErrorLayer = layerValidator.validateTwistedPolygon();
+							if (typeErrorLayer != null) {
+								errorLayer.mergeErrorLayer(typeErrorLayer);
+							}
+						}
 
 						if (option instanceof OneAcre) {
 							List<String> relationNames = ((OneAcre) option).getRelationType();
@@ -462,7 +469,12 @@ public class CollectionValidator {
 							}
 						}
 						if (option instanceof EntityDuplicated) {
-							typeErrorLayer = layerValidator.validateEntityDuplicated();
+//							typeErrorLayer = layerValidator.validateEntityDuplicated();
+//							if (typeErrorLayer != null) {
+//								errorLayer.mergeErrorLayer(typeErrorLayer);
+//							}
+							
+							typeErrorLayer = layerValidator.validateUFIDDuplicated();
 							if (typeErrorLayer != null) {
 								errorLayer.mergeErrorLayer(typeErrorLayer);
 							}
@@ -628,11 +640,7 @@ public class CollectionValidator {
 						}
 
 						if (option instanceof HoleMisplacement) {
-//							typeErrorLayer = layerValidator.validateHoleMisplacement();
-//							if (typeErrorLayer != null) {
-//								errorLayer.mergeErrorLayer(typeErrorLayer);
-//							}
-							typeErrorLayer = layerValidator.validateMultiPart();
+							typeErrorLayer = layerValidator.validateHoleMisplacement();
 							if (typeErrorLayer != null) {
 								errorLayer.mergeErrorLayer(typeErrorLayer);
 							}
