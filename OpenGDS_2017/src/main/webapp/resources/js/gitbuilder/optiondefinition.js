@@ -128,9 +128,15 @@ gitbuilder.ui.OptionDefinition = $
 							"type" : "figure",
 							"unit" : "Characters"
 						},
-						"BuildingSite" : {
-							"title" : "Building Site Error",
-							"alias" : "BuildingSite",
+						"BuildingSiteDanger" : {
+							"title" : "Building Site Error(Dangerous Facility)",
+							"alias" : "BuildingSiteDanger",
+							"type" : "labelnrelation",
+							"multi" : false
+						},
+						"BuildingSiteRelaxation" : {
+							"title" : "Building Site Error(Relaxation Facility)",
+							"alias" : "BuildingSiteRelaxation",
 							"type" : "labelnrelation",
 							"multi" : false
 						},
