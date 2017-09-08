@@ -58,27 +58,35 @@ gb.panel.EditingTool = function(obj) {
 		})
 	}) ];
 
-	this.highlightStyles1 = new ol.style.Style({
+	this.highlightStyles1 = [ new ol.style.Style({
 		stroke : new ol.style.Stroke({
 			color : 'rgba(255,0,0,1)',
 			width : 2
 		})
 	}), new ol.style.Style({
 		image : new ol.style.Circle({
-			radius : 10
+			radius : 10,
+			stroke : new ol.style.Stroke({
+				color : 'rgba(255,0,0,1)',
+				width : 2
+			})
 		})
-	});
+	}) ];
 
-	this.highlightStyles2 = new ol.style.Style({
+	this.highlightStyles2 = [ new ol.style.Style({
 		stroke : new ol.style.Stroke({
 			color : 'rgba(0, 0, 255, 1)',
 			width : 2
 		})
 	}), new ol.style.Style({
 		image : new ol.style.Circle({
-			radius : 10
+			radius : 10,
+			stroke : new ol.style.Stroke({
+				color : 'rgba(0, 0, 255, 1)',
+				width : 2
+			})
 		})
-	});
+	}) ];
 
 	this.selectedStyles = [ new ol.style.Style({
 		stroke : new ol.style.Stroke({
