@@ -52,9 +52,10 @@ gitbuilder.ui.OptionDefinition = $
 								"MultiPart", "UFIDDuplicated" ],
 						polygon : [ "Admin", "CrossRoad", "RefAttributeMiss", "BridgeName", "NodeMiss", "EdgeMatchMiss", "UselessEntity",
 								"LayerMiss", "RefLayerMiss", "SmallArea", "EntityDuplicated", "SelfEntity", "PointDuplicated",
-								"AttributeFix", "OutBoundary", "OverShoot", "UnderShoot", "OneAcre", "OneStage", "BuildingSite",
-								"UFIDLength", "HouseAttribute", "CemeterySite", "NumericalValue", "RiverBoundaryMiss", "UFIDRule",
-								"HoleMisplacement", "CenterLineMiss", "EntityInHole", "TwistedPolygon", "MultiPart", "UFIDDuplicated" ]
+								"AttributeFix", "OutBoundary", "OverShoot", "UnderShoot", "OneAcre", "OneStage", "BuildingSiteDanger",
+								"BuildingSiteRelaxation", "UFIDLength", "HouseAttribute", "CemeterySite", "NumericalValue",
+								"RiverBoundaryMiss", "UFIDRule", "HoleMisplacement", "CenterLineMiss", "EntityInHole", "TwistedPolygon",
+								"MultiPart", "UFIDDuplicated" ]
 					},
 					optItem : {
 						"UFIDDuplicated" : {
