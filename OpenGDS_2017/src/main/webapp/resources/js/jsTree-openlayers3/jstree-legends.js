@@ -38,7 +38,7 @@ $.jstreeol3.defaults.legends = {
 		}
 	},
 	"geoserver" : {
-		"url" : "http://175.116.181.42:9990/geoserver/wms",
+		"url" : "http://localhost:9990/geoserver/wms",
 		"width" : "15",
 		"height" : "15",
 		"format" : "image/png"

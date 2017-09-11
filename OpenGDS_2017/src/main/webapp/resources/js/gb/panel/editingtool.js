@@ -23,7 +23,7 @@ gb.panel.EditingTool = function(obj) {
 	this.layerInfo = options.layerInfo ? options.layerInfo : undefined;
 	this.imageTile = options.imageTile ? options.imageTile : undefined;
 	this.getFeature = options.getFeature ? options.getFeature : undefined;
-
+	this.getFeatureInfo = options.getFeatureInfo ? options.getFeatureInfo : undefined;
 	this.layers = undefined;
 	this.layer = undefined;
 
@@ -1471,4 +1471,77 @@ gb.panel.EditingTool.prototype.setMap = function(map) {
  */
 gb.panel.EditingTool.prototype.setMap = function() {
 	return this.map;
+}
+/**
+ * String인지 검사한다.
+ * 
+ * @method isString()
+ * @param {mixed}
+ *            va
+ * @return {Boolean} is String?
+ */
+gb.panel.EditingTool.prototype.isString = function(va) {
+	var result = false;
+	if (typeof va === "string") {
+		result = true;
+	}
+	return result;
+}
+/**
+ * Integer인지 검사한다.
+ * 
+ * @method isString()
+ * @param {mixed}
+ *            va
+ * @return {Boolean} is Integer?
+ */
+gb.panel.EditingTool.prototype.isInteger = function(va) {
+	var result = false;
+	if (va == parseInt(va)) {
+		result = true;
+	}
+	return result;
+}
+/**
+ * Double인지 검사한다.
+ * 
+ * @method isDouble()
+ * @param {mixed}
+ *            va
+ * @return {Boolean} is Double?
+ */
+gb.panel.EditingTool.prototype.isDouble = function(va) {
+	return;
+}
+/**
+ * Boolean인지 검사한다.
+ * 
+ * @method isBoolean()
+ * @param {mixed}
+ *            va
+ * @return {Boolean} is Boolean?
+ */
+gb.panel.EditingTool.prototype.isBoolean = function(va) {
+	var result = false;
+	if (va == "true" || va == "false") {
+		result = true;
+	}
+	return result;
+}
+/**
+ * Date인지 검사한다.
+ * 
+ * @method isDate()
+ * @param {mixed}
+ *            va
+ * @return {Boolean} is Date?
+ */
+gb.panel.EditingTool.prototype.isDate = function(va) {
+	var result = false;
+	if (typeof va === "string") {
+		if ((new Date(va)).getTime() > 0) {
+			result = true;
+		}
+	}
+	return result;
 }
