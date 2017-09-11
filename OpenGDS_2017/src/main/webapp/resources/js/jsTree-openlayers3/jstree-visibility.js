@@ -463,11 +463,11 @@ $.jstreeol3.plugins.visibility = function(options, parent) {
 		if (layer instanceof ol.layer.Tile) {
 			var showing = [];
 			var children = JSON.parse(JSON.stringify(node.children)).reverse();
-			console.log(children);
+			// console.log(children);
 			for (var i = 0; i < children.length; i++) {
 				showing.push(this.get_LayerById(children[i]).get("id"));
 			}
-			console.log(showing);
+			// console.log(showing);
 			var source = layer.getSource();
 			var params = source.getParams();
 			params["LAYERS"] = showing.toString();
@@ -488,7 +488,7 @@ $.jstreeol3.plugins.visibility = function(options, parent) {
 			var showing = [];
 			var hiding = this._data.visibility.hiding;
 			var children = JSON.parse(JSON.stringify(node.children)).reverse();
-			console.log(children);
+			// console.log(children);
 			for (var i = 0; i < hiding.length; i++) {
 				if (children.indexOf(hiding[i]) !== -1) {
 					children.splice(children.indexOf(hiding[i]), 1);
@@ -497,7 +497,7 @@ $.jstreeol3.plugins.visibility = function(options, parent) {
 			for (var i = 0; i < children.length; i++) {
 				showing.push(this.get_LayerById(children[i]).get("id"));
 			}
-			console.log(showing);
+			// console.log(showing);
 			var source = layer.getSource();
 			var params = source.getParams();
 			if (showing.length === 0) {
@@ -579,7 +579,7 @@ $.jstreeol3.plugins.visibility = function(options, parent) {
 		for (i = 0, j = p.length; i < j; i++) {
 			if (!m[p[i]].state["hiding"]) {
 				s = this.get_node(p[i], true);
-				console.log(s);
+				// console.log(s);
 				if (s && s.length) {
 					s.children('.jstreeol3-anchor').children('.jstreeol3-visibility').addClass('jstreeol3-undetermined');
 				}
@@ -800,7 +800,7 @@ $.jstreeol3.plugins.visibility = function(options, parent) {
 		// if (this.settings.visibility.tie_selection) {
 		// return this.select_node(obj, false, true, e);
 		// }
-		console.log("node checked");
+		// console.log("node checked");
 		var dom, t1, t2, th;
 		if ($.isArray(obj)) {
 			obj = obj.slice();
@@ -820,7 +820,7 @@ $.jstreeol3.plugins.visibility = function(options, parent) {
 			if (dom && dom.length) {
 				dom.children('.jstreeol3-anchor').addClass('jstreeol3-checked');
 			}
-			console.log(obj);
+			// console.log(obj);
 			this._displayTileLayer(obj, false);
 			// var layer = this._updateTileLayer(obj);
 			// if (layer instanceof ol.layer.Base) {
@@ -862,7 +862,7 @@ $.jstreeol3.plugins.visibility = function(options, parent) {
 		// if (this.settings.visibility.tie_selection) {
 		// return this.deselect_node(obj, false, e);
 		// }
-		console.log("node unchecked");
+		// console.log("node unchecked");
 		var t1, t2, dom;
 		if ($.isArray(obj)) {
 			obj = obj.slice();
@@ -877,7 +877,7 @@ $.jstreeol3.plugins.visibility = function(options, parent) {
 		}
 		dom = this.get_node(obj, true);
 		if (obj.state.hiding) {
-			console.log(obj);
+			// console.log(obj);
 			obj.state.hiding = false;
 			this._data.visibility.hiding = $.vakata.array_remove_item(this._data.visibility.hiding, obj.id);
 			if (dom.length) {

@@ -16,12 +16,13 @@ gb.panel.EditingTool = function(obj) {
 	gb.panel.Base.call(this, obj);
 	var options = obj ? obj : {};
 	this.map = options.map ? options.map : undefined;
+	console.log(this.map.getView().getProjection());
 	this.featureRecord = options.featureRecord ? options.featureRecord : undefined;
 	this.treeInstance = options.treeInstance ? options.treeInstance : undefined;
 	this.selected = options.selected ? options.selected : undefined;
-	this.infoURL = options.infoURL ? options.infoURL : undefined;
-	this.wmsURL = options.wmsURL ? options.wmsURL : undefined;
-	this.wfsURL = options.wfsURL ? options.wfsURL : undefined;
+	this.layerInfo = options.layerInfo ? options.layerInfo : undefined;
+	this.imageTile = options.imageTile ? options.imageTile : undefined;
+	this.getFeature = options.getFeature ? options.getFeature : undefined;
 
 	this.layers = undefined;
 	this.layer = undefined;
@@ -521,100 +522,7 @@ gb.panel.EditingTool.prototype.select = function(layer) {
 	}
 	if (sourceLayer instanceof ol.layer.Base && sourceLayer.get("git").hasOwnProperty("fake")) {
 		if (sourceLayer.get("git").fake === "child") {
-			var arr = {
-				"geoLayerList" : [ sourceLayer.get("id") ]
-			}
-			var names = [];
-			// console.log(JSON.stringify(arr));
-
-			$.ajax({
-				url : this.infoURL,
-				method : "POST",
-				contentType : "application/json; charset=UTF-8",
-				cache : false,
-				data : JSON.stringify(arr),
-				beforeSend : function() { // 호출전실행
-					$("body").css("cursor", "wait");
-				},
-				traditional : true,
-				success : function(data2, textStatus, jqXHR) {
-					console.log(data2);
-					if (Array.isArray(data2)) {
-						for (var i = 0; i < data2.length; i++) {
-							var source = new ol.source.TileWMS({
-								url : this.wmsURL,
-								params : {
-									'LAYERS' : data2[i].lName,
-									'TILED' : true,
-									'FORMAT' : 'image/png8',
-									'VERSION' : '1.1.0',
-									'CRS' : 'EPSG:5186',
-									'SRS' : 'EPSG:5186',
-									'BBOX' : data2[i].nbBox.minx.toString() + "," + data2[i].nbBox.miny.toString() + ","
-											+ data2[i].nbBox.maxx.toString() + "," + data2[i].nbBox.maxy.toString()
-								},
-								serverType : 'geoserver'
-							});
-							sourceLayer.setSource(source);
-							var ogit = sourceLayer.get("git");
-							ogit["attribute"] = data2[i].attInfo;
-							ogit["geometry"] = data2[i].geomType;
-							var getPosition = function(str, subString, index) {
-								return str.split(subString, index).join(subString).length;
-							};
-							var id = sourceLayer.get("id");
-							var format = id.substring((getPosition(id, "_", 1) + 1), getPosition(id, "_", 2));
-							var layer;
-							if (format === "ngi") {
-								layer = new gb.layer.LayerInfo({
-									name : sourceLayer.get("name"),
-									id : id,
-									format : format,
-									epsg : "5186",
-									mbound : [ [ data2[i].nbBox.minx.toString(), data2[i].nbBox.miny.toString() ],
-											[ data2[i].nbBox.maxx.toString(), data2[i].nbBox.maxy.toString() ] ],
-									lbound : [ [ 122.71, 28.6 ], [ 134.28, 40.27 ] ],
-									isNew : false,
-									geometry : id.substring(getPosition(id, "_", 4) + 1),
-									sheetNum : id.substring((getPosition(id, "_", 2) + 1), getPosition(id, "_", 3))
-								});
-							} else if (format === "dxf") {
-								layer = new gb.layer.LayerInfo({
-									name : sourceLayer.get("name"),
-									id : id,
-									format : format,
-									epsg : "5186",
-									mbound : [ [ data2[i].nbBox.minx.toString(), data2[i].nbBox.miny.toString() ],
-											[ data2[i].nbBox.maxx.toString(), data2[i].nbBox.maxy.toString() ] ],
-									isNew : false,
-									lbound : [ [ 122.71, 28.6 ], [ 134.28, 40.27 ] ],
-									isNew : false,
-									geometry : id.substring(getPosition(id, "_", 4) + 1),
-									sheetNum : id.substring((getPosition(id, "_", 2) + 1), getPosition(id, "_", 3))
-								});
-							}
-							ogit["information"] = layer;
-							// var git = {
-							// "validation" : false,
-							// "geometry" : data2[i].geomType,
-							// "editable" : true,
-							// "attribute" : data2[i].attInfo,
-							// "fake" : "child"
-							// }
-							// wms.set("name",
-							// obj.refer.get_node(data2[i].lName).text);
-							// wms.set("id", data2[i].lName);
-							// wms.setVisible(false);
-							// console.log(wms.get("id"));
-							// wms.set("type", "ImageTile");
-							// wms.set("git", git);
-							// console.log(wms);
-						}
-
-						$("body").css("cursor", "default");
-					}
-				}
-			});
+			this.setWMSSource(sourceLayer);
 		}
 	}
 
@@ -656,7 +564,8 @@ gb.panel.EditingTool.prototype.select = function(layer) {
 		});
 	} else {
 		this.interaction.selectWMS = new gb.interaction.SelectWMS({
-			url : this.wfsURL,
+			getFeature : this.getFeature,
+			getFeatureInfo : this.getFeatureInfo,
 			select : that.interaction.select,
 			destination : that.tempVector,
 			record : this.featureRecord,
@@ -1277,6 +1186,7 @@ gb.panel.EditingTool.prototype.updateSelected = function() {
 				}
 			} else if (layer instanceof ol.layer.Base) {
 				this.setLayer(layer);
+
 				result = layer;
 			}
 		}
@@ -1427,3 +1337,138 @@ gb.panel.EditingTool.prototype.open = function() {
 	}
 
 };
+
+/**
+ * 베이스 타입 레이어에 소스를 입력한다.
+ * 
+ * @method setWMSSource(layer)
+ * @param {ol.layer.Base}
+ */
+gb.panel.EditingTool.prototype.setWMSSource = function(sourceLayer) {
+
+	var arr = {
+		"geoLayerList" : [ sourceLayer.get("id") ]
+	}
+	var names = [];
+	// console.log(JSON.stringify(arr));
+
+	$.ajax({
+		url : this.layerInfo,
+		method : "POST",
+		contentType : "application/json; charset=UTF-8",
+		cache : false,
+		data : JSON.stringify(arr),
+		beforeSend : function() { // 호출전실행
+			$("body").css("cursor", "wait");
+		},
+		traditional : true,
+		success : function(data2, textStatus, jqXHR) {
+			console.log(data2);
+			if (Array.isArray(data2)) {
+				for (var i = 0; i < 1; i++) {
+					var source = new ol.source.TileWMS({
+						url : this.imageTile,
+						params : {
+							'LAYERS' : data2[i].lName,
+							'TILED' : true,
+							'FORMAT' : 'image/png8',
+							'VERSION' : '1.1.0',
+							'CRS' : 'EPSG:5186',
+							'SRS' : 'EPSG:5186',
+							'BBOX' : data2[i].nbBox.minx.toString() + "," + data2[i].nbBox.miny.toString() + ","
+									+ data2[i].nbBox.maxx.toString() + "," + data2[i].nbBox.maxy.toString()
+						},
+						serverType : 'geoserver'
+					});
+					sourceLayer.setSource(source);
+					var ogit = sourceLayer.get("git");
+					ogit["attribute"] = data2[i].attInfo;
+					ogit["geometry"] = data2[i].geomType;
+					var getPosition = function(str, subString, index) {
+						return str.split(subString, index).join(subString).length;
+					};
+					var id = sourceLayer.get("id");
+					var format = id.substring((getPosition(id, "_", 1) + 1), getPosition(id, "_", 2));
+					var layer;
+					if (format === "ngi") {
+						layer = new gb.layer.LayerInfo({
+							name : sourceLayer.get("name"),
+							id : id,
+							format : format,
+							epsg : "5186",
+							mbound : [ [ data2[i].nbBox.minx.toString(), data2[i].nbBox.miny.toString() ],
+									[ data2[i].nbBox.maxx.toString(), data2[i].nbBox.maxy.toString() ] ],
+							lbound : [ [ 122.71, 28.6 ], [ 134.28, 40.27 ] ],
+							isNew : false,
+							geometry : id.substring(getPosition(id, "_", 4) + 1),
+							sheetNum : id.substring((getPosition(id, "_", 2) + 1), getPosition(id, "_", 3))
+						});
+					} else if (format === "dxf") {
+						layer = new gb.layer.LayerInfo({
+							name : sourceLayer.get("name"),
+							id : id,
+							format : format,
+							epsg : "5186",
+							mbound : [ [ data2[i].nbBox.minx.toString(), data2[i].nbBox.miny.toString() ],
+									[ data2[i].nbBox.maxx.toString(), data2[i].nbBox.maxy.toString() ] ],
+							isNew : false,
+							lbound : [ [ 122.71, 28.6 ], [ 134.28, 40.27 ] ],
+							isNew : false,
+							geometry : id.substring(getPosition(id, "_", 4) + 1),
+							sheetNum : id.substring((getPosition(id, "_", 2) + 1), getPosition(id, "_", 3))
+						});
+					} else if (format === "shp") {
+						layer = new gb.layer.LayerInfo({
+							name : sourceLayer.get("name"),
+							id : id,
+							format : format,
+							epsg : "5186",
+							mbound : [ [ data2[i].nbBox.minx.toString(), data2[i].nbBox.miny.toString() ],
+									[ data2[i].nbBox.maxx.toString(), data2[i].nbBox.maxy.toString() ] ],
+							lbound : [ [ 122.71, 28.6 ], [ 134.28, 40.27 ] ],
+							isNew : false,
+							geometry : id.substring(getPosition(id, "_", 4) + 1),
+							sheetNum : id.substring((getPosition(id, "_", 2) + 1), getPosition(id, "_", 3))
+						});
+					}
+					ogit["information"] = layer;
+					// var git = {
+					// "validation" : false,
+					// "geometry" : data2[i].geomType,
+					// "editable" : true,
+					// "attribute" : data2[i].attInfo,
+					// "fake" : "child"
+					// }
+					// wms.set("name",
+					// obj.refer.get_node(data2[i].lName).text);
+					// wms.set("id", data2[i].lName);
+					// wms.setVisible(false);
+					// console.log(wms.get("id"));
+					// wms.set("type", "ImageTile");
+					// wms.set("git", git);
+					// console.log(wms);
+				}
+
+				$("body").css("cursor", "default");
+			}
+		}
+	});
+};
+/**
+ * ol.Map을 입력한다.
+ * 
+ * @method setMap(map)
+ * @param {ol.layer.Base}
+ */
+gb.panel.EditingTool.prototype.setMap = function(map) {
+	this.map = map;
+}
+/**
+ * ol.Map을 반환한다.
+ * 
+ * @method getMap(map)
+ * @return {ol.layer.Base}
+ */
+gb.panel.EditingTool.prototype.setMap = function() {
+	return this.map;
+}
