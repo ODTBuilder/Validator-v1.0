@@ -6239,8 +6239,8 @@
 							if (!!git) {
 								if (pLayer.get("git").hasOwnProperty("fake")) {
 									if (git.fake === "parent") {
-										console.log(pLayer.getSource().getParams());
-										console.log(pLayer.get("git").layers);
+										// console.log(pLayer.getSource().getParams());
+										// console.log(pLayer.get("git").layers);
 										var befSource = pLayer.getSource();
 										var param = befSource.getParams();
 										var inner = pLayer.get("git").layers.getArray().sort(function(a, b) {
@@ -6252,10 +6252,10 @@
 												names.push(inner[i].get("id"));
 											}
 										}
-										console.log(names.toString());
+										// console.log(names.toString());
 										param["LAYERS"] = names.toString();
 										befSource.updateParams(param);
-										console.log(inner);
+										// console.log(inner);
 										// var arr = [];
 										// for (var i = 0; i <
 										// inner.getLength(); i++) {
