@@ -287,6 +287,7 @@ html {
 						}
 					}
 					gitrnd.setProjection(null, null, null, null);
+					return;
 				});
 			},
 			addRemoveHistoryList : function(layer, arr) {
@@ -379,9 +380,10 @@ html {
 			selected : function() {
 				return $('#builderClientLayer').jstreeol3("get_selected_layer");
 			},
-			infoURL : "geoserver/getGeoLayerInfoList.ajax",
-			wmsURL : "geoserver/geoserverWMSLayerLoad.do",
-			wfsURL : "geoserver/geoserverWFSGetFeature.ajax"
+			getFeatureInfo : "http://175.116.181.42:9990/geoserver/wms",
+			layerInfo : "geoserver/getGeoLayerInfoList.ajax",
+			imageTile : "geoserver/geoserverWMSLayerLoad.do",
+			getFeature : "geoserver/geoserverWFSGetFeature.ajax"
 		});
 
 		$('#builderClientLayer').jstreeol3({

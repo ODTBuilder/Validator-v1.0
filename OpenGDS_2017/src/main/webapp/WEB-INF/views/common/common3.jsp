@@ -84,7 +84,7 @@
 <script src="${pageContext.request.contextPath}/resources/js/gitbuilder/qastatus.js"></script>
 
 <%-- 편집툴 --%>
-<script src="${pageContext.request.contextPath}/resources/js/gitbuilder/editingtool2.js"></script>
+<%-- <script src="${pageContext.request.contextPath}/resources/js/gitbuilder/editingtool2.js"></script> --%>
 
 <%-- wms편집이력 --%>
 <script src="${pageContext.request.contextPath}/resources/js/gitbuilder/edithistory.js"></script>
@@ -157,3 +157,5 @@
 <script src="${pageContext.request.contextPath}/resources/js/gb/panel/base.js"></script>
 <!-- gb.panel.EditingTool -->
 <script src="${pageContext.request.contextPath}/resources/js/gb/panel/editingtool.js"></script>
+<!-- gb.interaction.SelectWMS -->
+<script src="${pageContext.request.contextPath}/resources/js/gb/interaction/selectwms.js"></script>
