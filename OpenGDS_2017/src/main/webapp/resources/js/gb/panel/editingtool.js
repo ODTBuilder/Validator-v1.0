@@ -649,7 +649,7 @@ gb.panel.EditingTool.prototype.select = function(layer) {
 			that.setLayer(that.updateSelected());
 			var attrInfo = that.getLayer().get("git").attribute;
 			that.feature = that.features.item(0);
-			if (!!attrInfo) {
+			if (attrInfo) {
 				var attr = that.features.item(0).getProperties();
 				var keys = Object.keys(attrInfo);
 				for (var i = 0; i < keys.length; i++) {
@@ -663,10 +663,81 @@ gb.panel.EditingTool.prototype.select = function(layer) {
 						"width" : "100%",
 						"border" : "none"
 					}).val(attr[keys[i]]).on("input", function() {
-						var obj = {};
-						obj[$(this).parent().prev().text()] = $(this).val();
-						that.feature.setProperties(obj);
-						that.featureRecord.update(that.getLayer(), that.feature);
+						var attrTemp = attrInfo[$(this).parent().prev().text()];
+						console.log(attrTemp.type);
+						switch (attrTemp.type) {
+						case "String":
+							if (that.isString($(this).val()) || ($(this).val() === "")) {
+								var obj = {};
+								obj[$(this).parent().prev().text()] = $(this).val();
+								that.feature.setProperties(obj);
+								that.featureRecord.update(that.getLayer(), that.feature);
+								console.log("set");
+							} else {
+								$(this).val("");
+							}
+							break;
+						case "Integer":
+							if (that.isInteger($(this).val()) || ($(this).val() === "")) {
+								var obj = {};
+								obj[$(this).parent().prev().text()] = $(this).val();
+								that.feature.setProperties(obj);
+								that.featureRecord.update(that.getLayer(), that.feature);
+								console.log("set");
+							} else {
+								$(this).val("");
+							}
+							break;
+						case "Double":
+							if (that.isDouble($(this).val()) || ($(this).val() === "")) {
+								var obj = {};
+								obj[$(this).parent().prev().text()] = $(this).val();
+								that.feature.setProperties(obj);
+								that.featureRecord.update(that.getLayer(), that.feature);
+								console.log("set");
+							} else {
+								$(this).val("");
+							}
+							break;
+						case "Boolean":
+							var valid = [ "t", "tr", "tru", "true", "f", "fa", "fal", "fals", "false" ];
+							if (valid.indexOf($(this).val()) !== -1) {
+								if (that.isBoolean($(this).val())) {
+									var obj = {};
+									obj[$(this).parent().prev().text()] = $(this).val();
+									that.feature.setProperties(obj);
+									that.featureRecord.update(that.getLayer(), that.feature);
+									console.log("set");
+								}
+							} else if ($(this).val() === "") {
+								var obj = {};
+								obj[$(this).parent().prev().text()] = $(this).val();
+								that.feature.setProperties(obj);
+								that.featureRecord.update(that.getLayer(), that.feature);
+								console.log("set");
+							} else {
+								$(this).val("");
+							}
+							break;
+						case "Date":
+							if ($(this).val().length === 10) {
+								if (that.isBoolean($(this).val())) {
+									var obj = {};
+									obj[$(this).parent().prev().text()] = $(this).val();
+									that.feature.setProperties(obj);
+									that.featureRecord.update(that.getLayer(), that.feature);
+									console.log("set");
+								} else {
+									$(this).val("");
+								}
+							} else if ($(this).val().length > 10) {
+								$(this).val("");
+							}
+							break;
+						default:
+							break;
+						}
+
 					});
 					var td2 = $("<td>").append(tform);
 					var tr = $("<tr>").append(td1).append(td2);
@@ -1185,6 +1256,7 @@ gb.panel.EditingTool.prototype.updateSelected = function() {
 					result = layer;
 				}
 			} else if (layer instanceof ol.layer.Base) {
+				this.setWMSSource(layer);
 				this.setLayer(layer);
 
 				result = layer;
@@ -1432,21 +1504,8 @@ gb.panel.EditingTool.prototype.setWMSSource = function(sourceLayer) {
 						});
 					}
 					ogit["information"] = layer;
-					// var git = {
-					// "validation" : false,
-					// "geometry" : data2[i].geomType,
-					// "editable" : true,
-					// "attribute" : data2[i].attInfo,
-					// "fake" : "child"
-					// }
-					// wms.set("name",
-					// obj.refer.get_node(data2[i].lName).text);
-					// wms.set("id", data2[i].lName);
-					// wms.setVisible(false);
-					// console.log(wms.get("id"));
-					// wms.set("type", "ImageTile");
-					// wms.set("git", git);
-					// console.log(wms);
+					console.log(ogit["attribute"]);
+					console.log("source injected");
 				}
 
 				$("body").css("cursor", "default");
@@ -1511,7 +1570,14 @@ gb.panel.EditingTool.prototype.isInteger = function(va) {
  * @return {Boolean} is Double?
  */
 gb.panel.EditingTool.prototype.isDouble = function(va) {
-	return;
+	var result = false;
+	if (typeof va === "string") {
+		var p = parseFloat(va);
+		if (!isNaN(p)) {
+			result = true;
+		}
+	}
+	return result;
 }
 /**
  * Boolean인지 검사한다.
