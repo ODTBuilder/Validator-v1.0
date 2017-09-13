@@ -460,6 +460,7 @@ $.jstreeol3.plugins.visibility = function(options, parent) {
 	 */
 	this._displayTileLayer = function(node, bool) {
 		var layer = this.get_LayerById(node.id);
+		layer.setVisible(bool);
 		if (layer instanceof ol.layer.Tile) {
 			var showing = [];
 			var children = JSON.parse(JSON.stringify(node.children)).reverse();
@@ -472,7 +473,6 @@ $.jstreeol3.plugins.visibility = function(options, parent) {
 			var params = source.getParams();
 			params["LAYERS"] = showing.toString();
 			source.updateParams(params);
-			layer.setVisible(bool);
 		}
 	};
 	/**

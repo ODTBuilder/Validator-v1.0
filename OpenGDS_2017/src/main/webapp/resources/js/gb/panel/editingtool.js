@@ -27,6 +27,9 @@ gb.panel.EditingTool = function(obj) {
 	this.layers = undefined;
 	this.layer = undefined;
 
+	this.snap = [];
+	this.snapSource = new ol.source.Vector();
+
 	this.features = new ol.Collection();
 	this.tempSource = new ol.source.Vector({
 		features : this.features
@@ -308,6 +311,13 @@ gb.panel.EditingTool = function(obj) {
 			}
 		});
 	});
+	this.map.on('moveend', (function() {
+		if (this.getView().getZoom() >= 14) {
+			if (that.snap.length > 0) {
+				that.loadSnappingLayer(this.getView().calculateExtent(this.getSize()));
+			}
+		}
+	}));
 };
 gb.panel.EditingTool.prototype = Object.create(gb.panel.Base.prototype);
 gb.panel.EditingTool.prototype.constructor = gb.panel.EditingTool;
@@ -509,14 +519,14 @@ gb.panel.EditingTool.prototype.select = function(layer) {
 			console.error("no selected layer");
 			return;
 		} else {
-			sourceLayer = layer[0];
+			this.setLayer(layer[0]);
 		}
 	} else if (layer instanceof ol.layer.Base) {
-		sourceLayer = layer;
+		this.setLayer(layer);
 	} else {
 		return;
 	}
-
+	sourceLayer = this.getLayer();
 	if (!sourceLayer instanceof ol.layer.Base && !sourceLayer.get("git").hasOwnProperty("fake")) {
 		return;
 	}
@@ -576,11 +586,13 @@ gb.panel.EditingTool.prototype.select = function(layer) {
 		this.map.addInteraction(this.interaction.selectWMS);
 
 		this.interaction.dragbox.on('boxend', function() {
+			// if (that.getLayer().getVisible()) {
 			that.interaction.select.getFeatures().clear();
 			that.tempSource.forEachFeatureIntersectingExtent(this.getGeometry().getExtent(), function(feature) {
 				that.interaction.select.getFeatures().push(feature);
 			});
 			that.interaction.selectWMS.setExtent(this.getGeometry().getExtent());
+			// }
 		});
 	}
 
@@ -649,7 +661,7 @@ gb.panel.EditingTool.prototype.select = function(layer) {
 			that.setLayer(that.updateSelected());
 			var attrInfo = that.getLayer().get("git").attribute;
 			that.feature = that.features.item(0);
-			if (!!attrInfo) {
+			if (attrInfo) {
 				var attr = that.features.item(0).getProperties();
 				var keys = Object.keys(attrInfo);
 				for (var i = 0; i < keys.length; i++) {
@@ -663,10 +675,81 @@ gb.panel.EditingTool.prototype.select = function(layer) {
 						"width" : "100%",
 						"border" : "none"
 					}).val(attr[keys[i]]).on("input", function() {
-						var obj = {};
-						obj[$(this).parent().prev().text()] = $(this).val();
-						that.feature.setProperties(obj);
-						that.featureRecord.update(that.getLayer(), that.feature);
+						var attrTemp = attrInfo[$(this).parent().prev().text()];
+						console.log(attrTemp.type);
+						switch (attrTemp.type) {
+						case "String":
+							if (that.isString($(this).val()) || ($(this).val() === "")) {
+								var obj = {};
+								obj[$(this).parent().prev().text()] = $(this).val();
+								that.feature.setProperties(obj);
+								that.featureRecord.update(that.getLayer(), that.feature);
+								console.log("set");
+							} else {
+								$(this).val("");
+							}
+							break;
+						case "Integer":
+							if (that.isInteger($(this).val()) || ($(this).val() === "")) {
+								var obj = {};
+								obj[$(this).parent().prev().text()] = $(this).val();
+								that.feature.setProperties(obj);
+								that.featureRecord.update(that.getLayer(), that.feature);
+								console.log("set");
+							} else {
+								$(this).val("");
+							}
+							break;
+						case "Double":
+							if (that.isDouble($(this).val()) || ($(this).val() === "")) {
+								var obj = {};
+								obj[$(this).parent().prev().text()] = $(this).val();
+								that.feature.setProperties(obj);
+								that.featureRecord.update(that.getLayer(), that.feature);
+								console.log("set");
+							} else {
+								$(this).val("");
+							}
+							break;
+						case "Boolean":
+							var valid = [ "t", "tr", "tru", "true", "f", "fa", "fal", "fals", "false" ];
+							if (valid.indexOf($(this).val()) !== -1) {
+								if (that.isBoolean($(this).val())) {
+									var obj = {};
+									obj[$(this).parent().prev().text()] = $(this).val();
+									that.feature.setProperties(obj);
+									that.featureRecord.update(that.getLayer(), that.feature);
+									console.log("set");
+								}
+							} else if ($(this).val() === "") {
+								var obj = {};
+								obj[$(this).parent().prev().text()] = $(this).val();
+								that.feature.setProperties(obj);
+								that.featureRecord.update(that.getLayer(), that.feature);
+								console.log("set");
+							} else {
+								$(this).val("");
+							}
+							break;
+						case "Date":
+							if ($(this).val().length === 10) {
+								if (that.isBoolean($(this).val())) {
+									var obj = {};
+									obj[$(this).parent().prev().text()] = $(this).val();
+									that.feature.setProperties(obj);
+									that.featureRecord.update(that.getLayer(), that.feature);
+									console.log("set");
+								} else {
+									$(this).val("");
+								}
+							} else if ($(this).val().length > 10) {
+								$(this).val("");
+							}
+							break;
+						default:
+							break;
+						}
+
 					});
 					var td2 = $("<td>").append(tform);
 					var tr = $("<tr>").append(td1).append(td2);
@@ -749,7 +832,7 @@ gb.panel.EditingTool.prototype.draw = function(layer) {
 			type : git.geometry
 		});
 		this.interaction.snap = new ol.interaction.Snap({
-			source : sourceLayer.getSource()
+			source : this.snapSource
 		});
 		this.interaction.draw.selectedType = function() {
 			var irreGeom = that.updateSelected().get("git").geometry;
@@ -827,7 +910,7 @@ gb.panel.EditingTool.prototype.draw = function(layer) {
 			type : git.geometry
 		});
 		this.interaction.snap = new ol.interaction.Snap({
-			source : this.tempSource
+			source : this.snapSource
 		});
 		this.interaction.draw.selectedType = function() {
 			return that.updateSelected().get("git").geometry;
@@ -1057,11 +1140,11 @@ gb.panel.EditingTool.prototype.modify = function(layer) {
 		}
 		if (sourceLayer instanceof ol.layer.Vector) {
 			this.interaction.snap = new ol.interaction.Snap({
-				source : sourceLayer.getSource()
+				source : this.snapSource
 			});
 		} else if (sourceLayer instanceof ol.layer.Base) {
 			this.interaction.snap = new ol.interaction.Snap({
-				source : this.tempSource
+				source : this.snapSource
 			});
 		}
 		this.map.addInteraction(this.interaction.snap);
@@ -1185,6 +1268,7 @@ gb.panel.EditingTool.prototype.updateSelected = function() {
 					result = layer;
 				}
 			} else if (layer instanceof ol.layer.Base) {
+				this.setWMSSource(layer);
 				this.setLayer(layer);
 
 				result = layer;
@@ -1432,21 +1516,8 @@ gb.panel.EditingTool.prototype.setWMSSource = function(sourceLayer) {
 						});
 					}
 					ogit["information"] = layer;
-					// var git = {
-					// "validation" : false,
-					// "geometry" : data2[i].geomType,
-					// "editable" : true,
-					// "attribute" : data2[i].attInfo,
-					// "fake" : "child"
-					// }
-					// wms.set("name",
-					// obj.refer.get_node(data2[i].lName).text);
-					// wms.set("id", data2[i].lName);
-					// wms.setVisible(false);
-					// console.log(wms.get("id"));
-					// wms.set("type", "ImageTile");
-					// wms.set("git", git);
-					// console.log(wms);
+					console.log(ogit["attribute"]);
+					console.log("source injected");
 				}
 
 				$("body").css("cursor", "default");
@@ -1511,7 +1582,14 @@ gb.panel.EditingTool.prototype.isInteger = function(va) {
  * @return {Boolean} is Double?
  */
 gb.panel.EditingTool.prototype.isDouble = function(va) {
-	return;
+	var result = false;
+	if (typeof va === "string") {
+		var p = parseFloat(va);
+		if (!isNaN(p)) {
+			result = true;
+		}
+	}
+	return result;
 }
 /**
  * Boolean인지 검사한다.
@@ -1545,3 +1623,101 @@ gb.panel.EditingTool.prototype.isDate = function(va) {
 	}
 	return result;
 }
+/**
+ * 스냅핑 레이어를 설정한다.
+ * 
+ * @method addSnappingLayer()
+ * @param {ol.layer.Base}
+ */
+gb.panel.EditingTool.prototype.addSnappingLayer = function(lid) {
+	this.snap.push(lid);
+}
+/**
+ * 스냅핑 레이어를 설정한다.
+ * 
+ * @method addSnappingLayer()
+ * @param {ol.layer.Base}
+ */
+gb.panel.EditingTool.prototype.removeSnappingLayer = function(layer) {
+	if (layer instanceof ol.layer.Group) {
+		if (this.snap.indexOf(layer.get("id")) !== -1) {
+			this.snap.splice(this.snap.indexOf(layer.get("id")), 1);
+		}
+		var layers = layer.getLayers();
+		for (var i = 0; i < layers.getLength(); i++) {
+			this.removeSnappingLayer(layers.item(i));
+		}
+	} else if (layer instanceof ol.layer.Base) {
+		var git;
+		if (layer) {
+			git = layer.get("git");
+		}
+		if (!!git) {
+			if (git.hasOwnProperty("fake")) {
+				if (git.fake === "parent") {
+					if (this.snap.indexOf(layer.get("id")) !== -1) {
+						this.snap.splice(this.snap.indexOf(layer.get("id")), 1);
+					}
+					var layers = layer.get("git").layers;
+					for (var i = 0; i < layers.getLength(); i++) {
+						this.removeSnappingLayer(layers.item(i));
+					}
+				} else if (git.fake === "child") {
+					if (this.snap.indexOf(layer.get("id")) !== -1) {
+						this.snap.splice(this.snap.indexOf(layer.get("id")), 1);
+					}
+				}
+			} else {
+				if (this.snap.indexOf(layer.get("id")) !== -1) {
+					this.snap.splice(this.snap.indexOf(layer.get("id")), 1);
+				}
+			}
+		} else {
+			if (this.snap.indexOf(layer.get("id")) !== -1) {
+				this.snap.splice(this.snap.indexOf(layer.get("id")), 1);
+			}
+		}
+	}
+}
+/**
+ * 스냅핑 레이어를 설정한다.
+ * 
+ * @method addSnappingLayer()
+ * @param {ol.layer.Base}
+ */
+gb.panel.EditingTool.prototype.loadSnappingLayer = function(extent) {
+	var that = this;
+	that.snapSource.clear();
+	var params = {
+		"service" : "WFS",
+		"version" : "1.0.0",
+		"request" : "GetFeature",
+		"typeName" : this.snap.toString(),
+		"outputformat" : "text/javascript",
+		"bbox" : extent.toString(),
+		"format_options" : "callback:getJson"
+	};
+
+	$.ajax({
+		url : this.getFeature,
+		data : params,
+		dataType : 'jsonp',
+		jsonpCallback : 'getJson',
+		beforeSend : function() {
+			$("body").css("cursor", "wait");
+		},
+		complete : function() {
+			$("body").css("cursor", "default");
+		},
+		success : function(data) {
+			var features = new ol.format.GeoJSON().readFeatures(JSON.stringify(data));
+			if (that.interaction.snap instanceof ol.interaction.Snap) {
+				for (var i = 0; i < features.length; i++) {
+					that.interaction.snap.addFeature(features[i]);
+				}
+			}
+			// that.snapSource.addFeatures(features);
+			console.log("snap feature injected");
+		}
+	});
+};

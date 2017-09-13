@@ -438,7 +438,10 @@ html {
 					"format" : "image/png"
 				}
 			},
-			plugins : [ "contextmenu", "dnd", "search", "state", "sort", "visibility", "layerproperties", "legends" ]
+			"functionmarker" : {
+				"snapping" : "fa fa-magnet"
+			},
+			plugins : [ "contextmenu", "dnd", "search", "state", "sort", "visibility", "layerproperties", "legends", "functionmarker" ]
 		});
 
 		var transfer = new gb.edit.RecordTransfer({
