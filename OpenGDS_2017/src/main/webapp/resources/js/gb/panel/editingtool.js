@@ -27,6 +27,9 @@ gb.panel.EditingTool = function(obj) {
 	this.layers = undefined;
 	this.layer = undefined;
 
+	this.snap = [];
+	this.snapSource = new ol.source.Vector();
+
 	this.features = new ol.Collection();
 	this.tempSource = new ol.source.Vector({
 		features : this.features
@@ -308,6 +311,13 @@ gb.panel.EditingTool = function(obj) {
 			}
 		});
 	});
+	this.map.on('moveend', (function() {
+		if (this.getView().getZoom() >= 14) {
+			console.log(this.getView().getZoom());
+			console.log(this.getView().calculateExtent(this.getSize()));
+			that.loadSnappingLayer(this.getView().calculateExtent(this.getSize()));
+		}
+	}));
 };
 gb.panel.EditingTool.prototype = Object.create(gb.panel.Base.prototype);
 gb.panel.EditingTool.prototype.constructor = gb.panel.EditingTool;
@@ -509,14 +519,14 @@ gb.panel.EditingTool.prototype.select = function(layer) {
 			console.error("no selected layer");
 			return;
 		} else {
-			sourceLayer = layer[0];
+			this.setLayer(layer[0]);
 		}
 	} else if (layer instanceof ol.layer.Base) {
-		sourceLayer = layer;
+		this.setLayer(layer);
 	} else {
 		return;
 	}
-
+	sourceLayer = this.getLayer();
 	if (!sourceLayer instanceof ol.layer.Base && !sourceLayer.get("git").hasOwnProperty("fake")) {
 		return;
 	}
@@ -576,11 +586,13 @@ gb.panel.EditingTool.prototype.select = function(layer) {
 		this.map.addInteraction(this.interaction.selectWMS);
 
 		this.interaction.dragbox.on('boxend', function() {
-			that.interaction.select.getFeatures().clear();
-			that.tempSource.forEachFeatureIntersectingExtent(this.getGeometry().getExtent(), function(feature) {
-				that.interaction.select.getFeatures().push(feature);
-			});
-			that.interaction.selectWMS.setExtent(this.getGeometry().getExtent());
+//			if (that.getLayer().getVisible()) {
+				that.interaction.select.getFeatures().clear();
+				that.tempSource.forEachFeatureIntersectingExtent(this.getGeometry().getExtent(), function(feature) {
+					that.interaction.select.getFeatures().push(feature);
+				});
+				that.interaction.selectWMS.setExtent(this.getGeometry().getExtent());
+//			}
 		});
 	}
 
@@ -820,7 +832,7 @@ gb.panel.EditingTool.prototype.draw = function(layer) {
 			type : git.geometry
 		});
 		this.interaction.snap = new ol.interaction.Snap({
-			source : sourceLayer.getSource()
+			source : this.snapSource
 		});
 		this.interaction.draw.selectedType = function() {
 			var irreGeom = that.updateSelected().get("git").geometry;
@@ -898,7 +910,7 @@ gb.panel.EditingTool.prototype.draw = function(layer) {
 			type : git.geometry
 		});
 		this.interaction.snap = new ol.interaction.Snap({
-			source : this.tempSource
+			source : this.snapSource
 		});
 		this.interaction.draw.selectedType = function() {
 			return that.updateSelected().get("git").geometry;
@@ -1128,11 +1140,11 @@ gb.panel.EditingTool.prototype.modify = function(layer) {
 		}
 		if (sourceLayer instanceof ol.layer.Vector) {
 			this.interaction.snap = new ol.interaction.Snap({
-				source : sourceLayer.getSource()
+				source : this.snapSource
 			});
 		} else if (sourceLayer instanceof ol.layer.Base) {
 			this.interaction.snap = new ol.interaction.Snap({
-				source : this.tempSource
+				source : this.snapSource
 			});
 		}
 		this.map.addInteraction(this.interaction.snap);
@@ -1611,3 +1623,55 @@ gb.panel.EditingTool.prototype.isDate = function(va) {
 	}
 	return result;
 }
+/**
+ * 스냅핑 레이어를 설정한다.
+ * 
+ * @method addSnappingLayer()
+ * @param {ol.layer.Base}
+ */
+gb.panel.EditingTool.prototype.addSnappingLayer = function(lid) {
+	var that = this;
+	this.snap.push(lid);
+}
+/**
+ * 스냅핑 레이어를 설정한다.
+ * 
+ * @method addSnappingLayer()
+ * @param {ol.layer.Base}
+ */
+gb.panel.EditingTool.prototype.loadSnappingLayer = function(extent) {
+	var that = this;
+	that.snapSource.clear();
+	var params = {
+		"service" : "WFS",
+		"version" : "1.0.0",
+		"request" : "GetFeature",
+		"typeName" : this.snap.toString(),
+		"outputformat" : "text/javascript",
+		"bbox" : extent.toString(),
+		"format_options" : "callback:getJson"
+	};
+
+	$.ajax({
+		url : this.getFeature,
+		data : params,
+		dataType : 'jsonp',
+		jsonpCallback : 'getJson',
+		beforeSend : function() {
+			$("body").css("cursor", "wait");
+		},
+		complete : function() {
+			$("body").css("cursor", "default");
+		},
+		success : function(data) {
+			var features = new ol.format.GeoJSON().readFeatures(JSON.stringify(data));
+			if (that.interaction.snap instanceof ol.interaction.Snap) {
+				for (var i = 0; i < features.length; i++) {
+					that.interaction.snap.addFeature(features[i]);
+				}
+			}
+			// that.snapSource.addFeatures(features);
+			console.log("snap feature injected");
+		}
+	});
+};

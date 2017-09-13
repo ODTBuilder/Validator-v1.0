@@ -8816,10 +8816,36 @@
 						// inst.edit(obj);
 						// }
 						// },
+						"snap" : {
+							"separator_before" : false,
+							"icon" : "fa fa-magnet",
+							"separator_after" : false,
+							"_disabled" : false, // (this.check("delete_node",
+							// data.reference,
+							// this.get_parent(data.reference),
+							// "")),
+							"label" : "Snap",
+							"action" : function(data) {
+								console.log(data);
+								var inst = $.jstreeol3.reference(data.reference), obj = inst.get_node(data.reference);
+								var layers = inst.get_selected();
+								for (var i = 0; i < layers.length; i++) {
+									var node = inst.get_node(layers[i]);
+									if (node.state["snapping"] === false) {
+										inst.set_flag(node, "snapping", true);
+										var layer = inst.get_LayerById(layers[i]);
+										inst._data.layerproperties.editingTool.addSnappingLayer(layer.get("id"));
+										console.log(layer);
+									} else {
+										inst.set_flag(node, "snapping", false);
+									}
+								}
+							}
+						},
 						"remove" : {
 							"separator_before" : false,
 							"icon" : "fa fa-trash",
-							"separator_after" : true,
+							"separator_after" : false,
 							"_disabled" : false, // (this.check("delete_node",
 							// data.reference,
 							// this.get_parent(data.reference),

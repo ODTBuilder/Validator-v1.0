@@ -8,6 +8,11 @@
  * @param {function ||
  *            ol.layer.Tile} layer 선택한 레이어 또는 레이어를 반환할 함수
  */
+var gb;
+if (!gb)
+	gb = {};
+if (!gb.panel)
+	gb.interaction = {};
 gb.interaction.SelectWMS = function(opt_options) {
 	var options = opt_options ? opt_options : {};
 	this.map_ = null;
@@ -48,6 +53,9 @@ gb.interaction.SelectWMS.prototype.setExtent = function(extent) {
 		this.layer = this.conLayer();
 	} else if (this.conLayer instanceof ol.layer.Base) {
 		this.layer = this.conLayer;
+	}
+	if (!this.getLayer().getVisible()) {
+		return;
 	}
 	this.extent_ = extent;
 	var that = this;
@@ -127,6 +135,9 @@ gb.interaction.SelectWMS.prototype.setCoordinate = function(evt) {
 		this.setLayer(this.conLayer());
 	} else if (this.conLayer instanceof ol.layer.Base) {
 		this.setLayer(this.conLayer);
+	}
+	if (!this.getLayer().getVisible()) {
+		return;
 	}
 	var that = this;
 	var params;
