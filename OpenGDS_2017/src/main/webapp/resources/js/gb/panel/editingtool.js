@@ -313,9 +313,9 @@ gb.panel.EditingTool = function(obj) {
 	});
 	this.map.on('moveend', (function() {
 		if (this.getView().getZoom() >= 14) {
-			console.log(this.getView().getZoom());
-			console.log(this.getView().calculateExtent(this.getSize()));
-			that.loadSnappingLayer(this.getView().calculateExtent(this.getSize()));
+			if (that.snap.length > 0) {
+				that.loadSnappingLayer(this.getView().calculateExtent(this.getSize()));
+			}
 		}
 	}));
 };
@@ -586,13 +586,13 @@ gb.panel.EditingTool.prototype.select = function(layer) {
 		this.map.addInteraction(this.interaction.selectWMS);
 
 		this.interaction.dragbox.on('boxend', function() {
-//			if (that.getLayer().getVisible()) {
-				that.interaction.select.getFeatures().clear();
-				that.tempSource.forEachFeatureIntersectingExtent(this.getGeometry().getExtent(), function(feature) {
-					that.interaction.select.getFeatures().push(feature);
-				});
-				that.interaction.selectWMS.setExtent(this.getGeometry().getExtent());
-//			}
+			// if (that.getLayer().getVisible()) {
+			that.interaction.select.getFeatures().clear();
+			that.tempSource.forEachFeatureIntersectingExtent(this.getGeometry().getExtent(), function(feature) {
+				that.interaction.select.getFeatures().push(feature);
+			});
+			that.interaction.selectWMS.setExtent(this.getGeometry().getExtent());
+			// }
 		});
 	}
 
@@ -1630,8 +1630,54 @@ gb.panel.EditingTool.prototype.isDate = function(va) {
  * @param {ol.layer.Base}
  */
 gb.panel.EditingTool.prototype.addSnappingLayer = function(lid) {
-	var that = this;
 	this.snap.push(lid);
+}
+/**
+ * 스냅핑 레이어를 설정한다.
+ * 
+ * @method addSnappingLayer()
+ * @param {ol.layer.Base}
+ */
+gb.panel.EditingTool.prototype.removeSnappingLayer = function(layer) {
+	if (layer instanceof ol.layer.Group) {
+		if (this.snap.indexOf(layer.get("id")) !== -1) {
+			this.snap.splice(this.snap.indexOf(layer.get("id")), 1);
+		}
+		var layers = layer.getLayers();
+		for (var i = 0; i < layers.getLength(); i++) {
+			this.removeSnappingLayer(layers.item(i));
+		}
+	} else if (layer instanceof ol.layer.Base) {
+		var git;
+		if (layer) {
+			git = layer.get("git");
+		}
+		if (!!git) {
+			if (git.hasOwnProperty("fake")) {
+				if (git.fake === "parent") {
+					if (this.snap.indexOf(layer.get("id")) !== -1) {
+						this.snap.splice(this.snap.indexOf(layer.get("id")), 1);
+					}
+					var layers = layer.get("git").layers;
+					for (var i = 0; i < layers.getLength(); i++) {
+						this.removeSnappingLayer(layers.item(i));
+					}
+				} else if (git.fake === "child") {
+					if (this.snap.indexOf(layer.get("id")) !== -1) {
+						this.snap.splice(this.snap.indexOf(layer.get("id")), 1);
+					}
+				}
+			} else {
+				if (this.snap.indexOf(layer.get("id")) !== -1) {
+					this.snap.splice(this.snap.indexOf(layer.get("id")), 1);
+				}
+			}
+		} else {
+			if (this.snap.indexOf(layer.get("id")) !== -1) {
+				this.snap.splice(this.snap.indexOf(layer.get("id")), 1);
+			}
+		}
+	}
 }
 /**
  * 스냅핑 레이어를 설정한다.
