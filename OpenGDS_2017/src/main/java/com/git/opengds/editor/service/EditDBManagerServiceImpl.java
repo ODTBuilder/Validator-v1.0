@@ -24,7 +24,6 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import org.aspectj.asm.internal.ProgramElement;
 import org.opengis.feature.simple.SimpleFeature;
 import org.springframework.stereotype.Service;
 import org.springframework.test.context.ContextConfiguration;
@@ -136,7 +135,7 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 
 		HashMap<String, Object> selectValidateProgressIdx = validateQueryManager.getSelectNGIValidateProgressIdx(cIdx);
 		Integer pIdx = progressDAO.selectNGIValidateProgressPid(userVO, selectValidateProgressIdx);
-		
+
 		if (pIdx != null) {
 			HashMap<String, Object> deleteValidateProgressQuery = queryManager.getDeleteNGIProgressQuery(cIdx);
 			progressDAO.deleteNGIProgress(deleteValidateProgressQuery);
@@ -670,7 +669,6 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 		DXFDBQueryManager queryManager = new DXFDBQueryManager();
 		HashMap<String, Object> deleteQuery = queryManager.getDeleteTablesQuery(cIdx);
 		dxfDAO.deleteField(userVO, deleteQuery);
-		System.out.println("");
 	}
 
 	@Override

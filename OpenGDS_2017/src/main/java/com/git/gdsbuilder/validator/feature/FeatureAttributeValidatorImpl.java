@@ -58,7 +58,6 @@ import com.git.gdsbuilder.type.validate.option.UFIDLength;
 import com.git.gdsbuilder.type.validate.option.UFIDRule;
 import com.git.gdsbuilder.type.validate.option.ZValueAmbiguous;
 import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
 
 public class FeatureAttributeValidatorImpl implements FeatureAttributeValidator {
 
@@ -337,14 +336,10 @@ public class FeatureAttributeValidatorImpl implements FeatureAttributeValidator 
 			String featureIdx = simpleFeature.getID();
 			Property featuerIDPro = simpleFeature.getProperty("feature_id");
 			String featureID = (String) featuerIDPro.getValue();
-			if (featureID.equals("RECORD 458")) {
-				System.out.println();
-			}
 			if (isStringDouble(attributeStr)) {
 				double attributeDou = Double.parseDouble(attributeStr);
-
 				if (condition.equals("over")) {
-					if (attributeDou <= figure) {
+					if (attributeDou > figure) {
 						// error
 						ErrorFeature errorFeature = new ErrorFeature(featureIdx, featureID,
 								NumericalValue.Type.NUMERICALVALUE.errType(),
@@ -352,7 +347,7 @@ public class FeatureAttributeValidatorImpl implements FeatureAttributeValidator 
 						return errorFeature;
 					}
 				} else if (condition.equals("under")) {
-					if (attributeDou >= figure) {
+					if (attributeDou < figure) {
 						// error
 						ErrorFeature errorFeature = new ErrorFeature(featureIdx, featureID,
 								NumericalValue.Type.NUMERICALVALUE.errType(),

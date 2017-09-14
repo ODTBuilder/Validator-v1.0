@@ -127,6 +127,11 @@ public class NGIFileFeatureParser {
 	 */
 	public DTNGIFeature parserDTFeature(String featureID) throws IOException {
 
+		if(featureID.equals("RECORD 10354")) {
+			System.out.println("");
+		}
+		
+		
 		DTNGIFeature feature = null;
 
 		String id = StringReplace(featureID);
@@ -289,7 +294,7 @@ public class NGIFileFeatureParser {
 			polygon = createPolygon();
 		}
 		if (ringCount > 1) {
-			polygon = createHullPolygon(ringCount);
+			polygon = createHolePolygon(ringCount);
 		}
 		String graphicID = getGraphicID();
 		DTNGIFeature feature = new DTNGIFeature(featureID, "POLYGON", ringCountStr,
@@ -326,11 +331,11 @@ public class NGIFileFeatureParser {
 	 * HULL POLYGON 타입의 좌표값을 Geometry 객체로 생성 @author DY.Oh @Date 2017. 5. 11. 오전
 	 * 11:04:10 @return @throws IOException Geometry @throws
 	 */
-	private Geometry createHullPolygon(int ringCount) throws IOException {
+	private Geometry createHolePolygon(int ringCount) throws IOException {
 
 		LinearRing shell = null;
-		LinearRing[] hulls = new LinearRing[ringCount - 1];
-		hulls[0] = shell;
+		LinearRing[] holes = new LinearRing[ringCount - 1];
+		holes[0] = shell;
 		for (int j = 0; j < ringCount; j++) {
 			String strCount = getCoordinateCount();
 			int count = Integer.valueOf(strCount);
@@ -349,11 +354,11 @@ public class NGIFileFeatureParser {
 			if (j == 0) {
 				shell = linearRing;
 			} else {
-				hulls[j - 1] = linearRing;
+				holes[j - 1] = linearRing;
 			}
 		}
 		GeometryFactory factory = new GeometryFactory();
-		Geometry polygon = factory.createPolygon(shell, hulls);
+		Geometry polygon = factory.createPolygon(shell, holes);
 		return polygon;
 	}
 
