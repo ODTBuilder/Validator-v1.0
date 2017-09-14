@@ -210,7 +210,7 @@ gb.edit.CreateVectorLayer.prototype.setForm = function(format, type) {
 		$(this.attrForm).hide();
 		$(this.expertForm).hide();
 	} else if (type === "layer") {
-		$(this.htag).text("Create a layer");
+		$(this.htag).text("Create a vector layer");
 		$(this.sheetNumInput).val("");
 		$(this.layerNameInput).val("");
 		$(this.layerNameForm).show();
@@ -222,7 +222,7 @@ gb.edit.CreateVectorLayer.prototype.setForm = function(format, type) {
 		} else if (format === "ngi") {
 			this.initGeomForm("ngi");
 			$(this.geomForm).show();
-			this.initAttrForm();
+			this.initAttrForm("ngi");
 			$(this.attrForm).show();
 			this.initExpertForm();
 			$(this.expertForm).show();
@@ -230,7 +230,7 @@ gb.edit.CreateVectorLayer.prototype.setForm = function(format, type) {
 		} else if (format === "shp") {
 			this.initGeomForm("shp");
 			$(this.geomForm).show();
-			this.initAttrForm();
+			this.initAttrForm("shp");
 			$(this.attrForm).show();
 			$(this.expertForm).hide();
 		}
@@ -260,14 +260,19 @@ gb.edit.CreateVectorLayer.prototype.initGeomForm = function(type) {
 	var tp = $("<p>").text("Type");
 	$(this.geomForm).append(tp).append(select);
 };
-gb.edit.CreateVectorLayer.prototype.initAttrForm = function() {
+gb.edit.CreateVectorLayer.prototype.initAttrForm = function(format) {
 	var that = this;
 	var htd1 = $("<td>").text("Name");
 	var htd2 = $("<td>").text("Type");
 	var htd3 = $("<td>").text("Not Null");
 	var htd4 = $("<td>").text("Unique");
 	var htd5 = $("<td>").text("Delete");
-	var thd = $("<thead>").append(htd1).append(htd2).append(htd3).append(htd4).append(htd5);
+	var thd;
+	if (format === "ngi") {
+		thd = $("<thead>").append(htd1).append(htd2).append(htd3).append(htd4).append(htd5);
+	} else {
+		thd = $("<thead>").append(htd1).append(htd2).append(htd3).append(htd5);
+	}
 
 	var key = $("<input>").addClass("form-control").attr({
 		"type" : "text"
@@ -303,10 +308,17 @@ gb.edit.CreateVectorLayer.prototype.initAttrForm = function() {
 
 	var td5 = $("<td>").append(del);
 
-	var tr1 = $("<tr>").append(td1).append(td2).append(td3).append(td4).append(td5);
+	var tr1;
+	if (format === "ngi") {
+		tr1 = $("<tr>").append(td1).append(td2).append(td3).append(td4).append(td5);
+	} else {
+		tr1 = $("<tr>").append(td1).append(td2).append(td3).append(td5);
+	}
+
 	this.geomFormBody = $("<tbody>").append(tr1);
 
 	var table = $("<table>").addClass("table").addClass("text-center").append(thd).append(this.geomFormBody);
+
 	var addBtn = $("<input>").addClass("gitbuilder-createlayer-addattr").addClass("btn").addClass("btn-default").attr({
 		"type" : "button",
 		"value" : "Add Attribute"
@@ -334,7 +346,21 @@ gb.edit.CreateVectorLayer.prototype.initAttrForm = function() {
 			"type" : "checkbox"
 		});
 		var td4 = $("<td>").append(unique);
-		var tr1 = $("<tr>").append(td1).append(td2).append(td3).append(td4);
+
+		var delIcon = $("<i>").attr({
+			"aria-hidden" : "true"
+		}).addClass("fa").addClass("fa-times");
+		var del = $("<button>").addClass("btn").addClass("btn-default").append(delIcon);
+
+		var td5 = $("<td>").append(del);
+
+		var tr1;
+		if (that.getFormat() === "ngi") {
+			tr1 = $("<tr>").append(td1).append(td2).append(td3).append(td4).append(td5);
+		} else if (that.getFormat() === "shp") {
+			tr1 = $("<tr>").append(td1).append(td2).append(td3).append(td5);
+		}
+
 		$(that.geomFormBody).append(tr1);
 	});
 	$(this.attrForm).empty();
@@ -578,8 +604,47 @@ gb.edit.CreateVectorLayer.prototype.getDefinitionForm = function() {
 			// layerObj["attr"] = layerAttr;
 			layer.setAttributes(layerAttr);
 			gitLayer["attribute"] = layer.getAttributesJSON();
+		} else if (this.format === "shp") {
+			var attrs = $(this.attrForm).find("tr");
+			for (var i = 0; i < attrs.length; i++) {
+				if ($(attrs[i]).children().eq(0).find("input:text").val().replace(/(\s*)/g, '') === "") {
+					break;
+				}
+				var attribute = new gb.layer.Attribute({
+					originFieldName : $(attrs[i]).children().eq(0).find("input:text").val().replace(/(\s*)/g, ''),
+					fieldName : $(attrs[i]).children().eq(0).find("input:text").val().replace(/(\s*)/g, ''),
+					type : $(attrs[i]).children().eq(1).find("select").val(),
+					// decimal :
+					// $(attrs[i]).children().eq(1).find("select").val() ===
+					// "Double" ? 30 : null,
+					// size : 256,
+					isUnique : false,
+					nullable : $(attrs[i]).children().eq(2).find("input:checkbox").prop("checked") ? false : true,
+					isNew : true
+				});
+				// var attr = {
+				// "fieldName" :
+				// $(attrs[i]).children().eq(0).find("input:text").val().replace(/(\s*)/g,
+				// ''),
+				// "type" : $(attrs[i]).children().eq(1).find("select").val(),
+				// "nullable" :
+				// $(attrs[i]).children().eq(2).find("input:checkbox").prop("checked")
+				// ? false : true,
+				// "isUnique" :
+				// $(attrs[i]).children().eq(3).find("input:checkbox").prop("checked")
+				// ? true : false,
+				// "decimal" : $(attrs[i]).children().eq(1).find("select").val()
+				// === "Double" ? 30 : null,
+				// "size" : 256
+				// };
+				layerAttr.push(attribute);
+			}
+			// layerObj["attr"] = layerAttr;
+			layer.setAttributes(layerAttr);
+			gitLayer["attribute"] = layer.getAttributesJSON();
 		}
 		vectorLayer.set("git", gitLayer);
+		console.log(vectorLayer.get("git"));
 		var col = new ol.Collection();
 		col.push(vectorLayer);
 		groupLayer.setLayers(col);
@@ -594,4 +659,10 @@ gb.edit.CreateVectorLayer.prototype.setUrl = function(url) {
 };
 gb.edit.CreateVectorLayer.prototype.getUrl = function() {
 	return this.url;
+};
+gb.edit.CreateVectorLayer.prototype.setFormat = function(format) {
+	this.format = format;
+};
+gb.edit.CreateVectorLayer.prototype.getFormat = function() {
+	return this.format;
 };

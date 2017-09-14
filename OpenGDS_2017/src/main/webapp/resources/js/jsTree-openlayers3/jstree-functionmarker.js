@@ -41,8 +41,6 @@ $.jstreeol3.plugins.functionmarker = function(options, parent) {
 						m[dpc[i]].state[optKeys[k]] = false;
 					}
 				}
-				console.log(m[dpc[i]]);
-				console.log(this.get_state());
 			}
 		}, this)).on('delete_node_layer.jstreeol3', $.proxy(function(e, data) {
 			console.log("delete layer");

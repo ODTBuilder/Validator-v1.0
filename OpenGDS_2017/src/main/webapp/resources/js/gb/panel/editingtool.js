@@ -138,16 +138,6 @@ gb.panel.EditingTool = function(obj) {
 
 	this.interval = undefined;
 	this.count = 1;
-	this.glitterFeature = function(feature) {
-		// var val = this.count % 2;
-		// if (val === 0) {
-		// feature.setStyle(this.highlightStyles1);
-		// } else {
-		// feature.setStyle(this.highlightStyles2);
-		// }
-		// this.count++;
-		console.log("hi");
-	};
 
 	this.btn = {
 		selectBtn : undefined,
@@ -527,7 +517,7 @@ gb.panel.EditingTool.prototype.select = function(layer) {
 		return;
 	}
 	sourceLayer = this.getLayer();
-	if (!sourceLayer instanceof ol.layer.Base && !sourceLayer.get("git").hasOwnProperty("fake")) {
+	if (!sourceLayer instanceof ol.layer.Base) {
 		return;
 	}
 	if (sourceLayer instanceof ol.layer.Base && sourceLayer.get("git").hasOwnProperty("fake")) {
@@ -631,10 +621,7 @@ gb.panel.EditingTool.prototype.select = function(layer) {
 							feature.setStyle(that.highlightStyles2);
 						}
 						that.count++;
-						console.log("hi");
 					}, 500);
-					// that.map.getView().fit(feature.getGeometry().getExtent(),
-					// that.map.getSize());
 					console.log("in");
 				}).mouseleave(function() {
 					var fid = $(this).find("a").attr("value");
@@ -733,7 +720,7 @@ gb.panel.EditingTool.prototype.select = function(layer) {
 							break;
 						case "Date":
 							if ($(this).val().length === 10) {
-								if (that.isBoolean($(this).val())) {
+								if (that.isDate($(this).val())) {
 									var obj = {};
 									obj[$(this).parent().prev().text()] = $(this).val();
 									that.feature.setProperties(obj);
@@ -763,7 +750,6 @@ gb.panel.EditingTool.prototype.select = function(layer) {
 					"collision" : "fit"
 				});
 			} else {
-				// $(that.featurePop).hide();
 				that.attrPop.close();
 			}
 		} else {
@@ -894,15 +880,6 @@ gb.panel.EditingTool.prototype.draw = function(layer) {
 		this.activeIntrct_("snap");
 		this.activeBtn_("drawBtn");
 	} else if (git.editable === true && sourceLayer instanceof ol.layer.Base) {
-
-		// if (!this.managed) {
-		// this.managed = new ol.layer.Vector({
-		// source : this.tempSource
-		// });
-		// this.managed.set("name", "temp_vector");
-		// this.managed.set("id", "temp_vector");
-		//
-		// }
 		this.map.addLayer(this.managed);
 
 		this.interaction.draw = new ol.interaction.Draw({
@@ -1121,7 +1098,6 @@ gb.panel.EditingTool.prototype.modify = function(layer) {
 		this.deactiveIntrct_([ "select", "selectWMS", "dragbox", "draw", "move", "rotate" ]);
 		this.map.addInteraction(this.interaction.modify);
 
-		// hochul's code start
 		var sourceLayer;
 		if (Array.isArray(layer)) {
 			if (layer.length > 1) {
@@ -1149,7 +1125,6 @@ gb.panel.EditingTool.prototype.modify = function(layer) {
 		}
 		this.map.addInteraction(this.interaction.snap);
 		this.activeIntrct_("snap");
-		// hochul''s code end
 
 		this.activeIntrct_("modify");
 		this.activeBtn_("modiBtn");
@@ -1168,25 +1143,8 @@ gb.panel.EditingTool.prototype.remove = function(layer) {
 	if (this.interaction.select === undefined) {
 		return;
 	}
-	// if (this.isOn.remove) {
-	// if (!!this.interaction.remove) {
-	// this.interaction.select.getFeatures().clear();
-	// this.deactiveBtn_("removeBtn");
-	// this.map.removeLayer(this.managed);
-	// }
-	// return;
-	// }
 	var that = this;
 	if (this.interaction.select.getFeatures().getLength() > 0) {
-
-		// if (!this.managed) {
-		// this.managed = new ol.layer.Vector({
-		// source : this.tempSource
-		// });
-		// this.managed.set("name", "temp_vector");
-		// this.managed.set("id", "temp_vector");
-		// this.map.addLayer(this.managed);
-		// }
 		var layers = that.selected();
 		if (layers.length !== 1) {
 			return;
@@ -1267,10 +1225,12 @@ gb.panel.EditingTool.prototype.updateSelected = function() {
 					this.setLayer(layer);
 					result = layer;
 				}
+			} else if (layer instanceof ol.layer.Vector) {
+				this.setLayer(layer);
+				result = layer;
 			} else if (layer instanceof ol.layer.Base) {
 				this.setWMSSource(layer);
 				this.setLayer(layer);
-
 				result = layer;
 			}
 		}

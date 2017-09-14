@@ -144,8 +144,8 @@
 <!-- 오픈레이어스 3 오버라이딩 -->
 <!-- gb.overriding.olinteractiondraw -->
 <script src="${pageContext.request.contextPath}/resources/js/gb/overriding/olinteractiondraw.js"></script>
-<!-- gb.overriding.ollayerbase -->
-<script src="${pageContext.request.contextPath}/resources/js/gb/overriding/ollayerbase.js"></script>
+<!-- gb.overriding.olinteractionselect -->
+<script src="${pageContext.request.contextPath}/resources/js/gb/overriding/olinteractionselect.js"></script>
 
 <!-- 프로토타입 코딩 -->
 <!-- gb css -->

@@ -1233,6 +1233,7 @@ gitbuilder.ui.OptionDefinition = $
 										var obj = JSON.parse(reader.result.replace(/(\s*)/g, ''));
 										that.setOptDefCopy(obj);
 										that.update();
+										that.resetRelation();
 										$(lower).css("display", "none");
 									}
 								});
@@ -1364,26 +1365,27 @@ gitbuilder.ui.OptionDefinition = $
 							this.setLayerDefinition(this.options.layerDefinition);
 						}
 					},
-					afterStartRelation : function() {
-						var def = this.getDefinition();
-						var dkeys = Object.keys(def);
-						for (var i = 0; i < dkeys.length; i++) {
-							var vkeys = Object.keys(def[dkeys[i]]);
-							for (var j = 0; j < vkeys.length; j++) {
-								if (this.optItem[vkeys[j]].type === "relation" || this.optItem[vkeys[j]].type === "labelnrelation") {
-									var relation = def[dkeys[i]][vkeys[j]].relation;
-									for (var k = 0; k < relation.length; k++) {
-										if (!def.hasOwnProperty(relation[k])) {
-											this.getDefinition()[relation[k]] = {};
-											console.log(this.getDefinition());
-										}
-									}
-								}
-							}
-						}
-						console.log("afterStartRelation: ");
-						console.log(this.emptyLayers);
-					},
+					// afterStartRelation : function() {
+					// var def = this.getDefinition();
+					// var dkeys = Object.keys(def);
+					// for (var i = 0; i < dkeys.length; i++) {
+					// var vkeys = Object.keys(def[dkeys[i]]);
+					// for (var j = 0; j < vkeys.length; j++) {
+					// if (this.optItem[vkeys[j]].type === "relation" ||
+					// this.optItem[vkeys[j]].type === "labelnrelation") {
+					// var relation = def[dkeys[i]][vkeys[j]].relation;
+					// for (var k = 0; k < relation.length; k++) {
+					// if (!def.hasOwnProperty(relation[k])) {
+					// this.getDefinition()[relation[k]] = {};
+					// console.log(this.getDefinition());
+					// }
+					// }
+					// }
+					// }
+					// }
+					// console.log("afterStartRelation: ");
+					// console.log(this.emptyLayers);
+					// },
 					beforeSaveRelation : function() {
 						var cobj = this.getOptDefCopy();
 						var ekeys = Object.keys(this.emptyLayers);
@@ -1413,7 +1415,7 @@ gitbuilder.ui.OptionDefinition = $
 							this.emptyLayers[ldefKeys[i]] = 0;
 						}
 
-						var def = this.getDefinition();
+						var def = this.getOptDefCopy();
 						var dkeys = Object.keys(def);
 						for (var i = 0; i < dkeys.length; i++) {
 							var vkeys = Object.keys(def[dkeys[i]]);
@@ -1423,8 +1425,8 @@ gitbuilder.ui.OptionDefinition = $
 									for (var k = 0; k < relation.length; k++) {
 										this.updateRelation(relation[k], "up");
 										if (!def.hasOwnProperty(relation[k])) {
-											this.getDefinition()[relation[k]] = {};
-											console.log(this.getDefinition());
+											this.getOptDefCopy()[relation[k]] = {};
+											console.log(this.getOptDefCopy());
 										}
 									}
 								}
@@ -2192,10 +2194,9 @@ gitbuilder.ui.OptionDefinition = $
 					open : function() {
 						this.updateLayerDefinition();
 						this.setOptDefCopy(Object.assign({}, this.getDefinition()));
-						this.resetRelation();
-						// this.afterStartRelation();
-						this.window.modal('show');
 						this.update();
+						this.resetRelation();
+						this.window.modal('show');
 					},
 					close : function() {
 						this.window.modal('hide');
