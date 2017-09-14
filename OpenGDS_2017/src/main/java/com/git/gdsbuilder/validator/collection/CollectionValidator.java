@@ -65,7 +65,8 @@ import com.git.gdsbuilder.type.validate.option.AttributeFix;
 import com.git.gdsbuilder.type.validate.option.B_SymbolOutSided;
 import com.git.gdsbuilder.type.validate.option.BridgeName;
 import com.git.gdsbuilder.type.validate.option.BuildingOpen;
-import com.git.gdsbuilder.type.validate.option.BuildingSite;
+import com.git.gdsbuilder.type.validate.option.BuildingSiteDanger;
+import com.git.gdsbuilder.type.validate.option.BuildingSiteRelaxation;
 import com.git.gdsbuilder.type.validate.option.CemeterySite;
 import com.git.gdsbuilder.type.validate.option.CenterLineMiss;
 import com.git.gdsbuilder.type.validate.option.ConBreak;
@@ -259,7 +260,7 @@ public class CollectionValidator {
 				throw new Exception();
 			}
 			// layerMiss 검수
-			layerMissValidate(types, collection, errorLayer);
+			layerMissValidate(types, collection, errorLayer); 
 
 			// geometric 검수
 			geometricValidate(types, collection, errorLayer);
@@ -286,6 +287,9 @@ public class CollectionValidator {
 
 		String collectionName = layerCollection.getCollectionName();
 		for (int j = 0; j < types.size(); j++) {
+			
+			System.out.println("속성 검수");
+			
 			ValidateLayerType type = types.get(j);
 			GeoLayerList typeLayers = types.getTypeLayers(type.getTypeName(), layerCollection);
 			List<ValidatorOption> options = type.getOptionList();
@@ -386,12 +390,13 @@ public class CollectionValidator {
 	private void geometricValidate(ValidateLayerTypeList types, GeoLayerCollection layerCollection,
 			ErrorLayer errorLayer)
 			throws SchemaException, NoSuchAuthorityCodeException, FactoryException, TransformException, IOException {
-
+		
 		GeoLayer neatLayer = layerCollection.getNeatLine();
 
 		for (int i = 0; i < types.size(); i++) {
 			// getType
 			ValidateLayerType type = types.get(i);
+			
 			// getTypeLayers
 			GeoLayerList typeLayers = types.getTypeLayers(type.getTypeName(), layerCollection);
 			// getTypeOption
@@ -469,12 +474,7 @@ public class CollectionValidator {
 							}
 						}
 						if (option instanceof EntityDuplicated) {
-//							typeErrorLayer = layerValidator.validateEntityDuplicated();
-//							if (typeErrorLayer != null) {
-//								errorLayer.mergeErrorLayer(typeErrorLayer);
-//							}
-							
-							typeErrorLayer = layerValidator.validateUFIDDuplicated();
+							typeErrorLayer = layerValidator.validateEntityDuplicated();
 							if (typeErrorLayer != null) {
 								errorLayer.mergeErrorLayer(typeErrorLayer);
 							}
@@ -600,16 +600,32 @@ public class CollectionValidator {
 							}
 						}
 
-						if (option instanceof BuildingSite) {
-							HashMap<String, Object> attributeNames = ((BuildingSite) option).getAttributeKey();
-							List<String> relationNames = ((BuildingSite) option).getRelationType();
+						if (option instanceof BuildingSiteDanger) {
+							HashMap<String, Object> attributeNames = ((BuildingSiteDanger) option).getAttributeKey();
+							List<String> relationNames = ((BuildingSiteDanger) option).getRelationType();
 							String typeLayerName = typeLayer.getLayerName();
 							JSONObject attrJson = (JSONObject) attributeNames.get(typeLayerName);
 
 							for (int j = 0; j < relationNames.size(); j++) {
 								List<GeoLayer> relationName = types.getTypeLayers(relationNames.get(j),
 										layerCollection);
-								typeErrorLayer = layerValidator.validateBuildingSite(attrJson, relationName);
+								typeErrorLayer = layerValidator.validateBuildingSiteDager(attrJson, relationName);
+							}
+							if (typeErrorLayer != null) {
+								errorLayer.mergeErrorLayer(typeErrorLayer);
+							}
+						}
+						
+						if (option instanceof BuildingSiteRelaxation) {
+							HashMap<String, Object> attributeNames = ((BuildingSiteRelaxation) option).getAttributeKey();
+							List<String> relationNames = ((BuildingSiteRelaxation) option).getRelationType();
+							String typeLayerName = typeLayer.getLayerName();
+							JSONObject attrJson = (JSONObject) attributeNames.get(typeLayerName);
+
+							for (int j = 0; j < relationNames.size(); j++) {
+								List<GeoLayer> relationName = types.getTypeLayers(relationNames.get(j),
+										layerCollection);
+								typeErrorLayer = layerValidator.validateBuildingSiteRelaxation(attrJson, relationName);
 							}
 							if (typeErrorLayer != null) {
 								errorLayer.mergeErrorLayer(typeErrorLayer);

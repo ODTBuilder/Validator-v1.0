@@ -146,33 +146,36 @@ public class EditDTFeatureParser {
 		String featureID = (String) featureObj.get("id");
 		dxfFeature.setFeatureID(featureID);
 
-		JSONObject properties = (JSONObject) featureObj.get("properties");
-		Iterator iterator = properties.keySet().iterator();
-		while (iterator.hasNext()) {
-			String propertyKey = (String) iterator.next();
-			if (propertyKey.equals("feature_type")) {
-				Object value = properties.get(propertyKey);
-				dxfFeature.setFeatureType(value.toString());
-			}
-			if (propertyKey.equals("elevation")) {
-				Object value = properties.get(propertyKey);
-				dxfFeature.setElevation(Double.parseDouble(value.toString()));
-			}
-			if (propertyKey.equals("rotate")) {
-				Object value = properties.get(propertyKey);
-				dxfFeature.setRotate((Double) value);
-			}
-			if (propertyKey.equals("width")) {
-				Object value = properties.get(propertyKey);
-				dxfFeature.setWidth((Double) value);
-			}
-			if (propertyKey.equals("height")) {
-				Object value = properties.get(propertyKey);
-				dxfFeature.setHeight((Double) value);
-			}
-			if (propertyKey.equals("textValue")) {
-				Object value = properties.get(propertyKey);
-				dxfFeature.setTextValue(value.toString());
+		Object propertiesObj = featureObj.get("properties");
+		if (propertiesObj != null) {
+			JSONObject properties = (JSONObject) propertiesObj;
+			Iterator iterator = properties.keySet().iterator();
+			while (iterator.hasNext()) {
+				String propertyKey = (String) iterator.next();
+				if (propertyKey.equals("feature_type")) {
+					Object value = properties.get(propertyKey);
+					dxfFeature.setFeatureType(value.toString());
+				}
+				if (propertyKey.equals("elevation")) {
+					Object value = properties.get(propertyKey);
+					dxfFeature.setElevation(Double.parseDouble(value.toString()));
+				}
+				if (propertyKey.equals("rotate")) {
+					Object value = properties.get(propertyKey);
+					dxfFeature.setRotate(Double.parseDouble(value.toString()));
+				}
+				if (propertyKey.equals("width")) {
+					Object value = properties.get(propertyKey);
+					dxfFeature.setWidth(Double.parseDouble(value.toString()));
+				}
+				if (propertyKey.equals("height")) {
+					Object value = properties.get(propertyKey);
+					dxfFeature.setHeight(Double.parseDouble(value.toString()));
+				}
+				if (propertyKey.equals("textValue")) {
+					Object value = properties.get(propertyKey);
+					dxfFeature.setTextValue(value.toString());
+				}
 			}
 		}
 	}

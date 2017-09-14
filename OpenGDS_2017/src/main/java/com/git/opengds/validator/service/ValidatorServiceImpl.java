@@ -17,7 +17,6 @@
 
 package com.git.opengds.validator.service;
 
-import java.io.FileReader;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
@@ -28,7 +27,6 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.feature.SchemaException;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -40,10 +38,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.git.gdsbuilder.convertor.impl.GeoJsonToSimpleImpl;
 import com.git.gdsbuilder.type.geoserver.collection.GeoLayerCollection;
 import com.git.gdsbuilder.type.geoserver.collection.GeoLayerCollectionList;
-import com.git.gdsbuilder.type.geoserver.layer.GeoLayer;
 import com.git.gdsbuilder.type.validate.collection.ValidateLayerCollectionList;
 import com.git.gdsbuilder.type.validate.error.ErrorLayer;
 import com.git.gdsbuilder.type.validate.error.ErrorLayerList;
@@ -85,6 +81,8 @@ public class ValidatorServiceImpl implements ValidatorService {
 	@Override
 	public void validate(final UserVO userVO, String jsonObject) throws Exception {
 
+		System.out.println(jsonObject);
+		
 		JSONParser parser = new JSONParser();
 		JSONObject jsonObj = (JSONObject) parser.parse(jsonObject);
 

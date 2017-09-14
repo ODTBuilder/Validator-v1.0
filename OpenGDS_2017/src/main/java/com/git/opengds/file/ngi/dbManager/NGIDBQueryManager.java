@@ -170,19 +170,21 @@ public class NGIDBQueryManager {
 
 			// properties
 			HashMap<String, Object> properties = feature.getProperties();
-			int propertiesSize = properties.size();
-			if (propertiesSize != 0) {
-				Iterator keys = properties.keySet().iterator();
-				while (keys.hasNext()) {
-					String key = (String) keys.next();
-					Object value = properties.get(key);
+			if (properties != null) {
+				int propertiesSize = properties.size();
+				if (propertiesSize != 0) {
+					Iterator keys = properties.keySet().iterator();
+					while (keys.hasNext()) {
+						String key = (String) keys.next();
+						Object value = properties.get(key);
 
-					if (value instanceof String) {
-						insertDefaultQuery += "\"" + key + "\"" + ", ";
-						insertDefaultValues += "'" + value + "', ";
-					} else {
-						insertDefaultQuery += "\"" + key + "\"" + ", ";
-						insertDefaultValues += value + ", ";
+						if (value instanceof String) {
+							insertDefaultQuery += "\"" + key + "\"" + ", ";
+							insertDefaultValues += "'" + value + "', ";
+						} else {
+							insertDefaultQuery += "\"" + key + "\"" + ", ";
+							insertDefaultValues += value + ", ";
+						}
 					}
 				}
 			}
