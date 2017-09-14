@@ -27,8 +27,10 @@ gb.panel.EditingTool = function(obj) {
 	this.layers = undefined;
 	this.layer = undefined;
 
-	this.snap = [];
+	this.snapWMS = [];
 	this.snapSource = new ol.source.Vector();
+
+	this.snapVector = new ol.Collection();
 
 	this.features = new ol.Collection();
 	this.tempSource = new ol.source.Vector({
@@ -302,11 +304,7 @@ gb.panel.EditingTool = function(obj) {
 		});
 	});
 	this.map.on('moveend', (function() {
-		if (this.getView().getZoom() >= 14) {
-			if (that.snap.length > 0) {
-				that.loadSnappingLayer(this.getView().calculateExtent(this.getSize()));
-			}
-		}
+		that.loadSnappingLayer(this.getView().calculateExtent(this.getSize()));
 	}));
 };
 gb.panel.EditingTool.prototype = Object.create(gb.panel.Base.prototype);
@@ -1589,8 +1587,45 @@ gb.panel.EditingTool.prototype.isDate = function(va) {
  * @method addSnappingLayer()
  * @param {ol.layer.Base}
  */
-gb.panel.EditingTool.prototype.addSnappingLayer = function(lid) {
-	this.snap.push(lid);
+gb.panel.EditingTool.prototype.addSnappingLayer = function(layer) {
+	var success = false;
+	if (layer instanceof ol.layer.Group) {
+		var layers = layer.getLayers();
+		for (var i = 0; i < layers.getLength(); i++) {
+			this.addSnappingLayer(layers.item(i));
+		}
+	} else if (layer instanceof ol.layer.Vector) {
+		for (var i = 0; i < this.snapVector.getLength(); i++) {
+			if (this.snapVector.item(i).get("id") === layer.get("id")) {
+				success = true;
+				break;
+			}
+		}
+		if (!success) {
+			this.snapVector.push(layer);
+			success = true;
+		}
+	} else if (layer instanceof ol.layer.Tile) {
+		if (this.snapWMS.indexOf(layer.get("id")) === -1) {
+			this.snapWMS.push(layer.get("id"));
+			success = true;
+		}
+	} else if (layer instanceof ol.layer.Layer) {
+		var git = layer.get("git");
+		if (git) {
+			if (git.hasOwnProperty("fake")) {
+				if (git.fake === "parent") {
+
+				} else if (git.fake === "child") {
+					if (this.snapWMS.indexOf(layer.get("id")) === -1) {
+						this.snapWMS.push(layer.get("id"));
+						success = true;
+					}
+				}
+			}
+		}
+	}
+	return success;
 }
 /**
  * 스냅핑 레이어를 설정한다.
@@ -1600,14 +1635,20 @@ gb.panel.EditingTool.prototype.addSnappingLayer = function(lid) {
  */
 gb.panel.EditingTool.prototype.removeSnappingLayer = function(layer) {
 	if (layer instanceof ol.layer.Group) {
-		if (this.snap.indexOf(layer.get("id")) !== -1) {
-			this.snap.splice(this.snap.indexOf(layer.get("id")), 1);
-		}
 		var layers = layer.getLayers();
 		for (var i = 0; i < layers.getLength(); i++) {
 			this.removeSnappingLayer(layers.item(i));
 		}
-	} else if (layer instanceof ol.layer.Base) {
+	} else if (layer instanceof ol.layer.Vector) {
+		for (var i = 0; i < this.snapVector.getLength(); i++) {
+			if (this.snapVector.item(i).get("id") === layer.get("id")) {
+				success = true;
+				break;
+			}
+		}
+	} else if (layer instanceof ol.layer.Tile) {
+
+	} else if (layer instanceof ol.layer.Layer) {
 		var git;
 		if (layer) {
 			git = layer.get("git");
@@ -1615,26 +1656,26 @@ gb.panel.EditingTool.prototype.removeSnappingLayer = function(layer) {
 		if (!!git) {
 			if (git.hasOwnProperty("fake")) {
 				if (git.fake === "parent") {
-					if (this.snap.indexOf(layer.get("id")) !== -1) {
-						this.snap.splice(this.snap.indexOf(layer.get("id")), 1);
+					if (this.snapWMS.indexOf(layer.get("id")) !== -1) {
+						this.snapWMS.splice(this.snapWMS.indexOf(layer.get("id")), 1);
 					}
 					var layers = layer.get("git").layers;
 					for (var i = 0; i < layers.getLength(); i++) {
 						this.removeSnappingLayer(layers.item(i));
 					}
 				} else if (git.fake === "child") {
-					if (this.snap.indexOf(layer.get("id")) !== -1) {
-						this.snap.splice(this.snap.indexOf(layer.get("id")), 1);
+					if (this.snapWMS.indexOf(layer.get("id")) !== -1) {
+						this.snapWMS.splice(this.snapWMS.indexOf(layer.get("id")), 1);
 					}
 				}
 			} else {
-				if (this.snap.indexOf(layer.get("id")) !== -1) {
-					this.snap.splice(this.snap.indexOf(layer.get("id")), 1);
+				if (this.snapWMS.indexOf(layer.get("id")) !== -1) {
+					this.snapWMS.splice(this.snapWMS.indexOf(layer.get("id")), 1);
 				}
 			}
 		} else {
-			if (this.snap.indexOf(layer.get("id")) !== -1) {
-				this.snap.splice(this.snap.indexOf(layer.get("id")), 1);
+			if (this.snapWMS.indexOf(layer.get("id")) !== -1) {
+				this.snapWMS.splice(this.snapWMS.indexOf(layer.get("id")), 1);
 			}
 		}
 	}
@@ -1647,37 +1688,41 @@ gb.panel.EditingTool.prototype.removeSnappingLayer = function(layer) {
  */
 gb.panel.EditingTool.prototype.loadSnappingLayer = function(extent) {
 	var that = this;
-	that.snapSource.clear();
-	var params = {
-		"service" : "WFS",
-		"version" : "1.0.0",
-		"request" : "GetFeature",
-		"typeName" : this.snap.toString(),
-		"outputformat" : "text/javascript",
-		"bbox" : extent.toString(),
-		"format_options" : "callback:getJson"
-	};
+	if (this.getMap().getView().getZoom() >= 14) {
+		if (that.snapWMS.length > 0) {
+			that.snapSource.clear();
+			var params = {
+				"service" : "WFS",
+				"version" : "1.0.0",
+				"request" : "GetFeature",
+				"typeName" : this.snapWMS.toString(),
+				"outputformat" : "text/javascript",
+				"bbox" : extent.toString(),
+				"format_options" : "callback:getJson"
+			};
 
-	$.ajax({
-		url : this.getFeature,
-		data : params,
-		dataType : 'jsonp',
-		jsonpCallback : 'getJson',
-		beforeSend : function() {
-			$("body").css("cursor", "wait");
-		},
-		complete : function() {
-			$("body").css("cursor", "default");
-		},
-		success : function(data) {
-			var features = new ol.format.GeoJSON().readFeatures(JSON.stringify(data));
-			if (that.interaction.snap instanceof ol.interaction.Snap) {
-				for (var i = 0; i < features.length; i++) {
-					that.interaction.snap.addFeature(features[i]);
+			$.ajax({
+				url : this.getFeature,
+				data : params,
+				dataType : 'jsonp',
+				jsonpCallback : 'getJson',
+				beforeSend : function() {
+					$("body").css("cursor", "wait");
+				},
+				complete : function() {
+					$("body").css("cursor", "default");
+				},
+				success : function(data) {
+					var features = new ol.format.GeoJSON().readFeatures(JSON.stringify(data));
+					if (that.interaction.snap instanceof ol.interaction.Snap) {
+						for (var i = 0; i < features.length; i++) {
+							that.interaction.snap.addFeature(features[i]);
+						}
+					}
+					// that.snapSource.addFeatures(features);
+					console.log("snap feature injected");
 				}
-			}
-			// that.snapSource.addFeatures(features);
-			console.log("snap feature injected");
+			});
 		}
-	});
+	}
 };

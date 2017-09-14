@@ -8832,9 +8832,11 @@
 								for (var i = 0; i < layers.length; i++) {
 									var node = inst.get_node(layers[i]);
 									if (node.state["snapping"] === false) {
-										inst.set_flag(node, "snapping", true);
 										var layer = inst.get_LayerById(layers[i]);
-										inst._data.layerproperties.editingTool.addSnappingLayer(layer.get("id"));
+										var succ = inst._data.layerproperties.editingTool.addSnappingLayer(layer);
+										if (succ) {
+											inst.set_flag(node, "snapping", true);
+										}
 										console.log(layer);
 									} else {
 										inst.set_flag(node, "snapping", false);
