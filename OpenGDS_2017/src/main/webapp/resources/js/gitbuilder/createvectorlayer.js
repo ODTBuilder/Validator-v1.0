@@ -485,7 +485,7 @@ gb.edit.CreateVectorLayer.prototype.getDefinitionForm = function() {
 				id : "geo_" + this.format + "_" + $(this.sheetNumInput).val().replace(/(\s*)/g, '') + "_"
 						+ $(this.layerNameInput).val().replace(/(\s*)/g, '') + "_" + ($(this.geomForm).find("select").val().toUpperCase()),
 				format : this.format,
-				epsg : "5186",
+				srs : "EPSG:5186",
 				NGIVer : parseInt($(this.ver).val()),
 				NGIDim : parseInt($(this.dim).val()),
 				NGIRep : $(this.rep).val(),
@@ -501,7 +501,7 @@ gb.edit.CreateVectorLayer.prototype.getDefinitionForm = function() {
 				id : "geo_" + this.format + "_" + $(this.sheetNumInput).val().replace(/(\s*)/g, '') + "_"
 						+ $(this.layerNameInput).val().replace(/(\s*)/g, '') + "_" + ($(this.geomForm).find("select").val().toUpperCase()),
 				format : this.format,
-				epsg : "5186",
+				srs : "EPSG:5186",
 				mbound : [ [ $(this.minx).val(), $(this.miny).val() ], [ $(this.maxx).val(), $(this.maxy).val() ] ],
 				lbound : [ [ 122.71, 28.6 ], [ 134.28, 40.27 ] ],
 				isNew : true,
@@ -514,7 +514,7 @@ gb.edit.CreateVectorLayer.prototype.getDefinitionForm = function() {
 				id : "geo_" + this.format + "_" + $(this.sheetNumInput).val().replace(/(\s*)/g, '') + "_"
 						+ $(this.layerNameInput).val().replace(/(\s*)/g, '') + "_" + ($(this.geomForm).find("select").val().toUpperCase()),
 				format : this.format,
-				epsg : "5186",
+				srs : "EPSG:5186",
 				mbound : [ [ $(this.minx).val(), $(this.miny).val() ], [ $(this.maxx).val(), $(this.maxy).val() ] ],
 				lbound : [ [ 122.71, 28.6 ], [ 134.28, 40.27 ] ],
 				isNew : true,

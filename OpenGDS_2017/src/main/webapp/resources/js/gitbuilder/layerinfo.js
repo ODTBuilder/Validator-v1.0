@@ -18,7 +18,7 @@ gb.layer.LayerInfo = function(opt) {
 	this.sheetNum = options.sheetNum ? options.sheetNum : undefined;
 	this.attributes = options.attributes ? options.attributes : undefined;
 	this.format = options.format ? options.format : null;
-	this.epsg = options.epsg ? options.epsg : null;
+	this.srs = options.srs ? options.srs : null;
 	this.ngi = {
 		"version" : options.NGIVer ? options.NGIVer : 2,
 		"dim" : options.NGIDim ? options.NGIDim : 2,
@@ -109,11 +109,11 @@ gb.layer.LayerInfo.prototype.getFormat = function() {
 	return this.format;
 };
 
-gb.layer.LayerInfo.prototype.setEPSG = function(epsg) {
-	this.epsg = epsg;
+gb.layer.LayerInfo.prototype.setSRS = function(srs) {
+	this.srs = srs;
 };
-gb.layer.LayerInfo.prototype.getEPSG = function() {
-	return this.epsg;
+gb.layer.LayerInfo.prototype.getSRS = function() {
+	return this.srs;
 };
 
 gb.layer.LayerInfo.prototype.setNGIVersion = function(ver) {
@@ -161,7 +161,7 @@ gb.layer.LayerInfo.prototype.clone = function() {
 		name : this.getName().toString(),
 		id : this.getId().toString(),
 		format : this.getFormat().toString(),
-		epsg : this.getEPSG().toString(),
+		srs : this.getSRS().toString(),
 		NGIVer : this.getNGIVersion().toString(),
 		NGIDim : this.getNGIDim().toString(),
 		mbound : this.getMbound().slice(),

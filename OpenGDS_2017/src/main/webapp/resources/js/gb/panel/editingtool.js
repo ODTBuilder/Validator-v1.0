@@ -1429,7 +1429,7 @@ gb.panel.EditingTool.prototype.open = function() {
  * @param {ol.layer.Base}
  */
 gb.panel.EditingTool.prototype.setWMSSource = function(sourceLayer) {
-
+	var that = this;
 	var arr = {
 		"geoLayerList" : [ sourceLayer.get("id") ]
 	}
@@ -1457,8 +1457,8 @@ gb.panel.EditingTool.prototype.setWMSSource = function(sourceLayer) {
 							'TILED' : true,
 							'FORMAT' : 'image/png8',
 							'VERSION' : '1.1.0',
-							'CRS' : 'EPSG:5186',
-							'SRS' : 'EPSG:5186',
+							'CRS' : that.getMap().getView().getProjection().getCode(),
+							'SRS' : that.getMap().getView().getProjection().getCode(),
 							'BBOX' : data2[i].nbBox.minx.toString() + "," + data2[i].nbBox.miny.toString() + ","
 									+ data2[i].nbBox.maxx.toString() + "," + data2[i].nbBox.maxy.toString()
 						},
@@ -1479,7 +1479,7 @@ gb.panel.EditingTool.prototype.setWMSSource = function(sourceLayer) {
 							name : sourceLayer.get("name"),
 							id : id,
 							format : format,
-							epsg : "5186",
+							epsg : data2[i].srs,
 							mbound : [ [ data2[i].nbBox.minx.toString(), data2[i].nbBox.miny.toString() ],
 									[ data2[i].nbBox.maxx.toString(), data2[i].nbBox.maxy.toString() ] ],
 							lbound : [ [ 122.71, 28.6 ], [ 134.28, 40.27 ] ],
@@ -1492,7 +1492,7 @@ gb.panel.EditingTool.prototype.setWMSSource = function(sourceLayer) {
 							name : sourceLayer.get("name"),
 							id : id,
 							format : format,
-							epsg : "5186",
+							epsg : data2[i].srs,
 							mbound : [ [ data2[i].nbBox.minx.toString(), data2[i].nbBox.miny.toString() ],
 									[ data2[i].nbBox.maxx.toString(), data2[i].nbBox.maxy.toString() ] ],
 							isNew : false,
@@ -1506,7 +1506,7 @@ gb.panel.EditingTool.prototype.setWMSSource = function(sourceLayer) {
 							name : sourceLayer.get("name"),
 							id : id,
 							format : format,
-							epsg : "5186",
+							epsg : data2[i].srs,
 							mbound : [ [ data2[i].nbBox.minx.toString(), data2[i].nbBox.miny.toString() ],
 									[ data2[i].nbBox.maxx.toString(), data2[i].nbBox.maxy.toString() ] ],
 							lbound : [ [ 122.71, 28.6 ], [ 134.28, 40.27 ] ],
@@ -1540,7 +1540,7 @@ gb.panel.EditingTool.prototype.setMap = function(map) {
  * @method getMap(map)
  * @return {ol.layer.Base}
  */
-gb.panel.EditingTool.prototype.setMap = function() {
+gb.panel.EditingTool.prototype.getMap = function() {
 	return this.map;
 }
 /**
