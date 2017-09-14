@@ -98,7 +98,6 @@ $.jstreeol3.plugins.legends = function(options, parent) {
 															m[dpc[i]].icon = g.url + "?" + "REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT="
 																	+ g.format + "&WIDTH=" + g.width + "&HEIGHT=" + g.height + "&LAYER="
 																	+ layer.get("id") + "&SCALE=1001&LEGEND_OPTIONS=bgColor:0xededed;";
-															console.log(m[dpc[i]].icon);
 														}
 													}
 												}

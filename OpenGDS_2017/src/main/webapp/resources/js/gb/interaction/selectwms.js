@@ -11,8 +11,9 @@
 var gb;
 if (!gb)
 	gb = {};
-if (!gb.panel)
+if (!gb.interaction)
 	gb.interaction = {};
+
 gb.interaction.SelectWMS = function(opt_options) {
 	var options = opt_options ? opt_options : {};
 	this.map_ = null;

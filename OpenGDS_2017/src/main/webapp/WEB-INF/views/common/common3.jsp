@@ -84,9 +84,6 @@
 <%-- 검수 현황 --%>
 <script src="${pageContext.request.contextPath}/resources/js/gitbuilder/qastatus.js"></script>
 
-<%-- 편집툴 --%>
-<%-- <script src="${pageContext.request.contextPath}/resources/js/gitbuilder/editingtool2.js"></script> --%>
-
 <%-- wms편집이력 --%>
 <script src="${pageContext.request.contextPath}/resources/js/gitbuilder/edithistory.js"></script>
 
@@ -95,12 +92,6 @@
 
 <%-- 편집이력 전송 --%>
 <script src="${pageContext.request.contextPath}/resources/js/gitbuilder/recordtransfer.js"></script>
-
-<%-- 커스텀 인터랙션 --%>
-<script src="${pageContext.request.contextPath}/resources/js/gitbuilder/interaction.js"></script>
-
-<%-- 오픈 레이어스 프로토타입 확장 --%>
-<script src="${pageContext.request.contextPath}/resources/js/gitbuilder/olextension.js"></script>
 
 <%-- 레이어 정보 --%>
 <script src="${pageContext.request.contextPath}/resources/js/gitbuilder/modifylayer.js"></script>
@@ -150,6 +141,11 @@
 </script>
 
 <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/resources/img/favi32.png" />
+<!-- 오픈레이어스 3 오버라이딩 -->
+<!-- gb.overriding.olinteractiondraw -->
+<script src="${pageContext.request.contextPath}/resources/js/gb/overriding/olinteractiondraw.js"></script>
+<!-- gb.overriding.olinteractionselect -->
+<script src="${pageContext.request.contextPath}/resources/js/gb/overriding/olinteractionselect.js"></script>
 
 <!-- 프로토타입 코딩 -->
 <!-- gb css -->
@@ -160,3 +156,5 @@
 <script src="${pageContext.request.contextPath}/resources/js/gb/panel/editingtool.js"></script>
 <!-- gb.interaction.SelectWMS -->
 <script src="${pageContext.request.contextPath}/resources/js/gb/interaction/selectwms.js"></script>
+<!-- gb.interaction.MultiTransform -->
+<script src="${pageContext.request.contextPath}/resources/js/gb/interaction/multitransform.js"></script>
