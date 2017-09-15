@@ -40,10 +40,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.geotools.data.DataUtilities;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureIterator;
-import org.geotools.data.simple.SimpleFeatureSource;
 import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.feature.DefaultFeatureCollection;
 import org.geotools.feature.SchemaException;
@@ -74,7 +72,6 @@ import com.git.gdsbuilder.validator.feature.FeatureCloseCollectionValidator;
 import com.git.gdsbuilder.validator.feature.FeatureCloseCollectionValidatorImpl;
 import com.git.gdsbuilder.validator.feature.FeatureGraphicValidator;
 import com.git.gdsbuilder.validator.feature.FeatureGraphicValidatorImpl;
-import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.Polygon;
 
@@ -664,7 +661,12 @@ public class LayerValidatorImpl implements LayerValidator {
 		SimpleFeatureIterator sit = sfc.features();
 		while (sit.hasNext()) {
 			SimpleFeature simpleFeature = sit.next();
-			graphicValidator.validateB_SymbolOutSided(simpleFeature, relationSfcs);
+			ErrorFeature errFeature = graphicValidator.validateB_SymbolOutSided(simpleFeature, relationSfcs);
+			if (errFeature != null) {
+				errLayer.addErrorFeature(errFeature);
+			} else {
+				continue;
+			}
 		}
 		if (errLayer.getErrFeatureList().size() > 0) {
 			return errLayer;
@@ -1178,7 +1180,7 @@ public class LayerValidatorImpl implements LayerValidator {
 	}
 
 	public ErrorLayer valildateLinearDisconnection(List<GeoLayer> relationLayers) throws SchemaException {
-		
+
 		ErrorLayer errorLayer = new ErrorLayer();
 		SimpleFeatureCollection sfc = validatorLayer.getSimpleFeatureCollection();
 		SimpleFeatureIterator simpleFeatureIterator = sfc.features();

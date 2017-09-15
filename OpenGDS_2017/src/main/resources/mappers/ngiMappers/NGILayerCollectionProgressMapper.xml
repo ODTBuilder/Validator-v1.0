@@ -27,7 +27,7 @@
 		resultType="hashMap">
 		${updateQuery}
 	</select>
-	
+
 	<select id="updateQA20ValidateFailState" parameterType="hashMap"
 		resultType="hashMap">
 		${updateQuery}
@@ -62,5 +62,9 @@
 		resultType="hashMap">
 		${selectAllQuery}
 	</select>
+
+	<delete id="deleteQA20Progress" parameterType="hashMap">
+		${deleteQuery}
+	</delete>
 
 </mapper>
