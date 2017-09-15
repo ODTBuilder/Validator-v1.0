@@ -13,9 +13,11 @@ public interface ValidateProgressDAO {
 
 	public Integer insertSHPRequestState(UserVO userVO, HashMap<String, Object> insertQuery);
 
-	public Integer selectNGIValidateProgressPid(UserVO userVO, HashMap<String, Object> selectQA20ValidateProgressPid);
+	public List<HashMap<String, Object>> selectNGIValidateProgressPid(UserVO userVO,
+			HashMap<String, Object> selectQA20ValidateProgressPid);
 
-	public Integer selectDXFValidateProgressPid(UserVO userVO, HashMap<String, Object> selectQA10ValidateProgressPid);
+	public List<HashMap<String, Object>> selectDXFValidateProgressPid(UserVO userVO,
+			HashMap<String, Object> selectQA10ValidateProgressPid);
 
 	public Integer selectSHPValidateProgressPid(UserVO userVO, HashMap<String, Object> selectQA10ValidateProgressPid);
 

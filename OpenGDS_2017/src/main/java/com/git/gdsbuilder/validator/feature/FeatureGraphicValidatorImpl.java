@@ -35,13 +35,13 @@
 package com.git.gdsbuilder.validator.feature;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureIterator;
 import org.geotools.feature.SchemaException;
-import org.geotools.geometry.jts.JTSFactoryFinder;
 import org.geotools.referencing.CRS;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -67,6 +67,7 @@ import com.git.gdsbuilder.type.validate.option.EntityDuplicated;
 import com.git.gdsbuilder.type.validate.option.EntityInHole;
 import com.git.gdsbuilder.type.validate.option.HoleMisplacement;
 import com.git.gdsbuilder.type.validate.option.LayerMiss;
+import com.git.gdsbuilder.type.validate.option.LinearDisconnection;
 import com.git.gdsbuilder.type.validate.option.MultiPart;
 import com.git.gdsbuilder.type.validate.option.NodeMiss;
 import com.git.gdsbuilder.type.validate.option.OneAcre;
@@ -83,7 +84,6 @@ import com.git.gdsbuilder.type.validate.option.UnderShoot;
 import com.git.gdsbuilder.type.validate.option.UselessEntity;
 import com.git.gdsbuilder.type.validate.option.UselessPoint;
 import com.git.gdsbuilder.type.validate.option.WaterOpen;
-import com.sun.swing.internal.plaf.basic.resources.basic;
 import com.vividsolutions.jts.algorithm.Angle;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
@@ -860,7 +860,7 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 				SimpleFeature relationSf = sfIterator.next();
 				Geometry relationGeom = (Geometry) relationSf.getDefaultGeometry();
 				Geometry relationEnvelop = relationGeom.getEnvelope();
-				if (relationEnvelop.within(targetGeom)) {
+				if (targetGeom.within(relationEnvelop)) {
 					isTrue = true;
 				}
 			}
@@ -1306,21 +1306,123 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 	public List<ErrorFeature> validateLinearDisconnection(SimpleFeature simpleFeature,
 			SimpleFeatureCollection relationSfc) {
 
-		// simpleFeature - 도로 중심선, relation - 도로경계
-		List<ErrorFeature> errorFeatures = new ArrayList<ErrorFeature>();
+//		// simpleFeature - 도로 중심선, relation - 도로경계
+//		List<ErrorFeature> errorFeatures = new ArrayList<ErrorFeature>();
+//		GeometryFactory geometryFactory = new GeometryFactory();
+//
+//		// 도로중심선
+//		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
+//		boolean isTrue1 = false;
+//		boolean isTrue2 = false;
+//
+//		Coordinate[] geomCoors = geometry.getCoordinates();
+//		Point firPt = geometryFactory.createPoint(geomCoors[0]);
+//		Point lastPt = geometryFactory.createPoint(geomCoors[geomCoors.length - 1]);
+//
+//		SimpleFeatureIterator iterator = relationSfc.features();
+//		while (iterator.hasNext()) {
+//			// 도로경계
+//			SimpleFeature relationSimpleFeature = iterator.next();
+//			Geometry relationGeom = (Geometry) relationSimpleFeature.getDefaultGeometry();
+//			Geometry relationBoundary = relationGeom.getBoundary();
+//
+//			Geometry intersectedGeom = geometry.intersection(relationBoundary);
+//			if (intersectedGeom.isEmpty()) {
+//				continue;
+//			} else {
+//				int size = intersectedGeom.getNumPoints();
+//				if (size != 2) {
+//					isTrue1 = true;
+//					isTrue2 = true;
+//					continue;
+//				} else {
+//					Coordinate[] interCoors = intersectedGeom.getCoordinates();
+//					for (int i = 0; i < interCoors.length; i++) {
+//						Point interPt = geometryFactory.createPoint(interCoors[i]);
+//						if (Math.abs(firPt.distance(interPt)) < 0.2) {
+//							isTrue1 = true;
+//						}
+//						if (Math.abs(lastPt.distance(interPt)) < 0.2) {
+//							isTrue2 = true;
+//						}
+//					}
+//				}
+//			}
+//		}
+//		String featureIdx = simpleFeature.getID();
+//		Property featureIDPro = simpleFeature.getProperty("feature_id");
+//		String featureID = (String) featureIDPro.getValue();
+//		if (!isTrue1) {
+//			ErrorFeature errorFeature = new ErrorFeature(featureIdx, featureID,
+//					LinearDisconnection.Type.LINEARDISCONNECTION.errType(),
+//					LinearDisconnection.Type.LINEARDISCONNECTION.errName(), firPt);
+//			errorFeatures.add(errorFeature);
+//		}
+//		if (!isTrue2) {
+//			ErrorFeature errorFeature = new ErrorFeature(featureIdx, featureID,
+//					LinearDisconnection.Type.LINEARDISCONNECTION.errType(),
+//					LinearDisconnection.Type.LINEARDISCONNECTION.errName(), lastPt);
+//			errorFeatures.add(errorFeature);
+//		}
+//		return errorFeatures;
+		
 		GeometryFactory geometryFactory = new GeometryFactory();
-
-		// 도로중심선
 		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
-		boolean isTrue = false;
-		SimpleFeatureIterator iterator = relationSfc.features();
-		while (iterator.hasNext()) {
-			// 도로경계
-			SimpleFeature relationSimpleFeature = iterator.next();
-			Geometry relationGeom = (Geometry) relationSimpleFeature.getDefaultGeometry();
-			Geometry intersectedPt = geometry.intersection(relationGeom);
-			System.out.println(intersectedPt.getNumPoints());
+		SimpleFeatureIterator simpleFeatureIterator = relationSfc.features();
+		String featureIdx = simpleFeature.getID();
+		Property featuerIDPro = simpleFeature.getProperty("feature_id");
+		String featureID = (String) featuerIDPro.getValue();
+		List<SimpleFeature> relationSimpleFeatures = new ArrayList<>();
+		List<Geometry> geometries = new ArrayList<>();
+		List<ErrorFeature> errorFeatures = new ArrayList<>();
+
+		while (simpleFeatureIterator.hasNext()) {
+			SimpleFeature relationSimpleFeatrue = simpleFeatureIterator.next();
+			Geometry relationGeometry = (Geometry) relationSimpleFeatrue.getDefaultGeometry();
+			Property featuerIDPro2 = simpleFeature.getProperty("feature_id");
+			String featureID2 = (String) featuerIDPro2.getValue();
+			if (geometry.intersects(relationGeometry)) {
+				Geometry intersection = geometry.intersection(relationGeometry);
+				String intersectionType = intersection.getGeometryType().toUpperCase();
+				if (!intersectionType.equals("POINT") || !intersectionType.equals("NULTIPOINT")) {
+					if (intersectionType.equals("LINESTRING")) {
+						double length = intersection.getLength();
+						if (length > 0.01) {
+							relationSimpleFeatures.add(relationSimpleFeatrue);
+						}
+					}
+				}
+			}
 		}
+
+		if (relationSimpleFeatures.size() > 1) {
+			for (int i = 0; i < relationSimpleFeatures.size(); i++) {
+				SimpleFeature relationSimpleFeature = relationSimpleFeatures.get(i);
+				Geometry relationGeometry = (Geometry) relationSimpleFeature.getDefaultGeometry();
+				Geometry intersection = geometry.intersection(relationGeometry.getBoundary());
+				String intersectionType = intersection.getGeometryType().toUpperCase();
+				if (intersectionType.equals("MULTIPOINT") || intersectionType.equals("POINT")) {
+					Coordinate[] coordinates = intersection.getCoordinates();
+					for (int j = 0; j < coordinates.length; j++) {
+						Coordinate coordinate = coordinates[j];
+						Point point = geometryFactory.createPoint(coordinate);
+						geometries.add(point);
+					}
+				}
+			}
+		}
+
+		HashSet<Geometry> distinctData = new HashSet<>(geometries);
+		geometries.clear();
+		geometries.addAll(distinctData);
+		for (int i = 0; i < geometries.size(); i++) {
+			Geometry point = geometries.get(i);
+			ErrorFeature errorFeature = new ErrorFeature(featureIdx, featureID,
+					LinearDisconnection.Type.LINEARDISCONNECTION.errType(),
+					LinearDisconnection.Type.LINEARDISCONNECTION.errName(), point);
+			errorFeatures.add(errorFeature);
+		}
+
 		return errorFeatures;
 	}
 
