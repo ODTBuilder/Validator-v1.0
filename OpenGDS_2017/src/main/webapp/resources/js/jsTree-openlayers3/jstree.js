@@ -8794,7 +8794,10 @@
 							 */
 							"action" : function(data) {
 								var inst = $.jstreeol3.reference(data.reference), obj = inst.get_node(data.reference);
-								inst.zoom_to_fit(obj);
+								var layer = inst.get_LayerById(obj.id);
+								inst._data.layerproperties.editingTool.zoomToFit(layer);
+								// inst._data.layerproperties.editingTool.setWMSSource(layer,
+								// inst.zoom_to_fit(obj));
 							}
 						},
 						// "rename" : {
@@ -8831,16 +8834,22 @@
 								var layers = inst.get_selected();
 								for (var i = 0; i < layers.length; i++) {
 									var node = inst.get_node(layers[i]);
+									var layer = inst.get_LayerById(layers[i]);
 									if (node.state["snapping"] === false) {
-										var layer = inst.get_LayerById(layers[i]);
 										var succ = inst._data.layerproperties.editingTool.addSnappingLayer(layer);
 										if (succ) {
 											inst.set_flag(node, "snapping", true);
 										}
 										console.log(layer);
 									} else {
-										inst.set_flag(node, "snapping", false);
+										var succ = inst._data.layerproperties.editingTool.removeSnappingLayer(layer);
+										if (succ) {
+											inst.set_flag(node, "snapping", false);
+										}
 									}
+									var ext = inst._data.layerproperties.editingTool.getMap().getView().calculateExtent(
+											inst._data.layerproperties.editingTool.getMap().getSize());
+									inst._data.layerproperties.editingTool.loadSnappingLayer(ext);
 								}
 							}
 						},

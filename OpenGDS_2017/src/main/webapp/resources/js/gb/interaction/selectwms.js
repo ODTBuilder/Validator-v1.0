@@ -39,8 +39,38 @@ ol.inherits(gb.interaction.SelectWMS, ol.interaction.Interaction);
 gb.interaction.SelectWMS.prototype.handleEvent = function(evt) {
 	var that = this;
 	this.map_ = evt.map;
+	if (typeof this.conLayer === "function") {
+		this.layer = this.conLayer();
+	} else if (this.conLayer instanceof ol.layer.Base) {
+		this.layer = this.conLayer;
+	}
 	if (evt.type === "singleclick") {
-		this.setCoordinate(evt);
+		if (this.layer instanceof ol.layer.Vector) {
+			var lys = [ this.layer ];
+			var layerFilter;
+			if (lys) {
+				if (typeof lys === 'function') {
+					layerFilter = lys;
+				} else {
+					var layers = lys;
+					layerFilter = function(layer) {
+						return ol.array.includes(lys, layer);
+					};
+				}
+			} else {
+				layerFilter = ol.functions.TRUE;
+			}
+
+			/**
+			 * @private
+			 * @type {function(ol.layer.Layer): boolean}
+			 */
+			this.select_.layerFilter_ = layerFilter;
+
+			this.select_.handleEvent(evt);
+		} else if (this.layer instanceof ol.layer.Layer) {
+			this.setCoordinate(evt);
+		}
 	}
 	return true;
 };
@@ -50,12 +80,7 @@ gb.interaction.SelectWMS.prototype.getFeatures = function() {
 };
 
 gb.interaction.SelectWMS.prototype.setExtent = function(extent) {
-	if (typeof this.conLayer === "function") {
-		this.layer = this.conLayer();
-	} else if (this.conLayer instanceof ol.layer.Base) {
-		this.layer = this.conLayer;
-	}
-	if (!this.getLayer().getVisible()) {
+	if (!this.getLayer().getVisible() || this.getLayer() instanceof ol.layer.Vector) {
 		return;
 	}
 	this.extent_ = extent;
@@ -132,12 +157,7 @@ gb.interaction.SelectWMS.prototype.setExtent = function(extent) {
 	});
 };
 gb.interaction.SelectWMS.prototype.setCoordinate = function(evt) {
-	if (typeof this.conLayer === "function") {
-		this.setLayer(this.conLayer());
-	} else if (this.conLayer instanceof ol.layer.Base) {
-		this.setLayer(this.conLayer);
-	}
-	if (!this.getLayer().getVisible()) {
+	if (!this.getLayer().getVisible() || this.getLayer() instanceof ol.layer.Vector) {
 		return;
 	}
 	var that = this;
@@ -163,12 +183,6 @@ gb.interaction.SelectWMS.prototype.getLayer = function() {
 	return this.layer;
 }
 gb.interaction.SelectWMS.prototype.setFeatureId = function(fid) {
-	// if (typeof this.conLayer === "function") {
-	// this.layer = this.conLayer();
-	// } else if (this.conLayer instanceof ol.layer.Base){
-	// this.layer = this.conLayer;
-	// }
-
 	var that = this;
 	var params;
 	if (that.layer instanceof ol.layer.Tile) {
