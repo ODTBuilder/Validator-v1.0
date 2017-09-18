@@ -544,9 +544,7 @@ html {
 			}
 		});
 
-		$("#layerDefinition").layerdefinition20({
-
-		});
+		$("#layerDefinition").layerdefinition20({});
 
 		$("#validDefinition").optiondefinition({
 			layerDefinition : function() {
