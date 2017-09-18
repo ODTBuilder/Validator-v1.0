@@ -392,11 +392,14 @@ public class CollectionValidator {
 			throws SchemaException, NoSuchAuthorityCodeException, FactoryException, TransformException, IOException {
 		
 		GeoLayer neatLayer = layerCollection.getNeatLine();
-
+		
+	
+		
 		for (int i = 0; i < types.size(); i++) {
 			// getType
 			ValidateLayerType type = types.get(i);
-			
+			System.out.println("Geom검수");
+			System.out.println(type.getTypeName());
 			// getTypeLayers
 			GeoLayerList typeLayers = types.getTypeLayers(type.getTypeName(), layerCollection);
 			// getTypeOption
@@ -644,15 +647,15 @@ public class CollectionValidator {
 						}
 
 						if (option instanceof CenterLineMiss) {
-							List<String> relationNames = ((CenterLineMiss) option).getRelationType();
-							for (int j = 0; j < relationNames.size(); j++) {
-								typeErrorLayer = layerValidator.validateCenterLineMiss(
-										types.getTypeLayers(relationNames.get(j), layerCollection),
-										lineInvadedTolorence);
-								if (typeErrorLayer != null) {
-									errorLayer.mergeErrorLayer(typeErrorLayer);
-								}
-							}
+//							List<String> relationNames = ((CenterLineMiss) option).getRelationType();
+//							for (int j = 0; j < relationNames.size(); j++) {
+//								typeErrorLayer = layerValidator.validateCenterLineMiss(
+//										types.getTypeLayers(relationNames.get(j), layerCollection),
+//										lineInvadedTolorence);
+//								if (typeErrorLayer != null) {
+//									errorLayer.mergeErrorLayer(typeErrorLayer);
+//								}
+//							}
 						}
 
 						if (option instanceof HoleMisplacement) {

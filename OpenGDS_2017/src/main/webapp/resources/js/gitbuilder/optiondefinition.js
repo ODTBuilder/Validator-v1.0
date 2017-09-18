@@ -1420,7 +1420,7 @@ gitbuilder.ui.OptionDefinition = $
 						for (var i = 0; i < dkeys.length; i++) {
 							var vkeys = Object.keys(def[dkeys[i]]);
 							for (var j = 0; j < vkeys.length; j++) {
-								// console.log(vkeys[j]);
+								 console.log(vkeys[j]);
 								if (this.optItem[vkeys[j]].type === "relation" || this.optItem[vkeys[j]].type === "labelnrelation") {
 									var relation = def[dkeys[i]][vkeys[j]].relation;
 									for (var k = 0; k < relation.length; k++) {
