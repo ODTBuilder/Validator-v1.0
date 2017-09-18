@@ -16,15 +16,21 @@ gb.panel.EditingTool = function(obj) {
 	gb.panel.Base.call(this, obj);
 	var options = obj ? obj : {};
 	this.map = options.map ? options.map : undefined;
+	console.log(this.map.getView().getProjection());
 	this.featureRecord = options.featureRecord ? options.featureRecord : undefined;
 	this.treeInstance = options.treeInstance ? options.treeInstance : undefined;
 	this.selected = options.selected ? options.selected : undefined;
-	this.infoURL = options.infoURL ? options.infoURL : undefined;
-	this.wmsURL = options.wmsURL ? options.wmsURL : undefined;
-	this.wfsURL = options.wfsURL ? options.wfsURL : undefined;
-
+	this.layerInfo = options.layerInfo ? options.layerInfo : undefined;
+	this.imageTile = options.imageTile ? options.imageTile : undefined;
+	this.getFeature = options.getFeature ? options.getFeature : undefined;
+	this.getFeatureInfo = options.getFeatureInfo ? options.getFeatureInfo : undefined;
 	this.layers = undefined;
 	this.layer = undefined;
+
+	this.snapWMS = [];
+	this.snapSource = new ol.source.Vector();
+
+	this.snapVector = new ol.Collection();
 
 	this.features = new ol.Collection();
 	this.tempSource = new ol.source.Vector({
@@ -58,27 +64,35 @@ gb.panel.EditingTool = function(obj) {
 		})
 	}) ];
 
-	this.highlightStyles1 = new ol.style.Style({
+	this.highlightStyles1 = [ new ol.style.Style({
 		stroke : new ol.style.Stroke({
 			color : 'rgba(255,0,0,1)',
 			width : 2
 		})
 	}), new ol.style.Style({
 		image : new ol.style.Circle({
-			radius : 10
+			radius : 10,
+			stroke : new ol.style.Stroke({
+				color : 'rgba(255,0,0,1)',
+				width : 2
+			})
 		})
-	});
+	}) ];
 
-	this.highlightStyles2 = new ol.style.Style({
+	this.highlightStyles2 = [ new ol.style.Style({
 		stroke : new ol.style.Stroke({
 			color : 'rgba(0, 0, 255, 1)',
 			width : 2
 		})
 	}), new ol.style.Style({
 		image : new ol.style.Circle({
-			radius : 10
+			radius : 10,
+			stroke : new ol.style.Stroke({
+				color : 'rgba(0, 0, 255, 1)',
+				width : 2
+			})
 		})
-	});
+	}) ];
 
 	this.selectedStyles = [ new ol.style.Style({
 		stroke : new ol.style.Stroke({
@@ -126,16 +140,6 @@ gb.panel.EditingTool = function(obj) {
 
 	this.interval = undefined;
 	this.count = 1;
-	this.glitterFeature = function(feature) {
-		// var val = this.count % 2;
-		// if (val === 0) {
-		// feature.setStyle(this.highlightStyles1);
-		// } else {
-		// feature.setStyle(this.highlightStyles2);
-		// }
-		// this.count++;
-		console.log("hi");
-	};
 
 	this.btn = {
 		selectBtn : undefined,
@@ -299,6 +303,9 @@ gb.panel.EditingTool = function(obj) {
 			}
 		});
 	});
+	this.map.on('moveend', (function() {
+		that.loadSnappingLayer(this.getView().calculateExtent(this.getSize()));
+	}));
 };
 gb.panel.EditingTool.prototype = Object.create(gb.panel.Base.prototype);
 gb.panel.EditingTool.prototype.constructor = gb.panel.EditingTool;
@@ -500,113 +507,23 @@ gb.panel.EditingTool.prototype.select = function(layer) {
 			console.error("no selected layer");
 			return;
 		} else {
-			sourceLayer = layer[0];
+			this.setLayer(layer[0]);
 		}
 	} else if (layer instanceof ol.layer.Base) {
-		sourceLayer = layer;
+		this.setLayer(layer);
 	} else {
 		return;
 	}
-
-	if (!sourceLayer instanceof ol.layer.Base && !sourceLayer.get("git").hasOwnProperty("fake")) {
+	sourceLayer = this.getLayer();
+	if (!sourceLayer instanceof ol.layer.Base) {
 		return;
 	}
 	if (sourceLayer instanceof ol.layer.Base && sourceLayer.get("git").hasOwnProperty("fake")) {
 		if (sourceLayer.get("git").fake === "child") {
-			var arr = {
-				"geoLayerList" : [ sourceLayer.get("id") ]
+			var source = sourceLayer.getSource();
+			if (!source) {
+				this.setWMSSource(sourceLayer);
 			}
-			var names = [];
-			// console.log(JSON.stringify(arr));
-
-			$.ajax({
-				url : this.infoURL,
-				method : "POST",
-				contentType : "application/json; charset=UTF-8",
-				cache : false,
-				data : JSON.stringify(arr),
-				beforeSend : function() { // 호출전실행
-					$("body").css("cursor", "wait");
-				},
-				traditional : true,
-				success : function(data2, textStatus, jqXHR) {
-					console.log(data2);
-					if (Array.isArray(data2)) {
-						for (var i = 0; i < data2.length; i++) {
-							var source = new ol.source.TileWMS({
-								url : this.wmsURL,
-								params : {
-									'LAYERS' : data2[i].lName,
-									'TILED' : true,
-									'FORMAT' : 'image/png8',
-									'VERSION' : '1.1.0',
-									'CRS' : 'EPSG:5186',
-									'SRS' : 'EPSG:5186',
-									'BBOX' : data2[i].nbBox.minx.toString() + "," + data2[i].nbBox.miny.toString() + ","
-											+ data2[i].nbBox.maxx.toString() + "," + data2[i].nbBox.maxy.toString()
-								},
-								serverType : 'geoserver'
-							});
-							sourceLayer.setSource(source);
-							var ogit = sourceLayer.get("git");
-							ogit["attribute"] = data2[i].attInfo;
-							ogit["geometry"] = data2[i].geomType;
-							var getPosition = function(str, subString, index) {
-								return str.split(subString, index).join(subString).length;
-							};
-							var id = sourceLayer.get("id");
-							var format = id.substring((getPosition(id, "_", 1) + 1), getPosition(id, "_", 2));
-							var layer;
-							if (format === "ngi") {
-								layer = new gb.layer.LayerInfo({
-									name : sourceLayer.get("name"),
-									id : id,
-									format : format,
-									epsg : "5186",
-									mbound : [ [ data2[i].nbBox.minx.toString(), data2[i].nbBox.miny.toString() ],
-											[ data2[i].nbBox.maxx.toString(), data2[i].nbBox.maxy.toString() ] ],
-									lbound : [ [ 122.71, 28.6 ], [ 134.28, 40.27 ] ],
-									isNew : false,
-									geometry : id.substring(getPosition(id, "_", 4) + 1),
-									sheetNum : id.substring((getPosition(id, "_", 2) + 1), getPosition(id, "_", 3))
-								});
-							} else if (format === "dxf") {
-								layer = new gb.layer.LayerInfo({
-									name : sourceLayer.get("name"),
-									id : id,
-									format : format,
-									epsg : "5186",
-									mbound : [ [ data2[i].nbBox.minx.toString(), data2[i].nbBox.miny.toString() ],
-											[ data2[i].nbBox.maxx.toString(), data2[i].nbBox.maxy.toString() ] ],
-									isNew : false,
-									lbound : [ [ 122.71, 28.6 ], [ 134.28, 40.27 ] ],
-									isNew : false,
-									geometry : id.substring(getPosition(id, "_", 4) + 1),
-									sheetNum : id.substring((getPosition(id, "_", 2) + 1), getPosition(id, "_", 3))
-								});
-							}
-							ogit["information"] = layer;
-							// var git = {
-							// "validation" : false,
-							// "geometry" : data2[i].geomType,
-							// "editable" : true,
-							// "attribute" : data2[i].attInfo,
-							// "fake" : "child"
-							// }
-							// wms.set("name",
-							// obj.refer.get_node(data2[i].lName).text);
-							// wms.set("id", data2[i].lName);
-							// wms.setVisible(false);
-							// console.log(wms.get("id"));
-							// wms.set("type", "ImageTile");
-							// wms.set("git", git);
-							// console.log(wms);
-						}
-
-						$("body").css("cursor", "default");
-					}
-				}
-			});
 		}
 	}
 
@@ -639,33 +556,34 @@ gb.panel.EditingTool.prototype.select = function(layer) {
 		condition : ol.events.condition.shiftKeyOnly
 	});
 	this.map.addInteraction(this.interaction.dragbox);
-	if (sourceLayer instanceof ol.layer.Vector) {
-		this.interaction.dragbox.on('boxend', function() {
+
+	this.interaction.selectWMS = new gb.interaction.SelectWMS({
+		getFeature : this.getFeature,
+		getFeatureInfo : this.getFeatureInfo,
+		select : this.interaction.select,
+		dragbox : this.interaction.dragbox,
+		destination : this.tempVector,
+		record : this.featureRecord,
+		layer : function() {
+			return that.updateSelected();
+		}
+	});
+	this.map.addInteraction(this.interaction.selectWMS);
+
+	this.interaction.dragbox.on('boxend', function() {
+		if (that.getLayer() instanceof ol.layer.Vector) {
 			that.interaction.select.getFeatures().clear();
-			sourceLayer.getSource().forEachFeatureIntersectingExtent(this.getGeometry().getExtent(), function(feature) {
+			that.getLayer().getSource().forEachFeatureIntersectingExtent(this.getGeometry().getExtent(), function(feature) {
 				that.interaction.select.getFeatures().push(feature);
 			});
-		});
-	} else {
-		this.interaction.selectWMS = new gb.interaction.SelectWMS({
-			url : this.wfsURL,
-			select : that.interaction.select,
-			destination : that.tempVector,
-			record : this.featureRecord,
-			layer : function() {
-				return that.updateSelected();
-			}
-		});
-		this.map.addInteraction(this.interaction.selectWMS);
-
-		this.interaction.dragbox.on('boxend', function() {
+		} else if (that.getLayer() instanceof ol.layer.Layer) {
 			that.interaction.select.getFeatures().clear();
 			that.tempSource.forEachFeatureIntersectingExtent(this.getGeometry().getExtent(), function(feature) {
 				that.interaction.select.getFeatures().push(feature);
 			});
 			that.interaction.selectWMS.setExtent(this.getGeometry().getExtent());
-		});
-	}
+		}
+	});
 
 	this.interaction.select.getFeatures().on("change:length", function(evt) {
 		that.features = that.interaction.select.getFeatures();
@@ -702,10 +620,7 @@ gb.panel.EditingTool.prototype.select = function(layer) {
 							feature.setStyle(that.highlightStyles2);
 						}
 						that.count++;
-						console.log("hi");
 					}, 500);
-					// that.map.getView().fit(feature.getGeometry().getExtent(),
-					// that.map.getSize());
 					console.log("in");
 				}).mouseleave(function() {
 					var fid = $(this).find("a").attr("value");
@@ -732,7 +647,7 @@ gb.panel.EditingTool.prototype.select = function(layer) {
 			that.setLayer(that.updateSelected());
 			var attrInfo = that.getLayer().get("git").attribute;
 			that.feature = that.features.item(0);
-			if (!!attrInfo) {
+			if (attrInfo) {
 				var attr = that.features.item(0).getProperties();
 				var keys = Object.keys(attrInfo);
 				for (var i = 0; i < keys.length; i++) {
@@ -746,10 +661,81 @@ gb.panel.EditingTool.prototype.select = function(layer) {
 						"width" : "100%",
 						"border" : "none"
 					}).val(attr[keys[i]]).on("input", function() {
-						var obj = {};
-						obj[$(this).parent().prev().text()] = $(this).val();
-						that.feature.setProperties(obj);
-						that.featureRecord.update(that.getLayer(), that.feature);
+						var attrTemp = attrInfo[$(this).parent().prev().text()];
+						console.log(attrTemp.type);
+						switch (attrTemp.type) {
+						case "String":
+							if (that.isString($(this).val()) || ($(this).val() === "")) {
+								var obj = {};
+								obj[$(this).parent().prev().text()] = $(this).val();
+								that.feature.setProperties(obj);
+								that.featureRecord.update(that.getLayer(), that.feature);
+								console.log("set");
+							} else {
+								$(this).val("");
+							}
+							break;
+						case "Integer":
+							if (that.isInteger($(this).val()) || ($(this).val() === "")) {
+								var obj = {};
+								obj[$(this).parent().prev().text()] = $(this).val();
+								that.feature.setProperties(obj);
+								that.featureRecord.update(that.getLayer(), that.feature);
+								console.log("set");
+							} else {
+								$(this).val("");
+							}
+							break;
+						case "Double":
+							if (that.isDouble($(this).val()) || ($(this).val() === "")) {
+								var obj = {};
+								obj[$(this).parent().prev().text()] = $(this).val();
+								that.feature.setProperties(obj);
+								that.featureRecord.update(that.getLayer(), that.feature);
+								console.log("set");
+							} else {
+								$(this).val("");
+							}
+							break;
+						case "Boolean":
+							var valid = [ "t", "tr", "tru", "true", "f", "fa", "fal", "fals", "false" ];
+							if (valid.indexOf($(this).val()) !== -1) {
+								if (that.isBoolean($(this).val())) {
+									var obj = {};
+									obj[$(this).parent().prev().text()] = $(this).val();
+									that.feature.setProperties(obj);
+									that.featureRecord.update(that.getLayer(), that.feature);
+									console.log("set");
+								}
+							} else if ($(this).val() === "") {
+								var obj = {};
+								obj[$(this).parent().prev().text()] = $(this).val();
+								that.feature.setProperties(obj);
+								that.featureRecord.update(that.getLayer(), that.feature);
+								console.log("set");
+							} else {
+								$(this).val("");
+							}
+							break;
+						case "Date":
+							if ($(this).val().length === 10) {
+								if (that.isDate($(this).val())) {
+									var obj = {};
+									obj[$(this).parent().prev().text()] = $(this).val();
+									that.feature.setProperties(obj);
+									that.featureRecord.update(that.getLayer(), that.feature);
+									console.log("set");
+								} else {
+									$(this).val("");
+								}
+							} else if ($(this).val().length > 10) {
+								$(this).val("");
+							}
+							break;
+						default:
+							break;
+						}
+
 					});
 					var td2 = $("<td>").append(tform);
 					var tr = $("<tr>").append(td1).append(td2);
@@ -763,7 +749,6 @@ gb.panel.EditingTool.prototype.select = function(layer) {
 					"collision" : "fit"
 				});
 			} else {
-				// $(that.featurePop).hide();
 				that.attrPop.close();
 			}
 		} else {
@@ -832,7 +817,7 @@ gb.panel.EditingTool.prototype.draw = function(layer) {
 			type : git.geometry
 		});
 		this.interaction.snap = new ol.interaction.Snap({
-			source : sourceLayer.getSource()
+			source : this.snapSource
 		});
 		this.interaction.draw.selectedType = function() {
 			var irreGeom = that.updateSelected().get("git").geometry;
@@ -894,15 +879,6 @@ gb.panel.EditingTool.prototype.draw = function(layer) {
 		this.activeIntrct_("snap");
 		this.activeBtn_("drawBtn");
 	} else if (git.editable === true && sourceLayer instanceof ol.layer.Base) {
-
-		// if (!this.managed) {
-		// this.managed = new ol.layer.Vector({
-		// source : this.tempSource
-		// });
-		// this.managed.set("name", "temp_vector");
-		// this.managed.set("id", "temp_vector");
-		//
-		// }
 		this.map.addLayer(this.managed);
 
 		this.interaction.draw = new ol.interaction.Draw({
@@ -910,7 +886,7 @@ gb.panel.EditingTool.prototype.draw = function(layer) {
 			type : git.geometry
 		});
 		this.interaction.snap = new ol.interaction.Snap({
-			source : this.tempSource
+			source : this.snapSource
 		});
 		this.interaction.draw.selectedType = function() {
 			return that.updateSelected().get("git").geometry;
@@ -1121,7 +1097,6 @@ gb.panel.EditingTool.prototype.modify = function(layer) {
 		this.deactiveIntrct_([ "select", "selectWMS", "dragbox", "draw", "move", "rotate" ]);
 		this.map.addInteraction(this.interaction.modify);
 
-		// hochul's code start
 		var sourceLayer;
 		if (Array.isArray(layer)) {
 			if (layer.length > 1) {
@@ -1140,16 +1115,15 @@ gb.panel.EditingTool.prototype.modify = function(layer) {
 		}
 		if (sourceLayer instanceof ol.layer.Vector) {
 			this.interaction.snap = new ol.interaction.Snap({
-				source : sourceLayer.getSource()
+				source : this.snapSource
 			});
 		} else if (sourceLayer instanceof ol.layer.Base) {
 			this.interaction.snap = new ol.interaction.Snap({
-				source : this.tempSource
+				source : this.snapSource
 			});
 		}
 		this.map.addInteraction(this.interaction.snap);
 		this.activeIntrct_("snap");
-		// hochul''s code end
 
 		this.activeIntrct_("modify");
 		this.activeBtn_("modiBtn");
@@ -1168,25 +1142,8 @@ gb.panel.EditingTool.prototype.remove = function(layer) {
 	if (this.interaction.select === undefined) {
 		return;
 	}
-	// if (this.isOn.remove) {
-	// if (!!this.interaction.remove) {
-	// this.interaction.select.getFeatures().clear();
-	// this.deactiveBtn_("removeBtn");
-	// this.map.removeLayer(this.managed);
-	// }
-	// return;
-	// }
 	var that = this;
 	if (this.interaction.select.getFeatures().getLength() > 0) {
-
-		// if (!this.managed) {
-		// this.managed = new ol.layer.Vector({
-		// source : this.tempSource
-		// });
-		// this.managed.set("name", "temp_vector");
-		// this.managed.set("id", "temp_vector");
-		// this.map.addLayer(this.managed);
-		// }
 		var layers = that.selected();
 		if (layers.length !== 1) {
 			return;
@@ -1267,7 +1224,14 @@ gb.panel.EditingTool.prototype.updateSelected = function() {
 					this.setLayer(layer);
 					result = layer;
 				}
+			} else if (layer instanceof ol.layer.Vector) {
+				this.setLayer(layer);
+				result = layer;
 			} else if (layer instanceof ol.layer.Base) {
+				var source = layer.getSource();
+				if (!source) {
+					this.setWMSSource(layer);
+				}
 				this.setLayer(layer);
 				result = layer;
 			}
@@ -1418,4 +1382,438 @@ gb.panel.EditingTool.prototype.open = function() {
 		this.panel.css("display", "block");
 	}
 
+};
+
+/**
+ * 베이스 타입 레이어에 소스를 입력한다.
+ * 
+ * @method setWMSSource(layer)
+ * @param {ol.layer.Base}
+ */
+gb.panel.EditingTool.prototype.setWMSSource = function(sourceLayer, callback) {
+	var that = this;
+	if (sourceLayer instanceof ol.layer.Vector || sourceLayer instanceof ol.layer.Group) {
+		return;
+	}
+	var arr = {
+		"geoLayerList" : [ sourceLayer.get("id") ]
+	}
+	var names = [];
+	// console.log(JSON.stringify(arr));
+
+	$.ajax({
+		url : this.layerInfo,
+		method : "POST",
+		contentType : "application/json; charset=UTF-8",
+		cache : false,
+		data : JSON.stringify(arr),
+		beforeSend : function() { // 호출전실행
+			$("body").css("cursor", "wait");
+		},
+		traditional : true,
+		success : function(data2, textStatus, jqXHR) {
+			console.log(data2);
+			if (Array.isArray(data2)) {
+				for (var i = 0; i < 1; i++) {
+					var source = new ol.source.TileWMS({
+						url : this.imageTile,
+						params : {
+							'LAYERS' : data2[i].lName,
+							'TILED' : true,
+							'FORMAT' : 'image/png8',
+							'VERSION' : '1.1.0',
+							'CRS' : that.getMap().getView().getProjection().getCode(),
+							'SRS' : that.getMap().getView().getProjection().getCode(),
+							'BBOX' : data2[i].nbBox.minx.toString() + "," + data2[i].nbBox.miny.toString() + ","
+									+ data2[i].nbBox.maxx.toString() + "," + data2[i].nbBox.maxy.toString()
+						},
+						serverType : 'geoserver'
+					});
+					sourceLayer.setSource(source);
+					var ogit = sourceLayer.get("git");
+					ogit["attribute"] = data2[i].attInfo;
+					ogit["geometry"] = data2[i].geomType;
+					var getPosition = function(str, subString, index) {
+						return str.split(subString, index).join(subString).length;
+					};
+					var id = sourceLayer.get("id");
+					var format = id.substring((getPosition(id, "_", 1) + 1), getPosition(id, "_", 2));
+					var layer;
+					if (format === "ngi") {
+						layer = new gb.layer.LayerInfo({
+							name : sourceLayer.get("name"),
+							id : id,
+							format : format,
+							epsg : data2[i].srs,
+							mbound : [ [ data2[i].nbBox.minx.toString(), data2[i].nbBox.miny.toString() ],
+									[ data2[i].nbBox.maxx.toString(), data2[i].nbBox.maxy.toString() ] ],
+							lbound : [ [ 122.71, 28.6 ], [ 134.28, 40.27 ] ],
+							isNew : false,
+							geometry : id.substring(getPosition(id, "_", 4) + 1),
+							sheetNum : id.substring((getPosition(id, "_", 2) + 1), getPosition(id, "_", 3))
+						});
+					} else if (format === "dxf") {
+						layer = new gb.layer.LayerInfo({
+							name : sourceLayer.get("name"),
+							id : id,
+							format : format,
+							epsg : data2[i].srs,
+							mbound : [ [ data2[i].nbBox.minx.toString(), data2[i].nbBox.miny.toString() ],
+									[ data2[i].nbBox.maxx.toString(), data2[i].nbBox.maxy.toString() ] ],
+							isNew : false,
+							lbound : [ [ 122.71, 28.6 ], [ 134.28, 40.27 ] ],
+							isNew : false,
+							geometry : id.substring(getPosition(id, "_", 4) + 1),
+							sheetNum : id.substring((getPosition(id, "_", 2) + 1), getPosition(id, "_", 3))
+						});
+					} else if (format === "shp") {
+						layer = new gb.layer.LayerInfo({
+							name : sourceLayer.get("name"),
+							id : id,
+							format : format,
+							epsg : data2[i].srs,
+							mbound : [ [ data2[i].nbBox.minx.toString(), data2[i].nbBox.miny.toString() ],
+									[ data2[i].nbBox.maxx.toString(), data2[i].nbBox.maxy.toString() ] ],
+							lbound : [ [ 122.71, 28.6 ], [ 134.28, 40.27 ] ],
+							isNew : false,
+							geometry : id.substring(getPosition(id, "_", 4) + 1),
+							sheetNum : id.substring((getPosition(id, "_", 2) + 1), getPosition(id, "_", 3))
+						});
+					}
+					ogit["information"] = layer;
+					console.log(ogit["attribute"]);
+					console.log("source injected");
+					if (typeof callback === "function") {
+						callback(source);
+					}
+				}
+				$("body").css("cursor", "default");
+			}
+		}
+	});
+};
+/**
+ * ol.Map을 입력한다.
+ * 
+ * @method setMap(map)
+ * @param {ol.layer.Base}
+ */
+gb.panel.EditingTool.prototype.setMap = function(map) {
+	this.map = map;
+}
+/**
+ * ol.Map을 반환한다.
+ * 
+ * @method getMap(map)
+ * @return {ol.layer.Base}
+ */
+gb.panel.EditingTool.prototype.getMap = function() {
+	return this.map;
+}
+/**
+ * String인지 검사한다.
+ * 
+ * @method isString()
+ * @param {mixed}
+ *            va
+ * @return {Boolean} is String?
+ */
+gb.panel.EditingTool.prototype.isString = function(va) {
+	var result = false;
+	if (typeof va === "string") {
+		result = true;
+	}
+	return result;
+}
+/**
+ * Integer인지 검사한다.
+ * 
+ * @method isString()
+ * @param {mixed}
+ *            va
+ * @return {Boolean} is Integer?
+ */
+gb.panel.EditingTool.prototype.isInteger = function(va) {
+	var result = false;
+	if (va == parseInt(va)) {
+		result = true;
+	}
+	return result;
+}
+/**
+ * Double인지 검사한다.
+ * 
+ * @method isDouble()
+ * @param {mixed}
+ *            va
+ * @return {Boolean} is Double?
+ */
+gb.panel.EditingTool.prototype.isDouble = function(va) {
+	var result = false;
+	if (typeof va === "string") {
+		var p = parseFloat(va);
+		if (!isNaN(p)) {
+			result = true;
+		}
+	}
+	return result;
+}
+/**
+ * Boolean인지 검사한다.
+ * 
+ * @method isBoolean()
+ * @param {mixed}
+ *            va
+ * @return {Boolean} is Boolean?
+ */
+gb.panel.EditingTool.prototype.isBoolean = function(va) {
+	var result = false;
+	if (va == "true" || va == "false") {
+		result = true;
+	}
+	return result;
+}
+/**
+ * Date인지 검사한다.
+ * 
+ * @method isDate()
+ * @param {mixed}
+ *            va
+ * @return {Boolean} is Date?
+ */
+gb.panel.EditingTool.prototype.isDate = function(va) {
+	var result = false;
+	if (typeof va === "string") {
+		if ((new Date(va)).getTime() > 0) {
+			result = true;
+		}
+	}
+	return result;
+}
+/**
+ * 스냅핑 레이어를 설정한다.
+ * 
+ * @method addSnappingLayer()
+ * @param {ol.layer.Base}
+ */
+gb.panel.EditingTool.prototype.addSnappingLayer = function(layer) {
+	var success = false;
+	if (layer instanceof ol.layer.Group) {
+		var layers = layer.getLayers();
+		for (var i = 0; i < layers.getLength(); i++) {
+			this.addSnappingLayer(layers.item(i));
+		}
+		success = true;
+	} else if (layer instanceof ol.layer.Vector) {
+		for (var i = 0; i < this.snapVector.getLength(); i++) {
+			if (this.snapVector.item(i).get("id") === layer.get("id")) {
+				success = true;
+				break;
+			}
+		}
+		if (!success) {
+			this.snapVector.push(layer);
+			success = true;
+		}
+	} else if (layer instanceof ol.layer.Tile) {
+		if (this.snapWMS.indexOf(layer.get("id")) === -1) {
+			this.snapWMS.push(layer.get("id"));
+			success = true;
+		}
+	} else if (layer instanceof ol.layer.Layer) {
+		var git = layer.get("git");
+		if (git) {
+			if (git.hasOwnProperty("fake")) {
+				if (git.fake === "child") {
+					if (this.snapWMS.indexOf(layer.get("id")) === -1) {
+						this.snapWMS.push(layer.get("id"));
+						success = true;
+					}
+				}
+			}
+		}
+	}
+	return success;
+}
+/**
+ * 스냅핑 레이어를 삭제한다.
+ * 
+ * @method addSnappingLayer()
+ * @param {ol.layer.Base}
+ */
+gb.panel.EditingTool.prototype.removeSnappingLayer = function(layer) {
+	var that = this;
+	var success = false;
+	if (layer instanceof ol.layer.Group) {
+		var layers = layer.getLayers();
+		for (var i = 0; i < layers.getLength(); i++) {
+			this.removeSnappingLayer(layers.item(i));
+		}
+		success = true;
+	} else if (layer instanceof ol.layer.Vector) {
+		for (var i = 0; i < this.snapVector.getLength(); i++) {
+			if (this.snapVector.item(i).get("id") === layer.get("id")) {
+				this.snapVector.removeAt(i);
+				success = true;
+				break;
+			}
+		}
+	} else if (layer instanceof ol.layer.Tile) {
+		if (this.snapWMS.indexOf(layer.get("id")) !== -1) {
+			this.snapWMS.splice(this.snapWMS.indexOf(layer.get("id")), 1);
+			success = true;
+		}
+	} else if (layer instanceof ol.layer.Layer) {
+		var git;
+		if (layer) {
+			git = layer.get("git");
+		}
+		if (!!git) {
+			if (git.hasOwnProperty("fake")) {
+				if (git.fake === "child") {
+					if (this.snapWMS.indexOf(layer.get("id")) !== -1) {
+						this.snapWMS.splice(this.snapWMS.indexOf(layer.get("id")), 1);
+						success = true;
+					}
+				}
+			} else {
+				if (this.snapWMS.indexOf(layer.get("id")) !== -1) {
+					this.snapWMS.splice(this.snapWMS.indexOf(layer.get("id")), 1);
+					success = true;
+				}
+			}
+		} else {
+			if (this.snapWMS.indexOf(layer.get("id")) !== -1) {
+				this.snapWMS.splice(this.snapWMS.indexOf(layer.get("id")), 1);
+				success = true;
+			}
+		}
+	}
+	return success;
+}
+/**
+ * 스냅핑 레이어를 로드한다.
+ * 
+ * @method addSnappingLayer()
+ * @param {ol.layer.Base}
+ */
+gb.panel.EditingTool.prototype.loadSnappingLayer = function(extent) {
+	var that = this;
+	if (this.getMap().getView().getZoom() >= 14) {
+		that.snapSource.clear();
+		if (that.snapWMS.length > 0) {
+			var params = {
+				"service" : "WFS",
+				"version" : "1.0.0",
+				"request" : "GetFeature",
+				"typeName" : this.snapWMS.toString(),
+				"outputformat" : "text/javascript",
+				"bbox" : extent.toString(),
+				"format_options" : "callback:getJson"
+			};
+
+			$.ajax({
+				url : this.getFeature,
+				data : params,
+				dataType : 'jsonp',
+				jsonpCallback : 'getJson',
+				beforeSend : function() {
+					$("body").css("cursor", "wait");
+				},
+				complete : function() {
+					$("body").css("cursor", "default");
+				},
+				success : function(data) {
+					var features = new ol.format.GeoJSON().readFeatures(JSON.stringify(data));
+					if (that.interaction.snap instanceof ol.interaction.Snap) {
+						that.snapSource.addFeatures(features);
+					}
+					console.log("snap feature injected");
+				}
+			});
+		}
+		if (this.snapVector.getLength() > 0) {
+			for (var i = 0; i < this.snapVector.getLength(); i++) {
+				this.snapVector.item(i).getSource().forEachFeatureIntersectingExtent(extent, function(feature) {
+					that.snapSource.addFeature(feature);
+				});
+			}
+		}
+		if (this.tempSource.getFeatures().length > 0) {
+			this.tempSource.forEachFeatureIntersectingExtent(extent, function(feature) {
+				var lid = feature.getId().substring(0, feature.getId().indexOf("."));
+				if (that.snapWMS.indexOf(lid) !== -1) {
+					that.snapSource.addFeature(feature);
+				}
+			});
+		}
+	}
+};
+/**
+ * zoom to fit
+ * 
+ * @method zoomToFit()
+ * @param {ol.layer.Base}
+ */
+gb.panel.EditingTool.prototype.zoomToFit = function(layer) {
+	var that = this;
+	if (layer instanceof ol.layer.Group) {
+		var extent = ol.extent.createEmpty();
+		layer.getLayers().forEach(function(layer2) {
+			if (layer2.getSource() instanceof ol.source.TileWMS) {
+				var param = layer2.getSource().getParams();
+				var keys = Object.keys(param);
+				var bbx = "bbox";
+				for (var i = 0; i < keys.length; i++) {
+					if (keys[i].toLowerCase() === bbx.toLowerCase()) {
+						var bbox = param[keys[i]].split(",");
+						ol.extent.extend(extent, bbox);
+						break;
+					}
+				}
+			} else if (layer2.source instanceof ol.source.Vector) {
+				ol.extent.extend(extent, layer2.getSource().getExtent());
+			}
+		});
+		this.getMap().getView().fit(extent, this.getMap().getSize());
+	} else if (layer instanceof ol.layer.Vector) {
+		var view = this.getMap().getView();
+		view.fit(source.getExtent(), this.getMap().getSize());
+	} else if (layer instanceof ol.layer.Tile) {
+		var source = layer.getSource();
+		if (source instanceof ol.source.TileWMS) {
+			var param = source.getParams();
+			var keys = Object.keys(param);
+			var bbx = "bbox";
+			for (var i = 0; i < keys.length; i++) {
+				if (keys[i].toLowerCase() === bbx.toLowerCase()) {
+					var bbox = param[keys[i]].split(",");
+					var view = this.getMap().getView();
+					view.fit(bbox, this.getMap().getSize());
+					break;
+				}
+			}
+		}
+	} else if (layer instanceof ol.layer.Layer) {
+		var source = layer.getSource();
+		var func = function(src) {
+			var param = src.getParams();
+			var keys = Object.keys(param);
+			var bbx = "bbox";
+			for (var i = 0; i < keys.length; i++) {
+				if (keys[i].toLowerCase() === bbx.toLowerCase()) {
+					var bbox = param[keys[i]].split(",");
+					var view = that.getMap().getView();
+					view.fit(bbox, that.getMap().getSize());
+					break;
+				}
+			}
+		};
+		if (typeof source === "undefined" || source === null) {
+			this.setWMSSource(layer, func);
+		} else if (source instanceof ol.source.TileWMS) {
+			func(source);
+		}
+	}
+	return;
 };

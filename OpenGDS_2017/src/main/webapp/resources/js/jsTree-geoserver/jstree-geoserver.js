@@ -94,7 +94,7 @@ $.jstree.plugins.geoserver = function(options, parent) {
 						});
 						var layers = new ol.Collection();
 						for (var j = 0; j < data[i].publishedList.names.length; j++) {
-							var layer = new ol.layer.Base({
+							var layer = new ol.layer.Layer({
 								opacity : 1,
 								visible : true
 							});
@@ -228,7 +228,7 @@ $.jstree.plugins.geoserver = function(options, parent) {
 
 						var layers = new ol.Collection();
 						for (var j = 0; j < obj.arr.length; j++) {
-							var layer = new ol.layer.Base({
+							var layer = new ol.layer.Layer({
 								opacity : 1,
 								visible : true
 							});

@@ -7284,6 +7284,7 @@
 									"icon" : "fa fa-file-excel-o",
 									"separator_after" : false,
 									"label" : "Vector",
+									"_disabled" : true,
 									"action" : function(data) {
 										var inst = $.jstree.reference(data.reference), obj = inst.get_node(data.reference);
 										inst.import_vector();

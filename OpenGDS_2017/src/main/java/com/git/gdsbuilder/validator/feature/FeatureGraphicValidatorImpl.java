@@ -38,15 +38,13 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureIterator;
 import org.geotools.feature.SchemaException;
-import org.geotools.geometry.jts.JTS;
-import org.geotools.geometry.jts.JTSFactoryFinder;
 import org.geotools.referencing.CRS;
 import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.referencing.FactoryException;
@@ -58,7 +56,7 @@ import org.opengis.referencing.operation.TransformException;
 import com.git.gdsbuilder.type.validate.error.ErrorFeature;
 import com.git.gdsbuilder.type.validate.option.B_SymbolOutSided;
 import com.git.gdsbuilder.type.validate.option.BuildingOpen;
-import com.git.gdsbuilder.type.validate.option.BuildingSite;
+import com.git.gdsbuilder.type.validate.option.BuildingSiteDanger;
 import com.git.gdsbuilder.type.validate.option.CemeterySite;
 import com.git.gdsbuilder.type.validate.option.CenterLineMiss;
 import com.git.gdsbuilder.type.validate.option.ConBreak;
@@ -70,6 +68,7 @@ import com.git.gdsbuilder.type.validate.option.EntityInHole;
 import com.git.gdsbuilder.type.validate.option.HoleMisplacement;
 import com.git.gdsbuilder.type.validate.option.LayerMiss;
 import com.git.gdsbuilder.type.validate.option.LinearDisconnection;
+import com.git.gdsbuilder.type.validate.option.MultiPart;
 import com.git.gdsbuilder.type.validate.option.NodeMiss;
 import com.git.gdsbuilder.type.validate.option.OneAcre;
 import com.git.gdsbuilder.type.validate.option.OneStage;
@@ -86,7 +85,6 @@ import com.git.gdsbuilder.type.validate.option.UselessEntity;
 import com.git.gdsbuilder.type.validate.option.UselessPoint;
 import com.git.gdsbuilder.type.validate.option.WaterOpen;
 import com.vividsolutions.jts.algorithm.Angle;
-import com.vividsolutions.jts.algorithm.CentroidPoint;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
@@ -221,40 +219,29 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 
 			// 길이 조건
 			double tmpLength = a.distance(b);
-			double distance = JTS.orthodromicDistance(a, b, crs);
+			// double distance = JTS.orthodromicDistance(a, b, crs);
 
-			if (tmpLength == 0) {
-				CentroidPoint cPoint = new CentroidPoint();
-				cPoint.add(a);
-				cPoint.add(b);
-
-				Coordinate coordinate = cPoint.getCentroid();
-				GeometryFactory gFactory = new GeometryFactory();
-				Geometry returnGeom = gFactory.createPoint(coordinate);
-
-				Property featuerIDPro = simpleFeature.getProperty("feature_id");
-				String featureID = (String) featuerIDPro.getValue();
-				String featureIdx = simpleFeature.getID();
-				ErrorFeature errFeature = new ErrorFeature(featureIdx, featureID,
-						UselessPoint.Type.USELESSPOINT.errType(), UselessPoint.Type.USELESSPOINT.errName(),
-						returnGeom.getGeometryN(i));
-				errFeatures.add(errFeature);
+			boolean isTrue = true;
+			if (tmpLength < 3) {
+				isTrue = false;
 			}
-			if (i < coorsSize - 2) {
-				// 각도 조건
-				Coordinate c = coors[i + 2];
-				if (!a.equals2D(b) && !b.equals2D(c) && !c.equals2D(a)) {
-					double tmpAngle = Angle.toDegrees(Angle.angleBetween(a, b, c));
-					if (tmpAngle < 6) {
-						GeometryFactory gFactory = new GeometryFactory();
-						Geometry returnGeom = gFactory.createPoint(b);
-						String featureIdx = simpleFeature.getID();
-						Property featuerIDPro = simpleFeature.getProperty("feature_id");
-						String featureID = (String) featuerIDPro.getValue();
-						ErrorFeature errFeature = new ErrorFeature(featureIdx, featureID,
-								UselessPoint.Type.USELESSPOINT.errType(), UselessPoint.Type.USELESSPOINT.errName(),
-								returnGeom.getGeometryN(i));
-						errFeatures.add(errFeature);
+			if (!isTrue) {
+				if (i < coorsSize - 2) {
+					// 각도 조건
+					Coordinate c = coors[i + 2];
+					if (!a.equals2D(b) && !b.equals2D(c) && !c.equals2D(a)) {
+						double tmpAngle = Angle.toDegrees(Angle.angleBetween(a, b, c));
+						if (tmpAngle < 6) {
+							GeometryFactory gFactory = new GeometryFactory();
+							Geometry returnGeom = gFactory.createPoint(b);
+							String featureIdx = simpleFeature.getID();
+							Property featuerIDPro = simpleFeature.getProperty("feature_id");
+							String featureID = (String) featuerIDPro.getValue();
+							ErrorFeature errFeature = new ErrorFeature(featureIdx, featureID,
+									UselessPoint.Type.USELESSPOINT.errType(), UselessPoint.Type.USELESSPOINT.errName(),
+									returnGeom.getGeometryN(i));
+							errFeatures.add(errFeature);
+						}
 					}
 				}
 			}
@@ -858,155 +845,37 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 		}
 	}
 
-	public ErrorFeature validateB_SymbolOutSided(List<SimpleFeature> simpleFeatures,
-			SimpleFeature relationSimpleFeature) throws SchemaException {
+	public ErrorFeature validateB_SymbolOutSided(SimpleFeature simpleFeature,
+			List<SimpleFeatureCollection> relationSfcs) throws SchemaException {
 
-		Geometry relationGeometry = (Geometry) relationSimpleFeature.getDefaultGeometry();
-		Boolean flag = false;
+		// 기호
+		Geometry targetGeom = (Geometry) simpleFeature.getDefaultGeometry();
+		boolean isTrue = false;
 
-		for (int i = 0; i < simpleFeatures.size(); i++) {
-			SimpleFeature simpleFeature = simpleFeatures.get(i);
-			Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
-			String upperType = simpleFeature.getAttribute("feature_type").toString().toUpperCase();
-
-			if (upperType.equals("POINT") || upperType.equals("TEXT")) {
-				if ((geometry.equals(relationGeometry))) {
-					flag = true;
-					break;
-				}
-			}
-			if (upperType.equals("LINESTRING") || upperType.equals("LINE")) {
-				GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory();
-				Coordinate[] coordinates = geometry.getCoordinates();
-				Coordinate start = coordinates[0];
-				Coordinate end = coordinates[coordinates.length - 1];
-				if (start.equals2D(end)) {
-					LinearRing ring = geometryFactory.createLinearRing(coordinates);
-					LinearRing holes[] = null;
-					Polygon polygon = geometryFactory.createPolygon(ring, holes);
-					if (polygon.contains(relationGeometry)) {
-						flag = true;
-						break;
-					}
-				}
-
-			}
-			if (upperType.equals("LWPOLYLINE") || upperType.equals("POLYLINE")) {
-
-				// create Polygon
-				GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory();
-				List<Coordinate> list = new ArrayList<Coordinate>();
-				Coordinate[] coordinates = geometry.getCoordinates();
-				Coordinate start = coordinates[0];
-				Coordinate end = coordinates[coordinates.length - 1];
-				if (start.equals2D(end)) {
-					LinearRing ring = geometryFactory.createLinearRing(coordinates);
-					LinearRing holes[] = null;
-					Polygon polygon = geometryFactory.createPolygon(ring, holes);
-					if (polygon.contains(relationGeometry)) {
-						flag = true;
-						break;
-					}
-				} else {
-					for (int j = 0; j < coordinates.length; j++) {
-						Coordinate coordinate = coordinates[j];
-						list.add(coordinate);
-					}
-					list.add(start);
-					Coordinate[] coordinates2 = new Coordinate[list.size()];
-					list.toArray(coordinates2);
-					LinearRing ring = geometryFactory.createLinearRing(coordinates2);
-					LinearRing holes[] = null;
-					Polygon polygon = geometryFactory.createPolygon(ring, holes);
-					if (polygon.contains(relationGeometry)) {
-						flag = true;
-						break;
-					}
+		// 건물들
+		for (int i = 0; i < relationSfcs.size(); i++) {
+			SimpleFeatureCollection relationSfc = relationSfcs.get(i);
+			SimpleFeatureIterator sfIterator = relationSfc.features();
+			while (sfIterator.hasNext()) {
+				SimpleFeature relationSf = sfIterator.next();
+				Geometry relationGeom = (Geometry) relationSf.getDefaultGeometry();
+				Geometry relationEnvelop = relationGeom.getEnvelope();
+				if (targetGeom.within(relationEnvelop)) {
+					isTrue = true;
 				}
 			}
 		}
-
-		if (flag == false) {
-			String featureIdx = relationSimpleFeature.getID();
-			Property featuerIDPro = relationSimpleFeature.getProperty("feature_id");
+		if (!isTrue) {
+			String featureIdx = simpleFeature.getID();
+			Property featuerIDPro = simpleFeature.getProperty("feature_id");
 			String featureID = (String) featuerIDPro.getValue();
 			ErrorFeature errorFeature = new ErrorFeature(featureIdx, featureID,
 					B_SymbolOutSided.Type.B_SYMBOLOUTSIDED.errType(), B_SymbolOutSided.Type.B_SYMBOLOUTSIDED.errName(),
-					relationGeometry.getInteriorPoint());
+					targetGeom.getInteriorPoint());
 			return errorFeature;
 		} else {
 			return null;
 		}
-	}
-
-	public List<ErrorFeature> validateCrossRoad(SimpleFeature simpleFeature, List<SimpleFeature> relationSimpleFeatures,
-			double tolerence) throws SchemaException {
-		List<ErrorFeature> errorFeatures = new ArrayList<ErrorFeature>();
-		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
-		GeometryFactory geometryFactory = new GeometryFactory();
-		Coordinate[] coordinates = geometry.getCoordinates();
-
-		for (int i = 0; i < relationSimpleFeatures.size(); i++) {
-			SimpleFeature relationSimpleFeature = relationSimpleFeatures.get(i);
-			Geometry relationGeom = (Geometry) relationSimpleFeature.getDefaultGeometry();
-			Coordinate[] relCoordinates = relationGeom.getCoordinates();
-			LineString lineString = geometryFactory.createLineString(relCoordinates);
-			for (int j = 0; j < coordinates.length; j++) {
-				Coordinate coordinate = coordinates[j];
-				Geometry point = geometryFactory.createPoint(coordinate);
-				if (Math.abs(lineString.distance(point)) > tolerence) {
-					String featureIdx = relationSimpleFeature.getID();
-					Property featuerIDPro = relationSimpleFeature.getProperty("feature_id");
-					String featureID = (String) featuerIDPro.getValue();
-					ErrorFeature errorFeature = new ErrorFeature(featureIdx, featureID,
-							CrossRoad.Type.CROSSROAD.errType(), CrossRoad.Type.CROSSROAD.errName(), point);
-					errorFeatures.add(errorFeature);
-				}
-			}
-		}
-		return errorFeatures;
-	}
-
-	public List<ErrorFeature> validateNodeMiss(SimpleFeature simpleFeature, List<SimpleFeature> relationSimpleFeatures,
-			double tolerence) throws SchemaException {
-		List<ErrorFeature> errorFeatures = new ArrayList<ErrorFeature>();
-		GeometryFactory geometryFactory = new GeometryFactory();
-		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
-		Coordinate[] coordinates = geometry.getCoordinates();
-		LineString line = geometryFactory.createLineString(coordinates);
-
-		for (int i = 0; i < relationSimpleFeatures.size(); i++) {
-			SimpleFeature lineSimpleFeature = relationSimpleFeatures.get(i);
-			Geometry lineGeometry = (Geometry) lineSimpleFeature.getDefaultGeometry();
-			if (line.intersects(lineGeometry)) {
-				Boolean flag = false;
-				Geometry intersectGeom = line.intersection(lineGeometry);
-				Coordinate[] intersectCoor = intersectGeom.getCoordinates();
-				Coordinate[] lineCoordinates = lineGeometry.getCoordinates();
-				for (int j = 0; j < intersectCoor.length; j++) {
-					Coordinate interCoordinateValue = intersectCoor[j];
-					Geometry interPoint = geometryFactory.createPoint(interCoordinateValue);
-
-					for (int k = 0; k < lineCoordinates.length; k++) {
-						Coordinate lineCoordinate = lineCoordinates[k];
-						Geometry linePoint = geometryFactory.createPoint(lineCoordinate);
-						if (Math.abs(linePoint.distance(interPoint)) < tolerence) {
-							flag = true;
-							break;
-						}
-					}
-					if (flag == false) {
-						String featureIdx = lineSimpleFeature.getID();
-						Property featuerIDPro = lineSimpleFeature.getProperty("feature_id");
-						String featureID = (String) featuerIDPro.getValue();
-						ErrorFeature errorFeature = new ErrorFeature(featureIdx, featureID,
-								NodeMiss.Type.NODEMISS.errType(), NodeMiss.Type.NODEMISS.errName(), interPoint);
-						errorFeatures.add(errorFeature);
-					}
-				}
-			}
-		}
-		return errorFeatures;
 	}
 
 	// 객체 꼬임 여부 검사
@@ -1198,84 +1067,86 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 		}
 	}
 
-	public ErrorFeature validateCemeterySite(SimpleFeature simpleFeature, SimpleFeatureCollection relationSfc) {
+	public List<ErrorFeature> validateCemeterySite(SimpleFeature simpleFeature, SimpleFeatureCollection relationSfc) {
+
+		List<ErrorFeature> errorFeatures = new ArrayList<>();
+
 		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
 
 		SimpleFeatureIterator relationSimpleFeatureIterator = relationSfc.features();
-		Boolean isTrue = false;
-		Geometry errPoint = null;
 		while (relationSimpleFeatureIterator.hasNext()) {
 			SimpleFeature relationSimpleFeature = relationSimpleFeatureIterator.next();
 			Geometry relationGeometry = (Geometry) relationSimpleFeature.getDefaultGeometry();
 			if (geometry.intersects(relationGeometry) || geometry.contains(relationGeometry)) {
-				isTrue = true;
 				Geometry errorPoint = geometry.intersection(relationGeometry);
-				errPoint = errorPoint;
-				break;
+				Property featuerIDPro = simpleFeature.getProperty("feature_id");
+				String featureID = (String) featuerIDPro.getValue();
+				String featureIdx = simpleFeature.getID();
+
+				ErrorFeature errorFeature = new ErrorFeature(featureIdx, featureID,
+						CemeterySite.Type.CEMETERYSITE.errType(), CemeterySite.Type.CEMETERYSITE.errName(), errorPoint);
+				errorFeatures.add(errorFeature);
 			}
 		}
-
-		if (isTrue) {
-			Property featuerIDPro = simpleFeature.getProperty("feature_id");
-			String featureID = (String) featuerIDPro.getValue();
-			String featureIdx = simpleFeature.getID();
-
-			ErrorFeature errorFeature = new ErrorFeature(featureIdx, featureID,
-					CemeterySite.Type.CEMETERYSITE.errType(), CemeterySite.Type.CEMETERYSITE.errName(), errPoint);
-			return errorFeature;
+		if (errorFeatures.size() > 0) {
+			return errorFeatures;
 		} else {
 			return null;
 		}
 	}
 
-	public ErrorFeature validateBuildingSite(SimpleFeature simpleFeature, SimpleFeatureCollection relationSfc,
-			Map<String, List<String>> attributes) {
-		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
-		SimpleFeatureIterator simpleFeatureIterator = relationSfc.features();
-
-		if (attributes != null) {
-			Iterator iterator = attributes.keySet().iterator();
-			while (iterator.hasNext()) {
-				String attributeKey = (String) iterator.next();
-				Object attributeObj = simpleFeature.getAttribute(attributeKey);
-				JSONArray attributeArray = (JSONArray) attributes.get(attributeKey);
-
-				if (attributeObj != null) {
-					String attribute = attributeObj.toString();
-					Iterator iteratorArray = attributeArray.iterator();
-					Boolean flag = false;
-					while (iteratorArray.hasNext()) {
-						String attributeValue = (String) iteratorArray.next();
-						if (attribute.equals(attributeValue)) {
-							flag = true;
-							break;
-						}
-					}
-					if (flag == true) {
-						Boolean isTrue = false;
-						while (simpleFeatureIterator.hasNext()) {
-							SimpleFeature relationSimpleFeature = simpleFeatureIterator.next();
-							Geometry relationGeometry = (Geometry) relationSimpleFeature.getDefaultGeometry();
-							if (relationGeometry.contains(geometry) || geometry.within(relationGeometry)) {
-								isTrue = true;
-								break;
-							}
-						}
-						if (isTrue == false) {
-							String featureIdx = simpleFeature.getID();
-							Property featuerIDPro = simpleFeature.getProperty("feature_id");
-							String featureID = (String) featuerIDPro.getValue();
-							ErrorFeature errorFeature = new ErrorFeature(featureIdx, featureID,
-									BuildingSite.Type.BUILDINGSITE.errType(), BuildingSite.Type.BUILDINGSITE.errName(),
-									geometry.getInteriorPoint());
-							return errorFeature;
-						}
-					}
-				}
-			}
-		}
-		return null;
-	}
+	// public ErrorFeature validateBuildingSite(SimpleFeature simpleFeature,
+	// SimpleFeatureCollection relationSfc,
+	// Map<String, List<String>> attributes) {
+	// Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
+	// SimpleFeatureIterator simpleFeatureIterator = relationSfc.features();
+	//
+	// if (attributes != null) {
+	// Iterator iterator = attributes.keySet().iterator();
+	// while (iterator.hasNext()) {
+	// String attributeKey = (String) iterator.next();
+	// Object attributeObj = simpleFeature.getAttribute(attributeKey);
+	// JSONArray attributeArray = (JSONArray) attributes.get(attributeKey);
+	//
+	// if (attributeObj != null) {
+	// String attribute = attributeObj.toString();
+	// Iterator iteratorArray = attributeArray.iterator();
+	// Boolean flag = false;
+	// while (iteratorArray.hasNext()) {
+	// String attributeValue = (String) iteratorArray.next();
+	// if (attribute.equals(attributeValue)) {
+	// flag = true;
+	// break;
+	// }
+	// }
+	// if (flag == true) {
+	// Boolean isTrue = false;
+	// while (simpleFeatureIterator.hasNext()) {
+	// SimpleFeature relationSimpleFeature = simpleFeatureIterator.next();
+	// Geometry relationGeometry = (Geometry)
+	// relationSimpleFeature.getDefaultGeometry();
+	// if (relationGeometry.contains(geometry) ||
+	// geometry.within(relationGeometry)) {
+	// isTrue = true;
+	// break;
+	// }
+	// }
+	// if (isTrue == false) {
+	// String featureIdx = simpleFeature.getID();
+	// Property featuerIDPro = simpleFeature.getProperty("feature_id");
+	// String featureID = (String) featuerIDPro.getValue();
+	// ErrorFeature errorFeature = new ErrorFeature(featureIdx, featureID,
+	// BuildingSiteDanger.Type.BUILDINGSITE.errType(),
+	// BuildingSiteDanger.Type.BUILDINGSITE.errName(),
+	// geometry.getInteriorPoint());
+	// return errorFeature;
+	// }
+	// }
+	// }
+	// }
+	// }
+	// return null;
+	// }
 
 	public List<ErrorFeature> validateRiverBoundaryMiss(SimpleFeature simpleFeature,
 			SimpleFeatureCollection relationSfc) {
@@ -1303,8 +1174,7 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 							RiverBoundaryMiss.Type.RIVERBOUNDARYMISS.errName(), geometry.getInteriorPoint());
 					errorFeatures.add(errorFeature);
 				} else {
-					Geometry tmpInGeom = intersectionGeom.difference(relationGeometry);
-					if (!tmpInGeom.isEmpty()) {
+					if (geometry.overlaps(intersectionGeom)) {
 						// err
 						ErrorFeature errorFeature = new ErrorFeature(featureIdx, featureID,
 								RiverBoundaryMiss.Type.RIVERBOUNDARYMISS.errType(),
@@ -1329,6 +1199,7 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 
 	public ErrorFeature validateCenterLineMiss(SimpleFeature simpleFeature, SimpleFeatureCollection relationSfc,
 			double lineInvadedTolorence) {
+
 		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
 		String featureIdx = simpleFeature.getID();
 		Property featureIDPro = simpleFeature.getProperty("feature_id");
@@ -1342,19 +1213,12 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 			SimpleFeature relationSimpleFeature = relationSfcIterator.next();
 			Geometry relationGeometry = (Geometry) relationSimpleFeature.getDefaultGeometry();
 			if (geometry.intersects(relationGeometry)) {
-				isTrue = true;
 				if (bufferGeom.contains(relationGeometry) || relationGeometry.within(bufferGeom)) {
+					isTrue = true;
 					break;
-				} else {
-					// error
-					ErrorFeature errorFeature = new ErrorFeature(featureIdx, featureID,
-							CenterLineMiss.Type.CENTERLINEMISS.errType(), CenterLineMiss.Type.CENTERLINEMISS.errName(),
-							geometry.getInteriorPoint());
-					return errorFeature;
 				}
 			}
 		}
-
 		if (!isTrue) {
 			// error
 			ErrorFeature errorFeature = new ErrorFeature(featureIdx, featureID,
@@ -1385,7 +1249,7 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 					LineString lineString = polygon.getInteriorRingN(i);
 					ErrorFeature errorFeature = new ErrorFeature(featureIdx, featureID,
 							HoleMisplacement.Type.HOLEMISPLACEMENT.errType(),
-							HoleMisplacement.Type.HOLEMISPLACEMENT.errName(), lineString.getInteriorPoint());
+							HoleMisplacement.Type.HOLEMISPLACEMENT.errName(), lineString.getCentroid());
 					errorFeatures.add(errorFeature);
 					return errorFeatures;
 				}
@@ -1400,11 +1264,9 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 		GeometryFactory geometryFactory = new GeometryFactory();
 		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
 		String geomType = geometry.getGeometryType().toUpperCase();
-		SimpleFeatureIterator relationSfcIterator = relationSfc.features();
 
-		String featureIdx = simpleFeature.getID();
-		Property featureIDPro = simpleFeature.getProperty("feature_id");
-		String featureID = (String) featureIDPro.getValue();
+		Property featureIDProT = simpleFeature.getProperty("feature_id");
+		String featureIDT = (String) featureIDProT.getValue();
 
 		if (geomType.equals("POLYGON")) {
 			Polygon polygon = (Polygon) geometry;
@@ -1415,30 +1277,25 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 					LinearRing holes[] = null;
 					Polygon interiorPolygon = geometryFactory.createPolygon(interiorRing, holes);
 
+					SimpleFeatureIterator relationSfcIterator = relationSfc.features();
 					while (relationSfcIterator.hasNext()) {
 						SimpleFeature relationSimpleFeature = relationSfcIterator.next();
-						Geometry relationGeometry = (Geometry) relationSimpleFeature.getDefaultGeometry();
-						if (interiorPolygon.intersects(relationGeometry)) {
-							if (interiorPolygon.equals(relationGeometry)) {
-								// error
-								ErrorFeature errorFeature = new ErrorFeature(featureIdx, featureID,
-										EntityInHole.Type.ENTITYINHOLE.errType(),
-										EntityInHole.Type.ENTITYINHOLE.errName(), interiorPolygon.getInteriorPoint());
-								errorFeatures.add(errorFeature);
-							} else {
-								if (relationGeometry.contains(interiorPolygon)
-										|| interiorPolygon.within(relationGeometry)) {
-									// error
-									ErrorFeature errorFeature = new ErrorFeature(featureIdx, featureID,
-											EntityInHole.Type.ENTITYINHOLE.errType(),
-											EntityInHole.Type.ENTITYINHOLE.errName(),
 
-											interiorPolygon.getInteriorPoint());
-									errorFeatures.add(errorFeature);
-								}
-							}
+						String featureIdxR = relationSimpleFeature.getID();
+						Property featureIDProR = relationSimpleFeature.getProperty("feature_id");
+						String featureIDR = (String) featureIDProR.getValue();
+
+						if (featureIDT.equals(featureIDR)) {
+							continue;
 						}
-
+						Geometry relationGeometry = (Geometry) relationSimpleFeature.getDefaultGeometry();
+						if (interiorPolygon.equals(relationGeometry) || interiorPolygon.intersects(relationGeometry)) {
+							// error
+							ErrorFeature errorFeature = new ErrorFeature(featureIdxR, featureIDR,
+									EntityInHole.Type.ENTITYINHOLE.errType(), EntityInHole.Type.ENTITYINHOLE.errName(),
+									interiorPolygon.getInteriorPoint());
+							errorFeatures.add(errorFeature);
+						}
 					}
 				}
 			}
@@ -1449,6 +1306,66 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 	public List<ErrorFeature> validateLinearDisconnection(SimpleFeature simpleFeature,
 			SimpleFeatureCollection relationSfc) {
 
+//		// simpleFeature - 도로 중심선, relation - 도로경계
+//		List<ErrorFeature> errorFeatures = new ArrayList<ErrorFeature>();
+//		GeometryFactory geometryFactory = new GeometryFactory();
+//
+//		// 도로중심선
+//		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
+//		boolean isTrue1 = false;
+//		boolean isTrue2 = false;
+//
+//		Coordinate[] geomCoors = geometry.getCoordinates();
+//		Point firPt = geometryFactory.createPoint(geomCoors[0]);
+//		Point lastPt = geometryFactory.createPoint(geomCoors[geomCoors.length - 1]);
+//
+//		SimpleFeatureIterator iterator = relationSfc.features();
+//		while (iterator.hasNext()) {
+//			// 도로경계
+//			SimpleFeature relationSimpleFeature = iterator.next();
+//			Geometry relationGeom = (Geometry) relationSimpleFeature.getDefaultGeometry();
+//			Geometry relationBoundary = relationGeom.getBoundary();
+//
+//			Geometry intersectedGeom = geometry.intersection(relationBoundary);
+//			if (intersectedGeom.isEmpty()) {
+//				continue;
+//			} else {
+//				int size = intersectedGeom.getNumPoints();
+//				if (size != 2) {
+//					isTrue1 = true;
+//					isTrue2 = true;
+//					continue;
+//				} else {
+//					Coordinate[] interCoors = intersectedGeom.getCoordinates();
+//					for (int i = 0; i < interCoors.length; i++) {
+//						Point interPt = geometryFactory.createPoint(interCoors[i]);
+//						if (Math.abs(firPt.distance(interPt)) < 0.2) {
+//							isTrue1 = true;
+//						}
+//						if (Math.abs(lastPt.distance(interPt)) < 0.2) {
+//							isTrue2 = true;
+//						}
+//					}
+//				}
+//			}
+//		}
+//		String featureIdx = simpleFeature.getID();
+//		Property featureIDPro = simpleFeature.getProperty("feature_id");
+//		String featureID = (String) featureIDPro.getValue();
+//		if (!isTrue1) {
+//			ErrorFeature errorFeature = new ErrorFeature(featureIdx, featureID,
+//					LinearDisconnection.Type.LINEARDISCONNECTION.errType(),
+//					LinearDisconnection.Type.LINEARDISCONNECTION.errName(), firPt);
+//			errorFeatures.add(errorFeature);
+//		}
+//		if (!isTrue2) {
+//			ErrorFeature errorFeature = new ErrorFeature(featureIdx, featureID,
+//					LinearDisconnection.Type.LINEARDISCONNECTION.errType(),
+//					LinearDisconnection.Type.LINEARDISCONNECTION.errName(), lastPt);
+//			errorFeatures.add(errorFeature);
+//		}
+//		return errorFeatures;
+		
 		GeometryFactory geometryFactory = new GeometryFactory();
 		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
 		SimpleFeatureIterator simpleFeatureIterator = relationSfc.features();
@@ -1512,18 +1429,212 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 	@Override
 	public List<ErrorFeature> validateMultiPart(SimpleFeature simpleFeature) {
 
-		List<ErrorFeature> errFeatures = new ArrayList<>();
+		String featureIdx = simpleFeature.getID();
+		Property featuerIDPro = simpleFeature.getProperty("feature_id");
+		String featureID = (String) featuerIDPro.getValue();
 
+		List<ErrorFeature> errFeatures = new ArrayList<>();
 		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
-		Coordinate[] coordinates = geometry.getCoordinates();
-		GeometryFactory geometryFactory = new GeometryFactory();
-		boolean isEquals = false;
-		for (int i = 0; i < coordinates.length - 1; i++) {
-			Coordinate coorI = coordinates[i];
-			for (int j = i + 1; j < coordinates.length - 1; j++) {
-				Coordinate coorJ = coordinates[j];
-			}
+		if (!(geometry.isValid())) {
+			Coordinate[] coors = geometry.getCoordinates();
+			ErrorFeature errorFeature = new ErrorFeature(featureIdx, featureID, MultiPart.Type.MULTIPART.errType(),
+					MultiPart.Type.MULTIPART.errName(), new GeometryFactory().createPoint(coors[0]));
+			errFeatures.add(errorFeature);
 		}
 		return errFeatures;
+	}
+
+	@Override
+	public ErrorFeature validateBuildingSiteDanger(SimpleFeature simpleFeature, SimpleFeatureCollection relationSfc,
+			JSONObject attributeJson) {
+
+		// {"용도":["위험물저장및처리시설"]}
+		// simpleFeature의 속성이 위험물저장및처리시설이면 relationSfc의 SimpleFeature 중 하나에라도
+		// 포함되어있어야함
+		Iterator attIterator = attributeJson.keySet().iterator();
+		outer: while (attIterator.hasNext()) {
+			String attKey = (String) attIterator.next(); // 용도
+			JSONArray attValues = (JSONArray) attributeJson.get(attKey);
+			for (int i = 0; i < attValues.size(); i++) {
+				String attValue = (String) attValues.get(i); // 위험물저장및처리시설
+				Object targetAttObj = simpleFeature.getAttribute(attKey);
+				if (targetAttObj != null) {
+					String targetAtt = targetAttObj.toString();
+					if (attValue.equals(targetAtt)) {
+						Geometry targetGeom = (Geometry) simpleFeature.getDefaultGeometry();
+						SimpleFeatureIterator relationIterator = relationSfc.features();
+						boolean isTrue = false;
+						while (relationIterator.hasNext()) {
+							SimpleFeature relationSf = relationIterator.next();
+							Geometry relationGeom = (Geometry) relationSf.getDefaultGeometry();
+							if (targetGeom.within(relationGeom)) {
+								isTrue = true;
+							}
+						}
+						if (!isTrue) {
+							// err
+							String featureIdx = simpleFeature.getID();
+							Property featureIDPro = simpleFeature.getProperty("feature_id");
+							String featureID = (String) featureIDPro.getValue();
+							ErrorFeature errorFeature = new ErrorFeature(featureIdx, featureID,
+									BuildingSiteDanger.Type.BUILDINGSITEDANGER.errType(),
+									BuildingSiteDanger.Type.BUILDINGSITEDANGER.errName(),
+									targetGeom.getInteriorPoint());
+							return errorFeature;
+						}
+					}
+				} else {
+					break outer;
+				}
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public ErrorFeature validateBuildingSiteRelaxtion(SimpleFeature simpleFeature, SimpleFeatureCollection relationSfc,
+			JSONObject attributeJson) {
+
+		Iterator attIterator = attributeJson.keySet().iterator();
+		outer: while (attIterator.hasNext()) {
+			String attKey = (String) attIterator.next(); // 용도
+			JSONArray attValues = (JSONArray) attributeJson.get(attKey);
+			for (int i = 0; i < attValues.size(); i++) {
+				String attValue = (String) attValues.get(i); // 관광 휴게시설
+				Object targetAttObj = simpleFeature.getAttribute(attKey);
+				if (targetAttObj != null) {
+					String targetAtt = targetAttObj.toString();
+					if (attValue.equals(targetAtt)) {
+						Geometry targetGeom = (Geometry) simpleFeature.getDefaultGeometry();
+						SimpleFeatureIterator relationIterator = relationSfc.features();
+						boolean isTrue = false;
+						while (relationIterator.hasNext()) {
+							SimpleFeature relationSf = relationIterator.next();
+							Geometry relationGeom = (Geometry) relationSf.getDefaultGeometry();
+							if (targetGeom.contains(relationGeom)) {
+								isTrue = true;
+							}
+						}
+						if (!isTrue) {
+							// err
+							String featureIdx = simpleFeature.getID();
+							Property featureIDPro = simpleFeature.getProperty("feature_id");
+							String featureID = (String) featureIDPro.getValue();
+							ErrorFeature errorFeature = new ErrorFeature(featureIdx, featureID,
+									BuildingSiteDanger.Type.BUILDINGSITEDANGER.errType(),
+									BuildingSiteDanger.Type.BUILDINGSITEDANGER.errName(),
+									targetGeom.getInteriorPoint());
+							return errorFeature;
+						}
+					}
+				} else {
+					break outer;
+				}
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public ErrorFeature validateCrossRoad(SimpleFeature simpleFeature, SimpleFeatureCollection relationSfc) {
+
+		// simpleFeature -> 교차로
+		// relationSfc -> 도로경계
+		Geometry geomT = (Geometry) simpleFeature.getDefaultGeometry();
+		String featureIdx = simpleFeature.getID();
+		Property featureIDPro = simpleFeature.getProperty("feature_id");
+		String featureID = (String) featureIDPro.getValue();
+		boolean isTrue = false;
+		SimpleFeatureIterator sfIterator = relationSfc.features();
+		while (sfIterator.hasNext()) {
+			SimpleFeature relationSf = sfIterator.next();
+			Geometry geomR = (Geometry) relationSf.getDefaultGeometry();
+			if (geomT.equals(geomR)) {
+				isTrue = true;
+			}
+		}
+		if (!isTrue) {
+			ErrorFeature errorFeature = new ErrorFeature(featureIdx, featureID, CrossRoad.Type.CROSSROAD.errType(),
+					CrossRoad.Type.CROSSROAD.errName(), geomT.getInteriorPoint());
+			return errorFeature;
+		} else {
+			return null;
+		}
+	}
+
+	@Override
+	public List<ErrorFeature> validateNodeMiss(SimpleFeature simpleFeature, SimpleFeatureCollection relationSfc,
+			SimpleFeatureCollection selfSfc) throws SchemaException {
+
+		// target : 중심선, relation : 도로경계
+		String featureIdx = simpleFeature.getID();
+		Property featuerIDPro = simpleFeature.getProperty("feature_id");
+		String featureID = (String) featuerIDPro.getValue();
+
+		List<ErrorFeature> errorFeatures = new ArrayList<ErrorFeature>();
+		Geometry targetGeom = (Geometry) simpleFeature.getDefaultGeometry();
+		Geometry targetInterioPt = targetGeom.getInteriorPoint();
+
+		boolean isTrueRelation1 = false;
+		boolean isTrueRelation2 = false;
+		boolean isTrueSelf1 = false;
+		boolean isTrueSelf2 = false;
+
+		boolean isReturn = false;
+
+		GeometryFactory geometryFactory = new GeometryFactory();
+		Coordinate[] geomCoors = targetGeom.getCoordinates();
+		Point geomPt1 = geometryFactory.createPoint(geomCoors[0]);
+		Point geomPt2 = geometryFactory.createPoint(geomCoors[geomCoors.length - 1]);
+
+		SimpleFeatureIterator relationIt = relationSfc.features();
+		while (relationIt.hasNext()) {
+			SimpleFeature reSimpleFeature = relationIt.next();
+			Geometry reGeom = (Geometry) reSimpleFeature.getDefaultGeometry();
+
+			if (targetInterioPt.intersects(reGeom)) {
+				isReturn = true;
+			}
+
+			Geometry reGeomBoundary = reGeom.getBoundary();
+			if (Math.abs(geomPt1.distance(reGeomBoundary)) < 0.2) {
+				isTrueRelation1 = true;
+			}
+			if (Math.abs(geomPt2.distance(reGeomBoundary)) < 0.2) {
+				isTrueRelation2 = true;
+			}
+		}
+
+		if (!isReturn) {
+			return null;
+		}
+
+		if (!isTrueRelation1 || !isTrueRelation2) {
+			SimpleFeatureIterator selfIt = selfSfc.features();
+			while (selfIt.hasNext()) {
+				SimpleFeature selfSimpleFeature = selfIt.next();
+				String selfIdx = selfSimpleFeature.getID();
+				if (!featureIdx.equals(selfIdx)) {
+					Geometry selfGeom = (Geometry) selfSimpleFeature.getDefaultGeometry();
+					if (Math.abs(geomPt1.distance(selfGeom)) < 0.2) {
+						isTrueSelf1 = true;
+					}
+					if (Math.abs(geomPt2.distance(selfGeom)) < 0.2) {
+						isTrueSelf2 = true;
+					}
+				}
+			}
+			if (!isTrueRelation1 && !isTrueSelf1) {
+				ErrorFeature errorFeature = new ErrorFeature(featureIdx, featureID, NodeMiss.Type.NODEMISS.errType(),
+						NodeMiss.Type.NODEMISS.errName(), geomPt1);
+				errorFeatures.add(errorFeature);
+			}
+			if (!isTrueRelation2 && !isTrueSelf2) {
+				ErrorFeature errorFeature = new ErrorFeature(featureIdx, featureID, NodeMiss.Type.NODEMISS.errType(),
+						NodeMiss.Type.NODEMISS.errName(), geomPt2);
+				errorFeatures.add(errorFeature);
+			}
+		}
+		return errorFeatures;
 	}
 }

@@ -33,28 +33,46 @@ gitbuilder.ui.OptionDefinition = $
 						// "EdgeMatchMiss", "PointDuplicated",
 						// "ZValueAmbiguous",
 						// "EntityDuplicated" ],
-						polyline : [ "SelfEntity", "BSymbolOutSided", "BuildingOpen", "WaterOpen", "EntityNone", "EdgeMatchMiss",
-								"ConBreak", "ConIntersected", "ConOverDegree", "UselessEntity", "EntityDuplicated", "PointDuplicated",
-								"UselessPoint", "LayerMiss", "ZValueAmbiguous", "OverShoot", "UnderShoot", "RefLayerMiss", "RefZValueMiss" ],
+						polyline : [ "SelfEntity", "BuildingOpen", "WaterOpen", "EntityNone", "EdgeMatchMiss", "ConBreak",
+								"ConIntersected", "ConOverDegree", "UselessEntity", "EntityDuplicated", "PointDuplicated", "UselessPoint",
+								"LayerMiss", "ZValueAmbiguous", "OverShoot", "UnderShoot", "RefLayerMiss", "RefZValueMiss" ],
 						lwpolyline : [ "SelfEntity", "BSymbolOutSided", "BuildingOpen", "WaterOpen", "EntityNone", "EdgeMatchMiss",
 								"ConBreak", "ConIntersected", "ConOverDegree", "UselessEntity", "EntityDuplicated", "PointDuplicated",
 								"UselessPoint", "LayerMiss", "ZValueAmbiguous", "OverShoot", "UnderShoot", "RefLayerMiss", "RefZValueMiss" ],
 						text : [ "SelfEntity", "LayerMiss", "UselessEntity", "EntityDuplicated", "OverShoot", "UFIDLength",
 								"NumericalValue", "UFIDRule" ],
-						insert : [ "SelfEntity", "LayerMiss", "UselessEntity", "EntityDuplicated", "OverShoot" ],
+						insert : [ "SelfEntity", "LayerMiss", "UselessEntity", "EntityDuplicated", "BSymbolOutSided", "OverShoot" ],
 						point : [ "LayerMiss", "UselessEntity", "EntityDuplicated", "SelfEntity", "AttributeFix", "OutBoundary",
-								"CharacterAccuracy", "OverShoot", "UnderShoot", "UFIDLength", "NumericalValue", "UFIDRule" ],
+								"CharacterAccuracy", "OverShoot", "UnderShoot", "UFIDLength", "NumericalValue", "UFIDRule",
+								"UFIDDuplicated" ],
 						linestring : [ "RefAttributeMiss", "EdgeMatchMiss", "UselessEntity", "LayerMiss", "RefLayerMiss", "SmallLength",
 								"EntityDuplicated", "SelfEntity", "PointDuplicated", "ConIntersected", "ConOverDegree", "ConBreak",
 								"AttributeFix", "OutBoundary", "ZValueAmbiguous", "UselessPoint", "OverShoot", "UnderShoot",
-								"RefZValueMiss", "UFIDLength", "NeatLineAttribute", "NumericalValue", "UFIDRule", "LinearDisconnection" ],
-						polygon : [ "Admin", "CrossRoad", "RefAttributeMiss", "BridgeName", "NodeMiss", "EdgeMatchMiss", "UselessEntity",
-								"LayerMiss", "RefLayerMiss", "SmallArea", "EntityDuplicated", "SelfEntity", "PointDuplicated",
-								"AttributeFix", "OutBoundary", "OverShoot", "UnderShoot", "OneAcre", "OneStage", "BuildingSite",
-								"UFIDLength", "HouseAttribute", "CemeterySite", "NumericalValue", "RiverBoundaryMiss", "UFIDRule",
-								"HoleMisplacement", "CenterLineMiss", "EntityInHole" ]
+								"RefZValueMiss", "UFIDLength", "NeatLineAttribute", "NumericalValue", "UFIDRule", "LinearDisconnection",
+								"MultiPart", "UFIDDuplicated", "NodeMiss" ],
+						polygon : [ "Admin", "CrossRoad", "RefAttributeMiss", "BridgeName", "EdgeMatchMiss", "UselessEntity", "LayerMiss",
+								"RefLayerMiss", "SmallArea", "EntityDuplicated", "SelfEntity", "PointDuplicated", "AttributeFix",
+								"OutBoundary", "OverShoot", "UnderShoot", "OneAcre", "OneStage", "BuildingSiteDanger",
+								"BuildingSiteRelaxation", "UFIDLength", "HouseAttribute", "CemeterySite", "NumericalValue",
+								"RiverBoundaryMiss", "UFIDRule", "HoleMisplacement", "CenterLineMiss", "EntityInHole", "TwistedPolygon",
+								"MultiPart", "UFIDDuplicated" ]
 					},
 					optItem : {
+						"UFIDDuplicated" : {
+							"title" : "UFID Duplication",
+							"alias" : "UFIDDuplicated",
+							"type" : "none"
+						},
+						"MultiPart" : {
+							"title" : "Entity Looking Like Multipart",
+							"alias" : "MultiPart",
+							"type" : "none"
+						},
+						"TwistedPolygon" : {
+							"title" : "Twisted Polygon",
+							"alias" : "TwistedPolygon",
+							"type" : "none"
+						},
 						"LinearDisconnection" : {
 							"title" : "Linear Disconnection",
 							"alias" : "LinearDisconnection",
@@ -111,9 +129,15 @@ gitbuilder.ui.OptionDefinition = $
 							"type" : "figure",
 							"unit" : "Characters"
 						},
-						"BuildingSite" : {
-							"title" : "Building Site Error",
-							"alias" : "BuildingSite",
+						"BuildingSiteDanger" : {
+							"title" : "Building Site Error(Dangerous Facility)",
+							"alias" : "BuildingSiteDanger",
+							"type" : "labelnrelation",
+							"multi" : false
+						},
+						"BuildingSiteRelaxation" : {
+							"title" : "Building Site Error(Relaxation Facility)",
+							"alias" : "BuildingSiteRelaxation",
 							"type" : "labelnrelation",
 							"multi" : false
 						},
@@ -1209,6 +1233,7 @@ gitbuilder.ui.OptionDefinition = $
 										var obj = JSON.parse(reader.result.replace(/(\s*)/g, ''));
 										that.setOptDefCopy(obj);
 										that.update();
+										that.resetRelation();
 										$(lower).css("display", "none");
 									}
 								});
@@ -1340,26 +1365,27 @@ gitbuilder.ui.OptionDefinition = $
 							this.setLayerDefinition(this.options.layerDefinition);
 						}
 					},
-					afterStartRelation : function() {
-						var def = this.getDefinition();
-						var dkeys = Object.keys(def);
-						for (var i = 0; i < dkeys.length; i++) {
-							var vkeys = Object.keys(def[dkeys[i]]);
-							for (var j = 0; j < vkeys.length; j++) {
-								if (this.optItem[vkeys[j]].type === "relation" || this.optItem[vkeys[j]].type === "labelnrelation") {
-									var relation = def[dkeys[i]][vkeys[j]].relation;
-									for (var k = 0; k < relation.length; k++) {
-										if (!def.hasOwnProperty(relation[k])) {
-											this.getDefinition()[relation[k]] = {};
-											console.log(this.getDefinition());
-										}
-									}
-								}
-							}
-						}
-						console.log("afterStartRelation: ");
-						console.log(this.emptyLayers);
-					},
+					// afterStartRelation : function() {
+					// var def = this.getDefinition();
+					// var dkeys = Object.keys(def);
+					// for (var i = 0; i < dkeys.length; i++) {
+					// var vkeys = Object.keys(def[dkeys[i]]);
+					// for (var j = 0; j < vkeys.length; j++) {
+					// if (this.optItem[vkeys[j]].type === "relation" ||
+					// this.optItem[vkeys[j]].type === "labelnrelation") {
+					// var relation = def[dkeys[i]][vkeys[j]].relation;
+					// for (var k = 0; k < relation.length; k++) {
+					// if (!def.hasOwnProperty(relation[k])) {
+					// this.getDefinition()[relation[k]] = {};
+					// console.log(this.getDefinition());
+					// }
+					// }
+					// }
+					// }
+					// }
+					// console.log("afterStartRelation: ");
+					// console.log(this.emptyLayers);
+					// },
 					beforeSaveRelation : function() {
 						var cobj = this.getOptDefCopy();
 						var ekeys = Object.keys(this.emptyLayers);
@@ -1389,18 +1415,19 @@ gitbuilder.ui.OptionDefinition = $
 							this.emptyLayers[ldefKeys[i]] = 0;
 						}
 
-						var def = this.getDefinition();
+						var def = this.getOptDefCopy();
 						var dkeys = Object.keys(def);
 						for (var i = 0; i < dkeys.length; i++) {
 							var vkeys = Object.keys(def[dkeys[i]]);
 							for (var j = 0; j < vkeys.length; j++) {
+								// console.log(vkeys[j]);
 								if (this.optItem[vkeys[j]].type === "relation" || this.optItem[vkeys[j]].type === "labelnrelation") {
 									var relation = def[dkeys[i]][vkeys[j]].relation;
 									for (var k = 0; k < relation.length; k++) {
 										this.updateRelation(relation[k], "up");
 										if (!def.hasOwnProperty(relation[k])) {
-											this.getDefinition()[relation[k]] = {};
-											console.log(this.getDefinition());
+											this.getOptDefCopy()[relation[k]] = {};
+											console.log(this.getOptDefCopy());
 										}
 									}
 								}
@@ -2168,10 +2195,9 @@ gitbuilder.ui.OptionDefinition = $
 					open : function() {
 						this.updateLayerDefinition();
 						this.setOptDefCopy(Object.assign({}, this.getDefinition()));
-						this.resetRelation();
-						// this.afterStartRelation();
-						this.window.modal('show');
 						this.update();
+						this.resetRelation();
+						this.window.modal('show');
 					},
 					close : function() {
 						this.window.modal('hide');

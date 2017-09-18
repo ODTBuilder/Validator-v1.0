@@ -35,15 +35,17 @@
 package com.git.gdsbuilder.validator.feature;
 
 import java.util.List;
-import java.util.Map;
 
 import org.geotools.data.simple.SimpleFeatureCollection;
+import org.geotools.data.simple.SimpleFeatureIterator;
 import org.geotools.feature.SchemaException;
+import org.json.simple.JSONObject;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.operation.TransformException;
 
+import com.git.gdsbuilder.type.geoserver.layer.GeoLayer;
 import com.git.gdsbuilder.type.validate.error.ErrorFeature;
 
 /**
@@ -185,16 +187,8 @@ public interface FeatureGraphicValidator {
 	 * 오후 5:49:27 @param simpleFeatures @param relationSimpleFeature @return
 	 * ErrorFeature @throws SchemaException @throws
 	 */
-	public ErrorFeature validateB_SymbolOutSided(List<SimpleFeature> simpleFeatures,
-			SimpleFeature relationSimpleFeature) throws SchemaException;
-
-	/**
-	 * 검수 항목 중 "교차로 오류(CrossRoad)" 검수 @author JY.Kim @Date 2017. 7. 28. 오후
-	 * 5:50:13 @param simpleFeature @param relationSimpleFeatures @param
-	 * tolerence @return List<ErrorFeature> @throws SchemaException @throws
-	 */
-	public List<ErrorFeature> validateCrossRoad(SimpleFeature simpleFeature, List<SimpleFeature> relationSimpleFeatures,
-			double tolerence) throws SchemaException;
+	public ErrorFeature validateB_SymbolOutSided(SimpleFeature simpleFeature,
+			List<SimpleFeatureCollection> relationSfcs) throws SchemaException;
 
 	/**
 	 * 검수 항목 중 "꼬인객체(TwistedPolygon)" 검수 @author JY.Kim @Date 2017. 7. 28. 오후
@@ -208,8 +202,8 @@ public interface FeatureGraphicValidator {
 	 * 5:53:08 @param simpleFeature @param relationSimpleFeature @param
 	 * tolerence @return List<ErrorFeature> @throws SchemaException @throws
 	 */
-	public List<ErrorFeature> validateNodeMiss(SimpleFeature simpleFeature, List<SimpleFeature> relationSimpleFeature,
-			double tolerence) throws SchemaException;
+	public List<ErrorFeature> validateNodeMiss(SimpleFeature simpleFeature, SimpleFeatureCollection relationSfc,
+			SimpleFeatureCollection sfc) throws SchemaException;
 
 	/**
 	 * 검수 항목 중 "등고선 교차오류(ConIntersected)" 검수 @author JY.Kim @Date 2017. 7. 28.
@@ -227,15 +221,16 @@ public interface FeatureGraphicValidator {
 	 * 2:22:12 @param simpleFeature @param relationSfc @return
 	 * ErrorFeature @throws
 	 */
-	public ErrorFeature validateCemeterySite(SimpleFeature simpleFeature, SimpleFeatureCollection relationSfc);
+	public List<ErrorFeature> validateCemeterySite(SimpleFeature simpleFeature, SimpleFeatureCollection relationSfc);
 
 	/**
 	 * 검수 항목 중 "건물 부지 오류(BuildingSite)" 검수 @author JY.Kim @Date 2017. 8. 17. 오전
 	 * 10:38:15 @param simpleFeature @param relationSfc @param
 	 * attributes @return ErrorFeature @throws
 	 */
-	public ErrorFeature validateBuildingSite(SimpleFeature simpleFeature, SimpleFeatureCollection relationSfc,
-			Map<String, List<String>> attributes);
+	// public ErrorFeature validateBuildingSite(SimpleFeature simpleFeature,
+	// SimpleFeatureCollection relationSfc,
+	// Map<String, List<String>> attributes);
 
 	/**
 	 * 검수 항목 중 "하천경계 오류(RiverBoundaryMiss)" 검수 @author JY.Kim @Date 2017. 8. 17.
@@ -275,5 +270,13 @@ public interface FeatureGraphicValidator {
 			SimpleFeatureCollection relationSfc);
 
 	public List<ErrorFeature> validateMultiPart(SimpleFeature simpleFeature);
+
+	public ErrorFeature validateBuildingSiteDanger(SimpleFeature simpleFeature, SimpleFeatureCollection relationSfc,
+			JSONObject attributeJson);
+
+	public ErrorFeature validateBuildingSiteRelaxtion(SimpleFeature simpleFeature, SimpleFeatureCollection relationSfc,
+			JSONObject attributeJson);
+
+	public ErrorFeature validateCrossRoad(SimpleFeature simpleFeature, SimpleFeatureCollection relationSfc);
 
 }

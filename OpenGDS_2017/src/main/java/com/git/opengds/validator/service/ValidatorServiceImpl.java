@@ -81,7 +81,6 @@ public class ValidatorServiceImpl implements ValidatorService {
 	@Override
 	public void validate(final UserVO userVO, String jsonObject) throws Exception {
 
-		
 		System.out.println(jsonObject);
 		
 		JSONParser parser = new JSONParser();
@@ -113,8 +112,8 @@ public class ValidatorServiceImpl implements ValidatorService {
 		// 검수수행
 		ValidateLayerCollectionList validateLayerCollection = new ValidateLayerCollectionList(collectionList,
 				validateLayerTypeList);
-
 		GeoLayerCollectionList geoLayerCollectionList = validateLayerCollection.getLayerCollectionList();
+		
 		final ValidateLayerTypeList layerTypeList = validateLayerCollection.getValidateLayerTypeList();
 		final MapSystemRule mapSystemRule = new MapSystemRule(-10, 10, -1, 1); // 도곽설정
 

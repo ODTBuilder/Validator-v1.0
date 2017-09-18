@@ -48,7 +48,15 @@ public class SHPFileUploadServiceImpl implements SHPFileUploadService {
 		layerInfo.setTransSrc("EPSG:3857");
 
 		GeoLayerInfo geoLayerInfo = shpdbManagerService.insertSHPLayerCollection(userVO, dtCollection, layerInfo);
-		FileMeta geoserverFileMeta = geoserverService.dbLayerPublishGeoserver(userVO, geoLayerInfo);
-		return null;
+		fileMeta.setDbInsertFlag(geoLayerInfo.isDbInsertFlag());
+		
+		// publish Layer
+		if (fileMeta.isDbInsertFlag()) {
+			fileMeta.setUploadFlag(true);
+			FileMeta geoserverFileMeta = geoserverService.dbLayerPublishGeoserver(userVO, geoLayerInfo);
+			boolean isPublished = geoserverFileMeta.isServerPublishFlag();
+			fileMeta.setServerPublishFlag(isPublished);
+		}
+		return fileMeta;
 	}
 }

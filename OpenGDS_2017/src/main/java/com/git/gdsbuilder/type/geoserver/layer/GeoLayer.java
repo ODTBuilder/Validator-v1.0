@@ -158,6 +158,7 @@ public class GeoLayer {
 	 * */
 	public void setSimpleFeatureCollection(SimpleFeatureCollection simpleFeatureCollection) {
 		this.simpleFeatureCollection = simpleFeatureCollection;
+		System.out.println(simpleFeatureCollection.size());
 	}
 
 }

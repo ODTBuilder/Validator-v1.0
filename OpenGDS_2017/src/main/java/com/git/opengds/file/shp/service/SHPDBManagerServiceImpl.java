@@ -28,43 +28,51 @@ public class SHPDBManagerServiceImpl implements SHPDBManagerService {
 	public GeoLayerInfo insertSHPLayerCollection(UserVO userVO, DTSHPLayerCollection dtCollection,
 			GeoLayerInfo layerInfo) throws Exception {
 
-		SHPDBQueryManager dbManager = new SHPDBQueryManager();
-		String collectionName = dtCollection.getCollectionName();
-		String type = layerInfo.getFileType();
+		try {
+			SHPDBQueryManager dbManager = new SHPDBQueryManager();
+			String collectionName = dtCollection.getCollectionName();
+			String type = layerInfo.getFileType();
 
-		// insert layerCollection tb
-		HashMap<String, Object> insertCollectionQuery = dbManager.getInsertSHPLayerCollectionQuery(collectionName);
-		int cIdx = dao.insertSHPLayerCollection(userVO, insertCollectionQuery);
+			// insert layerCollection tb
+			HashMap<String, Object> insertCollectionQuery = dbManager.getInsertSHPLayerCollectionQuery(collectionName);
+			int cIdx = dao.insertSHPLayerCollection(userVO, insertCollectionQuery);
 
-		String src = layerInfo.getOriginSrc();
-		DTSHPLayerList layerList = dtCollection.getShpLayerList();
-		for (int i = 0; i < layerList.size(); i++) {
-			DTSHPLayer shpLayer = layerList.get(i);
-			// create layer tb
-			HashMap<String, Object> createLayerQuery = dbManager.getSHPLayerTbCreateQuery(type, collectionName,
-					shpLayer, src);
-			dao.createSHPLayerTb(userVO, (HashMap<String, Object>) createLayerQuery.get("createQueryMap"));
+			String src = layerInfo.getOriginSrc();
+			DTSHPLayerList layerList = dtCollection.getShpLayerList();
+			for (int i = 0; i < layerList.size(); i++) {
+				DTSHPLayer shpLayer = layerList.get(i);
+				// create layer tb
+				HashMap<String, Object> createLayerQuery = dbManager.getSHPLayerTbCreateQuery(type, collectionName,
+						shpLayer, src);
+				dao.createSHPLayerTb(userVO, (HashMap<String, Object>) createLayerQuery.get("createQueryMap"));
 
-			// insert layer tb
-			List<String> attriKeyList = (List<String>) createLayerQuery.get("attriKeyList");
-			List<HashMap<String, Object>> insertLayerQueryList = dbManager.getSHPLayerInsertQuery(type, collectionName,
-					attriKeyList, shpLayer, src);
-			for (int j = 0; j < insertLayerQueryList.size(); j++) {
-				HashMap<String, Object> insertLayerQuery = insertLayerQueryList.get(j);
-				dao.insertSHPLayer(userVO, insertLayerQuery);
+				// insert layer tb
+				List<String> attriKeyList = (List<String>) createLayerQuery.get("attriKeyList");
+				List<HashMap<String, Object>> insertLayerQueryList = dbManager.getSHPLayerInsertQuery(type,
+						collectionName, attriKeyList, shpLayer, src);
+				for (int j = 0; j < insertLayerQueryList.size(); j++) {
+					HashMap<String, Object> insertLayerQuery = insertLayerQueryList.get(j);
+					dao.insertSHPLayer(userVO, insertLayerQuery);
+				}
+
+				// inert layer meta tb
+				HashMap<String, Object> insertLayerMeteQuery = dbManager.getSHPLayerMetaInertQuery(type, collectionName,
+						shpLayer, cIdx);
+				dao.insertSHPLayerMetadata(userVO, insertLayerMeteQuery);
+
+				// geoLayerInfo
+				String layerName = shpLayer.getLayerName();
+				layerInfo.putLayerName(layerName);
+				String layerType = shpLayer.getLayerType();
+				layerInfo.putLayerType(layerName, layerType);
+				layerInfo.putLayerColumns(layerName, attriKeyList);
 			}
-
-			// inert layer meta tb
-			HashMap<String, Object> insertLayerMeteQuery = dbManager.getSHPLayerMetaInertQuery(type, collectionName,
-					shpLayer, cIdx);
-			dao.insertSHPLayerMetadata(userVO, insertLayerMeteQuery);
-
-			// geoLayerInfo
-			String layerName = shpLayer.getLayerName();
-			layerInfo.putLayerName(layerName);
-			String layerType = shpLayer.getLayerType();
-			layerInfo.putLayerType(layerName, layerType);
-			layerInfo.putLayerColumns(layerName, attriKeyList);
+		} catch (Exception e) {
+			throw new RuntimeException();
+		}
+		if (layerInfo != null) {
+			// txManager.commit(status);
+			layerInfo.setDbInsertFlag(true);
 		}
 		return layerInfo;
 	}

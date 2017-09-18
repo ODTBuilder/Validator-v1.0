@@ -153,7 +153,7 @@ html {
 				</div>
 
 				<div class="panel-body" style="padding: 0;">
-<!-- 					<input type="text" class="form-control builder-tree-search" id="inputSearchServer" /> -->
+					<!-- 					<input type="text" class="form-control builder-tree-search" id="inputSearchServer" /> -->
 					<div id="builderServerLayer" class="gitbuilder-layer-panel"></div>
 				</div>
 			</div>
@@ -165,7 +165,7 @@ html {
 					</button>
 				</div>
 				<div class="panel-body" style="padding: 0;">
-<!-- 					<input type="text" class="form-control builder-tree-search" id="inputSearchClient" /> -->
+					<!-- 					<input type="text" class="form-control builder-tree-search" id="inputSearchClient" /> -->
 					<div id="builderClientLayer" class="gitbuilder-layer-panel"></div>
 				</div>
 			</div>
@@ -236,7 +236,7 @@ html {
 				var listHeight = $("#builderLayer").innerHeight() / 2 - (16 + 1 + 1);
 				// 				41은 패널 헤더의 높이
 				var treeHeight = listHeight - (41);
-// 				var searchHeight = $(".builder-tree-search").outerHeight();
+				// 				var searchHeight = $(".builder-tree-search").outerHeight();
 				$(".gitbuilder-layer-panel").outerHeight(treeHeight);
 				$("#builderLayerGeoServerPanel").outerHeight(listHeight);
 				$("#builderLayerClientPanel").outerHeight(listHeight);
@@ -287,6 +287,7 @@ html {
 						}
 					}
 					gitrnd.setProjection(null, null, null, null);
+					return;
 				});
 			},
 			addRemoveHistoryList : function(layer, arr) {
@@ -379,9 +380,10 @@ html {
 			selected : function() {
 				return $('#builderClientLayer').jstreeol3("get_selected_layer");
 			},
-			infoURL : "geoserver/getGeoLayerInfoList.ajax",
-			wmsURL : "geoserver/geoserverWMSLayerLoad.do",
-			wfsURL : "geoserver/geoserverWFSGetFeature.ajax"
+			getFeatureInfo : "http://175.116.181.42:9990/geoserver/wms",
+			layerInfo : "geoserver/getGeoLayerInfoList.ajax",
+			imageTile : "geoserver/geoserverWMSLayerLoad.do",
+			getFeature : "geoserver/geoserverWFSGetFeature.ajax"
 		});
 
 		$('#builderClientLayer').jstreeol3({
@@ -401,7 +403,45 @@ html {
 			"search" : {
 				show_only_matches : true
 			},
-			plugins : [ "contextmenu", "dnd", "search", "state", "types", "sort", "visibility", "layerproperties" ]
+			"legends" : {
+				"types" : {
+					"#" : {
+						"valid_children" : [ "default", "Group", "Vector", "Raster", "ImageTile" ]
+					},
+					// 편집도구에서 지원할 타입
+					"Group" : {
+						"icon" : "fa fa-folder-o",
+						"valid_children" : [ "default", "Group", "Vector", "Raster", "ImageTile" ]
+					},
+					// 이외의 기본형
+					"default" : {
+						"icon" : "fa fa-file-o",
+						"valid_children" : []
+					},
+					"Vector" : {
+						"icon" : "fa fa-file-image-o",
+						"valid_children" : []
+					},
+					"Raster" : {
+						"icon" : "fa fa-file-image-o",
+						"valid_children" : []
+					},
+					"ImageTile" : {
+						"icon" : "fa fa-file-image-o",
+						"valid_children" : []
+					}
+				},
+				"geoserver" : {
+					"url" : "http://175.116.181.42:9990/geoserver/wms",
+					"width" : "15",
+					"height" : "15",
+					"format" : "image/png"
+				}
+			},
+			"functionmarker" : {
+				"snapping" : "fa fa-magnet"
+			},
+			plugins : [ "contextmenu", "dnd", "search", "state", "sort", "visibility", "layerproperties", "legends", "functionmarker" ]
 		});
 
 		var transfer = new gb.edit.RecordTransfer({

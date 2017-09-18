@@ -78,7 +78,11 @@ public class NGIDBManagerServiceImpl implements NGIDBManagerService {
 			for (int i = 0; i < createLayerList.size(); i++) {
 				DTNGILayer ngiLayer = createLayerList.get(i);
 				String layerName = ngiLayer.getLayerName();
-
+		
+				if(layerName.equals("H0040000_TEXT")) {
+					System.out.println("");
+				}
+				
 				// isFeature
 				if (ngiLayer.getFeatures().size() == 0) {
 					isFeaturesMap.put(layerName, false);
@@ -151,8 +155,9 @@ public class NGIDBManagerServiceImpl implements NGIDBManagerService {
 					String layerTypeStr = ngiLayer.getLayerType();
 					String layerType = dbManager.getLayerType(layerTypeStr);
 					layerInfo.putLayerType(layerName, layerType);
-					List<String> columns = dbManager.getLayerCoulmns(ngiLayer);
-					layerInfo.putLayerColumns(layerName, columns);
+					// List<String> columns =
+					// dbManager.getLayerCoulmns(ngiLayer);
+					// layerInfo.putLayerColumns(layerName, columns);
 					// layerInfo.putLayerBoundary(layerName, boundryMap);
 				}
 			}

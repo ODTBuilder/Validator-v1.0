@@ -1,704 +1,450 @@
 /**
  * ### legends plugin
- * 
- * This plugin renders legend icons in front of each node, making multiple
- * selection much easier. It also supports tri-state behavior, meaning that if a
- * node has a few of its children checked it will be rendered as undetermined,
- * and state will be propagated up.
  */
 
-var _legend = document.createElement('legend');
-_legend.className = 'jstreeol3-icon jstreeol3-legend';
-_legend.setAttribute('role', 'presentation');
 /**
- * stores all defaults for the legend plugin
  * 
- * @name $.jstreeol3.defaults.legend
- * @plugin legend
+ * @name $.jstreeol3.defaults.legends
+ * @plugin legends
+ * @comment 지오서버 범례 표시
+ * @author 소이준
  */
-$.jstreeol3.defaults.legend = {
-	/**
-	 * a boolean indicating if legendes should be visible (can be changed at a
-	 * later time using `show_legendes()` and `hide_legendes`). Defaults to
-	 * `true`.
-	 * 
-	 * @name $.jstreeol3.defaults.legend.visible
-	 * @plugin legend
-	 */
-	visible : true,
-	/**
-	 * a boolean indicating if legendes should cascade down and have an
-	 * undetermined state. Defaults to `true`.
-	 * 
-	 * @name $.jstreeol3.defaults.legend.three_state
-	 * @plugin legend
-	 */
-	three_state : true,
-	/**
-	 * a boolean indicating if clicking anywhere on the node should act as
-	 * clicking on the legend. Defaults to `true`.
-	 * 
-	 * @name $.jstreeol3.defaults.legend.whole_node
-	 * @plugin legend
-	 */
-	whole_node : true,
-	/**
-	 * a boolean indicating if the selected style of a node should be kept, or
-	 * removed. Defaults to `true`.
-	 * 
-	 * @name $.jstreeol3.defaults.legend.keep_selected_style
-	 * @plugin legend
-	 */
-	keep_selected_style : true,
-	/**
-	 * This setting controls how cascading and undetermined nodes are applied.
-	 * If 'up' is in the string - cascading up is enabled, if 'down' is in the
-	 * string - cascading down is enabled, if 'undetermined' is in the string -
-	 * undetermined nodes will be used. If `three_state` is set to `true` this
-	 * setting is automatically set to 'up+down+undetermined'. Defaults to ''.
-	 * 
-	 * @name $.jstreeol3.defaults.legend.cascade
-	 * @plugin legend
-	 */
-	cascade : '',
-	/**
-	 * This setting controls if legend are bound to the general tree selection
-	 * or to an internal array maintained by the legend plugin. Defaults to
-	 * `true`, only set to `false` if you know exactly what you are doing.
-	 * 
-	 * @name $.jstreeol3.defaults.legend.tie_selection
-	 * @plugin legend
-	 */
-	tie_selection : true
+$.jstreeol3.defaults.legends = {
+	"types" : {
+		"#" : {
+			"valid_children" : [ "default", "Group", "Vector", "Raster", "ImageTile" ]
+		},
+		// 편집도구에서 지원할 타입
+		"Group" : {
+			"icon" : "fa fa-folder-o",
+			"valid_children" : [ "default", "Group", "Vector", "Raster", "ImageTile" ]
+		},
+		// 이외의 기본형
+		"default" : {
+			"icon" : "fa fa-file-o",
+			"valid_children" : []
+		},
+		"Vector" : {
+			"icon" : "fa fa-file-image-o",
+			"valid_children" : []
+		},
+		"Raster" : {
+			"icon" : "fa fa-file-image-o",
+			"valid_children" : []
+		},
+		"ImageTile" : {
+			"icon" : "fa fa-file-image-o",
+			"valid_children" : []
+		}
+	},
+	"geoserver" : {
+		"url" : "http://localhost:9990/geoserver/wms",
+		"width" : "15",
+		"height" : "15",
+		"format" : "image/png"
+	}
 };
-$.jstreeol3.plugins.legend = function(options, parent) {
-	this.bind = function() {
-		parent.bind.call(this);
-		this._data.legend.uto = false;
-		this._data.legend.selected = [];
-		if (this.settings.legend.three_state) {
-			this.settings.legend.cascade = 'up+down+undetermined';
-		}
-		this.element.on("init.jstreeol3", $.proxy(function() {
-			this._data.legend.visible = this.settings.legend.visible;
-			if (!this.settings.legend.keep_selected_style) {
-				this.element.addClass('jstreeol3-legend-no-clicked');
-			}
-			if (this.settings.legend.tie_selection) {
-				this.element.addClass('jstreeol3-legend-selection');
-			}
-		}, this)).on("loading.jstreeol3", $.proxy(function() {
-			this[this._data.legend.visible ? 'show_legendes' : 'hide_legendes']();
-		}, this));
-		
-		if (!this.settings.legend.tie_selection) {
-			this.element.on('model.jstreeol3', $.proxy(function(e, data) {
-				var m = this._model.data, p = m[data.parent], dpc = data.nodes, i, j;
-				for (i = 0, j = dpc.length; i < j; i++) {
-					m[dpc[i]].state.checked = m[dpc[i]].state.checked
-							|| (m[dpc[i]].original && m[dpc[i]].original.state && m[dpc[i]].original.state.checked);
-					if (m[dpc[i]].state.checked) {
-						this._data.legend.selected.push(dpc[i]);
-					}
-				}
-			}, this));
-		}
-	};
-	/**
-	 * set the undetermined state where and if necessary. Used internally.
-	 * 
-	 * @private
-	 * @name _undetermined()
-	 * @plugin legend
-	 */
-	this._undetermined = function() {
-		if (this.element === null) {
-			return;
-		}
-		var i, j, k, l, o = {}, m = this._model.data, t = this.settings.legend.tie_selection, s = this._data[t ? 'core' : 'legend'].selected, p = [], tt = this;
-		for (i = 0, j = s.length; i < j; i++) {
-			if (m[s[i]] && m[s[i]].parents) {
-				for (k = 0, l = m[s[i]].parents.length; k < l; k++) {
-					if (o[m[s[i]].parents[k]] !== undefined) {
-						break;
-					}
-					if (m[s[i]].parents[k] !== $.jstreeol3.root) {
-						o[m[s[i]].parents[k]] = true;
-						p.push(m[s[i]].parents[k]);
-					}
-				}
-			}
-		}
-		// attempt for server side undetermined state
-		this.element.find('.jstreeol3-closed').not(':has(.jstreeol3-children)').each(
-				function() {
-					var tmp = tt.get_node(this), tmp2;
-					if (!tmp.state.loaded) {
-						if (tmp.original && tmp.original.state && tmp.original.state.undetermined
-								&& tmp.original.state.undetermined === true) {
-							if (o[tmp.id] === undefined && tmp.id !== $.jstreeol3.root) {
-								o[tmp.id] = true;
-								p.push(tmp.id);
-							}
-							for (k = 0, l = tmp.parents.length; k < l; k++) {
-								if (o[tmp.parents[k]] === undefined && tmp.parents[k] !== $.jstreeol3.root) {
-									o[tmp.parents[k]] = true;
-									p.push(tmp.parents[k]);
-								}
-							}
-						}
-					} else {
-						for (i = 0, j = tmp.children_d.length; i < j; i++) {
-							tmp2 = m[tmp.children_d[i]];
-							if (!tmp2.state.loaded && tmp2.original && tmp2.original.state && tmp2.original.state.undetermined
-									&& tmp2.original.state.undetermined === true) {
-								if (o[tmp2.id] === undefined && tmp2.id !== $.jstreeol3.root) {
-									o[tmp2.id] = true;
-									p.push(tmp2.id);
-								}
-								for (k = 0, l = tmp2.parents.length; k < l; k++) {
-									if (o[tmp2.parents[k]] === undefined && tmp2.parents[k] !== $.jstreeol3.root) {
-										o[tmp2.parents[k]] = true;
-										p.push(tmp2.parents[k]);
-									}
-								}
-							}
+$.jstreeol3.defaults.legends[$.jstreeol3.root] = {};
+
+$.jstreeol3.plugins.legends = function(options, parent) {
+	this.init = function(el, options) {
+		// this._data.legends.geoserver = this.settings.legends.geoserver;
+		var i, j;
+		if (options && options.legends && options.legends.types['default']) {
+			for (i in options.legends.types) {
+				if (i !== "default" && i !== $.jstreeol3.root && options.legends.types.hasOwnProperty(i)) {
+					for (j in options.legends.types['default']) {
+						if (options.legends.types['default'].hasOwnProperty(j) && options.legends.types[i][j] === undefined) {
+							options.legends.types[i][j] = options.legends.types['default'][j];
 						}
 					}
-				});
-
-		this.element.find('.jstreeol3-undetermined').removeClass('jstreeol3-undetermined');
-		for (i = 0, j = p.length; i < j; i++) {
-			if (!m[p[i]].state[t ? 'selected' : 'checked']) {
-				s = this.get_node(p[i], true);
-				if (s && s.length) {
-					s.children('.jstreeol3-anchor').children('.jstreeol3-legend').addClass('jstreeol3-undetermined');
 				}
 			}
 		}
-	};
-	this.redraw_node = function(obj, deep, is_callback, force_render) {
-		obj = parent.redraw_node.apply(this, arguments);
-		if (obj) {
-			var i, j, tmp = null, icon = null;
-			for (i = 0, j = obj.childNodes.length; i < j; i++) {
-				if (obj.childNodes[i] && obj.childNodes[i].className && obj.childNodes[i].className.indexOf("jstreeol3-anchor") !== -1) {
-					tmp = obj.childNodes[i];
-					break;
-				}
-			}
-			if (tmp) {
-				if (!this.settings.legend.tie_selection && this._model.data[obj.id].state.checked) {
-					tmp.className += ' jstreeol3-checked';
-				}
-				icon = _legend.cloneNode(false);
-				if (this._model.data[obj.id].state.legend_disabled) {
-					icon.className += ' jstreeol3-legend-disabled';
-				}
-				tmp.insertBefore(icon, tmp.childNodes[0]);
-			}
-		}
-		if (!is_callback && this.settings.legend.cascade.indexOf('undetermined') !== -1) {
-			if (this._data.legend.uto) {
-				clearTimeout(this._data.legend.uto);
-			}
-			this._data.legend.uto = setTimeout($.proxy(this._undetermined, this), 50);
-		}
-		return obj;
-	};
-	/**
-	 * show the node legend icons
-	 * 
-	 * @name show_legendes()
-	 * @plugin legend
-	 */
-	this.show_legendes = function() {
-		this._data.core.themes.legendes = true;
-		this.get_container_ul().removeClass("jstreeol3-no-legendes");
-	};
-	/**
-	 * hide the node legend icons
-	 * 
-	 * @name hide_legendes()
-	 * @plugin legend
-	 */
-	this.hide_legendes = function() {
-		this._data.core.themes.legendes = false;
-		this.get_container_ul().addClass("jstreeol3-no-legendes");
-	};
-	/**
-	 * toggle the node icons
-	 * 
-	 * @name toggle_legendes()
-	 * @plugin legend
-	 */
-	this.toggle_legendes = function() {
-		if (this._data.core.themes.legendes) {
-			this.hide_legendes();
-		} else {
-			this.show_legendes();
-		}
-	};
-	/**
-	 * checks if a node is in an undetermined state
-	 * 
-	 * @name is_undetermined(obj)
-	 * @param {mixed}
-	 *            obj
-	 * @return {Boolean}
-	 */
-	this.is_undetermined = function(obj) {
-		obj = this.get_node(obj);
-		var s = this.settings.legend.cascade, i, j, t = this.settings.legend.tie_selection, d = this._data[t ? 'core' : 'legend'].selected, m = this._model.data;
-		if (!obj || obj.state[t ? 'selected' : 'checked'] === true || s.indexOf('undetermined') === -1
-				|| (s.indexOf('down') === -1 && s.indexOf('up') === -1)) {
-			return false;
-		}
-		if (!obj.state.loaded && obj.original.state.undetermined === true) {
-			return true;
-		}
-		for (i = 0, j = obj.children_d.length; i < j; i++) {
-			if ($.inArray(obj.children_d[i], d) !== -1
-					|| (!m[obj.children_d[i]].state.loaded && m[obj.children_d[i]].original.state.undetermined)) {
-				return true;
-			}
-		}
-		return false;
-	};
-	/**
-	 * disable a node's legend
-	 * 
-	 * @name disable_legend(obj)
-	 * @param {mixed}
-	 *            obj an array can be used too
-	 * @trigger disable_legend.jstreeol3
-	 * @plugin legend
-	 */
-	this.disable_legend = function(obj) {
-		var t1, t2, dom;
-		if ($.isArray(obj)) {
-			obj = obj.slice();
-			for (t1 = 0, t2 = obj.length; t1 < t2; t1++) {
-				this.disable_legend(obj[t1]);
-			}
-			return true;
-		}
-		obj = this.get_node(obj);
-		if (!obj || obj.id === $.jstreeol3.root) {
-			return false;
-		}
-		dom = this.get_node(obj, true);
-		if (!obj.state.legend_disabled) {
-			obj.state.legend_disabled = true;
-			if (dom && dom.length) {
-				dom.children('.jstreeol3-anchor').children('.jstreeol3-legend').addClass('jstreeol3-legend-disabled');
-			}
-			/**
-			 * triggered when an node's legend is disabled
-			 * 
-			 * @event
-			 * @name disable_legend.jstreeol3
-			 * @param {Object}
-			 *            node
-			 * @plugin legend
-			 */
-			this.trigger('disable_legend', {
-				'node' : obj
-			});
-		}
-	};
-	/**
-	 * enable a node's legend
-	 * 
-	 * @name disable_legend(obj)
-	 * @param {mixed}
-	 *            obj an array can be used too
-	 * @trigger enable_legend.jstreeol3
-	 * @plugin legend
-	 */
-	this.enable_legend = function(obj) {
-		var t1, t2, dom;
-		if ($.isArray(obj)) {
-			obj = obj.slice();
-			for (t1 = 0, t2 = obj.length; t1 < t2; t1++) {
-				this.enable_legend(obj[t1]);
-			}
-			return true;
-		}
-		obj = this.get_node(obj);
-		if (!obj || obj.id === $.jstreeol3.root) {
-			return false;
-		}
-		dom = this.get_node(obj, true);
-		if (obj.state.legend_disabled) {
-			obj.state.legend_disabled = false;
-			if (dom && dom.length) {
-				dom.children('.jstreeol3-anchor').children('.jstreeol3-legend').removeClass('jstreeol3-legend-disabled');
-			}
-			/**
-			 * triggered when an node's legend is enabled
-			 * 
-			 * @event
-			 * @name enable_legend.jstreeol3
-			 * @param {Object}
-			 *            node
-			 * @plugin legend
-			 */
-			this.trigger('enable_legend', {
-				'node' : obj
-			});
-		}
-	};
-
-	this.activate_node = function(obj, e) {
-		if ($(e.target).hasClass('jstreeol3-legend-disabled')) {
-			return false;
-		}
-		if (this.settings.legend.tie_selection && (this.settings.legend.whole_node || $(e.target).hasClass('jstreeol3-legend'))) {
-			e.ctrlKey = true;
-		}
-		if (this.settings.legend.tie_selection || (!this.settings.legend.whole_node && !$(e.target).hasClass('jstreeol3-legend'))) {
-			return parent.activate_node.call(this, obj, e);
-		}
-		if (this.is_disabled(obj)) {
-			return false;
-		}
-		if (this.is_checked(obj)) {
-			this.uncheck_node(obj, e);
-		} else {
-			this.check_node(obj, e);
-		}
-		this.trigger('activate_node', {
-			'node' : this.get_node(obj)
-		});
-	};
-
-	/**
-	 * check a node (only if tie_selection in legend settings is false,
-	 * otherwise select_node will be called internally)
-	 * 
-	 * @name check_node(obj)
-	 * @param {mixed}
-	 *            obj an array can be used to check multiple nodes
-	 * @trigger check_node.jstreeol3
-	 * @plugin legend
-	 */
-	this.check_node = function(obj, e) {
-		if (this.settings.legend.tie_selection) {
-			return this.select_node(obj, false, true, e);
-		}
-		var dom, t1, t2, th;
-		if ($.isArray(obj)) {
-			obj = obj.slice();
-			for (t1 = 0, t2 = obj.length; t1 < t2; t1++) {
-				this.check_node(obj[t1], e);
-			}
-			return true;
-		}
-		obj = this.get_node(obj);
-		if (!obj || obj.id === $.jstreeol3.root) {
-			return false;
-		}
-		dom = this.get_node(obj, true);
-		if (!obj.state.checked) {
-			obj.state.checked = true;
-			this._data.legend.selected.push(obj.id);
-			if (dom && dom.length) {
-				dom.children('.jstreeol3-anchor').addClass('jstreeol3-checked');
-			}
-			/**
-			 * triggered when an node is checked (only if tie_selection in
-			 * legend settings is false)
-			 * 
-			 * @event
-			 * @name check_node.jstreeol3
-			 * @param {Object}
-			 *            node
-			 * @param {Array}
-			 *            selected the current selection
-			 * @param {Object}
-			 *            event the event (if any) that triggered this
-			 *            check_node
-			 * @plugin legend
-			 */
-			this.trigger('check_node', {
-				'node' : obj,
-				'selected' : this._data.legend.selected,
-				'event' : e
-			});
-		}
-	};
-	/**
-	 * uncheck a node (only if tie_selection in legend settings is false,
-	 * otherwise deselect_node will be called internally)
-	 * 
-	 * @name uncheck_node(obj)
-	 * @param {mixed}
-	 *            obj an array can be used to uncheck multiple nodes
-	 * @trigger uncheck_node.jstreeol3
-	 * @plugin legend
-	 */
-	this.uncheck_node = function(obj, e) {
-		if (this.settings.legend.tie_selection) {
-			return this.deselect_node(obj, false, e);
-		}
-		var t1, t2, dom;
-		if ($.isArray(obj)) {
-			obj = obj.slice();
-			for (t1 = 0, t2 = obj.length; t1 < t2; t1++) {
-				this.uncheck_node(obj[t1], e);
-			}
-			return true;
-		}
-		obj = this.get_node(obj);
-		if (!obj || obj.id === $.jstreeol3.root) {
-			return false;
-		}
-		dom = this.get_node(obj, true);
-		if (obj.state.checked) {
-			obj.state.checked = false;
-			this._data.legend.selected = $.vakata.array_remove_item(this._data.legend.selected, obj.id);
-			if (dom.length) {
-				dom.children('.jstreeol3-anchor').removeClass('jstreeol3-checked');
-			}
-			/**
-			 * triggered when an node is unchecked (only if tie_selection in
-			 * legend settings is false)
-			 * 
-			 * @event
-			 * @name uncheck_node.jstreeol3
-			 * @param {Object}
-			 *            node
-			 * @param {Array}
-			 *            selected the current selection
-			 * @param {Object}
-			 *            event the event (if any) that triggered this
-			 *            uncheck_node
-			 * @plugin legend
-			 */
-			this.trigger('uncheck_node', {
-				'node' : obj,
-				'selected' : this._data.legend.selected,
-				'event' : e
-			});
-		}
-	};
-	/**
-	 * checks all nodes in the tree (only if tie_selection in legend settings is
-	 * false, otherwise select_all will be called internally)
-	 * 
-	 * @name check_all()
-	 * @trigger check_all.jstreeol3, changed.jstreeol3
-	 * @plugin legend
-	 */
-	this.check_all = function() {
-		if (this.settings.legend.tie_selection) {
-			return this.select_all();
-		}
-		var tmp = this._data.legend.selected.concat([]), i, j;
-		this._data.legend.selected = this._model.data[$.jstreeol3.root].children_d.concat();
-		for (i = 0, j = this._data.legend.selected.length; i < j; i++) {
-			if (this._model.data[this._data.legend.selected[i]]) {
-				this._model.data[this._data.legend.selected[i]].state.checked = true;
-			}
-		}
-		this.redraw(true);
-		/**
-		 * triggered when all nodes are checked (only if tie_selection in legend
-		 * settings is false)
-		 * 
-		 * @event
-		 * @name check_all.jstreeol3
-		 * @param {Array}
-		 *            selected the current selection
-		 * @plugin legend
-		 */
-		this.trigger('check_all', {
-			'selected' : this._data.legend.selected
-		});
-	};
-	/**
-	 * uncheck all checked nodes (only if tie_selection in legend settings is
-	 * false, otherwise deselect_all will be called internally)
-	 * 
-	 * @name uncheck_all()
-	 * @trigger uncheck_all.jstreeol3
-	 * @plugin legend
-	 */
-	this.uncheck_all = function() {
-		if (this.settings.legend.tie_selection) {
-			return this.deselect_all();
-		}
-		var tmp = this._data.legend.selected.concat([]), i, j;
-		for (i = 0, j = this._data.legend.selected.length; i < j; i++) {
-			if (this._model.data[this._data.legend.selected[i]]) {
-				this._model.data[this._data.legend.selected[i]].state.checked = false;
-			}
-		}
-		this._data.legend.selected = [];
-		this.element.find('.jstreeol3-checked').removeClass('jstreeol3-checked');
-		/**
-		 * triggered when all nodes are unchecked (only if tie_selection in
-		 * legend settings is false)
-		 * 
-		 * @event
-		 * @name uncheck_all.jstreeol3
-		 * @param {Object}
-		 *            node the previous selection
-		 * @param {Array}
-		 *            selected the current selection
-		 * @plugin legend
-		 */
-		this.trigger('uncheck_all', {
-			'selected' : this._data.legend.selected,
-			'node' : tmp
-		});
-	};
-	/**
-	 * checks if a node is checked (if tie_selection is on in the settings this
-	 * function will return the same as is_selected)
-	 * 
-	 * @name is_checked(obj)
-	 * @param {mixed}
-	 *            obj
-	 * @return {Boolean}
-	 * @plugin legend
-	 */
-	this.is_checked = function(obj) {
-		if (this.settings.legend.tie_selection) {
-			return this.is_selected(obj);
-		}
-		obj = this.get_node(obj);
-		if (!obj || obj.id === $.jstreeol3.root) {
-			return false;
-		}
-		return obj.state.checked;
-	};
-	/**
-	 * get an array of all checked nodes (if tie_selection is on in the settings
-	 * this function will return the same as get_selected)
-	 * 
-	 * @name get_checked([full])
-	 * @param {mixed}
-	 *            full if set to `true` the returned array will consist of the
-	 *            full node objects, otherwise - only IDs will be returned
-	 * @return {Array}
-	 * @plugin legend
-	 */
-	this.get_checked = function(full) {
-		if (this.settings.legend.tie_selection) {
-			return this.get_selected(full);
-		}
-		return full ? $.map(this._data.legend.selected, $.proxy(function(i) {
-			return this.get_node(i);
-		}, this)) : this._data.legend.selected;
-	};
-	/**
-	 * get an array of all top level checked nodes (ignoring children of checked
-	 * nodes) (if tie_selection is on in the settings this function will return
-	 * the same as get_top_selected)
-	 * 
-	 * @name get_top_checked([full])
-	 * @param {mixed}
-	 *            full if set to `true` the returned array will consist of the
-	 *            full node objects, otherwise - only IDs will be returned
-	 * @return {Array}
-	 * @plugin legend
-	 */
-	this.get_top_checked = function(full) {
-		if (this.settings.legend.tie_selection) {
-			return this.get_top_selected(full);
-		}
-		var tmp = this.get_checked(true), obj = {}, i, j, k, l;
-		for (i = 0, j = tmp.length; i < j; i++) {
-			obj[tmp[i].id] = tmp[i];
-		}
-		for (i = 0, j = tmp.length; i < j; i++) {
-			for (k = 0, l = tmp[i].children_d.length; k < l; k++) {
-				if (obj[tmp[i].children_d[k]]) {
-					delete obj[tmp[i].children_d[k]];
-				}
-			}
-		}
-		tmp = [];
-		for (i in obj) {
-			if (obj.hasOwnProperty(i)) {
-				tmp.push(i);
-			}
-		}
-		return full ? $.map(tmp, $.proxy(function(i) {
-			return this.get_node(i);
-		}, this)) : tmp;
-	};
-	/**
-	 * get an array of all bottom level checked nodes (ignoring selected
-	 * parents) (if tie_selection is on in the settings this function will
-	 * return the same as get_bottom_selected)
-	 * 
-	 * @name get_bottom_checked([full])
-	 * @param {mixed}
-	 *            full if set to `true` the returned array will consist of the
-	 *            full node objects, otherwise - only IDs will be returned
-	 * @return {Array}
-	 * @plugin legend
-	 */
-	this.get_bottom_checked = function(full) {
-		if (this.settings.legend.tie_selection) {
-			return this.get_bottom_selected(full);
-		}
-		var tmp = this.get_checked(true), obj = [], i, j;
-		for (i = 0, j = tmp.length; i < j; i++) {
-			if (!tmp[i].children.length) {
-				obj.push(tmp[i].id);
-			}
-		}
-		return full ? $.map(obj, $.proxy(function(i) {
-			return this.get_node(i);
-		}, this)) : obj;
-	};
-	this.load_node = function(obj, callback) {
-		var k, l, i, j, c, tmp;
-		if (!$.isArray(obj) && !this.settings.legend.tie_selection) {
-			tmp = this.get_node(obj);
-			if (tmp && tmp.state.loaded) {
-				for (k = 0, l = tmp.children_d.length; k < l; k++) {
-					if (this._model.data[tmp.children_d[k]].state.checked) {
-						c = true;
-						this._data.legend.selected = $.vakata.array_remove_item(this._data.legend.selected, tmp.children_d[k]);
-					}
-				}
-			}
-		}
-		return parent.load_node.apply(this, arguments);
-	};
-	this.get_state = function() {
-		var state = parent.get_state.apply(this, arguments);
-		if (this.settings.legend.tie_selection) {
-			return state;
-		}
-		state.legend = this._data.legend.selected.slice();
-		return state;
-	};
-	this.set_state = function(state, callback) {
-		var res = parent.set_state.apply(this, arguments);
-		if (res && state.legend) {
-			if (!this.settings.legend.tie_selection) {
-				this.uncheck_all();
-				var _this = this;
-				$.each(state.legend, function(i, v) {
-					_this.check_node(v);
-				});
-			}
-			delete state.legend;
-			this.set_state(state, callback);
-			return false;
-		}
-		return res;
+		parent.init.call(this, el, options);
+		this._model.data[$.jstreeol3.root].type = $.jstreeol3.root;
 	};
 	this.refresh = function(skip_loading, forget_state) {
-		if (!this.settings.legend.tie_selection) {
-			this._data.legend.selected = [];
+		parent.refresh.call(this, skip_loading, forget_state);
+		this._model.data[$.jstreeol3.root].type = $.jstreeol3.root;
+	};
+	this.bind = function() {
+		this.element
+				.on(
+						'model.jstreeol3',
+						$
+								.proxy(
+										function(e, data) {
+											var m = this._model.data, dpc = data.nodes, g = this.settings.legends.geoserver, t = this.settings.legends.types, i, j, c = 'default', k;
+											for (i = 0, j = dpc.length; i < j; i++) {
+												c = 'default';
+												if (m[dpc[i]].original && m[dpc[i]].original.type && t[m[dpc[i]].original.type]) {
+													c = m[dpc[i]].original.type;
+												}
+												if (m[dpc[i]].data && m[dpc[i]].data.jstreeol3 && m[dpc[i]].data.jstreeol3.type
+														&& t[m[dpc[i]].data.jstreeol3.type]) {
+													c = m[dpc[i]].data.jstreeol3.type;
+												}
+												m[dpc[i]].type = c;
+												if (m[dpc[i]].icon === true && t[c].icon !== undefined) {
+													m[dpc[i]].icon = t[c].icon;
+												}
+
+												var layer = this.get_LayerById(m[dpc[i]].id);
+												if (layer instanceof ol.layer.Base) {
+													var git = layer.get("git");
+													if (git && git.hasOwnProperty("fake")) {
+														if (git.fake === "child") {
+															m[dpc[i]].icon = g.url + "?" + "REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT="
+																	+ g.format + "&WIDTH=" + g.width + "&HEIGHT=" + g.height + "&LAYER="
+																	+ layer.get("id") + "&SCALE=1001&LEGEND_OPTIONS=bgColor:0xededed;";
+														}
+													}
+												}
+
+												if (t[c].li_attr !== undefined && typeof t[c].li_attr === 'object') {
+													for (k in t[c].li_attr) {
+														if (t[c].li_attr.hasOwnProperty(k)) {
+															if (k === 'id') {
+																continue;
+															} else if (m[dpc[i]].li_attr[k] === undefined) {
+																m[dpc[i]].li_attr[k] = t[c].li_attr[k];
+															} else if (k === 'class') {
+																m[dpc[i]].li_attr['class'] = t[c].li_attr['class'] + ' '
+																		+ m[dpc[i]].li_attr['class'];
+															}
+														}
+													}
+												}
+												if (t[c].a_attr !== undefined && typeof t[c].a_attr === 'object') {
+													for (k in t[c].a_attr) {
+														if (t[c].a_attr.hasOwnProperty(k)) {
+															if (k === 'id') {
+																continue;
+															} else if (m[dpc[i]].a_attr[k] === undefined) {
+																m[dpc[i]].a_attr[k] = t[c].a_attr[k];
+															} else if (k === 'href' && m[dpc[i]].a_attr[k] === '#') {
+																m[dpc[i]].a_attr['href'] = t[c].a_attr['href'];
+															} else if (k === 'class') {
+																m[dpc[i]].a_attr['class'] = t[c].a_attr['class'] + ' '
+																		+ m[dpc[i]].a_attr['class'];
+															}
+														}
+													}
+												}
+											}
+											m[$.jstreeol3.root].type = $.jstreeol3.root;
+										}, this));
+		parent.bind.call(this);
+	};
+	this.get_json = function(obj, options, flat) {
+		var i, j, m = this._model.data, opt = options ? $.extend(true, {}, options, {
+			no_id : false
+		}) : {}, tmp = parent.get_json.call(this, obj, opt, flat);
+		if (tmp === false) {
+			return false;
 		}
-		return parent.refresh.apply(this, arguments);
+		if ($.isArray(tmp)) {
+			for (i = 0, j = tmp.length; i < j; i++) {
+				tmp[i].type = tmp[i].id && m[tmp[i].id] && m[tmp[i].id].type ? m[tmp[i].id].type : "default";
+				if (options && options.no_id) {
+					delete tmp[i].id;
+					if (tmp[i].li_attr && tmp[i].li_attr.id) {
+						delete tmp[i].li_attr.id;
+					}
+					if (tmp[i].a_attr && tmp[i].a_attr.id) {
+						delete tmp[i].a_attr.id;
+					}
+				}
+			}
+		} else {
+			tmp.type = tmp.id && m[tmp.id] && m[tmp.id].type ? m[tmp.id].type : "default";
+			if (options && options.no_id) {
+				tmp = this._delete_ids(tmp);
+			}
+		}
+		return tmp;
+	};
+	this._delete_ids = function(tmp) {
+		if ($.isArray(tmp)) {
+			for (var i = 0, j = tmp.length; i < j; i++) {
+				tmp[i] = this._delete_ids(tmp[i]);
+			}
+			return tmp;
+		}
+		delete tmp.id;
+		if (tmp.li_attr && tmp.li_attr.id) {
+			delete tmp.li_attr.id;
+		}
+		if (tmp.a_attr && tmp.a_attr.id) {
+			delete tmp.a_attr.id;
+		}
+		if (tmp.children && $.isArray(tmp.children)) {
+			tmp.children = this._delete_ids(tmp.children);
+		}
+		return tmp;
+	};
+	this.check = function(chk, obj, par, pos, more) {
+		if (parent.check.call(this, chk, obj, par, pos, more) === false) {
+			return false;
+		}
+		obj = obj && obj.id ? obj : this.get_node(obj);
+		par = par && par.id ? par : this.get_node(par);
+		var m = obj && obj.id ? (more && more.origin ? more.origin : $.jstreeol3.reference(obj.id)) : null, tmp, d, i, j;
+		m = m && m._model && m._model.data ? m._model.data : null;
+		switch (chk) {
+		case "create_node":
+		case "move_node":
+		case "copy_node":
+			if (chk !== 'move_node' || $.inArray(obj.id, par.children) === -1) {
+				tmp = this.get_rules(par);
+				if (tmp.max_children !== undefined && tmp.max_children !== -1 && tmp.max_children === par.children.length) {
+					this._data.core.last_error = {
+						'error' : 'check',
+						'plugin' : 'legends',
+						'id' : 'legends_01',
+						'reason' : 'max_children prevents function: ' + chk,
+						'data' : JSON.stringify({
+							'chk' : chk,
+							'pos' : pos,
+							'obj' : obj && obj.id ? obj.id : false,
+							'par' : par && par.id ? par.id : false
+						})
+					};
+					return false;
+				}
+				if (tmp.valid_children !== undefined && tmp.valid_children !== -1
+						&& $.inArray((obj.type || 'default'), tmp.valid_children) === -1) {
+					this._data.core.last_error = {
+						'error' : 'check',
+						'plugin' : 'legends',
+						'id' : 'legends_02',
+						'reason' : 'valid_children prevents function: ' + chk,
+						'data' : JSON.stringify({
+							'chk' : chk,
+							'pos' : pos,
+							'obj' : obj && obj.id ? obj.id : false,
+							'par' : par && par.id ? par.id : false
+						})
+					};
+					return false;
+				}
+				if (m && obj.children_d && obj.parents) {
+					d = 0;
+					for (i = 0, j = obj.children_d.length; i < j; i++) {
+						d = Math.max(d, m[obj.children_d[i]].parents.length);
+					}
+					d = d - obj.parents.length + 1;
+				}
+				if (d <= 0 || d === undefined) {
+					d = 1;
+				}
+				do {
+					if (tmp.max_depth !== undefined && tmp.max_depth !== -1 && tmp.max_depth < d) {
+						this._data.core.last_error = {
+							'error' : 'check',
+							'plugin' : 'legends',
+							'id' : 'legends_03',
+							'reason' : 'max_depth prevents function: ' + chk,
+							'data' : JSON.stringify({
+								'chk' : chk,
+								'pos' : pos,
+								'obj' : obj && obj.id ? obj.id : false,
+								'par' : par && par.id ? par.id : false
+							})
+						};
+						return false;
+					}
+					par = this.get_node(par.parent);
+					tmp = this.get_rules(par);
+					d++;
+				} while (par);
+			}
+			break;
+		}
+		return true;
+	};
+	/**
+	 * used to retrieve the type settings object for a node
+	 * 
+	 * @name get_rules(obj)
+	 * @param {mixed}
+	 *            obj the node to find the rules for
+	 * @return {Object}
+	 * @plugin legends
+	 */
+	this.get_rules = function(obj) {
+		obj = this.get_node(obj);
+		if (!obj) {
+			return false;
+		}
+		var tmp = this.get_type(obj, true);
+		if (tmp.max_depth === undefined) {
+			tmp.max_depth = -1;
+		}
+		if (tmp.max_children === undefined) {
+			tmp.max_children = -1;
+		}
+		if (tmp.valid_children === undefined) {
+			tmp.valid_children = -1;
+		}
+		return tmp;
+	};
+	/**
+	 * used to retrieve the type string or settings object for a node
+	 * 
+	 * @name get_type(obj [, rules])
+	 * @param {mixed}
+	 *            obj the node to find the rules for
+	 * @param {Boolean}
+	 *            rules if set to `true` instead of a string the settings object
+	 *            will be returned
+	 * @return {String|Object}
+	 * @plugin legends
+	 */
+	this.get_type = function(obj, rules) {
+		obj = this.get_node(obj);
+		return (!obj) ? false : (rules ? $.extend({
+			'type' : obj.type
+		}, this.settings.legends.types[obj.type]) : obj.type);
+	};
+	/**
+	 * used to change a node's type
+	 * 
+	 * @name set_type(obj, type)
+	 * @param {mixed}
+	 *            obj the node to change
+	 * @param {String}
+	 *            type the new type
+	 * @plugin legends
+	 */
+	this.set_type = function(obj, type) {
+		var m = this._model.data, t, t1, t2, old_type, old_icon, k, d, a;
+		if ($.isArray(obj)) {
+			obj = obj.slice();
+			for (t1 = 0, t2 = obj.length; t1 < t2; t1++) {
+				this.set_type(obj[t1], type);
+			}
+			return true;
+		}
+		t = this.settings.legends.types;
+		obj = this.get_node(obj);
+		if (!t[type] || !obj) {
+			return false;
+		}
+		d = this.get_node(obj, true);
+		if (d && d.length) {
+			a = d.children('.jstreeol3-anchor');
+		}
+		old_type = obj.type;
+		old_icon = this.get_icon(obj);
+		obj.type = type;
+		if (old_icon === true || !t[old_type] || (t[old_type].icon !== undefined && old_icon === t[old_type].icon)) {
+			this.set_icon(obj, t[type].icon !== undefined ? t[type].icon : true);
+		}
+
+		// remove old type props
+		if (t[old_type] && t[old_type].li_attr !== undefined && typeof t[old_type].li_attr === 'object') {
+			for (k in t[old_type].li_attr) {
+				if (t[old_type].li_attr.hasOwnProperty(k)) {
+					if (k === 'id') {
+						continue;
+					} else if (k === 'class') {
+						m[obj.id].li_attr['class'] = (m[obj.id].li_attr['class'] || '').replace(t[old_type].li_attr[k], '');
+						if (d) {
+							d.removeClass(t[old_type].li_attr[k]);
+						}
+					} else if (m[obj.id].li_attr[k] === t[old_type].li_attr[k]) {
+						m[obj.id].li_attr[k] = null;
+						if (d) {
+							d.removeAttr(k);
+						}
+					}
+				}
+			}
+		}
+		if (t[old_type] && t[old_type].a_attr !== undefined && typeof t[old_type].a_attr === 'object') {
+			for (k in t[old_type].a_attr) {
+				if (t[old_type].a_attr.hasOwnProperty(k)) {
+					if (k === 'id') {
+						continue;
+					} else if (k === 'class') {
+						m[obj.id].a_attr['class'] = (m[obj.id].a_attr['class'] || '').replace(t[old_type].a_attr[k], '');
+						if (a) {
+							a.removeClass(t[old_type].a_attr[k]);
+						}
+					} else if (m[obj.id].a_attr[k] === t[old_type].a_attr[k]) {
+						if (k === 'href') {
+							m[obj.id].a_attr[k] = '#';
+							if (a) {
+								a.attr('href', '#');
+							}
+						} else {
+							delete m[obj.id].a_attr[k];
+							if (a) {
+								a.removeAttr(k);
+							}
+						}
+					}
+				}
+			}
+		}
+
+		// add new props
+		if (t[type].li_attr !== undefined && typeof t[type].li_attr === 'object') {
+			for (k in t[type].li_attr) {
+				if (t[type].li_attr.hasOwnProperty(k)) {
+					if (k === 'id') {
+						continue;
+					} else if (m[obj.id].li_attr[k] === undefined) {
+						m[obj.id].li_attr[k] = t[type].li_attr[k];
+						if (d) {
+							if (k === 'class') {
+								d.addClass(t[type].li_attr[k]);
+							} else {
+								d.attr(k, t[type].li_attr[k]);
+							}
+						}
+					} else if (k === 'class') {
+						m[obj.id].li_attr['class'] = t[type].li_attr[k] + ' ' + m[obj.id].li_attr['class'];
+						if (d) {
+							d.addClass(t[type].li_attr[k]);
+						}
+					}
+				}
+			}
+		}
+		if (t[type].a_attr !== undefined && typeof t[type].a_attr === 'object') {
+			for (k in t[type].a_attr) {
+				if (t[type].a_attr.hasOwnProperty(k)) {
+					if (k === 'id') {
+						continue;
+					} else if (m[obj.id].a_attr[k] === undefined) {
+						m[obj.id].a_attr[k] = t[type].a_attr[k];
+						if (a) {
+							if (k === 'class') {
+								a.addClass(t[type].a_attr[k]);
+							} else {
+								a.attr(k, t[type].a_attr[k]);
+							}
+						}
+					} else if (k === 'href' && m[obj.id].a_attr[k] === '#') {
+						m[obj.id].a_attr['href'] = t[type].a_attr['href'];
+						if (a) {
+							a.attr('href', t[type].a_attr['href']);
+						}
+					} else if (k === 'class') {
+						m[obj.id].a_attr['class'] = t[type].a_attr['class'] + ' ' + m[obj.id].a_attr['class'];
+						if (a) {
+							a.addClass(t[type].a_attr[k]);
+						}
+					}
+				}
+			}
+		}
+
+		return true;
 	};
 };
+// include the legends plugin by default
+// $.jstreeol3.defaults.plugins.push("legends");

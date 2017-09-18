@@ -39,7 +39,6 @@ import java.util.List;
 
 import org.geotools.feature.SchemaException;
 import org.json.simple.JSONObject;
-import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.operation.TransformException;
@@ -47,7 +46,6 @@ import org.opengis.referencing.operation.TransformException;
 import com.git.gdsbuilder.type.geoserver.layer.GeoLayer;
 import com.git.gdsbuilder.type.geoserver.layer.GeoLayerList;
 import com.git.gdsbuilder.type.validate.collection.close.ValidateCloseCollectionLayer;
-import com.git.gdsbuilder.type.validate.error.ErrorFeature;
 import com.git.gdsbuilder.type.validate.error.ErrorLayer;
 
 /**
@@ -252,7 +250,7 @@ public interface LayerValidator {
 	 * 오전 10:25:18 @param attributeJson @param relationLayers @return
 	 * ErrorLayer @throws
 	 */
-	public ErrorLayer validateBuildingSite(JSONObject attributeJson, List<GeoLayer> relationLayers);
+//	public ErrorLayer validateBuildingSite(JSONObject attributeJson, List<GeoLayer> relationLayers);
 
 	/**
 	 * 검수항목 중 "도엽속성 오류(NeatLineAttribute)" 검수를 수행 @author JY.Kim @Date 2017. 8.
@@ -295,13 +293,20 @@ public interface LayerValidator {
 	 * 검수항목 중 "선형 단락 오류(LinearDisconnection)" 검수를 수행 @author JY.Kim @author
 	 * JY.Kim @Date 2017. 8. 24. 오후 5:30:09 @param relationLayers @return
 	 * ErrorLayer @throws
+	 * @throws SchemaException 
 	 */
-	public ErrorLayer valildateLinearDisconnection(List<GeoLayer> relationLayers);
+	public ErrorLayer valildateLinearDisconnection(List<GeoLayer> relationLayers) throws SchemaException;
 
 	public ErrorLayer validateEntityInHole(List<GeoLayer> relationLayers);
 
 	public ErrorLayer validateCloseCollection(ValidateCloseCollectionLayer closeCollectionLayer, String geomColunm);
 
 	public ErrorLayer validateMultiPart();
+	
+	public ErrorLayer validateUFIDDuplicated();
+
+	public ErrorLayer validateBuildingSiteDager(JSONObject attrJson, List<GeoLayer> relationName);
+
+	public ErrorLayer validateBuildingSiteRelaxation(JSONObject attrJson, List<GeoLayer> relationName);
 
 }

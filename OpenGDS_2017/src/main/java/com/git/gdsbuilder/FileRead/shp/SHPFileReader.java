@@ -96,11 +96,11 @@ public class SHPFileReader {
 						}
 						dtLayer.setLayerType(geomType.toUpperCase());
 						dtLayer.setSimpleFeatureCollection(newCollection);
-						dtLayer.setLayerName(shpName.toUpperCase() + "_" + geomType.toUpperCase());
+						dtLayer.setLayerName(shpName.toUpperCase());
 						dtLayerList.add(dtLayer);
 					} else {
 						dtLayer.setLayerType(geomType.toUpperCase());
-						dtLayer.setLayerName(shpName.toUpperCase() + "_" + geomType.toUpperCase());
+						dtLayer.setLayerName(shpName.toUpperCase());
 						dtLayerList.add(dtLayer);
 					}
 				}
@@ -121,7 +121,7 @@ public class SHPFileReader {
 			String otherFileName = otherFileNames.get(i);
 			int otherComma = otherFileName.lastIndexOf(".");
 			String otherName = otherFileName.substring(0, otherComma);
-			if (fileName.equals(otherName)) {
+			if (fileName.toUpperCase().equals(otherName.toUpperCase())) {
 				isValid = true;
 			}
 		}

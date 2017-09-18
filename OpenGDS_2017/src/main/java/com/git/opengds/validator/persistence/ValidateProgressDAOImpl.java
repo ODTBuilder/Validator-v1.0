@@ -46,24 +46,25 @@ public class ValidateProgressDAOImpl extends DataSourceFactory implements Valida
 	}
 
 	@Override
-	public Integer selectNGIValidateProgressPid(UserVO userVO, HashMap<String, Object> selectQA20ValidateProgressPid) {
+	public List<HashMap<String, Object>> selectNGIValidateProgressPid(UserVO userVO,
+			HashMap<String, Object> selectQA20ValidateProgressPid) {
 		sqlSession = super.getSqlSession(userVO.getId());
-		HashMap<String, Object> idxMap = sqlSession.selectOne(ngiNamespace + ".selectQA20ValidateProgressPid",
+		List<HashMap<String, Object>> idxMaps = sqlSession.selectList(ngiNamespace + ".selectQA20ValidateProgressPid",
 				selectQA20ValidateProgressPid);
-		if (idxMap != null) {
-			return (Integer) idxMap.get("p_idx");
+		if (idxMaps != null) {
+			return idxMaps;
 		} else {
 			return null;
 		}
 	}
 
 	@Override
-	public Integer selectDXFValidateProgressPid(UserVO userVO, HashMap<String, Object> selectQA10ValidateProgressPid) {
+	public List<HashMap<String, Object>> selectDXFValidateProgressPid(UserVO userVO, HashMap<String, Object> selectQA10ValidateProgressPid) {
 		sqlSession = super.getSqlSession(userVO.getId());
-		HashMap<String, Object> idxMap = sqlSession.selectOne(dxfNamespace + ".selectQA10ValidateProgressPid",
+		List<HashMap<String, Object>> idxMaps = sqlSession.selectList(dxfNamespace + ".selectQA10ValidateProgressPid",
 				selectQA10ValidateProgressPid);
-		if (idxMap != null) {
-			return (Integer) idxMap.get("p_idx");
+		if (idxMaps != null) {
+			return idxMaps;
 		} else {
 			return null;
 		}
@@ -193,6 +194,7 @@ public class ValidateProgressDAOImpl extends DataSourceFactory implements Valida
 	public List<HashMap<String, Object>> selectAllNGIValidateProgress(UserVO userVO,
 			HashMap<String, Object> selectAllQA20ValidateProgress) {
 		sqlSession = super.getSqlSession(userVO.getId());
+
 		return sqlSession.selectList(ngiNamespace + ".selectAllQA20ValidateProgress", selectAllQA20ValidateProgress);
 	}
 
@@ -203,7 +205,7 @@ public class ValidateProgressDAOImpl extends DataSourceFactory implements Valida
 
 	@Override
 	public void deleteNGIProgress(HashMap<String, Object> deleteValidateProgressQuery) {
-		sqlSession.delete(dxfNamespace + ".deleteQA20Progress", deleteValidateProgressQuery);
+		sqlSession.delete(ngiNamespace + ".deleteQA20Progress", deleteValidateProgressQuery);
 	}
 
 	@Override

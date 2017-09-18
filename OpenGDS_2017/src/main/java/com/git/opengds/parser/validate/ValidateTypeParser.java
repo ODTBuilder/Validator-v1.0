@@ -22,8 +22,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.swing.plaf.multi.MultiPanelUI;
-
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -34,7 +32,8 @@ import com.git.gdsbuilder.type.validate.option.AttributeFix;
 import com.git.gdsbuilder.type.validate.option.B_SymbolOutSided;
 import com.git.gdsbuilder.type.validate.option.BridgeName;
 import com.git.gdsbuilder.type.validate.option.BuildingOpen;
-import com.git.gdsbuilder.type.validate.option.BuildingSite;
+import com.git.gdsbuilder.type.validate.option.BuildingSiteDanger;
+import com.git.gdsbuilder.type.validate.option.BuildingSiteRelaxation;
 import com.git.gdsbuilder.type.validate.option.CemeterySite;
 import com.git.gdsbuilder.type.validate.option.CenterLineMiss;
 import com.git.gdsbuilder.type.validate.option.ConBreak;
@@ -65,6 +64,8 @@ import com.git.gdsbuilder.type.validate.option.RiverBoundaryMiss;
 import com.git.gdsbuilder.type.validate.option.SelfEntity;
 import com.git.gdsbuilder.type.validate.option.SmallArea;
 import com.git.gdsbuilder.type.validate.option.SmallLength;
+import com.git.gdsbuilder.type.validate.option.TwistedPolygon;
+import com.git.gdsbuilder.type.validate.option.UFIDDuplicated;
 import com.git.gdsbuilder.type.validate.option.UFIDLength;
 import com.git.gdsbuilder.type.validate.option.UFIDRule;
 import com.git.gdsbuilder.type.validate.option.UnderShoot;
@@ -541,32 +542,36 @@ public class ValidateTypeParser {
 				}
 			}
 
-			if (optionName.equalsIgnoreCase(BuildingSite.Type.BUILDINGSITE.errName())) {
-				Object buildingSiteObj = qaOptions.get("BuildingSite");
-				if (buildingSiteObj == null) {
-					continue;
-				} else {
-					HashMap<String, Object> hashMap = new HashMap<String, Object>();
-					List<String> relations = new ArrayList<String>();
-					JSONObject buildingSiteJson = (JSONObject) buildingSiteObj;
-					JSONObject label = (JSONObject) buildingSiteJson.get("label");
-					JSONArray relation = (JSONArray) buildingSiteJson.get("relation");
-
-					Iterator iterator = label.keySet().iterator();
-					while (iterator.hasNext()) {
-						String layerName = (String) iterator.next();
-						JSONObject attributeObj = (JSONObject) label.get(layerName);
-						hashMap.put(layerName, attributeObj);
-					}
-
-					for (int i = 0; i < relation.size(); i++) {
-						String relationID = (String) relation.get(i);
-						relations.add(relationID);
-					}
-					ValidatorOption buildingSite = new BuildingSite(hashMap, relations);
-					optionList.add(buildingSite);
-				}
-			}
+			// if
+			// (optionName.equalsIgnoreCase(BuildingSiteDanger.Type.BUILDINGSITE.errName()))
+			// {
+			// Object buildingSiteObj = qaOptions.get("BuildingSite");
+			// if (buildingSiteObj == null) {
+			// continue;
+			// } else {
+			// HashMap<String, Object> hashMap = new HashMap<String, Object>();
+			// List<String> relations = new ArrayList<String>();
+			// JSONObject buildingSiteJson = (JSONObject) buildingSiteObj;
+			// JSONObject label = (JSONObject) buildingSiteJson.get("label");
+			// JSONArray relation = (JSONArray)
+			// buildingSiteJson.get("relation");
+			//
+			// Iterator iterator = label.keySet().iterator();
+			// while (iterator.hasNext()) {
+			// String layerName = (String) iterator.next();
+			// JSONObject attributeObj = (JSONObject) label.get(layerName);
+			// hashMap.put(layerName, attributeObj);
+			// }
+			//
+			// for (int i = 0; i < relation.size(); i++) {
+			// String relationID = (String) relation.get(i);
+			// relations.add(relationID);
+			// }
+			// ValidatorOption buildingSite = new BuildingSiteDanger(hashMap,
+			// relations);
+			// optionList.add(buildingSite);
+			// }
+			// }
 
 			if (optionName.equalsIgnoreCase(NeatLineAttribute.Type.NEATLINEATTRIBUTE.errName())) {
 				Boolean isTrue = (Boolean) qaOptions.get("NeatLineAttribute");
@@ -680,7 +685,6 @@ public class ValidateTypeParser {
 					optionList.add(linearDisconnection);
 				}
 			}
-
 			if (optionName.equalsIgnoreCase(EntityNone.Type.ENTITYNONE.errName())) {
 				Boolean isTrue = (Boolean) qaOptions.get("EntityNone");
 				if (isTrue) {
@@ -688,7 +692,6 @@ public class ValidateTypeParser {
 					optionList.add(entityNone);
 				}
 			}
-
 			if (optionName.equalsIgnoreCase(EdgeMatchMiss.Type.EDGEMATCHMISS.errName())) {
 				Boolean isTrue = (Boolean) qaOptions.get("EdgeMatchMiss");
 				if (isTrue) {
@@ -696,7 +699,6 @@ public class ValidateTypeParser {
 					optionList.add(edgeMatchMiss);
 				}
 			}
-
 			if (optionName.equalsIgnoreCase(RefAttributeMiss.Type.RefAttributeMiss.errName())) {
 				Object refAttributeMissObj = qaOptions.get("RefAttributeMiss");
 				if (refAttributeMissObj == null) {
@@ -742,12 +744,79 @@ public class ValidateTypeParser {
 					optionList.add(neatLineMiss);
 				}
 			}
-
 			if (optionName.equalsIgnoreCase(MultiPart.Type.MULTIPART.errName())) {
 				Boolean isTrue = (Boolean) qaOptions.get("MultiPart");
 				if (isTrue) {
 					MultiPart multiPart = new MultiPart();
 					optionList.add(multiPart);
+				}
+			}
+			if (optionName.equalsIgnoreCase(UFIDDuplicated.Type.UFIDDUPLICATED.errName())) {
+				Boolean isTrue = (Boolean) qaOptions.get("UFIDDuplicated");
+				if (isTrue) {
+					UFIDDuplicated ufidDuplicated = new UFIDDuplicated();
+					optionList.add(ufidDuplicated);
+				}
+			}
+			if (optionName.equalsIgnoreCase(TwistedPolygon.Type.TWISTEDPOLYGON.errName())) {
+				Boolean isTrue = (Boolean) qaOptions.get("TwistedPolygon");
+				if (isTrue) {
+					TwistedPolygon twistedPolygon = new TwistedPolygon();
+					optionList.add(twistedPolygon);
+				}
+			}
+
+			if (optionName.equalsIgnoreCase(BuildingSiteDanger.Type.BUILDINGSITEDANGER.errName())) {
+				Object buildingSiteDanger = qaOptions.get("BuildingSiteDanger");
+				if (buildingSiteDanger == null) {
+					continue;
+				} else {
+					HashMap<String, Object> hashMap = new HashMap<String, Object>();
+					List<String> relations = new ArrayList<String>();
+					JSONObject buildingSiteJson = (JSONObject) buildingSiteDanger;
+					JSONObject label = (JSONObject) buildingSiteJson.get("label");
+					JSONArray relation = (JSONArray) buildingSiteJson.get("relation");
+
+					Iterator iterator = label.keySet().iterator();
+					while (iterator.hasNext()) {
+						String layerName = (String) iterator.next();
+						JSONObject attributeObj = (JSONObject) label.get(layerName);
+						hashMap.put(layerName, attributeObj);
+					}
+
+					for (int i = 0; i < relation.size(); i++) {
+						String relationID = (String) relation.get(i);
+						relations.add(relationID);
+					}
+					ValidatorOption buildingSite = new BuildingSiteDanger(hashMap, relations);
+					optionList.add(buildingSite);
+				}
+			}
+
+			if (optionName.equalsIgnoreCase(BuildingSiteRelaxation.Type.BUILDINGSITERELAXATION.errName())) {
+				Object buildingSiteDanger = qaOptions.get("BuildingSiteRelaxation");
+				if (buildingSiteDanger == null) {
+					continue;
+				} else {
+					HashMap<String, Object> hashMap = new HashMap<String, Object>();
+					List<String> relations = new ArrayList<String>();
+					JSONObject buildingSiteJson = (JSONObject) buildingSiteDanger;
+					JSONObject label = (JSONObject) buildingSiteJson.get("label");
+					JSONArray relation = (JSONArray) buildingSiteJson.get("relation");
+
+					Iterator iterator = label.keySet().iterator();
+					while (iterator.hasNext()) {
+						String layerName = (String) iterator.next();
+						JSONObject attributeObj = (JSONObject) label.get(layerName);
+						hashMap.put(layerName, attributeObj);
+					}
+
+					for (int i = 0; i < relation.size(); i++) {
+						String relationID = (String) relation.get(i);
+						relations.add(relationID);
+					}
+					ValidatorOption buildingSite = new BuildingSiteRelaxation(hashMap, relations);
+					optionList.add(buildingSite);
 				}
 			}
 		}

@@ -6239,8 +6239,8 @@
 							if (!!git) {
 								if (pLayer.get("git").hasOwnProperty("fake")) {
 									if (git.fake === "parent") {
-										console.log(pLayer.getSource().getParams());
-										console.log(pLayer.get("git").layers);
+										// console.log(pLayer.getSource().getParams());
+										// console.log(pLayer.get("git").layers);
 										var befSource = pLayer.getSource();
 										var param = befSource.getParams();
 										var inner = pLayer.get("git").layers.getArray().sort(function(a, b) {
@@ -6252,10 +6252,10 @@
 												names.push(inner[i].get("id"));
 											}
 										}
-										console.log(names.toString());
+										// console.log(names.toString());
 										param["LAYERS"] = names.toString();
 										befSource.updateParams(param);
-										console.log(inner);
+										// console.log(inner);
 										// var arr = [];
 										// for (var i = 0; i <
 										// inner.getLength(); i++) {
@@ -8794,7 +8794,10 @@
 							 */
 							"action" : function(data) {
 								var inst = $.jstreeol3.reference(data.reference), obj = inst.get_node(data.reference);
-								inst.zoom_to_fit(obj);
+								var layer = inst.get_LayerById(obj.id);
+								inst._data.layerproperties.editingTool.zoomToFit(layer);
+								// inst._data.layerproperties.editingTool.setWMSSource(layer,
+								// inst.zoom_to_fit(obj));
 							}
 						},
 						// "rename" : {
@@ -8816,10 +8819,44 @@
 						// inst.edit(obj);
 						// }
 						// },
+						"snap" : {
+							"separator_before" : false,
+							"icon" : "fa fa-magnet",
+							"separator_after" : false,
+							"_disabled" : false, // (this.check("delete_node",
+							// data.reference,
+							// this.get_parent(data.reference),
+							// "")),
+							"label" : "Snap",
+							"action" : function(data) {
+								console.log(data);
+								var inst = $.jstreeol3.reference(data.reference), obj = inst.get_node(data.reference);
+								var layers = inst.get_selected();
+								for (var i = 0; i < layers.length; i++) {
+									var node = inst.get_node(layers[i]);
+									var layer = inst.get_LayerById(layers[i]);
+									if (node.state["snapping"] === false) {
+										var succ = inst._data.layerproperties.editingTool.addSnappingLayer(layer);
+										if (succ) {
+											inst.set_flag(node, "snapping", true);
+										}
+										console.log(layer);
+									} else {
+										var succ = inst._data.layerproperties.editingTool.removeSnappingLayer(layer);
+										if (succ) {
+											inst.set_flag(node, "snapping", false);
+										}
+									}
+									var ext = inst._data.layerproperties.editingTool.getMap().getView().calculateExtent(
+											inst._data.layerproperties.editingTool.getMap().getSize());
+									inst._data.layerproperties.editingTool.loadSnappingLayer(ext);
+								}
+							}
+						},
 						"remove" : {
 							"separator_before" : false,
 							"icon" : "fa fa-trash",
-							"separator_after" : true,
+							"separator_after" : false,
 							"_disabled" : false, // (this.check("delete_node",
 							// data.reference,
 							// this.get_parent(data.reference),
@@ -8842,6 +8879,7 @@
 											inst._data.layerproperties.layerRecord.remove(info.getFormat(), info.getSheetNumber(), layer);
 										}
 										var layer = inst.get_LayerById(layers[i]);
+										inst._data.layerproperties.editingTool.removeSnappingLayer(layer);
 										inst.delete_node_layer(layers[i]);
 									}
 								} else {
@@ -8856,6 +8894,7 @@
 									if (!!info) {
 										inst._data.layerproperties.layerRecord.remove(info.getFormat(), info.getSheetNumber(), layer);
 									}
+									inst._data.layerproperties.editingTool.removeSnappingLayer(layer);
 									inst.delete_node_layer(obj);
 								}
 							}
