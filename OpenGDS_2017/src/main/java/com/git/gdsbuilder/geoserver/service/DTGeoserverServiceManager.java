@@ -6,6 +6,6 @@ import com.git.gdsbuilder.geoserver.service.wms.WMSGetMap;
 
 public interface DTGeoserverServiceManager {
 	public void requestWFSGetFeature(WFSGetFeature feature);
-	public void requestWMSFeatureInfo(WMSGetFeatureInfo feature);
+	public void requestWMSGetFeatureInfo(WMSGetFeatureInfo feature);
 	public void requestWMSGetMap(WMSGetMap feature);
 }

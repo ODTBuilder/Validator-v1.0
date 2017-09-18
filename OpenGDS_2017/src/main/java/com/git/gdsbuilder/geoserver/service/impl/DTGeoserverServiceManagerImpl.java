@@ -28,7 +28,7 @@ public class DTGeoserverServiceManagerImpl implements DTGeoserverServiceManager 
 	};
 	
 	@Override
-	public void requestWMSFeatureInfo(WMSGetFeatureInfo featureInfo) {
+	public void requestWMSGetFeatureInfo(WMSGetFeatureInfo featureInfo) {
 		String url = featureInfo.getWMSGetFeatureInfoURL();
 		this.requestProxyService(url);
 	};

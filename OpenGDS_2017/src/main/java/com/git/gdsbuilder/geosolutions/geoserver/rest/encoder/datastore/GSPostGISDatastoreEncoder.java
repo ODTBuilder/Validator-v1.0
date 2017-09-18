@@ -39,7 +39,7 @@ public class GSPostGISDatastoreEncoder extends GSAbstractDatastoreEncoder {
 	static final int DEFAULT_MIN_CONNECTIONS = 1;
 	static final int DEFAULT_MAX_CONNECTIONS = 10;
 	static final int DEFAULT_FETCH_SIZE = 1000;
-	static final int DEFAULT_CONNECTION_TIMEOUT = 20;
+	static final int DEFAULT_CONNECTION_TIMEOUT = 200;
 	static final boolean DEFAULT_LOOSE_BBOX = true;
 	static final boolean DEFAULT_PREPARED_STATEMENTS = false;
 	static final int DEFAULT_MAX_OPEN_PREPARED_STATEMENTS = 50;

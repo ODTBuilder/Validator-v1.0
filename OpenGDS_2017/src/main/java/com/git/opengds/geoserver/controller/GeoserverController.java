@@ -139,6 +139,24 @@ public class GeoserverController extends AbstractController{
  		UserVO generalUser  = (UserVO) getSession(request,EnUserType.GENERAL.getTypeName());
 		proService.requestGetFeature(generalUser,request, response);
 	}
+ 	
+
+ 	/**
+ 	 * WMSGetFeatureInfo 
+ 	 * @author SG.Lee
+ 	 * @Date 2017. 6. 5. 오전 11:50:04
+ 	 * @param request
+ 	 * @param response
+ 	 * @throws ServletException
+ 	 * @throws IOException void
+ 	 * @throws
+ 	 * */
+ 	@RequestMapping(value="geoserverWMSGetFeatureInfo.ajax")
+	@ResponseBody
+	public void geoserverWMSGetFeatureInfo(HttpServletRequest request , HttpServletResponse response) throws ServletException, IOException {
+ 		UserVO generalUser  = (UserVO) getSession(request,EnUserType.GENERAL.getTypeName());
+		proService.requestGetFeatureInfo(generalUser,request, response);
+	}
 	
 	/**
 	 * Geoserver Layer 조회
