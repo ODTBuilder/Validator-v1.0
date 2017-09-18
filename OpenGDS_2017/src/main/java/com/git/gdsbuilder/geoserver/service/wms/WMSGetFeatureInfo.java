@@ -14,17 +14,18 @@ public class WMSGetFeatureInfo {
 	private String layers = "";
 	private String styles = "";
 	private String srs = "";
+	private String crs = "";
 	private String bbox = "";
 	private int width = 0;
 	private int height = 0;
 	private String query_layers = "";
-	private String info_format = "application/json";
-	private int feature_count = 1;
+	private String info_format = "";
+	private int feature_count = 0;
 	private int x = 0;
 	private int y = 0;
-	private String exceptions = "application/vnd.ogc.se_xml";
+	private String exceptions = "";
 
-	public WMSGetFeatureInfo(String serverURL, String version, String layers, String styles, String srs, String bbox,
+	public WMSGetFeatureInfo(String serverURL, String version, String layers, String styles, String srs, String crs,String bbox,
 			int width, int height, String query_layers, String info_format, int feature_count, int x, int y,String exceptions) {
 		super();
 		if (!serverURL.trim().equals("")) {
@@ -41,6 +42,9 @@ public class WMSGetFeatureInfo {
 		}
 		if (!srs.trim().equals("")) {
 			this.srs = srs;
+		}
+		if (!crs.trim().equals("")) {
+			this.crs = crs;
 		}
 		if (!bbox.trim().equals("")) {
 			this.bbox = bbox;
@@ -71,7 +75,7 @@ public class WMSGetFeatureInfo {
 		}
 	}
 
-	public WMSGetFeatureInfo(String serverURL, String version, String layers, String styles, String srs, String bbox,
+	public WMSGetFeatureInfo(String serverURL, String version, String layers, String styles, String srs, String crs, String bbox,
 			int width, int height, String query_layers, int x, int y) {
 		super();
 		if (!serverURL.trim().equals("")) {
@@ -88,6 +92,9 @@ public class WMSGetFeatureInfo {
 		}
 		if (!srs.trim().equals("")) {
 			this.srs = srs;
+		}
+		if (!crs.trim().equals("")) {
+			this.crs = crs;
 		}
 		if (!bbox.trim().equals("")) {
 			this.bbox = bbox;
@@ -196,6 +203,13 @@ public class WMSGetFeatureInfo {
 	public void setInfo_format(String info_format) {
 		this.info_format = info_format;
 	}
+	public String getCrs() {
+		return crs;
+	}
+
+	public void setCrs(String crs) {
+		this.crs = crs;
+	}
 
 	public int getFeature_count() {
 		return feature_count;
@@ -253,6 +267,10 @@ public class WMSGetFeatureInfo {
 				urlBuffer.append("&");
 				urlBuffer.append("srs=" + srs);
 			}
+			if (!this.crs.equals("")) {
+				urlBuffer.append("&");
+				urlBuffer.append("crs=" + crs);
+			}
 			if (!this.info_format.equals("")) {
 				urlBuffer.append("&");
 				urlBuffer.append("info_format=" + info_format);
@@ -269,12 +287,14 @@ public class WMSGetFeatureInfo {
 				urlBuffer.append("&");
 				urlBuffer.append("exceptions=" + exceptions);
 			}
+			if(this.feature_count!=0){
+				urlBuffer.append("&");
+				urlBuffer.append("feature_count=" + feature_count);
+			}
 			urlBuffer.append("&");
 			urlBuffer.append("width=" + String.valueOf(this.width));
 			urlBuffer.append("&");
 			urlBuffer.append("height=" + String.valueOf(this.height));
-			urlBuffer.append("&");
-			urlBuffer.append("feature_count=" + String.valueOf(this.feature_count));
 			urlBuffer.append("&");
 			urlBuffer.append("x=" + String.valueOf(this.x));
 			urlBuffer.append("&");

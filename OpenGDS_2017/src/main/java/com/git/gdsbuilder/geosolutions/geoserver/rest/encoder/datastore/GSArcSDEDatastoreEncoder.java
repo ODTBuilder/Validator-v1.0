@@ -41,7 +41,7 @@ public class GSArcSDEDatastoreEncoder extends GSAbstractDatastoreEncoder {
 	static final int DEFAULT_PORT = 5151;
 	static final int DEFAULT_MIN_CONNECTIONS = 2;
 	static final int DEFAULT_MAX_CONNECTIONS = 6;
-	static final int DEFAULT_CONNECTION_TIMEOUT = 500;
+	static final int DEFAULT_CONNECTION_TIMEOUT = 5000;
 	static final boolean DEFAULT_ALLOW_NON_SPATIAL_TABLES = false;
  
     /**

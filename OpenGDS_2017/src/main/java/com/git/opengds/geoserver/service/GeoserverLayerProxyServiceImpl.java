@@ -42,6 +42,7 @@ import com.git.gdsbuilder.geoserver.service.DTGeoserverServiceManager;
 import com.git.gdsbuilder.geoserver.service.en.EnGeoserverService;
 import com.git.gdsbuilder.geoserver.service.impl.DTGeoserverServiceManagerImpl;
 import com.git.gdsbuilder.geoserver.service.wfs.WFSGetFeature;
+import com.git.gdsbuilder.geoserver.service.wms.WMSGetFeatureInfo;
 import com.git.gdsbuilder.geoserver.service.wms.WMSGetMap;
 import com.git.opengds.user.domain.UserVO;
 
@@ -267,5 +268,81 @@ public class GeoserverLayerProxyServiceImpl implements GeoserverLayerProxyServic
 			}
 		}
 		return new WFSGetFeature(serverURL, version, typeName, outputformat, maxFeatures, bbox, format_options,featureID);
+	}
+	
+	
+	@Override
+	public void requestGetFeatureInfo(UserVO userVO, HttpServletRequest request, HttpServletResponse response){
+		WMSGetFeatureInfo getFeatureInfo = this.getWMSGetFeatureInfo(userVO, request);
+		DTGeoserverServiceManager geoserverService = new DTGeoserverServiceManagerImpl(request,response);
+		geoserverService.requestWMSGetFeatureInfo(getFeatureInfo);
+	}
+	
+	private WMSGetFeatureInfo getWMSGetFeatureInfo(UserVO userVO, HttpServletRequest request){
+		String serverURL = this.URL + "/" + userVO.getId() + "/wms"; ;
+		String version = "1.0.0";
+		String layers = "";
+		String styles = "";
+		String crs = "";
+		String srs = "";
+		String bbox = "";
+		int width = 0;
+		int height = 0;
+		String query_layers = "";
+		String info_format = "application/json";
+		int feature_count = 0;
+		int x = 0;
+		int y = 0;
+		String exceptions = "application/vnd.ogc.se_xml";
+		
+		Enumeration paramNames = request.getParameterNames();
+		while (paramNames.hasMoreElements()) {
+			String key = paramNames.nextElement().toString();
+			String value = request.getParameter(key);
+			
+			if(key.toLowerCase().equals("version")){
+				version=value;
+			} 
+			else if (key.toLowerCase().equals("layers")) {
+				layers=value;
+			}
+			else if(key.toLowerCase().equals("styles")){
+				styles=value;
+			}
+			else if(key.toLowerCase().equals("crs")){
+				crs=value;
+			}
+			else if(key.toLowerCase().equals("srs")){
+				srs=value;
+			}
+			else if(key.toLowerCase().equals("bbox")){
+				bbox=value;
+			}
+			else if(key.toLowerCase().equals("width")){
+				width=Integer.parseInt(value);
+			}
+			else if(key.toLowerCase().equals("height")){
+				height=Integer.parseInt(value);
+			}
+			else if(key.toLowerCase().equals("query_layers")){
+				query_layers=value;
+			}
+			else if(key.toLowerCase().equals("info_format")){
+				info_format=value;
+			}
+			else if(key.toLowerCase().equals("feature_count")){
+				feature_count=Integer.parseInt(value);
+			}
+			else if(key.toLowerCase().equals("x")){
+				x=Integer.parseInt(value);
+			}
+			else if(key.toLowerCase().equals("y")){
+				y=Integer.parseInt(value);
+			}
+			else if(key.toLowerCase().equals("exceptions")){
+				exceptions=value;
+			}
+		}
+		return new WMSGetFeatureInfo(serverURL, version, layers, styles, srs, crs, bbox, width, height, query_layers, info_format, feature_count, x, y, exceptions);
 	}
 }
