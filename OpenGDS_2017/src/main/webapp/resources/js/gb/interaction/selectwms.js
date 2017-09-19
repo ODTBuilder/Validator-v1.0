@@ -69,6 +69,26 @@ gb.interaction.SelectWMS.prototype.handleEvent = function(evt) {
 
 			this.select_.handleEvent(evt);
 		} else if (this.layer instanceof ol.layer.Layer) {
+			var lys = [ this.destination_ ];
+			var layerFilter;
+			if (lys) {
+				if (typeof lys === 'function') {
+					layerFilter = lys;
+				} else {
+					var layers = lys;
+					layerFilter = function(layer) {
+						return ol.array.includes(lys, layer);
+					};
+				}
+			} else {
+				layerFilter = ol.functions.TRUE;
+			}
+			/**
+			 * @private
+			 * @type {function(ol.layer.Layer): boolean}
+			 */
+			this.select_.layerFilter_ = layerFilter;
+
 			this.setCoordinate(evt);
 		}
 	}
@@ -130,7 +150,7 @@ gb.interaction.SelectWMS.prototype.setExtent = function(extent) {
 			that.select_.getFeatures().clear();
 
 			that.destination_.getSource().forEachFeatureIntersectingExtent(extent, function(feature) {
-				if (!that.record.isRemoved(that.layer, feature)) {
+				if (feature.getId().indexOf(that.layer.get("id")) !== -1 && !that.record.isRemoved(that.layer, feature)) {
 					that.select_.getFeatures().push(feature);
 				}
 			});
@@ -258,11 +278,21 @@ gb.interaction.SelectWMS.prototype.getFeatureAJAX = function(url) {
 			}
 			that.destination_.getSource().addFeatures(features);
 			that.destination_.setMap(that.map_);
+
+			console.log(that.select_.getFeatures());
+			var vf = that.select_.getFeatures();
+			for (var i = 0; i < vf.getLength(); i++) {
+				if (vf.item(i).getId().indexOf(that.layer.get("id")) !== -1) {
+					ids.push(vf.item(i).getId());
+				}
+			}
 			that.select_.getFeatures().clear();
 
 			for (var i = 0; i < ids.length; i++) {
 				var f = that.destination_.getSource().getFeatureById(ids[i]);
-				that.select_.getFeatures().push(f);
+				if (f.getId().indexOf(that.layer.get("id")) !== -1 && !that.record.isRemoved(that.layer, f)) {
+					that.select_.getFeatures().push(f);
+				}
 			}
 		}
 	});
