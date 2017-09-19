@@ -621,14 +621,12 @@ gb.panel.EditingTool.prototype.select = function(layer) {
 						}
 						that.count++;
 					}, 500);
-					console.log("in");
 				}).mouseleave(function() {
 					var fid = $(this).find("a").attr("value");
 					var feature = that.tempSelectSource.getFeatureById(fid);
 					that.count = 1;
 					clearInterval(that.interval);
 					feature.setStyle(undefined);
-					console.log("out");
 				});
 				$(that.featureTB).append(tr);
 			}
@@ -820,7 +818,11 @@ gb.panel.EditingTool.prototype.draw = function(layer) {
 			source : this.snapSource
 		});
 		this.interaction.draw.selectedType = function() {
-			var irreGeom = that.updateSelected().get("git").geometry;
+			var layer = that.updateSelected();
+			if (!layer) {
+				return;
+			}
+			var irreGeom = layer.get("git").geometry;
 			var geom;
 			switch (irreGeom) {
 			case "Polyline":
@@ -889,7 +891,12 @@ gb.panel.EditingTool.prototype.draw = function(layer) {
 			source : this.snapSource
 		});
 		this.interaction.draw.selectedType = function() {
-			return that.updateSelected().get("git").geometry;
+			var result = false;
+			var layer = that.updateSelected();
+			if (layer) {
+				result = layer.get("git").geometry;
+			}
+			return result;
 		};
 		this.interaction.draw.on("drawend", function(evt) {
 			console.log(evt);

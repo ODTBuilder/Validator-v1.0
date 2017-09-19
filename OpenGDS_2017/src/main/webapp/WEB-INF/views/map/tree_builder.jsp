@@ -292,7 +292,9 @@ html {
 			},
 			addRemoveHistoryList : function(layer, arr) {
 				if (layer instanceof ol.layer.Group) {
-					arr.push(layer.get("id"));
+					if (layer.get("id")) {
+						arr.push(layer.get("id"));	
+					}
 					var layers = layer.getLayers();
 					for (var i = 0; i < layers.getLength(); i++) {
 						gitrnd.addRemoveHistoryList(layers.item(i), arr);
@@ -329,6 +331,8 @@ html {
 					}
 				} else if (clayer instanceof ol.layer.Tile) {
 					arr.push(clayer);
+				} else if (clayer instanceof ol.layer.Vector) {
+					
 				} else if (clayer instanceof ol.layer.Base) {
 					var cnode = $('#builderClientLayer').jstreeol3(true).get_node(node);
 					var parent = cnode.parent;
@@ -544,9 +548,7 @@ html {
 			}
 		});
 
-		$("#layerDefinition").layerdefinition20({
-
-		});
+		$("#layerDefinition").layerdefinition20({});
 
 		$("#validDefinition").optiondefinition({
 			layerDefinition : function() {

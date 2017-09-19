@@ -513,6 +513,7 @@ gitbuilder.ui.Validation = $.widget("gitbuilder.validation", {
 
 		var typeValidate = [];
 		for (var i = 0; i < lkeys.length; i++) {
+// console.log(lkeys[i]);
 			if (!ldef[lkeys[i]].hasOwnProperty("area")) {
 				console.error(lkeys[i]+"레이어의 검수영역이 없음");
 			}
