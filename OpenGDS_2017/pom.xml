@@ -12,7 +12,7 @@
 		<org.springframework-version>3.1.1.RELEASE</org.springframework-version>
 		<org.aspectj-version>1.6.10</org.aspectj-version>
 		<org.slf4j-version>1.7.7</org.slf4j-version>
-		<geotools.version>15.1</geotools.version>
+		<geotools.version>16.5</geotools.version>
 	</properties>
 
 	<!-- repository 추가 -->
@@ -254,7 +254,7 @@
 		   <artifactId>gt-wfs</artifactId>
 		   <version>${geotools.version}</version>
 		 </dependency>
-		<!-- <dependency>
+	<!-- 	<dependency>
 		    <groupId>org.geotools</groupId>
 		    <artifactId>gt-wfs-ng</artifactId>
 		    <version>${geotools.version}</version>
