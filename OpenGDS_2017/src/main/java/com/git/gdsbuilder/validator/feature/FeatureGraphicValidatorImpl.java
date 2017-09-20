@@ -504,7 +504,8 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 			}
 			if (typeJ.equals("Polygon") || typeJ.equals("MultiPolygon")) {
 				if (!geometryI.equals(geometryJ)) {
-					if (geometryI.overlaps(geometryJ) || geometryI.within(geometryJ) || geometryI.contains(geometryJ)) {
+					if (geometryI.intersects(geometryJ) || geometryI.overlaps(geometryJ) || geometryI.within(geometryJ)
+							|| geometryI.contains(geometryJ)) {
 						Geometry geometry = geometryI.intersection(geometryJ);
 						String upperType = geometry.getGeometryType().toUpperCase();
 						if (upperType.equals("POLYGON") || upperType.equals("MULTIPOLYGON")) {
@@ -1206,18 +1207,19 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 		String featureID = (String) featureIDPro.getValue();
 		SimpleFeatureIterator relationSfcIterator = relationSfc.features();
 
-		Geometry bufferGeom = geometry.buffer(lineInvadedTolorence);
+		System.out.println(featureID);
 
+	//	Geometry bufferGeom = geometry.buffer(lineInvadedTolorence);
 		boolean isTrue = false;
 		while (relationSfcIterator.hasNext()) {
 			SimpleFeature relationSimpleFeature = relationSfcIterator.next();
 			Geometry relationGeometry = (Geometry) relationSimpleFeature.getDefaultGeometry();
-			if (geometry.intersects(relationGeometry)) {
-				if (bufferGeom.contains(relationGeometry) || relationGeometry.within(bufferGeom)) {
+		//	if (geometry.intersects(relationGeometry)) {
+				if (geometry.contains(relationGeometry) || relationGeometry.within(geometry)) {
 					isTrue = true;
 					break;
 				}
-			}
+		//	}
 		}
 		if (!isTrue) {
 			// error
@@ -1258,7 +1260,8 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 		return null;
 	}
 
-	public List<ErrorFeature> validateEntityInHole(SimpleFeature simpleFeature, SimpleFeatureCollection relationSfc) {
+	public List<ErrorFeature> validateEntityInHole(SimpleFeature simpleFeature, SimpleFeatureCollection relationSfc,
+			boolean isEquals) {
 
 		List<ErrorFeature> errorFeatures = new ArrayList<ErrorFeature>();
 		GeometryFactory geometryFactory = new GeometryFactory();
@@ -1289,12 +1292,23 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 							continue;
 						}
 						Geometry relationGeometry = (Geometry) relationSimpleFeature.getDefaultGeometry();
-						if (interiorPolygon.equals(relationGeometry) || interiorPolygon.intersects(relationGeometry)) {
-							// error
-							ErrorFeature errorFeature = new ErrorFeature(featureIdxR, featureIDR,
-									EntityInHole.Type.ENTITYINHOLE.errType(), EntityInHole.Type.ENTITYINHOLE.errName(),
-									interiorPolygon.getInteriorPoint());
-							errorFeatures.add(errorFeature);
+						if (isEquals) {
+							if (interiorPolygon.equals(relationGeometry)
+									|| interiorPolygon.intersects(relationGeometry)) {
+								// error
+								ErrorFeature errorFeature = new ErrorFeature(featureIdxR, featureIDR,
+										EntityInHole.Type.ENTITYINHOLE.errType(),
+										EntityInHole.Type.ENTITYINHOLE.errName(), interiorPolygon.getInteriorPoint());
+								errorFeatures.add(errorFeature);
+							}
+						} else {
+							if (interiorPolygon.equals(relationGeometry)) {
+								// error
+								ErrorFeature errorFeature = new ErrorFeature(featureIdxR, featureIDR,
+										EntityInHole.Type.ENTITYINHOLE.errType(),
+										EntityInHole.Type.ENTITYINHOLE.errName(), interiorPolygon.getInteriorPoint());
+								errorFeatures.add(errorFeature);
+							}
 						}
 					}
 				}
@@ -1306,66 +1320,68 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 	public List<ErrorFeature> validateLinearDisconnection(SimpleFeature simpleFeature,
 			SimpleFeatureCollection relationSfc) {
 
-//		// simpleFeature - 도로 중심선, relation - 도로경계
-//		List<ErrorFeature> errorFeatures = new ArrayList<ErrorFeature>();
-//		GeometryFactory geometryFactory = new GeometryFactory();
-//
-//		// 도로중심선
-//		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
-//		boolean isTrue1 = false;
-//		boolean isTrue2 = false;
-//
-//		Coordinate[] geomCoors = geometry.getCoordinates();
-//		Point firPt = geometryFactory.createPoint(geomCoors[0]);
-//		Point lastPt = geometryFactory.createPoint(geomCoors[geomCoors.length - 1]);
-//
-//		SimpleFeatureIterator iterator = relationSfc.features();
-//		while (iterator.hasNext()) {
-//			// 도로경계
-//			SimpleFeature relationSimpleFeature = iterator.next();
-//			Geometry relationGeom = (Geometry) relationSimpleFeature.getDefaultGeometry();
-//			Geometry relationBoundary = relationGeom.getBoundary();
-//
-//			Geometry intersectedGeom = geometry.intersection(relationBoundary);
-//			if (intersectedGeom.isEmpty()) {
-//				continue;
-//			} else {
-//				int size = intersectedGeom.getNumPoints();
-//				if (size != 2) {
-//					isTrue1 = true;
-//					isTrue2 = true;
-//					continue;
-//				} else {
-//					Coordinate[] interCoors = intersectedGeom.getCoordinates();
-//					for (int i = 0; i < interCoors.length; i++) {
-//						Point interPt = geometryFactory.createPoint(interCoors[i]);
-//						if (Math.abs(firPt.distance(interPt)) < 0.2) {
-//							isTrue1 = true;
-//						}
-//						if (Math.abs(lastPt.distance(interPt)) < 0.2) {
-//							isTrue2 = true;
-//						}
-//					}
-//				}
-//			}
-//		}
-//		String featureIdx = simpleFeature.getID();
-//		Property featureIDPro = simpleFeature.getProperty("feature_id");
-//		String featureID = (String) featureIDPro.getValue();
-//		if (!isTrue1) {
-//			ErrorFeature errorFeature = new ErrorFeature(featureIdx, featureID,
-//					LinearDisconnection.Type.LINEARDISCONNECTION.errType(),
-//					LinearDisconnection.Type.LINEARDISCONNECTION.errName(), firPt);
-//			errorFeatures.add(errorFeature);
-//		}
-//		if (!isTrue2) {
-//			ErrorFeature errorFeature = new ErrorFeature(featureIdx, featureID,
-//					LinearDisconnection.Type.LINEARDISCONNECTION.errType(),
-//					LinearDisconnection.Type.LINEARDISCONNECTION.errName(), lastPt);
-//			errorFeatures.add(errorFeature);
-//		}
-//		return errorFeatures;
-		
+		// // simpleFeature - 도로 중심선, relation - 도로경계
+		// List<ErrorFeature> errorFeatures = new ArrayList<ErrorFeature>();
+		// GeometryFactory geometryFactory = new GeometryFactory();
+		//
+		// // 도로중심선
+		// Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
+		// boolean isTrue1 = false;
+		// boolean isTrue2 = false;
+		//
+		// Coordinate[] geomCoors = geometry.getCoordinates();
+		// Point firPt = geometryFactory.createPoint(geomCoors[0]);
+		// Point lastPt = geometryFactory.createPoint(geomCoors[geomCoors.length
+		// - 1]);
+		//
+		// SimpleFeatureIterator iterator = relationSfc.features();
+		// while (iterator.hasNext()) {
+		// // 도로경계
+		// SimpleFeature relationSimpleFeature = iterator.next();
+		// Geometry relationGeom = (Geometry)
+		// relationSimpleFeature.getDefaultGeometry();
+		// Geometry relationBoundary = relationGeom.getBoundary();
+		//
+		// Geometry intersectedGeom = geometry.intersection(relationBoundary);
+		// if (intersectedGeom.isEmpty()) {
+		// continue;
+		// } else {
+		// int size = intersectedGeom.getNumPoints();
+		// if (size != 2) {
+		// isTrue1 = true;
+		// isTrue2 = true;
+		// continue;
+		// } else {
+		// Coordinate[] interCoors = intersectedGeom.getCoordinates();
+		// for (int i = 0; i < interCoors.length; i++) {
+		// Point interPt = geometryFactory.createPoint(interCoors[i]);
+		// if (Math.abs(firPt.distance(interPt)) < 0.2) {
+		// isTrue1 = true;
+		// }
+		// if (Math.abs(lastPt.distance(interPt)) < 0.2) {
+		// isTrue2 = true;
+		// }
+		// }
+		// }
+		// }
+		// }
+		// String featureIdx = simpleFeature.getID();
+		// Property featureIDPro = simpleFeature.getProperty("feature_id");
+		// String featureID = (String) featureIDPro.getValue();
+		// if (!isTrue1) {
+		// ErrorFeature errorFeature = new ErrorFeature(featureIdx, featureID,
+		// LinearDisconnection.Type.LINEARDISCONNECTION.errType(),
+		// LinearDisconnection.Type.LINEARDISCONNECTION.errName(), firPt);
+		// errorFeatures.add(errorFeature);
+		// }
+		// if (!isTrue2) {
+		// ErrorFeature errorFeature = new ErrorFeature(featureIdx, featureID,
+		// LinearDisconnection.Type.LINEARDISCONNECTION.errType(),
+		// LinearDisconnection.Type.LINEARDISCONNECTION.errName(), lastPt);
+		// errorFeatures.add(errorFeature);
+		// }
+		// return errorFeatures;
+
 		GeometryFactory geometryFactory = new GeometryFactory();
 		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
 		SimpleFeatureIterator simpleFeatureIterator = relationSfc.features();

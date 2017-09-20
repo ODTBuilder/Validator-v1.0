@@ -51,7 +51,11 @@ public class ErrorReportController extends AbstractController {
 		
 		JSONObject geoObj =  (JSONObject) JSONValue.parse(geo);
 		JSONObject json = errReportService.getDetailsReport(generalUser, (String) geoObj.get("errorLayer"));
-		String str = json.toJSONString();
-		return str;
+		if(json != null) {
+			String str = json.toJSONString();
+			return str;
+		} else {
+			return null;
+		}
 	}
 }

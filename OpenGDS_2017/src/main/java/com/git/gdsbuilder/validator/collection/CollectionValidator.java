@@ -37,7 +37,6 @@ package com.git.gdsbuilder.validator.collection;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -57,11 +56,6 @@ import org.opengis.referencing.operation.TransformException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.git.gdsbuilder.geosolutions.geoserver.rest.decoder.RESTFeatureType;
-import com.git.gdsbuilder.geosolutions.geoserver.rest.decoder.RESTLayer;
-import com.git.gdsbuilder.geosolutions.geoserver.rest.encoder.GSLayerEncoder;
-import com.git.gdsbuilder.geosolutions.geoserver.rest.encoder.GSResourceEncoder.ProjectionPolicy;
-import com.git.gdsbuilder.geosolutions.geoserver.rest.encoder.feature.GSFeatureTypeEncoder;
 import com.git.gdsbuilder.type.geoserver.collection.GeoLayerCollection;
 import com.git.gdsbuilder.type.geoserver.layer.GeoLayer;
 import com.git.gdsbuilder.type.geoserver.layer.GeoLayerList;
@@ -407,7 +401,7 @@ public class CollectionValidator {
 							attResult.mergeErrorLayer(typeErrorLayer);
 						}
 					}
-					
+
 					if (option instanceof UFIDDuplicated) {
 						typeErrorLayer = layerValidator.validateUFIDDuplicated();
 						if (typeErrorLayer != null) {
@@ -472,10 +466,14 @@ public class CollectionValidator {
 
 			@Override
 			public void run() {
+
 				ErrorLayer typeErrorLayer = null;
 				LayerValidatorImpl layerValidator = new LayerValidatorImpl(typeLayer);
 
 				String layerFullName = typeLayer.getLayerName();
+				
+				System.out.println(layerFullName);
+				
 				int dash = layerFullName.indexOf("_");
 				String layerType = layerFullName.substring(dash + 1);
 				String upperLayerType = layerType.toUpperCase();
@@ -484,7 +482,6 @@ public class CollectionValidator {
 				for (int k = 0; k < options.size(); k++) {
 					ValidatorOption option = options.get(k);
 
-					
 					if (option instanceof TwistedPolygon) {
 						// twistedFeature
 						try {
@@ -758,8 +755,8 @@ public class CollectionValidator {
 					if (option instanceof CemeterySite) {
 						List<String> relationNames = ((CemeterySite) option).getRelationType();
 						for (int j = 0; j < relationNames.size(); j++) {
-							typeErrorLayer = layerValidator.validateCemeterySite(
-									types.getTypeLayers(relationNames.get(j), layerCollection));
+							typeErrorLayer = layerValidator
+									.validateCemeterySite(types.getTypeLayers(relationNames.get(j), layerCollection));
 							if (typeErrorLayer != null) {
 								geometricResult.mergeErrorLayer(typeErrorLayer);
 							}
@@ -773,15 +770,14 @@ public class CollectionValidator {
 						JSONObject attrJson = (JSONObject) attributeNames.get(typeLayerName);
 
 						for (int j = 0; j < relationNames.size(); j++) {
-							List<GeoLayer> relationName = types.getTypeLayers(relationNames.get(j),
-									layerCollection);
+							List<GeoLayer> relationName = types.getTypeLayers(relationNames.get(j), layerCollection);
 							typeErrorLayer = layerValidator.validateBuildingSiteDager(attrJson, relationName);
 						}
 						if (typeErrorLayer != null) {
 							geometricResult.mergeErrorLayer(typeErrorLayer);
 						}
 					}
-					
+
 					if (option instanceof BuildingSiteRelaxation) {
 						HashMap<String, Object> attributeNames = ((BuildingSiteRelaxation) option).getAttributeKey();
 						List<String> relationNames = ((BuildingSiteRelaxation) option).getRelationType();
@@ -789,8 +785,7 @@ public class CollectionValidator {
 						JSONObject attrJson = (JSONObject) attributeNames.get(typeLayerName);
 
 						for (int j = 0; j < relationNames.size(); j++) {
-							List<GeoLayer> relationName = types.getTypeLayers(relationNames.get(j),
-									layerCollection);
+							List<GeoLayer> relationName = types.getTypeLayers(relationNames.get(j), layerCollection);
 							typeErrorLayer = layerValidator.validateBuildingSiteRelaxation(attrJson, relationName);
 						}
 						if (typeErrorLayer != null) {
@@ -810,15 +805,14 @@ public class CollectionValidator {
 					}
 
 					if (option instanceof CenterLineMiss) {
-//						List<String> relationNames = ((CenterLineMiss) option).getRelationType();
-//						for (int j = 0; j < relationNames.size(); j++) {
-//							typeErrorLayer = layerValidator.validateCenterLineMiss(
-//									types.getTypeLayers(relationNames.get(j), layerCollection),
-//									lineInvadedTolorence);
-//							if (typeErrorLayer != null) {
-//								errorLayer.mergeErrorLayer(typeErrorLayer);
-//							}
-//						}
+						List<String> relationNames = ((CenterLineMiss) option).getRelationType();
+						for (int j = 0; j < relationNames.size(); j++) {
+							typeErrorLayer = layerValidator.validateCenterLineMiss(
+									types.getTypeLayers(relationNames.get(j), layerCollection), lineInvadedTolorence);
+							if (typeErrorLayer != null) {
+								errorLayer.mergeErrorLayer(typeErrorLayer);
+							}
+						}
 					}
 
 					if (option instanceof HoleMisplacement) {
@@ -831,8 +825,8 @@ public class CollectionValidator {
 					if (option instanceof EntityInHole) {
 						List<String> relationNames = ((EntityInHole) option).getRelationType();
 						for (int j = 0; j < relationNames.size(); j++) {
-							typeErrorLayer = layerValidator.validateEntityInHole(
-									types.getTypeLayers(relationNames.get(j), layerCollection));
+							typeErrorLayer = layerValidator
+									.validateEntityInHole(types.getTypeLayers(relationNames.get(j), layerCollection));
 							if (typeErrorLayer != null) {
 								geometricResult.mergeErrorLayer(typeErrorLayer);
 							}
@@ -863,7 +857,8 @@ public class CollectionValidator {
 					}
 				}
 			}
-		};
+		}
+		;
 
 		List<Future<GeometricResult>> futures = new ArrayList<Future<GeometricResult>>();
 		for (int i = 0; i < types.size(); i++) {
@@ -938,7 +933,6 @@ public class CollectionValidator {
 		// TODO Auto-generated method stub
 		String geomCol = "geom"; // 임시선언 geometry 컬럼
 
-
 		if (layerCollection != null) {
 			SimpleFeatureCollection neatLineCollection = layerCollection.getNeatLine().getSimpleFeatureCollection();
 			SimpleFeatureIterator featureIterator = neatLineCollection.features();
@@ -949,7 +943,8 @@ public class CollectionValidator {
 			GeoLayerCollection leftGeoCollection = null;
 			GeoLayerCollection rightGeoCollection = null;
 
-			// GeoLayerCollectionList collectionList = this.getLayerCollectionList();
+			// GeoLayerCollectionList collectionList =
+			// this.getLayerCollectionList();
 			List<GeoLayerCollection> collectionList = this.nearCollections;
 
 			if (collectionList != null) {
@@ -1058,12 +1053,9 @@ public class CollectionValidator {
 			nearFeaturesGetBoundary.put(MapSystemRuleType.LEFT, leftBuffer);
 			nearFeaturesGetBoundary.put(MapSystemRuleType.RIGHT, rightBuffer);
 
-			
-			
 			ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 			CloseCollectionResult closeCollectionResult = new CloseCollectionResult();
-			
-			
+
 			class Task implements Runnable {
 				CloseCollectionResult closeCollectionResult;
 				GeoLayer geoLayer;
@@ -1078,9 +1070,12 @@ public class CollectionValidator {
 				Map<MapSystemRuleType, Polygon> targetFeaturesGetBoundary;
 				Map<MapSystemRuleType, Polygon> nearFeaturesGetBoundary;
 
-				Task(CloseCollectionResult closeCollectionResult,List<ValidatorOption> options, GeoLayer geoLayer,double tolorence,
-						Map<MapSystemRuleType, LineString> collectionBoundary,Map<MapSystemRuleType, Polygon> targetFeaturesGetBoundary,Map<MapSystemRuleType, Polygon> nearFeaturesGetBoundary,
-						GeoLayerCollection topGeoCollection, GeoLayerCollection bottomGeoCollection, GeoLayerCollection leftGeoCollection, GeoLayerCollection rightGeoCollection) {
+				Task(CloseCollectionResult closeCollectionResult, List<ValidatorOption> options, GeoLayer geoLayer,
+						double tolorence, Map<MapSystemRuleType, LineString> collectionBoundary,
+						Map<MapSystemRuleType, Polygon> targetFeaturesGetBoundary,
+						Map<MapSystemRuleType, Polygon> nearFeaturesGetBoundary, GeoLayerCollection topGeoCollection,
+						GeoLayerCollection bottomGeoCollection, GeoLayerCollection leftGeoCollection,
+						GeoLayerCollection rightGeoCollection) {
 					this.closeCollectionResult = closeCollectionResult;
 					this.geoLayer = geoLayer;
 					this.options = options;
@@ -1121,8 +1116,7 @@ public class CollectionValidator {
 								collectionOptions.putRefAttributeMissOption(colunms);
 							}
 							if (option instanceof RefZValueMiss) {
-								HashMap<String, List<String>> opts = ((RefZValueMiss) option)
-										.getRefZValueMissOpts();
+								HashMap<String, List<String>> opts = ((RefZValueMiss) option).getRefZValueMissOpts();
 								List<String> colunms = opts.get(layerName);
 								collectionOptions.putRefZValueMissOption(colunms);
 							}
@@ -1152,9 +1146,9 @@ public class CollectionValidator {
 							collctionMap.put(MapSystemRuleType.RIGHT, rightLayer);
 						}
 
-						ValidateCloseCollectionLayer closeCollectionLayer = new ValidateCloseCollectionLayer(
-								geoLayer, collctionMap, tolorence, collectionOptions,
-								collectionBoundary, targetFeaturesGetBoundary, nearFeaturesGetBoundary);
+						ValidateCloseCollectionLayer closeCollectionLayer = new ValidateCloseCollectionLayer(geoLayer,
+								collctionMap, tolorence, collectionOptions, collectionBoundary,
+								targetFeaturesGetBoundary, nearFeaturesGetBoundary);
 
 						typeErrorLayer = layerValidator.validateCloseCollection(closeCollectionLayer, geomCol);
 						if (typeErrorLayer != null) {
@@ -1162,8 +1156,9 @@ public class CollectionValidator {
 						}
 					}
 				}
-			};
-			
+			}
+			;
+
 			List<Future<CloseCollectionResult>> futures = new ArrayList<Future<CloseCollectionResult>>();
 			for (ValidateLayerType layerType : types) {
 				GeoLayerList typeLayers = types.getTypeLayers(layerType.getTypeName(), layerCollection);
@@ -1171,11 +1166,12 @@ public class CollectionValidator {
 				if (options != null) {
 					for (GeoLayer geoLayer : typeLayers) {
 						if (geoLayer != null) {
-							Runnable task = new Task(closeCollectionResult,options,geoLayer,spatialAccuracyTolorence,collectionBoundary,
-									targetFeaturesGetBoundary,nearFeaturesGetBoundary,topGeoCollection,bottomGeoCollection,leftGeoCollection,rightGeoCollection);
+							Runnable task = new Task(closeCollectionResult, options, geoLayer, spatialAccuracyTolorence,
+									collectionBoundary, targetFeaturesGetBoundary, nearFeaturesGetBoundary,
+									topGeoCollection, bottomGeoCollection, leftGeoCollection, rightGeoCollection);
 
 							Future<CloseCollectionResult> future = executorService.submit(task, closeCollectionResult);
-							
+
 							futures.add(future);
 						}
 					}
@@ -1271,7 +1267,7 @@ class GeometricResult {
  * @author SG.Lee
  * @Date 2017. 9. 6. 오후 3:09:38
  */
-class CloseCollectionResult{
+class CloseCollectionResult {
 	ErrorLayer treadErrorLayer = new ErrorLayer();
 
 	synchronized void mergeErrorLayer(ErrorLayer typeErrorLayer) {

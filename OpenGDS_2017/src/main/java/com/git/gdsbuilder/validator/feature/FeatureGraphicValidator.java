@@ -37,7 +37,6 @@ package com.git.gdsbuilder.validator.feature;
 import java.util.List;
 
 import org.geotools.data.simple.SimpleFeatureCollection;
-import org.geotools.data.simple.SimpleFeatureIterator;
 import org.geotools.feature.SchemaException;
 import org.json.simple.JSONObject;
 import org.opengis.feature.simple.SimpleFeature;
@@ -45,7 +44,6 @@ import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.operation.TransformException;
 
-import com.git.gdsbuilder.type.geoserver.layer.GeoLayer;
 import com.git.gdsbuilder.type.validate.error.ErrorFeature;
 
 /**
@@ -258,8 +256,11 @@ public interface FeatureGraphicValidator {
 	 * 검수 항목 중 "홀 내부 객체 오류(EntityInHole)" 검수 @author JY.Kim @Date 2017. 8. 22.
 	 * 오전 11:01:35 @param simpleFeature @param relationSfc @return
 	 * List<ErrorFeature> @throws
+	 * 
+	 * @param isEquals
 	 */
-	public List<ErrorFeature> validateEntityInHole(SimpleFeature simpleFeature, SimpleFeatureCollection relationSfc);
+	public List<ErrorFeature> validateEntityInHole(SimpleFeature simpleFeature, SimpleFeatureCollection relationSfc,
+			boolean isEquals);
 
 	/**
 	 * 검수 항목 중 "선형단락 오류(LinearDisconnection)" 검수 @author JY.Kim @Date 2017. 8.

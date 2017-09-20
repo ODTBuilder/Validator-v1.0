@@ -535,6 +535,8 @@ gitbuilder.ui.Validation = $.widget("gitbuilder.validation", {
 			var tLayers = [];
 			var codes = ldef[lkeys[i]].code;
 			for (var j = 0; j < codes.length; j++) {
+				console.log(lkeys[i]);
+				console.log(ldef[lkeys[i]]);
 				var name = codes[j] + "_" + (ldef[lkeys[i]].geom.toUpperCase());
 				tLayers.push(name);
 			}
