@@ -26,6 +26,7 @@ import org.json.simple.JSONObject;
 
 import com.git.gdsbuilder.geolayer.data.DTGeoGroupLayerList;
 import com.git.gdsbuilder.geolayer.data.DTGeoLayerList;
+import com.git.gdsbuilder.geoserver.data.GeoserverLayerCollectionTree.TreeType;
 import com.git.gdsbuilder.type.geoserver.layer.GeoLayerInfo;
 import com.git.gdsbuilder.type.geoserver.layer.GeoLayerInfoList;
 import com.git.opengds.upload.domain.FileMeta;
@@ -68,7 +69,7 @@ public interface GeoserverService {
 	 * @Date 2017. 4. 10. 오후 3:17:23
 	 * @return JSONObject - Tree 형태의 GeoaerverLayerCollection JSONObject 객체 반환
 	 * */
-	public JSONArray getGeoserverLayerCollectionTree(UserVO userVO);
+	public JSONArray getGeoserverLayerCollectionTree(UserVO userVO, TreeType treeType);
 	
 	/**
 	 * 레이어를 중복체크한다.

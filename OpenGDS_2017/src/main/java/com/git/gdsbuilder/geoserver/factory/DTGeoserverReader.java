@@ -54,6 +54,7 @@ import com.git.gdsbuilder.geolayer.data.DTGeoGroupLayerList;
 import com.git.gdsbuilder.geolayer.data.DTGeoLayer;
 import com.git.gdsbuilder.geolayer.data.DTGeoLayerList;
 import com.git.gdsbuilder.geoserver.data.GeoserverLayerCollectionTree;
+import com.git.gdsbuilder.geoserver.data.GeoserverLayerCollectionTree.TreeType;
 import com.git.gdsbuilder.geosolutions.geoserver.rest.GeoServerRESTReader;
 import com.git.gdsbuilder.geosolutions.geoserver.rest.HTTPUtils;
 import com.git.gdsbuilder.geosolutions.geoserver.rest.decoder.RESTFeatureTypeList;
@@ -151,13 +152,13 @@ public class DTGeoserverReader extends GeoServerRESTReader {
 		return groupLayerList;
 	};
 	
-	public GeoserverLayerCollectionTree getGeoserverLayerCollectionTree(String workspace){
+	public GeoserverLayerCollectionTree getGeoserverLayerCollectionTree(String workspace, TreeType treeType){
 		if(workspace ==null || workspace.isEmpty()){
 			throw new IllegalArgumentException("Workspace may not be null");
 		}
 		RESTFeatureTypeList typeList = super.getFeatureTypes(workspace);
 		GeoserverLayerCollectionTree collectionTree = null;
-		collectionTree = new GeoserverLayerCollectionTree(typeList);
+		collectionTree = new GeoserverLayerCollectionTree(typeList,treeType);
 		return collectionTree;
 	}
 	

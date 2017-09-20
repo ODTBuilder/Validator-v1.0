@@ -810,15 +810,15 @@ public class CollectionValidator {
 					}
 
 					if (option instanceof CenterLineMiss) {
-//						List<String> relationNames = ((CenterLineMiss) option).getRelationType();
-//						for (int j = 0; j < relationNames.size(); j++) {
-//							typeErrorLayer = layerValidator.validateCenterLineMiss(
-//									types.getTypeLayers(relationNames.get(j), layerCollection),
-//									lineInvadedTolorence);
-//							if (typeErrorLayer != null) {
-//								errorLayer.mergeErrorLayer(typeErrorLayer);
-//							}
-//						}
+						/*List<String> relationNames = ((CenterLineMiss) option).getRelationType();
+						for (int j = 0; j < relationNames.size(); j++) {
+							typeErrorLayer = layerValidator.validateCenterLineMiss(
+									types.getTypeLayers(relationNames.get(j), layerCollection),
+									lineInvadedTolorence);
+							if (typeErrorLayer != null) {
+								errorLayer.mergeErrorLayer(typeErrorLayer);
+							}
+						}*/
 					}
 
 					if (option instanceof HoleMisplacement) {

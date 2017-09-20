@@ -36,6 +36,7 @@ import com.git.gdsbuilder.geolayer.data.DTGeoGroupLayer;
 import com.git.gdsbuilder.geolayer.data.DTGeoGroupLayerList;
 import com.git.gdsbuilder.geolayer.data.DTGeoLayerList;
 import com.git.gdsbuilder.geoserver.data.GeoserverLayerCollectionTree;
+import com.git.gdsbuilder.geoserver.data.GeoserverLayerCollectionTree.TreeType;
 import com.git.gdsbuilder.geoserver.factory.DTGeoserverPublisher;
 import com.git.gdsbuilder.geoserver.factory.DTGeoserverReader;
 import com.git.gdsbuilder.geosolutions.geoserver.rest.decoder.RESTFeatureType;
@@ -517,8 +518,8 @@ public class GeoserverServiceImpl implements GeoserverService {
 	 * @see com.git.opengds.geoserver.service.GeoserverService#getGeoserverLayerCollectionTree()
 	 */
 	@Override
-	public JSONArray getGeoserverLayerCollectionTree(UserVO userVO) {
-		GeoserverLayerCollectionTree collectionTree = dtReader.getGeoserverLayerCollectionTree(userVO.getId());
+	public JSONArray getGeoserverLayerCollectionTree(UserVO userVO, TreeType treeType) {
+		GeoserverLayerCollectionTree collectionTree = dtReader.getGeoserverLayerCollectionTree(userVO.getId(),treeType);
 		return collectionTree;
 	}
 
