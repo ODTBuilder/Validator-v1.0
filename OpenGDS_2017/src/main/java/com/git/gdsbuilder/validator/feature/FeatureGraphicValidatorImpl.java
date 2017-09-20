@@ -1175,7 +1175,7 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 							RiverBoundaryMiss.Type.RIVERBOUNDARYMISS.errName(), geometry.getInteriorPoint());
 					errorFeatures.add(errorFeature);
 				} else {
-					if (geometry.overlaps(intersectionGeom)) {
+					if (geometry.buffer(0.01).overlaps(intersectionGeom)) {
 						// err
 						ErrorFeature errorFeature = new ErrorFeature(featureIdx, featureID,
 								RiverBoundaryMiss.Type.RIVERBOUNDARYMISS.errType(),
@@ -1209,17 +1209,18 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 
 		System.out.println(featureID);
 
-	//	Geometry bufferGeom = geometry.buffer(lineInvadedTolorence);
+		Geometry bufferGeom = geometry.buffer(lineInvadedTolorence);
 		boolean isTrue = false;
 		while (relationSfcIterator.hasNext()) {
 			SimpleFeature relationSimpleFeature = relationSfcIterator.next();
 			Geometry relationGeometry = (Geometry) relationSimpleFeature.getDefaultGeometry();
-		//	if (geometry.intersects(relationGeometry)) {
-				if (geometry.contains(relationGeometry) || relationGeometry.within(geometry)) {
-					isTrue = true;
-					break;
-				}
-		//	}
+			if (geometry.intersects(relationGeometry)) {
+				// if (bufferGeom.contains(relationGeometry) ||
+				// relationGeometry.within(bufferGeom)) {
+				isTrue = true;
+				break;
+				// }
+			}
 		}
 		if (!isTrue) {
 			// error

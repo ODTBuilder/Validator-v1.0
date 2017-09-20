@@ -37,37 +37,40 @@ public class SHPDBQueryManager {
 
 		List<String> attriKeyList = new ArrayList<>();
 		SimpleFeatureCollection featureCollection = shpLayer.getSimpleFeatureCollection();
-		SimpleFeatureType sft = featureCollection.getSchema();
-		List<AttributeDescriptor> attriDescriptros = sft.getAttributeDescriptors();
-		for (int j = 0; j < attriDescriptros.size(); j++) {
-			AttributeDescriptor attriDescriptor = attriDescriptros.get(j);
-			String attriName = attriDescriptor.getName().toString();
-			if (attriName.equals("the_geom")) {
-				continue;
-			} else {
-				defalutCreateQuery += attriName;
-				AttributeType attriType = attriDescriptor.getType();
-				String typeName = attriType.getBinding().getSimpleName();
-				if (typeName.equals("String")) {
-					defalutCreateQuery += " varchar(100), ";
-				} else if (typeName.equals("int")) {
-					defalutCreateQuery += " int, ";
-				} else if (typeName.equals("Double")) {
-					defalutCreateQuery += " double precision, ";
-				} else if (typeName.equals("Long")) {
-					defalutCreateQuery += " int, ";
+
+		HashMap<String, Object> returnMap = new HashMap<String, Object>();
+		if (featureCollection != null) {
+			SimpleFeatureType sft = featureCollection.getSchema();
+			List<AttributeDescriptor> attriDescriptros = sft.getAttributeDescriptors();
+			for (int j = 0; j < attriDescriptros.size(); j++) {
+				AttributeDescriptor attriDescriptor = attriDescriptros.get(j);
+				String attriName = attriDescriptor.getName().toString();
+				if (attriName.equals("the_geom")) {
+					continue;
+				} else {
+					defalutCreateQuery += attriName;
+					AttributeType attriType = attriDescriptor.getType();
+					String typeName = attriType.getBinding().getSimpleName();
+					if (typeName.equals("String")) {
+						defalutCreateQuery += " varchar(100), ";
+					} else if (typeName.equals("int")) {
+						defalutCreateQuery += " int, ";
+					} else if (typeName.equals("Double")) {
+						defalutCreateQuery += " double precision, ";
+					} else if (typeName.equals("Long")) {
+						defalutCreateQuery += " int, ";
+					}
+					attriKeyList.add(attriName);
 				}
-				attriKeyList.add(attriName);
 			}
+			returnMap.put("attriKeyList", attriKeyList);
 		}
 		int lastIndext = defalutCreateQuery.lastIndexOf(",");
 		String returnQuery = defalutCreateQuery.substring(0, lastIndext) + ")";
 		HashMap<String, Object> createQuery = new HashMap<String, Object>();
 		createQuery.put("createQuery", returnQuery);
-
-		HashMap<String, Object> returnMap = new HashMap<String, Object>();
 		returnMap.put("createQueryMap", createQuery);
-		returnMap.put("attriKeyList", attriKeyList);
+
 		return returnMap;
 	}
 

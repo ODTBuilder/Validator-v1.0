@@ -805,14 +805,14 @@ public class CollectionValidator {
 					}
 
 					if (option instanceof CenterLineMiss) {
-						List<String> relationNames = ((CenterLineMiss) option).getRelationType();
-						for (int j = 0; j < relationNames.size(); j++) {
-							typeErrorLayer = layerValidator.validateCenterLineMiss(
-									types.getTypeLayers(relationNames.get(j), layerCollection), lineInvadedTolorence);
-							if (typeErrorLayer != null) {
-								errorLayer.mergeErrorLayer(typeErrorLayer);
-							}
-						}
+//						List<String> relationNames = ((CenterLineMiss) option).getRelationType();
+//						for (int j = 0; j < relationNames.size(); j++) {
+//							typeErrorLayer = layerValidator.validateCenterLineMiss(
+//									types.getTypeLayers(relationNames.get(j), layerCollection), lineInvadedTolorence);
+//							if (typeErrorLayer != null) {
+//								errorLayer.mergeErrorLayer(typeErrorLayer);
+//							}
+//						}
 					}
 
 					if (option instanceof HoleMisplacement) {
@@ -834,19 +834,19 @@ public class CollectionValidator {
 					}
 
 					if (option instanceof LinearDisconnection) {
-						List<String> relationNames = ((LinearDisconnection) option).getRelationType();
-						for (int j = 0; j < relationNames.size(); j++) {
-							try {
-								typeErrorLayer = layerValidator.valildateLinearDisconnection(
-										types.getTypeLayers(relationNames.get(j), layerCollection));
-							} catch (SchemaException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
-							if (typeErrorLayer != null) {
-								geometricResult.mergeErrorLayer(typeErrorLayer);
-							}
-						}
+//						List<String> relationNames = ((LinearDisconnection) option).getRelationType();
+//						for (int j = 0; j < relationNames.size(); j++) {
+//							try {
+//								typeErrorLayer = layerValidator.valildateLinearDisconnection(
+//										types.getTypeLayers(relationNames.get(j), layerCollection));
+//							} catch (SchemaException e) {
+//								// TODO Auto-generated catch block
+//								e.printStackTrace();
+//							}
+//							if (typeErrorLayer != null) {
+//								geometricResult.mergeErrorLayer(typeErrorLayer);
+//							}
+//						}
 					}
 
 					if (option instanceof MultiPart) {

@@ -127,7 +127,7 @@ public class EditDTLayerServiceImpl implements EditDTLayerService {
 								layerInfo.setFileName(collectionName);
 								String layerType = createLayer.getLayerType();
 								String layerId = createLayer.getLayerName();
-								layerInfo.putLayerName(layerId + "_" + layerType);
+								layerInfo.putLayerName(layerId);
 								layerInfo.putLayerType(layerId, layerType);
 								geoserverService.dbLayerPublishGeoserver(userVO, layerInfo);
 								condition.putSuccessedLayers(collectionName, layerName);
