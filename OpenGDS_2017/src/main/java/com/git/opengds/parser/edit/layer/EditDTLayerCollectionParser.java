@@ -138,7 +138,7 @@ public class EditDTLayerCollectionParser {
 		this.editSHPCollection = editSHPCollection;
 	}
 
-	public void shpCollectionParser() throws ParseException {
+	public void shpCollectionParser() throws ParseException, SchemaException {
 
 		this.editSHPCollection = new EditSHPLayerCollection();
 		Iterator iterator = collectionObj.keySet().iterator();
@@ -178,7 +178,7 @@ public class EditDTLayerCollectionParser {
 		}
 	}
 
-	public void dxfCollectionParser() throws ParseException {
+	public void dxfCollectionParser() throws ParseException, SchemaException {
 
 		this.editDXFCollection = new EditDXFLayerCollection();
 		Iterator iterator = collectionObj.keySet().iterator();
@@ -235,7 +235,7 @@ public class EditDTLayerCollectionParser {
 		}
 	}
 
-	public void ngiCollectionParser() throws ParseException {
+	public void ngiCollectionParser() throws ParseException, SchemaException {
 
 		this.editNGICollection = new EditNGILayerCollection();
 		Iterator iterator = collectionObj.keySet().iterator();

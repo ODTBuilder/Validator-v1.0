@@ -504,7 +504,8 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 			}
 			if (typeJ.equals("Polygon") || typeJ.equals("MultiPolygon")) {
 				if (!geometryI.equals(geometryJ)) {
-					if (geometryI.overlaps(geometryJ) || geometryI.within(geometryJ) || geometryI.contains(geometryJ)) {
+					if (geometryI.intersects(geometryJ) || geometryI.overlaps(geometryJ) || geometryI.within(geometryJ)
+							|| geometryI.contains(geometryJ)) {
 						Geometry geometry = geometryI.intersection(geometryJ);
 						String upperType = geometry.getGeometryType().toUpperCase();
 						if (upperType.equals("POLYGON") || upperType.equals("MULTIPOLYGON")) {
@@ -1206,18 +1207,19 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 		String featureID = (String) featureIDPro.getValue();
 		SimpleFeatureIterator relationSfcIterator = relationSfc.features();
 
-		Geometry bufferGeom = geometry.buffer(lineInvadedTolorence);
+		System.out.println(featureID);
 
+	//	Geometry bufferGeom = geometry.buffer(lineInvadedTolorence);
 		boolean isTrue = false;
 		while (relationSfcIterator.hasNext()) {
 			SimpleFeature relationSimpleFeature = relationSfcIterator.next();
 			Geometry relationGeometry = (Geometry) relationSimpleFeature.getDefaultGeometry();
-			if (geometry.intersects(relationGeometry)) {
-				if (bufferGeom.contains(relationGeometry) || relationGeometry.within(bufferGeom)) {
+		//	if (geometry.intersects(relationGeometry)) {
+				if (geometry.contains(relationGeometry) || relationGeometry.within(geometry)) {
 					isTrue = true;
 					break;
 				}
-			}
+		//	}
 		}
 		if (!isTrue) {
 			// error
@@ -1269,10 +1271,6 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 		Property featureIDProT = simpleFeature.getProperty("feature_id");
 		String featureIDT = (String) featureIDProT.getValue();
 
-		if (featureIDT.equals("RECORD 10199")) {
-			System.out.println("");
-		}
-
 		if (geomType.equals("POLYGON")) {
 			Polygon polygon = (Polygon) geometry;
 			int holeNum = polygon.getNumInteriorRing();
@@ -1289,10 +1287,6 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 						String featureIdxR = relationSimpleFeature.getID();
 						Property featureIDProR = relationSimpleFeature.getProperty("feature_id");
 						String featureIDR = (String) featureIDProR.getValue();
-
-						if (featureIDR.equals("RECORD 10179")) {
-							System.out.println("");
-						}
 
 						if (featureIDT.equals(featureIDR)) {
 							continue;

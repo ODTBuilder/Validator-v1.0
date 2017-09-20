@@ -37,7 +37,6 @@ package com.git.gdsbuilder.validator.feature;
 import java.util.List;
 
 import org.geotools.data.simple.SimpleFeatureCollection;
-import org.geotools.data.simple.SimpleFeatureIterator;
 import org.geotools.feature.SchemaException;
 import org.json.simple.JSONObject;
 import org.opengis.feature.simple.SimpleFeature;
@@ -45,7 +44,6 @@ import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.operation.TransformException;
 
-import com.git.gdsbuilder.type.geoserver.layer.GeoLayer;
 import com.git.gdsbuilder.type.validate.error.ErrorFeature;
 
 /**

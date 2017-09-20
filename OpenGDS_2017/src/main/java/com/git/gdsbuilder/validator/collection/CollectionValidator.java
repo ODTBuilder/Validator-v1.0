@@ -37,7 +37,6 @@ package com.git.gdsbuilder.validator.collection;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -57,11 +56,6 @@ import org.opengis.referencing.operation.TransformException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.git.gdsbuilder.geosolutions.geoserver.rest.decoder.RESTFeatureType;
-import com.git.gdsbuilder.geosolutions.geoserver.rest.decoder.RESTLayer;
-import com.git.gdsbuilder.geosolutions.geoserver.rest.encoder.GSLayerEncoder;
-import com.git.gdsbuilder.geosolutions.geoserver.rest.encoder.GSResourceEncoder.ProjectionPolicy;
-import com.git.gdsbuilder.geosolutions.geoserver.rest.encoder.feature.GSFeatureTypeEncoder;
 import com.git.gdsbuilder.type.geoserver.collection.GeoLayerCollection;
 import com.git.gdsbuilder.type.geoserver.layer.GeoLayer;
 import com.git.gdsbuilder.type.geoserver.layer.GeoLayerList;
@@ -477,6 +471,9 @@ public class CollectionValidator {
 				LayerValidatorImpl layerValidator = new LayerValidatorImpl(typeLayer);
 
 				String layerFullName = typeLayer.getLayerName();
+				
+				System.out.println(layerFullName);
+				
 				int dash = layerFullName.indexOf("_");
 				String layerType = layerFullName.substring(dash + 1);
 				String upperLayerType = layerType.toUpperCase();
@@ -808,18 +805,14 @@ public class CollectionValidator {
 					}
 
 					if (option instanceof CenterLineMiss) {
-						// List<String> relationNames = ((CenterLineMiss)
-						// option).getRelationType();
-						// for (int j = 0; j < relationNames.size(); j++) {
-						// typeErrorLayer =
-						// layerValidator.validateCenterLineMiss(
-						// types.getTypeLayers(relationNames.get(j),
-						// layerCollection),
-						// lineInvadedTolorence);
-						// if (typeErrorLayer != null) {
-						// errorLayer.mergeErrorLayer(typeErrorLayer);
-						// }
-						// }
+						List<String> relationNames = ((CenterLineMiss) option).getRelationType();
+						for (int j = 0; j < relationNames.size(); j++) {
+							typeErrorLayer = layerValidator.validateCenterLineMiss(
+									types.getTypeLayers(relationNames.get(j), layerCollection), lineInvadedTolorence);
+							if (typeErrorLayer != null) {
+								errorLayer.mergeErrorLayer(typeErrorLayer);
+							}
+						}
 					}
 
 					if (option instanceof HoleMisplacement) {
