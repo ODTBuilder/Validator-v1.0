@@ -19,11 +19,19 @@ package com.git.opengds.parser.edit.layer;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import org.geotools.data.DataUtilities;
+import org.geotools.feature.DefaultFeatureCollection;
+import org.geotools.feature.SchemaException;
+import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.simple.SimpleFeatureType;
 
 import com.git.gdsbuilder.edit.dxf.EditDXFLayer;
 import com.git.gdsbuilder.edit.ngi.EditNGILayer;
@@ -31,6 +39,7 @@ import com.git.gdsbuilder.edit.shp.EditSHPLayer;
 import com.git.gdsbuilder.type.ngi.header.NDAField;
 import com.git.gdsbuilder.type.ngi.header.NDAHeader;
 import com.git.gdsbuilder.type.ngi.header.NGIHeader;
+import com.git.gdsbuilder.type.shp.feature.DTSHPFeatureList;
 import com.vividsolutions.jts.io.ParseException;
 
 /**
@@ -123,8 +132,9 @@ public class EditDTLayerParser {
 	 * @param layerObj
 	 * @param state
 	 * @throws ParseException
+	 * @throws SchemaException
 	 */
-	public EditDTLayerParser(String type, JSONObject layerObj, String state) throws ParseException {
+	public EditDTLayerParser(String type, JSONObject layerObj, String state) throws ParseException, SchemaException {
 		this.originLayerType = type;
 		this.layerObj = layerObj;
 		if (type.equals("ngi")) {
@@ -348,7 +358,34 @@ public class EditDTLayerParser {
 
 	}
 
-	public void shpCreatedLayerParse() {
+	public void shpCreatedLayerParse() throws SchemaException {
 
+		editSHPLayer = new EditSHPLayer();
+
+		String layerType = (String) layerObj.get("layerType");
+		String layerName = (String) layerObj.get("layerName");
+
+//		JSONArray attrArray = (JSONArray) layerObj.get("attr");
+//
+//		String temp = "";
+//		Object[] objects = new Object[attrArray.size() + 1];
+//		objects[0] = null;
+//		for (int i = 0; i < attrArray.size(); i++) {
+//			JSONObject attr = (JSONObject) attrArray.get(i);
+//			String fieldName = (String) attr.get("fieldName");
+//			boolean isNull = (boolean) attr.get("nullable");
+//			String type = (String) attr.get("type");
+//			temp += fieldName + ":" + type + ",";
+//			objects[i + 1] = "default";
+//		}
+//		String featureID = "temp";
+//		SimpleFeatureType simpleFeatureType = DataUtilities.createType(featureID,
+//				"the_geom:" + layerType + "," + temp.substring(0, temp.length() - 1));
+//		SimpleFeature simpleFeature = SimpleFeatureBuilder.build(simpleFeatureType, objects, featureID);
+//		
+		String upLayerType = layerType.toUpperCase();
+		editSHPLayer.setLayerName(layerName + "_" + upLayerType);
+		editSHPLayer.setOrignName(layerName + "_" + upLayerType);
+		editSHPLayer.setLayerType(upLayerType);
 	}
 }

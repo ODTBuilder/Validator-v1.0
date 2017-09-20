@@ -15,7 +15,6 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.opengis.feature.simple.SimpleFeature;
 
-import com.git.gdsbuilder.edit.dxf.EditDXFLayerCollectionList;
 import com.git.gdsbuilder.edit.shp.EditSHPLayerCollectionList;
 import com.git.gdsbuilder.type.shp.feature.DTSHPFeatureList;
 import com.git.opengds.parser.edit.feature.EditDTFeatureParser;
@@ -30,10 +29,8 @@ public class BuilderJSONSHPParser {
 		JSONObject collectionListObj = (JSONObject) editLayerObj.get(type);
 		EditDTLayerCollectionListParser editLayerCollectionListParser = new EditDTLayerCollectionListParser(type,
 				collectionListObj);
-		EditDXFLayerCollectionList edtCollectionList = editLayerCollectionListParser.getEdtDXFCollectionList();
-
-		return null;
-
+		EditSHPLayerCollectionList edtCollectionList = editLayerCollectionListParser.getEdtSHPCollectionList();
+		return edtCollectionList;
 	}
 
 	public static Map<String, Object> parseSHPFeature(JSONObject stateObj, String layerType)

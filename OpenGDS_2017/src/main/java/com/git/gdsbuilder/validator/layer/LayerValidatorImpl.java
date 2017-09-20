@@ -1108,10 +1108,13 @@ public class LayerValidatorImpl implements LayerValidator {
 		for (int i = 0; i < relationLayers.size(); i++) {
 			GeoLayer relationLayer = relationLayers.get(i);
 			SimpleFeatureCollection relationSfc = relationLayer.getSimpleFeatureCollection();
+			int j = 0;
 			while (simpleFeatureIterator.hasNext()) {
 				SimpleFeature simpleFeature = simpleFeatureIterator.next();
 				ErrorFeature errorFeature = graphicValidator.validateCenterLineMiss(simpleFeature, relationSfc,
 						lineInvadedTolorence);
+				System.out.println(j);
+				j++;
 				if (errorFeature != null) {
 					errorFeature.setLayerName(validatorLayer.getLayerName());
 					errorLayer.addErrorFeature(errorFeature);
@@ -1155,13 +1158,20 @@ public class LayerValidatorImpl implements LayerValidator {
 	public ErrorLayer validateEntityInHole(List<GeoLayer> relationLayers) {
 		ErrorLayer errorLayer = new ErrorLayer();
 		SimpleFeatureCollection sfc = validatorLayer.getSimpleFeatureCollection();
+		String layerNameTg = validatorLayer.getLayerName();
 		SimpleFeatureIterator simpleFeatureIterator = sfc.features();
 		for (int i = 0; i < relationLayers.size(); i++) {
 			GeoLayer geoLayer = relationLayers.get(i);
 			SimpleFeatureCollection relationSfc = geoLayer.getSimpleFeatureCollection();
+			String layerNameRl = geoLayer.getLayerName();
+			boolean isEquals = false;
+			if (layerNameTg.equals(layerNameRl)) {
+				isEquals = true;
+			}
 			while (simpleFeatureIterator.hasNext()) {
 				SimpleFeature simpleFeature = simpleFeatureIterator.next();
-				List<ErrorFeature> errorFeatures = graphicValidator.validateEntityInHole(simpleFeature, relationSfc);
+				List<ErrorFeature> errorFeatures = graphicValidator.validateEntityInHole(simpleFeature, relationSfc,
+						isEquals);
 				if (errorFeatures != null) {
 					for (ErrorFeature errFeature : errorFeatures) {
 						errFeature.setLayerName(validatorLayer.getLayerName());

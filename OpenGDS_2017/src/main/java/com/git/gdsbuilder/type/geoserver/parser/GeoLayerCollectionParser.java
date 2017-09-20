@@ -89,7 +89,7 @@ public class GeoLayerCollectionParser {
 		this.validateLayerList = validateLayerList;
 		Map connectionParameters = new HashMap();
 		connectionParameters.put("WFSDataStoreFactory:GET_CAPABILITIES_URL", getCapabilities);
-		connectionParameters.put("WFSDataStoreFactory.TIMEOUT.key", 10000);
+		connectionParameters.put("WFSDataStoreFactory.TIMEOUT.key", 999999999);
 		this.dataStore = DataStoreFinder.getDataStore(connectionParameters);
 		collectionParser();
 	}

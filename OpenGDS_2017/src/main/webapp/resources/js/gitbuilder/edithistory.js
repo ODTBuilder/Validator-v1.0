@@ -87,7 +87,7 @@ gb.edit.FeatureRecord.prototype.create = function(layer, feature) {
 		this.created[layer.get("id")] = {};
 	}
 	this.created[layer.get("id")][feature.getId()] = feature;
-	console.log(this.created);
+	// console.log(this.created);
 }
 gb.edit.FeatureRecord.prototype.remove = function(layer, feature) {
 	if (!this.removed[layer.get("id")]) {
@@ -109,9 +109,9 @@ gb.edit.FeatureRecord.prototype.remove = function(layer, feature) {
 			}
 		}
 	}
-	console.log(this.removed);
-	console.log(this.created);
-	console.log(this.modified);
+	// console.log(this.removed);
+	// console.log(this.created);
+	// console.log(this.modified);
 }
 gb.edit.FeatureRecord.prototype.removeByLayer = function(layerId) {
 	if (this.removed.hasOwnProperty(layerId)) {
@@ -123,9 +123,9 @@ gb.edit.FeatureRecord.prototype.removeByLayer = function(layerId) {
 	if (this.modified.hasOwnProperty(layerId)) {
 		delete this.modified[layerId];
 	}
-	console.log(this.removed);
-	console.log(this.created);
-	console.log(this.modified);
+	// console.log(this.removed);
+	// console.log(this.created);
+	// console.log(this.modified);
 }
 gb.edit.FeatureRecord.prototype.update = function(layer, feature) {
 	if (!this.modified) {
@@ -139,9 +139,9 @@ gb.edit.FeatureRecord.prototype.update = function(layer, feature) {
 		}
 		this.modified[layer.get("id")][this.id ? feature.get(this.id) : feature.getId()] = feature;
 	}
-	console.log(this.removed);
-	console.log(this.created);
-	console.log(this.modified);
+	// console.log(this.removed);
+	// console.log(this.created);
+	// console.log(this.modified);
 }
 gb.edit.FeatureRecord.prototype.getStructure = function() {
 	var format = new ol.format.GeoJSON();

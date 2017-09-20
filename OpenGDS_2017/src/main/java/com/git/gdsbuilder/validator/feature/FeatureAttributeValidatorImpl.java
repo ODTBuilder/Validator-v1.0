@@ -247,14 +247,11 @@ public class FeatureAttributeValidatorImpl implements FeatureAttributeValidator 
 		}
 	}
 
+	@SuppressWarnings("null")
 	public ErrorFeature validateHouseAttribute(SimpleFeature simpleFeature) {
 		String featureIdx = simpleFeature.getID();
 		Property featuerIDPro = simpleFeature.getProperty("feature_id");
 		String featureID = (String) featuerIDPro.getValue();
-		if (featureID.equals("RECORD 459")) {
-			System.out.println();
-		}
-
 		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
 		Object kindsAttr = simpleFeature.getAttribute("종류");
 		Object notNullAttr = simpleFeature.getAttribute("주기");
@@ -267,9 +264,7 @@ public class FeatureAttributeValidatorImpl implements FeatureAttributeValidator 
 							HouseAttribute.Type.HOUSEATTRIBUTE.errType(), HouseAttribute.Type.HOUSEATTRIBUTE.errName(),
 							geometry.getInteriorPoint());
 					return errorFeature;
-				} else {
-					return null;
-				}
+				} 
 			}
 		}
 		return null;
@@ -279,7 +274,6 @@ public class FeatureAttributeValidatorImpl implements FeatureAttributeValidator 
 		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
 		Object attUFIDObj = (String) simpleFeature.getAttribute("UFID"); // null
 																			// 체크
-
 		// 코딩하기
 		if (attUFIDObj != null) {
 			String attUFIDStr = attUFIDObj.toString();

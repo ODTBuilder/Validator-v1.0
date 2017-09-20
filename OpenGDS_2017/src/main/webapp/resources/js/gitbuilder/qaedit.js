@@ -634,7 +634,7 @@ gitbuilder.ui.QAEdit = $.widget("gitbuilder.qaedit",
 								wms.set("name", jstreeRefer.get_node(data[i].name).text);
 								wms.set("id", data[i].name);
 								var git = {
-									"validation" : true,
+									"validation" : false,
 									"geometry" : data[i].geomType,
 									"editable" : true,
 									"fake" : "parent"
@@ -691,7 +691,7 @@ gitbuilder.ui.QAEdit = $.widget("gitbuilder.qaedit",
 									})
 								});
 								var git = {
-									"validation" : true,
+									"validation" : false,
 									"geometry" : data2[i].geomType,
 									"editable" : true,
 									"attribute" : data2[i].attInfo,
@@ -773,6 +773,9 @@ gitbuilder.ui.QAEdit = $.widget("gitbuilder.qaedit",
 						layer.set("name", jstreeRefer.get_node(errorLayerName).text);
 						layer.set("id", jstreeRefer.get_node(errorLayerName).id);
 						layer.set("type", "Point");
+						layer.set("git", {
+							"validation" : true
+						});
 						instance.error = layer;
 
 						group.getLayers().push(layer);
@@ -1062,7 +1065,7 @@ gitbuilder.ui.QAEdit = $.widget("gitbuilder.qaedit",
 										});
 										sourceLayer.setSource(source);
 										var git = {
-											"validation" : true,
+											"validation" : false,
 											"geometry" : data2[i].geomType,
 											"editable" : true,
 											"attribute" : data2[i].attInfo,

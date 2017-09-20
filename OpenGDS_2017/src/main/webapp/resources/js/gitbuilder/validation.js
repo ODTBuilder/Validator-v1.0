@@ -513,6 +513,7 @@ gitbuilder.ui.Validation = $.widget("gitbuilder.validation", {
 
 		var typeValidate = [];
 		for (var i = 0; i < lkeys.length; i++) {
+// console.log(lkeys[i]);
 			if (!ldef[lkeys[i]].hasOwnProperty("area")) {
 				console.error(lkeys[i]+"레이어의 검수영역이 없음");
 			}
@@ -534,6 +535,8 @@ gitbuilder.ui.Validation = $.widget("gitbuilder.validation", {
 			var tLayers = [];
 			var codes = ldef[lkeys[i]].code;
 			for (var j = 0; j < codes.length; j++) {
+				console.log(lkeys[i]);
+				console.log(ldef[lkeys[i]]);
 				var name = codes[j] + "_" + (ldef[lkeys[i]].geom.toUpperCase());
 				tLayers.push(name);
 			}

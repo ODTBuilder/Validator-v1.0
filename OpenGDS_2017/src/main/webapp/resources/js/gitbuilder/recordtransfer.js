@@ -46,8 +46,22 @@ gb.edit.RecordTransfer.prototype.getStructure = function() {
 	console.log(obj);
 	return obj;
 };
-
+gb.edit.RecordTransfer.prototype.refresh = function(layer, editingTool) {
+	if (layer instanceof ol.layer.Group) {
+		var layers = layer.getLayers();
+		for (var i = 0; i < layers.getLength(); i++) {
+			this.refresh(layers.item(i), editingTool);
+		}
+	} else if (layer instanceof ol.layer.Tile) {
+		var params = layer.getSource().getParams();
+		params["time"] = Date.now();
+		layer.getSource().updateParams(params);
+		layer.getSource().refresh();
+		editingTool.removeFeatureFromUnmanaged(layer);
+	}
+};
 gb.edit.RecordTransfer.prototype.sendStructure = function(ollayers, editingTool) {
+	var that = this;
 	var featureObj = this.getFeatureRecord();
 	console.log(this.getStructure());
 	$.ajax({
@@ -66,13 +80,7 @@ gb.edit.RecordTransfer.prototype.sendStructure = function(ollayers, editingTool)
 			console.log(data);
 			featureObj.clearAll();
 			for (var i = 0; i < ollayers.getLength(); i++) {
-				if (ollayers.item(i) instanceof ol.layer.Tile) {
-					var params = ollayers.item(i).getSource().getParams();
-					params["time"] = Date.now();
-					ollayers.item(i).getSource().updateParams(params);
-					ollayers.item(i).getSource().refresh();
-					editingTool.removeFeatureFromUnmanaged(ollayers.item(i));
-				}
+				that.refresh(ollayers.item(i), editingTool);
 			}
 		}
 	});

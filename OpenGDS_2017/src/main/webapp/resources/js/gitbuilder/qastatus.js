@@ -327,7 +327,8 @@ gb.qa.QAStatus.prototype.setList = function() {
 					"targets" : 7,
 					"data" : null,
 					"defaultContent" : "<button class='btn btn-default gb-qastatus-downBtn'>Click</button>"
-				} ]
+				} ],
+				"order" : [ [ 4, "desc" ] ]
 			});
 
 		}
@@ -353,7 +354,9 @@ gb.qa.QAStatus.prototype.setReport = function(layer) {
 		},
 		traditional : true,
 		success : function(data, textStatus, jqXHR) {
-
+			if (data === null) {
+				return;
+			}
 			var json = JSON.parse(data);
 			var arr = json.fields;
 			var tableData = [];

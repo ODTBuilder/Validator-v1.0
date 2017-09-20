@@ -25,7 +25,8 @@ public class SHPLayerCollectionDAOImpl extends DataSourceFactory implements SHPL
 	@Override
 	public int createSHPLayerTb(UserVO userVO, HashMap<String, Object> createLayerQuery) {
 		sqlSession = super.getSqlSession(userVO.getId());
-		return sqlSession.update(namespace + ".createSHPLayerTb", createLayerQuery);
+		int suc = sqlSession.update(namespace + ".createSHPLayerTb", createLayerQuery);
+		return suc;
 	}
 
 	@Override
@@ -59,7 +60,11 @@ public class SHPLayerCollectionDAOImpl extends DataSourceFactory implements SHPL
 		sqlSession = super.getSqlSession(userVO.getId());
 		HashMap<String, Object> idxMap = sqlSession.selectOne(namespace + ".selectSHPLayerCollectionIdx",
 				selectLayerCollectionIdxQuery);
-		return (Integer) idxMap.get("c_idx");
+		if(idxMap == null) {
+			return null; 
+		} else {
+			return (Integer) idxMap.get("c_idx");
+		}
 	}
 
 	@Override
