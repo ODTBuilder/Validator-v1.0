@@ -536,7 +536,7 @@ html {
 
 		$("#validation1").validation({
 			validatorURL : "validator/validate.ajax",
-			layersURL : "geoserver/getGeolayerCollectionTree.ajax",
+			layersURL : "geoserver/getGeolayerCollectionTree.ajax?treeType=qa1.0",
 			layerDefinition : function() {
 				return $("#layerDefinition1").layerdefinition10("getDefinition");
 			},
@@ -567,7 +567,7 @@ html {
 
 		$("#validation").validation({
 			validatorURL : "validator/validate.ajax",
-			layersURL : "geoserver/getGeolayerCollectionTree.ajax",
+			layersURL : "geoserver/getGeolayerCollectionTree.ajax?treeType=qa2.0",
 			layerDefinition : function() {
 				return $("#layerDefinition").layerdefinition20("getDefinition");
 			},
@@ -585,7 +585,7 @@ html {
 			treeInstance : $('#builderClientLayer').jstreeol3(true),
 			linkKey : "feature_idx",
 			user : "admin",
-			layersURL : 'geoserver/getGeolayerCollectionTree.ajax',
+			layersURL : 'geoserver/getGeolayerCollectionTree.ajax?treeType=all',
 			featureWMSURL : "geoserver/geoserverWMSLayerLoad.do",
 			featureWFSURL : "geoserver/geoserverWFSGetFeature.ajax",
 			groupInfoURL : "geoserver/getGeoGroupLayerInfoList.ajax",
@@ -611,7 +611,7 @@ html {
 				},
 				'data' : {
 					'url' : function() {
-						return 'geoserver/getGeolayerCollectionTree.ajax';
+						return 'geoserver/getGeolayerCollectionTree.ajax?treeType=all';
 					}
 				}
 			},
