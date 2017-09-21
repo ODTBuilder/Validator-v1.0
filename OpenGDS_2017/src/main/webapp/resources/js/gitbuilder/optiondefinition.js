@@ -1365,27 +1365,6 @@ gitbuilder.ui.OptionDefinition = $
 							this.setLayerDefinition(this.options.layerDefinition);
 						}
 					},
-					// afterStartRelation : function() {
-					// var def = this.getDefinition();
-					// var dkeys = Object.keys(def);
-					// for (var i = 0; i < dkeys.length; i++) {
-					// var vkeys = Object.keys(def[dkeys[i]]);
-					// for (var j = 0; j < vkeys.length; j++) {
-					// if (this.optItem[vkeys[j]].type === "relation" ||
-					// this.optItem[vkeys[j]].type === "labelnrelation") {
-					// var relation = def[dkeys[i]][vkeys[j]].relation;
-					// for (var k = 0; k < relation.length; k++) {
-					// if (!def.hasOwnProperty(relation[k])) {
-					// this.getDefinition()[relation[k]] = {};
-					// console.log(this.getDefinition());
-					// }
-					// }
-					// }
-					// }
-					// }
-					// console.log("afterStartRelation: ");
-					// console.log(this.emptyLayers);
-					// },
 					beforeSaveRelation : function() {
 						var cobj = this.getOptDefCopy();
 						var ekeys = Object.keys(this.emptyLayers);
@@ -1405,7 +1384,7 @@ gitbuilder.ui.OptionDefinition = $
 					getRelation : function() {
 						return this.emptyLayers;
 					},
-					resetRelation : function() {
+					resetRelation : function(obj) {
 						// if (!this.getRelation()) {
 						this.emptyLayers = {};
 						// }
