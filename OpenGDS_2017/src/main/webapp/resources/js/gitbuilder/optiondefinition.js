@@ -33,29 +33,18 @@ gitbuilder.ui.OptionDefinition = $
 						// "EdgeMatchMiss", "PointDuplicated",
 						// "ZValueAmbiguous",
 						// "EntityDuplicated" ],
-						polyline : [ "SelfEntity", "BuildingOpen", "WaterOpen", "EntityNone", "EdgeMatchMiss", "ConBreak",
-								"ConIntersected", "ConOverDegree", "UselessEntity", "EntityDuplicated", "PointDuplicated", "UselessPoint",
-								"LayerMiss", "ZValueAmbiguous", "OverShoot", "UnderShoot", "RefLayerMiss", "RefZValueMiss" ],
-						lwpolyline : [ "SelfEntity", "BSymbolOutSided", "BuildingOpen", "WaterOpen", "EntityNone", "EdgeMatchMiss",
-								"ConBreak", "ConIntersected", "ConOverDegree", "UselessEntity", "EntityDuplicated", "PointDuplicated",
-								"UselessPoint", "LayerMiss", "ZValueAmbiguous", "OverShoot", "UnderShoot", "RefLayerMiss", "RefZValueMiss" ],
-						text : [ "SelfEntity", "LayerMiss", "UselessEntity", "EntityDuplicated", "OverShoot", "UFIDLength",
-								"NumericalValue", "UFIDRule" ],
-						insert : [ "SelfEntity", "LayerMiss", "UselessEntity", "EntityDuplicated", "BSymbolOutSided", "OverShoot" ],
-						point : [ "LayerMiss", "UselessEntity", "EntityDuplicated", "SelfEntity", "AttributeFix", "OutBoundary",
-								"CharacterAccuracy", "OverShoot", "UnderShoot", "UFIDLength", "NumericalValue", "UFIDRule",
-								"UFIDDuplicated" ],
-						linestring : [ "RefAttributeMiss", "EdgeMatchMiss", "UselessEntity", "LayerMiss", "RefLayerMiss", "SmallLength",
-								"EntityDuplicated", "SelfEntity", "PointDuplicated", "ConIntersected", "ConOverDegree", "ConBreak",
-								"AttributeFix", "OutBoundary", "ZValueAmbiguous", "UselessPoint", "OverShoot", "UnderShoot",
-								"RefZValueMiss", "UFIDLength", "NeatLineAttribute", "NumericalValue", "UFIDRule", "LinearDisconnection",
-								"MultiPart", "UFIDDuplicated", "NodeMiss" ],
-						polygon : [ "Admin", "CrossRoad", "RefAttributeMiss", "BridgeName", "EdgeMatchMiss", "UselessEntity", "LayerMiss",
-								"RefLayerMiss", "SmallArea", "EntityDuplicated", "SelfEntity", "PointDuplicated", "AttributeFix",
-								"OutBoundary", "OverShoot", "UnderShoot", "OneAcre", "OneStage", "BuildingSiteDanger",
-								"BuildingSiteRelaxation", "UFIDLength", "HouseAttribute", "CemeterySite", "NumericalValue",
-								"RiverBoundaryMiss", "UFIDRule", "HoleMisplacement", "CenterLineMiss", "EntityInHole", "TwistedPolygon",
-								"MultiPart", "UFIDDuplicated" ]
+						polyline : [ "LayerMiss", "EdgeMatchMiss", "ConBreak", "ConIntersected", "ConOverDegree", "PointDuplicated",
+								"UselessPoint", "ZValueAmbiguous", "OverShoot", "UnderShoot" ],
+						lwpolyline : [ "LayerMiss", "EdgeMatchMiss", "ConBreak", "ConIntersected", "ConOverDegree", "PointDuplicated",
+								"UselessPoint", "ZValueAmbiguous", "OverShoot", "UnderShoot" ],
+						text : [ "OverShoot", "LayerMiss" ],
+						insert : [ "OverShoot", "LayerMiss" ],
+						point : [ "AttributeFix", "OutBoundary", "OverShoot", "UnderShoot", "LayerMiss" ],
+						linestring : [ "RefAttributeMiss", "EdgeMatchMiss", "PointDuplicated", "ConIntersected", "ConOverDegree",
+								"ConBreak", "AttributeFix", "OutBoundary", "ZValueAmbiguous", "UselessPoint", "OverShoot", "UnderShoot",
+								"LayerMiss" ],
+						polygon : [ "RefAttributeMiss", "EdgeMatchMiss", "PointDuplicated", "AttributeFix", "OutBoundary", "OverShoot",
+								"UnderShoot", "TwistedPolygon", "LayerMiss" ]
 					},
 					optItem : {
 						"UFIDDuplicated" : {
@@ -1365,27 +1354,6 @@ gitbuilder.ui.OptionDefinition = $
 							this.setLayerDefinition(this.options.layerDefinition);
 						}
 					},
-					// afterStartRelation : function() {
-					// var def = this.getDefinition();
-					// var dkeys = Object.keys(def);
-					// for (var i = 0; i < dkeys.length; i++) {
-					// var vkeys = Object.keys(def[dkeys[i]]);
-					// for (var j = 0; j < vkeys.length; j++) {
-					// if (this.optItem[vkeys[j]].type === "relation" ||
-					// this.optItem[vkeys[j]].type === "labelnrelation") {
-					// var relation = def[dkeys[i]][vkeys[j]].relation;
-					// for (var k = 0; k < relation.length; k++) {
-					// if (!def.hasOwnProperty(relation[k])) {
-					// this.getDefinition()[relation[k]] = {};
-					// console.log(this.getDefinition());
-					// }
-					// }
-					// }
-					// }
-					// }
-					// console.log("afterStartRelation: ");
-					// console.log(this.emptyLayers);
-					// },
 					beforeSaveRelation : function() {
 						var cobj = this.getOptDefCopy();
 						var ekeys = Object.keys(this.emptyLayers);
@@ -1405,7 +1373,7 @@ gitbuilder.ui.OptionDefinition = $
 					getRelation : function() {
 						return this.emptyLayers;
 					},
-					resetRelation : function() {
+					resetRelation : function(obj) {
 						// if (!this.getRelation()) {
 						this.emptyLayers = {};
 						// }
@@ -1420,7 +1388,7 @@ gitbuilder.ui.OptionDefinition = $
 						for (var i = 0; i < dkeys.length; i++) {
 							var vkeys = Object.keys(def[dkeys[i]]);
 							for (var j = 0; j < vkeys.length; j++) {
-								 console.log(vkeys[j]);
+								// console.log(vkeys[j]);
 								if (this.optItem[vkeys[j]].type === "relation" || this.optItem[vkeys[j]].type === "labelnrelation") {
 									var relation = def[dkeys[i]][vkeys[j]].relation;
 									for (var k = 0; k < relation.length; k++) {
