@@ -321,6 +321,7 @@ gitbuilder.ui.OptionDefinition = $
 					labelAttrForm : undefined,
 					addBtn : undefined,
 					addAttrBtn : undefined,
+					addLabelAttrBtn : undefined,
 					file : undefined,
 					emptyLayers : undefined,
 					radio : undefined,
@@ -369,7 +370,7 @@ gitbuilder.ui.OptionDefinition = $
 								.addClass("btn-default");
 						this.addAttrBtn = $("<button>").text("Add Attribute").addClass("optiondefinition-nnullattr-addrow").addClass("btn")
 								.addClass("btn-default");
-						this.addBtn = $("<button>").text("Add Attribute").addClass("optiondefinition-labelattr-addrow").addClass("btn")
+						this.addLabelAttrBtn = $("<button>").text("Add Attribute").addClass("optiondefinition-labelattr-addrow").addClass("btn")
 								.addClass("btn-default");
 						this.file = $("<input>").attr({
 							"type" : "file"
@@ -1750,7 +1751,7 @@ gitbuilder.ui.OptionDefinition = $
 							that._addClass(tb, "table");
 							that._addClass(tb, "text-center");
 							if (obj.multi) {
-								$(that.dOption).append(that.labelCodeSelect).append(tb).append(that.addBtn);
+								$(that.dOption).append(that.labelCodeSelect).append(tb).append(that.addLabelAttrBtn);
 							} else {
 								$(that.dOption).append(that.labelCodeSelect).append(tb);
 							}

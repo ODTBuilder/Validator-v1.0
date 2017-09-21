@@ -233,7 +233,7 @@ public class SHPDBQueryManager {
 			int cidx) {
 		String tableName = "\"" + "shp_layercollection_qa_progress" + "\"";
 		String insertQueryStr = " insert into " + tableName
-				+ "(c_name, file_type, state, request_time , c_idx) values ('" + collectionName + "'," + "'" + fileType
+				+ "(collection_name, file_type, state, request_time , c_idx) values ('" + collectionName + "'," + "'" + fileType
 				+ "', " + validateStart + ", " + "CURRENT_TIMESTAMP" + ", " + cidx + ")";
 		HashMap<String, Object> insertQueryMap = new HashMap<String, Object>();
 		insertQueryMap.put("insertQuery", insertQueryStr);
