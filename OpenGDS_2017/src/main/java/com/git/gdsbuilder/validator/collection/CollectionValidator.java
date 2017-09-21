@@ -175,7 +175,6 @@ public class CollectionValidator {
 	public CollectionValidator(GeoLayerCollection collection, List<GeoLayerCollection> nearCollections,
 			ValidateLayerTypeList types, MapSystemRule mapSystemRule, String fileType)
 			throws NoSuchAuthorityCodeException, SchemaException, FactoryException, TransformException, IOException {
-
 		this.collection = collection;
 		this.nearCollections = nearCollections;
 		this.types = types;

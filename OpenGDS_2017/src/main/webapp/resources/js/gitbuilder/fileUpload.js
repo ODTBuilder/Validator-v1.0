@@ -242,7 +242,7 @@ gitbuilder.method ={};
 		        thumbnailHeight: 80,
 		        parallelUploads: 20,
 		        maxFiles: 100,
-		        maxFilesize: 100,
+		        maxFilesize: 300,
 		        previewTemplate: previewTemplate,
 		        acceptedFiles:".dxf",
 		        autoQueue: false, // Make sure the files aren't queued until manually added
