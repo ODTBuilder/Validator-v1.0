@@ -33,18 +33,29 @@ gitbuilder.ui.OptionDefinition = $
 						// "EdgeMatchMiss", "PointDuplicated",
 						// "ZValueAmbiguous",
 						// "EntityDuplicated" ],
-						polyline : [ "LayerMiss", "EdgeMatchMiss", "ConBreak", "ConIntersected", "ConOverDegree", "PointDuplicated",
-								"UselessPoint", "ZValueAmbiguous", "OverShoot", "UnderShoot" ],
-						lwpolyline : [ "LayerMiss", "EdgeMatchMiss", "ConBreak", "ConIntersected", "ConOverDegree", "PointDuplicated",
-								"UselessPoint", "ZValueAmbiguous", "OverShoot", "UnderShoot" ],
-						text : [ "OverShoot", "LayerMiss" ],
-						insert : [ "OverShoot", "LayerMiss" ],
-						point : [ "AttributeFix", "OutBoundary", "OverShoot", "UnderShoot", "LayerMiss" ],
-						linestring : [ "RefAttributeMiss", "EdgeMatchMiss", "PointDuplicated", "ConIntersected", "ConOverDegree",
-								"ConBreak", "AttributeFix", "OutBoundary", "ZValueAmbiguous", "UselessPoint", "OverShoot", "UnderShoot",
-								"LayerMiss" ],
-						polygon : [ "RefAttributeMiss", "EdgeMatchMiss", "PointDuplicated", "AttributeFix", "OutBoundary", "OverShoot",
-								"UnderShoot", "TwistedPolygon", "LayerMiss" ]
+						polyline : [ "SelfEntity", "BuildingOpen", "WaterOpen", "EntityNone", "EdgeMatchMiss", "ConBreak",
+								"ConIntersected", "ConOverDegree", "UselessEntity", "EntityDuplicated", "PointDuplicated", "UselessPoint",
+								"LayerMiss", "ZValueAmbiguous", "OverShoot", "UnderShoot", "RefLayerMiss", "RefZValueMiss" ],
+						lwpolyline : [ "SelfEntity", "BSymbolOutSided", "BuildingOpen", "WaterOpen", "EntityNone", "EdgeMatchMiss",
+								"ConBreak", "ConIntersected", "ConOverDegree", "UselessEntity", "EntityDuplicated", "PointDuplicated",
+								"UselessPoint", "LayerMiss", "ZValueAmbiguous", "OverShoot", "UnderShoot", "RefLayerMiss", "RefZValueMiss" ],
+						text : [ "SelfEntity", "LayerMiss", "UselessEntity", "EntityDuplicated", "OverShoot", "UFIDLength",
+								"NumericalValue", "UFIDRule" ],
+						insert : [ "SelfEntity", "LayerMiss", "UselessEntity", "EntityDuplicated", "BSymbolOutSided", "OverShoot" ],
+						point : [ "LayerMiss", "UselessEntity", "EntityDuplicated", "SelfEntity", "AttributeFix", "OutBoundary",
+								"CharacterAccuracy", "OverShoot", "UnderShoot", "UFIDLength", "NumericalValue", "UFIDRule",
+								"UFIDDuplicated" ],
+						linestring : [ "RefAttributeMiss", "EdgeMatchMiss", "UselessEntity", "LayerMiss", "RefLayerMiss", "SmallLength",
+								"EntityDuplicated", "SelfEntity", "PointDuplicated", "ConIntersected", "ConOverDegree", "ConBreak",
+								"AttributeFix", "OutBoundary", "ZValueAmbiguous", "UselessPoint", "OverShoot", "UnderShoot",
+								"RefZValueMiss", "UFIDLength", "NeatLineAttribute", "NumericalValue", "UFIDRule", "LinearDisconnection",
+								"MultiPart", "UFIDDuplicated", "NodeMiss" ],
+						polygon : [ "Admin", "CrossRoad", "RefAttributeMiss", "BridgeName", "EdgeMatchMiss", "UselessEntity", "LayerMiss",
+								"RefLayerMiss", "SmallArea", "EntityDuplicated", "SelfEntity", "PointDuplicated", "AttributeFix",
+								"OutBoundary", "OverShoot", "UnderShoot", "OneAcre", "OneStage", "BuildingSiteDanger",
+								"BuildingSiteRelaxation", "UFIDLength", "HouseAttribute", "CemeterySite", "NumericalValue",
+								"RiverBoundaryMiss", "UFIDRule", "HoleMisplacement", "CenterLineMiss", "EntityInHole", "TwistedPolygon",
+								"MultiPart", "UFIDDuplicated" ]
 					},
 					optItem : {
 						"UFIDDuplicated" : {
@@ -310,6 +321,7 @@ gitbuilder.ui.OptionDefinition = $
 					labelAttrForm : undefined,
 					addBtn : undefined,
 					addAttrBtn : undefined,
+					addLabelAttrBtn : undefined,
 					file : undefined,
 					emptyLayers : undefined,
 					radio : undefined,
@@ -358,7 +370,7 @@ gitbuilder.ui.OptionDefinition = $
 								.addClass("btn-default");
 						this.addAttrBtn = $("<button>").text("Add Attribute").addClass("optiondefinition-nnullattr-addrow").addClass("btn")
 								.addClass("btn-default");
-						this.addBtn = $("<button>").text("Add Attribute").addClass("optiondefinition-labelattr-addrow").addClass("btn")
+						this.addLabelAttrBtn = $("<button>").text("Add Attribute").addClass("optiondefinition-labelattr-addrow").addClass("btn")
 								.addClass("btn-default");
 						this.file = $("<input>").attr({
 							"type" : "file"
@@ -1388,7 +1400,7 @@ gitbuilder.ui.OptionDefinition = $
 						for (var i = 0; i < dkeys.length; i++) {
 							var vkeys = Object.keys(def[dkeys[i]]);
 							for (var j = 0; j < vkeys.length; j++) {
-								// console.log(vkeys[j]);
+								 console.log(vkeys[j]);
 								if (this.optItem[vkeys[j]].type === "relation" || this.optItem[vkeys[j]].type === "labelnrelation") {
 									var relation = def[dkeys[i]][vkeys[j]].relation;
 									for (var k = 0; k < relation.length; k++) {
@@ -1739,7 +1751,7 @@ gitbuilder.ui.OptionDefinition = $
 							that._addClass(tb, "table");
 							that._addClass(tb, "text-center");
 							if (obj.multi) {
-								$(that.dOption).append(that.labelCodeSelect).append(tb).append(that.addBtn);
+								$(that.dOption).append(that.labelCodeSelect).append(tb).append(that.addLabelAttrBtn);
 							} else {
 								$(that.dOption).append(that.labelCodeSelect).append(tb);
 							}
