@@ -321,6 +321,7 @@ gitbuilder.ui.OptionDefinition = $
 					labelAttrForm : undefined,
 					addBtn : undefined,
 					addAttrBtn : undefined,
+					addLabelAttrBtn : undefined,
 					file : undefined,
 					emptyLayers : undefined,
 					radio : undefined,
@@ -369,7 +370,7 @@ gitbuilder.ui.OptionDefinition = $
 								.addClass("btn-default");
 						this.addAttrBtn = $("<button>").text("Add Attribute").addClass("optiondefinition-nnullattr-addrow").addClass("btn")
 								.addClass("btn-default");
-						this.addBtn = $("<button>").text("Add Attribute").addClass("optiondefinition-labelattr-addrow").addClass("btn")
+						this.addLabelAttrBtn = $("<button>").text("Add Attribute").addClass("optiondefinition-labelattr-addrow").addClass("btn")
 								.addClass("btn-default");
 						this.file = $("<input>").attr({
 							"type" : "file"
@@ -1365,27 +1366,6 @@ gitbuilder.ui.OptionDefinition = $
 							this.setLayerDefinition(this.options.layerDefinition);
 						}
 					},
-					// afterStartRelation : function() {
-					// var def = this.getDefinition();
-					// var dkeys = Object.keys(def);
-					// for (var i = 0; i < dkeys.length; i++) {
-					// var vkeys = Object.keys(def[dkeys[i]]);
-					// for (var j = 0; j < vkeys.length; j++) {
-					// if (this.optItem[vkeys[j]].type === "relation" ||
-					// this.optItem[vkeys[j]].type === "labelnrelation") {
-					// var relation = def[dkeys[i]][vkeys[j]].relation;
-					// for (var k = 0; k < relation.length; k++) {
-					// if (!def.hasOwnProperty(relation[k])) {
-					// this.getDefinition()[relation[k]] = {};
-					// console.log(this.getDefinition());
-					// }
-					// }
-					// }
-					// }
-					// }
-					// console.log("afterStartRelation: ");
-					// console.log(this.emptyLayers);
-					// },
 					beforeSaveRelation : function() {
 						var cobj = this.getOptDefCopy();
 						var ekeys = Object.keys(this.emptyLayers);
@@ -1405,7 +1385,7 @@ gitbuilder.ui.OptionDefinition = $
 					getRelation : function() {
 						return this.emptyLayers;
 					},
-					resetRelation : function() {
+					resetRelation : function(obj) {
 						// if (!this.getRelation()) {
 						this.emptyLayers = {};
 						// }
@@ -1771,7 +1751,7 @@ gitbuilder.ui.OptionDefinition = $
 							that._addClass(tb, "table");
 							that._addClass(tb, "text-center");
 							if (obj.multi) {
-								$(that.dOption).append(that.labelCodeSelect).append(tb).append(that.addBtn);
+								$(that.dOption).append(that.labelCodeSelect).append(tb).append(that.addLabelAttrBtn);
 							} else {
 								$(that.dOption).append(that.labelCodeSelect).append(tb);
 							}

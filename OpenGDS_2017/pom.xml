@@ -68,17 +68,17 @@
 			<artifactId>aspectjrt</artifactId>
 			<version>${org.aspectj-version}</version>
 		</dependency>
-		
+
 		<dependency>
-		    <groupId>org.aspectj</groupId>
-		    <artifactId>aspectjweaver</artifactId>
-		    <version>${org.aspectj-version}</version>
+			<groupId>org.aspectj</groupId>
+			<artifactId>aspectjweaver</artifactId>
+			<version>${org.aspectj-version}</version>
 		</dependency>
 
 		<dependency>
-		    <groupId>cglib</groupId>
-		    <artifactId>cglib-nodep</artifactId>
-		    <version>3.1</version>
+			<groupId>cglib</groupId>
+			<artifactId>cglib-nodep</artifactId>
+			<version>3.1</version>
 		</dependency>
 
 		<!-- Logging -->
@@ -132,16 +132,18 @@
 		</dependency>
 
 		<!-- Servlet -->
+		<!-- https://mvnrepository.com/artifact/javax.servlet/javax.servlet-api -->
 		<dependency>
 			<groupId>javax.servlet</groupId>
-			<artifactId>servlet-api</artifactId>
-			<version>2.5</version>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>3.1.0</version>
 			<scope>provided</scope>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/javax.servlet.jsp/javax.servlet.jsp-api -->
 		<dependency>
 			<groupId>javax.servlet.jsp</groupId>
-			<artifactId>jsp-api</artifactId>
-			<version>2.1</version>
+			<artifactId>javax.servlet.jsp-api</artifactId>
+			<version>2.3.1</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -250,15 +252,12 @@
 			<version>${geotools.version}</version>
 		</dependency>
 		<dependency>
-		   <groupId>org.geotools</groupId>
-		   <artifactId>gt-wfs</artifactId>
-		   <version>${geotools.version}</version>
-		 </dependency>
-	<!-- 	<dependency>
-		    <groupId>org.geotools</groupId>
-		    <artifactId>gt-wfs-ng</artifactId>
-		    <version>${geotools.version}</version>
-		</dependency> -->
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-wfs</artifactId>
+			<version>${geotools.version}</version>
+		</dependency>
+		<!-- <dependency> <groupId>org.geotools</groupId> <artifactId>gt-wfs-ng</artifactId> 
+			<version>${geotools.version}</version> </dependency> -->
 
 
 		<dependency>
