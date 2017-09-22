@@ -59,7 +59,7 @@
 <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/js/gitbuilder/gitbuilder2017.css">
 
 <%-- 2.0 레이어 코드 정의 --%>
-<script src="${pageContext.request.contextPath}/resources/js/gitbuilder/layerdefinition20.js"></script>
+<script src="${pageContext.request.contextPath}/resources/js/gitbuilder/layerdefinition20_page.js"></script>
 
 <%-- 1.0 레이어 코드 정의 --%>
 <script src="${pageContext.request.contextPath}/resources/js/gitbuilder/layerdefinition10.js"></script>
