@@ -80,6 +80,7 @@ $.jstree.plugins.geoserver = function(options, parent) {
 							source : new ol.source.TileWMS({
 								url : that._data.geoserver.WMSLayerURL,
 								params : {
+									'TIME' : Date.now(),
 									'LAYERS' : obj.refer.get_node(data[i].name).children.toString(),
 									'TILED' : true,
 									'FORMAT' : 'image/png8',
@@ -209,6 +210,7 @@ $.jstree.plugins.geoserver = function(options, parent) {
 							source : new ol.source.TileWMS({
 								url : that._data.geoserver.WMSLayerURL,
 								params : {
+									'TIME' : Date.now(),
 									'LAYERS' : obj.arr.toString(),
 									// 'LAYERS' :
 									// that._data.geoserver.user
@@ -325,6 +327,7 @@ $.jstree.plugins.geoserver = function(options, parent) {
 									names.push(befCollection.item(i).get("id"));
 								}
 								befParams["LAYERS"] = names.toString();
+								befParams['TIME'] = Date.now();
 								mapLayers.item(j).getSource().updateParams(befParams);
 								// that._data.geoserver.clientRefer.refresh();
 								var group = new ol.layer.Group({
@@ -400,6 +403,7 @@ $.jstree.plugins.geoserver = function(options, parent) {
 							source : new ol.source.TileWMS({
 								url : that._data.geoserver.WMSLayerURL,
 								params : {
+									'TIME' : Date.now(),
 									'LAYERS' : obj.arr.toString(),
 									// 'LAYERS' :
 									// that._data.geoserver.user +
@@ -458,6 +462,7 @@ $.jstree.plugins.geoserver = function(options, parent) {
 									source : new ol.source.TileWMS({
 										url : that._data.geoserver.WMSLayerURL,
 										params : {
+											'TIME' : Date.now(),
 											'LAYERS' : data2[i].lName,
 											'TILED' : true,
 											'FORMAT' : 'image/png8',
@@ -515,6 +520,7 @@ $.jstree.plugins.geoserver = function(options, parent) {
 										names.push(befCollection.item(i).get("id"));
 									}
 									befParams["LAYERS"] = names.toString();
+									befParams['TIME'] = Date.now();
 									// var group = new
 									// ol.layer.Group({
 									// layers : befCollection
@@ -593,6 +599,7 @@ $.jstree.plugins.geoserver = function(options, parent) {
 							source : new ol.source.TileWMS({
 								url : that._data.geoserver.WMSLayerURL,
 								params : {
+									'TIME' : Date.now(),
 									'LAYERS' : data[i].lName,
 									'TILED' : true,
 									'FORMAT' : 'image/png8',
@@ -701,6 +708,7 @@ $.jstree.plugins.geoserver = function(options, parent) {
 							source : new ol.source.TileWMS({
 								url : that._data.geoserver.WMSLayerURL,
 								params : {
+									'TIME' : Date.now(),
 									'LAYERS' : obj.refer.get_node(data[i].name).children.toString(),
 									// 'LAYERS' :
 									// that._data.geoserver.user +
@@ -760,6 +768,7 @@ $.jstree.plugins.geoserver = function(options, parent) {
 										source : new ol.source.TileWMS({
 											url : that._data.geoserver.WMSLayerURL,
 											params : {
+												'TIME' : Date.now(),
 												'LAYERS' : data2[i].lName,
 												'TILED' : true,
 												'FORMAT' : 'image/png8',
@@ -818,6 +827,7 @@ $.jstree.plugins.geoserver = function(options, parent) {
 											names.push(befCollection.item(i).get("id"));
 										}
 										befParams["LAYERS"] = names.toString();
+										befParams['TIME'] = Date.now();
 										// var group = new
 										// ol.layer.Group({
 										// layers : befCollection
@@ -898,6 +908,7 @@ $.jstree.plugins.geoserver = function(options, parent) {
 							source : new ol.source.TileWMS({
 								url : that._data.geoserver.WMSLayerURL,
 								params : {
+									'TIME' : Date.now(),
 									'LAYERS' : data[i].name,
 									// 'LAYERS' :
 									// that._data.geoserver.user +
