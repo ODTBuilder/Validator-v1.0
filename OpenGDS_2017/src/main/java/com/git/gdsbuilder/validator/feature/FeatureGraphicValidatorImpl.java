@@ -207,6 +207,13 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 
 		List<ErrorFeature> errFeatures = new ArrayList<ErrorFeature>();
 
+		String featureIdx = simpleFeature.getID();
+		Property featuerIDPro = simpleFeature.getProperty("feature_id");
+		String featureID = (String) featuerIDPro.getValue();
+		
+		if(featureID.equals("f0010000_linestring.81")) {
+			System.out.println("");
+		}
 		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
 		Coordinate[] coors = geometry.getCoordinates();
 		int coorsSize = coors.length;
@@ -216,11 +223,13 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 		for (int i = 0; i < coorsSize - 1; i++) {
 			Coordinate a = coors[i];
 			Coordinate b = coors[i + 1];
-
+			if (a.equals2D(b)) {
+				continue;
+			}
 			// 길이 조건
 			double tmpLength = a.distance(b);
-			// double distance = JTS.orthodromicDistance(a, b, crs);
 
+			// double distance = JTS.orthodromicDistance(a, b, crs);
 			boolean isTrue = true;
 			if (tmpLength < 3) {
 				isTrue = false;
@@ -230,17 +239,22 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 					// 각도 조건
 					Coordinate c = coors[i + 2];
 					if (!a.equals2D(b) && !b.equals2D(c) && !c.equals2D(a)) {
-						double tmpAngle = Angle.toDegrees(Angle.angleBetween(a, b, c));
-						if (tmpAngle < 6) {
-							GeometryFactory gFactory = new GeometryFactory();
-							Geometry returnGeom = gFactory.createPoint(b);
-							String featureIdx = simpleFeature.getID();
-							Property featuerIDPro = simpleFeature.getProperty("feature_id");
-							String featureID = (String) featuerIDPro.getValue();
-							ErrorFeature errFeature = new ErrorFeature(featureIdx, featureID,
-									UselessPoint.Type.USELESSPOINT.errType(), UselessPoint.Type.USELESSPOINT.errName(),
-									returnGeom.getGeometryN(i));
-							errFeatures.add(errFeature);
+						double tmpLength2 = b.distance(c);
+						if (tmpLength2 < 3) {
+
+							System.out.println("tmpLength : " + tmpLength);
+							System.out.println("tmpLength2 : " + tmpLength2);
+
+							double angle = Angle.toDegrees(Angle.angleBetween(a, b, c));
+							double tmp = 180 - angle;
+							if (angle < 6) {
+								GeometryFactory gFactory = new GeometryFactory();
+								Geometry returnGeom = gFactory.createPoint(b);
+								ErrorFeature errFeature = new ErrorFeature(featureIdx, featureID,
+										UselessPoint.Type.USELESSPOINT.errType(),
+										UselessPoint.Type.USELESSPOINT.errName(), returnGeom);
+								errFeatures.add(errFeature);
+							}
 						}
 					}
 				}
