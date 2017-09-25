@@ -421,7 +421,7 @@ gitbuilder.ui.LayerDefinition20 = $.widget("gitbuilder.layerdefinition20", {
 				$(anchor)[0].click();
 			}
 		} else if ($(this.upper2).is(":visible")) {
-//			def = this.addObj;
+			// def = this.addObj;
 			this.setMessage("Please, Save first");
 		}
 
@@ -743,7 +743,7 @@ gitbuilder.ui.LayerDefinition20 = $.widget("gitbuilder.layerdefinition20", {
 			delete obj[keys[idx]];
 			obj[lname] = {
 				"code" : lcode.split(","),
-				"goem" : geom,
+				"geom" : geom,
 				"area" : area
 			};
 			console.log(obj);
