@@ -18,10 +18,12 @@ gitbuilder.ui.LayerDefinition20 = $.widget("gitbuilder.layerdefinition20", {
 	tbody2 : undefined,
 	message : undefined,
 	file : undefined,
+	copyNameList : undefined,
 	objCopy : undefined,
-	nameList : undefined,
+	addNameList : undefined,
 	addObj : undefined,
 	pagination : undefined,
+	okBtn : undefined,
 	options : {
 		definition : undefined,
 		appendTo : "body"
@@ -342,16 +344,16 @@ gitbuilder.ui.LayerDefinition20 = $.widget("gitbuilder.layerdefinition20", {
 		this._addClass(closeBtn, "btn-default");
 		$(closeBtn).text("Close");
 
-		var okBtn = $("<button>").attr({
+		this.okBtn = $("<button>").attr({
 			"type" : "button"
 		});
-		this._addClass(okBtn, "btn");
-		this._addClass(okBtn, "btn-primary");
-		$(okBtn).text("Save");
+		this._addClass(this.okBtn, "btn");
+		this._addClass(this.okBtn, "btn-primary");
+		$(this.okBtn).text("Save");
 
-		this._on(false, okBtn, {
+		this._on(false, this.okBtn, {
 			click : function(event) {
-				if (event.target === okBtn[0]) {
+				if (event.target === that.okBtn[0]) {
 					if ($(that.upper).is(":visible")) {
 						var obj = that.objCopy;
 						if (!!obj) {
@@ -372,7 +374,7 @@ gitbuilder.ui.LayerDefinition20 = $.widget("gitbuilder.layerdefinition20", {
 
 		var pright = $("<span>").css("float", "right");
 		// this._addClass(pright, "text-right");
-		$(pright).append(closeBtn).append(okBtn);
+		$(pright).append(closeBtn).append(this.okBtn);
 
 		var footer = $("<div>").append(pleft).append(pright);
 		this._addClass(footer, "modal-footer");
@@ -535,8 +537,9 @@ gitbuilder.ui.LayerDefinition20 = $.widget("gitbuilder.layerdefinition20", {
 		if (!obj) {
 			obj = this.layerDef;
 		}
-		var keys = Object.keys(obj);
-		if (keys.length === 0) {
+
+		this.copyNameList = Object.keys(obj);
+		if (this.copyNameList.length === 0) {
 			$(this.upper).hide();
 			$(this.upper2).show();
 			$(this.backBtn).hide();
@@ -546,18 +549,19 @@ gitbuilder.ui.LayerDefinition20 = $.widget("gitbuilder.layerdefinition20", {
 			$(this.upper2).hide();
 		}
 
-		console.log(keys.length);
-		keys.sort();
+		console.log(this.copyNameList.length);
+		this.copyNameList.sort();
+		console.log(this.copyNameList);
 		var itemStartNum, itemEndNum, startPageNum;
 		if (!page) {
 			page = 1;
 		}
-		if (keys.length >= (page * 5)) {
+		if (this.copyNameList.length >= (page * 5)) {
 			itemEndNum = (page * 5);
 			itemStartNum = (page * 5) - 5;
 		} else {
-			itemEndNum = keys.length;
-			itemStartNum = keys.length - (keys.length % 5);
+			itemEndNum = this.copyNameList.length;
+			itemStartNum = this.copyNameList.length - (this.copyNameList.length % 5);
 		}
 		for (itemStartNum; itemStartNum < itemEndNum; itemStartNum++) {
 			var no = $("<span>").css({
@@ -566,13 +570,13 @@ gitbuilder.ui.LayerDefinition20 = $.widget("gitbuilder.layerdefinition20", {
 			var td1 = $("<td>").append(no);
 			var lname = $("<input>").attr({
 				"type" : "text"
-			}).addClass("layerdefinition20-lname").val(keys[itemStartNum]);
+			}).addClass("layerdefinition20-lname").val(this.copyNameList[itemStartNum]);
 			this._addClass(lname, "form-control");
 			var td2 = $("<td>").append(lname);
 
 			var lcode = $("<input>").attr({
 				"type" : "text"
-			}).addClass("layerdefinition20-lcode").val(obj[keys[itemStartNum]].code.toString());
+			}).addClass("layerdefinition20-lcode").val(obj[this.copyNameList[itemStartNum]].code.toString());
 			this._addClass(lcode, "form-control");
 			var td3 = $("<td>").append(lcode);
 
@@ -581,7 +585,7 @@ gitbuilder.ui.LayerDefinition20 = $.widget("gitbuilder.layerdefinition20", {
 			var ty3 = $("<option>").text("Polygon").val("polygon");
 			var ty4 = $("<option>").text("Text").val("text");
 			var gtype = $("<select>").addClass("layerdefinition20-geom").append(ty1).append(ty2).append(ty3).append(ty4).val(
-					obj[keys[itemStartNum]].geom);
+					obj[this.copyNameList[itemStartNum]].geom);
 			this._addClass(gtype, "form-control");
 			var td4 = $("<td>").append(gtype);
 
@@ -599,7 +603,7 @@ gitbuilder.ui.LayerDefinition20 = $.widget("gitbuilder.layerdefinition20", {
 			}).css({
 				"vertical-align" : "-webkit-baseline-middle"
 			}).addClass("layerdefinition20-area");
-			if (obj[keys[itemStartNum]].area) {
+			if (obj[this.copyNameList[itemStartNum]].area) {
 				$(radio).prop("checked", true);
 			} else {
 				$(radio).prop("checked", false);
@@ -616,7 +620,7 @@ gitbuilder.ui.LayerDefinition20 = $.widget("gitbuilder.layerdefinition20", {
 			$(that.tbody).append(tr);
 		}
 		// 총 페이지 수
-		var totalPageNum = Math.ceil(keys.length >= 5 ? keys.length / 5 : 1);
+		var totalPageNum = Math.ceil(this.copyNameList.length >= 5 ? this.copyNameList.length / 5 : 1);
 		// 현재 페이지 위치
 		var currentPageNum = (page * 5) >= 5 ? page > totalPageNum ? totalPageNum : page : 1;
 		// 보여줄 마지막 페이지
@@ -719,16 +723,47 @@ gitbuilder.ui.LayerDefinition20 = $.widget("gitbuilder.layerdefinition20", {
 		}
 		return result;
 	},
+	setSaveBtn : function(flag) {
+		if (flag) {
+			$(this.okBtn).prop({
+				"disabled" : false
+			});
+		} else {
+			$(this.okBtn).prop({
+				"disabled" : true
+			});
+		}
+	},
 	setCopyData : function(index) {
 		var that = this;
 		$(this.tbody).find("tr").each(function() {
 			that.setDefault(this);
 		});
+		this.setMessage("");
 		var tr = $(this.tbody).find("tr:eq(" + index + ")");
 		var lname = $(tr).find(".layerdefinition20-lname").val().replace(/(\s*)/g, '');
 		console.log(lname);
+		if (lname === "") {
+			this.setMessage("Layer name must be set.");
+			this.setWarning(tr);
+			this.setSaveBtn(false);
+			return;
+		}
+		// if (that.objCopy.hasOwnProperty(lname)) {
+		// this.setMessage("Layer name is duplicated.");
+		// this.setWarning(tr);
+		// return;
+		// } else {
+		// this.setMessage("");
+		// }
 		var lcode = $(tr).find(".layerdefinition20-lcode").val().replace(/(\s*)/g, '');
 		console.log(lcode);
+		if (lcode === "") {
+			this.setMessage("Layer code must be set.");
+			this.setWarning(tr);
+			this.setSaveBtn(false);
+			return;
+		}
 		var geom = $(tr).find(".layerdefinition20-geom").val();
 		console.log(geom);
 		var area = $(tr).find(".layerdefinition20-area").is(":checked");
@@ -738,24 +773,31 @@ gitbuilder.ui.LayerDefinition20 = $.widget("gitbuilder.layerdefinition20", {
 			console.log($(tr).index());
 			var idx = parseInt($(tr).find("td:eq(0)").text()) - 1;
 			var obj = that.objCopy;
-			var keys = Object.keys(obj).sort();
+
 			// var oldDef = obj[keys[idx]];
-			delete obj[keys[idx]];
+			if (this.copyNameList.indexOf(lname) !== -1 && this.copyNameList[idx] !== lname) {
+				this.setMessage("Layer name is duplicated.");
+				this.setWarning(tr);
+				this.setSaveBtn(false);
+				return;
+			}
+			delete obj[this.copyNameList[idx]];
+			this.copyNameList[idx] = lname;
+
 			obj[lname] = {
 				"code" : lcode.split(","),
 				"geom" : geom,
 				"area" : area
 			};
-			console.log(obj);
 
 			if (!this.checkArea(obj)) {
-				this.setMessage("Please check QA area.");
+				this.setMessage("QA area is not set or duplicated.");
 				this.setWarning(tr);
-			} else {
-				this.setMessage("");
-				// this.setDefault(tr);
+				this.setSaveBtn(false);
 			}
 			console.log(obj);
+			console.log(Object.keys(obj).length);
+			this.setSaveBtn(true);
 		}
 	},
 	setTempData : function(index) {
@@ -763,16 +805,29 @@ gitbuilder.ui.LayerDefinition20 = $.widget("gitbuilder.layerdefinition20", {
 		$(this.tbody2).find("tr").each(function() {
 			that.setDefault(this);
 		});
+		this.setMessage("");
 		var tr = $(this.tbody2).find("tr:eq(" + index + ")");
 		console.log(tr);
 		if (typeof this.addObj === "undefined") {
-			this.nameList = [];
+			this.addNameList = [];
 			this.addObj = {};
 		}
 		var lname = $(tr).find(".layerdefinition20-lname-temp").val().replace(/(\s*)/g, '');
 		console.log(lname);
+		if (lname === "") {
+			this.setMessage("Layer name must be set.");
+			this.setWarning(tr);
+			this.setSaveBtn(false);
+			return;
+		}
 		var lcode = $(tr).find(".layerdefinition20-lcode-temp").val().replace(/(\s*)/g, '');
 		console.log(lcode);
+		if (lcode === "") {
+			this.setMessage("Layer code must be set.");
+			this.setWarning(tr);
+			this.setSaveBtn(false);
+			return;
+		}
 		var geom = $(tr).find(".layerdefinition20-geom-temp").val();
 		console.log(geom);
 		var area = $(tr).find(".layerdefinition20-area-temp").is(":checked");
@@ -783,44 +838,41 @@ gitbuilder.ui.LayerDefinition20 = $.widget("gitbuilder.layerdefinition20", {
 			var def = this.objCopy;
 			var isExistOrigin = def.hasOwnProperty(lname);
 			var isExistTemp = this.addObj.hasOwnProperty(lname);
-			if (isExistOrigin || (isExistTemp && this.nameList.indexOf(lname) !== index)) {
+			if (isExistOrigin || (isExistTemp && this.addNameList.indexOf(lname) !== index)) {
 				this.setMessage("Same layer names are not allowed.");
 				this.setWarning(tr);
-
-				console.log(this.nameList);
+				this.setSaveBtn(false);
+				console.log(this.addNameList);
 				console.log(this.addObj);
 				return;
-			} else {
-				this.setMessage("");
-				this.setDefault(tr);
 			}
-			delete this.addObj[this.nameList[index]];
-			this.nameList[index] = undefined;
+			delete this.addObj[this.addNameList[index]];
+			this.addNameList[index] = undefined;
 
-			this.nameList[index] = lname;
+			this.addNameList[index] = lname;
 			this.addObj[lname] = {
 				"code" : lcode.split(","),
 				"geom" : geom,
 				"area" : area
 			};
 
-			console.log(this.nameList);
+			console.log(this.addNameList);
 			console.log(this.addObj);
 			var tobj = $.extend({}, this.objCopy, this.addObj);
 			if (!this.checkArea(tobj)) {
 				this.setMessage("Please check QA area.");
 				this.setWarning(tr);
-			} else {
-				this.setMessage("");
-				// this.setDefault(tr);
+				this.setSaveBtn(false);
+				return;
 			}
 			console.log(tobj);
+			this.setSaveBtn(true);
 		}
 	},
 	includeAddObject : function() {
 		var tobj = $.extend({}, this.objCopy, this.addObj);
 		this.addObj = {};
-		this.nameList = [];
+		this.addNameList = [];
 		// this.objCopy = tobj;
 		return tobj;
 	},
