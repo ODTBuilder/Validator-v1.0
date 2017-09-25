@@ -794,6 +794,7 @@ gitbuilder.ui.LayerDefinition20 = $.widget("gitbuilder.layerdefinition20", {
 				this.setMessage("QA area is not set or duplicated.");
 				this.setWarning(tr);
 				this.setSaveBtn(false);
+				return;
 			}
 			console.log(obj);
 			console.log(Object.keys(obj).length);
