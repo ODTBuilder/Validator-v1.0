@@ -6,6 +6,16 @@
  * @version 0.01
  * @class gb.panel.Base
  * @constructor
+ * @param {String}
+ *            width (ex: 10px)
+ * @param {String}
+ *            height (ex: 10px)
+ * @param {Number}
+ *            positionX
+ * @param {Number}
+ *            positionY
+ * @param {Boolean}
+ *            autoOpen
  */
 var gb;
 if (!gb)
@@ -44,13 +54,13 @@ gb.panel.Base = function(obj) {
 	// containment : "body"
 	// });
 
+	$("body").append(this.panel);
+
 	if (this.autoOpen) {
 		this.open();
 	} else {
 		this.close();
 	}
-	$("body").append(this.panel);
-
 };
 /**
  * 패널 바디를 설정한다.

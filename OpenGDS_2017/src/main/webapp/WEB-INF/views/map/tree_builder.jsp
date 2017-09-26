@@ -293,7 +293,7 @@ html {
 			addRemoveHistoryList : function(layer, arr) {
 				if (layer instanceof ol.layer.Group) {
 					if (layer.get("id")) {
-						arr.push(layer.get("id"));	
+						arr.push(layer.get("id"));
 					}
 					var layers = layer.getLayers();
 					for (var i = 0; i < layers.getLength(); i++) {
@@ -332,7 +332,7 @@ html {
 				} else if (clayer instanceof ol.layer.Tile) {
 					arr.push(clayer);
 				} else if (clayer instanceof ol.layer.Vector) {
-					
+
 				} else if (clayer instanceof ol.layer.Base) {
 					var cnode = $('#builderClientLayer').jstreeol3(true).get_node(node);
 					var parent = cnode.parent;
@@ -675,6 +675,13 @@ html {
 					$('#builderClientLayer').jstreeol3(true).search(v);
 				}, 250);
 			});
+		});
+
+		var modal = new gb.modal.Base({
+			"width" : "300px",
+			"height" : "250px",
+			"autoOpen" : true,
+			"body" : "hi"
 		});
 	</script>
 
