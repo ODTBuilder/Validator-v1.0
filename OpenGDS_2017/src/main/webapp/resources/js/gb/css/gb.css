@@ -1,15 +1,7 @@
-.gb-panel, .gb-modal {
-	background-color: #fff;
-	border: 1px solid #ddd;
-	border-radius: 4px;
-	-webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, .05);
-	box-shadow: 0 1px 1px rgba(0, 0, 0, .05);
-}
-
 .gb-modal-background {
 	display: none; /* Hidden by default */
 	position: fixed; /* Stay in place */
-	z-index: 1; /* Sit on top */
+	z-index: 10; /* Sit on top */
 	left: 0;
 	top: 0;
 	width: 100%; /* Full width */
@@ -17,6 +9,126 @@
 	overflow: auto; /* Enable scroll if needed */
 	background-color: rgb(0, 0, 0); /* Fallback color */
 	background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+}
+
+.gb-modal-title {
+	font-size: 18px;
+	padding-left: 2px;
+}
+
+.gb-modal-head {
+	color: #333;
+	background-color: #fff;
+	border-bottom: 1px solid #ddd;
+	border-top-left-radius: 3px;
+	border-top-right-radius: 3px;
+	height: 48px;
+	padding: 10px;
+}
+
+.gb-modal-footer {
+	color: #333;
+	background-color: #fff;
+	border-top: 1px solid #ddd;
+	border-bottom-left-radius: 3px;
+	border-bottom-right-radius: 3px;
+	height: 54px;
+	padding: 10px;
+}
+
+.gb-modal-buttons {
+	float: right;
+}
+
+.gb-button {
+	margin-left: 4px;
+	display: inline-block;
+	padding: 6px 12px;
+	margin-bottom: 0;
+	font-size: 14px;
+	font-weight: 400;
+	line-height: 1.42857143;
+	text-align: center;
+	white-space: nowrap;
+	vertical-align: middle;
+	-ms-touch-action: manipulation;
+	touch-action: manipulation;
+	cursor: pointer;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	background-image: none;
+	border: 1px solid transparent;
+	border-radius: 4px;
+}
+
+.gb-button-default {
+	color: #333;
+	background-color: #fff;
+	border-color: #ccc;
+}
+
+.gb-button-primary {
+	color: #fff;
+	background-color: #337ab7;
+	border-color: #2e6da4;
+}
+
+.gb-modal-head>button {
+	display: inline-block;
+	float: right;
+	padding: 0;
+	margin: 0;
+	color: #ccc;
+	border: none;
+	background-color: transparent;
+	cursor: pointer;
+	outline: none;
+	color: #ccc;
+}
+
+.gb-modal-head>button>span {
+	padding: 2px 8px;
+	font-size: 18px;
+	font-weight: 700;
+}
+
+.gb-modal-head>button :HOVER {
+	color: #000;
+}
+
+.gb-article {
+	background-color: #fff;
+	border: 1px solid #ddd;
+	border-radius: 4px;
+	-webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, .05);
+	box-shadow: 0 1px 1px rgba(0, 0, 0, .05);
+	margin: 10px;
+}
+
+.gb-article-head {
+	color: #333;
+	background-color: #f5f5f5;
+	border-bottom: 1px solid #ddd;
+	border-top-left-radius: 3px;
+	border-top-right-radius: 3px;
+	height: 40px;
+	padding-top: 9px;
+	padding-left: 13px;
+}
+
+.gb-article-body {
+	padding: 0;
+	overflow-y: "auto";
+}
+
+.gb-panel, .gb-modal {
+	background-color: #fff;
+	border: 1px solid #ddd;
+	border-radius: 4px;
+	-webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, .05);
+	box-shadow: 0 1px 1px rgba(0, 0, 0, .05);
 }
 
 .gb-panel-head {

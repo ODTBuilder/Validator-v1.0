@@ -160,3 +160,5 @@
 <script src="${pageContext.request.contextPath}/resources/js/gb/interaction/multitransform.js"></script>
 <!-- gb.modal.Base -->
 <script src="${pageContext.request.contextPath}/resources/js/gb/modal/base.js"></script>
+<!-- gb.modal.Generalization -->
+<script src="${pageContext.request.contextPath}/resources/js/gb/modal/generalization.js"></script>

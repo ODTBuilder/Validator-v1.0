@@ -6,10 +6,10 @@
  * @version 0.01
  * @class gb.panel.Base
  * @constructor
- * @param {String}
- *            width (ex: 10px)
- * @param {String}
- *            height (ex: 10px)
+ * @param {Number}
+ *            width (px)
+ * @param {Number}
+ *            height (px)
  * @param {Number}
  *            positionX
  * @param {Number}
@@ -41,8 +41,8 @@ gb.panel.Base = function(obj) {
 		$(this.panelBody).append(body);
 	}
 	this.panel = $("<div>").addClass("gb-panel").css({
-		"width" : this.width,
-		"height" : this.height,
+		"width" : this.width + "px",
+		"height" : this.height + "px",
 		"position" : "absolute",
 		"z-Index" : "999",
 		"top" : this.y + "px",

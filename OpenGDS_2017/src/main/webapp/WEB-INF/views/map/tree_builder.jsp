@@ -121,7 +121,7 @@ html {
 				</ul></li>
 			<li><a href="#" title="QA Edit" id="qaedit">QA Edit</a></li>
 			<li><a href="#" title="QA Status" id="qastat">QA Status</a></li>
-
+			<li><a href="#" title="Generalization" id="gen">Generalization</a></li>
 			<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
 				aria-expanded="false" title="ToolBox">ToolBox</a>
 				<ul class="dropdown-menu" role="menu">
@@ -373,8 +373,8 @@ html {
 		});
 
 		var epan = new gb.panel.EditingTool({
-			width : "84px",
-			height : "145px",
+			width : 84,
+			height : 145,
 			positionX : 425,
 			positionY : 100,
 			autoOpen : false,
@@ -653,6 +653,18 @@ html {
 			epan.open();
 		});
 
+		var modal = new gb.modal.Generalization({
+			"width" : 800,
+			"autoOpen" : false,
+			"title" : "Generalization",
+			"jstreeURL" : "geoserver/getGeolayerCollectionTree.ajax?treeType=all",
+			"item" : [ "simplification", "elimination" ]
+		});
+
+		$("#gen").click(function() {
+			modal.open();
+		});
+
 		$(function() {
 			var to = false;
 			$('#inputSearchServer').keyup(function() {
@@ -675,13 +687,6 @@ html {
 					$('#builderClientLayer').jstreeol3(true).search(v);
 				}, 250);
 			});
-		});
-
-		var modal = new gb.modal.Base({
-			"width" : "300px",
-			"height" : "250px",
-			"autoOpen" : true,
-			"body" : "hi"
 		});
 	</script>
 
