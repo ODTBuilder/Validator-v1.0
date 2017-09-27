@@ -65,6 +65,10 @@ public class FileUploadController extends AbstractController {
 			HttpServletResponse response) throws Throwable {
 		UserVO generalUser = (UserVO) getSession(request, EnUserType.GENERAL.getTypeName());
 		LinkedList<FileMeta> files = new LinkedList<FileMeta>();
+		long start = System.currentTimeMillis() ; 
+
+		
+		
 		files = fileService.filesUpload(generalUser, request, response);
 		/*
 		 * geoserverService.groupPublish();
@@ -72,6 +76,9 @@ public class FileUploadController extends AbstractController {
 		 * geoserverService.updateDBLayer("admin", "admin",
 		 * "geo_ngi_00000738000124_E0052114_POLYGON", null, null);
 		 */
+
+		long end = System.currentTimeMillis(); 
+		System.out.println((end-start)/1000 +" 초 걸림");
 
 		return files;
 	}

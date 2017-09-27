@@ -137,8 +137,9 @@ public class GeoLayerCollection {
 	}
 
 	/**
-	 * layerCollection에서 layerName에 해당하는 Layer 객체를 반환 @author DY.Oh @Date 2017.
-	 * 3. 11. 오전 11:48:22 @param layerName @param layerCollection @return
+	 * layerCollection에서 layerName에 해당하는 Layer 객체를 반환 
+	 * @author DY.Oh 
+	 * @Date 2017. 03. 11. 오전 11:48:22 @param layerName @param layerCollection @return
 	 * Layer @throws
 	 */
 	public GeoLayer getLayer(String layerName, GeoLayerCollection layerCollection) {

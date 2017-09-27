@@ -169,7 +169,6 @@ public class GeoLayerCollectionParser {
 	}
 
 	private JSONArray checkValidateLayerList(JSONArray layerNames) {
-
 		JSONArray checkedLayerNames = new JSONArray();
 		for (int i = 0; i < layerNames.size(); i++) {
 			String layer = ((String) layerNames.get(i)).replaceAll(" ", "");
