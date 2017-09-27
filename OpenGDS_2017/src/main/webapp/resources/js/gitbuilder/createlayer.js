@@ -183,6 +183,7 @@ gb.geoserver.CreateLayer.prototype.getReference = function() {
 };
 gb.geoserver.CreateLayer.prototype.save = function(obj) {
 	var that = this;
+	console.log(obj);
 	$.ajax({
 		url : this.getUrl(),
 		method : "POST",
@@ -258,6 +259,11 @@ gb.geoserver.CreateLayer.prototype.initTypeForm = function(type) {
 		var option3 = $("<option>").text("Polygon");
 		var option4 = $("<option>").text("Text");
 		$(select).append(option1).append(option2).append(option3).append(option4);
+	} else if (type === "shp") {
+		var option1 = $("<option>").text("Point");
+		var option2 = $("<option>").text("LineString");
+		var option3 = $("<option>").text("Polygon");
+		$(select).append(option1).append(option2).append(option3);
 	}
 	$(this.typeForm).empty();
 	var tp = $("<p>").text("Type");
@@ -473,6 +479,22 @@ gb.geoserver.CreateLayer.prototype.getDefinitionForm = function() {
 			layerObj["dim"] = $(this.dim).val();
 			layerObj["bound"] = [ [ $(this.minx).val(), $(this.miny).val() ], [ $(this.maxx).val(), $(this.maxy).val() ] ];
 			layerObj["represent"] = $(this.rep).val();
+		} else if (this.format === "shp") {
+			var attrs = $(this.attrForm).find("tr");
+			for (var i = 0; i < attrs.length; i++) {
+				if ($(attrs[i]).children().eq(0).find("input:text").val().replace(/(\s*)/g, '') === "") {
+					break;
+				}
+				var attr = {
+					"fieldName" : $(attrs[i]).children().eq(0).find("input:text").val().replace(/(\s*)/g, ''),
+					"type" : $(attrs[i]).children().eq(1).find("select").val(),
+					"nullable" : $(attrs[i]).children().eq(2).find("input:checkbox").prop("checked") ? false : true
+				};
+				layerAttr.push(attr);
+			}
+			layerObj["attr"] = layerAttr;
+			// layerObj["bound"] = [ [ $(this.minx).val(), $(this.miny).val() ],
+			// [ $(this.maxx).val(), $(this.maxy).val() ] ];
 		}
 		this.futureId = "geo_" + this.format + "_" + $(this.sheetNumInput).val().replace(/(\s*)/g, '') + "_" + $(this.layerNameInput).val()
 				+ "_" + ($(this.typeForm).find("select").val().toUpperCase());
