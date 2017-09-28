@@ -100,9 +100,7 @@ public class GeoLayerParser {
 		this.fileFormat = fileFormat;
 		Map connectionParameters = new HashMap();
 		connectionParameters.put("WFSDataStoreFactory:GET_CAPABILITIES_URL", getCapabilities);
-//		connectionParameters.put("WFSDataStoreFactory:OUTPUTFORMAT", "text/xml; subType=gml/3.1.1/profiles/gmlsf/1.0.0/0");
 		connectionParameters.put("WFSDataStoreFactory.TIMEOUT.key", 999999999);
-//		connectionParameters.put("WFSDataStoreFactory:BUFFER_SIZE", 100);
 		this.dataStore = DataStoreFinder.getDataStore(connectionParameters);
 		this.layer = layerParse();
 	}
