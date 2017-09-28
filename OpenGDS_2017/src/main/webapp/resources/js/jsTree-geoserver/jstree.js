@@ -10546,9 +10546,29 @@
 				// },
 				"generalization" : {
 					"icon" : "fa fa-folder-o",
-					"valid_children" : [ "g_layer" ]
+					"valid_children" : [ "g_ngi_layer", "g_dxf_layer", "g_shp_layer" ]
 				},
-				"g_layer" : {
+				"g_ngi" : {
+					"icon" : "fa fa-folder-o",
+					"valid_children" : [ "g_ngi_layer" ]
+				},
+				"g_dxf" : {
+					"icon" : "fa fa-folder-o",
+					"valid_children" : [ "g_dxf_layer" ]
+				},
+				"g_shp" : {
+					"icon" : "fa fa-folder-o",
+					"valid_children" : [ "g_shp_layer" ]
+				},
+				"g_ngi_layer" : {
+					"icon" : "fa fa-file-image-o",
+					"valid_children" : []
+				},
+				"g_dxf_layer" : {
+					"icon" : "fa fa-file-image-o",
+					"valid_children" : []
+				},
+				"g_shp_layer" : {
 					"icon" : "fa fa-file-image-o",
 					"valid_children" : []
 				}

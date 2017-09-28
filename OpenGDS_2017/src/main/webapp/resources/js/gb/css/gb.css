@@ -1,4 +1,148 @@
-.gb-panel {
+.gb-modal-background {
+	display: none; /* Hidden by default */
+	position: fixed; /* Stay in place */
+	z-index: 10; /* Sit on top */
+	left: 0;
+	top: 0;
+	width: 100%; /* Full width */
+	height: 100%; /* Full height */
+	overflow: auto; /* Enable scroll if needed */
+	background-color: rgb(0, 0, 0); /* Fallback color */
+	background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+}
+
+.gb-modal-title {
+	font-size: 18px;
+	padding-left: 2px;
+}
+
+.gb-modal-head {
+	color: #333;
+	background-color: #fff;
+	border-bottom: 1px solid #ddd;
+	border-top-left-radius: 3px;
+	border-top-right-radius: 3px;
+	height: 48px;
+	padding: 10px;
+}
+
+.gb-modal-footer {
+	color: #333;
+	background-color: #fff;
+	border-top: 1px solid #ddd;
+	border-bottom-left-radius: 3px;
+	border-bottom-right-radius: 3px;
+	height: 54px;
+	padding: 10px;
+}
+
+.gb-modal-buttons {
+	float: right;
+}
+
+.gb-button {
+	margin-left: 4px;
+	display: inline-block;
+	padding: 6px 12px;
+	margin-bottom: 0;
+	font-size: 14px;
+	font-weight: 400;
+	line-height: 1.42857143;
+	text-align: center;
+	white-space: nowrap;
+	vertical-align: middle;
+	-ms-touch-action: manipulation;
+	touch-action: manipulation;
+	cursor: pointer;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	background-image: none;
+	border: 1px solid transparent;
+	border-radius: 4px;
+}
+
+.gb-button-default {
+	color: #333;
+	background-color: #fff;
+	border-color: #ccc;
+}
+
+.gb-button-primary {
+	color: #fff;
+	background-color: #337ab7;
+	border-color: #2e6da4;
+}
+
+.gb-modal-head>button {
+	display: inline-block;
+	float: right;
+	padding: 0;
+	margin: 0;
+	color: #ccc;
+	border: none;
+	background-color: transparent;
+	cursor: pointer;
+	outline: none;
+	color: #ccc;
+}
+
+.gb-modal-head>button>span {
+	padding: 2px 8px;
+	font-size: 18px;
+	font-weight: 700;
+}
+
+.gb-modal-head>button :HOVER {
+	color: #000;
+}
+
+.gb-article {
+	background-color: #fff;
+	border: 1px solid #ddd;
+	border-radius: 4px;
+	-webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, .05);
+	box-shadow: 0 1px 1px rgba(0, 0, 0, .05);
+	margin: 10px;
+}
+
+.gb-article-head {
+	color: #333;
+	background-color: #f5f5f5;
+	border-bottom: 1px solid #ddd;
+	border-top-left-radius: 3px;
+	border-top-right-radius: 3px;
+	height: 40px;
+	padding-top: 9px;
+	padding-left: 13px;
+}
+
+.gb-article-body {
+	padding: 0;
+	overflow-y: auto;
+}
+
+.gb-form {
+	display: block;
+	width: 100%;
+	height: 34px;
+	padding: 6px 12px;
+	font-size: 14px;
+	line-height: 1.42857143;
+	color: #555;
+	background-color: #fff;
+	background-image: none;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	-webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+	box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+	-webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
+	-o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+	transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+}
+
+.gb-panel, .gb-modal {
 	background-color: #fff;
 	border: 1px solid #ddd;
 	border-radius: 4px;
@@ -102,4 +246,27 @@
 	color: #333;
 	background-color: #e6e6e6;
 	border-color: #adadad;
+}
+
+.gb-alert {
+	text-shadow: 0 1px 0 rgba(255, 255, 255, .2);
+	-webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, .25), 0 1px 2px rgba(0, 0, 0, .05);
+	box-shadow: inset 0 1px 0 rgba(255, 255, 255, .25), 0 1px 2px rgba(0, 0, 0, .05);
+	padding: 15px;
+	margin-bottom: 20px;
+	border: 1px solid transparent;
+	border-radius: 4px;
+}
+
+.gb-alert-success {
+	background-image: -webkit-linear-gradient(top, #dff0d8 0, #c8e5bc 100%);
+	background-image: -o-linear-gradient(top, #dff0d8 0, #c8e5bc 100%);
+	background-image: -webkit-gradient(linear, left top, left bottom, from(#dff0d8), to(#c8e5bc));
+	background-image: linear-gradient(to bottom, #dff0d8 0, #c8e5bc 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffdff0d8', endColorstr='#ffc8e5bc', GradientType=0);
+	background-repeat: repeat-x;
+	border-color: #b2dba1;
+	color: #3c763d;
+	background-color: #dff0d8;
+	border-color: #d6e9c6;
 }

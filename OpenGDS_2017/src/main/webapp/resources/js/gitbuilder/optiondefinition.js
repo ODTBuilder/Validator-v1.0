@@ -45,14 +45,28 @@ gitbuilder.ui.OptionDefinition = $
 						point : [ "LayerMiss", "UselessEntity", "EntityDuplicated", "SelfEntity", "AttributeFix", "OutBoundary",
 								"CharacterAccuracy", "OverShoot", "UnderShoot", "UFIDLength", "NumericalValue", "UFIDRule",
 								"UFIDDuplicated" ],
+						multipoint : [ "LayerMiss", "UselessEntity", "EntityDuplicated", "SelfEntity", "AttributeFix", "OutBoundary",
+								"CharacterAccuracy", "OverShoot", "UnderShoot", "UFIDLength", "NumericalValue", "UFIDRule",
+								"UFIDDuplicated" ],
 						linestring : [ "RefAttributeMiss", "EdgeMatchMiss", "UselessEntity", "LayerMiss", "RefLayerMiss", "SmallLength",
 								"EntityDuplicated", "SelfEntity", "PointDuplicated", "ConIntersected", "ConOverDegree", "ConBreak",
 								"AttributeFix", "OutBoundary", "ZValueAmbiguous", "UselessPoint", "OverShoot", "UnderShoot",
 								"RefZValueMiss", "UFIDLength", "NeatLineAttribute", "NumericalValue", "UFIDRule", "LinearDisconnection",
 								"MultiPart", "UFIDDuplicated", "NodeMiss" ],
+						multilinestring : [ "RefAttributeMiss", "EdgeMatchMiss", "UselessEntity", "LayerMiss", "RefLayerMiss",
+								"SmallLength", "EntityDuplicated", "SelfEntity", "PointDuplicated", "ConIntersected", "ConOverDegree",
+								"ConBreak", "AttributeFix", "OutBoundary", "ZValueAmbiguous", "UselessPoint", "OverShoot", "UnderShoot",
+								"RefZValueMiss", "UFIDLength", "NeatLineAttribute", "NumericalValue", "UFIDRule", "LinearDisconnection",
+								"MultiPart", "UFIDDuplicated", "NodeMiss" ],
 						polygon : [ "Admin", "CrossRoad", "RefAttributeMiss", "BridgeName", "EdgeMatchMiss", "UselessEntity", "LayerMiss",
 								"RefLayerMiss", "SmallArea", "EntityDuplicated", "SelfEntity", "PointDuplicated", "AttributeFix",
 								"OutBoundary", "OverShoot", "UnderShoot", "OneAcre", "OneStage", "BuildingSiteDanger",
+								"BuildingSiteRelaxation", "UFIDLength", "HouseAttribute", "CemeterySite", "NumericalValue",
+								"RiverBoundaryMiss", "UFIDRule", "HoleMisplacement", "CenterLineMiss", "EntityInHole", "TwistedPolygon",
+								"MultiPart", "UFIDDuplicated" ],
+						multipolygon : [ "Admin", "CrossRoad", "RefAttributeMiss", "BridgeName", "EdgeMatchMiss", "UselessEntity",
+								"LayerMiss", "RefLayerMiss", "SmallArea", "EntityDuplicated", "SelfEntity", "PointDuplicated",
+								"AttributeFix", "OutBoundary", "OverShoot", "UnderShoot", "OneAcre", "OneStage", "BuildingSiteDanger",
 								"BuildingSiteRelaxation", "UFIDLength", "HouseAttribute", "CemeterySite", "NumericalValue",
 								"RiverBoundaryMiss", "UFIDRule", "HoleMisplacement", "CenterLineMiss", "EntityInHole", "TwistedPolygon",
 								"MultiPart", "UFIDDuplicated" ]
@@ -370,8 +384,8 @@ gitbuilder.ui.OptionDefinition = $
 								.addClass("btn-default");
 						this.addAttrBtn = $("<button>").text("Add Attribute").addClass("optiondefinition-nnullattr-addrow").addClass("btn")
 								.addClass("btn-default");
-						this.addLabelAttrBtn = $("<button>").text("Add Attribute").addClass("optiondefinition-labelattr-addrow").addClass("btn")
-								.addClass("btn-default");
+						this.addLabelAttrBtn = $("<button>").text("Add Attribute").addClass("optiondefinition-labelattr-addrow").addClass(
+								"btn").addClass("btn-default");
 						this.file = $("<input>").attr({
 							"type" : "file"
 						});
@@ -1400,7 +1414,7 @@ gitbuilder.ui.OptionDefinition = $
 						for (var i = 0; i < dkeys.length; i++) {
 							var vkeys = Object.keys(def[dkeys[i]]);
 							for (var j = 0; j < vkeys.length; j++) {
-								 console.log(vkeys[j]);
+								console.log(vkeys[j]);
 								if (this.optItem[vkeys[j]].type === "relation" || this.optItem[vkeys[j]].type === "labelnrelation") {
 									var relation = def[dkeys[i]][vkeys[j]].relation;
 									for (var k = 0; k < relation.length; k++) {
@@ -1499,11 +1513,20 @@ gitbuilder.ui.OptionDefinition = $
 						case "point":
 							list = that.itemList.point;
 							break;
+						case "multipoint":
+							list = that.itemList.multipoint;
+							break;
 						case "linestring":
 							list = that.itemList.linestring;
 							break;
+						case "multilinestring":
+							list = that.itemList.multilinestring;
+							break;
 						case "polygon":
 							list = that.itemList.polygon;
+							break;
+						case "multipolygon":
+							list = that.itemList.multipolygon;
 							break;
 						case "line":
 							list = that.itemList.line;
@@ -1681,11 +1704,20 @@ gitbuilder.ui.OptionDefinition = $
 								case "point":
 									enType = "Point";
 									break;
+								case "multipoint":
+									enType = "MultiPoint";
+									break;
 								case "linestring":
 									enType = "LineString";
 									break;
+								case "multilinestring":
+									enType = "MultiLineString";
+									break;
 								case "polygon":
 									enType = "Polygon";
+									break;
+								case "multipolygon":
+									enType = "MultiPolygon";
 									break;
 								case "line":
 									enType = "Line";

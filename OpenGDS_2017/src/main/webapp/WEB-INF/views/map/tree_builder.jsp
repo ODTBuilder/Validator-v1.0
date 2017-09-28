@@ -121,7 +121,12 @@ html {
 				</ul></li>
 			<li><a href="#" title="QA Edit" id="qaedit">QA Edit</a></li>
 			<li><a href="#" title="QA Status" id="qastat">QA Status</a></li>
-
+			<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
+				aria-expanded="false" title="Generalization">Generalization</a>
+				<ul class="dropdown-menu" role="menu">
+					<li><a href="#" title="Generalization Process" id="gen">Generalization</a></li>
+					<li><a href="#" title="Validating Option" id="sepview">Separate View</a></li>
+				</ul></li>
 			<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
 				aria-expanded="false" title="ToolBox">ToolBox</a>
 				<ul class="dropdown-menu" role="menu">
@@ -293,7 +298,7 @@ html {
 			addRemoveHistoryList : function(layer, arr) {
 				if (layer instanceof ol.layer.Group) {
 					if (layer.get("id")) {
-						arr.push(layer.get("id"));	
+						arr.push(layer.get("id"));
 					}
 					var layers = layer.getLayers();
 					for (var i = 0; i < layers.getLength(); i++) {
@@ -332,7 +337,7 @@ html {
 				} else if (clayer instanceof ol.layer.Tile) {
 					arr.push(clayer);
 				} else if (clayer instanceof ol.layer.Vector) {
-					
+
 				} else if (clayer instanceof ol.layer.Base) {
 					var cnode = $('#builderClientLayer').jstreeol3(true).get_node(node);
 					var parent = cnode.parent;
@@ -373,8 +378,8 @@ html {
 		});
 
 		var epan = new gb.panel.EditingTool({
-			width : "84px",
-			height : "145px",
+			width : 84,
+			height : 145,
 			positionX : 425,
 			positionY : 100,
 			autoOpen : false,
@@ -651,6 +656,19 @@ html {
 
 		$("#edit").click(function() {
 			epan.open();
+		});
+
+		var modal = new gb.modal.Generalization({
+			"width" : 800,
+			"autoOpen" : false,
+			"title" : "Generalization",
+			"jstreeURL" : "geoserver/getGeolayerCollectionTree.ajax?treeType=all",
+			"items" : [ "Simplification", "Elimination" ],
+			"requestURL" : "generalization/exeGeneralization.ajax"
+		});
+
+		$("#gen").click(function() {
+			modal.open();
 		});
 
 		$(function() {

@@ -6,6 +6,16 @@
  * @version 0.01
  * @class gb.panel.Base
  * @constructor
+ * @param {Number}
+ *            width (px)
+ * @param {Number}
+ *            height (px)
+ * @param {Number}
+ *            positionX
+ * @param {Number}
+ *            positionY
+ * @param {Boolean}
+ *            autoOpen
  */
 var gb;
 if (!gb)
@@ -31,8 +41,8 @@ gb.panel.Base = function(obj) {
 		$(this.panelBody).append(body);
 	}
 	this.panel = $("<div>").addClass("gb-panel").css({
-		"width" : this.width,
-		"height" : this.height,
+		"width" : this.width + "px",
+		"height" : this.height + "px",
 		"position" : "absolute",
 		"z-Index" : "999",
 		"top" : this.y + "px",
@@ -44,13 +54,13 @@ gb.panel.Base = function(obj) {
 	// containment : "body"
 	// });
 
+	$("body").append(this.panel);
+
 	if (this.autoOpen) {
 		this.open();
 	} else {
 		this.close();
 	}
-	$("body").append(this.panel);
-
 };
 /**
  * 패널 바디를 설정한다.
