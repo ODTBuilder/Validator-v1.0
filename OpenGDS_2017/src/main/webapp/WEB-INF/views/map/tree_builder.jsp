@@ -121,7 +121,12 @@ html {
 				</ul></li>
 			<li><a href="#" title="QA Edit" id="qaedit">QA Edit</a></li>
 			<li><a href="#" title="QA Status" id="qastat">QA Status</a></li>
-			<li><a href="#" title="Generalization" id="gen">Generalization</a></li>
+			<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
+				aria-expanded="false" title="Generalization">Generalization</a>
+				<ul class="dropdown-menu" role="menu">
+					<li><a href="#" title="Generalization Process" id="gen">Generalization</a></li>
+					<li><a href="#" title="Validating Option" id="sepview">Separate View</a></li>
+				</ul></li>
 			<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
 				aria-expanded="false" title="ToolBox">ToolBox</a>
 				<ul class="dropdown-menu" role="menu">
@@ -658,7 +663,8 @@ html {
 			"autoOpen" : false,
 			"title" : "Generalization",
 			"jstreeURL" : "geoserver/getGeolayerCollectionTree.ajax?treeType=all",
-			"item" : [ "simplification", "elimination" ]
+			"items" : [ "Simplification", "Elimination" ],
+			"requestURL" : "not yet"
 		});
 
 		$("#gen").click(function() {
