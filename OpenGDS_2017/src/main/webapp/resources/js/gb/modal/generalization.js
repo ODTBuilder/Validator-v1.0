@@ -60,7 +60,10 @@ gb.modal.Generalization = function(obj) {
 				var opt = $("<option>").text(this.items[j]).attr("value", this.items[j].toLowerCase());
 				$(select).append(opt);
 			}
-			var span = $("<div>").text("Step" + (i + 1));
+			var inc = $("<input>").attr({
+				"type" : "checkbox"
+			});
+			var span = $("<div>").append("Step" + (i + 1)).append(inc);
 
 			var row1 = $("<div>").append(select);
 
@@ -144,103 +147,204 @@ gb.modal.Generalization = function(obj) {
 		"plugins" : [ "types" ]
 	});
 
-	$(this.treeBody).on(
-			'deselect_node.jstree',
-			function(e, data) {
-				var r = [];
-				for (var i = 0; i < data.selected.length; i++) {
-					if (data.instance.get_node(data.selected[i]).type === "n_ngi_group"
-							|| data.instance.get_node(data.selected[i]).type === "n_dxf_group"
-							|| data.instance.get_node(data.selected[i]).type === "n_shp_group") {
-						if (r.length === 0 && data.instance.get_node(data.selected[i]).type === "n_ngi_group") {
-							r.push(data.instance.get_node(data.selected[i]));
-							that.fileType = "ngi";
-							continue;
-						} else if (r.length === 0 && data.instance.get_node(data.selected[i]).type === "n_dxf_group") {
-							r.push(data.instance.get_node(data.selected[i]));
-							that.fileType = "dxf";
-							continue;
-						} else if (r.length === 0 && data.instance.get_node(data.selected[i]).type === "n_shp_group") {
-							r.push(data.instance.get_node(data.selected[i]));
-							that.fileType = "shp";
-							continue;
-						}
-
-						if (r.length > 0 && that.fileType === "ngi" && data.instance.get_node(data.selected[i]).type === "n_ngi_group") {
-							r.push(data.instance.get_node(data.selected[i]));
-							continue;
-						} else if (r.length > 0 && that.fileType === "dxf"
-								&& data.instance.get_node(data.selected[i]).type === "n_dxf_group") {
-							r.push(data.instance.get_node(data.selected[i]));
-							continue;
-						} else if (r.length > 0 && that.fileType === "shp"
-								&& data.instance.get_node(data.selected[i]).type === "n_shp_group") {
-							r.push(data.instance.get_node(data.selected[i]));
-							continue;
-						}
-						if (that.fileType === "ngi" && data.instance.get_node(data.selected[i]).type === "n_dxf_group") {
-							data.instance.deselect_node(data.instance.get_node(data.selected[i]));
-						} else if (that.fileType === "dxf" && data.instance.get_node(data.selected[i]).type === "n_ngi_group") {
-							data.instance.deselect_node(data.instance.get_node(data.selected[i]));
-						} else if (that.fileType === "shp" && data.instance.get_node(data.selected[i]).type === "n_shp_group") {
-							data.instance.deselect_node(data.instance.get_node(data.selected[i]));
-						}
-					} else {
-						data.instance.deselect_node(data.instance.get_node(data.selected[i]));
-						that.updateLayerList(r);
-					}
-				}
-				that.updateLayerList(r);
-			});
-	$(this.treeBody).on(
-			'select_node.jstree',
-			function(e, data) {
-				var r = [];
-				for (var i = 0; i < data.selected.length; i++) {
-					if (data.instance.get_node(data.selected[i]).type === "n_ngi_group"
-							|| data.instance.get_node(data.selected[i]).type === "n_dxf_group"
-							|| data.instance.get_node(data.selected[i]).type === "n_shp_group") {
-						if (r.length === 0 && data.instance.get_node(data.selected[i]).type === "n_ngi_group") {
-							r.push(data.instance.get_node(data.selected[i]));
-							that.fileType = "ngi";
-							continue;
-						} else if (r.length === 0 && data.instance.get_node(data.selected[i]).type === "n_dxf_group") {
-							r.push(data.instance.get_node(data.selected[i]));
-							that.fileType = "dxf";
-							continue;
-						} else if (r.length === 0 && data.instance.get_node(data.selected[i]).type === "n_shp_group") {
-							r.push(data.instance.get_node(data.selected[i]));
-							that.fileType = "shp";
-							continue;
-						}
-
-						if (r.length > 0 && that.fileType === "ngi" && data.instance.get_node(data.selected[i]).type === "n_ngi_group") {
-							r.push(data.instance.get_node(data.selected[i]));
-							continue;
-						} else if (r.length > 0 && that.fileType === "dxf"
-								&& data.instance.get_node(data.selected[i]).type === "n_dxf_group") {
-							r.push(data.instance.get_node(data.selected[i]));
-							continue;
-						} else if (r.length > 0 && that.fileType === "shp"
-								&& data.instance.get_node(data.selected[i]).type === "n_shp_group") {
-							r.push(data.instance.get_node(data.selected[i]));
-							continue;
-						}
-
-						if (that.fileType === "ngi" && data.instance.get_node(data.selected[i]).type === "n_dxf_group") {
-							data.instance.deselect_node(data.instance.get_node(data.selected[i]));
-						} else if (that.fileType === "dxf" && data.instance.get_node(data.selected[i]).type === "n_ngi_group") {
-							data.instance.deselect_node(data.instance.get_node(data.selected[i]));
-						} else if (that.fileType === "shp" && data.instance.get_node(data.selected[i]).type === "n_shp_group") {
-							data.instance.deselect_node(data.instance.get_node(data.selected[i]));
-						}
-					} else {
-						data.instance.deselect_node(data.instance.get_node(data.selected[i]));
-						that.updateLayerList(r);
-					}
-				}
-				that.updateLayerList(r);
-			});
+	$(this.treeBody).on('deselect_node.jstree', function(e, data) {
+		var r = [];
+		for (var i = 0; i < data.selected.length; i++) {
+			// if (data.instance.get_node(data.selected[i]).type ===
+			// "n_shp_layer_pt"
+			// || data.instance.get_node(data.selected[i]).type ===
+			// "n_shp_layer_ln"
+			// || data.instance.get_node(data.selected[i]).type ===
+			// "n_shp_layer_pg"
+			// || data.instance.get_node(data.selected[i]).type ===
+			// "n_shp_layer_mpt"
+			// || data.instance.get_node(data.selected[i]).type ===
+			// "n_shp_layer_mln"
+			// || data.instance.get_node(data.selected[i]).type ===
+			// "n_shp_layer_mpg") {
+			// if (r.length === 0 &&
+			// data.instance.get_node(data.selected[i]).type === "n_ngi_group")
+			// {
+			// r.push(data.instance.get_node(data.selected[i]));
+			// that.fileType = "ngi";
+			// continue;
+			// } else if (r.length === 0 &&
+			// data.instance.get_node(data.selected[i]).type === "n_dxf_group")
+			// {
+			// r.push(data.instance.get_node(data.selected[i]));
+			// that.fileType = "dxf";
+			// continue;
+			// } else if (r.length === 0 &&
+			// data.instance.get_node(data.selected[i]).type === "n_shp_group")
+			// {
+			r.push(data.instance.get_node(data.selected[i]));
+			that.fileType = "shp";
+			// continue;
+			// }
+			//
+			// if (r.length > 0 && that.fileType === "ngi" &&
+			// data.instance.get_node(data.selected[i]).type === "n_ngi_group")
+			// {
+			// r.push(data.instance.get_node(data.selected[i]));
+			// continue;
+			// } else if (r.length > 0 && that.fileType === "dxf"
+			// && data.instance.get_node(data.selected[i]).type ===
+			// "n_dxf_group") {
+			// r.push(data.instance.get_node(data.selected[i]));
+			// continue;
+			// } else if (r.length > 0 && that.fileType === "shp"
+			// && data.instance.get_node(data.selected[i]).type ===
+			// "n_shp_group") {
+			// r.push(data.instance.get_node(data.selected[i]));
+			// continue;
+			// }
+			// if (that.fileType === "ngi" &&
+			// data.instance.get_node(data.selected[i]).type === "n_dxf_group")
+			// {
+			// data.instance.deselect_node(data.instance.get_node(data.selected[i]));
+			// } else if (that.fileType === "dxf" &&
+			// data.instance.get_node(data.selected[i]).type === "n_ngi_group")
+			// {
+			// data.instance.deselect_node(data.instance.get_node(data.selected[i]));
+			// } else if (that.fileType === "shp" &&
+			// data.instance.get_node(data.selected[i]).type === "n_shp_group")
+			// {
+			// data.instance.deselect_node(data.instance.get_node(data.selected[i]));
+			// }
+			// } else {
+			// data.instance.deselect_node(data.instance.get_node(data.selected[i]));
+			// that.updateLayerList(r);
+			// }
+		}
+		// for (var i = 0; i < data.selected.length; i++) {
+		// if (data.instance.get_node(data.selected[i]).type ===
+		// "n_ngi_group"
+		// || data.instance.get_node(data.selected[i]).type ===
+		// "n_dxf_group"
+		// || data.instance.get_node(data.selected[i]).type ===
+		// "n_shp_group") {
+		// if (r.length === 0 &&
+		// data.instance.get_node(data.selected[i]).type ===
+		// "n_ngi_group") {
+		// r.push(data.instance.get_node(data.selected[i]));
+		// that.fileType = "ngi";
+		// continue;
+		// } else if (r.length === 0 &&
+		// data.instance.get_node(data.selected[i]).type ===
+		// "n_dxf_group") {
+		// r.push(data.instance.get_node(data.selected[i]));
+		// that.fileType = "dxf";
+		// continue;
+		// } else if (r.length === 0 &&
+		// data.instance.get_node(data.selected[i]).type ===
+		// "n_shp_group") {
+		// r.push(data.instance.get_node(data.selected[i]));
+		// that.fileType = "shp";
+		// continue;
+		// }
+		//
+		// if (r.length > 0 && that.fileType === "ngi" &&
+		// data.instance.get_node(data.selected[i]).type ===
+		// "n_ngi_group") {
+		// r.push(data.instance.get_node(data.selected[i]));
+		// continue;
+		// } else if (r.length > 0 && that.fileType === "dxf"
+		// && data.instance.get_node(data.selected[i]).type ===
+		// "n_dxf_group") {
+		// r.push(data.instance.get_node(data.selected[i]));
+		// continue;
+		// } else if (r.length > 0 && that.fileType === "shp"
+		// && data.instance.get_node(data.selected[i]).type ===
+		// "n_shp_group") {
+		// r.push(data.instance.get_node(data.selected[i]));
+		// continue;
+		// }
+		// if (that.fileType === "ngi" &&
+		// data.instance.get_node(data.selected[i]).type ===
+		// "n_dxf_group") {
+		// data.instance.deselect_node(data.instance.get_node(data.selected[i]));
+		// } else if (that.fileType === "dxf" &&
+		// data.instance.get_node(data.selected[i]).type ===
+		// "n_ngi_group") {
+		// data.instance.deselect_node(data.instance.get_node(data.selected[i]));
+		// } else if (that.fileType === "shp" &&
+		// data.instance.get_node(data.selected[i]).type ===
+		// "n_shp_group") {
+		// data.instance.deselect_node(data.instance.get_node(data.selected[i]));
+		// }
+		// } else {
+		// data.instance.deselect_node(data.instance.get_node(data.selected[i]));
+		// that.updateLayerList(r);
+		// }
+		// }
+		that.updateLayerList(r);
+	});
+	$(this.treeBody).on('select_node.jstree', function(e, data) {
+		var r = [];
+		for (var i = 0; i < data.selected.length; i++) {
+			// if (data.instance.get_node(data.selected[i]).type ===
+			// "n_ngi_group"
+			// || data.instance.get_node(data.selected[i]).type ===
+			// "n_dxf_group"
+			// || data.instance.get_node(data.selected[i]).type ===
+			// "n_shp_group") {
+			// if (r.length === 0 &&
+			// data.instance.get_node(data.selected[i]).type === "n_ngi_group")
+			// {
+			// r.push(data.instance.get_node(data.selected[i]));
+			// that.fileType = "ngi";
+			// continue;
+			// } else if (r.length === 0 &&
+			// data.instance.get_node(data.selected[i]).type === "n_dxf_group")
+			// {
+			// r.push(data.instance.get_node(data.selected[i]));
+			// that.fileType = "dxf";
+			// continue;
+			// } else if (r.length === 0 &&
+			// data.instance.get_node(data.selected[i]).type === "n_shp_group")
+			// {
+			r.push(data.instance.get_node(data.selected[i]));
+			that.fileType = "shp";
+			// continue;
+			// }
+			//
+			// if (r.length > 0 && that.fileType === "ngi" &&
+			// data.instance.get_node(data.selected[i]).type === "n_ngi_group")
+			// {
+			// r.push(data.instance.get_node(data.selected[i]));
+			// continue;
+			// } else if (r.length > 0 && that.fileType === "dxf"
+			// && data.instance.get_node(data.selected[i]).type ===
+			// "n_dxf_group") {
+			// r.push(data.instance.get_node(data.selected[i]));
+			// continue;
+			// } else if (r.length > 0 && that.fileType === "shp"
+			// && data.instance.get_node(data.selected[i]).type ===
+			// "n_shp_group") {
+			// r.push(data.instance.get_node(data.selected[i]));
+			// continue;
+			// }
+			//
+			// if (that.fileType === "ngi" &&
+			// data.instance.get_node(data.selected[i]).type === "n_dxf_group")
+			// {
+			// data.instance.deselect_node(data.instance.get_node(data.selected[i]));
+			// } else if (that.fileType === "dxf" &&
+			// data.instance.get_node(data.selected[i]).type === "n_ngi_group")
+			// {
+			// data.instance.deselect_node(data.instance.get_node(data.selected[i]));
+			// } else if (that.fileType === "shp" &&
+			// data.instance.get_node(data.selected[i]).type === "n_shp_group")
+			// {
+			// data.instance.deselect_node(data.instance.get_node(data.selected[i]));
+			// }
+			// } else {
+			// data.instance.deselect_node(data.instance.get_node(data.selected[i]));
+			// that.updateLayerList(r);
+			// }
+		}
+		that.updateLayerList(r);
+	});
 };
 gb.modal.Generalization.prototype = Object.create(gb.modal.Base.prototype);
 gb.modal.Generalization.prototype.constructor = gb.modal.Generalization;
@@ -312,33 +416,34 @@ gb.modal.Generalization.prototype.requestGeneralization = function() {
 	var obj = {
 		"topology" : $(this.check).is(":checked") ? true : false,
 		"order" : [],
-		"collectionName" : undefined,
 		"layers" : undefined
 	}
 	var groups = $(this.treeBody).jstree(true).get_selected();
-	obj.collectionName = groups;
-	var dup = {};
-	for (var i = 0; i < groups.length; i++) {
-		var parent = $(this.treeBody).jstree(true).get_node(groups[i]);
-		for (var j = 0; j < parent.children.length; j++) {
-			var node = $(this.treeBody).jstree(true).get_node(parent.children[j]);
-			dup[node.id] = null;
-		}
-	}
-	obj.layers = Object.keys(dup);
+	obj.layers = groups;
+	// var dup = {};
+	// for (var i = 0; i < groups.length; i++) {
+	// var parent = $(this.treeBody).jstree(true).get_node(groups[i]);
+	// for (var j = 0; j < parent.children.length; j++) {
+	// var node = $(this.treeBody).jstree(true).get_node(parent.children[j]);
+	// dup[node.id] = null;
+	// }
+	// }
+	// obj.layers = Object.keys(dup);
 	for (var i = 0; i < this.items.length; i++) {
-		if ($(this.info).find(".gb-generalization-step:eq(" + i + ")").find("select").val() === "simplification") {
-			var step = {
-				"method" : $(this.info).find(".gb-generalization-step:eq(" + i + ")").find("select").val(),
-				"tolerance" : $(this.info).find(".gb-generalization-step:eq(" + i + ")").find("input[type=number]").val()
-			};
-			obj.order.push(step);
-		} else if ($(this.info).find(".gb-generalization-step:eq(" + i + ")").find("select").val() === "elimination") {
-			var step = {
-				"method" : $(this.info).find(".gb-generalization-step:eq(" + i + ")").find("select").val(),
-				"tolerance" : $(this.info).find(".gb-generalization-step:eq(" + i + ")").find("input[type=number]").val()
-			};
-			obj.order.push(step);
+		if ($(this.info).find(".gb-generalization-step:eq(" + i + ")").find("input[type=checkbox]").is(":checked")) {
+			if ($(this.info).find(".gb-generalization-step:eq(" + i + ")").find("select").val() === "simplification") {
+				var step = {
+					"method" : $(this.info).find(".gb-generalization-step:eq(" + i + ")").find("select").val(),
+					"tolerance" : $(this.info).find(".gb-generalization-step:eq(" + i + ")").find("input[type=number]").val()
+				};
+				obj.order.push(step);
+			} else if ($(this.info).find(".gb-generalization-step:eq(" + i + ")").find("select").val() === "elimination") {
+				var step = {
+					"method" : $(this.info).find(".gb-generalization-step:eq(" + i + ")").find("select").val(),
+					"tolerance" : $(this.info).find(".gb-generalization-step:eq(" + i + ")").find("input[type=number]").val()
+				};
+				obj.order.push(step);
+			}
 		}
 	}
 	console.log(JSON.stringify(obj));
