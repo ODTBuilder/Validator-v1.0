@@ -664,7 +664,7 @@ html {
 			"title" : "Generalization",
 			"jstreeURL" : "geoserver/getGeolayerCollectionTree.ajax?treeType=all",
 			"items" : [ "Simplification", "Elimination" ],
-			"requestURL" : "not yet"
+			"requestURL" : "generalization/exeGeneralization.ajax"
 		});
 
 		$("#gen").click(function() {
