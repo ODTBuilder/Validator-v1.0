@@ -100,6 +100,8 @@ public class GeoLayerParser {
 		this.fileFormat = fileFormat;
 		Map connectionParameters = new HashMap();
 		connectionParameters.put("WFSDataStoreFactory:GET_CAPABILITIES_URL", getCapabilities);
+		//connectionParameters.put("WFSDataStoreFactory.TIMEOUT.key", 999999999);
+		//connectionParameters.put("WFSDataStoreFactory:BUFFER_SIZE", 999999999);
 		this.dataStore = DataStoreFinder.getDataStore(connectionParameters);
 		this.layer = layerParse();
 	}
@@ -186,7 +188,6 @@ public class GeoLayerParser {
 			try {
 				SimpleFeatureSource source = this.dataStore.getFeatureSource(workspaceName + ":" + fullLayerName);
 				sfc = source.getFeatures();
-				System.out.println(sfc.size());			
 //				SimpleFeatureIterator iter = sfc.features();
 //				while(iter.hasNext()) {
 //					SimpleFeature sf = iter.next();

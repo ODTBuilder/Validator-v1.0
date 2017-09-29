@@ -51,58 +51,59 @@ public class SHPFileReader {
 					SimpleFeatureType featureType = collection.getSchema();
 					GeometryType geometryType = featureType.getGeometryDescriptor().getType();
 					String geomType = geometryType.getName().toString();
-					if (geomType.startsWith("Multi")) {
-						DefaultFeatureCollection newCollection = new DefaultFeatureCollection();
-						SimpleFeatureIterator it = collection.features();
-						while (it.hasNext()) {
-							SimpleFeature sf = it.next();
-							Geometry geom = (Geometry) sf.getDefaultGeometry();
-							int geomNum = geom.getNumGeometries();
-							if (geomNum == 1) {
-								String featureID = sf.getID();
-								Geometry singleGeom = geom.getGeometryN(0);
-								int size = sf.getAttributeCount();
-								Object[] propertyObj = new Object[size];
-								propertyObj[0] = singleGeom;
-								String temp = "";
-								List<Property> properties = (List) sf.getProperties();
-								for (int j = 0; j < properties.size(); j++) {
-									Property property = properties.get(j);
-									String propertyName = property.getName().toString();
-									if (propertyName.equals("the_geom")) {
-										continue;
-									} else {
-										Object value = property.getValue();
-										String valueType = property.getValue().getClass().getSimpleName();
-										if (valueType.equals("Long")) {
-											valueType = "String";
-											propertyObj[j] = value.toString();
-											temp += propertyName + ":" + valueType + ",";
-										} else {
-											propertyObj[j] = value;
-											temp += propertyName + ":" + valueType + ",";
-										}
-									}
-								}
-								SimpleFeatureType simpleFeatureType = DataUtilities.createType(featureID.toString(),
-										"the_geom:" + singleGeom.getGeometryType() + "," + temp.substring(0, temp.length() - 1));
-								SimpleFeature newSimpleFeature = SimpleFeatureBuilder.build(simpleFeatureType,
-										propertyObj, featureID);
-								newCollection.add(newSimpleFeature);
-
-								geomType = geomType.replaceAll("Multi", "");
-								newCollection.add(sf);
-							}
-						}
+//					if (geomType.startsWith("Multi")) {
+//						DefaultFeatureCollection newCollection = new DefaultFeatureCollection();
+//						SimpleFeatureIterator it = collection.features();
+//						while (it.hasNext()) {
+//							SimpleFeature sf = it.next();
+//							Geometry geom = (Geometry) sf.getDefaultGeometry();
+//							int geomNum = geom.getNumGeometries();
+//							if (geomNum == 1) {
+//								String featureID = sf.getID();
+//								Geometry singleGeom = geom.getGeometryN(0);
+//								int size = sf.getAttributeCount();
+//								Object[] propertyObj = new Object[size];
+//								propertyObj[0] = singleGeom;
+//								String temp = "";
+//								List<Property> properties = (List) sf.getProperties();
+//								for (int j = 0; j < properties.size(); j++) {
+//									Property property = properties.get(j);
+//									String propertyName = property.getName().toString();
+//									if (propertyName.equals("the_geom")) {
+//										continue;
+//									} else {
+//										Object value = property.getValue();
+//										String valueType = property.getValue().getClass().getSimpleName();
+//										if (valueType.equals("Long")) {
+//											valueType = "String";
+//											propertyObj[j] = value.toString();
+//											temp += propertyName + ":" + valueType + ",";
+//										} else {
+//											propertyObj[j] = value;
+//											temp += propertyName + ":" + valueType + ",";
+//										}
+//									}
+//								}
+//								SimpleFeatureType simpleFeatureType = DataUtilities.createType(featureID.toString(),
+//										"the_geom:" + singleGeom.getGeometryType() + ","
+//												+ temp.substring(0, temp.length() - 1));
+//								SimpleFeature newSimpleFeature = SimpleFeatureBuilder.build(simpleFeatureType,
+//										propertyObj, featureID);
+//								newCollection.add(newSimpleFeature);
+//
+//								geomType = geomType.replaceAll("Multi", "");
+//								newCollection.add(sf);
+//							}
+//						}
+//						dtLayer.setLayerType(geomType.toUpperCase());
+//						dtLayer.setSimpleFeatureCollection(newCollection);
+//						dtLayer.setLayerName(shpName.toUpperCase());
+//						dtLayerList.add(dtLayer);
+//					} else {
 						dtLayer.setLayerType(geomType.toUpperCase());
-						dtLayer.setSimpleFeatureCollection(newCollection);
 						dtLayer.setLayerName(shpName.toUpperCase());
 						dtLayerList.add(dtLayer);
-					} else {
-						dtLayer.setLayerType(geomType.toUpperCase());
-						dtLayer.setLayerName(shpName.toUpperCase());
-						dtLayerList.add(dtLayer);
-					}
+//					}
 				}
 			}
 		}

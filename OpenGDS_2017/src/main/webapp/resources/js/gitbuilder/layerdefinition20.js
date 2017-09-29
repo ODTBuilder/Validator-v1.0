@@ -60,9 +60,8 @@ gitbuilder.ui.LayerDefinition20 = $.widget("gitbuilder.layerdefinition20", {
 		var tdhead4 = $("<td>").text("Geometry Type");
 		var tdhead5 = $("<td>").text("Delete");
 		var tdhead6 = $("<td>").text("QA Area");
-//		var tdhead7 = $("<td>").text("Weight");
-		var trhead = $("<tr>").append(tdhead1).append(tdhead2).append(tdhead3).append(tdhead4).append(tdhead5).append(
-				tdhead6);
+		// var tdhead7 = $("<td>").text("Weight");
+		var trhead = $("<tr>").append(tdhead1).append(tdhead2).append(tdhead3).append(tdhead4).append(tdhead5).append(tdhead6);
 		var thead = $("<thead>").append(trhead);
 		that.tbody = $("<tbody>");
 		var tb = $("<table>").append(thead).append(that.tbody);
@@ -106,10 +105,13 @@ gitbuilder.ui.LayerDefinition20 = $.widget("gitbuilder.layerdefinition20", {
 						"type" : "text"
 					});
 					var ty1 = $("<option>").text("Point").val("point");
+					var ty11 = $("<option>").text("MultiPoint").val("multipoint");
 					var ty2 = $("<option>").text("LineString").val("linestring");
+					var ty22 = $("<option>").text("MultiLineString").val("multilinestring");
 					var ty3 = $("<option>").text("Polygon").val("polygon");
+					var ty33 = $("<option>").text("MultiPolygon").val("multipolygon");
 					var ty4 = $("<option>").text("Text").val("text");
-					var gtype = $("<select>").append(ty1).append(ty2).append(ty3).append(ty4);
+					var gtype = $("<select>").append(ty1).append(ty11).append(ty2).append(ty22).append(ty3).append(ty33).append(ty4);
 					this._addClass(gtype, "form-control");
 					var td4 = $("<td>").append(gtype);
 					var icon = $("<i>").attr("aria-hidden", true);
@@ -127,13 +129,13 @@ gitbuilder.ui.LayerDefinition20 = $.widget("gitbuilder.layerdefinition20", {
 						"vertical-align" : "-webkit-baseline-middle"
 					});
 					var td6 = $("<td>").append(radio);
-//					var weight = $("<input>").attr({
-//						"type" : "number",
-//						"min" : 1,
-//						"max" : 100
-//					});
-//					that._addClass(weight, "form-control");
-//					var td7 = $("<td>").append(weight);
+					// var weight = $("<input>").attr({
+					// "type" : "number",
+					// "min" : 1,
+					// "max" : 100
+					// });
+					// that._addClass(weight, "form-control");
+					// var td7 = $("<td>").append(weight);
 					var tr = $("<tr>").append(td1).append(td2).append(td3).append(td4).append(td5).append(td6);
 					$(that.tbody).append(tr);
 				}
@@ -304,27 +306,30 @@ gitbuilder.ui.LayerDefinition20 = $.widget("gitbuilder.layerdefinition20", {
 		var result;
 		var children = $(tbody).children();
 		var error = [];
-//		var tWeight = 0;
+		// var tWeight = 0;
 		for (var i = 0; i < children.length; i++) {
-//			var wei = parseInt($(children[i]).find("td:eq(6)>input[type=number]").val());
-//			tWeight = tWeight + wei;
-//			if (wei < 1) {
-//				flag = false;
-//				$(that.message).css({
-//					"display" : "block"
-//				}).text("Each weight must be over than 0%");
-//			}
+			// var wei =
+			// parseInt($(children[i]).find("td:eq(6)>input[type=number]").val());
+			// tWeight = tWeight + wei;
+			// if (wei < 1) {
+			// flag = false;
+			// $(that.message).css({
+			// "display" : "block"
+			// }).text("Each weight must be over than 0%");
+			// }
 			$(children[i]).removeClass("danger");
 			for (var j = 0; j < children.length; j++) {
 				if (i !== j) {
-					if ($(children[i]).find("td:eq(1)>input").val() !== "" && $(children[i]).find("td:eq(1)>input").val().replace(/(\s*)/g, '') === $(children[j]).find("td:eq(1)>input").val().replace(/(\s*)/g, '')) {
-						 error.push(children[i]);
-						 error.push(children[j]);
+					if ($(children[i]).find("td:eq(1)>input").val() !== ""
+							&& $(children[i]).find("td:eq(1)>input").val().replace(/(\s*)/g, '') === $(children[j]).find("td:eq(1)>input")
+									.val().replace(/(\s*)/g, '')) {
+						error.push(children[i]);
+						error.push(children[j]);
 						flag = false;
 						$(that.message).css({
 							"display" : "block"
 						}).text("Same layer names are not allowed.");
-					} 
+					}
 				}
 			}
 			var area = $("input[name=layerdefinition20-area]:checked");
@@ -334,8 +339,7 @@ gitbuilder.ui.LayerDefinition20 = $.widget("gitbuilder.layerdefinition20", {
 					"display" : "block"
 				}).text("QA area must be set.");
 			}
-			if ($(children[i]).find("td:eq(1)>input").val() === ""
-					|| $(children[i]).find("td:eq(2)>input").val() === "") {
+			if ($(children[i]).find("td:eq(1)>input").val() === "" || $(children[i]).find("td:eq(2)>input").val() === "") {
 				$(children[i]).addClass("warning");
 				flag = false;
 				$(that.message).css({
@@ -355,21 +359,22 @@ gitbuilder.ui.LayerDefinition20 = $.widget("gitbuilder.layerdefinition20", {
 			} else {
 				area = false;
 			}
-//			var wVal = parseInt($(children[i]).find("td:eq(6)>input[type=number]").val());
+			// var wVal =
+			// parseInt($(children[i]).find("td:eq(6)>input[type=number]").val());
 			def[$(children[i]).find("td:eq(1)>input").val().replace(/(\s*)/g, '')] = {
 				"code" : spCode,
 				"geom" : geom,
 				"area" : area
-//				,
-//				"weight" : wVal
+			// ,
+			// "weight" : wVal
 			};
 		}
-//		if (tWeight !== 100) {
-//			flag = false;
-//			$(that.message).css({
-//				"display" : "block"
-//			}).text("Total weight must be 100%");
-//		}
+		// if (tWeight !== 100) {
+		// flag = false;
+		// $(that.message).css({
+		// "display" : "block"
+		// }).text("Total weight must be 100%");
+		// }
 		for (var k = 0; k < error.length; k++) {
 			$(error[k]).addClass("danger");
 		}
@@ -415,10 +420,14 @@ gitbuilder.ui.LayerDefinition20 = $.widget("gitbuilder.layerdefinition20", {
 			var td3 = $("<td>").append(lcode);
 
 			var ty1 = $("<option>").text("Point").val("point");
+			var ty11 = $("<option>").text("MultiPoint").val("multipoint");
 			var ty2 = $("<option>").text("LineString").val("linestring");
+			var ty22 = $("<option>").text("MultiLineString").val("multilinestring");
 			var ty3 = $("<option>").text("Polygon").val("polygon");
+			var ty33 = $("<option>").text("MultiPolygon").val("multipolygon");
 			var ty4 = $("<option>").text("Text").val("text");
-			var gtype = $("<select>").append(ty1).append(ty2).append(ty3).append(ty4).val(obj[keys[i]].geom);
+			var gtype = $("<select>").append(ty1).append(ty11).append(ty2).append(ty22).append(ty3).append(ty33).append(ty4).val(
+					obj[keys[i]].geom);
 			this._addClass(gtype, "form-control");
 			var td4 = $("<td>").append(gtype);
 
@@ -442,13 +451,13 @@ gitbuilder.ui.LayerDefinition20 = $.widget("gitbuilder.layerdefinition20", {
 				$(radio).prop("checked", false);
 			}
 			var td6 = $("<td>").append(radio);
-//			var weight = $("<input>").attr({
-//				"type" : "number",
-//				"min" : 1,
-//				"max" : 100
-//			}).val(obj[keys[i]].weight);
-//			that._addClass(weight, "form-control");
-//			var td7 = $("<td>").append(weight);
+			// var weight = $("<input>").attr({
+			// "type" : "number",
+			// "min" : 1,
+			// "max" : 100
+			// }).val(obj[keys[i]].weight);
+			// that._addClass(weight, "form-control");
+			// var td7 = $("<td>").append(weight);
 			var tr = $("<tr>").append(td1).append(td2).append(td3).append(td4).append(td5).append(td6);
 			$(that.tbody).append(tr);
 		}
@@ -522,8 +531,7 @@ gitbuilder.ui.LayerDefinition20 = $.widget("gitbuilder.layerdefinition20", {
 				// - disabled as an array instead of boolean
 				// - disabled class as method for disabling
 				// individual parts
-				if (!suppressDisabledCheck
-						&& (instance.options.disabled === true || $(this).hasClass("ui-state-disabled"))) {
+				if (!suppressDisabledCheck && (instance.options.disabled === true || $(this).hasClass("ui-state-disabled"))) {
 					return;
 				}
 				return (typeof handler === "string" ? instance[handler] : handler).apply(instance, arguments);

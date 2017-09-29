@@ -69,6 +69,7 @@ import com.git.gdsbuilder.type.validate.option.HoleMisplacement;
 import com.git.gdsbuilder.type.validate.option.LayerMiss;
 import com.git.gdsbuilder.type.validate.option.LinearDisconnection;
 import com.git.gdsbuilder.type.validate.option.MultiPart;
+import com.git.gdsbuilder.type.validate.option.NeatLineMiss;
 import com.git.gdsbuilder.type.validate.option.NodeMiss;
 import com.git.gdsbuilder.type.validate.option.OneAcre;
 import com.git.gdsbuilder.type.validate.option.OneStage;
@@ -210,8 +211,8 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 		String featureIdx = simpleFeature.getID();
 		Property featuerIDPro = simpleFeature.getProperty("feature_id");
 		String featureID = (String) featuerIDPro.getValue();
-		
-		if(featureID.equals("f0010000_linestring.81")) {
+
+		if (featureID.equals("f0010000_linestring.81")) {
 			System.out.println("");
 		}
 		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
@@ -834,14 +835,16 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 	}
 
 	public ErrorFeature validateLayerMiss(SimpleFeature simpleFeature, List<String> typeNames) throws SchemaException {
+
 		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
 		String upperType = simpleFeature.getAttribute("feature_type").toString().toUpperCase();
+		String upperMultiType = "MULTI" + upperType;
 		Boolean flag = false;
 
 		for (int i = 0; i < typeNames.size(); i++) {
 			String typeName = typeNames.get(i);
 			String upperTpyeName = typeName.toUpperCase();
-			if (upperTpyeName.equals(upperType)) {
+			if (upperTpyeName.equals(upperType) || upperTpyeName.equals(upperMultiType)) {
 				flag = true;
 				break;
 			} else {
@@ -968,7 +971,6 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 		List<ErrorFeature> errFeatures = new ArrayList<ErrorFeature>();
 		GeometryFactory geometryFactory = new GeometryFactory();
 		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
-
 		if (!geometry.isSimple()) {
 			Coordinate[] coordinates = geometry.getCoordinates();
 			for (int i = 0; i < coordinates.length - 1; i++) {
@@ -1667,5 +1669,44 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 			}
 		}
 		return errorFeatures;
+	}
+
+	@Override
+	public List<ErrorFeature> validateNeatLineMiss(SimpleFeature simpleFeature) {
+
+		String featureIdx = simpleFeature.getID();
+		Property featuerIDPro = simpleFeature.getProperty("feature_id");
+		String featureID = (String) featuerIDPro.getValue();
+
+		List<ErrorFeature> errorFeatures = new ArrayList<ErrorFeature>();
+
+		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
+		Coordinate[] coors = geometry.getCoordinates();
+		for (int i = 0; i < coors.length; i++) {
+			Coordinate coor = coors[i];
+			double x = coor.x;
+			double y = coor.y;
+
+			String xStr = String.valueOf(x);
+			int xIndex = xStr.indexOf(".");
+			int xLength = xStr.substring(xIndex, xStr.length() - 1).length();
+
+			String yStr = String.valueOf(y);
+			int yIndex = yStr.indexOf(".");
+			int yLength = yStr.substring(yIndex, yStr.length() - 1).length();
+
+			if (xLength != 2 && yLength != 2) {
+				ErrorFeature errorFeature = new ErrorFeature(featureIdx, featureID,
+						NeatLineMiss.Type.NEATLINEMISS.errType(), NeatLineMiss.Type.NEATLINEMISS.errName(),
+						new GeometryFactory().createPoint(coor));
+				errorFeatures.add(errorFeature);
+			}
+		}
+
+		if (errorFeatures.size() > 0) {
+			return errorFeatures;
+		} else {
+			return null;
+		}
 	}
 }
