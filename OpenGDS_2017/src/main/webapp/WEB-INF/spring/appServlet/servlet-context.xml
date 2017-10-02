@@ -24,7 +24,7 @@ http://www.springframework.org/schema/aop/spring-aop.xsd http://www.springframew
 	</beans:bean>
 	
 	<beans:bean class="org.springframework.web.multipart.commons.CommonsMultipartResolver" id="multipartResolver">
-		<beans:property name="maxUploadSize" value="50000000"/>
+		<beans:property name="maxUploadSize" value="500000000"/>
 	 </beans:bean>
 	
 	

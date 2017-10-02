@@ -53,7 +53,7 @@ public class SHPDBQueryManager {
 					String typeName = attriType.getBinding().getSimpleName();
 					if (typeName.equals("String")) {
 						defalutCreateQuery += " varchar(100), ";
-					} else if (typeName.equals("int")) {
+					} else if (typeName.equals("int") || typeName.equals("Integer")) {
 						defalutCreateQuery += " int, ";
 					} else if (typeName.equals("Double")) {
 						defalutCreateQuery += " double precision, ";
