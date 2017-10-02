@@ -187,7 +187,7 @@ html {
 	</nav>
 
 	<script type="text/javascript">
-		var projection = ol.proj.get('EPSG:5186');
+		var projection = ol.proj.get('EPSG:3857');
 
 		var view = new ol.View({
 			center : ol.proj.fromLonLat([ 37.41, 8.82 ]),
