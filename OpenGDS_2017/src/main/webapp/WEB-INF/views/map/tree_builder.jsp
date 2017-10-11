@@ -158,7 +158,7 @@ html {
 				</div>
 
 				<div class="panel-body" style="padding: 0;">
-					<!-- 					<input type="text" class="form-control builder-tree-search" id="inputSearchServer" /> -->
+					<input type="text" class="form-control builder-tree-search" id="inputSearchServer" />
 					<div id="builderServerLayer" class="gitbuilder-layer-panel"></div>
 				</div>
 			</div>
@@ -170,7 +170,7 @@ html {
 					</button>
 				</div>
 				<div class="panel-body" style="padding: 0;">
-					<!-- 					<input type="text" class="form-control builder-tree-search" id="inputSearchClient" /> -->
+					<input type="text" class="form-control builder-tree-search" id="inputSearchClient" />
 					<div id="builderClientLayer" class="gitbuilder-layer-panel"></div>
 				</div>
 			</div>
@@ -182,7 +182,7 @@ html {
 	</div>
 	<nav id="builderFooter" class="navbar navbar-default">
 		<div class="container-fluid">
-			<span class="text-muted">OpenGDS Builder/Validator</span>
+			<span class="text-muted">OpenGDS Builder/Validator</span> <span class="text-muted epsg-now"></span>
 		</div>
 	</nav>
 
@@ -241,8 +241,8 @@ html {
 				var listHeight = $("#builderLayer").innerHeight() / 2 - (16 + 1 + 1);
 				// 				41은 패널 헤더의 높이
 				var treeHeight = listHeight - (41);
-				// 				var searchHeight = $(".builder-tree-search").outerHeight();
-				$(".gitbuilder-layer-panel").outerHeight(treeHeight);
+				var searchHeight = $(".builder-tree-search").outerHeight();
+				$(".gitbuilder-layer-panel").outerHeight(treeHeight - searchHeight);
 				$("#builderLayerGeoServerPanel").outerHeight(listHeight);
 				$("#builderLayerClientPanel").outerHeight(listHeight);
 				//현재 컨텐츠 사이즈를 오픈레이어스에 반영
@@ -260,6 +260,7 @@ html {
 				}
 
 				var newProjCode = 'EPSG:' + code;
+				$(".epsg-now").text("[" + newProjCode + "]");
 				proj4.defs(newProjCode, proj4def);
 				var newProj = ol.proj.get(newProjCode);
 				var fromLonLat = ol.proj.getTransform('EPSG:4326', newProj);
@@ -347,7 +348,7 @@ html {
 			}
 		}
 
-		gitrnd.search("5186");
+		gitrnd.search("3857");
 
 		$(window).resize(function() {
 			gitrnd.resize();
@@ -659,7 +660,7 @@ html {
 		});
 
 		var modal = new gb.modal.Generalization({
-			"width" : 800,
+			"width" : 840,
 			"autoOpen" : false,
 			"title" : "Generalization",
 			"jstreeURL" : "geoserver/getGeolayerCollectionTree.ajax?treeType=all",
