@@ -63,10 +63,6 @@ public interface ValidateProgressDAO {
 
 	public void insertSHPErrorTableName(UserVO userVO, HashMap<String, Object> insertErrorTableName);
 
-	public Long selectNGIErrorLayerTbNamesCount(UserVO userVO, HashMap<String, Object> selectIdxQuery);
-
-	public Long selectDXFErrorLayerTbNamesCount(UserVO userVO, HashMap<String, Object> selectIdxQuery);
-
 	public List<HashMap<String, Object>> selectAllDXFValidateProgress(UserVO userVO,
 			HashMap<String, Object> selectAllQA10ValidateProgress);
 
@@ -80,6 +76,6 @@ public interface ValidateProgressDAO {
 	public List<HashMap<String, Object>> selectAllSHPValidateProgress(UserVO userVO,
 			Object selectAllSHPValidateProgress);
 
-	public Long selectSHPErrorLayerTbNamesCount(UserVO userVO, HashMap<String, Object> selectIdxQuery);
+	public Long selectErrorLayerTbNamesCount(UserVO userVO, HashMap<String, Object> selectIdxQuery);
 
 }

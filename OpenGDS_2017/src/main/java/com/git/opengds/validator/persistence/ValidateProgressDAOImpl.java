@@ -59,7 +59,8 @@ public class ValidateProgressDAOImpl extends DataSourceFactory implements Valida
 	}
 
 	@Override
-	public List<HashMap<String, Object>> selectDXFValidateProgressPid(UserVO userVO, HashMap<String, Object> selectQA10ValidateProgressPid) {
+	public List<HashMap<String, Object>> selectDXFValidateProgressPid(UserVO userVO,
+			HashMap<String, Object> selectQA10ValidateProgressPid) {
 		sqlSession = super.getSqlSession(userVO.getId());
 		List<HashMap<String, Object>> idxMaps = sqlSession.selectList(dxfNamespace + ".selectQA10ValidateProgressPid",
 				selectQA10ValidateProgressPid);
@@ -167,23 +168,6 @@ public class ValidateProgressDAOImpl extends DataSourceFactory implements Valida
 	}
 
 	@Override
-	public Long selectNGIErrorLayerTbNamesCount(UserVO userVO, HashMap<String, Object> selectIdxQuery) {
-		sqlSession = super.getSqlSession(userVO.getId());
-		HashMap<String, Object> countMap = sqlSession.selectOne(ngiNamespace + ".selectQA20ErrorLayerTbNamesCount",
-				selectIdxQuery);
-		return (Long) countMap.get("count");
-
-	}
-
-	@Override
-	public Long selectDXFErrorLayerTbNamesCount(UserVO userVO, HashMap<String, Object> selectIdxQuery) {
-		sqlSession = super.getSqlSession(userVO.getId());
-		HashMap<String, Object> countMap = sqlSession.selectOne(dxfNamespace + ".selectQA10ErrorLayerTbNamesCount",
-				selectIdxQuery);
-		return (Long) countMap.get("count");
-	}
-
-	@Override
 	public List<HashMap<String, Object>> selectAllDXFValidateProgress(UserVO userVO,
 			HashMap<String, Object> selectAllQA10ValidateProgress) {
 		sqlSession = super.getSqlSession(userVO.getId());
@@ -258,7 +242,7 @@ public class ValidateProgressDAOImpl extends DataSourceFactory implements Valida
 	}
 
 	@Override
-	public Long selectSHPErrorLayerTbNamesCount(UserVO userVO, HashMap<String, Object> selectIdxQuery) {
+	public Long selectErrorLayerTbNamesCount(UserVO userVO, HashMap<String, Object> selectIdxQuery) {
 		sqlSession = super.getSqlSession(userVO.getId());
 		HashMap<String, Object> countMap = sqlSession.selectOne(shpNamespace + ".selectSHPErrorLayerTbNamesCount",
 				selectIdxQuery);

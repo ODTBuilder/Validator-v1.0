@@ -20,8 +20,6 @@ package com.git.opengds.validator.persistence;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.inject.Inject;
-
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Repository;
 
@@ -35,12 +33,6 @@ public class ErrorLayerDAOImpl extends DataSourceFactory implements ErrorLayerDA
 
 	private static final String namespace = "com.git.mappers.errLayerMapper.ErrorLayerMapper";
 
-/*	public ErrorLayerDAOImpl(UserVO user) {
-		// TODO Auto-generated constructor stub
-		sqlSession = super.getSqlSession(user.getId());
-	}*/
-	
-	
 	@Override
 	public void createErrorLayerTb(UserVO userVO, HashMap<String, Object> createQuery) {
 		sqlSession = super.getSqlSession(userVO.getId());
