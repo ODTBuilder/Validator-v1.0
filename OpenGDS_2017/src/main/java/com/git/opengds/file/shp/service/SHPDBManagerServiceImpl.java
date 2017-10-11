@@ -50,6 +50,7 @@ public class SHPDBManagerServiceImpl implements SHPDBManagerService {
 				List<String> attriKeyList = (List<String>) createLayerQuery.get("attriKeyList");
 				List<HashMap<String, Object>> insertLayerQueryList = dbManager.getSHPLayerInsertQuery(type,
 						collectionName, attriKeyList, shpLayer, src);
+
 				for (int j = 0; j < insertLayerQueryList.size(); j++) {
 					HashMap<String, Object> insertLayerQuery = insertLayerQueryList.get(j);
 					dao.insertSHPLayer(userVO, insertLayerQuery);

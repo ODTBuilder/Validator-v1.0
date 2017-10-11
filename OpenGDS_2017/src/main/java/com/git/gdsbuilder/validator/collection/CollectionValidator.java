@@ -480,7 +480,9 @@ public class CollectionValidator {
 
 				for (int k = 0; k < options.size(); k++) {
 					ValidatorOption option = options.get(k);
-
+					
+					System.out.println(option.getClass().getSimpleName());
+					
 					if (option instanceof TwistedPolygon) {
 						// twistedFeature
 						try {

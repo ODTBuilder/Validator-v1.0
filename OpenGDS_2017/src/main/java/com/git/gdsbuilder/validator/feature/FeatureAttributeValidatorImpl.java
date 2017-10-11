@@ -49,10 +49,12 @@ import com.git.gdsbuilder.type.validate.error.ErrorFeature;
 import com.git.gdsbuilder.type.validate.option.Admin;
 import com.git.gdsbuilder.type.validate.option.AttributeFix;
 import com.git.gdsbuilder.type.validate.option.BridgeName;
+import com.git.gdsbuilder.type.validate.option.CharacterTypeMiss;
 import com.git.gdsbuilder.type.validate.option.EntityDuplicated;
 import com.git.gdsbuilder.type.validate.option.HouseAttribute;
 import com.git.gdsbuilder.type.validate.option.NeatLineAttribute;
 import com.git.gdsbuilder.type.validate.option.NumericalValue;
+import com.git.gdsbuilder.type.validate.option.SpecialCharactersMiss;
 import com.git.gdsbuilder.type.validate.option.UFIDDuplicated;
 import com.git.gdsbuilder.type.validate.option.UFIDLength;
 import com.git.gdsbuilder.type.validate.option.UFIDRule;
@@ -106,7 +108,6 @@ public class FeatureAttributeValidatorImpl implements FeatureAttributeValidator 
 			errorFeature = new ErrorFeature(featureIdx, featureID, ZValueAmbiguous.Type.ZVALUEAMBIGUOUS.errType(),
 					ZValueAmbiguous.Type.ZVALUEAMBIGUOUS.errName(), geometry.getInteriorPoint());
 		}
-
 		return errorFeature;
 	}
 
@@ -123,13 +124,11 @@ public class FeatureAttributeValidatorImpl implements FeatureAttributeValidator 
 				Object attribute = simpleFeature.getAttribute(attributeKey); // value
 				JSONArray attributeArray = (JSONArray) notNullAtt.get(attributeKey);
 				if (attributeArray.get(0).equals("") || attributeArray.isEmpty()) {
-					//
 					if (attribute == null) {
 						flag = false;
 						break;
 					}
 				} else {
-					//
 					if (attribute != null) {
 						String attributeStr = attribute.toString();
 						Iterator attrIterator = attributeArray.iterator();
@@ -249,25 +248,41 @@ public class FeatureAttributeValidatorImpl implements FeatureAttributeValidator 
 
 	@SuppressWarnings("null")
 	public ErrorFeature validateHouseAttribute(SimpleFeature simpleFeature) {
+
+		boolean isTrue = true;
+
 		String featureIdx = simpleFeature.getID();
 		Property featuerIDPro = simpleFeature.getProperty("feature_id");
 		String featureID = (String) featuerIDPro.getValue();
 		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
 		Object kindsAttr = simpleFeature.getAttribute("종류");
-		Object notNullAttr = simpleFeature.getAttribute("주기");
 
 		if (kindsAttr != null) {
 			String kinds = kindsAttr.toString();
 			if (kinds.equals("일반주택") || kinds.equals("일반 주택")) {
+				Object notNullAttr = simpleFeature.getAttribute("주기");
 				if (notNullAttr != null) {
-					ErrorFeature errorFeature = new ErrorFeature(featureIdx, featureID,
-							HouseAttribute.Type.HOUSEATTRIBUTE.errType(), HouseAttribute.Type.HOUSEATTRIBUTE.errName(),
-							geometry.getInteriorPoint());
-					return errorFeature;
-				} 
+					isTrue = false;
+				}
+				if (kinds.equals("연립주택") || kinds.equals("아파트")) {
+					Object houseAttr = simpleFeature.getAttribute("용도");
+					if (houseAttr != null) {
+						isTrue = false;
+						if (!houseAttr.toString().equals("주택")) {
+							isTrue = false;
+						}
+					}
+				}
 			}
 		}
-		return null;
+		if (!isTrue) {
+			ErrorFeature errorFeature = new ErrorFeature(featureIdx, featureID,
+					HouseAttribute.Type.HOUSEATTRIBUTE.errType(), HouseAttribute.Type.HOUSEATTRIBUTE.errName(),
+					geometry.getInteriorPoint());
+			return errorFeature;
+		} else {
+			return null;
+		}
 	}
 
 	public ErrorFeature validateUFIDLength(SimpleFeature simpleFeature, double length) {
@@ -504,5 +519,77 @@ public class FeatureAttributeValidatorImpl implements FeatureAttributeValidator 
 			}
 		}
 		return null;
+	}
+
+	@Override
+	public ErrorFeature valdiateCharacterTypeMiss(SimpleFeature simpleFeature, Map<String, Object> typeOption) {
+
+		boolean isTrue = true;
+		// ex {UFID:String, 도로번호:String, 도로폭:double}
+		Iterator iterator = typeOption.keySet().iterator();
+		while (iterator.hasNext()) {
+			String key = (String) iterator.next();
+			String optionType = (String) typeOption.get(key);
+
+			Object attrValue = simpleFeature.getAttribute(key);
+			if (attrValue != null) {
+				String attrType = attrValue.getClass().getSimpleName();
+				if (!optionType.equals(attrType)) {
+					isTrue = false;
+					break;
+				}
+			}
+		}
+		if (!isTrue) {
+			String featureIdx = simpleFeature.getID();
+			Property featuerIDPro = simpleFeature.getProperty("feature_id");
+			String featureID = (String) featuerIDPro.getValue();
+			Geometry geom = (Geometry) simpleFeature.getDefaultGeometry();
+
+			ErrorFeature errFeature = new ErrorFeature(featureIdx, featureID,
+					CharacterTypeMiss.Type.CHARACTERTYPEMISS.errType(),
+					CharacterTypeMiss.Type.CHARACTERTYPEMISS.errName(), geom.getInteriorPoint());
+
+			return errFeature;
+		} else {
+			return null;
+		}
+	}
+
+	@Override
+	public ErrorFeature valdiateSpecialCharacterMiss(SimpleFeature simpleFeature, Map<String, Object> typeOption) {
+
+		boolean isTrue = true;
+		// ex {UFID:false, 도로번호:false, 도로폭:true}
+		Iterator iterator = typeOption.keySet().iterator();
+		while (iterator.hasNext()) {
+			String key = (String) iterator.next();
+			boolean isSpecial = (boolean) typeOption.get(key);
+			if (isSpecial) {
+				Object attrValue = simpleFeature.getAttribute(key);
+				if (attrValue != null) {
+					String attrValueStr = attrValue.toString();
+					if (!attrValueStr.matches("[0-9|a-z|A-Z|ㄱ-ㅎ|ㅏ-ㅣ|가-힝]*")) {
+						isTrue = false;
+					}
+				}
+			} else {
+				continue;
+			}
+		}
+		if (!isTrue) {
+			String featureIdx = simpleFeature.getID();
+			Property featuerIDPro = simpleFeature.getProperty("feature_id");
+			String featureID = (String) featuerIDPro.getValue();
+			Geometry geom = (Geometry) simpleFeature.getDefaultGeometry();
+
+			ErrorFeature errFeature = new ErrorFeature(featureIdx, featureID,
+					SpecialCharactersMiss.Type.SPECIALCHARCTERSMISS.errType(),
+					SpecialCharactersMiss.Type.SPECIALCHARCTERSMISS.errName(), geom.getInteriorPoint());
+
+			return errFeature;
+		} else {
+			return null;
+		}
 	}
 }
