@@ -19,7 +19,6 @@ package com.git.opengds.generalization.controller;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -30,8 +29,6 @@ import com.git.opengds.common.AbstractController;
 import com.git.opengds.generalization.service.GeneralizationService;
 import com.git.opengds.user.domain.UserVO;
 import com.git.opengds.user.domain.UserVO.EnUserType;
-import com.git.opengds.validator.service.ValidatorService;
-import com.git.opengds.validator.service.ValidatorServiceImpl;
 
 @Controller("generalizationController")
 @RequestMapping("/generalization")
@@ -53,3 +50,4 @@ public class GeneralizationController extends AbstractController {
 //		return 
 	}
 }
+	

@@ -18,9 +18,7 @@
 package com.git.opengds.generalization.service;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -41,29 +39,29 @@ import com.git.gdsbuilder.generalization.impl.factory.GeneralizationFactoryImpl;
 import com.git.gdsbuilder.generalization.opt.EliminationOption;
 import com.git.gdsbuilder.generalization.opt.SimplificationOption;
 import com.git.gdsbuilder.generalization.rep.DTGeneralReport;
-import com.git.gdsbuilder.generalization.rep.DTGeneralReport.DTGeneralReportNumsType;
-import com.git.gdsbuilder.type.geoserver.layer.GeoLayerInfo;
-import com.git.gdsbuilder.type.shp.collection.DTSHPLayerCollection;
-import com.git.gdsbuilder.type.shp.layer.DTSHPLayer;
-import com.git.opengds.editor.service.EditDBManagerService;
-import com.git.opengds.file.shp.service.SHPDBManagerService;
-import com.git.opengds.geoserver.service.GeoserverService;
-import com.git.opengds.upload.domain.FileMeta;
 import com.git.opengds.user.domain.UserVO;
-
-import sun.print.resources.serviceui;
 
 @Service
 public class GeneralizationServiceImpl implements GeneralizationService {
 
 	@Inject
-	SHPDBManagerService shpDBManagerService;
+	GeneralizationLayerService generalizationLayerService;
 
 	@Inject
-	GeoserverService geoserverService;
+	GeneralizationProgressService progressService;
+
+	@Inject
+	GeneralizationReportService generalizationReportService;
 
 	private static final String URL;
 	private static final String ID;
+
+	protected static int requestSuccess = 0;
+	protected static int genProgresing = 1;
+	protected static int genSuccess = 2;
+	protected static int genFail = 3;
+	protected static int genLayerSuccess = 4;
+	protected static int genLayerFail = 5;
 
 	static {
 		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
@@ -91,14 +89,12 @@ public class GeneralizationServiceImpl implements GeneralizationService {
 
 		// String strTopoFlag = (String) jsonObj.get("topology");
 		boolean topoFlag = (boolean) jsonObj.get("topology");
-		;
 
 		/*
 		 * if(strTopoFlag.equals("true")){ topoFlag = true; }
 		 */
 
 		JSONArray orderArray = (JSONArray) jsonObj.get("order");
-
 		JSONArray layersArray = (JSONArray) jsonObj.get("layers");
 
 		// 일반화 레이어 로드
@@ -131,46 +127,67 @@ public class GeneralizationServiceImpl implements GeneralizationService {
 				}
 			}
 		}
-
 		if (layersArray.size() > 0) {
-			String layerName = (String) layersArray.get(0);
-			SimpleFeatureCollection sfc = null;
-			SimpleFeatureSource source = dataStore.getFeatureSource(layerName);
-			sfc = source.getFeatures();
-			System.out.println("데이터 가져왔다");
-			DTGeneralEAfLayer resultLayer = new GeneralizationFactoryImpl()
-					.createGeneralization(sfc, simplificationOption, eliminationOption, order, topoFlag)
-					.getGeneralization();
+			for (int i = 0; i < layersArray.size(); i++) {
+				String layerName = (String) layersArray.get(i);
 
-			SimpleFeatureCollection resultCollection = resultLayer.getCollection();
-			DTSHPLayer shpLayer = new DTSHPLayer(layerName, "MultiLineString", resultCollection);
+				int con = layerName.indexOf("_");
+				if (con != -1) {
+					String preName = layerName.substring(0, con); // 구분코드
+					String cutLayerName = layerName.substring(con + 1);
+					int dash = cutLayerName.indexOf("_");
+					String fileType = cutLayerName.substring(0, dash);
 
-			// create GeoLayerInfo
-			GeoLayerInfo layerInfo = new GeoLayerInfo();
-			layerInfo.setFileType("shp");
-			layerInfo.setFileName("Coast");
-			layerInfo.setOriginSrc("4326");
-			List<String> layerNames = new ArrayList<String>();
-			layerNames.add(layerName);
-			layerInfo.setLayerNames(layerNames);
+					String lastName = cutLayerName.substring(dash + 1); // 파일명_레이어명
+					int div = lastName.indexOf("_");
+					String fileName = lastName.substring(0, div);
+					// state 0 : 일반화 요청
+					Integer pIdx = progressService.setStateToRequest(userVO, requestSuccess, fileName, fileType,
+							layerName);
 
-			/*boolean geoLayerInfo = shpDBManagerService.createGenSHPLayer(userVO, "shp", 3, "Coast", shpLayer, "4326");
-			// publish Layer
-			if (geoLayerInfo) {
-				FileMeta geoserverFileMeta = geoserverService.dbLayerPublishGeoserver(userVO, layerInfo);
-				boolean isPublished = geoserverFileMeta.isServerPublishFlag();
-				System.out.println(isPublished);
-			}*/
+					String lastLayerName = lastName.substring(div + 1);
 
-			DTGeneralReport resultReport = resultLayer.getReport();
-			System.out.println("entityNums pre :"
-					+ resultReport.getDTGeneralReportNums(DTGeneralReportNumsType.ENTITY).getPreNum());
-			System.out.println("entityNums after :"
-					+ resultReport.getDTGeneralReportNums(DTGeneralReportNumsType.ENTITY).getAfNum());
-			System.out.println(
-					"pointNums pre :" + resultReport.getDTGeneralReportNums(DTGeneralReportNumsType.POINT).getPreNum());
-			System.out.println("pointNums after :"
-					+ resultReport.getDTGeneralReportNums(DTGeneralReportNumsType.POINT).getAfNum());
+					int layerTypeDash = lastLayerName.lastIndexOf("_");
+					String exTypelayerName = lastLayerName.substring(0, layerTypeDash);
+					String layerType = lastLayerName.substring(layerTypeDash + 1);
+					String suLayerType = "";
+
+					String groupName = "gro_" + fileType + "_" + fileName;
+
+					String src = "4326";
+
+					// state 1 : 일반화 진행중
+					progressService.setStateToProgressing(userVO, genProgresing, fileName, fileType, layerName, pIdx);
+					SimpleFeatureCollection sfc = null;
+					SimpleFeatureSource source = dataStore.getFeatureSource(layerName);
+					sfc = source.getFeatures();
+					DTGeneralEAfLayer resultLayer = new GeneralizationFactoryImpl()
+							.createGeneralization(sfc, simplificationOption, eliminationOption, order, topoFlag)
+							.getGeneralization();
+
+					// state 2 : 일반화 성공
+					if (resultLayer != null) {
+						progressService.setStateToProgressing(userVO, genSuccess, fileName, fileType, layerName, pIdx);
+						boolean isPublished = generalizationLayerService.publishGenLayer(userVO, resultLayer, fileType,
+								fileName, layerName, layerType, src);
+						if (isPublished) {
+							// state 4 : 발행 성공
+							progressService.setStateToProgressing(userVO, genLayerSuccess, fileName, fileType,
+									layerName, pIdx);
+							DTGeneralReport resultReport = resultLayer.getReport();
+							generalizationReportService.insertGenralResult(userVO, fileName, layerName, resultReport);
+						} else {
+							// state 5 : 발행 실패
+							progressService.setStateToProgressing(userVO, genLayerFail, fileName, fileType, layerName,
+									pIdx);
+						}
+					} else {
+						// state 3 : 일반화 실패
+						progressService.setStateToProgressing(userVO, genFail, fileName, fileType, layerName, pIdx);
+					}
+				}
+			}
 		}
+		System.out.println("성공");
 	}
 }

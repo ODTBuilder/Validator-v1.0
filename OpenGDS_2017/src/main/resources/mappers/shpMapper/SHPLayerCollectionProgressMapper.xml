@@ -4,6 +4,7 @@
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.git.mappers.shpMappers.SHPLayerCollectionProgressMapper">
 
+	<!-- qa20 -->
 	<insert id="insertSHPRequestState" parameterType="hashMap">
 		${insertQuery}
 
@@ -61,5 +62,8 @@
 		resultType="hashMap">
 		${selectAllQuery}
 	</select>
+
+	<!-- generalization -->
+
 
 </mapper>
