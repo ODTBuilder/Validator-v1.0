@@ -18,9 +18,13 @@
 package com.git.opengds.generalization.service;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+
+import javax.inject.Inject;
 
 import org.geotools.data.DataStore;
 import org.geotools.data.DataStoreFinder;
@@ -38,10 +42,26 @@ import com.git.gdsbuilder.generalization.opt.EliminationOption;
 import com.git.gdsbuilder.generalization.opt.SimplificationOption;
 import com.git.gdsbuilder.generalization.rep.DTGeneralReport;
 import com.git.gdsbuilder.generalization.rep.DTGeneralReport.DTGeneralReportNumsType;
+import com.git.gdsbuilder.type.geoserver.layer.GeoLayerInfo;
+import com.git.gdsbuilder.type.shp.collection.DTSHPLayerCollection;
+import com.git.gdsbuilder.type.shp.layer.DTSHPLayer;
+import com.git.opengds.editor.service.EditDBManagerService;
+import com.git.opengds.file.shp.service.SHPDBManagerService;
+import com.git.opengds.geoserver.service.GeoserverService;
+import com.git.opengds.upload.domain.FileMeta;
 import com.git.opengds.user.domain.UserVO;
+
+import sun.print.resources.serviceui;
 
 @Service
 public class GeneralizationServiceImpl implements GeneralizationService {
+
+	@Inject
+	SHPDBManagerService shpDBManagerService;
+
+	@Inject
+	GeoserverService geoserverService;
+
 	private static final String URL;
 	private static final String ID;
 
@@ -61,84 +81,96 @@ public class GeneralizationServiceImpl implements GeneralizationService {
 	@Override
 	public void exeGeneralization(final UserVO userVO, String jsonObject) throws Exception {
 
-		//일반화 객체 파라미터 선언
-		SimplificationOption simplificationOption = null; 
-		EliminationOption eliminationOption = null; 
-		GeneralizationOrder order = GeneralizationOrder.UNKNOWN; 
-		
-		
-		
-		
-		
+		// 일반화 객체 파라미터 선언
+		SimplificationOption simplificationOption = null;
+		EliminationOption eliminationOption = null;
+		GeneralizationOrder order = GeneralizationOrder.UNKNOWN;
+
 		JSONParser parser = new JSONParser();
 		JSONObject jsonObj = (JSONObject) parser.parse(jsonObject);
 
-		
-		String strTopoFlag = (String) jsonObj.get("topology");
-		boolean topoFlag = false;
-		
-		
-		if(strTopoFlag.equals("true")){
-			topoFlag = true;
-		}
-		
-		
+		// String strTopoFlag = (String) jsonObj.get("topology");
+		boolean topoFlag = (boolean) jsonObj.get("topology");
+		;
+
+		/*
+		 * if(strTopoFlag.equals("true")){ topoFlag = true; }
+		 */
+
 		JSONArray orderArray = (JSONArray) jsonObj.get("order");
-		
+
 		JSONArray layersArray = (JSONArray) jsonObj.get("layers");
-		
-		
-		//일반화 레이어 로드
+
+		// 일반화 레이어 로드
 		String getCapabilities = URL + "/wfs?REQUEST=GetCapabilities&version=1.0.0";
 		Map connectionParameters = new HashMap();
 		connectionParameters.put("WFSDataStoreFactory:GET_CAPABILITIES_URL", getCapabilities);
 		DataStore dataStore = DataStoreFinder.getDataStore(connectionParameters);
-		
-		
-		
-		
-		
-		
-		if(orderArray.size()>0){
+
+		if (orderArray.size() > 0) {
 			JSONObject firOrderJSON = (JSONObject) orderArray.get(0);
 			String firMethod = (String) firOrderJSON.get("method");
-			
-			if(firMethod.trim().equals("simplification")){
+
+			if (firMethod.trim().equals("simplification")) {
 				order = GeneralizationOrder.SIMPLIFICATION;
 			}
-			if(firMethod.trim().equals("elimination")){
+			if (firMethod.trim().equals("elimination")) {
 				order = GeneralizationOrder.ELIMINATION;
 			}
-			
-			
-			for(int i=0; i<orderArray.size(); i++){//옵션생성
+
+			for (int i = 0; i < orderArray.size(); i++) {// 옵션생성
 				JSONObject orderJSON = (JSONObject) orderArray.get(i);
 				String method = (String) orderJSON.get("method");
-				double tolerance = (double) orderJSON.get("tolerance");
-				
-				if(method.trim().equals("simplification")){
+				Double tolerance = Double.parseDouble((String) orderJSON.get("tolerance"));
+
+				if (method.trim().equals("simplification")) {
 					simplificationOption = new SimplificationOption(tolerance);
 				}
-				if(method.trim().equals("elimination")){
+				if (method.trim().equals("elimination")) {
 					eliminationOption = new EliminationOption(tolerance);
 				}
 			}
 		}
-		
-		if(layersArray.size()>0){
+
+		if (layersArray.size() > 0) {
 			String layerName = (String) layersArray.get(0);
 			SimpleFeatureCollection sfc = null;
 			SimpleFeatureSource source = dataStore.getFeatureSource(layerName);
 			sfc = source.getFeatures();
-			
-			DTGeneralEAfLayer resultLayer = new GeneralizationFactoryImpl().createGeneralization(sfc, simplificationOption, eliminationOption, order, topoFlag).getGeneralization();
-			
+			System.out.println("데이터 가져왔다");
+			DTGeneralEAfLayer resultLayer = new GeneralizationFactoryImpl()
+					.createGeneralization(sfc, simplificationOption, eliminationOption, order, topoFlag)
+					.getGeneralization();
+
 			SimpleFeatureCollection resultCollection = resultLayer.getCollection();
+			DTSHPLayer shpLayer = new DTSHPLayer(layerName, "MultiLineString", resultCollection);
+
+			// create GeoLayerInfo
+			GeoLayerInfo layerInfo = new GeoLayerInfo();
+			layerInfo.setFileType("shp");
+			layerInfo.setFileName("Coast");
+			layerInfo.setOriginSrc("4326");
+			List<String> layerNames = new ArrayList<String>();
+			layerNames.add(layerName);
+			layerInfo.setLayerNames(layerNames);
+
+			/*boolean geoLayerInfo = shpDBManagerService.createGenSHPLayer(userVO, "shp", 3, "Coast", shpLayer, "4326");
+			// publish Layer
+			if (geoLayerInfo) {
+				FileMeta geoserverFileMeta = geoserverService.dbLayerPublishGeoserver(userVO, layerInfo);
+				boolean isPublished = geoserverFileMeta.isServerPublishFlag();
+				System.out.println(isPublished);
+			}*/
+
 			DTGeneralReport resultReport = resultLayer.getReport();
-			System.out.println("entityNums pre :" +resultReport.getDTGeneralReportNums(DTGeneralReportNumsType.ENTITY).getPreNum());
-			System.out.println("entityNums after :" +resultReport.getDTGeneralReportNums(DTGeneralReportNumsType.ENTITY).getPreNum());
-			System.out.println("pointNums pre :" +resultReport.getDTGeneralReportNums(DTGeneralReportNumsType.POINT).getPreNum());
-			System.out.println("pointNums after :" +resultReport.getDTGeneralReportNums(DTGeneralReportNumsType.POINT).getPreNum());
+			System.out.println("entityNums pre :"
+					+ resultReport.getDTGeneralReportNums(DTGeneralReportNumsType.ENTITY).getPreNum());
+			System.out.println("entityNums after :"
+					+ resultReport.getDTGeneralReportNums(DTGeneralReportNumsType.ENTITY).getAfNum());
+			System.out.println(
+					"pointNums pre :" + resultReport.getDTGeneralReportNums(DTGeneralReportNumsType.POINT).getPreNum());
+			System.out.println("pointNums after :"
+					+ resultReport.getDTGeneralReportNums(DTGeneralReportNumsType.POINT).getAfNum());
 		}
 	}
 }

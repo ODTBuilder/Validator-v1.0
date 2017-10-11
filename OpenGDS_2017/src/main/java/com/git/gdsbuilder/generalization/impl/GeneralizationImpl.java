@@ -119,7 +119,6 @@ public class GeneralizationImpl extends TopoGeneralizationData implements Genera
 			return this.stepValue;
 		}
 	};*/
-	
 	@Override
 	public DTGeneralEAfLayer getGeneralization(){
 		DTGeneralEAfLayer returnLayerResult = new DTGeneralEAfLayer();
@@ -130,7 +129,6 @@ public class GeneralizationImpl extends TopoGeneralizationData implements Genera
 			
 			SimpleFeatureCollection disConCollection = super.getDisConnectCollection();
 			SimpleFeatureCollection conCollection = super.getConnectCollection();
-			
 			
 			
 //			if(this.order.getTypeName().equals("simplification")){

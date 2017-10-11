@@ -102,6 +102,7 @@ public class EliminationImpl implements Elimination {
 				} else {
 					resultCollection = null;
 				}
+				System.out.println("객체삭제중이다");
 			}
 			//계산된 Feature수, 포인트수 input
 			try {

@@ -75,7 +75,7 @@ public class SimplificationImpl implements Simplification {
 				pointPreNum = pointPreNum + geom.getNumPoints();
 				
 				Geometry newGeom = TopologyPreservingSimplifier.simplify(geom, option.getOption());
-				
+				System.out.println("일반화 되는중이다");
 				pointAfNum = pointAfNum + newGeom.getNumPoints();
 				
 				feature.setDefaultGeometry(newGeom);
