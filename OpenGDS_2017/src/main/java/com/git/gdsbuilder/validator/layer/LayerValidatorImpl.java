@@ -371,12 +371,11 @@ public class LayerValidatorImpl implements LayerValidator {
 
 		ErrorLayer errLayer = new ErrorLayer();
 
-		int tmpSizeI = simpleFeatures.size();
+		int tmpSizeI = Math.round(simpleFeatures.size() / 3 * 1);
 		int tmpSizeJ = relationSimpleFeatures.size();
 		for (int i = 0; i < tmpSizeI; i++) {
 			SimpleFeature simpleFeatureI = simpleFeatures.get(i);
 			String idI = simpleFeatureI.getID();
-			System.out.println("target : " + idI);
 			for (int j = 0; j < tmpSizeJ; j++) {
 				SimpleFeature simpleFeatureJ = relationSimpleFeatures.get(j);
 				String idJ = simpleFeatureJ.getID();
@@ -386,11 +385,11 @@ public class LayerValidatorImpl implements LayerValidator {
 					List<ErrorFeature> errFeatures = graphicValidator.validateSelfEntity(simpleFeatureI, simpleFeatureJ,
 							selfEntityLineTolerance, polygonInvadedTolorence);
 					if (errFeatures != null) {
-						System.out.println("errorFeatureSize : " + errFeatures.size());
 						for (ErrorFeature errFeature : errFeatures) {
 							errFeature.setLayerName(validatorLayer.getLayerName());
 							errLayer.addErrorFeature(errFeature);
 						}
+					} else {
 					}
 				}
 			}

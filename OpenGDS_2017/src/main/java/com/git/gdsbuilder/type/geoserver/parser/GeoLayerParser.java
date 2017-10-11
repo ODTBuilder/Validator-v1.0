@@ -42,12 +42,10 @@ import java.util.Map;
 import org.geotools.data.DataStore;
 import org.geotools.data.DataStoreFinder;
 import org.geotools.data.simple.SimpleFeatureCollection;
-import org.geotools.data.simple.SimpleFeatureIterator;
 import org.geotools.data.simple.SimpleFeatureSource;
 import org.geotools.feature.SchemaException;
 import org.json.simple.JSONArray;
 import org.json.simple.parser.ParseException;
-import org.opengis.feature.simple.SimpleFeature;
 
 import com.git.gdsbuilder.FileRead.en.EnFileFormat;
 import com.git.gdsbuilder.type.geoserver.layer.GeoLayer;
@@ -100,12 +98,6 @@ public class GeoLayerParser {
 		this.fileFormat = fileFormat;
 		Map connectionParameters = new HashMap();
 		connectionParameters.put("WFSDataStoreFactory:GET_CAPABILITIES_URL", getCapabilities);
-<<<<<<< HEAD
-		connectionParameters.put("WFSDataStoreFactory.TIMEOUT.key", 999999999);
-=======
-		//connectionParameters.put("WFSDataStoreFactory.TIMEOUT.key", 999999999);
-		//connectionParameters.put("WFSDataStoreFactory:BUFFER_SIZE", 999999999);
->>>>>>> dy.oh
 		this.dataStore = DataStoreFinder.getDataStore(connectionParameters);
 		this.layer = layerParse();
 	}

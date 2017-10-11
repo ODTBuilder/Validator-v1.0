@@ -115,15 +115,22 @@ public class TopoGeneralizationData {
 			disConnectObject = new DisConnectObject();
 			topologyTable = new TopologyTable();
 			
+			GeometryFactory factory = new GeometryFactory();
+			
+			
+			
+			List<String> firstObjs = new ArrayList<String>();
+			List<String> lastObjs = new ArrayList<String>();
 			
 			if (simpleFeatures.size() != 0) {
 				for (int i = 0; i < simpleFeatures.size(); i++) {
 					//Feature간 Topology 생성
 					Topology topology = new Topology();
-					List<String> firstObjs = new ArrayList<String>();
-					List<String> lastObjs = new ArrayList<String>();
+					firstObjs.clear();
+					lastObjs.clear();
 					
 					topology.setObjID(simpleFeatures.get(i).getID());
+					System.out.println(simpleFeatures.get(i).getID() + "빌드중");
 					
 					///////////////////////////////////////////////////////////////////////////////////
 					boolean startFlag = false;
@@ -144,8 +151,8 @@ public class TopoGeneralizationData {
 							/*if (mainCoord[0].equa ls2D(mainCoord[mainCoord.length - 1])) {
 								allCollection.add(simpleFeatures.get(i));}*/  
 //							else {
-								Geometry startGeom = new GeometryFactory().createPoint(mainCoord[0]);
-								Geometry endGeom = new GeometryFactory().createPoint(mainCoord[mainCoord.length - 1]);
+								Geometry startGeom = factory.createPoint(mainCoord[0]);
+								Geometry endGeom = factory.createPoint(mainCoord[mainCoord.length - 1]);
 								if (endGeom.isWithinDistance(subGeom, 2000)) {
 									endFlag = true;
 									lastObjs.add(simpleFeatures.get(j).getID());

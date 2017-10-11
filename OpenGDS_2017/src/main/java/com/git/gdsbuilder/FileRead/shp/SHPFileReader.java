@@ -9,7 +9,6 @@ import java.util.Map;
 import org.geotools.data.DataStoreFinder;
 import org.geotools.data.DataUtilities;
 import org.geotools.data.shapefile.ShapefileDataStore;
-import org.geotools.data.shapefile.shp.ShapefileReader;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureIterator;
 import org.geotools.data.simple.SimpleFeatureSource;
@@ -31,6 +30,7 @@ public class SHPFileReader {
 	@SuppressWarnings("unchecked")
 	public DTSHPLayerCollection read(String upZipFilePath, String entryName, Map<String, Object> fileNameMap)
 			throws Exception {
+
 		List<String> shpFileNames = (List<String>) fileNameMap.get("shp");
 		List<String> shxFileNames = (List<String>) fileNameMap.get("shx");
 		List<String> dbfFileNames = (List<String>) fileNameMap.get("dbf");
@@ -85,7 +85,6 @@ public class SHPFileReader {
 									}
 								}
 								SimpleFeatureType simpleFeatureType = DataUtilities.createType(featureID.toString(),
-
 										"the_geom:" + singleGeom.getGeometryType() + ","
 												+ temp.substring(0, temp.length() - 1));
 								SimpleFeature newSimpleFeature = SimpleFeatureBuilder.build(simpleFeatureType,
@@ -134,7 +133,6 @@ public class SHPFileReader {
 
 		Map<String, Object> map = new HashMap<String, Object>();
 		ShapefileDataStore dataStore;
-
 		String typeName;
 		SimpleFeatureCollection collection = null;
 
