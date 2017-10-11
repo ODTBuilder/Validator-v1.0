@@ -377,14 +377,9 @@ public class LayerValidatorImpl implements LayerValidator {
 			SimpleFeature simpleFeatureI = simpleFeatures.get(i);
 			String idI = simpleFeatureI.getID();
 			System.out.println("target : " + idI);
-			if (idI.equals("geo_shp_coastline3_COAST3_MULTILINESTRING.68072")
-					|| idI.equals("geo_shp_coastline3_COAST3_MULTILINESTRING.73878")) {
-				System.out.println("");
-			}
 			for (int j = 0; j < tmpSizeJ; j++) {
 				SimpleFeature simpleFeatureJ = relationSimpleFeatures.get(j);
 				String idJ = simpleFeatureJ.getID();
-				System.out.println("relation : " + idJ);
 				if (idI.equals(idJ)) {
 					continue;
 				} else {
@@ -396,8 +391,6 @@ public class LayerValidatorImpl implements LayerValidator {
 							errFeature.setLayerName(validatorLayer.getLayerName());
 							errLayer.addErrorFeature(errFeature);
 						}
-					} else {
-						System.out.println("null");
 					}
 				}
 			}
