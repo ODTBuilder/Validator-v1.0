@@ -85,7 +85,8 @@ gitbuilder.ui.QAEdit = $.widget("gitbuilder.qaedit",
 				var refBtn = $("<button>").addClass("pull-right").addClass("gitbuilder-clearbtn").append(icls).click(function() {
 					$(that.list).jstree("refresh");
 				});
-//				var serverTitle = $("<h3>").addClass("panel-title").text("GeoServer");
+				// var serverTitle =
+				// $("<h3>").addClass("panel-title").text("GeoServer");
 				var serverHead = $("<div>").addClass("panel-heading").append("GeoServer").append(refBtn);
 				this.list = $("<div>").attr({
 					"id" : "geoserverList"
@@ -508,8 +509,8 @@ gitbuilder.ui.QAEdit = $.widget("gitbuilder.qaedit",
 											'TILED' : true,
 											'FORMAT' : 'image/png8',
 											'VERSION' : '1.1.0',
-											'CRS' : 'EPSG:5186',
-											'SRS' : 'EPSG:5186',
+											'CRS' : that.map.getView().getProjection().getCode(),
+											'SRS' : that.map.getView().getProjection().getCode(),
 											'BBOX' : data[i].bbox.minx.toString() + "," + data[i].bbox.miny.toString() + ","
 													+ data[i].bbox.maxx.toString() + "," + data[i].bbox.maxy.toString(),
 											"time" : Date.now()
@@ -623,8 +624,8 @@ gitbuilder.ui.QAEdit = $.widget("gitbuilder.qaedit",
 											'TILED' : true,
 											'FORMAT' : 'image/png8',
 											'VERSION' : '1.1.0',
-											'CRS' : 'EPSG:5186',
-											'SRS' : 'EPSG:5186',
+											'CRS' : that.map.getView().getProjection().getCode(),
+											'SRS' : that.map.getView().getProjection().getCode(),
 											'BBOX' : data[i].bbox.minx.toString() + "," + data[i].bbox.miny.toString() + ","
 													+ data[i].bbox.maxx.toString() + "," + data[i].bbox.maxy.toString()
 										},
@@ -682,8 +683,8 @@ gitbuilder.ui.QAEdit = $.widget("gitbuilder.qaedit",
 											'TILED' : true,
 											'FORMAT' : 'image/png8',
 											'VERSION' : '1.1.0',
-											'CRS' : 'EPSG:5186',
-											'SRS' : 'EPSG:5186',
+											'CRS' : that.map.getView().getProjection().getCode(),
+											'SRS' : that.map.getView().getProjection().getCode(),
 											'BBOX' : data2[i].nbBox.minx.toString() + "," + data2[i].nbBox.miny.toString() + ","
 													+ data2[i].nbBox.maxx.toString() + "," + data2[i].nbBox.maxy.toString()
 										},
@@ -1056,8 +1057,8 @@ gitbuilder.ui.QAEdit = $.widget("gitbuilder.qaedit",
 												'TILED' : true,
 												'FORMAT' : 'image/png8',
 												'VERSION' : '1.1.0',
-												'CRS' : 'EPSG:5186',
-												'SRS' : 'EPSG:5186',
+												'CRS' : that.map.getView().getProjection().getCode(),
+												'SRS' : that.map.getView().getProjection().getCode(),
 												'BBOX' : data2[i].nbBox.minx.toString() + "," + data2[i].nbBox.miny.toString() + ","
 														+ data2[i].nbBox.maxx.toString() + "," + data2[i].nbBox.maxy.toString()
 											},

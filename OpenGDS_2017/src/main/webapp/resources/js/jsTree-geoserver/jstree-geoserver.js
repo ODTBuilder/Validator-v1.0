@@ -85,8 +85,8 @@ $.jstree.plugins.geoserver = function(options, parent) {
 									'TILED' : true,
 									'FORMAT' : 'image/png8',
 									'VERSION' : '1.0.0',
-									'CRS' : 'EPSG:5186',
-									'SRS' : 'EPSG:5186',
+									'CRS' : that._data.geoserver.map.getView().getProjection().getCode(),
+									'SRS' : that._data.geoserver.map.getView().getProjection().getCode(),
 									'BBOX' : data[i].bbox.minx.toString() + "," + data[i].bbox.miny.toString() + ","
 											+ data[i].bbox.maxx.toString() + "," + data[i].bbox.maxy.toString()
 								},
@@ -113,14 +113,23 @@ $.jstree.plugins.geoserver = function(options, parent) {
 							case "POINT":
 								geom = "Point";
 								break;
+							case "MULTIPOINT":
+								geom = "MultiPoint";
+								break;
 							case "INSERT":
 								geom = "Point";
 								break;
 							case "POLYGON":
 								geom = "Polygon";
 								break;
+							case "MULTIPOLYGON":
+								geom = "MultiPolygon";
+								break;
 							case "LINESTRING":
 								geom = "LineString";
+								break;
+							case "MULTILINESTRING":
+								geom = "MultiLineString";
 								break;
 							case "TEXT":
 								geom = "Point";
@@ -219,8 +228,8 @@ $.jstree.plugins.geoserver = function(options, parent) {
 									'TILED' : true,
 									'FORMAT' : 'image/png8',
 									'VERSION' : '1.0.0',
-									'CRS' : 'EPSG:5186',
-									'SRS' : 'EPSG:5186',
+									'CRS' : that._data.geoserver.map.getView().getProjection().getCode(),
+									'SRS' : that._data.geoserver.map.getView().getProjection().getCode(),
 									'BBOX' : data[i].bbox.minx.toString() + "," + data[i].bbox.miny.toString() + ","
 											+ data[i].bbox.maxx.toString() + "," + data[i].bbox.maxy.toString()
 								},
@@ -248,14 +257,23 @@ $.jstree.plugins.geoserver = function(options, parent) {
 							case "POINT":
 								geom = "Point";
 								break;
+							case "MULTIPOINT":
+								geom = "MultiPoint";
+								break;
 							case "INSERT":
 								geom = "Point";
 								break;
 							case "POLYGON":
 								geom = "Polygon";
 								break;
+							case "MULTIPOLYGON":
+								geom = "MultiPolygon";
+								break;
 							case "LINESTRING":
 								geom = "LineString";
+								break;
+							case "MULTILINESTRING":
+								geom = "MultiLineString";
 								break;
 							case "TEXT":
 								geom = "Point";
@@ -411,8 +429,8 @@ $.jstree.plugins.geoserver = function(options, parent) {
 									'TILED' : true,
 									'FORMAT' : 'image/png8',
 									'VERSION' : '1.0.0',
-									'CRS' : 'EPSG:5186',
-									'SRS' : 'EPSG:5186',
+									'CRS' : that._data.geoserver.map.getView().getProjection().getCode(),
+									'SRS' : that._data.geoserver.map.getView().getProjection().getCode(),
 									'BBOX' : data[i].bbox.minx.toString() + "," + data[i].bbox.miny.toString() + ","
 											+ data[i].bbox.maxx.toString() + "," + data[i].bbox.maxy.toString()
 								},
