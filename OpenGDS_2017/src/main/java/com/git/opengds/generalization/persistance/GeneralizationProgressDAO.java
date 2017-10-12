@@ -10,8 +10,8 @@ public interface GeneralizationProgressDAO {
 
 	public Integer insertRequestState(UserVO userVO, HashMap<String, Object> insertQuery);
 
-	public void getUpdateProgressingState(UserVO userVO, HashMap<String, Object> insertQuery);
+	public void updateProgressingState(UserVO userVO, HashMap<String, Object> insertQuery);
 
-	public void insertGenTableName(UserVO userVO, Object insertGenTableName);
+	public void insertGenResponseState(UserVO userVO, HashMap<String, Object> insertQuery);
 
 }

@@ -4,9 +4,27 @@
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.git.mappers.generalization.GeneralizationProgressMapper">
 
-	<select id="selectGenTbNamesCount" parameterType="hashMap" resultType="hashMap">
+	<select id="selectGenTbNamesCount" parameterType="hashMap"
+		resultType="hashMap">
 		${selectQuery}
 	</select>
 
+	<insert id="insertGenRequestState" parameterType="hashMap">
+		${insertQuery}
+
+		<selectKey keyProperty="p_idx" resultType="int" order="AFTER">
+			select currval('shp_layercollection_gen_progress_p_idx_seq')
+		</selectKey>
+	</insert>
+
+	<select id="updateGenProgressingState" parameterType="hashMap"
+		resultType="hashMap">
+		${updateQuery}
+	</select>
+
+	<select id="updateGenResponseState" parameterType="hashMap"
+		resultType="hashMap">
+		${updateQuery}
+	</select>
 
 </mapper>

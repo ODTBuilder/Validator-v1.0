@@ -18,11 +18,13 @@ public class GeneralizationReportServiceImpl implements GeneralizationReportServ
 	GeneralizationReportDAO generalizationReportDAO;
 
 	@Override
-	public boolean insertGenralResult(UserVO userVO, String collectionName, String layerName, DTGeneralReport resultReport) {
+	public boolean insertGenralResult(UserVO userVO, String collectionName, String layerName, String genTbName,
+			DTGeneralReport resultReport) {
 
 		try {
 			GenResultDBQueryManager queryManager = new GenResultDBQueryManager();
-			HashMap<String, Object> insertQuery = queryManager.getInsertGenResultQuery(collectionName, layerName, resultReport);
+			HashMap<String, Object> insertQuery = queryManager.getInsertGenResultQuery(collectionName, layerName,
+					genTbName, resultReport);
 			generalizationReportDAO.insertGenResult(userVO, insertQuery);
 			return true;
 		} catch (Exception e) {

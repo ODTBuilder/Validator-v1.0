@@ -45,11 +45,16 @@ public class GeneralizationProgressServiceImpl implements GeneralizationProgress
 	}
 
 	@Override
-	public void setStateToProgressing(UserVO userVO, int state, String collectionName, String type, String layerName,
-			Integer pIdx) {
+	public void setStateToProgressing(UserVO userVO, int state, String type, Integer pIdx) {
 		GenProgressQueryManager queryManager = new GenProgressQueryManager();
 		HashMap<String, Object> insertQuery = queryManager.getUpdateProgressingState(pIdx, type, state);
-		progressDAO.getUpdateProgressingState(userVO, insertQuery);
+		progressDAO.updateProgressingState(userVO, insertQuery);
 	}
 
+	@Override
+	public void setStateToResponse(UserVO userVO, String type, String genTbName, Integer pIdx) {
+		GenProgressQueryManager queryManager = new GenProgressQueryManager();
+		HashMap<String, Object> insertQuery = queryManager.getInsertResponseState(pIdx, genTbName, type);
+		progressDAO.insertGenResponseState(userVO, insertQuery);
+	}
 }

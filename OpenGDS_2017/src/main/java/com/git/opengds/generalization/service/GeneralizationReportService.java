@@ -5,6 +5,6 @@ import com.git.opengds.user.domain.UserVO;
 
 public interface GeneralizationReportService {
 
-	boolean insertGenralResult(UserVO userVO, String collectionName, String layerName, DTGeneralReport resultReport);
+	boolean insertGenralResult(UserVO userVO, String collectionName, String layerName, String genTbName, DTGeneralReport resultReport);
 
 }
