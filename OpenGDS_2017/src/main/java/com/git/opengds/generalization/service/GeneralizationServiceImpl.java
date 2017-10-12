@@ -101,6 +101,7 @@ public class GeneralizationServiceImpl implements GeneralizationService {
 		String getCapabilities = URL + "/wfs?REQUEST=GetCapabilities&version=1.0.0";
 		Map connectionParameters = new HashMap();
 		connectionParameters.put("WFSDataStoreFactory:GET_CAPABILITIES_URL", getCapabilities);
+		connectionParameters.put("WFSDataStoreFactory.TIMEOUT.key", 999999999);
 		DataStore dataStore = DataStoreFinder.getDataStore(connectionParameters);
 
 		if (orderArray.size() > 0) {

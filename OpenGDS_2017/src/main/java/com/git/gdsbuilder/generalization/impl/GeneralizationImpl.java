@@ -196,8 +196,15 @@ public class GeneralizationImpl extends TopoGeneralizationData implements Genera
 				DTGeneralReportNums entityNums = simpleReport.getDTGeneralReportNums(DTGeneralReportNumsType.ENTITY);
 				DTGeneralReportNums pointNums = simpleReport.getDTGeneralReportNums(DTGeneralReportNumsType.POINT);
 				
+				DTGeneralReportNums returnEntityNums = new DTGeneralReportNums(entityNums.getPreNum(),entityNums.getAfNum());
+				DTGeneralReportNums returnPointNums = new DTGeneralReportNums(pointNums.getPreNum(),pointNums.getAfNum());
 				
-				if(simpleEAfLayer!=null){
+				
+				simpleReport.setEntityNum(returnEntityNums);
+				simpleReport.setPointNum(returnPointNums);
+				
+				returnLayerResult = simpleEAfLayer;
+				/*if(simpleEAfLayer!=null){
 					SimpleFeatureCollection simpleFeatureCollection = simpleEAfLayer.getCollection();
 					DTGeneralEAfLayer eliEAfLayer = new EliminationImpl(simpleFeatureCollection, eliminationOption).getElimination();
 					DTGeneralReport eliReport = eliEAfLayer.getReport();
@@ -217,7 +224,7 @@ public class GeneralizationImpl extends TopoGeneralizationData implements Genera
 					eliEAfLayer.setReport(eliReport);
 					
 					returnLayerResult = eliEAfLayer;
-				}
+				}*/
 			}else{
 				DTGeneralEAfLayer eliEAfLayer = new EliminationImpl(super.getCollection(), eliminationOption).getElimination();
 				DTGeneralReport eliReport = eliEAfLayer.getReport();
