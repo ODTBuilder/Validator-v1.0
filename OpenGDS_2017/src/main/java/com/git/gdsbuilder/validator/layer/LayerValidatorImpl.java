@@ -337,18 +337,23 @@ public class LayerValidatorImpl implements LayerValidator {
 			SimpleFeature simpleFeature = simpleFeatureIterator.next();
 			simpleFeatures.add(simpleFeature);
 		}
-		// ErrorLayer selfErrorLayer = selfEntity(simpleFeatures,
-		// selfEntityLineTolerance, polygonInvadedTolorence);
+		// targetLayer
+		ErrorLayer selfErrorLayer = selfEntity(simpleFeatures, selfEntityLineTolerance, polygonInvadedTolorence);
+		if (selfErrorLayer != null) {
+			errLayer.mergeErrorLayer(selfErrorLayer);
+		}
 		for (int i = 0; i < relationLayers.size(); i++) {
 			GeoLayer relationLayer = relationLayers.get(i);
 			String relationLayerName = relationLayer.getLayerName();
 			if (validationLayerName.equals(relationLayerName)) {
+				// targetLayer = relationLayer
 				ErrorLayer relationErrorLayer = selfEntity(simpleFeatures, simpleFeatures, selfEntityLineTolerance,
 						polygonInvadedTolorence);
 				if (relationErrorLayer != null) {
 					errLayer.mergeErrorLayer(relationErrorLayer);
 				}
 			} else {
+				// targetLayer != relationLayer
 				SimpleFeatureCollection relationSfc = relationLayer.getSimpleFeatureCollection();
 				List<SimpleFeature> relationSimpleFeatures = new ArrayList<SimpleFeature>();
 				SimpleFeatureIterator relationSimpleFeatureIterator = relationSfc.features();
@@ -371,7 +376,7 @@ public class LayerValidatorImpl implements LayerValidator {
 
 		ErrorLayer errLayer = new ErrorLayer();
 
-		int tmpSizeI = Math.round(simpleFeatures.size() / 3 * 1);
+		int tmpSizeI = simpleFeatures.size();
 		int tmpSizeJ = relationSimpleFeatures.size();
 		for (int i = 0; i < tmpSizeI; i++) {
 			SimpleFeature simpleFeatureI = simpleFeatures.get(i);
@@ -409,12 +414,20 @@ public class LayerValidatorImpl implements LayerValidator {
 		int tmpSize = simpleFeatures.size();
 		for (int i = 0; i < tmpSize - 1; i++) {
 			SimpleFeature tmpSimpleFeatureI = simpleFeatures.get(i);
+			List<ErrorFeature> errFeatures1 = graphicValidator.validateSelfEntity(tmpSimpleFeatureI,
+					selfEntityLineTolerance, polygonInvadedTolorence);
+			if (errFeatures1 != null) {
+				for (ErrorFeature errFeature : errFeatures1) {
+					errFeature.setLayerName(validatorLayer.getLayerName());
+					errLayer.addErrorFeature(errFeature);
+				}
+			}
 			for (int j = i + 1; j < tmpSize; j++) {
 				SimpleFeature tmpSimpleFeatureJ = simpleFeatures.get(j);
-				List<ErrorFeature> errFeatures = graphicValidator.validateSelfEntity(tmpSimpleFeatureI,
+				List<ErrorFeature> errFeatures2 = graphicValidator.validateSelfEntity(tmpSimpleFeatureI,
 						tmpSimpleFeatureJ, selfEntityLineTolerance, polygonInvadedTolorence);
-				if (errFeatures != null) {
-					for (ErrorFeature errFeature : errFeatures) {
+				if (errFeatures2 != null) {
+					for (ErrorFeature errFeature : errFeatures2) {
 						errFeature.setLayerName(validatorLayer.getLayerName());
 						errLayer.addErrorFeature(errFeature);
 					}

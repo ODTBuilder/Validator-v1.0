@@ -97,7 +97,7 @@ public class SHPFileReader {
 					// dtLayerList.add(dtLayer);
 					// } else {
 					dtLayer.setLayerType(geomType.toUpperCase());
-					dtLayer.setLayerName(shpName.toUpperCase());
+					dtLayer.setLayerName(shpName.toUpperCase() + "_" + geomType.toUpperCase());
 					dtLayerList.add(dtLayer);
 					// }
 				}

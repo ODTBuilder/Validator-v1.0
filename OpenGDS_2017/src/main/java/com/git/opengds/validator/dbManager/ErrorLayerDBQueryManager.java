@@ -180,7 +180,7 @@ public class ErrorLayerDBQueryManager {
 	public HashMap<String, Object> selectQA10ErrorLayerTbNamesCountQuery(String fileType, String collectionName,
 			int cIdx) {
 		String tableName = "\"" + "qa10_layercollection_qa_progress" + "\"";
-		String countQueryStr = "select count (*) from " + tableName + "where c_idx = " + cIdx + "and state = " + 4;
+		String countQueryStr = "select count (*) from " + tableName + "where c_idx = " + cIdx;
 		HashMap<String, Object> selectQueryMap = new HashMap<String, Object>();
 		selectQueryMap.put("selectQuery", countQueryStr);
 		return selectQueryMap;
@@ -189,7 +189,7 @@ public class ErrorLayerDBQueryManager {
 	public HashMap<String, Object> selectQA20ErrorLayerTbNamesCountQuery(String fileType, String collectionName,
 			Integer cIdx) {
 		String tableName = "\"" + "qa20_layercollection_qa_progress" + "\"";
-		String countQueryStr = "select count (*) from " + tableName + "where c_idx = " + cIdx + "and state = " + 4;
+		String countQueryStr = "select count (*) from " + tableName + "where c_idx = " + cIdx;
 		HashMap<String, Object> selectQueryMap = new HashMap<String, Object>();
 		selectQueryMap.put("selectQuery", countQueryStr);
 		return selectQueryMap;
@@ -198,7 +198,7 @@ public class ErrorLayerDBQueryManager {
 	public HashMap<String, Object> selectErrorLayerTbNamesCountQuery(String fileType, String collectionName,
 			Integer cIdx) {
 		String tableName = "\"" + fileType + "_layercollection_qa_progress" + "\"";
-		String countQueryStr = "select count (*) from " + tableName + "where c_idx = " + cIdx + "and state = " + 4;
+		String countQueryStr = "select count (*) from " + tableName + "where c_idx = " + cIdx;
 		HashMap<String, Object> selectQueryMap = new HashMap<String, Object>();
 		selectQueryMap.put("selectQuery", countQueryStr);
 		return selectQueryMap;

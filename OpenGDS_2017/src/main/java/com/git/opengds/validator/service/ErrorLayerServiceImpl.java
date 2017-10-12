@@ -197,7 +197,7 @@ public class ErrorLayerServiceImpl implements ErrorLayerService {
 				errTableName += collectionName + "\"";
 			} else {
 				Long count = errTbCount + 1;
-				errTableName += collectionName + "_" + count + "\"";
+				errTableName += collectionName + "_" + count;
 			}
 			// create
 			HashMap<String, Object> createQuery = queryManager.createErrorLayerTbQuery(errTableName);
