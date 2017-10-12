@@ -6,7 +6,7 @@ public class GenProgressQueryManager {
 
 	public HashMap<String, Object> selectGenLayerTbNamesCountQuery(String type, String collectionName, Integer cIdx) {
 		String tableName = "\"" + type + "_" + "layercollection_gen_progress" + "\"";
-		String countQueryStr = "select count (*) from " + tableName + " where c_idx = " + cIdx + " and state = " + 4;
+		String countQueryStr = "select count (*) from " + tableName + " where c_idx = " + cIdx;
 		HashMap<String, Object> selectQueryMap = new HashMap<String, Object>();
 		selectQueryMap.put("selectQuery", countQueryStr);
 		return selectQueryMap;
@@ -34,9 +34,14 @@ public class GenProgressQueryManager {
 
 	}
 
-	public Object getInsertGenTableName(Integer pIdx, String layerName) {
-		// TODO Auto-generated method stub
-		return null;
+	public HashMap<String, Object> getInsertResponseState(Integer pIdx, String genTbName, String type) {
+
+		String tableName = "\"" + type + "_layercollection_gen_progress" + "\"";
+		String updateQueryStr = "update " + tableName + " set response_time = " + "CURRENT_TIMESTAMP"
+				+ ", gen_layer_tb_name = '" + genTbName + "' " + " where p_idx = " + pIdx;
+		HashMap<String, Object> updateQueryQueryMap = new HashMap<String, Object>();
+		updateQueryQueryMap.put("updateQuery", updateQueryStr);
+		return updateQueryQueryMap;
 	}
 
 }

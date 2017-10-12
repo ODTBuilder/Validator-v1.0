@@ -7,7 +7,7 @@ import com.git.opengds.user.domain.UserVO;
 
 public interface GeneralizationLayerService {
 
-	public boolean publishGenLayer(UserVO userVO, DTGeneralEAfLayer genLayer, String fileType, String fileName,
+	public String publishGenLayer(UserVO userVO, DTGeneralEAfLayer genLayer, String fileType, String fileName,
 			String layerName, String layerType, String src) throws IllegalArgumentException, MalformedURLException;
 
 }

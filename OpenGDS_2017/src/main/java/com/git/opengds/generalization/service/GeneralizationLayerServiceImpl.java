@@ -1,7 +1,6 @@
 package com.git.opengds.generalization.service;
 
 import java.net.MalformedURLException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -45,8 +44,9 @@ public class GeneralizationLayerServiceImpl implements GeneralizationLayerServic
 	private GeoserverService geoserverService;
 
 	@Override
-	public boolean publishGenLayer(UserVO userVO, DTGeneralEAfLayer genLayer, String fileType, String fileName,
-			String layerName, String layerType, String src) throws IllegalArgumentException, MalformedURLException {
+	public String publishGenLayer(UserVO userVO, DTGeneralEAfLayer genLayer, String fileType,
+			String fileName, String layerName, String layerType, String src)
+			throws IllegalArgumentException, MalformedURLException {
 
 		// create Table
 		SimpleFeatureCollection afterGeoSfc = genLayer.getCollection();
@@ -82,6 +82,12 @@ public class GeneralizationLayerServiceImpl implements GeneralizationLayerServic
 		layerInfo.setFileName(genTableName);
 		layerInfo.setOriginSrc("EPSG:" + src);
 		layerInfo.setFileType(fileType);
-		return geoserverService.errLayerPublishGeoserver(userVO, layerInfo);
+
+		boolean isPublished = geoserverService.errLayerPublishGeoserver(userVO, layerInfo);
+		if (isPublished) {
+			return genTableName;
+		} else {
+			return null;
+		}
 	}
 }

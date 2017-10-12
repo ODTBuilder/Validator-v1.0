@@ -141,6 +141,7 @@ public class GeneralizationServiceImpl implements GeneralizationService {
 					String lastName = cutLayerName.substring(dash + 1); // 파일명_레이어명
 					int div = lastName.indexOf("_");
 					String fileName = lastName.substring(0, div);
+
 					// state 0 : 일반화 요청
 					Integer pIdx = progressService.setStateToRequest(userVO, requestSuccess, fileName, fileType,
 							layerName);
@@ -157,7 +158,7 @@ public class GeneralizationServiceImpl implements GeneralizationService {
 					String src = "4326";
 
 					// state 1 : 일반화 진행중
-					progressService.setStateToProgressing(userVO, genProgresing, fileName, fileType, layerName, pIdx);
+					progressService.setStateToProgressing(userVO, genProgresing, fileType, pIdx);
 					SimpleFeatureCollection sfc = null;
 					SimpleFeatureSource source = dataStore.getFeatureSource(layerName);
 					sfc = source.getFeatures();
@@ -167,23 +168,26 @@ public class GeneralizationServiceImpl implements GeneralizationService {
 
 					// state 2 : 일반화 성공
 					if (resultLayer != null) {
-						progressService.setStateToProgressing(userVO, genSuccess, fileName, fileType, layerName, pIdx);
-						boolean isPublished = generalizationLayerService.publishGenLayer(userVO, resultLayer, fileType,
+						progressService.setStateToProgressing(userVO, genSuccess, fileType, pIdx);
+						// 일반화 결과 테이블 생성 및 서버 발행
+						String genTbName = generalizationLayerService.publishGenLayer(userVO, resultLayer, fileType,
 								fileName, layerName, layerType, src);
-						if (isPublished) {
+						if (genTbName != null) {
 							// state 4 : 발행 성공
-							progressService.setStateToProgressing(userVO, genLayerSuccess, fileName, fileType,
-									layerName, pIdx);
+							progressService.setStateToProgressing(userVO, genLayerSuccess, fileType, pIdx);
 							DTGeneralReport resultReport = resultLayer.getReport();
-							generalizationReportService.insertGenralResult(userVO, fileName, layerName, resultReport);
+							boolean isResult = generalizationReportService.insertGenralResult(userVO, fileName,
+									layerName, genTbName, resultReport);
+							if (isResult) {
+								progressService.setStateToResponse(userVO, fileType, genTbName, pIdx);
+							}
 						} else {
 							// state 5 : 발행 실패
-							progressService.setStateToProgressing(userVO, genLayerFail, fileName, fileType, layerName,
-									pIdx);
+							progressService.setStateToProgressing(userVO, genLayerFail, fileType, pIdx);
 						}
 					} else {
 						// state 3 : 일반화 실패
-						progressService.setStateToProgressing(userVO, genFail, fileName, fileType, layerName, pIdx);
+						progressService.setStateToProgressing(userVO, genFail, fileType, pIdx);
 					}
 				}
 			}

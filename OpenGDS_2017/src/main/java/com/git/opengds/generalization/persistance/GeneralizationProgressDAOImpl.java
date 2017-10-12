@@ -25,19 +25,20 @@ public class GeneralizationProgressDAOImpl extends DataSourceFactory implements 
 
 	@Override
 	public Integer insertRequestState(UserVO userVO, HashMap<String, Object> insertQuery) {
-		// TODO Auto-generated method stub
-		return null;
+		sqlSession = super.getSqlSession(userVO.getId());
+		sqlSession.insert(genNamespace + ".insertGenRequestState", insertQuery);
+		return (Integer) insertQuery.get("p_idx");
 	}
 
 	@Override
-	public void getUpdateProgressingState(UserVO userVO, HashMap<String, Object> updateQuery) {
-		// TODO Auto-generated method stub
-
+	public void updateProgressingState(UserVO userVO, HashMap<String, Object> updateQuery) {
+		sqlSession = super.getSqlSession(userVO.getId());
+		sqlSession.update(genNamespace + ".updateGenProgressingState", updateQuery);
 	}
 
 	@Override
-	public void insertGenTableName(UserVO userVO, Object insertGenTableName) {
-		// TODO Auto-generated method stub
-
+	public void insertGenResponseState(UserVO userVO, HashMap<String, Object> insertQuery) {
+		sqlSession = super.getSqlSession(userVO.getId());
+		sqlSession.update(genNamespace + ".updateGenResponseState", insertQuery);
 	}
 }
