@@ -171,7 +171,7 @@ public class GeneralizationServiceImpl implements GeneralizationService {
 						progressService.setStateToProgressing(userVO, genSuccess, fileType, pIdx);
 						// 일반화 결과 테이블 생성 및 서버 발행
 						String genTbName = generalizationLayerService.publishGenLayer(userVO, resultLayer, fileType,
-								fileName, layerName, layerType, src);
+								fileName, exTypelayerName, layerType, src);
 						if (genTbName != null) {
 							// state 4 : 발행 성공
 							progressService.setStateToProgressing(userVO, genLayerSuccess, fileType, pIdx);

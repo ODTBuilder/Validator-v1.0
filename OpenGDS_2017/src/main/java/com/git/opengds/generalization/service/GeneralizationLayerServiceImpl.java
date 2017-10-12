@@ -44,9 +44,8 @@ public class GeneralizationLayerServiceImpl implements GeneralizationLayerServic
 	private GeoserverService geoserverService;
 
 	@Override
-	public String publishGenLayer(UserVO userVO, DTGeneralEAfLayer genLayer, String fileType,
-			String fileName, String layerName, String layerType, String src)
-			throws IllegalArgumentException, MalformedURLException {
+	public String publishGenLayer(UserVO userVO, DTGeneralEAfLayer genLayer, String fileType, String fileName,
+			String layerName, String layerType, String src) throws IllegalArgumentException, MalformedURLException {
 
 		// create Table
 		SimpleFeatureCollection afterGeoSfc = genLayer.getCollection();
@@ -63,7 +62,7 @@ public class GeneralizationLayerServiceImpl implements GeneralizationLayerServic
 					fileName, cIdx);
 			Long tbCount = progressDAO.selectGenLayerTablesCount(userVO, selectTbCountQuery);
 			tbCount += 1;
-			genTableName = layerName + "_gen" + tbCount;
+			genTableName = "geo_" + fileType + "_" + fileName + "_" + layerName + "_gen" + tbCount + "_" + layerType;
 			HashMap<String, Object> createTbMap = genDBManager.getCreateGenLayerTbQuery("\"" + genTableName + "\"",
 					afterGeoSfc, layerType, src);
 
