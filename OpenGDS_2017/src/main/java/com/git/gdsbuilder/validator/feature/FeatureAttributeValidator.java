@@ -37,12 +37,10 @@ package com.git.gdsbuilder.validator.feature;
 import java.util.List;
 import java.util.Map;
 
-import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.feature.SchemaException;
 import org.opengis.feature.simple.SimpleFeature;
 
 import com.git.gdsbuilder.type.validate.error.ErrorFeature;
-import com.git.gdsbuilder.type.validate.error.ErrorLayer;
 
 /**
  * SimpleFeatureCollection를 속성 검수하는 클래스
@@ -139,5 +137,9 @@ public interface FeatureAttributeValidator {
 	public ErrorFeature validateUFIDRule(SimpleFeature simpleFeature);
 
 	public ErrorFeature validateUFIDDuplicated(SimpleFeature tmpSimpleFeatureI, SimpleFeature tmpSimpleFeatureJ);
+
+	public ErrorFeature valdiateCharacterTypeMiss(SimpleFeature simpleFeature, Map<String, Object> typeOption);
+
+	public ErrorFeature valdiateSpecialCharacterMiss(SimpleFeature simpleFeature, Map<String, Object> typeOption);
 
 }

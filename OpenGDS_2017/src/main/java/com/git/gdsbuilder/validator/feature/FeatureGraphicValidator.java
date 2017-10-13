@@ -280,4 +280,9 @@ public interface FeatureGraphicValidator {
 
 	public ErrorFeature validateCrossRoad(SimpleFeature simpleFeature, SimpleFeatureCollection relationSfc);
 
+	public List<ErrorFeature> validateNeatLineMiss(SimpleFeature simpleFeature);
+
+	public List<ErrorFeature> validateSelfEntity(SimpleFeature tmpSimpleFeatureI, double selfEntityLineTolerance,
+			double polygonInvadedTolorence);
+
 }

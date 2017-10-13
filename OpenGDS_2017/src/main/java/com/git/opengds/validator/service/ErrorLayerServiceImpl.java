@@ -105,26 +105,20 @@ public class ErrorLayerServiceImpl implements ErrorLayerService {
 					NGIDBQueryManager qa20dbQueryManager = new NGIDBQueryManager();
 					cIdx = qa20DAO.selectNGILayerCollectionIdx(userVO,
 							qa20dbQueryManager.getSelectNGILayerCollectionIdx(collectionName));
-					HashMap<String, Object> selectIdxQuery = queryManager
-							.selectQA20ErrorLayerTbNamesCountQuery(fileType, collectionName, cIdx);
-					errTbCount = progressDAO.selectNGIErrorLayerTbNamesCount(userVO, selectIdxQuery);
 				}
 				if (fileType.equals("dxf")) {
 					DXFDBQueryManager qa10dbQueryManager = new DXFDBQueryManager();
 					cIdx = qa10DAO.selectDXFLayerCollectionIdx(userVO,
 							qa10dbQueryManager.getSelectDXFLayerCollectionIdxQuery(collectionName));
-					HashMap<String, Object> selectIdxQuery = queryManager
-							.selectQA10ErrorLayerTbNamesCountQuery(fileType, collectionName, cIdx);
-					errTbCount = progressDAO.selectDXFErrorLayerTbNamesCount(userVO, selectIdxQuery);
 				}
 				if (fileType.equals("shp")) {
 					SHPDBQueryManager shpdbQueryManager = new SHPDBQueryManager();
 					cIdx = shpDAO.selectSHPLayerCollectionIdx(userVO,
 							shpdbQueryManager.getSelectSHPLayerCollectionIdxQuery(collectionName));
-					HashMap<String, Object> selectIdxQuery = queryManager.selectSHPErrorLayerTbNamesCountQuery(fileType,
-							collectionName, cIdx);
-					errTbCount = progressDAO.selectSHPErrorLayerTbNamesCount(userVO, selectIdxQuery);
 				}
+				HashMap<String, Object> selectIdxQuery = queryManager.selectErrorLayerTbNamesCountQuery(fileType,
+						collectionName, cIdx);
+				errTbCount = progressDAO.selectErrorLayerTbNamesCount(userVO, selectIdxQuery);
 				if (errTbCount == null) {
 					errTableName += collectionName + "\"";
 				} else {
@@ -185,31 +179,25 @@ public class ErrorLayerServiceImpl implements ErrorLayerService {
 				NGIDBQueryManager qa20dbQueryManager = new NGIDBQueryManager();
 				cIdx = qa20DAO.selectNGILayerCollectionIdx(userVO,
 						qa20dbQueryManager.getSelectNGILayerCollectionIdx(collectionName));
-				HashMap<String, Object> selectIdxQuery = queryManager.selectQA20ErrorLayerTbNamesCountQuery(fileType,
-						collectionName, cIdx);
-				errTbCount = progressDAO.selectNGIErrorLayerTbNamesCount(userVO, selectIdxQuery);
 			}
 			if (fileType.equals("dxf")) {
 				DXFDBQueryManager qa10dbQueryManager = new DXFDBQueryManager();
 				cIdx = qa10DAO.selectDXFLayerCollectionIdx(userVO,
 						qa10dbQueryManager.getSelectDXFLayerCollectionIdxQuery(collectionName));
-				HashMap<String, Object> selectIdxQuery = queryManager.selectQA10ErrorLayerTbNamesCountQuery(fileType,
-						collectionName, cIdx);
-				errTbCount = progressDAO.selectDXFErrorLayerTbNamesCount(userVO, selectIdxQuery);
 			}
 			if (fileType.equals("shp")) {
 				SHPDBQueryManager shpdbQueryManager = new SHPDBQueryManager();
 				cIdx = shpDAO.selectSHPLayerCollectionIdx(userVO,
 						shpdbQueryManager.getSelectSHPLayerCollectionIdxQuery(collectionName));
-				HashMap<String, Object> selectIdxQuery = queryManager.selectSHPErrorLayerTbNamesCountQuery(fileType,
-						collectionName, cIdx);
-				errTbCount = progressDAO.selectSHPErrorLayerTbNamesCount(userVO, selectIdxQuery);
 			}
+			HashMap<String, Object> selectIdxQuery = queryManager.selectErrorLayerTbNamesCountQuery(fileType,
+					collectionName, cIdx);
+			errTbCount = progressDAO.selectErrorLayerTbNamesCount(userVO, selectIdxQuery);
 			if (errTbCount == null) {
-				errTableName += collectionName;
+				errTableName += collectionName + "\"";
 			} else {
-				errTableName += collectionName + "_" + errTbCount;
-
+				Long count = errTbCount + 1;
+				errTableName += collectionName + "_" + count;
 			}
 			// create
 			HashMap<String, Object> createQuery = queryManager.createErrorLayerTbQuery(errTableName);
@@ -224,7 +212,9 @@ public class ErrorLayerServiceImpl implements ErrorLayerService {
 			layerInfo.setOriginSrc("EPSG:5186");
 			layerInfo.setTransSrc("EPSG:3857");
 			layerInfo.setFileType(fileType);
-		} catch (Exception e) {
+		} catch (
+
+		Exception e) {
 			// txManager.rollback(status);
 			returnMap.put("flag", false);
 			return returnMap;

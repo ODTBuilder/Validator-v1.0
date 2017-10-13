@@ -69,17 +69,21 @@ public class SimplificationImpl implements Simplification {
 			int pointPreNum = 0;
 			int pointAfNum = 0;
 			
+			int testNum = 0;
+			
 			while(featureIterator.hasNext()){
 				SimpleFeature feature = featureIterator.next();
 				Geometry geom = (Geometry) feature.getDefaultGeometry();
 				pointPreNum = pointPreNum + geom.getNumPoints();
 				
 				Geometry newGeom = TopologyPreservingSimplifier.simplify(geom, option.getOption());
-				
+				System.out.println(testNum + "번째 일반화 되는중이다");
 				pointAfNum = pointAfNum + newGeom.getNumPoints();
 				
 				feature.setDefaultGeometry(newGeom);
 				resultCollection.add(feature);
+				
+				testNum++;
 			}
 			
 			try {
