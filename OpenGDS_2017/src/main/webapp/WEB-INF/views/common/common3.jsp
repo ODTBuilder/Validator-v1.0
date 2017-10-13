@@ -53,6 +53,7 @@
 <script type="text/javascript" src="${ctx}/resources/js/jsTree-geoserver/jstree.js"></script>
 <link rel="stylesheet" type="text/css" href="${ctx}/resources/js/jsTree-geoserver/themes/default/style.css" />
 <script type="text/javascript" src="${ctx}/resources/js/jsTree-geoserver/jstree-geoserver.js"></script>
+<script type="text/javascript" src="${ctx}/resources/js/jsTree-geoserver/jstree-functionmarker.js"></script>
 
 <%-- 베이스맵 변경 --%>
 <script src="${pageContext.request.contextPath}/resources/js/gitbuilder/changebase.js"></script>
