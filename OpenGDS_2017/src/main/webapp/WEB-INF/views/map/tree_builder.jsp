@@ -348,7 +348,7 @@ html {
 			}
 		}
 
-		gitrnd.search("3857");
+		gitrnd.search("4326");
 
 		$(window).resize(function() {
 			gitrnd.resize();
@@ -660,7 +660,7 @@ html {
 		});
 
 		var modal = new gb.modal.Generalization({
-			"width" : 840,
+			"width" : 850,
 			"autoOpen" : false,
 			"title" : "Generalization",
 			"jstreeURL" : "geoserver/getGeolayerCollectionTree.ajax?treeType=all",
