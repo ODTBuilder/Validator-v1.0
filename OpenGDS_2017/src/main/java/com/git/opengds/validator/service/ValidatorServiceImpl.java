@@ -216,10 +216,6 @@ public class ValidatorServiceImpl implements ValidatorService {
 					isAllSuccessPublish = false;
 				}
 			}
-			boolean isErrorLayer = false;
-			if (errorLayerList.size() > 0) {
-				isErrorLayer = true;
-			}
 			// JSONObject returnJSON = new JSONObject();
 			// returnJSON.put("ErrorLayer", isErrorLayer);
 			// returnJSON.put("Publising ErrorLayer", isAllSuccessPublish);

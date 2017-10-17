@@ -53,7 +53,7 @@
 		${updateQuery}
 	</select>
 
-	<select id="selectQA20ErrorLayerTbNamesCount" parameterType="hashMap"
+	<select id="selectNGIErrorLayerTbNamesCount" parameterType="hashMap"
 		resultType="hashMap">
 		${selectQuery}
 	</select>

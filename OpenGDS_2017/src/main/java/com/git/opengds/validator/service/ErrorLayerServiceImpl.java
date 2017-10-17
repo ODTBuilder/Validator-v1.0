@@ -118,7 +118,7 @@ public class ErrorLayerServiceImpl implements ErrorLayerService {
 				}
 				HashMap<String, Object> selectIdxQuery = queryManager.selectErrorLayerTbNamesCountQuery(fileType,
 						collectionName, cIdx);
-				errTbCount = progressDAO.selectErrorLayerTbNamesCount(userVO, selectIdxQuery);
+				errTbCount = progressDAO.selectErrorLayerTbNamesCount(userVO, fileType, selectIdxQuery);
 				if (errTbCount == null) {
 					errTableName += collectionName + "\"";
 				} else {
@@ -192,7 +192,7 @@ public class ErrorLayerServiceImpl implements ErrorLayerService {
 			}
 			HashMap<String, Object> selectIdxQuery = queryManager.selectErrorLayerTbNamesCountQuery(fileType,
 					collectionName, cIdx);
-			errTbCount = progressDAO.selectErrorLayerTbNamesCount(userVO, selectIdxQuery);
+			errTbCount = progressDAO.selectErrorLayerTbNamesCount(userVO, fileType, selectIdxQuery);
 			if (errTbCount == null) {
 				errTableName += collectionName + "\"";
 			} else {

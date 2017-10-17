@@ -242,10 +242,18 @@ public class ValidateProgressDAOImpl extends DataSourceFactory implements Valida
 	}
 
 	@Override
-	public Long selectErrorLayerTbNamesCount(UserVO userVO, HashMap<String, Object> selectIdxQuery) {
+	public Long selectErrorLayerTbNamesCount(UserVO userVO, String fileType, HashMap<String, Object> selectIdxQuery) {
 		sqlSession = super.getSqlSession(userVO.getId());
-		HashMap<String, Object> countMap = sqlSession.selectOne(shpNamespace + ".selectSHPErrorLayerTbNamesCount",
-				selectIdxQuery);
+		HashMap<String, Object> countMap = null;
+		if (fileType.equals("dxf")) {
+			countMap = sqlSession.selectOne(dxfNamespace + ".selectDXFErrorLayerTbNamesCount", selectIdxQuery);
+		}
+		if (fileType.equals("ngi")) {
+			countMap = sqlSession.selectOne(ngiNamespace + ".selectNGIErrorLayerTbNamesCount", selectIdxQuery);
+		}
+		if (fileType.equals("shp")) {
+			countMap = sqlSession.selectOne(shpNamespace + ".selectSHPErrorLayerTbNamesCount", selectIdxQuery);
+		}
 		return (Long) countMap.get("count");
 	}
 }

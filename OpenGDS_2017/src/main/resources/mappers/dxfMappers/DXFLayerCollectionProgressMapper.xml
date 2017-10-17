@@ -55,7 +55,7 @@
 		${updateQuery}
 	</select>
 
-	<select id="selectQA10ErrorLayerTbNamesCount" parameterType="hashMap"
+	<select id="selectDXFErrorLayerTbNamesCount" parameterType="hashMap"
 		resultType="hashMap">
 		${selectQuery}
 	</select>

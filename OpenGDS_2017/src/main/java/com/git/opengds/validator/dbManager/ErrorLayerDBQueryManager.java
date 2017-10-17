@@ -64,7 +64,7 @@ public class ErrorLayerDBQueryManager {
 		String dafaultCreateQuery = "create table " + "\"" + errTableName + "\"" + "(" + "err_idx serial primary key"
 				+ "," + "collection_name varchar(100)" + "," + "layer_name varchar(100)" + ","
 				+ "feature_idx varchar(100), feature_id varchar(100)" + "," + "err_type varchar(100)" + ","
-				+ "err_name varchar(100)" + "," + "geom geometry(point, 4326)" + ")";
+				+ "err_name varchar(100)" + "," + "geom geometry(point, 5186)" + ")";
 
 		HashMap<String, Object> createQuery = new HashMap<String, Object>();
 		createQuery.put("createQuery", dafaultCreateQuery);
@@ -97,7 +97,7 @@ public class ErrorLayerDBQueryManager {
 					+ "collection_name, layer_name, feature_idx, feature_id, err_type, err_name, geom) values" + "("
 					+ "'" + collectionName + "'" + "," + "'" + layerName + "'" + "," + "'" + featureIdx + "', " + "'"
 					+ featureID + "'" + "," + "'" + errType + "'" + "," + "'" + errName + "'" + ","
-					+ "ST_GeomFromText('" + errPt.toString() + "', 4326)" + ")";
+					+ "ST_GeomFromText('" + errPt.toString() + "', 5186)" + ")";
 
 			HashMap<String, Object> insertQueryMap = new HashMap<String, Object>();
 			insertQueryMap.put("insertQuery", insertQuery);
@@ -197,8 +197,20 @@ public class ErrorLayerDBQueryManager {
 
 	public HashMap<String, Object> selectErrorLayerTbNamesCountQuery(String fileType, String collectionName,
 			Integer cIdx) {
-		String tableName = "\"" + fileType + "_layercollection_qa_progress" + "\"";
-		String countQueryStr = "select count (*) from " + tableName + "where c_idx = " + cIdx;
+		
+		
+		String tableName = "";
+		
+		if(fileType.equals("dxf")) {
+			tableName = "\"" + "qa10_layercollection_qa_progress" + "\"";
+		}
+		else if(fileType.equals("ngi")) {
+			tableName = "\"" + "qa20_layercollection_qa_progress" + "\"";
+		}
+		else if(fileType.equals("shp")) {
+			tableName = "\"" + "qa20_layercollection_qa_progress" + "\"";
+		}
+		String countQueryStr = "select count (*) from " + tableName + " where c_idx = " + cIdx;
 		HashMap<String, Object> selectQueryMap = new HashMap<String, Object>();
 		selectQueryMap.put("selectQuery", countQueryStr);
 		return selectQueryMap;
