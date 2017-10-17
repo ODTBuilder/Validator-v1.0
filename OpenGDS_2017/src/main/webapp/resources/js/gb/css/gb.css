@@ -1,3 +1,22 @@
+.gb-list-group {
+	padding-left: 0;
+	margin-bottom: 20px;
+}
+
+.gb-list-group-item:first-child {
+	border-top-left-radius: 4px;
+	border-top-right-radius: 4px;
+}
+
+.gb-list-group-item {
+	position: relative;
+	display: block;
+	padding: 10px 15px;
+	margin-bottom: -1px;
+	background-color: #fff;
+	border: 1px solid #ddd;
+}
+
 .gb-modal-background {
 	display: none; /* Hidden by default */
 	position: fixed; /* Stay in place */
