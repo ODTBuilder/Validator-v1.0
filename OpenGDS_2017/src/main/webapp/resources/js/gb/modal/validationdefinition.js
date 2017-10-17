@@ -456,12 +456,9 @@ gb.modal.ValidationDefinition = function(obj) {
 
 	this.updateLayerDefinition();
 	this.setDefinition(this.definition);
-	// this.optDef = $.extend({}, this.definition);
 	if (this.getDefinition()) {
 		this.setOptDefCopy(Object.assign({}, this.getDefinition()));
 	}
-	// this.optDefCopy =
-	// JSON.parse(JSON.stringify(this.optDef));
 
 	this._on(false, this.element, {
 		click : function(event) {
@@ -1344,16 +1341,16 @@ gb.modal.ValidationDefinition = function(obj) {
 	$(panel3).addClass("gb-article");
 
 	var left = $("<div>").append(panel1);
-	$(left).addClass("col-md-4");
+	// $(left).addClass("col-md-4");
 
 	var mid = $("<div>").append(panel2);
-	$(mid).addClass("col-md-4");
+	// $(mid).addClass("col-md-4");
 
 	var right = $("<div>").append(panel3);
-	$(right).addClass("col-md-4");
+	// $(right).addClass("col-md-4");
 
 	var upper = $("<div>").append(left).append(mid).append(right);
-	$(upper).addClass("row");
+	// $(upper).addClass("row");
 	this.file = $("<input>").attr({
 		"type" : "file"
 	}).css({
@@ -1378,14 +1375,14 @@ gb.modal.ValidationDefinition = function(obj) {
 					var obj = JSON.parse(reader.result.replace(/(\s*)/g, ''));
 					that.setOptDefCopy(obj);
 					that.update();
-					// that.resetRelation();
+					that.resetRelation();
 					$(lower).css("display", "none");
 				}
 			});
 		}
 	});
 	var body = $("<div>").append(upper).append(lower);
-//	$(body).addClass("modal-body");
+	// $(body).addClass("modal-body");
 	/*
 	 * 
 	 * 
@@ -1456,11 +1453,9 @@ gb.modal.ValidationDefinition = function(obj) {
 		}
 	});
 
-	var pright = $("<span>").css("float", "right");
-	$(pright).append(closeBtn).append(okBtn);
-
-	var footer = $("<div>").append(pleft).append(pright);
-	$(footer).addClass("modal-footer");
+	this.buttonArea = $("<span>").addClass("gb-modal-buttons").append(this.closeBtn).append(this.okBtn);
+	this.modalFooter = $("<div>").addClass("gb-modal-footer").append(this.buttonArea);
+	$(this.getModal()).append(this.modalFooter);
 	/*
 	 * 
 	 * 
@@ -1468,18 +1463,18 @@ gb.modal.ValidationDefinition = function(obj) {
 	 * 
 	 * 
 	 */
-	var content = $("<div>").append(header).append(body).append(footer);
-	$(content).addClass("modal-content");
-
-	var dialog = $("<div>").html(content);
-	$(dialog).addClass("modal-dialog");
-	$(dialog).addClass("modal-lg");
-
-	this.window = $("<div>").hide().attr({
-		// Setting tabIndex makes the div focusable
-		tabIndex : -1,
-		role : "dialog"
-	}).html(dialog);
+//	var content = $("<div>").append(header).append(body).append(footer);
+//	$(content).addClass("modal-content");
+//
+//	var dialog = $("<div>").html(content);
+//	$(dialog).addClass("modal-dialog");
+//	$(dialog).addClass("modal-lg");
+//
+//	this.window = $("<div>").hide().attr({
+//		// Setting tabIndex makes the div focusable
+//		tabIndex : -1,
+//		role : "dialog"
+//	}).html(dialog);
 
 	$(this.getModalBody()).append();
 };
