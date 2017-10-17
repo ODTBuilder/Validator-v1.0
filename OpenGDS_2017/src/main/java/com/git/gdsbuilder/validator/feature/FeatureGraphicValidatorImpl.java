@@ -69,6 +69,7 @@ import com.git.gdsbuilder.type.validate.option.CrossRoad;
 import com.git.gdsbuilder.type.validate.option.EntityDuplicated;
 import com.git.gdsbuilder.type.validate.option.EntityInHole;
 import com.git.gdsbuilder.type.validate.option.HoleMisplacement;
+import com.git.gdsbuilder.type.validate.option.LayerMiss;
 import com.git.gdsbuilder.type.validate.option.LinearDisconnection;
 import com.git.gdsbuilder.type.validate.option.MultiPart;
 import com.git.gdsbuilder.type.validate.option.NeatLineMiss;
@@ -767,15 +768,7 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 			Geometry geometryRelation = (Geometry) relationSimpleFeature.getDefaultGeometry(); // aop
 			Geometry aopBuffer = geometryRelation.buffer(tolerence); // tolerence
 
-			Polygon aopBufferPg = (Polygon) aopBuffer;
-			LineString ring = aopBufferPg.getInteriorRingN(0);
-			Coordinate[] coors = ring.getCoordinates();
 			GeometryFactory factory = new GeometryFactory();
-			for (int i = 0; i < coors.length; i++) {
-
-			}
-			System.out.println("");
-
 			// : 사용자
 			// 입력 파라미터
 			Geometry envelope = geometryRelation.getEnvelope();
@@ -934,35 +927,31 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 
 	public ErrorFeature validateLayerMiss(SimpleFeature simpleFeature, List<String> typeNames) throws SchemaException {
 
-		// Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
-		// String upperType =
-		// simpleFeature.getAttribute("feature_type").toString().toUpperCase();
-		// String upperMultiType = "MULTI" + upperType;
-		// Boolean flag = false;
-		//
-		// for (int i = 0; i < typeNames.size(); i++) {
-		// String typeName = typeNames.get(i);
-		// String upperTpyeName = typeName.toUpperCase();
-		// if (upperTpyeName.equals(upperType) ||
-		// upperTpyeName.equals(upperMultiType)) {
-		// flag = true;
-		// break;
-		// } else {
-		// flag = false;
-		// }
-		// }
-		// if (flag == false) {
-		// String featureIdx = simpleFeature.getID();
-		// Property featuerIDPro = simpleFeature.getProperty("feature_id");
-		// String featureID = (String) featuerIDPro.getValue();
-		// ErrorFeature errorFeature = new ErrorFeature(featureIdx, featureID,
-		// LayerMiss.Type.LAYERMISS.errType(),
-		// LayerMiss.Type.LAYERMISS.errName(), geometry.getInteriorPoint());
-		// return errorFeature;
-		// } else {
-		// return null;
-		// }
-		return null;
+		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
+		String upperType = simpleFeature.getAttribute("feature_type").toString().toUpperCase();
+		String upperMultiType = "MULTI" + upperType;
+		Boolean flag = false;
+
+		for (int i = 0; i < typeNames.size(); i++) {
+			String typeName = typeNames.get(i);
+			String upperTpyeName = typeName.toUpperCase();
+			if (upperTpyeName.equals(upperType) || upperTpyeName.equals(upperMultiType)) {
+				flag = true;
+				break;
+			} else {
+				flag = false;
+			}
+		}
+		if (flag == false) {
+			String featureIdx = simpleFeature.getID();
+			Property featuerIDPro = simpleFeature.getProperty("feature_id");
+			String featureID = (String) featuerIDPro.getValue();
+			ErrorFeature errorFeature = new ErrorFeature(featureIdx, featureID, LayerMiss.Type.LAYERMISS.errType(),
+					LayerMiss.Type.LAYERMISS.errName(), geometry.getInteriorPoint());
+			return errorFeature;
+		} else {
+			return null;
+		}
 	}
 
 	public ErrorFeature validateB_SymbolOutSided(SimpleFeature simpleFeature,

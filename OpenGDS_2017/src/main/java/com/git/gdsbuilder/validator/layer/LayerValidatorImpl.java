@@ -233,7 +233,6 @@ public class LayerValidatorImpl implements LayerValidator {
 							e.printStackTrace();
 						}
 					}
-					System.out.println(i + "번째 객체 검수 수행중");
 				}
 				SimpleFeature tmpSimpleFeatureI = tmpsSimpleFeatures.get(endNum - 1);
 				List<ErrorFeature> errFeatures = graphicValidator.validateConIntersected(tmpSimpleFeatureI);
@@ -1219,13 +1218,10 @@ public class LayerValidatorImpl implements LayerValidator {
 		for (int i = 0; i < relationLayers.size(); i++) {
 			GeoLayer relationLayer = relationLayers.get(i);
 			SimpleFeatureCollection relationSfc = relationLayer.getSimpleFeatureCollection();
-			int j = 0;
 			while (simpleFeatureIterator.hasNext()) {
 				SimpleFeature simpleFeature = simpleFeatureIterator.next();
 				ErrorFeature errorFeature = graphicValidator.validateCenterLineMiss(simpleFeature, relationSfc,
 						lineInvadedTolorence);
-				System.out.println(j);
-				j++;
 				if (errorFeature != null) {
 					errorFeature.setLayerName(validatorLayer.getLayerName());
 					errorLayer.addErrorFeature(errorFeature);
