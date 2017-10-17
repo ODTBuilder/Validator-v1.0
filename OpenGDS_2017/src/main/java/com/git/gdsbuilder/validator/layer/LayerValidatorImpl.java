@@ -110,64 +110,60 @@ public class LayerValidatorImpl implements LayerValidator {
 		this.validatorLayer = validatorLayer;
 	}
 
-	// public ErrorLayer validateConBreakLayers(GeoLayer neatLayer, double
-	// tolerence) throws SchemaException {
-	//
-	// ErrorLayer errLayer = new ErrorLayer();
-	//
-	// SimpleFeatureCollection neatLineSfc =
-	// neatLayer.getSimpleFeatureCollection();
-	// SimpleFeatureCollection sfc =
-	// validatorLayer.getSimpleFeatureCollection();
-	// SimpleFeatureIterator simpleFeatureIterator = sfc.features();
-	//
-	// while (simpleFeatureIterator.hasNext()) {
-	// SimpleFeature simpleFeature = simpleFeatureIterator.next();
-	// //List<ErrorFeature> errFeatures =
-	// graphicValidator.validateConBreak(simpleFeature, neatLineSfc, tolerence);
-	//
-	// if (errFeatures != null) {
-	//
-	// for (ErrorFeature errFeature : errFeatures) {
-	// errFeature.setLayerName(validatorLayer.getLayerName());
-	// errLayer.addErrorFeature(errFeature);
-	// }
-	// } else {
-	// continue;
-	// }
-	// }
-	// if (errLayer.getErrFeatureList().size() > 0) {
-	// return errLayer;
-	// } else {
-	// return null;
-	// }
-	// }
-
 	public ErrorLayer validateConBreakLayers(GeoLayer neatLayer, double tolerence) throws SchemaException {
 
+		ErrorLayer errLayer = new ErrorLayer();
+
+		SimpleFeatureCollection neatLineSfc = neatLayer.getSimpleFeatureCollection();
 		SimpleFeatureCollection sfc = validatorLayer.getSimpleFeatureCollection();
 		SimpleFeatureIterator simpleFeatureIterator = sfc.features();
-		int laTotalCount = 0;
-		int laFalseCount = 0;
+
 		while (simpleFeatureIterator.hasNext()) {
 			SimpleFeature simpleFeature = simpleFeatureIterator.next();
-			System.out.println(simpleFeature.getID());
-			Map<String, Object> returnMap = graphicValidator.genTest(simpleFeature);
-			if (returnMap != null) {
-				int feTotal = (int) returnMap.get("totalSize");
-				laTotalCount += feTotal;
-				int feFalse = (int) returnMap.get("trueSize");
-				laFalseCount += feFalse;
+			List<ErrorFeature> errFeatures = graphicValidator.validateConBreak(simpleFeature, neatLineSfc, tolerence);
+			if (errFeatures != null) {
+				for (ErrorFeature errFeature : errFeatures) {
+					errFeature.setLayerName(validatorLayer.getLayerName());
+					errLayer.addErrorFeature(errFeature);
+				}
 			} else {
 				continue;
 			}
 		}
-		DTGeneralReportDistance genDistance = new DTGeneralReportDistance();
-		genDistance.setTotalLine(laTotalCount);
-		genDistance.setAfLine(laFalseCount);
-
-		return null;
+		if (errLayer.getErrFeatureList().size() > 0) {
+			return errLayer;
+		} else {
+			return null;
+		}
 	}
+
+	// public ErrorLayer validateConBreakLayers(GeoLayer neatLayer, double
+	// tolerence) throws SchemaException {
+	//
+	// SimpleFeatureCollection sfc =
+	// validatorLayer.getSimpleFeatureCollection();
+	// SimpleFeatureIterator simpleFeatureIterator = sfc.features();
+	// int laTotalCount = 0;
+	// int laFalseCount = 0;
+	// while (simpleFeatureIterator.hasNext()) {
+	// SimpleFeature simpleFeature = simpleFeatureIterator.next();
+	// System.out.println(simpleFeature.getID());
+	// Map<String, Object> returnMap = graphicValidator.genTest(simpleFeature);
+	// if (returnMap != null) {
+	// int feTotal = (int) returnMap.get("totalSize");
+	// laTotalCount += feTotal;
+	// int feFalse = (int) returnMap.get("trueSize");
+	// laFalseCount += feFalse;
+	// } else {
+	// continue;
+	// }
+	// }
+	// DTGeneralReportDistance genDistance = new DTGeneralReportDistance();
+	// genDistance.setTotalLine(laTotalCount);
+	// genDistance.setAfLine(laFalseCount);
+	//
+	// return null;
+	// }
 
 	public ErrorLayer validateConIntersected() throws SchemaException {
 		SimpleFeatureCollection sfc = validatorLayer.getSimpleFeatureCollection();

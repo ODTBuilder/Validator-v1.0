@@ -103,7 +103,7 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 
 		Property featuerIDPro = simpleFeature.getProperty("osm_id");
 		String featureID = (String) featuerIDPro.getValue();
-		
+
 		Map<String, Object> returnMap = new HashedMap();
 		CRSAuthorityFactory factory = CRS.getAuthorityFactory(true);
 		try {
@@ -138,7 +138,7 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 			double tolerence) throws SchemaException {
 
 		List<ErrorFeature> errFeatures = new ArrayList<>();
-		
+
 		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
 		Coordinate[] coordinates = geometry.getCoordinates();
 		Coordinate start = coordinates[0];
@@ -176,21 +176,44 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 	public List<ErrorFeature> validateConIntersected(SimpleFeature simpleFeatureI, SimpleFeature simpleFeatureJ)
 			throws SchemaException {
 
+		List<ErrorFeature> errFeatures = new ArrayList<ErrorFeature>();
+		GeometryFactory geometryFactory = new GeometryFactory();
+		Geometry geometryI = (Geometry) simpleFeatureI.getDefaultGeometry();
+		Geometry geometryJ = (Geometry) simpleFeatureJ.getDefaultGeometry();
+
+		if (geometryI.intersects(geometryJ)) {
+			Geometry returnGeom = geometryI.intersection(geometryJ);
+			Coordinate[] coordinates = returnGeom.getCoordinates();
+			for (int i = 0; i < coordinates.length; i++) {
+				Coordinate coordinate = coordinates[i];
+				Geometry intersectPoint = geometryFactory.createPoint(coordinate);
+				String featureIdx = simpleFeatureI.getID();
+				Property featuerIDPro = simpleFeatureI.getProperty("feature_id");
+				String featureID = (String) featuerIDPro.getValue();
+				ErrorFeature errFeature = new ErrorFeature(featureIdx, featureID,
+						ConIntersected.Type.CONINTERSECTED.errType(), ConIntersected.Type.CONINTERSECTED.errName(),
+						intersectPoint);
+
+				errFeatures.add(errFeature);
+			}
+			return errFeatures;
+		} else {
+			return null;
+		}
+
+		// // --- 일반화 때문에 잠시 바꾼거 --- //
 		// List<ErrorFeature> errFeatures = new ArrayList<ErrorFeature>();
 		// GeometryFactory geometryFactory = new GeometryFactory();
 		// Geometry geometryI = (Geometry) simpleFeatureI.getDefaultGeometry();
 		// Geometry geometryJ = (Geometry) simpleFeatureJ.getDefaultGeometry();
-		//
-		// if (geometryI.intersects(geometryJ)) {
+		// if (geometryI.crosses(geometryJ)) {
 		// Geometry returnGeom = geometryI.intersection(geometryJ);
 		// Coordinate[] coordinates = returnGeom.getCoordinates();
 		// for (int i = 0; i < coordinates.length; i++) {
 		// Coordinate coordinate = coordinates[i];
 		// Geometry intersectPoint = geometryFactory.createPoint(coordinate);
 		// String featureIdx = simpleFeatureI.getID();
-		// Property featuerIDPro = simpleFeatureI.getProperty("feature_id");
-		// String featureID = (String) featuerIDPro.getValue();
-		// ErrorFeature errFeature = new ErrorFeature(featureIdx, featureID,
+		// ErrorFeature errFeature = new ErrorFeature(featureIdx, featureIdx,
 		// ConIntersected.Type.CONINTERSECTED.errType(),
 		// ConIntersected.Type.CONINTERSECTED.errName(),
 		// intersectPoint);
@@ -201,29 +224,6 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 		// } else {
 		// return null;
 		// }
-
-		// --- 일반화 때문에 잠시 바꾼거 --- //
-		List<ErrorFeature> errFeatures = new ArrayList<ErrorFeature>();
-		GeometryFactory geometryFactory = new GeometryFactory();
-		Geometry geometryI = (Geometry) simpleFeatureI.getDefaultGeometry();
-		Geometry geometryJ = (Geometry) simpleFeatureJ.getDefaultGeometry();
-		if (geometryI.crosses(geometryJ)) {
-			Geometry returnGeom = geometryI.intersection(geometryJ);
-			Coordinate[] coordinates = returnGeom.getCoordinates();
-			for (int i = 0; i < coordinates.length; i++) {
-				Coordinate coordinate = coordinates[i];
-				Geometry intersectPoint = geometryFactory.createPoint(coordinate);
-				String featureIdx = simpleFeatureI.getID();
-				ErrorFeature errFeature = new ErrorFeature(featureIdx, featureIdx,
-						ConIntersected.Type.CONINTERSECTED.errType(), ConIntersected.Type.CONINTERSECTED.errName(),
-						intersectPoint);
-
-				errFeatures.add(errFeature);
-			}
-			return errFeatures;
-		} else {
-			return null;
-		}
 	}
 
 	@Override
@@ -270,10 +270,6 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 		String featureIdx = simpleFeature.getID();
 		Property featuerIDPro = simpleFeature.getProperty("feature_id");
 		String featureID = (String) featuerIDPro.getValue();
-
-		if (featureID.equals("f0010000_linestring.81")) {
-			System.out.println("");
-		}
 		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
 		Coordinate[] coors = geometry.getCoordinates();
 		int coorsSize = coors.length;
@@ -301,10 +297,6 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 					if (!a.equals2D(b) && !b.equals2D(c) && !c.equals2D(a)) {
 						double tmpLength2 = b.distance(c);
 						if (tmpLength2 < 3) {
-
-							System.out.println("tmpLength : " + tmpLength);
-							System.out.println("tmpLength2 : " + tmpLength2);
-
 							double angle = Angle.toDegrees(Angle.angleBetween(a, b, c));
 							double tmp = 180 - angle;
 							if (angle < 6) {
