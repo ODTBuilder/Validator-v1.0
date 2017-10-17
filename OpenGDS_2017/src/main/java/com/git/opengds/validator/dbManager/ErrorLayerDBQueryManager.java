@@ -64,7 +64,7 @@ public class ErrorLayerDBQueryManager {
 		String dafaultCreateQuery = "create table " + "\"" + errTableName + "\"" + "(" + "err_idx serial primary key"
 				+ "," + "collection_name varchar(100)" + "," + "layer_name varchar(100)" + ","
 				+ "feature_idx varchar(100), feature_id varchar(100)" + "," + "err_type varchar(100)" + ","
-				+ "err_name varchar(100)" + "," + "geom geometry(point, 5186)" + ")";
+				+ "err_name varchar(100)" + "," + "geom geometry(point, 4326)" + ")";
 
 		HashMap<String, Object> createQuery = new HashMap<String, Object>();
 		createQuery.put("createQuery", dafaultCreateQuery);
@@ -97,7 +97,7 @@ public class ErrorLayerDBQueryManager {
 					+ "collection_name, layer_name, feature_idx, feature_id, err_type, err_name, geom) values" + "("
 					+ "'" + collectionName + "'" + "," + "'" + layerName + "'" + "," + "'" + featureIdx + "', " + "'"
 					+ featureID + "'" + "," + "'" + errType + "'" + "," + "'" + errName + "'" + ","
-					+ "ST_GeomFromText('" + errPt.toString() + "', 5186)" + ")";
+					+ "ST_GeomFromText('" + errPt.toString() + "', 4326)" + ")";
 
 			HashMap<String, Object> insertQueryMap = new HashMap<String, Object>();
 			insertQueryMap.put("insertQuery", insertQuery);

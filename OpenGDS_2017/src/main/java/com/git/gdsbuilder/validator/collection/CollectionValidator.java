@@ -257,7 +257,7 @@ public class CollectionValidator {
 			errorLayer.setCollectionType(this.collectionType);
 
 			GeoLayer neatLineLayer = collection.getNeatLine();
-
+         
 			// neatLineMiss 검수
 			if (neatLineLayer == null) {
 				throw new Exception();
