@@ -1247,7 +1247,7 @@ gb.panel.EditingTool.prototype.updateSelected = function() {
 	return result;
 };
 /**
- * 선택한 피처를 업데이트한다
+ * 피처를 선택한다
  * 
  * @method setFeatures
  * @param {ol.Feature}

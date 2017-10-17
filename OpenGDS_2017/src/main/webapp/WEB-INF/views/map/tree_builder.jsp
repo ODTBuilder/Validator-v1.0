@@ -348,7 +348,7 @@ html {
 			}
 		}
 
-		gitrnd.search("4326");
+		gitrnd.search("5186");
 
 		$(window).resize(function() {
 			gitrnd.resize();
@@ -695,6 +695,15 @@ html {
 				}, 250);
 			});
 		});
+		
+// 		var optwin = new gb.modal.ValidationDefinition({
+// 			width : 850,
+// 			outoOpen : true,
+// 			title : "Option Definition",
+// 			layerDefinition : function() {
+// 				return $("#layerDefinition").layerdefinition20("getDefinition");
+// 			}
+// 		});
 	</script>
 
 </body>

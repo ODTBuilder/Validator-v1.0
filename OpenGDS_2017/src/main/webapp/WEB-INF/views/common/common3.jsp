@@ -163,3 +163,5 @@
 <script src="${pageContext.request.contextPath}/resources/js/gb/modal/base.js"></script>
 <!-- gb.modal.Generalization -->
 <script src="${pageContext.request.contextPath}/resources/js/gb/modal/generalization.js"></script>
+<!-- gb.modal.ValidationDefinition -->
+<script src="${pageContext.request.contextPath}/resources/js/gb/modal/validationdefinition.js"></script>

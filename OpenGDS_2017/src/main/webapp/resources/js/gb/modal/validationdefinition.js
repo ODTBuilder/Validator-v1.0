@@ -460,14 +460,6 @@ gb.modal.ValidationDefinition = function(obj) {
 		this.setOptDefCopy(Object.assign({}, this.getDefinition()));
 	}
 
-	this._on(false, this.element, {
-		click : function(event) {
-			if (event.target === that.element[0]) {
-				that.open();
-			}
-		}
-	});
-
 	var phead1 = $("<div>").text("Layer Alias");
 	$(phead1).addClass("gb-article-head");
 	this.pbody1 = $("<div>").css({
@@ -1383,6 +1375,7 @@ gb.modal.ValidationDefinition = function(obj) {
 	});
 	var body = $("<div>").append(upper).append(lower);
 	// $(body).addClass("modal-body");
+	$(this.getModalBody()).append(body);
 	/*
 	 * 
 	 * 
@@ -1463,20 +1456,19 @@ gb.modal.ValidationDefinition = function(obj) {
 	 * 
 	 * 
 	 */
-//	var content = $("<div>").append(header).append(body).append(footer);
-//	$(content).addClass("modal-content");
-//
-//	var dialog = $("<div>").html(content);
-//	$(dialog).addClass("modal-dialog");
-//	$(dialog).addClass("modal-lg");
-//
-//	this.window = $("<div>").hide().attr({
-//		// Setting tabIndex makes the div focusable
-//		tabIndex : -1,
-//		role : "dialog"
-//	}).html(dialog);
+	// var content = $("<div>").append(header).append(body).append(footer);
+	// $(content).addClass("modal-content");
+	//
+	// var dialog = $("<div>").html(content);
+	// $(dialog).addClass("modal-dialog");
+	// $(dialog).addClass("modal-lg");
+	//
+	// this.window = $("<div>").hide().attr({
+	// // Setting tabIndex makes the div focusable
+	// tabIndex : -1,
+	// role : "dialog"
+	// }).html(dialog);
 
-	$(this.getModalBody()).append();
 };
 gb.modal.ValidationDefinition.prototype = Object.create(gb.modal.Base.prototype);
 gb.modal.ValidationDefinition.prototype.constructor = gb.modal.ValidationDefinition;
