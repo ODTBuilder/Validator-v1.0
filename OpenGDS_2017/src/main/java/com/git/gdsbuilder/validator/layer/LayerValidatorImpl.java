@@ -56,7 +56,6 @@ import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.operation.TransformException;
 
-import com.git.gdsbuilder.generalization.rep.type.DTGeneralReportDistance;
 import com.git.gdsbuilder.type.geoserver.layer.GeoLayer;
 import com.git.gdsbuilder.type.geoserver.layer.GeoLayerList;
 import com.git.gdsbuilder.type.validate.collection.close.ValidateCloseCollectionLayer;
