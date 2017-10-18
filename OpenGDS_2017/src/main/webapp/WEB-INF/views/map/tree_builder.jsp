@@ -116,6 +116,7 @@ html {
 				<ul class="dropdown-menu" role="menu">
 					<li><a href="#" title="Layer Definition" id="layerDefinition">Layer Definition</a></li>
 					<li><a href="#" title="Validating Option" id="validDefinition">Validating Option</a></li>
+					<li><a href="#" title="Validating Option" id="validDefinition2">Validating Option(test)</a></li>
 					<li><a href="#" title="Layer Weight" id="weight">Layer Weight</a></li>
 					<li><a href="#" title="Validation" id="validation">Validation</a></li>
 				</ul></li>
@@ -348,7 +349,7 @@ html {
 			}
 		}
 
-		gitrnd.search("3857");
+		gitrnd.search("5186");
 
 		$(window).resize(function() {
 			gitrnd.resize();
@@ -660,7 +661,7 @@ html {
 		});
 
 		var modal = new gb.modal.Generalization({
-			"width" : 840,
+			"width" : 850,
 			"autoOpen" : false,
 			"title" : "Generalization",
 			"jstreeURL" : "geoserver/getGeolayerCollectionTree.ajax?treeType=all",
@@ -694,6 +695,18 @@ html {
 					$('#builderClientLayer').jstreeol3(true).search(v);
 				}, 250);
 			});
+
+		});
+		var optwin = new gb.modal.ValidationDefinition({
+			"autoOpen" : false,
+			"title" : "Option Definition",
+			"layerDefinition" : function() {
+				return $("#layerDefinition").layerdefinition20("getDefinition");
+			}
+		});
+
+		$("#validDefinition2").click(function() {
+			optwin.open();
 		});
 	</script>
 

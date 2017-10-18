@@ -162,7 +162,6 @@ gb.interaction.SelectWMS.prototype.setCoordinate = function(evt) {
 		return;
 	}
 	var that = this;
-	var params;
 	this.coordinate_ = evt.coordinate;
 	var viewResolution = (this.map_.getView().getResolution());
 	var wmsSource = new ol.source.TileWMS({
@@ -222,6 +221,7 @@ gb.interaction.SelectWMS.prototype.setFeatureId = function(fid) {
 			$("body").css("cursor", "default");
 		},
 		success : function(data) {
+			
 			that.features_.clear();
 			var features = new ol.format.GeoJSON().readFeatures(JSON.stringify(data));
 			var ids = [];
@@ -231,26 +231,51 @@ gb.interaction.SelectWMS.prototype.setFeatureId = function(fid) {
 			that.destination_.getSource().addFeatures(features);
 			that.destination_.setMap(that.map_);
 
-			var selFeatures = that.select_.getFeatures();
-			var cFeatures = [];
-			for (var k = 0; k < selFeatures.getLength(); k++) {
-				if (selFeatures.item(k).getId().search(that.layer.get("id") + ".new") !== -1) {
-					cFeatures.push(selFeatures.item(k));
-				} else {
-					if (!that.record.isRemoved(that.layer, selFeatures.item(k))) {
-						cFeatures.push(selFeatures.item(k));
-					}
+			console.log(that.select_.getFeatures());
+			var vf = that.select_.getFeatures();
+			for (var i = 0; i < vf.getLength(); i++) {
+				if (vf.item(i).getId().indexOf(that.layer.get("id")) !== -1) {
+					ids.push(vf.item(i).getId());
 				}
 			}
 			that.select_.getFeatures().clear();
-			that.select_.getFeatures().extend(cFeatures);
-			var newFeatures = [];
-			for (var j = 0; j < ids.length; j++) {
-				if (!that.record.isRemoved(that.layer, that.destination_.getSource().getFeatureById(ids[j]))) {
-					newFeatures.push(that.destination_.getSource().getFeatureById(ids[j]));
+
+			for (var i = 0; i < ids.length; i++) {
+				var f = that.destination_.getSource().getFeatureById(ids[i]);
+				if (f.getId().indexOf(that.layer.get("id")) !== -1 && !that.record.isRemoved(that.layer, f)) {
+					that.select_.getFeatures().push(f);
 				}
 			}
-			that.select_.getFeatures().extend(newFeatures);
+			
+//			that.features_.clear();
+//			var features = new ol.format.GeoJSON().readFeatures(JSON.stringify(data));
+//			var ids = [];
+//			for (var i = 0; i < features.length; i++) {
+//				ids.push(features[i].getId());
+//			}
+//			that.destination_.getSource().addFeatures(features);
+//			that.destination_.setMap(that.map_);
+//
+//			var selFeatures = that.select_.getFeatures();
+//			var cFeatures = [];
+//			for (var k = 0; k < selFeatures.getLength(); k++) {
+//				if (selFeatures.item(k).getId().search(that.layer.get("id") + ".new") !== -1) {
+//					cFeatures.push(selFeatures.item(k));
+//				} else {
+//					if (!that.record.isRemoved(that.layer, selFeatures.item(k))) {
+//						cFeatures.push(selFeatures.item(k));
+//					}
+//				}
+//			}
+//			that.select_.getFeatures().clear();
+//			that.select_.getFeatures().extend(cFeatures);
+//			var newFeatures = [];
+//			for (var j = 0; j < ids.length; j++) {
+//				if (!that.record.isRemoved(that.layer, that.destination_.getSource().getFeatureById(ids[j]))) {
+//					newFeatures.push(that.destination_.getSource().getFeatureById(ids[j]));
+//				}
+//			}
+//			that.select_.getFeatures().extend(newFeatures);
 		}
 	});
 };

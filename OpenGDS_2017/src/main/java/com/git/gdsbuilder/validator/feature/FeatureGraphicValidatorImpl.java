@@ -38,19 +38,17 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureIterator;
 import org.geotools.feature.SchemaException;
-import org.geotools.referencing.CRS;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
-import org.opengis.referencing.crs.CRSAuthorityFactory;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 
 import com.git.gdsbuilder.type.validate.error.ErrorFeature;
@@ -276,15 +274,10 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 		Property featuerIDPro = simpleFeature.getProperty("feature_id");
 		String featureID = (String) featuerIDPro.getValue();
 
-		if (featureID.equals("f0010000_linestring.81")) {
-			System.out.println("");
-		}
 		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
 		Coordinate[] coors = geometry.getCoordinates();
 		int coorsSize = coors.length;
 
-		CRSAuthorityFactory factory = CRS.getAuthorityFactory(true);
-		CoordinateReferenceSystem crs = factory.createCoordinateReferenceSystem("EPSG:3857");
 		for (int i = 0; i < coorsSize - 1; i++) {
 			Coordinate a = coors[i];
 			Coordinate b = coors[i + 1];
@@ -306,12 +299,7 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 					if (!a.equals2D(b) && !b.equals2D(c) && !c.equals2D(a)) {
 						double tmpLength2 = b.distance(c);
 						if (tmpLength2 < 3) {
-
-							System.out.println("tmpLength : " + tmpLength);
-							System.out.println("tmpLength2 : " + tmpLength2);
-
 							double angle = Angle.toDegrees(Angle.angleBetween(a, b, c));
-							double tmp = 180 - angle;
 							if (angle < 6) {
 								GeometryFactory gFactory = new GeometryFactory();
 								Geometry returnGeom = gFactory.createPoint(b);
@@ -1281,17 +1269,13 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 		String featureID = (String) featureIDPro.getValue();
 		SimpleFeatureIterator relationSfcIterator = relationSfc.features();
 
-		Geometry bufferGeom = geometry.buffer(lineInvadedTolorence);
 		boolean isTrue = false;
 		while (relationSfcIterator.hasNext()) {
 			SimpleFeature relationSimpleFeature = relationSfcIterator.next();
 			Geometry relationGeometry = (Geometry) relationSimpleFeature.getDefaultGeometry();
 			if (geometry.intersects(relationGeometry)) {
-				// if (bufferGeom.contains(relationGeometry) ||
-				// relationGeometry.within(bufferGeom)) {
 				isTrue = true;
 				break;
-				// }
 			}
 		}
 		if (!isTrue) {
@@ -1406,8 +1390,6 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 		while (simpleFeatureIterator.hasNext()) {
 			SimpleFeature relationSimpleFeatrue = simpleFeatureIterator.next();
 			Geometry relationGeometry = (Geometry) relationSimpleFeatrue.getDefaultGeometry();
-			Property featuerIDPro2 = simpleFeature.getProperty("feature_id");
-			String featureID2 = (String) featuerIDPro2.getValue();
 			if (geometry.intersects(relationGeometry)) {
 				Geometry intersection = geometry.intersection(relationGeometry);
 				String intersectionType = intersection.getGeometryType().toUpperCase();
@@ -1702,6 +1684,12 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 		} else {
 			return null;
 		}
+	}
+
+	@Override
+	public Map<String, Object> genTest(SimpleFeature simpleFeature) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

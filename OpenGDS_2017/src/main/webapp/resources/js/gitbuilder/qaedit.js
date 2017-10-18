@@ -1030,26 +1030,6 @@ gitbuilder.ui.QAEdit = $.widget("gitbuilder.qaedit",
 								console.log(data2);
 								if (Array.isArray(data2)) {
 									for (var i = 0; i < data2.length; i++) {
-										// var wms = new ol.layer.Tile({
-										// source : new ol.source.TileWMS({
-										// url : wmsURL,
-										// params : {
-										// 'LAYERS' : data2[i].lName,
-										// 'TILED' : true,
-										// 'FORMAT' : 'image/png8',
-										// 'VERSION' : '1.1.0',
-										// 'CRS' : 'EPSG:5186',
-										// 'SRS' : 'EPSG:5186',
-										// 'BBOX' :
-										// data2[i].nbBox.minx.toString() + ","
-										// + data2[i].nbBox.miny.toString() +
-										// ","
-										// + data2[i].nbBox.maxx.toString() +
-										// "," + data2[i].nbBox.maxy.toString()
-										// },
-										// serverType : 'geoserver'
-										// })
-										// });
 										var source = new ol.source.TileWMS({
 											url : that.options.featureWMSURL,
 											params : {

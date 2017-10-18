@@ -76,6 +76,6 @@ public interface ValidateProgressDAO {
 	public List<HashMap<String, Object>> selectAllSHPValidateProgress(UserVO userVO,
 			Object selectAllSHPValidateProgress);
 
-	public Long selectErrorLayerTbNamesCount(UserVO userVO, HashMap<String, Object> selectIdxQuery);
+	public Long selectErrorLayerTbNamesCount(UserVO userVO, String fileType, HashMap<String, Object> selectIdxQuery);
 
 }

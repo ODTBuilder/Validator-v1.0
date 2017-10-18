@@ -197,8 +197,20 @@ public class ErrorLayerDBQueryManager {
 
 	public HashMap<String, Object> selectErrorLayerTbNamesCountQuery(String fileType, String collectionName,
 			Integer cIdx) {
-		String tableName = "\"" + fileType + "_layercollection_qa_progress" + "\"";
-		String countQueryStr = "select count (*) from " + tableName + "where c_idx = " + cIdx;
+		
+		
+		String tableName = "";
+		
+		if(fileType.equals("dxf")) {
+			tableName = "\"" + "qa10_layercollection_qa_progress" + "\"";
+		}
+		else if(fileType.equals("ngi")) {
+			tableName = "\"" + "qa20_layercollection_qa_progress" + "\"";
+		}
+		else if(fileType.equals("shp")) {
+			tableName = "\"" + "qa20_layercollection_qa_progress" + "\"";
+		}
+		String countQueryStr = "select count (*) from " + tableName + " where c_idx = " + cIdx;
 		HashMap<String, Object> selectQueryMap = new HashMap<String, Object>();
 		selectQueryMap.put("selectQuery", countQueryStr);
 		return selectQueryMap;

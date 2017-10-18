@@ -35,6 +35,7 @@
 package com.git.gdsbuilder.validator.feature;
 
 import java.util.List;
+import java.util.Map;
 
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.feature.SchemaException;
@@ -284,5 +285,7 @@ public interface FeatureGraphicValidator {
 
 	public List<ErrorFeature> validateSelfEntity(SimpleFeature tmpSimpleFeatureI, double selfEntityLineTolerance,
 			double polygonInvadedTolorence);
+
+	public Map<String, Object> genTest(SimpleFeature simpleFeature);
 
 }
