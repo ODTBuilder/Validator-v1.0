@@ -13,6 +13,8 @@ if (!gb)
 if (!gb.modal)
 	gb.modal = {};
 gb.modal.ValidationDefinition = function(obj) {
+	obj["width"] = 900;
+	obj["height"] = 710;
 	gb.modal.Base.call(this, obj);
 	var options = obj ? obj : {};
 	this.definition = obj.definition ? obj.definition : undefined;
@@ -334,7 +336,8 @@ gb.modal.ValidationDefinition = function(obj) {
 		"cursor" : "pointer"
 	});
 	this.dOption = $("<ul>").addClass("gb-list-group").css({
-		"margin-bottom" : 0
+		"margin-bottom" : 0,
+		"float" : "left"
 	});
 	this.codeSelect = $("<select>").addClass("gb-form").change(function() {
 		var isMulti = that.optItem[that.selectedValidationNow].multi;
@@ -487,7 +490,10 @@ gb.modal.ValidationDefinition = function(obj) {
 	// that._printValidationItem(mix);
 	// });
 	$(this.pbody1).addClass("gb-article-body");
-	var panel1 = $("<div>").append(phead1).append(this.pbody1);
+	var panel1 = $("<div>").css({
+		"float" : "left",
+		"width" : "279px"
+	}).append(phead1).append(this.pbody1);
 	$(panel1).addClass("gb-article");
 
 	var phead2 = $("<div>").text("Validation Item");
@@ -1319,7 +1325,10 @@ gb.modal.ValidationDefinition = function(obj) {
 	// });
 
 	$(this.pbody2).addClass("gb-article-body");
-	var panel2 = $("<div>").append(phead2).append(this.pbody2);
+	var panel2 = $("<div>").css({
+		"float" : "left",
+		"width" : "279px"
+	}).append(phead2).append(this.pbody2);
 	$(panel2).addClass("gb-article");
 
 	var phead3 = $("<div>").text("Detailed Option");
@@ -1329,7 +1338,10 @@ gb.modal.ValidationDefinition = function(obj) {
 		"overflow-y" : "auto"
 	}).append(this.dOption);
 	$(this.pbody3).addClass("gb-article-body");
-	var panel3 = $("<div>").append(phead3).append(this.pbody3);
+	var panel3 = $("<div>").css({
+		"float" : "left",
+		"width" : "279px"
+	}).append(phead3).append(this.pbody3);
 	$(panel3).addClass("gb-article");
 
 	var left = $("<div>").append(panel1);
@@ -1354,25 +1366,23 @@ gb.modal.ValidationDefinition = function(obj) {
 		"height" : "30px",
 		"margin" : "5px 0"
 	}).append(this.file);
-	this._on(false, this.file, {
-		change : function(event) {
-			var fileList = that.file[0].files;
-			var reader = new FileReader();
-			if (fileList.length === 0) {
-				return;
-			}
-			reader.readAsText(fileList[0]);
-			that._on(false, reader, {
-				load : function(event) {
-					var obj = JSON.parse(reader.result.replace(/(\s*)/g, ''));
-					that.setOptDefCopy(obj);
-					that.update();
-					that.resetRelation();
-					$(lower).css("display", "none");
-				}
-			});
+
+	$(this.file).on("change", function(event) {
+		var fileList = that.file[0].files;
+		var reader = new FileReader();
+		if (fileList.length === 0) {
+			return;
 		}
+		reader.readAsText(fileList[0]);
+		$(reader).on("load", function(event) {
+			var obj = JSON.parse(reader.result.replace(/(\s*)/g, ''));
+			that.setOptDefCopy(obj);
+			that.update();
+			that.resetRelation();
+			$(lower).css("display", "none");
+		});
 	});
+
 	var body = $("<div>").append(upper).append(lower);
 	// $(body).addClass("modal-body");
 	$(this.getModalBody()).append(body);
@@ -1389,28 +1399,25 @@ gb.modal.ValidationDefinition = function(obj) {
 	$(uploadBtn).addClass("gb-button");
 	$(uploadBtn).addClass("gb-button-default");
 	$(uploadBtn).text("Upload");
-	this._on(false, uploadBtn, {
-		click : function(event) {
-			if (event.target === uploadBtn[0]) {
-				if ($(lower).css("display") === "none") {
-					$(lower).css("display", "block");
-				} else {
-					$(lower).css("display", "none");
-				}
+	$(uploadBtn).click(function(event) {
+		if (event.target === uploadBtn[0]) {
+			if ($(lower).css("display") === "none") {
+				$(lower).css("display", "block");
+			} else {
+				$(lower).css("display", "none");
 			}
 		}
 	});
+
 	var downloadBtn = $("<button>").attr({
 		"type" : "button"
 	});
 	$(downloadBtn).addClass("gb-button");
 	$(downloadBtn).addClass("gb-button-default");
 	$(downloadBtn).text("Download");
-	this._on(false, downloadBtn, {
-		click : function(event) {
-			if (event.target === downloadBtn[0]) {
-				that.downloadSetting();
-			}
+	$(downloadBtn).click(function(event) {
+		if (event.target === downloadBtn[0]) {
+			that.downloadSetting();
 		}
 	});
 
@@ -1418,34 +1425,19 @@ gb.modal.ValidationDefinition = function(obj) {
 	// this._addClass(pleft, "text-left");
 	$(pleft).append(uploadBtn).append(downloadBtn);
 
-	var closeBtn = $("<button>").attr({
-		"type" : "button",
-		"data-dismiss" : "modal"
+	this.closeBtn = $("<button>").addClass("gb-button").addClass("gb-button-default").text("Close").click(this, function(evt) {
+		evt.data.close();
 	});
-	$(closeBtn).addClass("gb-button");
-	$(closeBtn).addClass("gb-button-default");
-	$(closeBtn).text("Close");
-
-	var okBtn = $("<button>").attr({
-		"type" : "button"
+	this.okBtn = $("<button>").addClass("gb-button").addClass("gb-button-primary").text("OK").click(this, function(evt) {
+//		evt.data.requestGeneralization();
+		// this.beforeSaveRelation();
+		var cobj = that.getOptDefCopy();
+		that.setDefinition(cobj);
+		console.log(cobj);
+		that.setOptDefCopy(undefined);
+		that.close();
 	});
-	$(okBtn).addClass("gb-button");
-	$(okBtn).addClass("gb-button-primary");
-	$(okBtn).text("Save");
-
-	this._on(false, okBtn, {
-		click : function(event) {
-			if (event.target === okBtn[0]) {
-				// this.beforeSaveRelation();
-				var cobj = that.getOptDefCopy();
-				that.setDefinition(cobj);
-				console.log(cobj);
-				that.setOptDefCopy(undefined);
-				that.close();
-			}
-		}
-	});
-
+	
 	this.buttonArea = $("<span>").addClass("gb-modal-buttons").append(this.closeBtn).append(this.okBtn);
 	this.modalFooter = $("<div>").addClass("gb-modal-footer").append(this.buttonArea);
 	$(this.getModal()).append(this.modalFooter);
@@ -1468,7 +1460,6 @@ gb.modal.ValidationDefinition = function(obj) {
 	// tabIndex : -1,
 	// role : "dialog"
 	// }).html(dialog);
-
 };
 gb.modal.ValidationDefinition.prototype = Object.create(gb.modal.Base.prototype);
 gb.modal.ValidationDefinition.prototype.constructor = gb.modal.ValidationDefinition;
@@ -1729,7 +1720,7 @@ gb.modal.ValidationDefinition.prototype._printDetailedOption = function(mix) {
 			"type" : "text"
 		});
 		$(input).addClass("optiondefinition-figure-text");
-		$(input).addClass("form-control");
+		$(input).addClass("gb-form");
 		if (!!optObj) {
 			var keys = Object.keys(optObj);
 			if (keys.indexOf("figure") !== -1) {
@@ -1971,7 +1962,7 @@ gb.modal.ValidationDefinition.prototype._printDetailedOption = function(mix) {
 			"placeholder" : "Attribute"
 		}).val(attr ? attr : "");
 		$(this.conAttr).addClass("optiondefinition-conditionalfigure-text");
-		$(this.conAttr).addClass("form-control");
+		$(this.conAttr).addClass("gb-form");
 		var div1 = $("<div>").css({
 			"width" : "90px",
 			"display" : "inline-block"
@@ -1987,8 +1978,8 @@ gb.modal.ValidationDefinition.prototype._printDetailedOption = function(mix) {
 		var equal = $("<option>").attr({
 			"value" : "equal"
 		}).text("=");
-		this.conSelect = $("<select>").addClass("form-control").addClass("optiondefinition-conditionalfigure-select").append(over).append(
-				under).append(equal);
+		this.conSelect = $("<select>").addClass("gb-form").addClass("optiondefinition-conditionalfigure-select").append(over).append(under)
+				.append(equal);
 		if (select) {
 			this.conSelect.val(select);
 		} else {
@@ -2005,7 +1996,7 @@ gb.modal.ValidationDefinition.prototype._printDetailedOption = function(mix) {
 			"placeholder" : "figure"
 		}).val(figure ? figure : "");
 		$(this.conFigure).addClass("optiondefinition-conditionalfigure-figure");
-		$(this.conFigure).addClass("form-control");
+		$(this.conFigure).addClass("gb-form");
 		var div3 = $("<div>").css({
 			"width" : "85px",
 			"display" : "inline-block"
@@ -2039,7 +2030,7 @@ gb.modal.ValidationDefinition.prototype._updateAttribute = function(code, multi)
 			}).css({
 				"display" : "inline-block"
 			});
-			$(text).addClass("form-control");
+			$(text).addClass("gb-form");
 			$(text).addClass("optiondefinition-attr-text");
 			var td1 = $("<td>").append(text);
 
@@ -2059,7 +2050,7 @@ gb.modal.ValidationDefinition.prototype._updateAttribute = function(code, multi)
 				"value" : attrs[keys[j]].toString(),
 				"placeholder" : "Value"
 			});
-			$(text2).addClass("form-control");
+			$(text2).addClass("gb-form");
 			$(text2).addClass("optiondefinition-attr-text2");
 			var td3 = $("<td>").attr({
 				"colspan" : "2"
@@ -2082,7 +2073,7 @@ gb.modal.ValidationDefinition.prototype._updateAttribute = function(code, multi)
 		}).css({
 			"display" : "inline-block"
 		});
-		$(text).addClass("form-control");
+		$(text).addClass("gb-form");
 		$(text).addClass("optiondefinition-attr-text");
 		var td1 = $("<td>").append(text);
 
@@ -2091,7 +2082,7 @@ gb.modal.ValidationDefinition.prototype._updateAttribute = function(code, multi)
 			"value" : attrs[keys[0]] ? attrs[keys[0]].toString() : "",
 			"placeholder" : "Value"
 		});
-		$(text2).addClass("form-control");
+		$(text2).addClass("gb-form");
 		$(text2).addClass("optiondefinition-attr-text2");
 		var td3 = $("<td>").attr({
 			"colspan" : "2"
@@ -2110,7 +2101,7 @@ gb.modal.ValidationDefinition.prototype._updateAttribute = function(code, multi)
 		}).css({
 			"display" : "inline-block"
 		});
-		$(text).addClass("form-control");
+		$(text).addClass("gb-form");
 		$(text).addClass("optiondefinition-attr-text");
 		var td1 = $("<td>").append(text);
 
@@ -2118,7 +2109,7 @@ gb.modal.ValidationDefinition.prototype._updateAttribute = function(code, multi)
 			"type" : "text",
 			"placeholder" : "Value"
 		});
-		$(text2).addClass("form-control");
+		$(text2).addClass("gb-form");
 		$(text2).addClass("optiondefinition-attr-text2");
 		var td3 = $("<td>").attr({
 			"colspan" : "2"
@@ -2159,7 +2150,7 @@ gb.modal.ValidationDefinition.prototype._updateLabelAttribute = function(code, m
 			}).css({
 				"display" : "inline-block"
 			});
-			$(text).addClass("form-control");
+			$(text).addClass("gb-form");
 			$(text).addClass("optiondefinition-labelattr-text");
 			var td1 = $("<td>").append(text);
 
@@ -2179,7 +2170,7 @@ gb.modal.ValidationDefinition.prototype._updateLabelAttribute = function(code, m
 				"value" : attrs[keys[j]].toString(),
 				"placeholder" : "Value"
 			});
-			$(text2).addClass("form-control");
+			$(text2).addClass("gb-form");
 			$(text2).addClass("optiondefinition-labelattr-text2");
 			var td3 = $("<td>").attr({
 				"colspan" : "2"
@@ -2202,7 +2193,7 @@ gb.modal.ValidationDefinition.prototype._updateLabelAttribute = function(code, m
 		}).css({
 			"display" : "inline-block"
 		});
-		$(text).addClass("form-control");
+		$(text).addClass("gb-form");
 		$(text).addClass("optiondefinition-labelattr-text");
 		var td1 = $("<td>").append(text);
 
@@ -2211,7 +2202,7 @@ gb.modal.ValidationDefinition.prototype._updateLabelAttribute = function(code, m
 			"value" : attrs[keys[0]] ? attrs[keys[0]].toString() : "",
 			"placeholder" : "Value"
 		});
-		$(text2).addClass("form-control");
+		$(text2).addClass("gb-form");
 		$(text2).addClass("optiondefinition-labelattr-text2");
 		var td3 = $("<td>").attr({
 			"colspan" : "2"
@@ -2230,7 +2221,7 @@ gb.modal.ValidationDefinition.prototype._updateLabelAttribute = function(code, m
 		}).css({
 			"display" : "inline-block"
 		});
-		$(text).addClass("form-control");
+		$(text).addClass("gb-form");
 		$(text).addClass("optiondefinition-labelattr-text");
 		var td1 = $("<td>").append(text);
 
@@ -2238,7 +2229,7 @@ gb.modal.ValidationDefinition.prototype._updateLabelAttribute = function(code, m
 			"type" : "text",
 			"placeholder" : "Value"
 		});
-		$(text2).addClass("form-control");
+		$(text2).addClass("gb-form");
 		$(text2).addClass("optiondefinition-labelattr-text2");
 		var td3 = $("<td>").attr({
 			"colspan" : "2"
@@ -2273,7 +2264,7 @@ gb.modal.ValidationDefinition.prototype._updateNotNullAttribute = function(code,
 		}).css({
 			"display" : "inline-block"
 		});
-		$(text).addClass("form-control");
+		$(text).addClass("gb-form");
 		$(text).addClass("optiondefinition-nnullattr-text");
 		var td1 = $("<td>").append(text);
 		btr1 = $("<tr>").append(td1);
@@ -2287,7 +2278,7 @@ gb.modal.ValidationDefinition.prototype._updateNotNullAttribute = function(code,
 			}).css({
 				"display" : "inline-block"
 			});
-			$(text).addClass("form-control");
+			$(text).addClass("gb-form");
 			$(text).addClass("optiondefinition-nnullattr-text");
 			var td1 = $("<td>").append(text);
 
@@ -2317,7 +2308,7 @@ gb.modal.ValidationDefinition.prototype._updateNotNullAttribute = function(code,
 			}).css({
 				"display" : "inline-block"
 			});
-			$(text).addClass("form-control");
+			$(text).addClass("gb-form");
 			$(text).addClass("optiondefinition-nnullattr-text");
 			var td1 = $("<td>").append(text);
 			btr1 = $("<tr>").append(td1);
@@ -2327,4 +2318,17 @@ gb.modal.ValidationDefinition.prototype._updateNotNullAttribute = function(code,
 		console.error("unknown");
 	}
 
+};
+
+/**
+ * 모달을 연다
+ * 
+ * @name open
+ */
+gb.modal.ValidationDefinition.prototype.open = function() {
+	gb.modal.Base.prototype.open.call(this);
+	this.updateLayerDefinition();
+	this.setOptDefCopy(Object.assign({}, this.getDefinition()));
+	this.update();
+	this.resetRelation();
 };

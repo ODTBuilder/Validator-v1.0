@@ -84,7 +84,7 @@ $.jstree.plugins.geoserver = function(options, parent) {
 									'LAYERS' : obj.refer.get_node(data[i].name).children.toString(),
 									'TILED' : true,
 									'FORMAT' : 'image/png8',
-									'VERSION' : '1.0.0',
+									'VERSION' : '1.3.0',
 									'CRS' : that._data.geoserver.map.getView().getProjection().getCode(),
 									'SRS' : that._data.geoserver.map.getView().getProjection().getCode(),
 									'BBOX' : data[i].bbox.minx.toString() + "," + data[i].bbox.miny.toString() + ","
@@ -227,7 +227,7 @@ $.jstree.plugins.geoserver = function(options, parent) {
 									// ":" + data[i].name,
 									'TILED' : true,
 									'FORMAT' : 'image/png8',
-									'VERSION' : '1.0.0',
+									'VERSION' : '1.3.0',
 									'CRS' : that._data.geoserver.map.getView().getProjection().getCode(),
 									'SRS' : that._data.geoserver.map.getView().getProjection().getCode(),
 									'BBOX' : data[i].bbox.minx.toString() + "," + data[i].bbox.miny.toString() + ","
@@ -428,7 +428,7 @@ $.jstree.plugins.geoserver = function(options, parent) {
 									// ":" + data[i].name,
 									'TILED' : true,
 									'FORMAT' : 'image/png8',
-									'VERSION' : '1.0.0',
+									'VERSION' : '1.3.0',
 									'CRS' : that._data.geoserver.map.getView().getProjection().getCode(),
 									'SRS' : that._data.geoserver.map.getView().getProjection().getCode(),
 									'BBOX' : data[i].bbox.minx.toString() + "," + data[i].bbox.miny.toString() + ","
@@ -484,7 +484,7 @@ $.jstree.plugins.geoserver = function(options, parent) {
 											'LAYERS' : data2[i].lName,
 											'TILED' : true,
 											'FORMAT' : 'image/png8',
-											'VERSION' : '1.0.0',
+											'VERSION' : '1.3.0',
 											'CRS' : that._data.geoserver.map.getView().getProjection().getCode(),
 											'SRS' : that._data.geoserver.map.getView().getProjection().getCode(),
 											'BBOX' : data2[i].nbBox.minx.toString() + "," + data2[i].nbBox.miny.toString() + ","
@@ -621,7 +621,7 @@ $.jstree.plugins.geoserver = function(options, parent) {
 									'LAYERS' : data[i].lName,
 									'TILED' : true,
 									'FORMAT' : 'image/png8',
-									'VERSION' : '1.0.0',
+									'VERSION' : '1.3.0',
 									'CRS' : that._data.geoserver.map.getView().getProjection().getCode(),
 									'SRS' : that._data.geoserver.map.getView().getProjection().getCode(),
 									'BBOX' : data[i].nbBox.minx.toString() + "," + data[i].nbBox.miny.toString() + ","
@@ -733,7 +733,7 @@ $.jstree.plugins.geoserver = function(options, parent) {
 									// ":" + data[i].name,
 									'TILED' : true,
 									'FORMAT' : 'image/png8',
-									'VERSION' : '1.0.0',
+									'VERSION' : '1.3.0',
 									'CRS' : that._data.geoserver.map.getView().getProjection().getCode(),
 									'SRS' : that._data.geoserver.map.getView().getProjection().getCode(),
 									'BBOX' : data[i].bbox.minx.toString() + "," + data[i].bbox.miny.toString() + ","
@@ -790,7 +790,7 @@ $.jstree.plugins.geoserver = function(options, parent) {
 												'LAYERS' : data2[i].lName,
 												'TILED' : true,
 												'FORMAT' : 'image/png8',
-												'VERSION' : '1.0.0',
+												'VERSION' : '1.3.0',
 												'CRS' : that._data.geoserver.map.getView().getProjection().getCode(),
 												'SRS' : that._data.geoserver.map.getView().getProjection().getCode(),
 												'BBOX' : data2[i].nbBox.minx.toString() + "," + data2[i].nbBox.miny.toString() + ","
@@ -933,7 +933,7 @@ $.jstree.plugins.geoserver = function(options, parent) {
 									// ":" + data[i].name,
 									'TILED' : true,
 									'FORMAT' : 'image/png8',
-									'VERSION' : '1.0.0',
+									'VERSION' : '1.3.0',
 									'CRS' : that._data.geoserver.map.getView().getProjection().getCode(),
 									'SRS' : that._data.geoserver.map.getView().getProjection().getCode(),
 									'BBOX' : data[i].bbox.minx.toString() + "," + data[i].bbox.miny.toString() + ","

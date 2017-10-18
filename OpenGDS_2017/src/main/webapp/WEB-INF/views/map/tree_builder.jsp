@@ -116,6 +116,7 @@ html {
 				<ul class="dropdown-menu" role="menu">
 					<li><a href="#" title="Layer Definition" id="layerDefinition">Layer Definition</a></li>
 					<li><a href="#" title="Validating Option" id="validDefinition">Validating Option</a></li>
+					<li><a href="#" title="Validating Option" id="validDefinition2">Validating Option(test)</a></li>
 					<li><a href="#" title="Layer Weight" id="weight">Layer Weight</a></li>
 					<li><a href="#" title="Validation" id="validation">Validation</a></li>
 				</ul></li>
@@ -694,16 +695,19 @@ html {
 					$('#builderClientLayer').jstreeol3(true).search(v);
 				}, 250);
 			});
+
 		});
-		
-// 		var optwin = new gb.modal.ValidationDefinition({
-// 			width : 850,
-// 			outoOpen : true,
-// 			title : "Option Definition",
-// 			layerDefinition : function() {
-// 				return $("#layerDefinition").layerdefinition20("getDefinition");
-// 			}
-// 		});
+		var optwin = new gb.modal.ValidationDefinition({
+			"autoOpen" : false,
+			"title" : "Option Definition",
+			"layerDefinition" : function() {
+				return $("#layerDefinition").layerdefinition20("getDefinition");
+			}
+		});
+
+		$("#validDefinition2").click(function() {
+			optwin.open();
+		});
 	</script>
 
 </body>
