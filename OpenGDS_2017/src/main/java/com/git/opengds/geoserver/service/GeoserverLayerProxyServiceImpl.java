@@ -145,7 +145,7 @@ public class GeoserverLayerProxyServiceImpl implements GeoserverLayerProxyServic
 	*/
 	
 	private WMSGetMap createWMSGetMap(UserVO userVO, HttpServletRequest request){
-		 String serverURL = this.URL + "/" + userVO.getId() + "/gwc/service/wms";
+		 String serverURL = this.URL + "/" + userVO.getId() + "/wms";
 		 String version="";
 		 String format="";
 		 String layers="";
@@ -171,7 +171,7 @@ public class GeoserverLayerProxyServiceImpl implements GeoserverLayerProxyServic
 				layers=value;
 			}
 			else if(key.toLowerCase().equals("version")){
-				bbox=value;
+				version=value;
 			} 
 			else if(key.toLowerCase().equals("bbox")){
 				bbox=value;
