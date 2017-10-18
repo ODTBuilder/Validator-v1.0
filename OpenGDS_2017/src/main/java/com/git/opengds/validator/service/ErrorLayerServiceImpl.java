@@ -209,7 +209,7 @@ public class ErrorLayerServiceImpl implements ErrorLayerService {
 				errLayerDAO.insertErrorFeature(userVO, insertQuery);
 			}
 			layerInfo.setFileName(errTableName);
-			layerInfo.setOriginSrc("EPSG:4326");
+			layerInfo.setOriginSrc("EPSG:5186");
 			layerInfo.setTransSrc("EPSG:3857");
 			layerInfo.setFileType(fileType);
 		} catch (

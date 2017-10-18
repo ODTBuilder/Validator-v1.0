@@ -440,10 +440,10 @@ public class LayerValidatorImpl implements LayerValidator {
 			simpleFeatures.add(simpleFeature);
 		}
 		// targetLayer
-		ErrorLayer selfErrorLayer = selfEntity(simpleFeatures, selfEntityLineTolerance, polygonInvadedTolorence);
-		if (selfErrorLayer != null) {
-			errLayer.mergeErrorLayer(selfErrorLayer);
-		}
+//		ErrorLayer selfErrorLayer = selfEntity(simpleFeatures, selfEntityLineTolerance, polygonInvadedTolorence);
+//		if (selfErrorLayer != null) {
+//			errLayer.mergeErrorLayer(selfErrorLayer);
+//		}
 		for (int i = 0; i < relationLayers.size(); i++) {
 			GeoLayer relationLayer = relationLayers.get(i);
 			String relationLayerName = relationLayer.getLayerName();
