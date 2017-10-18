@@ -1385,6 +1385,9 @@ gb.modal.ValidationDefinition = function(obj) {
 
 	var body = $("<div>").append(upper).append(lower);
 	// $(body).addClass("modal-body");
+	$(this.getModalBody()).css({
+		"height" : "607px"
+	});
 	$(this.getModalBody()).append(body);
 	/*
 	 * 
@@ -1429,7 +1432,7 @@ gb.modal.ValidationDefinition = function(obj) {
 		evt.data.close();
 	});
 	this.okBtn = $("<button>").addClass("gb-button").addClass("gb-button-primary").text("OK").click(this, function(evt) {
-//		evt.data.requestGeneralization();
+		// evt.data.requestGeneralization();
 		// this.beforeSaveRelation();
 		var cobj = that.getOptDefCopy();
 		that.setDefinition(cobj);
@@ -1437,7 +1440,7 @@ gb.modal.ValidationDefinition = function(obj) {
 		that.setOptDefCopy(undefined);
 		that.close();
 	});
-	
+
 	this.buttonArea = $("<span>").addClass("gb-modal-buttons").append(this.closeBtn).append(this.okBtn);
 	this.modalFooter = $("<div>").addClass("gb-modal-footer").append(this.buttonArea);
 	$(this.getModal()).append(this.modalFooter);
