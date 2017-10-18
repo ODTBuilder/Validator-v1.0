@@ -171,8 +171,45 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 		List<ErrorFeature> errFeatures = new ArrayList<ErrorFeature>();
 		GeometryFactory geometryFactory = new GeometryFactory();
 		Geometry geometryI = (Geometry) simpleFeatureI.getDefaultGeometry();
+		if (!geometryI.isSimple()) {
+			Coordinate[] coordinates = geometryI.getCoordinates();
+			for (int i = 0; i < coordinates.length - 1; i++) {
+				Coordinate[] coordI = new Coordinate[] { new Coordinate(coordinates[i]),
+						new Coordinate(coordinates[i + 1]) };
+				LineString lineI = geometryFactory.createLineString(coordI);
+				for (int j = 0; j < coordinates.length - 1; j++) {
+					Coordinate[] coordJ = new Coordinate[] { new Coordinate(coordinates[j]),
+							new Coordinate(coordinates[j + 1]) };
+					LineString lineJ = geometryFactory.createLineString(coordJ);
+					if (lineI.intersects(lineJ)) {
+						Geometry intersectGeom = lineI.intersection(lineJ);
+						Coordinate[] intersectCoors = intersectGeom.getCoordinates();
+						for (int k = 0; k < intersectCoors.length; k++) {
+							Coordinate interCoor = intersectCoors[k];
+							Geometry errPoint = geometryFactory.createPoint(interCoor);
+							Boolean flag = false;
+							for (int l = 0; l < coordI.length; l++) {
+								Coordinate coordPoint = coordI[l];
+								if (interCoor.equals2D(coordPoint)) {
+									flag = true;
+									break;
+								}
+							}
+							if (flag == false) {
+								Property featuerIDPro = simpleFeatureI.getProperty("feature_id");
+								String featureID = (String) featuerIDPro.getValue();
+								String featureIdx = simpleFeatureI.getID();
+								ErrorFeature errFeature = new ErrorFeature(featureIdx, featureID,
+										ConIntersected.Type.CONINTERSECTED.errType(),
+										ConIntersected.Type.CONINTERSECTED.errName(), errPoint);
+								errFeatures.add(errFeature);
+							}
+						}
+					}
+				}
+			}
+		}
 		Geometry geometryJ = (Geometry) simpleFeatureJ.getDefaultGeometry();
-
 		if (geometryI.crosses(geometryJ)) {
 			Geometry returnGeom = geometryI.intersection(geometryJ);
 			Coordinate[] coordinates = returnGeom.getCoordinates();
@@ -192,8 +229,6 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 		} else {
 			return null;
 		}
-		
-		
 	}
 
 	@Override
