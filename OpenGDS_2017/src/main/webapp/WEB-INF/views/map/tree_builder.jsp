@@ -572,6 +572,18 @@ html {
 			}
 		});
 
+		var optwin = new gb.modal.ValidationDefinition({
+			"autoOpen" : false,
+			"title" : "Option Definition",
+			"layerDefinition" : function() {
+				return $("#layerDefinition").layerdefinition20("getDefinition");
+			}
+		});
+
+		$("#validDefinition2").click(function() {
+			optwin.open();
+		});
+
 		$("#validation").validation({
 			validatorURL : "validator/validate.ajax",
 			layersURL : "geoserver/getGeolayerCollectionTree.ajax?treeType=qa2.0",
@@ -579,7 +591,8 @@ html {
 				return $("#layerDefinition").layerdefinition20("getDefinition");
 			},
 			optionDefinition : function() {
-				return $("#validDefinition").optiondefinition("getDefinition");
+				// 				return $("#validDefinition").optiondefinition("getDefinition");
+				return optwin.getDefinition();
 			},
 			weightDefinition : function() {
 				return $("#weight").weightdefinition("getDefinition");
@@ -696,17 +709,6 @@ html {
 				}, 250);
 			});
 
-		});
-		var optwin = new gb.modal.ValidationDefinition({
-			"autoOpen" : false,
-			"title" : "Option Definition",
-			"layerDefinition" : function() {
-				return $("#layerDefinition").layerdefinition20("getDefinition");
-			}
-		});
-
-		$("#validDefinition2").click(function() {
-			optwin.open();
 		});
 	</script>
 
