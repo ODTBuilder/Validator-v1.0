@@ -4,7 +4,7 @@ public class EdgeMatchMiss extends ValidatorOption {
 
 	public enum Type {
 
-		EDGEMATCHMISS("EdgeMatchMiss", "CloseCollectionError");
+		EDGEMATCHMISS("RefEntityMiss", "CloseCollectionError");
 
 		String errName;
 		String errType;

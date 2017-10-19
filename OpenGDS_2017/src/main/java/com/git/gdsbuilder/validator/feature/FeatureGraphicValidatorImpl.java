@@ -824,8 +824,8 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 		}
 	}
 
-	public List<ErrorFeature>  validateBuildingOpen(SimpleFeature simpleFeature, SimpleFeatureCollection aop, double tolerence)
-			throws SchemaException {
+	public List<ErrorFeature> validateBuildingOpen(SimpleFeature simpleFeature, SimpleFeatureCollection aop,
+			double tolerence) throws SchemaException {
 
 		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
 		Coordinate[] coordinates = geometry.getCoordinates();
@@ -836,9 +836,6 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 			String featureIdx = simpleFeature.getID();
 			Property featuerIDPro = simpleFeature.getProperty("feature_id");
 			String featureID = (String) featuerIDPro.getValue();
-
-			GeometryFactory factory = new GeometryFactory();
-
 			List<ErrorFeature> featureList = new ArrayList<ErrorFeature>();
 			ErrorFeature errorFeatureSt = new ErrorFeature(featureIdx, featureID,
 					BuildingOpen.Type.BUILDINGOPEN.errType(), BuildingOpen.Type.BUILDINGOPEN.errName(),
@@ -854,54 +851,29 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 		}
 	}
 
-	public ErrorFeature validateWaterOpen(SimpleFeature simpleFeature, SimpleFeatureCollection aop, double tolerence)
-			throws SchemaException {
-		GeometryFactory geometryFactory = new GeometryFactory();
+	public List<ErrorFeature> validateWaterOpen(SimpleFeature simpleFeature, SimpleFeatureCollection aop,
+			double tolerence) throws SchemaException {
+
 		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
 		Coordinate[] coordinates = geometry.getCoordinates();
 		int coorSize = coordinates.length;
 		Coordinate start = coordinates[0];
 		Coordinate end = coordinates[coorSize - 1];
-		Geometry startGeom = geometryFactory.createPoint(start);
-		Geometry endGeom = geometryFactory.createPoint(end);
-		if (coorSize > 3) {
-			if (!(start.equals2D(end))) {
-				SimpleFeatureIterator iterator = aop.features();
-				while (iterator.hasNext()) {
-					SimpleFeature aopSimpleFeature = iterator.next();
-					Geometry aopGeom = (Geometry) aopSimpleFeature.getDefaultGeometry();
-					if (Math.abs(aopGeom.distance(startGeom)) > tolerence
-							|| Math.abs(aopGeom.distance(endGeom)) > tolerence) {
-						String featureIdx = simpleFeature.getID();
-						Property featuerIDPro = simpleFeature.getProperty("feature_id");
-						String featureID = (String) featuerIDPro.getValue();
-						ErrorFeature errorFeature = new ErrorFeature(featureIdx, featureID,
-								WaterOpen.Type.WATEROPEN.errType(), WaterOpen.Type.WATEROPEN.errName(),
-								geometry.getInteriorPoint());
-						return errorFeature;
-					}
-				}
-			} else {
-				return null;
-			}
+		if (!(start.equals2D(end))) {
+			String featureIdx = simpleFeature.getID();
+			Property featuerIDPro = simpleFeature.getProperty("feature_id");
+			String featureID = (String) featuerIDPro.getValue();
+			List<ErrorFeature> featureList = new ArrayList<ErrorFeature>();
+			ErrorFeature errorFeatureSt = new ErrorFeature(featureIdx, featureID, WaterOpen.Type.WATEROPEN.errType(),
+					WaterOpen.Type.WATEROPEN.errName(), geometry.getInteriorPoint());
+			featureList.add(errorFeatureSt);
+			ErrorFeature errorFeatureEd = new ErrorFeature(featureIdx, featureID, WaterOpen.Type.WATEROPEN.errType(),
+					WaterOpen.Type.WATEROPEN.errName(), geometry.getInteriorPoint());
+			featureList.add(errorFeatureEd);
+			return featureList;
 		} else {
-			SimpleFeatureIterator iterator = aop.features();
-			while (iterator.hasNext()) {
-				SimpleFeature aopSimpleFeature = iterator.next();
-				Geometry aopGeom = (Geometry) aopSimpleFeature.getDefaultGeometry();
-				if (Math.abs(aopGeom.distance(startGeom)) > tolerence
-						|| Math.abs(aopGeom.distance(endGeom)) > tolerence) {
-					String featureIdx = simpleFeature.getID();
-					Property featuerIDPro = simpleFeature.getProperty("feature_id");
-					String featureID = (String) featuerIDPro.getValue();
-					ErrorFeature errorFeature = new ErrorFeature(featureIdx, featureID,
-							WaterOpen.Type.WATEROPEN.errType(), WaterOpen.Type.WATEROPEN.errName(),
-							geometry.getInteriorPoint());
-					return errorFeature;
-				}
-			}
+			return null;
 		}
-		return null;
 	}
 
 	public ErrorFeature validateLayerMiss(SimpleFeature simpleFeature, List<String> typeNames) throws SchemaException {

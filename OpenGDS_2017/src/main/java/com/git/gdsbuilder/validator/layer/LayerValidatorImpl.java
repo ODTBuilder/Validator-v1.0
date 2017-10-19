@@ -677,10 +677,12 @@ public class LayerValidatorImpl implements LayerValidator {
 		SimpleFeatureIterator simpleFeatureIterator = sfc.features();
 		while (simpleFeatureIterator.hasNext()) {
 			SimpleFeature simpleFeature = simpleFeatureIterator.next();
-			ErrorFeature errFeature = graphicValidator.validateWaterOpen(simpleFeature, neatLineSfc, tolerence);
-			if (errFeature != null) {
-				errFeature.setLayerName(validatorLayer.getLayerName());
-				errorLayer.addErrorFeature(errFeature);
+			List<ErrorFeature> errFeatures = graphicValidator.validateWaterOpen(simpleFeature, neatLineSfc, tolerence);
+			if (errFeatures != null) {
+				for (ErrorFeature errFeature : errFeatures) {
+					errFeature.setLayerName(validatorLayer.getLayerName());
+					errorLayer.addErrorFeature(errFeature);
+				}
 			} else {
 				continue;
 			}
@@ -722,7 +724,6 @@ public class LayerValidatorImpl implements LayerValidator {
 			GeoLayer relationLayer = relationLayers.get(i);
 			relationSfcs.add(relationLayer.getSimpleFeatureCollection());
 		}
-
 		SimpleFeatureCollection sfc = validatorLayer.getSimpleFeatureCollection();
 		SimpleFeatureIterator sit = sfc.features();
 		while (sit.hasNext()) {

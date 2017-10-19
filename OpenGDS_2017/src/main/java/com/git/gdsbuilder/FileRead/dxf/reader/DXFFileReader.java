@@ -35,6 +35,9 @@ public class DXFFileReader {
 		while (layerIterator.hasNext()) {
 			DXFLayer dxfLayer = (DXFLayer) layerIterator.next();
 			String layerId = dxfLayer.getName();
+			if (layerId.equals("B0014114")) {
+				System.out.println("");
+			}
 			if (layerId.matches("[0-9|a-z|A-Z|ㄱ-ㅎ|ㅏ-ㅣ|가-힝]*")) {
 				DTDXFLayerList dtLayers = DXFFileLayerParser.parseDTLayer(dxfLayer);
 				dtCollection.addAllQA10Layers(dtLayers);
