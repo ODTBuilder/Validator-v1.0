@@ -82,7 +82,7 @@ public class ValidatorServiceImpl implements ValidatorService {
 	public void validate(final UserVO userVO, String jsonObject) throws Exception {
 
 		System.out.println(jsonObject);
-		
+
 		JSONParser parser = new JSONParser();
 		JSONObject jsonObj = (JSONObject) parser.parse(jsonObject);
 
@@ -113,7 +113,7 @@ public class ValidatorServiceImpl implements ValidatorService {
 		ValidateLayerCollectionList validateLayerCollection = new ValidateLayerCollectionList(collectionList,
 				validateLayerTypeList);
 		GeoLayerCollectionList geoLayerCollectionList = validateLayerCollection.getLayerCollectionList();
-		
+
 		final ValidateLayerTypeList layerTypeList = validateLayerCollection.getValidateLayerTypeList();
 		final MapSystemRule mapSystemRule = new MapSystemRule(-10, 10, -1, 1); // 도곽설정
 
@@ -138,17 +138,39 @@ public class ValidatorServiceImpl implements ValidatorService {
 						String nearCollectionName = nearCollection.getCollectionName();
 						int nearCollectionNum = Integer.parseInt(nearCollectionName);
 
-						if (topColltionNum == nearCollectionNum) {
-							collections.add(nearCollection);
-						}
-						if (bottomColltionNum == nearCollectionNum) {
-							collections.add(nearCollection);
-						}
-						if (leftColltionNum == nearCollectionNum) {
-							collections.add(nearCollection);
-						}
-						if (rightColltionNum == nearCollectionNum) {
-							collections.add(nearCollection);
+						if (collectionName.endsWith("6")) {
+							if (topColltionNum == nearCollectionNum) {
+								collections.add(nearCollection);
+							}
+							if (bottomColltionNum == nearCollectionNum) {
+								collections.add(nearCollection);
+							}
+							if (rightColltionNum == nearCollectionNum) {
+								collections.add(nearCollection);
+							}
+						} else if (collectionName.endsWith("0")) {
+							if (topColltionNum == nearCollectionNum) {
+								collections.add(nearCollection);
+							}
+							if (bottomColltionNum == nearCollectionNum) {
+								collections.add(nearCollection);
+							}
+							if (leftColltionNum == nearCollectionNum) {
+								collections.add(nearCollection);
+							}
+						} else {
+							if (topColltionNum == nearCollectionNum) {
+								collections.add(nearCollection);
+							}
+							if (bottomColltionNum == nearCollectionNum) {
+								collections.add(nearCollection);
+							}
+							if (leftColltionNum == nearCollectionNum) {
+								collections.add(nearCollection);
+							}
+							if (rightColltionNum == nearCollectionNum) {
+								collections.add(nearCollection);
+							}
 						}
 					} catch (NumberFormatException e) {
 						// TODO: handle exception
