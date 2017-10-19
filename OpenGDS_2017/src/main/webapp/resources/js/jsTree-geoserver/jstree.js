@@ -7603,7 +7603,7 @@
 										}
 										for (var j = 0; j < downFiles.length; j++) {
 											var path = inst._data.geoserver.downloadNGIDXF;
-											var target = "gitWindow";
+											var target = "_blank";
 											var form = document.createElement("form");
 											form.setAttribute("method", "post");
 											form.setAttribute("action", path);
@@ -7628,12 +7628,17 @@
 									"label" : "SHP",
 									"action" : function(data) {
 										var inst = $.jstree.reference(data.reference), obj = inst.get_node(data.reference);
-										if (obj.type === "n_ngi_group" || obj.type === "n_dxf_group") {
-											console.error("not support");
-											return;
+										var selected = inst.get_selected();
+										var selectedObj = inst.get_selected(true);
+										for (var i = 0; i < selectedObj.length; i++) {
+											if (selectedObj[i].type === "n_ngi_group" || selectedObj[i].type === "n_dxf_group"
+													|| selectedObj[i].type === "n_shp_group") {
+												console.error("not support");
+												return;
+											}
 										}
 										var arr = {
-											"geoLayerList" : [ obj.id ]
+											"geoLayerList" : selected
 										}
 										var names = [];
 										$.ajax({
@@ -7648,14 +7653,19 @@
 											traditional : true,
 											success : function(data, textStatus, jqXHR) {
 												var path = inst._data.geoserver.downloadGeoserver;
+
 												var target = "_blank";
 												for (var i = 0; i < data.length; i++) {
 													var params = {
 														"serviceType" : "wfs",
-														"version" : "1.1.0",
+														"version" : "1.0.0",
 														"outputformat" : "SHAPE-ZIP",
 														"typeName" : data[i].lName
 													}
+													// var qstr =
+													// $.param(params);
+													// var url = path+"?"+qstr;
+													// console.log(url);
 													var form = document.createElement("form");
 													form.setAttribute("method", "post");
 													form.setAttribute("action", path);
@@ -7669,10 +7679,11 @@
 													}
 													form.target = target;
 													document.body.appendChild(form);
-													form.submit();
+													$(form).submit();
 												}
 											}
 										});
+
 									}
 								},
 								"gml2" : {
@@ -7706,7 +7717,7 @@
 												for (var i = 0; i < data.length; i++) {
 													var params = {
 														"serviceType" : "wfs",
-														"version" : "1.1.0",
+														"version" : "1.0.0",
 														"outputformat" : "gml2",
 														"typeName" : data[i].lName
 													}
@@ -7760,7 +7771,7 @@
 												for (var i = 0; i < data.length; i++) {
 													var params = {
 														"serviceType" : "wfs",
-														"version" : "1.1.0",
+														"version" : "1.0.0",
 														"outputformat" : "gml3",
 														"typeName" : data[i].lName
 													}
@@ -7814,7 +7825,7 @@
 												for (var i = 0; i < data.length; i++) {
 													var params = {
 														"serviceType" : "wfs",
-														"version" : "1.1.0",
+														"version" : "1.0.0",
 														"outputformat" : "json",
 														"typeName" : data[i].lName
 													}
@@ -7869,7 +7880,7 @@
 												for (var i = 0; i < data.length; i++) {
 													var params = {
 														"serviceType" : "wfs",
-														"version" : "1.1.0",
+														"version" : "1.0.0",
 														"outputformat" : "csv",
 														"typeName" : data[i].lName
 													}

@@ -26,14 +26,18 @@ gb.modal.Generalization = function(obj) {
 	this.thresholdArea = undefined;
 	this.fileType = undefined;
 	this.requestURL = options.requestURL ? options.requestURL : undefined;
-	this.closeBtn = $("<button>").addClass("gb-button").addClass("gb-button-default").text("Close").click(this, function(evt) {
+	this.closeBtn = $("<button>").css({
+		"float" : "right"
+	}).addClass("gb-button").addClass("gb-button-default").text("Close").click(this, function(evt) {
 		evt.data.close();
 	});
-	this.okBtn = $("<button>").addClass("gb-button").addClass("gb-button-primary").text("OK").click(this, function(evt) {
+	this.okBtn = $("<button>").css({
+		"float" : "right"
+	}).addClass("gb-button").addClass("gb-button-primary").text("OK").click(this, function(evt) {
 		evt.data.requestGeneralization();
 	});
 	this.message = $("<div>").addClass("gb-alert").addClass("gb-alert-success").hide();
-	this.buttonArea = $("<span>").addClass("gb-modal-buttons").append(this.closeBtn).append(this.okBtn);
+	this.buttonArea = $("<span>").addClass("gb-modal-buttons").append(this.okBtn).append(this.closeBtn);
 	this.modalFooter = $("<div>").addClass("gb-modal-footer").append(this.buttonArea);
 	$(this.getModal()).append(this.modalFooter);
 	var llist = $("<div>").text("Layer list");
@@ -60,7 +64,7 @@ gb.modal.Generalization = function(obj) {
 			}).change(function() {
 				// that.refreshThresholdArea($(this).val(),
 				// $(this).parent().parent().index());
-				
+
 			});
 
 			for (var j = 0; j < this.items.length; j++) {
@@ -260,11 +264,11 @@ gb.modal.Generalization.prototype.constructor = gb.modal.Generalization;
 /**
  * 
  */
-gb.modal.Generalization.prototype.updateFormData = function(){
+gb.modal.Generalization.prototype.updateFormData = function() {
 	var opt = {
-			"define" : $(this.def).val(),
-			"phase" : [],
-			"topology" : $(this.check).is(":checked")
+		"define" : $(this.def).val(),
+		"phase" : [],
+		"topology" : $(this.check).is(":checked")
 	};
 };
 

@@ -652,10 +652,13 @@ public class LayerValidatorImpl implements LayerValidator {
 		SimpleFeatureIterator simpleFeatureIterator = sfc.features();
 		while (simpleFeatureIterator.hasNext()) {
 			SimpleFeature simpleFeature = simpleFeatureIterator.next();
-			ErrorFeature errFeature = graphicValidator.validateBuildingOpen(simpleFeature, neatLineSfc, tolerence);
-			if (errFeature != null) {
-				errFeature.setLayerName(validatorLayer.getLayerName());
-				errorLayer.addErrorFeature(errFeature);
+			List<ErrorFeature> errFeatures = graphicValidator.validateBuildingOpen(simpleFeature, neatLineSfc,
+					tolerence);
+			if (errFeatures != null) {
+				for (ErrorFeature errFeature : errFeatures) {
+					errFeature.setLayerName(validatorLayer.getLayerName());
+					errorLayer.addErrorFeature(errFeature);
+				}
 			} else {
 				continue;
 			}
