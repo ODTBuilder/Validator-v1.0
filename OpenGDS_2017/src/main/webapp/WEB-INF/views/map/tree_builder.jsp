@@ -591,8 +591,8 @@ html {
 				return $("#layerDefinition").layerdefinition20("getDefinition");
 			},
 			optionDefinition : function() {
-				// 				return $("#validDefinition").optiondefinition("getDefinition");
-				return optwin.getDefinition();
+				return $("#validDefinition").optiondefinition("getDefinition");
+				// 				return optwin.getDefinition();
 			},
 			weightDefinition : function() {
 				return $("#weight").weightdefinition("getDefinition");

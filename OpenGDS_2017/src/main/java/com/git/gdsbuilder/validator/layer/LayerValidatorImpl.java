@@ -165,6 +165,9 @@ public class LayerValidatorImpl implements LayerValidator {
 	// }
 
 	public ErrorLayer validateConIntersected() throws SchemaException {
+
+		ErrorLayer errLayer = new ErrorLayer();
+
 		SimpleFeatureCollection sfc = validatorLayer.getSimpleFeatureCollection();
 		List<SimpleFeature> tmpsSimpleFeatures = new ArrayList<SimpleFeature>();
 		SimpleFeatureIterator simpleFeatureIterator = sfc.features();
@@ -173,108 +176,34 @@ public class LayerValidatorImpl implements LayerValidator {
 			tmpsSimpleFeatures.add(simpleFeature);
 		}
 
-		int treadNum = 0;
-
-		if (tmpsSimpleFeatures.size() != 0) {
-			if (tmpsSimpleFeatures.size() < 100000) {
-				treadNum = 1;
-			} else {
-				treadNum = tmpsSimpleFeatures.size() / 100000;
-			}
-		} else
-			return null;
-
-		ExecutorService executorService = Executors.newFixedThreadPool(treadNum);
-		ConIntersectedResult conIntersectedResult = new ConIntersectedResult();
-
-		class Task implements Runnable {
-			private ConIntersectedResult conIntersectedResult;
-			private List<SimpleFeature> tmpsSimpleFeatures;
-			private int startNum;
-			private int endNum;
-
-			Task(ConIntersectedResult conIntersectedResult, List<SimpleFeature> tmpsSimpleFeatures, int startNum,
-					int endNum) {
-				this.conIntersectedResult = conIntersectedResult;
-				this.tmpsSimpleFeatures = tmpsSimpleFeatures;
-				this.startNum = startNum;
-				this.endNum = endNum;
-			}
-
-			@Override
-			public void run() {
-
-				int totalSize = tmpsSimpleFeatures.size();
-				for (int i = startNum; i < endNum - 1; i++) {
-					SimpleFeature tmpSimpleFeatureI = tmpsSimpleFeatures.get(i);
-					List<ErrorFeature> errFeaturesI = graphicValidator.validateConIntersected(tmpSimpleFeatureI);
-					if (errFeaturesI != null) {
-						for (ErrorFeature errFeature : errFeaturesI) {
-							errFeature.setLayerName(validatorLayer.getLayerName());
-							conIntersectedResult.addErrorFeature(errFeature);
-						}
-					}
-					for (int j = startNum + 1; j < totalSize; j++) {
-						SimpleFeature tmpSimpleFeatureJ = tmpsSimpleFeatures.get(j);
-						try {
-							List<ErrorFeature> errFeaturesJ = graphicValidator.validateConIntersected(tmpSimpleFeatureI,
-									tmpSimpleFeatureJ);
-							if (errFeaturesJ != null) {
-								for (ErrorFeature errFeature : errFeaturesJ) {
-									errFeature.setLayerName(validatorLayer.getLayerName());
-									conIntersectedResult.addErrorFeature(errFeature);
-								}
-							} else {
-								continue;
-							}
-						} catch (SchemaException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-					}
+		int tmpsSimpleFeaturesSize = tmpsSimpleFeatures.size();
+		for (int i = 0; i < tmpsSimpleFeaturesSize - 1; i++) {
+			SimpleFeature tmpSimpleFeatureI = tmpsSimpleFeatures.get(i);
+			List<ErrorFeature> selfErrFeature = graphicValidator.validateConIntersected(tmpSimpleFeatureI);
+			if (selfErrFeature != null) {
+				for (ErrorFeature errFeature : selfErrFeature) {
+					errFeature.setLayerName(validatorLayer.getLayerName());
+					errLayer.addErrorFeature(errFeature);
 				}
-				SimpleFeature tmpSimpleFeatureI = tmpsSimpleFeatures.get(endNum - 1);
-				List<ErrorFeature> errFeatures = graphicValidator.validateConIntersected(tmpSimpleFeatureI);
+			}
+			for (int j = i + 1; j < tmpsSimpleFeaturesSize; j++) {
+				SimpleFeature tmpSimpleFeatureJ = tmpsSimpleFeatures.get(j);
+				List<ErrorFeature> errFeatures = graphicValidator.validateConIntersected(tmpSimpleFeatureI,
+						tmpSimpleFeatureJ);
 				if (errFeatures != null) {
 					for (ErrorFeature errFeature : errFeatures) {
 						errFeature.setLayerName(validatorLayer.getLayerName());
-						conIntersectedResult.addErrorFeature(errFeature);
+						errLayer.addErrorFeature(errFeature);
 					}
+				} else {
+					continue;
 				}
 			}
 		}
-		List<Future<ConIntersectedResult>> futures = new ArrayList<Future<ConIntersectedResult>>();
-
-		for (int i = 0; i < treadNum; i++) {
-			int startNum = Math.round(tmpsSimpleFeatures.size() / treadNum * i);
-			int endNum = Math.round(tmpsSimpleFeatures.size() / treadNum * (i + 1));
-			Runnable task = new Task(conIntersectedResult, tmpsSimpleFeatures, startNum, endNum);
-			Future<ConIntersectedResult> future = executorService.submit(task, conIntersectedResult);
-			futures.add(future);
-		}
-
-		for (Future<ConIntersectedResult> future : futures) {
-			try {
-				conIntersectedResult = future.get();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-
-		executorService.shutdown();
-
-		if (conIntersectedResult.treadErrorLayer.getErrFeatureList().size() > 0) {
-			return conIntersectedResult.treadErrorLayer;
+		if (errLayer.getErrFeatureList().size() > 0) {
+			return errLayer;
 		} else {
 			return null;
-		}
-	}
-
-	class ConIntersectedResult {
-		ErrorLayer treadErrorLayer = new ErrorLayer();
-
-		synchronized void addErrorFeature(ErrorFeature errorFeature) {
-			treadErrorLayer.addErrorFeature(errorFeature);
 		}
 	}
 
@@ -440,10 +369,11 @@ public class LayerValidatorImpl implements LayerValidator {
 			simpleFeatures.add(simpleFeature);
 		}
 		// targetLayer
-//		ErrorLayer selfErrorLayer = selfEntity(simpleFeatures, selfEntityLineTolerance, polygonInvadedTolorence);
-//		if (selfErrorLayer != null) {
-//			errLayer.mergeErrorLayer(selfErrorLayer);
-//		}
+		// ErrorLayer selfErrorLayer = selfEntity(simpleFeatures,
+		// selfEntityLineTolerance, polygonInvadedTolorence);
+		// if (selfErrorLayer != null) {
+		// errLayer.mergeErrorLayer(selfErrorLayer);
+		// }
 		for (int i = 0; i < relationLayers.size(); i++) {
 			GeoLayer relationLayer = relationLayers.get(i);
 			String relationLayerName = relationLayer.getLayerName();
@@ -722,10 +652,13 @@ public class LayerValidatorImpl implements LayerValidator {
 		SimpleFeatureIterator simpleFeatureIterator = sfc.features();
 		while (simpleFeatureIterator.hasNext()) {
 			SimpleFeature simpleFeature = simpleFeatureIterator.next();
-			ErrorFeature errFeature = graphicValidator.validateBuildingOpen(simpleFeature, neatLineSfc, tolerence);
-			if (errFeature != null) {
-				errFeature.setLayerName(validatorLayer.getLayerName());
-				errorLayer.addErrorFeature(errFeature);
+			List<ErrorFeature> errFeatures = graphicValidator.validateBuildingOpen(simpleFeature, neatLineSfc,
+					tolerence);
+			if (errFeatures != null) {
+				for (ErrorFeature errFeature : errFeatures) {
+					errFeature.setLayerName(validatorLayer.getLayerName());
+					errorLayer.addErrorFeature(errFeature);
+				}
 			} else {
 				continue;
 			}

@@ -139,76 +139,12 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 	public List<ErrorFeature> validateConIntersected(SimpleFeature simpleFeatureI, SimpleFeature simpleFeatureJ)
 			throws SchemaException {
 
-//		List<ErrorFeature> errFeatures = new ArrayList<ErrorFeature>();
-//		GeometryFactory geometryFactory = new GeometryFactory();
-//		Geometry geometryI = (Geometry) simpleFeatureI.getDefaultGeometry();
-//		Geometry geometryJ = (Geometry) simpleFeatureJ.getDefaultGeometry();
-//
-//		if (geometryI.intersects(geometryJ)) {
-//			Geometry returnGeom = geometryI.intersection(geometryJ);
-//			Coordinate[] coordinates = returnGeom.getCoordinates();
-//			for (int i = 0; i < coordinates.length; i++) {
-//				Coordinate coordinate = coordinates[i];
-//				Geometry intersectPoint = geometryFactory.createPoint(coordinate);
-//				String featureIdx = simpleFeatureI.getID();
-//				Property featuerIDPro = simpleFeatureI.getProperty("feature_id");
-//				String featureID = (String) featuerIDPro.getValue();
-//				ErrorFeature errFeature = new ErrorFeature(featureIdx, featureID,
-//						ConIntersected.Type.CONINTERSECTED.errType(), ConIntersected.Type.CONINTERSECTED.errName(),
-//						intersectPoint);
-//
-//				errFeatures.add(errFeature);
-//			}
-//			return errFeatures;
-//		} else {
-//			return null;
-//		}
-		
-		
-		// --- 일반화 때문에 잠시 바꾼거 --- //
 		List<ErrorFeature> errFeatures = new ArrayList<ErrorFeature>();
 		GeometryFactory geometryFactory = new GeometryFactory();
 		Geometry geometryI = (Geometry) simpleFeatureI.getDefaultGeometry();
-		if (!geometryI.isSimple()) {
-			Coordinate[] coordinates = geometryI.getCoordinates();
-			for (int i = 0; i < coordinates.length - 1; i++) {
-				Coordinate[] coordI = new Coordinate[] { new Coordinate(coordinates[i]),
-						new Coordinate(coordinates[i + 1]) };
-				LineString lineI = geometryFactory.createLineString(coordI);
-				for (int j = 0; j < coordinates.length - 1; j++) {
-					Coordinate[] coordJ = new Coordinate[] { new Coordinate(coordinates[j]),
-							new Coordinate(coordinates[j + 1]) };
-					LineString lineJ = geometryFactory.createLineString(coordJ);
-					if (lineI.intersects(lineJ)) {
-						Geometry intersectGeom = lineI.intersection(lineJ);
-						Coordinate[] intersectCoors = intersectGeom.getCoordinates();
-						for (int k = 0; k < intersectCoors.length; k++) {
-							Coordinate interCoor = intersectCoors[k];
-							Geometry errPoint = geometryFactory.createPoint(interCoor);
-							Boolean flag = false;
-							for (int l = 0; l < coordI.length; l++) {
-								Coordinate coordPoint = coordI[l];
-								if (interCoor.equals2D(coordPoint)) {
-									flag = true;
-									break;
-								}
-							}
-							if (flag == false) {
-								Property featuerIDPro = simpleFeatureI.getProperty("feature_id");
-								String featureID = (String) featuerIDPro.getValue();
-								String featureIdx = simpleFeatureI.getID();
-								ErrorFeature errFeature = new ErrorFeature(featureIdx, featureID,
-										ConIntersected.Type.CONINTERSECTED.errType(),
-										ConIntersected.Type.CONINTERSECTED.errName(), errPoint);
-								errFeatures.add(errFeature);
-							}
-						}
-					}
-				}
-			}
-		}
 		Geometry geometryJ = (Geometry) simpleFeatureJ.getDefaultGeometry();
-		if (geometryI.crosses(geometryJ)) {
+
+		if (geometryI.intersects(geometryJ)) {
 			Geometry returnGeom = geometryI.intersection(geometryJ);
 			Coordinate[] coordinates = returnGeom.getCoordinates();
 			for (int i = 0; i < coordinates.length; i++) {
@@ -227,6 +163,72 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 		} else {
 			return null;
 		}
+
+		// --- 일반화 때문에 잠시 바꾼거 --- //
+		// List<ErrorFeature> errFeatures = new ArrayList<ErrorFeature>();
+		// GeometryFactory geometryFactory = new GeometryFactory();
+		// Geometry geometryI = (Geometry) simpleFeatureI.getDefaultGeometry();
+		// if (!geometryI.isSimple()) {
+		// Coordinate[] coordinates = geometryI.getCoordinates();
+		// for (int i = 0; i < coordinates.length - 1; i++) {
+		// Coordinate[] coordI = new Coordinate[] { new
+		// Coordinate(coordinates[i]),
+		// new Coordinate(coordinates[i + 1]) };
+		// LineString lineI = geometryFactory.createLineString(coordI);
+		// for (int j = 0; j < coordinates.length - 1; j++) {
+		// Coordinate[] coordJ = new Coordinate[] { new
+		// Coordinate(coordinates[j]),
+		// new Coordinate(coordinates[j + 1]) };
+		// LineString lineJ = geometryFactory.createLineString(coordJ);
+		// if (lineI.intersects(lineJ)) {
+		// Geometry intersectGeom = lineI.intersection(lineJ);
+		// Coordinate[] intersectCoors = intersectGeom.getCoordinates();
+		// for (int k = 0; k < intersectCoors.length; k++) {
+		// Coordinate interCoor = intersectCoors[k];
+		// Geometry errPoint = geometryFactory.createPoint(interCoor);
+		// Boolean flag = false;
+		// for (int l = 0; l < coordI.length; l++) {
+		// Coordinate coordPoint = coordI[l];
+		// if (interCoor.equals2D(coordPoint)) {
+		// flag = true;
+		// break;
+		// }
+		// }
+		// if (flag == false) {
+		// Property featuerIDPro = simpleFeatureI.getProperty("feature_id");
+		// String featureID = (String) featuerIDPro.getValue();
+		// String featureIdx = simpleFeatureI.getID();
+		// ErrorFeature errFeature = new ErrorFeature(featureIdx, featureID,
+		// ConIntersected.Type.CONINTERSECTED.errType(),
+		// ConIntersected.Type.CONINTERSECTED.errName(), errPoint);
+		// errFeatures.add(errFeature);
+		// }
+		// }
+		// }
+		// }
+		// }
+		// }
+		// Geometry geometryJ = (Geometry) simpleFeatureJ.getDefaultGeometry();
+		// if (geometryI.crosses(geometryJ)) {
+		// Geometry returnGeom = geometryI.intersection(geometryJ);
+		// Coordinate[] coordinates = returnGeom.getCoordinates();
+		// for (int i = 0; i < coordinates.length; i++) {
+		// Coordinate coordinate = coordinates[i];
+		// Geometry intersectPoint = geometryFactory.createPoint(coordinate);
+		// String featureIdx = simpleFeatureI.getID();
+		// Property featuerIDPro = simpleFeatureI.getProperty("feature_id");
+		// String featureID = (String) featuerIDPro.getValue();
+		// ErrorFeature errFeature = new ErrorFeature(featureIdx, featureID,
+		// ConIntersected.Type.CONINTERSECTED.errType(),
+		// ConIntersected.Type.CONINTERSECTED.errName(),
+		// intersectPoint);
+		//
+		// errFeatures.add(errFeature);
+		// }
+		// return errFeatures;
+		// } else {
+		// return null;
+		// }
 	}
 
 	@Override
@@ -833,54 +835,34 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 		}
 	}
 
-	public ErrorFeature validateBuildingOpen(SimpleFeature simpleFeature, SimpleFeatureCollection aop, double tolerence)
+	public List<ErrorFeature>  validateBuildingOpen(SimpleFeature simpleFeature, SimpleFeatureCollection aop, double tolerence)
 			throws SchemaException {
-		GeometryFactory geometryFactory = new GeometryFactory();
+
 		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
 		Coordinate[] coordinates = geometry.getCoordinates();
 		int coorSize = coordinates.length;
 		Coordinate start = coordinates[0];
 		Coordinate end = coordinates[coorSize - 1];
-		Geometry startGeom = geometryFactory.createPoint(start);
-		Geometry endGeom = geometryFactory.createPoint(end);
-		if (coorSize > 3) {
-			if (!(start.equals2D(end))) {
-				SimpleFeatureIterator iterator = aop.features();
-				while (iterator.hasNext()) {
-					SimpleFeature aopSimpleFeature = iterator.next();
-					Geometry aopGeom = (Geometry) aopSimpleFeature.getDefaultGeometry();
-					if (Math.abs(aopGeom.distance(startGeom)) > tolerence
-							|| Math.abs(aopGeom.distance(endGeom)) > tolerence) {
-						String featureIdx = simpleFeature.getID();
-						Property featuerIDPro = simpleFeature.getProperty("feature_id");
-						String featureID = (String) featuerIDPro.getValue();
-						ErrorFeature errorFeature = new ErrorFeature(featureIdx, featureID,
-								BuildingOpen.Type.BUILDINGOPEN.errType(), BuildingOpen.Type.BUILDINGOPEN.errName(),
-								geometry.getInteriorPoint());
-						return errorFeature;
-					}
-				}
-			} else {
-				return null;
-			}
+		if (!(start.equals2D(end))) {
+			String featureIdx = simpleFeature.getID();
+			Property featuerIDPro = simpleFeature.getProperty("feature_id");
+			String featureID = (String) featuerIDPro.getValue();
+
+			GeometryFactory factory = new GeometryFactory();
+
+			List<ErrorFeature> featureList = new ArrayList<ErrorFeature>();
+			ErrorFeature errorFeatureSt = new ErrorFeature(featureIdx, featureID,
+					BuildingOpen.Type.BUILDINGOPEN.errType(), BuildingOpen.Type.BUILDINGOPEN.errName(),
+					geometry.getInteriorPoint());
+			featureList.add(errorFeatureSt);
+			ErrorFeature errorFeatureEd = new ErrorFeature(featureIdx, featureID,
+					BuildingOpen.Type.BUILDINGOPEN.errType(), BuildingOpen.Type.BUILDINGOPEN.errName(),
+					geometry.getInteriorPoint());
+			featureList.add(errorFeatureEd);
+			return featureList;
 		} else {
-			SimpleFeatureIterator iterator = aop.features();
-			while (iterator.hasNext()) {
-				SimpleFeature aopSimpleFeature = iterator.next();
-				Geometry aopGeom = (Geometry) aopSimpleFeature.getDefaultGeometry();
-				if (Math.abs(aopGeom.distance(startGeom)) > tolerence
-						|| Math.abs(aopGeom.distance(endGeom)) > tolerence) {
-					String featureIdx = simpleFeature.getID();
-					Property featuerIDPro = simpleFeature.getProperty("feature_id");
-					String featureID = (String) featuerIDPro.getValue();
-					ErrorFeature errorFeature = new ErrorFeature(featureIdx, featureID,
-							BuildingOpen.Type.BUILDINGOPEN.errType(), BuildingOpen.Type.BUILDINGOPEN.errName(),
-							geometry.getInteriorPoint());
-					return errorFeature;
-				}
-			}
+			return null;
 		}
-		return null;
 	}
 
 	public ErrorFeature validateWaterOpen(SimpleFeature simpleFeature, SimpleFeatureCollection aop, double tolerence)

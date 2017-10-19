@@ -163,7 +163,7 @@ public interface FeatureGraphicValidator {
 	 * 11:39:51 @param simpleFeature @return ErrorFeature @throws
 	 * SchemaException ErrorFeature @throws
 	 */
-	public ErrorFeature validateBuildingOpen(SimpleFeature simpleFeature, SimpleFeatureCollection aop, double tolerence)
+	public List<ErrorFeature>  validateBuildingOpen(SimpleFeature simpleFeature, SimpleFeatureCollection aop, double tolerence)
 			throws SchemaException;
 
 	/**

@@ -665,7 +665,7 @@ gb.modal.ValidationDefinition.prototype.update = function(obj) {
 	var keys = Object.keys(obj);
 	for (var i = 0; i < keys.length; i++) {
 		var alias = $("<span>").text(keys[i]);
-		$(alias).addClass("optiondefinition-alias-span");
+		// $(alias).addClass("optiondefinition-alias-span");
 		var span = $("<span>").text(obj[keys[i]].geom).css({
 			"font-weight" : "100"
 		});
@@ -674,11 +674,12 @@ gb.modal.ValidationDefinition.prototype.update = function(obj) {
 			"title" : obj[keys[i]].code
 		}).append(alias).append(span);
 		$(anchor).addClass("gb-list-group-item");
-		$(anchor).addClass("optiondefinition-alias").click(function() {
+		// $(anchor).addClass("optiondefinition-alias")
+		$(anchor).click(function() {
 			that.alias(this);
 		});
 		if (obj[keys[i]].area) {
-			$(anchor).addClass("list-group-item-info");
+			$(anchor).addClass("gb-list-group-item-info");
 		}
 		$(that.lAlias).append(anchor);
 	}
@@ -737,7 +738,8 @@ gb.modal.ValidationDefinition.prototype._printValidationItem = function(mix) {
 			"type" : "checkbox",
 			"value" : that.optItem[list[i]].alias
 		});
-		$(checkbox).addClass("optiondefinition-item-check").change(function() {
+		// $(checkbox).addClass("optiondefinition-item-check")
+		$(checkbox).change(function() {
 			if ($(this).prop("checked")) {
 				if (that.optItem[$(this).val()].type === "none") {
 					if (!that.getOptDefCopy().hasOwnProperty(that.selectedLayerNow)) {
@@ -776,7 +778,8 @@ gb.modal.ValidationDefinition.prototype._printValidationItem = function(mix) {
 		var li = $("<li>").append(checkbox).append(title);
 
 		$(li).addClass("gb-list-group-item");
-		$(li).addClass("optiondefinition-item").click(function() {
+		// $(li).addClass("optiondefinition-item");
+		$(li).click(function() {
 			var chldr = $(this).parent().children();
 			for (var i = 0; i < chldr.length; i++) {
 				$(chldr).removeClass("active");
@@ -818,7 +821,8 @@ gb.modal.ValidationDefinition.prototype._printDetailedOption = function(mix) {
 		var input = $("<input>").attr({
 			"type" : "text"
 		});
-		$(input).addClass("optiondefinition-figure-text").on("input", function() {
+		// $(input).addClass("optiondefinition-figure-text");
+		$(input).on("input", function() {
 			if ($(this).val() === "") {
 				delete that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow];
 				that._toggleCheckbox(that.selectedValidationNow, false);
@@ -878,7 +882,8 @@ gb.modal.ValidationDefinition.prototype._printDetailedOption = function(mix) {
 				"vertical-align" : "top",
 				"margin-right" : "3px"
 			});
-			$(checkbox).addClass("optiondefinition-rel-check")
+			// $(checkbox).addClass("optiondefinition-rel-check");
+			$(checkbox)
 					.change(
 							function() {
 								if ($(this).prop("checked")) {
@@ -1032,7 +1037,8 @@ gb.modal.ValidationDefinition.prototype._printDetailedOption = function(mix) {
 				"vertical-align" : "top",
 				"margin-right" : "3px"
 			});
-			$(checkbox).addClass("optiondefinition-geom-check").change(
+			// $(checkbox).addClass("optiondefinition-geom-check");
+			$(checkbox).change(
 					function() {
 						if ($(this).prop("checked")) {
 							if (!that.getOptDefCopy().hasOwnProperty(that.selectedLayerNow)) {
@@ -1188,7 +1194,7 @@ gb.modal.ValidationDefinition.prototype._printDetailedOption = function(mix) {
 							}
 						});
 			}
-			$(checkbox).addClass("optiondefinition-label-rel");
+			// $(checkbox).addClass("optiondefinition-label-rel");
 			if (that.getOptDefCopy().hasOwnProperty(that.selectedLayerNow)) {
 				if (that.getOptDefCopy()[that.selectedLayerNow].hasOwnProperty(vtem)) {
 					if (that.getOptDefCopy()[that.selectedLayerNow][vtem].relation.indexOf(keys[i]) !== -1) {
@@ -1221,7 +1227,8 @@ gb.modal.ValidationDefinition.prototype._printDetailedOption = function(mix) {
 			"type" : "text",
 			"placeholder" : "Attribute"
 		}).val(attr ? attr : "");
-		$(this.conAttr).addClass("optiondefinition-conditionalfigure-text").on("input", function() {
+		// $(this.conAttr).addClass("optiondefinition-conditionalfigure-text");
+		$(this.conAttr).on("input", function() {
 			that.conditionalfigure_text(this);
 		});
 		$(this.conAttr).addClass("gb-form");
@@ -1240,10 +1247,10 @@ gb.modal.ValidationDefinition.prototype._printDetailedOption = function(mix) {
 		var equal = $("<option>").attr({
 			"value" : "equal"
 		}).text("=");
-		this.conSelect = $("<select>").addClass("gb-form").addClass("optiondefinition-conditionalfigure-select").append(over).append(under)
-				.append(equal).on("input", function() {
-					that.conditionalfigure_select(this);
-				});
+		this.conSelect = $("<select>").addClass("gb-form").append(over).append(under).append(equal).on("input", function() {
+			that.conditionalfigure_select(this);
+		});
+		// $(this.conSelect).addClass("optiondefinition-conditionalfigure-select")
 		if (select) {
 			this.conSelect.val(select);
 		} else {
@@ -1259,7 +1266,7 @@ gb.modal.ValidationDefinition.prototype._printDetailedOption = function(mix) {
 			"type" : "number",
 			"placeholder" : "figure"
 		}).val(figure ? figure : "");
-		$(this.conFigure).addClass("optiondefinition-conditionalfigure-figure");
+		// $(this.conFigure).addClass("optiondefinition-conditionalfigure-figure");
 		$(this.conFigure).addClass("gb-form");
 		var div3 = $("<div>").css({
 			"width" : "85px",
@@ -1295,7 +1302,8 @@ gb.modal.ValidationDefinition.prototype._updateAttribute = function(code, multi)
 				"display" : "inline-block"
 			});
 			$(text).addClass("gb-form");
-			$(text).addClass("optiondefinition-attr-text").on("input", function() {
+			// $(text).addClass("optiondefinition-attr-text");
+			$(text).on("input", function() {
 				that.attr_text(this);
 			});
 			var td1 = $("<td>").append(text);
@@ -1308,7 +1316,8 @@ gb.modal.ValidationDefinition.prototype._updateAttribute = function(code, multi)
 			}).append(icon);
 			$(btn).addClass("gb-button");
 			$(btn).addClass("gb-button-default");
-			$(btn).addClass("optiondefinition-attr-del").on("click", function() {
+			// $(btn).addClass("optiondefinition-attr-del");
+			$(btn).on("click", function() {
 				that.attr_del(this);
 			});
 			var td2 = $("<td>").append(btn);
@@ -1319,7 +1328,8 @@ gb.modal.ValidationDefinition.prototype._updateAttribute = function(code, multi)
 				"placeholder" : "Value"
 			});
 			$(text2).addClass("gb-form");
-			$(text2).addClass("optiondefinition-attr-text2").on("input", function() {
+			// $(text2).addClass("optiondefinition-attr-text2");
+			$(text2).on("input", function() {
 				that.attr_text(this);
 			});
 			var td3 = $("<td>").attr({
@@ -1344,7 +1354,8 @@ gb.modal.ValidationDefinition.prototype._updateAttribute = function(code, multi)
 			"display" : "inline-block"
 		});
 		$(text).addClass("gb-form");
-		$(text).addClass("optiondefinition-attr-text").on("input", function() {
+		// $(text).addClass("optiondefinition-attr-text")
+		$(text).on("input", function() {
 			that.attr_text(this);
 		});
 		var td1 = $("<td>").append(text);
@@ -1355,7 +1366,8 @@ gb.modal.ValidationDefinition.prototype._updateAttribute = function(code, multi)
 			"placeholder" : "Value"
 		});
 		$(text2).addClass("gb-form");
-		$(text2).addClass("optiondefinition-attr-text2").on("input", function() {
+		// $(text2).addClass("optiondefinition-attr-text2");
+		$(text2).on("input", function() {
 			that.attr_text(this);
 		});
 		var td3 = $("<td>").attr({
@@ -1376,7 +1388,8 @@ gb.modal.ValidationDefinition.prototype._updateAttribute = function(code, multi)
 			"display" : "inline-block"
 		});
 		$(text).addClass("gb-form");
-		$(text).addClass("optiondefinition-attr-text").on("input", function() {
+		// $(text).addClass("optiondefinition-attr-text")
+		$(text).on("input", function() {
 			that.attr_text(this);
 		});
 		var td1 = $("<td>").append(text);
@@ -1386,7 +1399,8 @@ gb.modal.ValidationDefinition.prototype._updateAttribute = function(code, multi)
 			"placeholder" : "Value"
 		});
 		$(text2).addClass("gb-form");
-		$(text2).addClass("optiondefinition-attr-text2").on("input", function() {
+		// $(text2).addClass("optiondefinition-attr-text2")
+		$(text2).on("input", function() {
 			that.attr_text(this);
 		});
 		var td3 = $("<td>").attr({
@@ -1429,7 +1443,8 @@ gb.modal.ValidationDefinition.prototype._updateLabelAttribute = function(code, m
 				"display" : "inline-block"
 			});
 			$(text).addClass("gb-form");
-			$(text).addClass("optiondefinition-labelattr-text").on("input", function() {
+			// $(text).addClass("optiondefinition-labelattr-text")
+			$(text).on("input", function() {
 				that.labelattr_text(this);
 			});
 			var td1 = $("<td>").append(text);
@@ -1442,7 +1457,7 @@ gb.modal.ValidationDefinition.prototype._updateLabelAttribute = function(code, m
 			}).append(icon);
 			$(btn).addClass("gb-button");
 			$(btn).addClass("gb-button-default");
-			$(btn).addClass("optiondefinition-labelattr-del");
+			// $(btn).addClass("optiondefinition-labelattr-del");
 			var td2 = $("<td>").append(btn);
 
 			var text2 = $("<input>").attr({
@@ -1451,7 +1466,8 @@ gb.modal.ValidationDefinition.prototype._updateLabelAttribute = function(code, m
 				"placeholder" : "Value"
 			});
 			$(text2).addClass("gb-form");
-			$(text2).addClass("optiondefinition-labelattr-text2").on("input", function() {
+			// $(text2).addClass("optiondefinition-labelattr-text2")
+			$(text2).on("input", function() {
 				that.labelattr_text(this);
 			});
 			var td3 = $("<td>").attr({
@@ -1476,7 +1492,8 @@ gb.modal.ValidationDefinition.prototype._updateLabelAttribute = function(code, m
 			"display" : "inline-block"
 		});
 		$(text).addClass("gb-form");
-		$(text).addClass("optiondefinition-labelattr-text").on("input", function() {
+		// $(text).addClass("optiondefinition-labelattr-text")
+		$(text).on("input", function() {
 			that.labelattr_text(this);
 		});
 		var td1 = $("<td>").append(text);
@@ -1487,7 +1504,8 @@ gb.modal.ValidationDefinition.prototype._updateLabelAttribute = function(code, m
 			"placeholder" : "Value"
 		});
 		$(text2).addClass("gb-form");
-		$(text2).addClass("optiondefinition-labelattr-text2").on("input", function() {
+		// $(text2).addClass("optiondefinition-labelattr-text2")
+		$(text2).on("input", function() {
 			that.labelattr_text(this);
 		});
 		var td3 = $("<td>").attr({
@@ -1508,7 +1526,8 @@ gb.modal.ValidationDefinition.prototype._updateLabelAttribute = function(code, m
 			"display" : "inline-block"
 		});
 		$(text).addClass("gb-form");
-		$(text).addClass("optiondefinition-labelattr-text").on("input", function() {
+		// $(text).addClass("optiondefinition-labelattr-text")
+		$(text).on("input", function() {
 			that.labelattr_text(this);
 		});
 		var td1 = $("<td>").append(text);
@@ -1518,7 +1537,8 @@ gb.modal.ValidationDefinition.prototype._updateLabelAttribute = function(code, m
 			"placeholder" : "Value"
 		});
 		$(text2).addClass("gb-form");
-		$(text2).addClass("optiondefinition-labelattr-text2").on("input", function() {
+		// $(text2).addClass("optiondefinition-labelattr-text2")
+		$(text2).on("input", function() {
 			that.labelattr_text(this);
 		});
 		var td3 = $("<td>").attr({
@@ -1555,7 +1575,10 @@ gb.modal.ValidationDefinition.prototype._updateNotNullAttribute = function(code,
 			"display" : "inline-block"
 		});
 		$(text).addClass("gb-form");
-		$(text).addClass("optiondefinition-nnullattr-text");
+		// $(text).addClass("optiondefinition-nnullattr-text");
+		$(text).on("input", function() {
+			that.nnullattr_text(this);
+		});
 		var td1 = $("<td>").append(text);
 		btr1 = $("<tr>").append(td1);
 		$(that.nnullAttrForm).append(btr1);
@@ -1570,6 +1593,9 @@ gb.modal.ValidationDefinition.prototype._updateNotNullAttribute = function(code,
 			});
 			$(text).addClass("gb-form");
 			// $(text).addClass("optiondefinition-nnullattr-text");
+			$(text).on("input", function() {
+				that.nnullattr_text(this);
+			});
 			var td1 = $("<td>").append(text);
 
 			var icon = $("<i>").attr("aria-hidden", true);
@@ -1758,7 +1784,8 @@ gb.modal.ValidationDefinition.prototype.labelattr_addrow = function(jqobj) {
 		"display" : "inline-block"
 	});
 	$(text).addClass("gb-form");
-	$(text).addClass("optiondefinition-labelattr-text").on("input", function() {
+	// $(text).addClass("optiondefinition-labelattr-text")
+	$(text).on("input", function() {
 		that.labelattr_text(this);
 	});
 	var td1 = $("<td>").append(text);
@@ -1771,14 +1798,18 @@ gb.modal.ValidationDefinition.prototype.labelattr_addrow = function(jqobj) {
 	}).append(icon);
 	$(btn).addClass("gb-button");
 	$(btn).addClass("gb-button-default");
-	$(btn).addClass("optiondefinition-labelattr-del");
+	// $(btn).addClass("optiondefinition-labelattr-del");
+	$(btn).on("click", function() {
+		that.labelattr_del(this);
+	});
 	var td2 = $("<td>").append(btn);
 
 	var text2 = $("<input>").attr({
 		"type" : "text"
 	});
 	$(text2).addClass("gb-form");
-	$(text2).addClass("optiondefinition-labelattr-text2").on("input", function() {
+	// $(text2).addClass("optiondefinition-labelattr-text2")
+	$(text2).on("input", function() {
 		that.labelattr_text(this);
 	});
 	var td3 = $("<td>").attr({
@@ -1801,7 +1832,8 @@ gb.modal.ValidationDefinition.prototype.alias = function(jqobj) {
 		$(chldr).removeClass("active");
 	}
 	$(jqobj).addClass("active");
-	var text = $(jqobj).find(".optiondefinition-alias-span").text();
+	// var text = $(jqobj).find(".optiondefinition-alias-span").text();
+	var text = $(jqobj).find("span:eq(0)").text();
 	that.selectedLayerNow = text;
 	var opt = that.getOptDefCopy()[text];
 	var mix = {
@@ -1877,12 +1909,11 @@ gb.modal.ValidationDefinition.prototype.labelattr_del = function(jqobj) {
 
 gb.modal.ValidationDefinition.prototype.attr_text = function(jqobj) {
 	var that = this;
-	var attrs = $(that.attrForm).find("input.optiondefinition-attr-text");
+	var attrs = $(that.attrForm).find("input[type=text]:eq(0)");
 	var obj = {};
 	for (var i = 0; i < attrs.length; i++) {
 		var key = $(attrs[i]).val();
-		var values = $(attrs[i]).parent().parent().next().find("input[type=text].optiondefinition-attr-text2").val().replace(/(\s*)/g, '')
-				.split(",");
+		var values = $(attrs[i]).parent().parent().next().find("input[type=text]:eq(1)").val().replace(/(\s*)/g, '').split(",");
 		obj[key] = values;
 	}
 	var selected = $(that.codeSelect).val();
@@ -1912,7 +1943,7 @@ gb.modal.ValidationDefinition.prototype.attr_text = function(jqobj) {
 
 gb.modal.ValidationDefinition.prototype.nnullattr_text = function(jqobj) {
 	var that = this;
-	var attrs = $(that.nnullAttrForm).find("input.optiondefinition-nnullattr-text");
+	var attrs = $(that.nnullAttrForm).find("input[type=text]");
 	var obj = [];
 	var selected = $(that.nnullCodeSelect).val();
 	var curOpt;
@@ -1952,12 +1983,11 @@ gb.modal.ValidationDefinition.prototype.nnullattr_text = function(jqobj) {
 
 gb.modal.ValidationDefinition.prototype.labelattr_text = function(jqobj) {
 	var that = this;
-	var attrs = $(that.labelAttrForm).find("input.optiondefinition-labelattr-text");
+	var attrs = $(that.labelAttrForm).find("input[type=text]:eq(0)");
 	var obj = {};
 	for (var i = 0; i < attrs.length; i++) {
 		var key = $(attrs[i]).val();
-		var values = $(attrs[i]).parent().parent().next().find("input[type=text].optiondefinition-labelattr-text2").val().replace(/(\s*)/g,
-				'').split(",");
+		var values = $(attrs[i]).parent().parent().next().find("input[type=text]:eq(1)").val().replace(/(\s*)/g, '').split(",");
 		obj[key] = values;
 	}
 	var selected = $(that.labelCodeSelect).val();
