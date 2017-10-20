@@ -354,15 +354,9 @@ gb.modal.ValidationDefinition = function(obj) {
 	this.attrForm = $("<tbody>");
 	this.nnullAttrForm = $("<tbody>");
 	this.labelAttrForm = $("<tbody>");
-	this.addBtn = $("<button>").text("Add Attribute").addClass("gb-button").addClass("gb-button-default").click(function() {
-		that.attr_addrow(this);
-	});
-	this.addAttrBtn = $("<button>").text("Add Attribute").addClass("gb-button").addClass("gb-button-default").click(function() {
-		that.nnullattr_addrow(this);
-	});
-	this.addLabelAttrBtn = $("<button>").text("Add Attribute").addClass("gb-button").addClass("gb-button-default").click(function() {
-		that.labelattr_addrow(this);
-	});
+	this.addBtn = $("<button>").text("Add Attribute").addClass("gb-button").addClass("gb-button-default");
+	this.addAttrBtn = $("<button>").text("Add Attribute").addClass("gb-button").addClass("gb-button-default");
+	this.addLabelAttrBtn = $("<button>").text("Add Attribute").addClass("gb-button").addClass("gb-button-default");
 	this.file = $("<input>").attr({
 		"type" : "file"
 	});
@@ -938,27 +932,30 @@ gb.modal.ValidationDefinition.prototype._printDetailedOption = function(mix) {
 		}
 		break;
 	case "attribute":
-		$(that.codeSelect).empty();
-		var codes = that.getLayerDefinition()[that.selectedLayerNow].code;
-		var geom = that.getLayerDefinition()[that.selectedLayerNow].geom.toUpperCase();
+		$(this.codeSelect).empty();
+		var codes = that.getLayerDefinition()[this.selectedLayerNow].code;
+		var geom = that.getLayerDefinition()[this.selectedLayerNow].geom.toUpperCase();
 		var sCode;
 		for (var i = 0; i < codes.length; i++) {
 			var opt = $("<option>").text(codes[i] + "_" + geom);
-			$(that.codeSelect).append(opt);
+			$(this.codeSelect).append(opt);
 			if (i === 0) {
 				$(opt).prop("selected", true);
 				sCode = codes[i] + "_" + geom;
 			}
 		}
-		that._updateAttribute(sCode, obj.multi);
+		this._updateAttribute(sCode, obj.multi);
 
-		var tb = $("<table>").append(that.attrForm);
+		var tb = $("<table>").append(this.attrForm);
 		$(tb).addClass("table");
 		$(tb).addClass("text-center");
 		if (obj.multi) {
-			$(that.dOption).append(that.codeSelect).append(tb).append(that.addBtn);
+			$(this.addBtn).click(function() {
+				that.attr_addrow(this);
+			});
+			$(this.dOption).append(this.codeSelect).append(tb).append(this.addBtn);
 		} else {
-			$(that.dOption).append(that.codeSelect).append(tb);
+			$(this.dOption).append(this.codeSelect).append(tb);
 		}
 
 		break;
@@ -982,6 +979,9 @@ gb.modal.ValidationDefinition.prototype._printDetailedOption = function(mix) {
 		$(tb).addClass("text-center");
 
 		if (obj.multi) {
+			$(this.addAttrBtn).click(function() {
+				that.nnullattr_addrow(this);
+			});
 			$(that.dOption).append(that.nnullCodeSelect).append(tb).append(that.addAttrBtn);
 		} else {
 			$(that.dOption).append(that.nnullCodeSelect).append(tb);
@@ -1102,6 +1102,9 @@ gb.modal.ValidationDefinition.prototype._printDetailedOption = function(mix) {
 		$(tb).addClass("table");
 		$(tb).addClass("text-center");
 		if (obj.multi) {
+			$(this.addLabelAttrBtn).click(function() {
+				that.labelattr_addrow(this);
+			});
 			$(that.dOption).append(that.labelCodeSelect).append(tb).append(that.addLabelAttrBtn);
 		} else {
 			$(that.dOption).append(that.labelCodeSelect).append(tb);
@@ -1118,81 +1121,14 @@ gb.modal.ValidationDefinition.prototype._printDetailedOption = function(mix) {
 				"margin-right" : "3px"
 			});
 			if (obj.multi) {
-				$(checkbox)
-						.on(
-								"change",
-								function() {
-									if ($(this).prop("checked")) {
-										if (!that.getOptDefCopy().hasOwnProperty(that.selectedLayerNow)) {
-											that.getOptDefCopy()[that.selectedLayerNow] = {};
-										}
-										if (!that.getOptDefCopy()[that.selectedLayerNow].hasOwnProperty(that.selectedValidationNow)) {
-											that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow] = {};
-										}
-										if (!that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]
-												.hasOwnProperty("relation")) {
-											that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]["relation"] = [];
-										}
-										if (that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]["relation"].indexOf($(
-												this).val()) === -1) {
-											that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]["relation"]
-													.push($(this).val());
-											that.updateRelation($(this).val(), "up");
-											console.log(that.emptyLayers);
-										}
-										that._toggleCheckbox(that.selectedValidationNow, true);
-									} else {
-										if (that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]["relation"].indexOf($(
-												this).val()) !== -1) {
-											that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]["relation"].splice(that
-													.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]["relation"]
-													.indexOf($(this).val()), 1);
-											that.updateRelation($(this).val(), "down");
-											console.log(that.emptyLayers);
-										}
-									}
-									var checks = $(this).parent().parent().parent().find("input:checked");
-									if (checks.length === 0) {
-										delete that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow];
-										that._toggleCheckbox(that.selectedValidationNow, false);
-									}
-								});
+				$(checkbox).on("change", function() {
+					that.optiondefinition_label_rel_multi(this);
+				});
 			} else {
-				$(checkbox).on(
-						"change",
-						function() {
-							console.log("radio");
-							if ($(this).prop("checked")) {
-								if (!that.getOptDefCopy().hasOwnProperty(that.selectedLayerNow)) {
-									that.getOptDefCopy()[that.selectedLayerNow] = {};
-								}
-								if (!that.getOptDefCopy()[that.selectedLayerNow].hasOwnProperty(that.selectedValidationNow)) {
-									that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow] = {};
-								}
-								if (!that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow].hasOwnProperty("relation")) {
-									that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]["relation"] = [];
-								}
-								if (that.radio !== undefined) {
-									if (that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]["relation"]
-											.indexOf(that.radio) !== -1) {
-										that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]["relation"].splice(that
-												.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]["relation"]
-												.indexOf(that.radio), 1);
-									}
-								}
-
-								that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]["relation"].push($(this).val());
-								that.updateRelation($(this).val(), "upradio");
-								that.radio = $(this).val();
-								console.log(that.emptyLayers);
-								that._toggleCheckbox(that.selectedValidationNow, true);
-							}
-							var checks = $(this).parent().parent().parent().find("input:checked");
-							if (checks.length === 0) {
-								delete that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow];
-								that._toggleCheckbox(that.selectedValidationNow, false);
-							}
-						});
+				$(checkbox).on("change", function() {
+					console.log("radio");
+					that.optiondefinition_label_rel_single(this);
+				});
 			}
 			// $(checkbox).addClass("optiondefinition-label-rel");
 			if (that.getOptDefCopy().hasOwnProperty(that.selectedLayerNow)) {
@@ -1266,6 +1202,9 @@ gb.modal.ValidationDefinition.prototype._printDetailedOption = function(mix) {
 			"type" : "number",
 			"placeholder" : "figure"
 		}).val(figure ? figure : "");
+		$(this.conFigure).on("input", function() {
+			that.conditionalfigure_figure(this);
+		});
 		// $(this.conFigure).addClass("optiondefinition-conditionalfigure-figure");
 		$(this.conFigure).addClass("gb-form");
 		var div3 = $("<div>").css({
@@ -1457,6 +1396,9 @@ gb.modal.ValidationDefinition.prototype._updateLabelAttribute = function(code, m
 			}).append(icon);
 			$(btn).addClass("gb-button");
 			$(btn).addClass("gb-button-default");
+			$(btn).on("click", function() {
+				that.labelattr_del(this);
+			});
 			// $(btn).addClass("optiondefinition-labelattr-del");
 			var td2 = $("<td>").append(btn);
 
@@ -1909,12 +1851,18 @@ gb.modal.ValidationDefinition.prototype.labelattr_del = function(jqobj) {
 
 gb.modal.ValidationDefinition.prototype.attr_text = function(jqobj) {
 	var that = this;
-	var attrs = $(that.attrForm).find("input[type=text]:eq(0)");
+	// var attrs = $(that.attrForm).find("input[type=text]:eq(0)");
+	var tr = $(that.attrForm).find("tr");
 	var obj = {};
-	for (var i = 0; i < attrs.length; i++) {
-		var key = $(attrs[i]).val();
-		var values = $(attrs[i]).parent().parent().next().find("input[type=text]:eq(1)").val().replace(/(\s*)/g, '').split(",");
-		obj[key] = values;
+	for (var i = 0; i < tr.length; i = i + 2) {
+		var key = $(tr[i]).find("input[type=text]").val();
+		var values = $(tr[i + 1]).find("input[type=text]").val().replace(/(\s*)/g, '').split(",");
+		if (values.length === 1 && values[0] === "") {
+			values = undefined;
+		}
+		if (key !== "" && values !== undefined) {
+			obj[key] = values;
+		}
 	}
 	var selected = $(that.codeSelect).val();
 	if (!that.getOptDefCopy().hasOwnProperty(that.selectedLayerNow)) {
@@ -1983,12 +1931,19 @@ gb.modal.ValidationDefinition.prototype.nnullattr_text = function(jqobj) {
 
 gb.modal.ValidationDefinition.prototype.labelattr_text = function(jqobj) {
 	var that = this;
-	var attrs = $(that.labelAttrForm).find("input[type=text]:eq(0)");
+	var tr = $(that.labelAttrForm).find("tr");
 	var obj = {};
-	for (var i = 0; i < attrs.length; i++) {
-		var key = $(attrs[i]).val();
-		var values = $(attrs[i]).parent().parent().next().find("input[type=text]:eq(1)").val().replace(/(\s*)/g, '').split(",");
-		obj[key] = values;
+	for (var i = 0; i < tr.length; i = i + 2) {
+		var key = $(tr[i]).find("input[type=text]").val();
+		var values = $(tr[i + 1]).find("input[type=text]").val().replace(/(\s*)/g, '').split(",");
+		if (values.length === 1 && values[0] === "") {
+			values = undefined;
+		}
+		var checkbox = $("input[name=optiondefinition-label-rel]:checked");
+
+		if (key !== "" && values !== undefined && checkbox.length > 0) {
+			obj[key] = values;
+		}
 	}
 	var selected = $(that.labelCodeSelect).val();
 	if (!that.getOptDefCopy().hasOwnProperty(that.selectedLayerNow)) {
@@ -2132,5 +2087,70 @@ gb.modal.ValidationDefinition.prototype.conditionalfigure_figure = function(jqob
 			}
 			that._toggleCheckbox(that.selectedValidationNow, !!count);
 		}
+	}
+};
+
+gb.modal.ValidationDefinition.prototype.optiondefinition_label_rel_multi = function(jqobj) {
+	var that = this;
+	if ($(jqobj).prop("checked")) {
+		if (!that.getOptDefCopy().hasOwnProperty(that.selectedLayerNow)) {
+			that.getOptDefCopy()[that.selectedLayerNow] = {};
+		}
+		if (!that.getOptDefCopy()[that.selectedLayerNow].hasOwnProperty(that.selectedValidationNow)) {
+			that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow] = {};
+		}
+		if (!that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow].hasOwnProperty("relation")) {
+			that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]["relation"] = [];
+		}
+		if (that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]["relation"].indexOf($(jqobj).val()) === -1) {
+			that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]["relation"].push($(jqobj).val());
+			that.updateRelation($(jqobj).val(), "up");
+			console.log(that.emptyLayers);
+		}
+		that._toggleCheckbox(that.selectedValidationNow, true);
+	} else {
+		if (that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]["relation"].indexOf($(jqobj).val()) !== -1) {
+			that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]["relation"].splice(
+					that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]["relation"].indexOf($(jqobj).val()), 1);
+			that.updateRelation($(jqobj).val(), "down");
+			console.log(that.emptyLayers);
+		}
+	}
+	var checks = $(jqobj).parent().parent().parent().find("input:checked");
+	if (checks.length === 0) {
+		delete that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow];
+		that._toggleCheckbox(that.selectedValidationNow, false);
+	}
+};
+
+gb.modal.ValidationDefinition.prototype.optiondefinition_label_rel_single = function(jqobj) {
+	var that = this;
+	if ($(jqobj).prop("checked")) {
+		if (!that.getOptDefCopy().hasOwnProperty(that.selectedLayerNow)) {
+			that.getOptDefCopy()[that.selectedLayerNow] = {};
+		}
+		if (!that.getOptDefCopy()[that.selectedLayerNow].hasOwnProperty(that.selectedValidationNow)) {
+			that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow] = {};
+		}
+		if (!that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow].hasOwnProperty("relation")) {
+			that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]["relation"] = [];
+		}
+		if (that.radio !== undefined) {
+			if (that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]["relation"].indexOf(that.radio) !== -1) {
+				that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]["relation"].splice(
+						that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]["relation"].indexOf(that.radio), 1);
+			}
+		}
+
+		that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]["relation"].push($(jqobj).val());
+		that.updateRelation($(jqobj).val(), "upradio");
+		that.radio = $(jqobj).val();
+		console.log(that.emptyLayers);
+		that._toggleCheckbox(that.selectedValidationNow, true);
+	}
+	var checks = $(jqobj).parent().parent().parent().find("input:checked");
+	if (checks.length === 0) {
+		delete that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow];
+		that._toggleCheckbox(that.selectedValidationNow, false);
 	}
 };
