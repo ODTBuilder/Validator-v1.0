@@ -339,18 +339,9 @@ gb.modal.ValidationDefinition = function(obj) {
 		"margin-bottom" : 0,
 		"float" : "left"
 	});
-	this.codeSelect = $("<select>").addClass("gb-form").change(function() {
-		var isMulti = that.optItem[that.selectedValidationNow].multi;
-		that._updateAttribute($(this).val(), isMulti);
-	});
-	this.nnullCodeSelect = $("<select>").addClass("gb-form").change(function() {
-		var isMulti = that.optItem[that.selectedValidationNow].multi;
-		that._updateNotNullAttribute($(this).val(), isMulti);
-	});
-	this.labelCodeSelect = $("<select>").addClass("gb-form").change(function() {
-		var isMulti = that.optItem[that.selectedValidationNow].multi;
-		that._updateLabelAttribute($(this).val(), isMulti);
-	});
+	this.codeSelect = $("<select>").addClass("gb-form");
+	this.nnullCodeSelect = $("<select>").addClass("gb-form");
+	this.labelCodeSelect = $("<select>").addClass("gb-form");
 	this.attrForm = $("<tbody>");
 	this.nnullAttrForm = $("<tbody>");
 	this.labelAttrForm = $("<tbody>");
@@ -944,6 +935,10 @@ gb.modal.ValidationDefinition.prototype._printDetailedOption = function(mix) {
 				sCode = codes[i] + "_" + geom;
 			}
 		}
+		$(this.codeSelect).change(function() {
+			var isMulti = that.optItem[that.selectedValidationNow].multi;
+			that._updateAttribute($(this).val(), isMulti);
+		});
 		this._updateAttribute(sCode, obj.multi);
 
 		var tb = $("<table>").append(this.attrForm);
@@ -972,6 +967,10 @@ gb.modal.ValidationDefinition.prototype._printDetailedOption = function(mix) {
 				sCode = codes[i] + "_" + geom;
 			}
 		}
+		$(that.nnullCodeSelect).change(function() {
+			var isMulti = that.optItem[that.selectedValidationNow].multi;
+			that._updateNotNullAttribute($(this).val(), isMulti);
+		});
 		that._updateNotNullAttribute(sCode, obj.multi);
 
 		var tb = $("<table>").append(that.nnullAttrForm);
@@ -1096,11 +1095,15 @@ gb.modal.ValidationDefinition.prototype._printDetailedOption = function(mix) {
 				sCode = codes[i] + "_" + geom;
 			}
 		}
+		$(that.labelCodeSelect).change(function() {
+			var isMulti = that.optItem[that.selectedValidationNow].multi;
+			that._updateLabelAttribute($(this).val(), isMulti);
+		});
 		that._updateLabelAttribute(sCode, obj.multi);
 
 		var tb = $("<table>").append(that.labelAttrForm);
-		$(tb).addClass("table");
-		$(tb).addClass("text-center");
+		// $(tb).addClass("table");
+		// $(tb).addClass("text-center");
 		if (obj.multi) {
 			$(this.addLabelAttrBtn).click(function() {
 				that.labelattr_addrow(this);
@@ -1122,12 +1125,42 @@ gb.modal.ValidationDefinition.prototype._printDetailedOption = function(mix) {
 			});
 			if (obj.multi) {
 				$(checkbox).on("change", function() {
-					that.optiondefinition_label_rel_multi(this);
+					var flag = false;
+					var tr = $(that.labelAttrForm).find("tr");
+					for (var i = 0; i < tr.length; i = i + 2) {
+						var key = $(tr[i]).find("input[type=text]").val();
+						var value = $(tr[i + 1]).find("input[type=text]").val().replace(/(\s*)/g, '');
+						var values;
+						if (value === "") {
+							values = undefined;
+						} else {
+							values = value.split(",");
+							flag = true;
+						}
+					}
+					if (flag) {
+						that.optiondefinition_label_rel_multi(this);
+					}
 				});
 			} else {
 				$(checkbox).on("change", function() {
 					console.log("radio");
-					that.optiondefinition_label_rel_single(this);
+					var flag = false;
+					var tr = $(that.labelAttrForm).find("tr");
+					for (var i = 0; i < tr.length; i = i + 2) {
+						var key = $(tr[i]).find("input[type=text]").val();
+						var value = $(tr[i + 1]).find("input[type=text]").val().replace(/(\s*)/g, '');
+						var values;
+						if (value === "") {
+							values = undefined;
+						} else {
+							values = value.split(",");
+							flag = true;
+						}
+					}
+					if (flag) {
+						that.optiondefinition_label_rel_single(this);
+					}
 				});
 			}
 			// $(checkbox).addClass("optiondefinition-label-rel");
@@ -1942,7 +1975,15 @@ gb.modal.ValidationDefinition.prototype.labelattr_text = function(jqobj) {
 		var checkbox = $("input[name=optiondefinition-label-rel]:checked");
 
 		if (key !== "" && values !== undefined && checkbox.length > 0) {
-			obj[key] = values;
+			if (checkbox.length === 1) {
+				that.optiondefinition_label_rel_single(checkbox[0]);
+				obj[key] = values;
+			} else if (checkbox.length > 1) {
+				for (var i = 0; i < checkbox.length; i++) {
+					that.optiondefinition_label_rel_multi(checkbox[i]);
+				}
+				obj[key] = values;
+			}
 		}
 	}
 	var selected = $(that.labelCodeSelect).val();
