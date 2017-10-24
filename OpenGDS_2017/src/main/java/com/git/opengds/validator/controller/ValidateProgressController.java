@@ -1,9 +1,9 @@
 package com.git.opengds.validator.controller;
 
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
 import org.json.simple.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,7 +19,7 @@ import com.git.opengds.validator.service.ValidatorProgressService;
 @RequestMapping("/validateProgress")
 public class ValidateProgressController extends AbstractController {
 
-	@Autowired
+	@Inject
 	private ValidatorProgressService progressService;
 
 	@SuppressWarnings("unchecked")

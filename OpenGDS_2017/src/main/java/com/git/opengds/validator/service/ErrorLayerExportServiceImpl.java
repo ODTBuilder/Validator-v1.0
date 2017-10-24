@@ -51,6 +51,11 @@ public class ErrorLayerExportServiceImpl implements ErrorLayerExportService {
 
 	@Inject
 	private DXFLayerCollectionDAO qa10LayerCollectionDAO;
+	
+	
+	public static String ngiFormat = ".ngi";
+	public static String ndaFormat = ".nda";
+	public static String dxfFormat = ".dxf";
 
 	/*
 	 * public ErrorLayerExportServiceImpl(UserVO userVO) { // TODO
@@ -146,10 +151,13 @@ public class ErrorLayerExportServiceImpl implements ErrorLayerExportService {
 				String fileName = (String) fileMap.get("fileName");
 				// ngi
 				String ngiFileDir = (String) fileMap.get("NgifileDir");
-				layerFileOutputStream(fileName, ngiFileDir, response);
+				layerFileOutputStream(fileName, ngiFileDir, response, ngiFormat);
 				// nda
 				String ndaFileDir = (String) fileMap.get("NdafileDir");
-				layerFileOutputStream(fileName, ndaFileDir, response);
+				layerFileOutputStream(fileName, ndaFileDir, response, ndaFormat);
+				
+				System.out.println("");
+				
 			} else if (format.equals("dxf")) {
 
 				DTDXFLayer errQ120Layer = DXFLayerExportParser.parseQA10ErrorLayer(name, errAllFeatures);
@@ -369,7 +377,7 @@ public class ErrorLayerExportServiceImpl implements ErrorLayerExportService {
 				fileMap = qa10Writer.writeDxfFile(qa10LayerCollection, errQ120Layer);
 				String fileName = (String) fileMap.get("fileName");
 				String dxfDir = (String) fileMap.get("fileDxfDir");
-				layerFileOutputStream(fileName, dxfDir, response);
+				layerFileOutputStream(fileName, dxfDir, response, dxfFormat);
 			}
 		} catch (Exception e) {
 			return false;
@@ -377,12 +385,12 @@ public class ErrorLayerExportServiceImpl implements ErrorLayerExportService {
 		return true;
 	}
 
-	private boolean layerFileOutputStream(String fileName, String fileDir, HttpServletResponse response) {
+	private boolean layerFileOutputStream(String fileName, String fileDir, HttpServletResponse response, String format) {
 
 		try {
 			// fileOutput
 			response.setContentType("application/octet-stream");
-			response.setHeader("Content-Disposition", "attachment;filename=" + fileName);
+			response.setHeader("Content-Disposition", "attachment;filename=" + fileName + format);
 
 			File file = new File(fileDir);
 			FileInputStream fileIn = new FileInputStream(file);

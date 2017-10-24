@@ -19,8 +19,6 @@ package com.git.gdsbuilder.type.validate.option;
 
 import java.util.HashMap;
 
-import org.json.simple.JSONObject;
-
 /**
  * Z_ValueAmbiguous 정보를 담고 있는 클래스
  * @author DY.Oh

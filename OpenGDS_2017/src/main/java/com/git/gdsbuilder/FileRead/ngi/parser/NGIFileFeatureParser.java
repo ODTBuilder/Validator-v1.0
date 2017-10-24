@@ -127,11 +127,6 @@ public class NGIFileFeatureParser {
 	 */
 	public DTNGIFeature parserDTFeature(String featureID) throws IOException {
 
-		if(featureID.equals("RECORD 10354")) {
-			System.out.println("");
-		}
-		
-		
 		DTNGIFeature feature = null;
 
 		String id = StringReplace(featureID);
@@ -420,7 +415,7 @@ public class NGIFileFeatureParser {
 							replacedStr += strOne;
 						}
 					}
-					tmpLine = tmpLine.replaceAll(replacedStr, "");
+					tmpLine = tmpLine.replaceFirst(replacedStr, "");
 				} else {
 					properties.put(field_name, null);
 				}

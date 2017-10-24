@@ -118,9 +118,10 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 		ValidateProgressDBQueryManager validateQueryManager = new ValidateProgressDBQueryManager();
 
 		HashMap<String, Object> selectValidateProgressIdx = validateQueryManager.getSelectDXFValidateProgressIdx(cIdx);
-		List<HashMap<String, Object>> pIdxs = progressDAO.selectDXFValidateProgressPid(userVO, selectValidateProgressIdx);
+		List<HashMap<String, Object>> pIdxs = progressDAO.selectDXFValidateProgressPid(userVO,
+				selectValidateProgressIdx);
 
-		if (pIdxs != null) {
+		if (pIdxs != null || pIdxs.size() == 0) {
 			HashMap<String, Object> deleteValidateProgressQuery = queryManager.getDeleteDXFProgressQuery(cIdx);
 			progressDAO.deleteDXFProgress(deleteValidateProgressQuery);
 		}
@@ -137,7 +138,7 @@ public class EditDBManagerServiceImpl implements EditDBManagerService {
 		List<HashMap<String, Object>> pIdx = progressDAO.selectNGIValidateProgressPid(userVO,
 				selectValidateProgressIdx);
 
-		if (pIdx != null) {
+		if (pIdx != null || pIdx.size() == 0) {
 			HashMap<String, Object> deleteValidateProgressQuery = queryManager.getDeleteNGIProgressQuery(cIdx);
 			progressDAO.deleteNGIProgress(deleteValidateProgressQuery);
 		}

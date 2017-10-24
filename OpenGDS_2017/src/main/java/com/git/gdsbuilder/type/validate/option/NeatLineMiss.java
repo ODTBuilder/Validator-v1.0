@@ -4,7 +4,7 @@ public class NeatLineMiss extends ValidatorOption {
 
 	public enum Type {
 
-		NEATLINEMISS("NeatLineAttribute", "GeometricError");
+		NEATLINEMISS("NeatLineMiss", "GeometricError");
 
 		String errName;
 		String errType;

@@ -40,15 +40,20 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.map.HashedMap;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureIterator;
 import org.geotools.feature.SchemaException;
+import org.geotools.geometry.jts.JTS;
+import org.geotools.referencing.CRS;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
+import org.opengis.referencing.crs.CRSAuthorityFactory;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 
 import com.git.gdsbuilder.type.validate.error.ErrorFeature;
@@ -57,7 +62,6 @@ import com.git.gdsbuilder.type.validate.option.BuildingOpen;
 import com.git.gdsbuilder.type.validate.option.BuildingSiteDanger;
 import com.git.gdsbuilder.type.validate.option.CemeterySite;
 import com.git.gdsbuilder.type.validate.option.CenterLineMiss;
-import com.git.gdsbuilder.type.validate.option.ConBreak;
 import com.git.gdsbuilder.type.validate.option.ConIntersected;
 import com.git.gdsbuilder.type.validate.option.ConOverDegree;
 import com.git.gdsbuilder.type.validate.option.CrossRoad;
@@ -97,31 +101,77 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 	@Override
 	public List<ErrorFeature> validateConBreak(SimpleFeature simpleFeature, SimpleFeatureCollection aop,
 			double tolerence) throws SchemaException {
+		
+		Property featuerIDPro = simpleFeature.getProperty("osm_id");
+		String featureID = (String) featuerIDPro.getValue();
 
-		List<ErrorFeature> errFeatures = new ArrayList<ErrorFeature>();
-
-		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
-		Coordinate[] coordinates = geometry.getCoordinates();
-		Coordinate start = coordinates[0];
-		Coordinate end = coordinates[coordinates.length - 1];
-		if (!start.equals2D(end)) {
-			String featureIdx = simpleFeature.getID();
-			Property featuerIDPro = simpleFeature.getProperty("feature_id");
-			String featureID = (String) featuerIDPro.getValue();
-
-			GeometryFactory factroy = new GeometryFactory();
-			ErrorFeature errFeatureSt = new ErrorFeature(featureIdx, featureID, ConBreak.Type.CONBREAK.errType(),
-					ConBreak.Type.CONBREAK.errName(), factroy.createPoint(start));
-			errFeatures.add(errFeatureSt);
-			ErrorFeature errFeatureEd = new ErrorFeature(featureIdx, featureID, ConBreak.Type.CONBREAK.errType(),
-					ConBreak.Type.CONBREAK.errName(), factroy.createPoint(end));
-			errFeatures.add(errFeatureEd);
-		}
-		if (errFeatures.size() != 0) {
-			return errFeatures;
-		} else {
+		Map<String, Object> returnMap = new HashedMap();
+		CRSAuthorityFactory factory = CRS.getAuthorityFactory(true);
+		try {
+			CoordinateReferenceSystem crs = factory.createCoordinateReferenceSystem("EPSG:4326");
+			Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
+			Coordinate[] coordinates = geometry.getCoordinates();
+			int size = coordinates.length;
+			int totalSize = 0;
+			int falseSize = 0;
+			for (int i = 0; i < size - 1; i++) {
+				totalSize++;
+				Coordinate start = coordinates[i];
+				Coordinate end = coordinates[i + 1];
+				double distance = JTS.orthodromicDistance(start, end, crs);
+				if (distance > 1000) {
+					System.out.println(featureID);
+					falseSize++;
+				}
+			}
+			returnMap.put("totalSize", totalSize);
+			returnMap.put("trueSize", falseSize);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 			return null;
 		}
+		return null;
+
+//		List<ErrorFeature> errFeatures = new ArrayList<>();
+//
+//		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
+//		Coordinate[] coordinates = geometry.getCoordinates();
+//		Coordinate start = coordinates[0];
+//		Coordinate end = coordinates[coordinates.length - 1];
+//		GeometryFactory geometryFactory = new GeometryFactory();
+//
+//		if (!start.equals2D(end)) {
+//			SimpleFeatureIterator iterator = aop.features();
+//			while (iterator.hasNext()) {
+//				SimpleFeature aopSimpleFeature = iterator.next();
+//				Geometry aopGeom = (Geometry) aopSimpleFeature.getDefaultGeometry();
+//				if (geometry.intersection(aopGeom) != null) {
+//					Coordinate[] temp = new Coordinate[] { start, end };
+//					int tempSize = temp.length;
+//					for (int i = 0; i < tempSize; i++) {
+//						Geometry returnGeom = geometryFactory.createPoint(temp[i]);
+//						if (Math.abs(returnGeom.distance(aopGeom)) > tolerence || returnGeom.crosses(aopGeom)) {
+//							String featureIdx = simpleFeature.getID();
+//
+//							ErrorFeature errFeatureSt = new ErrorFeature(featureIdx, featureIdx,
+//									ConBreak.Type.CONBREAK.errType(), ConBreak.Type.CONBREAK.errName(),
+//									geometryFactory.createPoint(start));
+//							errFeatures.add(errFeatureSt);
+//							ErrorFeature errFeatureEd = new ErrorFeature(featureIdx, featureIdx,
+//									ConBreak.Type.CONBREAK.errType(), ConBreak.Type.CONBREAK.errName(),
+//									geometryFactory.createPoint(end));
+//							errFeatures.add(errFeatureEd);
+//						}
+//					}
+//				}
+//			}
+//		}
+//		if (errFeatures.size() != 0) {
+//			return errFeatures;
+//		} else {
+//			return null;
+//		}
 	}
 
 	@Override
@@ -827,25 +877,53 @@ public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
 	public List<ErrorFeature> validateBuildingOpen(SimpleFeature simpleFeature, SimpleFeatureCollection aop,
 			double tolerence) throws SchemaException {
 
+		List<ErrorFeature> errFeatures = new ArrayList<>();
+
+		GeometryFactory geometryFactory = new GeometryFactory();
 		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
 		Coordinate[] coordinates = geometry.getCoordinates();
 		int coorSize = coordinates.length;
 		Coordinate start = coordinates[0];
 		Coordinate end = coordinates[coorSize - 1];
-		if (!(start.equals2D(end))) {
-			String featureIdx = simpleFeature.getID();
-			Property featuerIDPro = simpleFeature.getProperty("feature_id");
-			String featureID = (String) featuerIDPro.getValue();
-			List<ErrorFeature> featureList = new ArrayList<ErrorFeature>();
+		Geometry startGeom = geometryFactory.createPoint(start);
+		Geometry endGeom = geometryFactory.createPoint(end);
+
+		String featureIdx = simpleFeature.getID();
+		Property featuerIDPro = simpleFeature.getProperty("feature_id");
+		String featureID = (String) featuerIDPro.getValue();
+
+		boolean isError = false;
+		if (coorSize > 3) {
+			if (!(start.equals2D(end))) {
+				SimpleFeatureIterator iterator = aop.features();
+				while (iterator.hasNext()) {
+					SimpleFeature aopSimpleFeature = iterator.next();
+					Geometry aopGeom = (Geometry) aopSimpleFeature.getDefaultGeometry();
+					if (Math.abs(aopGeom.distance(startGeom)) > tolerence
+							|| Math.abs(aopGeom.distance(endGeom)) > tolerence) {
+						isError = true;
+					}
+				}
+			}
+		} else {
+			SimpleFeatureIterator iterator = aop.features();
+			while (iterator.hasNext()) {
+				SimpleFeature aopSimpleFeature = iterator.next();
+				Geometry aopGeom = (Geometry) aopSimpleFeature.getDefaultGeometry();
+				if (Math.abs(aopGeom.distance(startGeom)) > tolerence
+						|| Math.abs(aopGeom.distance(endGeom)) > tolerence) {
+					isError = true;
+				}
+			}
+		}
+		if (isError = true) {
 			ErrorFeature errorFeatureSt = new ErrorFeature(featureIdx, featureID,
-					BuildingOpen.Type.BUILDINGOPEN.errType(), BuildingOpen.Type.BUILDINGOPEN.errName(),
-					geometry.getInteriorPoint());
-			featureList.add(errorFeatureSt);
-			ErrorFeature errorFeatureEd = new ErrorFeature(featureIdx, featureID,
-					BuildingOpen.Type.BUILDINGOPEN.errType(), BuildingOpen.Type.BUILDINGOPEN.errName(),
-					geometry.getInteriorPoint());
-			featureList.add(errorFeatureEd);
-			return featureList;
+					BuildingOpen.Type.BUILDINGOPEN.errType(), BuildingOpen.Type.BUILDINGOPEN.errName(), startGeom);
+			ErrorFeature errorFeatureEn = new ErrorFeature(featureIdx, featureID,
+					BuildingOpen.Type.BUILDINGOPEN.errType(), BuildingOpen.Type.BUILDINGOPEN.errName(), endGeom);
+			errFeatures.add(errorFeatureSt);
+			errFeatures.add(errorFeatureEn);
+			return errFeatures;
 		} else {
 			return null;
 		}

@@ -53,17 +53,9 @@ public class NGIDBManagerServiceImpl implements NGIDBManagerService {
 	 */
 	public GeoLayerInfo insertNGILayerCollection(UserVO userVO, DTNGILayerCollection dtCollection,
 			GeoLayerInfo layerInfo) throws RuntimeException {
-		/*
-		 * DefaultTransactionDefinition def = new
-		 * DefaultTransactionDefinition();
-		 * def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED
-		 * ); TransactionStatus status = txManager.getTransaction(def);
-		 */
 
 		try {
 			NGIDBQueryManager dbManager = new NGIDBQueryManager();
-			// EditLayerDBQueryManager queryManager = new
-			// EditLayerDBQueryManager();
 
 			String collectionName = dtCollection.getFileName();
 			String type = layerInfo.getFileType();
@@ -78,11 +70,6 @@ public class NGIDBManagerServiceImpl implements NGIDBManagerService {
 			for (int i = 0; i < createLayerList.size(); i++) {
 				DTNGILayer ngiLayer = createLayerList.get(i);
 				String layerName = ngiLayer.getLayerName();
-		
-				if(layerName.equals("H0040000_TEXT")) {
-					System.out.println("");
-				}
-				
 				// isFeature
 				if (ngiLayer.getFeatures().size() == 0) {
 					isFeaturesMap.put(layerName, false);

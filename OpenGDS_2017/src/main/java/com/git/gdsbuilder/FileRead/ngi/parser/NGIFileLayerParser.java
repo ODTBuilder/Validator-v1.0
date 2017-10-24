@@ -119,6 +119,11 @@ public class NGIFileLayerParser {
 					NGIFileFeatureParser featureParser = new NGIFileFeatureParser(ngiReader, ndaReader);
 					DTNGIFeature feature = featureParser.parserDTFeature(featureID);
 					String ndaFeatureID = ndaLine;
+
+					if (ndaFeatureID.equals("$RECORD 19508")) {
+						System.out.println("");
+					}
+
 					if (featureID.equals(ndaFeatureID)) {
 						feature.setProperties(featureParser.getFeatureAttrib(ndaHeader, true));
 					} else {
