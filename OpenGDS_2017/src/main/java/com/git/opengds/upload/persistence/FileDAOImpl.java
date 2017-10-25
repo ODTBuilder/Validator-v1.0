@@ -25,20 +25,16 @@ import com.git.opengds.user.domain.UserVO;
 
 /**
  * 파일에 대한 DB처리를 하는 클래스
+ * 
  * @author SG.Lee
  * @Date 2017. 5. 12. 오전 2:24:03
- * */
+ */
 @Repository
 public class FileDAOImpl extends DataSourceFactory implements FileDAO {
 	private SqlSession sqlSession;
 
 	private static final String namespace = "com.git.mappers.fileMappers.FileMapper";
 
-/*	public FileDAOImpl(UserVO user) {
-		// TODO Auto-generated constructor stub
-		sqlSession = super.getSqlSession(user.getId());
-	}*/
-	
 	/**
 	 * @since 2017. 4
 	 * @author SG.Lee
@@ -47,63 +43,19 @@ public class FileDAOImpl extends DataSourceFactory implements FileDAO {
 	 * @see com.git.opengds.upload.persistence.FileDAO#selectDuplicateCheck(java.lang.String)
 	 */
 	@Override
-	public boolean selectNGIDuplicateCheck(UserVO userVO, String fileName){
+	public boolean selectSHPDuplicateCheck(UserVO userVO, String fileName) {
 		sqlSession = super.getSqlSession(userVO.getId());
 		int duplicateNums = 0;
-		try{
-			duplicateNums = sqlSession.selectOne(namespace + ".selectNGIDuplicateCheck", fileName);
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-		}
-		boolean dupFlag = true;
-		
-		if(duplicateNums>0){
-			dupFlag = true;
-		}
-		else{
-			dupFlag = false;
-		}
-		return dupFlag;
-	}
-	
-	@Override
-	public boolean selectDXFDuplicateCheck(UserVO userVO, String fileName){
-		sqlSession = super.getSqlSession(userVO.getId());
-		int duplicateNums = 0;
-		try{
-			duplicateNums = sqlSession.selectOne(namespace + ".selectDXFDuplicateCheck", fileName);
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-		}
-		boolean dupFlag = true;
-		
-		if(duplicateNums>0){
-			dupFlag = true;
-		}
-		else{
-			dupFlag = false;
-		}
-		return dupFlag;
-	}
-	
-	@Override
-	public boolean selectSHPDuplicateCheck(UserVO userVO, String fileName){
-		sqlSession = super.getSqlSession(userVO.getId());
-		int duplicateNums = 0;
-		try{
+		try {
 			duplicateNums = sqlSession.selectOne(namespace + ".selectSHPDuplicateCheck", fileName);
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		boolean dupFlag = true;
-		
-		if(duplicateNums>0){
+
+		if (duplicateNums > 0) {
 			dupFlag = true;
-		}
-		else{
+		} else {
 			dupFlag = false;
 		}
 		return dupFlag;

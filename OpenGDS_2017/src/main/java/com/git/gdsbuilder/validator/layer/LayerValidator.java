@@ -44,8 +44,6 @@ import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.operation.TransformException;
 
 import com.git.gdsbuilder.type.geoserver.layer.GeoLayer;
-import com.git.gdsbuilder.type.geoserver.layer.GeoLayerList;
-import com.git.gdsbuilder.type.validate.collection.close.ValidateCloseCollectionLayer;
 import com.git.gdsbuilder.type.validate.error.ErrorLayer;
 
 /**
@@ -101,13 +99,6 @@ public interface LayerValidator {
 	public ErrorLayer validateOverShoot(GeoLayer neatLayer, double tolerence) throws SchemaException;
 
 	/**
-	 * 검수 항목 중 두 레이어의 “기준점 미달 (UnderShoot)” 검수 @author DY.Oh @Date 2017. 4. 18.
-	 * 오후 3:51:00 @param neatLayer @param tolerence @return @throws
-	 * SchemaException @throws
-	 */
-	public ErrorLayer validateUnderShoot(GeoLayer neatLayer, double tolerence) throws SchemaException;
-
-	/**
 	 * 검수 항목 중 두 레이어의 “단독 존재 오류 (Self Entity)” 검수를 수행 @author DY.Oh @Date 2017.
 	 * 4. 18. 오후 3:51:01 @param relationLayers @return @throws
 	 * SchemaException @throws
@@ -139,64 +130,6 @@ public interface LayerValidator {
 	public ErrorLayer validateEntityDuplicated() throws SchemaException;
 
 	/**
-	 * 검수 항목 중 "불확실한사용요소오류(UselessEntity)" 검수를 수행 @author JY.Kim @Date 2017. 6.
-	 * 26. 오후 4:19:17 @return @throws SchemaException ErrorLayer @throws
-	 */
-	public ErrorLayer validateUselessEntity() throws SchemaException;
-
-	/**
-	 * 검수 항목 중 "건물페합오류(BuildingOpen)" 검수를 수행 @author JY.Kim @Date 2017. 6. 26.
-	 * 오후 4:20:17 @return @throws SchemaException ErrorLayer @throws
-	 */
-	public ErrorLayer validateBuildingOpen(GeoLayer neatLayer, double tolerence) throws SchemaException;
-
-	/**
-	 * 검수항목 중 "수부코드폐합오류(WaterOpen)" 검수를 수행 @author JY.Kim @Date 2017. 6. 26. 오후
-	 * 4:20:42 @return @throws SchemaException ErrorLayer @throws
-	 */
-	public ErrorLayer validateWaterOpen(GeoLayer neatLayer, double tolerence) throws SchemaException;
-
-	/**
-	 * 검수항목 중 "계층오류(LayerMiss)" 검수를 수행 @author JY.Kim @Date 2017. 6. 26. 오후
-	 * 4:21:17 @param typeNames @return @throws SchemaException
-	 * ErrorLayer @throws
-	 */
-	public ErrorLayer validateLayerMiss(List<String> typeNames) throws SchemaException;
-
-	/**
-	 * 검수항목 중 "건물기호위치오류(B_SymbolOutSided)" 검수를 수행 @author JY.Kim @Date 2017. 6.
-	 * 26. 오후 4:21:53 @param relationLayers @return @throws SchemaException
-	 * ErrorLayer @throws
-	 */
-	public ErrorLayer vallidateB_SymbolOutSided(List<GeoLayer> relationLayers) throws SchemaException;
-
-	/**
-	 * 검수항목 중 "교차로오류(CrossRoad)" 검수를 수행 @author JY.Kim @Date 2017. 6. 26. 오후
-	 * 4:22:33 @param relationLayers @return @throws SchemaException
-	 * ErrorLayer @throws
-	 */
-	public ErrorLayer validateCrossRoad(List<GeoLayer> relationLayers, String geomColumn, double tolerence)
-			throws SchemaException;
-
-	/**
-	 * 검수항목 중 "교량명오류(BridgeName)" 검수를 수행 @author JY.Kim @Date 2017. 6. 26. 오후
-	 * 4:23:03 @param relationLayers @return @throws SchemaException
-	 * ErrorLayer @throws
-	 */
-	public ErrorLayer validateBridgeName(List<GeoLayer> relationLayers) throws SchemaException;
-
-	/**
-	 * 검수항목 중 "행정경계오류(Admin)" 검수를 수행
-	 * 
-	 * @author JY.Kim
-	 * @Date 2017. 8. 18. 오전 10:20:46
-	 * @return ErrorLayer
-	 * @throws SchemaException
-	 *             ErrorLayer
-	 */
-	public ErrorLayer validateAdmin() throws SchemaException;
-
-	/**
 	 * 검수항목 중 "꼬인객체오류(TwistedPolygon)" 검수를 수행 @author JY.Kim @Date 2017. 8. 18.
 	 * 오전 10:21:23 @return ErrorLayer @throws SchemaException ErrorLayer @throws
 	 */
@@ -222,91 +155,5 @@ public interface LayerValidator {
 	 * 오전 10:23:26 @return ErrorLayer @throws
 	 */
 	public ErrorLayer validatePointDuplicated();
-
-	public ErrorLayer validateOneAcre(GeoLayerList typeLayers, double spatialAccuracyTolorence);
-
-	public ErrorLayer validateOneStage(GeoLayerList typeLayers, double spatialAccuracyTolorence);
-
-	/**
-	 * 검수항목 중 "일반주택주기값오류(HouseAttribute)" 검수를 수행 @author JY.Kim @Date 2017. 8.
-	 * 18. 오전 10:23:50 @return ErrorLayer @throws
-	 */
-	public ErrorLayer valildateHouseAttribute();
-
-	/**
-	 * 검수항목 중 "UFID길이오류(UFIDLength)" 검수를 수행 @author JY.Kim @Date 2017. 8. 18. 오전
-	 * 10:24:38 @param length @return ErrorLayer @throws
-	 */
-	public ErrorLayer validateUFIDLength(double length);
-
-	/**
-	 * 검수항목 중 "묘지계 오류(CemeterySite)" 검수를 수행 @author JY.Kim @Date 2017. 8. 18. 오전
-	 * 10:24:58 @param relationLayers @return ErrorLayer @throws
-	 */
-	public ErrorLayer validateCemeterySite(List<GeoLayer> relationLayers);
-
-	/**
-	 * 검수항목 중 "건물 부지 오류(BuildingSite)" 검수를 수행 @author JY.Kim @Date 2017. 8. 18.
-	 * 오전 10:25:18 @param attributeJson @param relationLayers @return
-	 * ErrorLayer @throws
-	 */
-//	public ErrorLayer validateBuildingSite(JSONObject attributeJson, List<GeoLayer> relationLayers);
-
-	/**
-	 * 검수항목 중 "도엽속성 오류(NeatLineAttribute)" 검수를 수행 @author JY.Kim @Date 2017. 8.
-	 * 18. 오전 10:25:36 @return ErrorLayer @throws
-	 */
-	public ErrorLayer validateNeatLineAttribute();
-
-	/**
-	 * 검수항목 중 "수치값 오류(NumericalValue)" 검수를 수행 @author JY.Kim @Date 2017. 8. 18.
-	 * 오전 10:25:58 @param attribute @param condition @param figure @return
-	 * ErrorLayer @throws
-	 */
-	public ErrorLayer validateNumericalValue(String attribute, String condition, double figure);
-
-	/**
-	 * 검수항목 중 "하천경계 오류(RiverBoundaryMiss)" 검수를 수행 @author JY.Kim @Date 2017. 8.
-	 * 18. 오전 10:26:16 @param relationLayers @return ErrorLayer @throws
-	 */
-	public ErrorLayer validateRiverBoundaryMiss(List<GeoLayer> relationLayers);
-
-	/**
-	 * 검수항목 중 "UFID규칙 오류(UFIDRule)" 검수를 수행 @author JY.Kim @Date 2017. 8. 18. 오전
-	 * 10:26:36 @return ErrorLayer @throws
-	 */
-	public ErrorLayer validateUFIDRule();
-
-	/**
-	 * 검수항목 중 "중심선 누락 오류(CenterLineMiss)" 검수를 수행 @author JY.Kim @Date 2017. 8.
-	 * 18. 오전 10:26:59 @param relationLayers @return ErrorLayer @throws
-	 */
-	public ErrorLayer validateCenterLineMiss(List<GeoLayer> relationLayers, double lineInvadedTolorence);
-
-	/**
-	 * 검수항목 중 "홀 존재 오류(HoleMisplacement)" 검수를 수행 @author JY.Kim @Date 2017. 8.
-	 * 18. 오후 5:14:25 @return ErrorLayer @throws
-	 */
-	public ErrorLayer validateHoleMisplacement();
-
-	/**
-	 * 검수항목 중 "선형 단락 오류(LinearDisconnection)" 검수를 수행 @author JY.Kim @author
-	 * JY.Kim @Date 2017. 8. 24. 오후 5:30:09 @param relationLayers @return
-	 * ErrorLayer @throws
-	 * @throws SchemaException 
-	 */
-	public ErrorLayer valildateLinearDisconnection(List<GeoLayer> relationLayers) throws SchemaException;
-
-	public ErrorLayer validateEntityInHole(List<GeoLayer> relationLayers);
-
-	public ErrorLayer validateCloseCollection(ValidateCloseCollectionLayer closeCollectionLayer, String geomColunm);
-
-	public ErrorLayer validateMultiPart();
-	
-	public ErrorLayer validateUFIDDuplicated();
-
-	public ErrorLayer validateBuildingSiteDager(JSONObject attrJson, List<GeoLayer> relationName);
-
-	public ErrorLayer validateBuildingSiteRelaxation(JSONObject attrJson, List<GeoLayer> relationName);
 
 }

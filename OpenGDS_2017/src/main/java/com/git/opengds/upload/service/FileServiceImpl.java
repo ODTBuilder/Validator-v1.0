@@ -33,8 +33,6 @@ import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
-import com.git.opengds.file.dxf.service.DXFFileUploadService;
-import com.git.opengds.file.ngi.service.NGIFileUploadService;
 import com.git.opengds.file.shp.service.SHPFileUploadService;
 import com.git.opengds.upload.domain.FileMeta;
 import com.git.opengds.upload.persistence.FileDAO;
@@ -45,12 +43,6 @@ import com.git.opengds.user.domain.UserVO;
 public class FileServiceImpl implements FileService {
 
 	private static final String dirPath = "D:\\files";
-
-	@Autowired
-	private NGIFileUploadService ngiFileService;
-
-	@Autowired
-	private DXFFileUploadService dxfFileService;
 
 	@Autowired
 	private SHPFileUploadService shpFileService;
@@ -78,15 +70,11 @@ public class FileServiceImpl implements FileService {
 
 		// 사용자별 디렉토리 생성
 		if (!targetDir.exists()) {
-			File ngiDir = new File(fullDirPath + "\\ngi");
 			File shpDir = new File(fullDirPath + "\\shp");
-			File dxfDir = new File(fullDirPath + "\\dxf");
 			File otherDir = new File(fullDirPath + "\\other");
 
 			targetDir.mkdirs();
-			ngiDir.mkdirs();
 			shpDir.mkdirs();
-			dxfDir.mkdirs();
 			otherDir.mkdirs();
 		}
 
@@ -121,12 +109,8 @@ public class FileServiceImpl implements FileService {
 
 				String saveFilePath = "";
 
-				if (ext.endsWith("dxf") || ext.endsWith("ngi") || ext.endsWith("nda") || ext.endsWith("zip")) {
-					if (ext.endsWith("ngi") || ext.endsWith("nda")) {
-						saveFilePath = fullDirPath + "\\ngi\\" + mpf.getOriginalFilename();
-					} else if (ext.endsWith("dxf")) {
-						saveFilePath = fullDirPath + "\\dxf\\" + mpf.getOriginalFilename();
-					} else if (ext.endsWith("zip")) {
+				if (ext.endsWith("zip")) {
+					if (ext.endsWith("zip")) {
 						saveFilePath = fullDirPath + "\\shp\\" + mpf.getOriginalFilename();
 					}
 				} else
@@ -157,14 +141,10 @@ public class FileServiceImpl implements FileService {
 			int pos = fileMeta.getFilePath().lastIndexOf(".");
 			String ext = fileMeta.getFilePath().substring(pos + 1).toLowerCase();
 
-			if (ext.endsWith("ngi") || ext.endsWith("zip") || ext.endsWith("dxf")) {
+			if (ext.endsWith("zip")) {
 				FileMeta refileMeta = null;
 				try {
-					if (ext.equals("dxf")) {
-						refileMeta = dxfFileService.dxfUpload(userVO, fileMeta);
-					} else if (ext.equals("ngi")) {
-						refileMeta = ngiFileService.ngiUpload(userVO, fileMeta);
-					} else if (ext.equals("zip")) {
+					if (ext.equals("zip")) {
 						fileMeta.setFileType("shp");
 						refileMeta = shpFileService.shpUpload(userVO, fileMeta);
 					}
@@ -189,13 +169,8 @@ public class FileServiceImpl implements FileService {
 			String fileName = fileFullName.substring(0, Idx);
 			String fileType = fileFullName.substring(Idx + 1);
 
-			if (fileType.endsWith("dxf") || fileType.endsWith("ngi") || fileType.endsWith("nda")
-					|| fileType.endsWith("zip")) {
-				if (fileType.endsWith("ngi") || fileType.endsWith("nda")) {
-					dupFlag = fileDAO.selectNGIDuplicateCheck(userVO, fileName);
-				} else if (fileType.endsWith("dxf")) {
-					dupFlag = fileDAO.selectDXFDuplicateCheck(userVO, fileName);
-				} else if (fileType.endsWith("zip")) {
+			if (fileType.endsWith("zip")) {
+				if (fileType.endsWith("zip")) {
 					dupFlag = fileDAO.selectSHPDuplicateCheck(userVO, fileName);
 				}
 			}

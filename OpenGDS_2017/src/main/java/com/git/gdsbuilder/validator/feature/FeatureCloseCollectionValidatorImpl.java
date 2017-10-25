@@ -12,8 +12,6 @@ import com.git.gdsbuilder.type.validate.error.ErrorFeature;
 import com.git.gdsbuilder.type.validate.option.EdgeMatchMiss;
 import com.git.gdsbuilder.type.validate.option.EntityNone;
 import com.git.gdsbuilder.type.validate.option.RefAttributeMiss;
-import com.git.gdsbuilder.type.validate.option.RefZValueMiss;
-import com.git.gdsbuilder.type.validate.option.UnderShoot;
 import com.git.gdsbuilder.validator.collection.opt.ValCollectionOption;
 import com.git.gdsbuilder.validator.collection.opt.ValCollectionOption.ValCollectionOptionType;
 import com.vividsolutions.jts.geom.Coordinate;
@@ -137,57 +135,6 @@ public class FeatureCloseCollectionValidatorImpl implements FeatureCloseCollecti
 				}
 			}
 		}
-		if (underShoot) {
-			double underShootTolerance = (Double) closeValidateOptions.get(ValCollectionOptionType.UNDERSHOOT);
-			Coordinate[] nearLineCoors = nearLine.getCoordinates();
-			Coordinate nearLineCoor = nearLineCoors[0];
-
-			// target객체 좌표 LIST 생성하기
-			List<Coordinate> targetList = new ArrayList<Coordinate>();
-
-			for (int i = 0; i < tarCoors.length; i++) {
-				Coordinate targetCoor = tarCoors[i];
-				targetList.add(targetCoor);
-			}
-
-			// target객체와 인접해있는 객체가 있는지 확인하기
-			boolean isErrorFeature = false;
-			for (SimpleFeature relationSimpleFeature : relationSimpleFeatures) {
-				Geometry relationGeometry = (Geometry) relationSimpleFeature.getDefaultGeometry();
-				if (Math.abs(targetGeometry.distance(relationGeometry)) <= underShootTolerance) {
-					if (simpleFeature.getAttributeCount() != 0 && relationSimpleFeature.getAttributeCount() != 0) {
-						List attrIList = simpleFeature.getAttributes();
-						List attrJList = relationSimpleFeature.getAttributes();
-						int equalsCount = 0;
-						for (int i = 1; i < attrIList.size(); i++) {
-							Object attrI = attrIList.get(i);
-							breakOut: for (int j = 1; j < attrJList.size(); j++) {
-								Object attrJ = attrJList.get(j);
-								if (attrI != null && attrJ != null) {
-									if (attrI.toString().equals(attrJ.toString())) {
-										equalsCount++;
-										break breakOut;
-									}
-								} else if (attrI == null) {
-									if (attrJ == null) {
-										equalsCount++;
-										break breakOut;
-									}
-								}
-							}
-						}
-						if (equalsCount == attrIList.size() - 1) {
-							isErrorFeature = true;
-						}
-					}
-				}
-			}
-			if (!isErrorFeature) {
-				ErrorFeature errFeature = new ErrorFeature(featureIdx, featureID, UnderShoot.Type.UNDERSHOOT.errType(),
-						UnderShoot.Type.UNDERSHOOT.errName(), targetGeometry.getInteriorPoint());
-				collectionErrors.add(errFeature);
-			}
-		}
 		if (reSimpleFeatures.size() > 0) {
 			if (refAttributeMiss) {
 				JSONArray attributesColumns = (JSONArray) closeValidateOptions
@@ -235,55 +182,6 @@ public class FeatureCloseCollectionValidatorImpl implements FeatureCloseCollecti
 					ErrorFeature errFeature = new ErrorFeature(featureIdx, featureID,
 							RefAttributeMiss.Type.RefAttributeMiss.errType(),
 							RefAttributeMiss.Type.RefAttributeMiss.errName(), minDistPt);
-					collectionErrors.add(errFeature);
-				}
-			}
-			if (refZvalueMiss) {
-				JSONArray attributesColumns = (JSONArray) closeValidateOptions
-						.get(ValCollectionOptionType.REFZVALUEMISS);
-				boolean isMiss = false;
-				outerFor: for (int i = 0; i < reSimpleFeatures.size(); i++) {
-					SimpleFeature reSimpleFeature = reSimpleFeatures.get(i);
-					for (int j = 0; j < attributesColumns.size(); j++) {
-						String attriKey = (String) attributesColumns.get(j);
-						Property relationProperty = reSimpleFeature.getProperty(attriKey);
-						Property targetProperty = simpleFeature.getProperty(attriKey);
-						if (targetProperty == null || relationProperty == null) {
-							isMiss = true;
-							break outerFor;
-						} else {
-							Object rePropertyValue = relationProperty.getValue();
-							Object tarPropertyValue = targetProperty.getValue();
-							if (rePropertyValue == null || tarPropertyValue == null) {
-								isMiss = true;
-								break outerFor;
-							} else {
-								String reValueStr = rePropertyValue.toString();
-								String tarValueStr = tarPropertyValue.toString();
-								if (!reValueStr.equals(tarValueStr)) {
-									isMiss = true;
-									break outerFor;
-								}
-							}
-						}
-					}
-					if (!isMiss) {
-						break outerFor;
-					}
-				}
-				if (isMiss) {
-					Point minDistPt = null;
-					for (int i = 0; i < tarCoors.length; i++) {
-						Point tmpPt = geometryFactory.createPoint(tarCoors[i]);
-						double tarDist = nearLine.distance(tmpPt);
-						if (tarDist >= 0 && tarDist <= tolerence) {
-							minDistPt = tmpPt;
-							break;
-						}
-					}
-					ErrorFeature errFeature = new ErrorFeature(featureIdx, featureID,
-							RefZValueMiss.Type.REFZVALUEMISS.errType(), RefZValueMiss.Type.REFZVALUEMISS.errName(),
-							minDistPt);
 					collectionErrors.add(errFeature);
 				}
 			}

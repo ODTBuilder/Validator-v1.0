@@ -17,29 +17,10 @@
 
 package com.git.opengds.parser.edit.layer;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.geotools.data.DataUtilities;
-import org.geotools.feature.DefaultFeatureCollection;
 import org.geotools.feature.SchemaException;
-import org.geotools.feature.simple.SimpleFeatureBuilder;
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.feature.simple.SimpleFeatureType;
 
-import com.git.gdsbuilder.edit.dxf.EditDXFLayer;
-import com.git.gdsbuilder.edit.ngi.EditNGILayer;
 import com.git.gdsbuilder.edit.shp.EditSHPLayer;
-import com.git.gdsbuilder.type.ngi.header.NDAField;
-import com.git.gdsbuilder.type.ngi.header.NDAHeader;
-import com.git.gdsbuilder.type.ngi.header.NGIHeader;
-import com.git.gdsbuilder.type.shp.feature.DTSHPFeatureList;
 import com.vividsolutions.jts.io.ParseException;
 
 /**
@@ -56,8 +37,6 @@ public class EditDTLayerParser {
 
 	JSONObject layerObj;
 	String originLayerType;
-	EditNGILayer editNGILayer;
-	EditDXFLayer editDXFLayer;
 	EditSHPLayer editSHPLayer;
 
 	public static String getCreate() {
@@ -100,22 +79,6 @@ public class EditDTLayerParser {
 		this.originLayerType = type;
 	}
 
-	public EditNGILayer getEditNGILayer() {
-		return editNGILayer;
-	}
-
-	public void setEditNGILayer(EditNGILayer editQA20Layer) {
-		this.editNGILayer = editQA20Layer;
-	}
-
-	public EditDXFLayer getEditDXFLayer() {
-		return editDXFLayer;
-	}
-
-	public void setEditDXFLayer(EditDXFLayer editQA10Layer) {
-		this.editDXFLayer = editQA10Layer;
-	}
-
 	public EditSHPLayer getEditSHPLayer() {
 		return editSHPLayer;
 	}
@@ -137,221 +100,13 @@ public class EditDTLayerParser {
 	public EditDTLayerParser(String type, JSONObject layerObj, String state) throws ParseException, SchemaException {
 		this.originLayerType = type;
 		this.layerObj = layerObj;
-		if (type.equals("ngi")) {
-			if (state.equals(create)) {
-				ngiCreatedLayerParse();
-			} else if (state.equals(modify)) {
-				ngiModifiedLayerParse();
-			}
-		} else if (type.equals("dxf")) {
-			if (state.equals(create)) {
-				dxfCreatedLayerParse();
-			} else if (state.equals(modify)) {
-				dxfModifiedLayerParse();
-			}
-		} else if (type.equals("shp")) {
+		if (type.equals("shp")) {
 			if (state.equals(create)) {
 				shpCreatedLayerParse();
 			} else if (state.equals(modify)) {
 				shpModifiedLayerParse();
 			}
 		}
-	}
-
-	public void modifiedGeoserverLayerParse(String type) {
-
-		JSONObject geoLayerObj = (JSONObject) layerObj.get("geoserver");
-		// geoLayerObj.get("lbound");
-		// geoLayerObj.get("style");
-		String orignalName = (String) layerObj.get("originLayerName");
-		String name = (String) layerObj.get("currentLayerName");
-		String title = (String) geoLayerObj.get("title");
-		String abstractContent = (String) geoLayerObj.get("summary");
-
-		Map<String, Object> geoLayer = new HashMap<String, Object>();
-		geoLayer.put("orignalName", orignalName);
-		geoLayer.put("name", name);
-		geoLayer.put("title", title);
-		geoLayer.put("summary", abstractContent);
-		geoLayer.put("attChangeFlag", true);
-
-		if (type.equals("ngi")) {
-			this.editNGILayer.setGeoServerLayer(geoLayer);
-		} else if (type.equals("dxf")) {
-			this.editDXFLayer.setGeoServerLayer(geoLayer);
-		}
-	}
-
-	public void ngiModifiedLayerParse() {
-
-		editNGILayer = new EditNGILayer();
-		// name
-		String orignName = (String) layerObj.get("originLayerName");
-		String currentName = (String) layerObj.get("currentLayerName");
-		editNGILayer.setOrignName(orignName);
-		editNGILayer.setLayerName(currentName);
-
-		// attr
-		JSONArray updateAttrArray = (JSONArray) layerObj.get("updateAttr");
-
-		// ndaHeader
-		List<NDAField> updateAttr = parseAttrNGILayer(currentName, updateAttrArray);
-		NDAHeader ndaHeader = new NDAHeader("1", updateAttr);
-		editNGILayer.setNdaHeader(ndaHeader);
-
-		// // bound
-		// JSONArray boundArry = (JSONArray) layerObj.get("bound");
-		// JSONArray minArry = (JSONArray) boundArry.get(0);
-		// double minX = (Double) minArry.get(0);
-		// double minY = (Double) minArry.get(1);
-		//
-
-		// JSONArray maxArry = (JSONArray) boundArry.get(1);
-		// double maxX = (Double) maxArry.get(0);
-		// double maxY = (Double) maxArry.get(1);
-		// String boundStr = "BOUND(" + minX + ", " + minY + ", " + maxX + ", "
-		// + maxY + ")";
-		//
-		// NGIHeader ngiHeader = new NGIHeader();
-		// ngiHeader.setBound(boundStr);
-		//
-		// // represent
-		// String represent = (String) layerObj.get("represent");
-		//
-		// // ngiHeader
-		// editQA20Layer.setNgiHeader(ngiHeader);
-		modifiedGeoserverLayerParse("ngi");
-		editNGILayer.setModified(true);
-	}
-
-	private List<NDAField> parseAttrNGILayer(String layerName, JSONArray attrArry) {
-
-		List<NDAField> fieldList = new ArrayList<NDAField>();
-		for (int i = 0; i < attrArry.size(); i++) {
-			JSONObject attrObj = (JSONObject) attrArry.get(i);
-			String originFieldName = (String) attrObj.get("originFieldName");
-			String fieldName = (String) attrObj.get("fieldName");
-			String type = (String) attrObj.get("type");
-			String decimalStr = "";
-			if (type.equals("Double")) {
-				Object decimalObj = attrObj.get("decimal");
-				if (decimalObj != null) {
-					long decimal = (long) decimalObj;
-					decimalStr = String.valueOf(decimal);
-				}
-			}
-			long size = (long) attrObj.get("size");
-			String sizeStr = String.valueOf(size);
-			boolean isUnique = (boolean) attrObj.get("isUnique");
-			boolean isNotNull = (boolean) attrObj.get("nullable");
-			NDAField fied = new NDAField(originFieldName, fieldName, type, sizeStr, decimalStr, isUnique, isNotNull);
-			fieldList.add(fied);
-		}
-		return fieldList;
-	}
-
-	public void ngiCreatedLayerParse() throws ParseException {
-
-		editNGILayer = new EditNGILayer();
-
-		String layerName = (String) layerObj.get("layerName");
-		String layerType = (String) layerObj.get("layerType");
-		String upLayerType = layerType.toUpperCase();
-		editNGILayer.setLayerType(upLayerType);
-		editNGILayer.setLayerName(layerName + "_" + upLayerType);
-		editNGILayer.setOrignName(layerName + "_" + upLayerType);
-
-		NGIHeader ngiHeader = new NGIHeader();
-		String mask = "MASK(" + layerType + ")";
-		ngiHeader.setGeometric_metadata(mask);
-
-		String version = layerObj.get("version").toString();
-		ngiHeader.setVersion(version);
-
-		String dim = layerObj.get("dim").toString();
-		ngiHeader.setDim("DIM(" + dim + ")");
-
-		JSONArray boundArr = (JSONArray) layerObj.get("bound");
-		JSONArray minXY = (JSONArray) boundArr.get(0);
-		JSONArray maxXY = (JSONArray) boundArr.get(1);
-		String bound = "BOUND(" + minXY.get(0).toString() + ", " + minXY.get(1).toString() + ", "
-				+ maxXY.get(0).toString() + ", " + maxXY.get(1).toString() + ")";
-		ngiHeader.setBound(bound);
-		String test = "1 REGIONATTR(SOLID, 1, 14606014, SOLID100, 14606014, 14606014)";
-		ngiHeader.addRegion_represent(test);
-
-		NDAHeader ndaHeader = new NDAHeader();
-		ndaHeader.setVersion(version);
-		List<NDAField> fieldList = new ArrayList<NDAField>();
-		JSONArray attrArray = (JSONArray) layerObj.get("attr");
-		for (int i = 0; i < attrArray.size(); i++) {
-			JSONObject attrObj = (JSONObject) attrArray.get(i);
-			String fieldName = (String) attrObj.get("fieldName");
-			String type = (String) attrObj.get("type");
-			String decimalStr = "";
-			if (type.equals("Double")) {
-				long decimal = (long) attrObj.get("decimal");
-				decimalStr = String.valueOf(decimal);
-			}
-			long size = (long) attrObj.get("size");
-			String sizeStr = String.valueOf(size);
-			sizeStr = "0";
-			boolean isUnique = (boolean) attrObj.get("isUnique");
-			// boolean isNotNull = (boolean) attrObj.get("nullable");
-			boolean isNotNull = true;
-			NDAField fied = new NDAField(fieldName, type, sizeStr, decimalStr, isUnique, isNotNull);
-			fieldList.add(fied);
-		}
-		ndaHeader.setAspatial_field_def(fieldList);
-
-		editNGILayer.setNgiHeader(ngiHeader);
-		editNGILayer.setNdaHeader(ndaHeader);
-	}
-
-	public void dxfModifiedLayerParse() {
-
-		editDXFLayer = new EditDXFLayer();
-
-		String originLayerName = (String) layerObj.get("originLayerName");
-		String currentLayerName = (String) layerObj.get("currentLayerName");
-		editDXFLayer.setLayerName(currentLayerName);
-		editDXFLayer.setOrignName(originLayerName);
-
-		modifiedGeoserverLayerParse("dxf");
-	}
-
-	public void dxfCreatedLayerParse() {
-
-		editDXFLayer = new EditDXFLayer();
-
-		String originLayerType = (String) layerObj.get("layerType");
-		editDXFLayer.setOriginLayerType(originLayerType.toUpperCase());
-
-		String layerType = "";
-		if (originLayerType.equals("LineString")) {
-			layerType = "LineString";
-		} else if (originLayerType.equals("Polyline")) {
-			layerType = "LineString";
-		} else if (originLayerType.equals("LWPolyline")) {
-			layerType = "LineString";
-		} else if (originLayerType.equals("Insert")) {
-			layerType = "Point";
-		} else if (originLayerType.equals("Text")) {
-			layerType = "Point";
-		} else if (originLayerType.equals("Solid")) {
-			layerType = "Polygon";
-		} else if (originLayerType.equals("Circle")) {
-			layerType = "Polygon";
-		} else if (originLayerType.equals("Arc")) {
-			layerType = "LineString";
-		} else if (originLayerType.equals("Point")) {
-			layerType = "Point";
-		}
-		String upLayerType = layerType.toUpperCase();
-		String layerName = (String) layerObj.get("layerName");
-		editDXFLayer.setLayerName(layerName + "_" + upLayerType);
-		editDXFLayer.setOrignName(layerName + "_" + upLayerType);
-		editDXFLayer.setLayerType(upLayerType);
 	}
 
 	public void shpModifiedLayerParse() {
@@ -365,24 +120,27 @@ public class EditDTLayerParser {
 		String layerType = (String) layerObj.get("layerType");
 		String layerName = (String) layerObj.get("layerName");
 
-//		JSONArray attrArray = (JSONArray) layerObj.get("attr");
-//
-//		String temp = "";
-//		Object[] objects = new Object[attrArray.size() + 1];
-//		objects[0] = null;
-//		for (int i = 0; i < attrArray.size(); i++) {
-//			JSONObject attr = (JSONObject) attrArray.get(i);
-//			String fieldName = (String) attr.get("fieldName");
-//			boolean isNull = (boolean) attr.get("nullable");
-//			String type = (String) attr.get("type");
-//			temp += fieldName + ":" + type + ",";
-//			objects[i + 1] = "default";
-//		}
-//		String featureID = "temp";
-//		SimpleFeatureType simpleFeatureType = DataUtilities.createType(featureID,
-//				"the_geom:" + layerType + "," + temp.substring(0, temp.length() - 1));
-//		SimpleFeature simpleFeature = SimpleFeatureBuilder.build(simpleFeatureType, objects, featureID);
-//		
+		// JSONArray attrArray = (JSONArray) layerObj.get("attr");
+		//
+		// String temp = "";
+		// Object[] objects = new Object[attrArray.size() + 1];
+		// objects[0] = null;
+		// for (int i = 0; i < attrArray.size(); i++) {
+		// JSONObject attr = (JSONObject) attrArray.get(i);
+		// String fieldName = (String) attr.get("fieldName");
+		// boolean isNull = (boolean) attr.get("nullable");
+		// String type = (String) attr.get("type");
+		// temp += fieldName + ":" + type + ",";
+		// objects[i + 1] = "default";
+		// }
+		// String featureID = "temp";
+		// SimpleFeatureType simpleFeatureType =
+		// DataUtilities.createType(featureID,
+		// "the_geom:" + layerType + "," + temp.substring(0, temp.length() -
+		// 1));
+		// SimpleFeature simpleFeature =
+		// SimpleFeatureBuilder.build(simpleFeatureType, objects, featureID);
+		//
 		String upLayerType = layerType.toUpperCase();
 		editSHPLayer.setLayerName(layerName + "_" + upLayerType);
 		editSHPLayer.setOrignName(layerName + "_" + upLayerType);

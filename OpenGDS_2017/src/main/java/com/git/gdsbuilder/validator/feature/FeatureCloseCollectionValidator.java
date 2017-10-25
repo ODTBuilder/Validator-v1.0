@@ -17,10 +17,9 @@ public interface FeatureCloseCollectionValidator {
 	/**
 	 *
 	 * @author JY.Kim @Date 2017. 7. 13. 오전 10:50:43 @param targetFeature @param
-	 * topFeatureList @param closeValidateOptions @param topLineString @param
-	 * tolorence @return List<ErrorFeature> @throws
+	 *         topFeatureList @param closeValidateOptions @param
+	 *         topLineString @param tolorence @return List<ErrorFeature> @throws
 	 */
 	public List<ErrorFeature> ValidateCloseCollectionRelation(SimpleFeature nearFeature,
-			List<SimpleFeature> targetFeatureList, LineString nearLine,
-			double tolorence);
+			List<SimpleFeature> targetFeatureList, LineString nearLine, double tolorence);
 }

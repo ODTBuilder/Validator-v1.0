@@ -4,16 +4,6 @@
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.git.mappers.fileMappers.FileMapper">
 
-	<select id="selectNGIDuplicateCheck" resultType="int">
-		select count(file_name) from public.ngi_layercollection
-		where file_name = #{fileName};
-	</select>
-	
-	<select id="selectDXFDuplicateCheck" resultType="int">
-		select count(collection_name) from public.dxf_layercollection
-		where collection_name = #{fileName};
-	</select>
-	
 	<select id="selectSHPDuplicateCheck" resultType="int">
 		select count(c_name) from public.shp_layercollection
 		where c_name = #{fileName};

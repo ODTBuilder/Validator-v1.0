@@ -64,51 +64,23 @@ import com.git.gdsbuilder.type.validate.error.ErrorLayer;
 import com.git.gdsbuilder.type.validate.error.ErrorLayerList;
 import com.git.gdsbuilder.type.validate.layer.ValidateLayerType;
 import com.git.gdsbuilder.type.validate.layer.ValidateLayerTypeList;
-import com.git.gdsbuilder.type.validate.option.Admin;
 import com.git.gdsbuilder.type.validate.option.AttributeFix;
-import com.git.gdsbuilder.type.validate.option.B_SymbolOutSided;
-import com.git.gdsbuilder.type.validate.option.BridgeName;
-import com.git.gdsbuilder.type.validate.option.BuildingOpen;
-import com.git.gdsbuilder.type.validate.option.BuildingSiteDanger;
-import com.git.gdsbuilder.type.validate.option.BuildingSiteRelaxation;
-import com.git.gdsbuilder.type.validate.option.CemeterySite;
-import com.git.gdsbuilder.type.validate.option.CenterLineMiss;
 import com.git.gdsbuilder.type.validate.option.ConBreak;
 import com.git.gdsbuilder.type.validate.option.ConIntersected;
 import com.git.gdsbuilder.type.validate.option.ConOverDegree;
-import com.git.gdsbuilder.type.validate.option.CrossRoad;
 import com.git.gdsbuilder.type.validate.option.EdgeMatchMiss;
 import com.git.gdsbuilder.type.validate.option.EntityDuplicated;
-import com.git.gdsbuilder.type.validate.option.EntityInHole;
 import com.git.gdsbuilder.type.validate.option.EntityNone;
-import com.git.gdsbuilder.type.validate.option.HoleMisplacement;
-import com.git.gdsbuilder.type.validate.option.HouseAttribute;
-import com.git.gdsbuilder.type.validate.option.LayerMiss;
-import com.git.gdsbuilder.type.validate.option.LinearDisconnection;
-import com.git.gdsbuilder.type.validate.option.MultiPart;
-import com.git.gdsbuilder.type.validate.option.NeatLineAttribute;
 import com.git.gdsbuilder.type.validate.option.NodeMiss;
-import com.git.gdsbuilder.type.validate.option.NumericalValue;
-import com.git.gdsbuilder.type.validate.option.OneAcre;
-import com.git.gdsbuilder.type.validate.option.OneStage;
 import com.git.gdsbuilder.type.validate.option.OutBoundary;
 import com.git.gdsbuilder.type.validate.option.OverShoot;
 import com.git.gdsbuilder.type.validate.option.PointDuplicated;
 import com.git.gdsbuilder.type.validate.option.RefAttributeMiss;
-import com.git.gdsbuilder.type.validate.option.RefZValueMiss;
-import com.git.gdsbuilder.type.validate.option.RiverBoundaryMiss;
 import com.git.gdsbuilder.type.validate.option.SelfEntity;
 import com.git.gdsbuilder.type.validate.option.SmallArea;
 import com.git.gdsbuilder.type.validate.option.SmallLength;
-import com.git.gdsbuilder.type.validate.option.TwistedPolygon;
-import com.git.gdsbuilder.type.validate.option.UFIDDuplicated;
-import com.git.gdsbuilder.type.validate.option.UFIDLength;
-import com.git.gdsbuilder.type.validate.option.UFIDRule;
-import com.git.gdsbuilder.type.validate.option.UnderShoot;
-import com.git.gdsbuilder.type.validate.option.UselessEntity;
 import com.git.gdsbuilder.type.validate.option.UselessPoint;
 import com.git.gdsbuilder.type.validate.option.ValidatorOption;
-import com.git.gdsbuilder.type.validate.option.WaterOpen;
 import com.git.gdsbuilder.type.validate.option.ZValueAmbiguous;
 import com.git.gdsbuilder.validator.collection.opt.ValCollectionOption;
 import com.git.gdsbuilder.validator.collection.rule.MapSystemRule;
@@ -257,7 +229,7 @@ public class CollectionValidator {
 			errorLayer.setCollectionType(this.collectionType);
 
 			GeoLayer neatLineLayer = collection.getNeatLine();
-         
+
 			// neatLineMiss 검수
 			if (neatLineLayer == null) {
 				throw new Exception();
@@ -309,32 +281,6 @@ public class CollectionValidator {
 				LayerValidatorImpl layerValidator = new LayerValidatorImpl(typeLayer);
 				for (int k = 0; k < options.size(); k++) {
 					ValidatorOption option = options.get(k);
-					if (option instanceof BridgeName) {
-						List<String> relationNames = ((BridgeName) option).getRelationType();
-						for (int l = 0; l < relationNames.size(); l++) {
-							try {
-								typeErrorLayer = layerValidator
-										.validateBridgeName(types.getTypeLayers(relationNames.get(l), layerCollection));
-							} catch (SchemaException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
-							if (typeErrorLayer != null) {
-								attResult.mergeErrorLayer(typeErrorLayer);
-							}
-						}
-					}
-					if (option instanceof Admin) {
-						try {
-							typeErrorLayer = layerValidator.validateAdmin();
-						} catch (SchemaException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-						if (typeErrorLayer != null) {
-							attResult.mergeErrorLayer(typeErrorLayer);
-						}
-					}
 					if (option instanceof AttributeFix) {
 						HashMap<String, Object> attributeNames = ((AttributeFix) option).getRelationType();
 						String typeLayerName = typeLayer.getLayerName();
@@ -363,55 +309,9 @@ public class CollectionValidator {
 							attResult.mergeErrorLayer(typeErrorLayer);
 						}
 					}
-					if (option instanceof HouseAttribute) {
-						typeErrorLayer = layerValidator.valildateHouseAttribute();
-						if (typeErrorLayer != null) {
-							attResult.mergeErrorLayer(typeErrorLayer);
-						}
-					}
-					if (option instanceof UFIDLength) {
-						double length = ((UFIDLength) option).getLength();
-						typeErrorLayer = layerValidator.validateUFIDLength(length);
-						if (typeErrorLayer != null) {
-							attResult.mergeErrorLayer(typeErrorLayer);
-						}
-					}
-
-					if (option instanceof NeatLineAttribute) {
-						typeErrorLayer = layerValidator.validateNeatLineAttribute();
-						if (typeErrorLayer != null) {
-							attResult.mergeErrorLayer(typeErrorLayer);
-						}
-					}
-
-					if (option instanceof NumericalValue) {
-						String attribute = ((NumericalValue) option).getAttribute();
-						String condition = ((NumericalValue) option).getCondition();
-						double figure = ((NumericalValue) option).getFigure();
-						typeErrorLayer = layerValidator.validateNumericalValue(attribute, condition, figure);
-						if (typeErrorLayer != null) {
-							attResult.mergeErrorLayer(typeErrorLayer);
-						}
-					}
-
-					if (option instanceof UFIDRule) {
-						typeErrorLayer = layerValidator.validateUFIDRule();
-						if (typeErrorLayer != null) {
-							attResult.mergeErrorLayer(typeErrorLayer);
-						}
-					}
-
-					if (option instanceof UFIDDuplicated) {
-						typeErrorLayer = layerValidator.validateUFIDDuplicated();
-						if (typeErrorLayer != null) {
-							attResult.mergeErrorLayer(typeErrorLayer);
-						}
-					}
 				}
 			}
 		}
-		;
-
 		List<Future<AttResult>> futures = new ArrayList<Future<AttResult>>();
 		for (int j = 0; j < types.size(); j++) {
 			ValidateLayerType type = types.get(j);
@@ -470,9 +370,9 @@ public class CollectionValidator {
 				LayerValidatorImpl layerValidator = new LayerValidatorImpl(typeLayer);
 
 				String layerFullName = typeLayer.getLayerName();
-				
+
 				System.out.println(layerFullName);
-				
+
 				int dash = layerFullName.indexOf("_");
 				String layerType = layerFullName.substring(dash + 1);
 				String upperLayerType = layerType.toUpperCase();
@@ -480,46 +380,6 @@ public class CollectionValidator {
 
 				for (int k = 0; k < options.size(); k++) {
 					ValidatorOption option = options.get(k);
-					
-					System.out.println(option.getClass().getSimpleName());
-					
-					if (option instanceof TwistedPolygon) {
-						// twistedFeature
-						try {
-							typeErrorLayer = layerValidator.validateTwistedPolygon();
-						} catch (SchemaException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-						if (typeErrorLayer != null) {
-							geometricResult.mergeErrorLayer(typeErrorLayer);
-						}
-					}
-
-					if (option instanceof OneAcre) {
-						List<String> relationNames = ((OneAcre) option).getRelationType();
-						for (int r = 0; r < relationNames.size(); r++) {
-							typeErrorLayer = layerValidator.validateOneAcre(
-									types.getTypeLayers(relationNames.get(r), layerCollection),
-									spatialAccuracyTolorence);
-							if (typeErrorLayer != null) {
-								geometricResult.mergeErrorLayer(typeErrorLayer);
-							}
-						}
-					}
-
-					if (option instanceof OneStage) {
-						List<String> relationNames = ((OneStage) option).getRelationType();
-						for (int r = 0; r < relationNames.size(); r++) {
-							typeErrorLayer = layerValidator.validateOneStage(
-									types.getTypeLayers(relationNames.get(r), layerCollection),
-									spatialAccuracyTolorence);
-							if (typeErrorLayer != null) {
-								geometricResult.mergeErrorLayer(typeErrorLayer);
-							}
-						}
-					}
-
 					if (option instanceof ConBreak) {
 						try {
 							typeErrorLayer = layerValidator.validateConBreakLayers(neatLayer, spatialAccuracyTolorence);
@@ -664,70 +524,6 @@ public class CollectionValidator {
 					// errorLayer.mergeErrorLayer(typeErrorLayer);
 					// }
 					// }
-					if (option instanceof UselessEntity) {
-						try {
-							typeErrorLayer = layerValidator.validateUselessEntity();
-						} catch (SchemaException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-						if (typeErrorLayer != null) {
-							geometricResult.mergeErrorLayer(typeErrorLayer);
-						}
-					}
-					if (option instanceof BuildingOpen) {
-						try {
-							typeErrorLayer = layerValidator.validateBuildingOpen(neatLayer, spatialAccuracyTolorence);
-						} catch (SchemaException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-						if (typeErrorLayer != null) {
-							geometricResult.mergeErrorLayer(typeErrorLayer);
-						}
-					}
-					if (option instanceof WaterOpen) {
-						try {
-							typeErrorLayer = layerValidator.validateWaterOpen(neatLayer, spatialAccuracyTolorence);
-						} catch (SchemaException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-						if (typeErrorLayer != null) {
-							geometricResult.mergeErrorLayer(typeErrorLayer);
-						}
-					}
-					if (option instanceof B_SymbolOutSided) {
-						List<String> relationNames = ((B_SymbolOutSided) option).getRelationType();
-						for (int l = 0; l < relationNames.size(); l++) {
-							try {
-								typeErrorLayer = layerValidator.vallidateB_SymbolOutSided(
-										types.getTypeLayers(relationNames.get(l), layerCollection));
-							} catch (SchemaException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
-							if (typeErrorLayer != null) {
-								geometricResult.mergeErrorLayer(typeErrorLayer);
-							}
-						}
-					}
-					if (option instanceof CrossRoad) {
-						List<String> relationNames = ((CrossRoad) option).getRelationType();
-						for (int l = 0; l < relationNames.size(); l++) {
-							try {
-								typeErrorLayer = layerValidator.validateCrossRoad(
-										types.getTypeLayers(relationNames.get(l), layerCollection), "",
-										spatialAccuracyTolorence);
-							} catch (SchemaException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
-							if (typeErrorLayer != null) {
-								geometricResult.mergeErrorLayer(typeErrorLayer);
-							}
-						}
-					}
 					if (option instanceof NodeMiss) {
 						List<String> relationNames = ((NodeMiss) option).getRelationType();
 						for (int l = 0; l < relationNames.size(); l++) {
@@ -753,113 +549,9 @@ public class CollectionValidator {
 							geometricResult.mergeErrorLayer(typeErrorLayer);
 						}
 					}
-					if (option instanceof CemeterySite) {
-						List<String> relationNames = ((CemeterySite) option).getRelationType();
-						for (int j = 0; j < relationNames.size(); j++) {
-							typeErrorLayer = layerValidator
-									.validateCemeterySite(types.getTypeLayers(relationNames.get(j), layerCollection));
-							if (typeErrorLayer != null) {
-								geometricResult.mergeErrorLayer(typeErrorLayer);
-							}
-						}
-					}
-
-					if (option instanceof BuildingSiteDanger) {
-						HashMap<String, Object> attributeNames = ((BuildingSiteDanger) option).getAttributeKey();
-						List<String> relationNames = ((BuildingSiteDanger) option).getRelationType();
-						String typeLayerName = typeLayer.getLayerName();
-						JSONObject attrJson = (JSONObject) attributeNames.get(typeLayerName);
-
-						for (int j = 0; j < relationNames.size(); j++) {
-							List<GeoLayer> relationName = types.getTypeLayers(relationNames.get(j), layerCollection);
-							typeErrorLayer = layerValidator.validateBuildingSiteDager(attrJson, relationName);
-						}
-						if (typeErrorLayer != null) {
-							geometricResult.mergeErrorLayer(typeErrorLayer);
-						}
-					}
-
-					if (option instanceof BuildingSiteRelaxation) {
-						HashMap<String, Object> attributeNames = ((BuildingSiteRelaxation) option).getAttributeKey();
-						List<String> relationNames = ((BuildingSiteRelaxation) option).getRelationType();
-						String typeLayerName = typeLayer.getLayerName();
-						JSONObject attrJson = (JSONObject) attributeNames.get(typeLayerName);
-
-						for (int j = 0; j < relationNames.size(); j++) {
-							List<GeoLayer> relationName = types.getTypeLayers(relationNames.get(j), layerCollection);
-							typeErrorLayer = layerValidator.validateBuildingSiteRelaxation(attrJson, relationName);
-						}
-						if (typeErrorLayer != null) {
-							geometricResult.mergeErrorLayer(typeErrorLayer);
-						}
-					}
-
-					if (option instanceof RiverBoundaryMiss) {
-						List<String> relationNames = ((RiverBoundaryMiss) option).getRelationType();
-						for (int r = 0; r < relationNames.size(); r++) {
-							typeErrorLayer = layerValidator.validateRiverBoundaryMiss(
-									types.getTypeLayers(relationNames.get(r), layerCollection));
-							if (typeErrorLayer != null) {
-								geometricResult.mergeErrorLayer(typeErrorLayer);
-							}
-						}
-					}
-
-					if (option instanceof CenterLineMiss) {
-//						List<String> relationNames = ((CenterLineMiss) option).getRelationType();
-//						for (int j = 0; j < relationNames.size(); j++) {
-//							typeErrorLayer = layerValidator.validateCenterLineMiss(
-//									types.getTypeLayers(relationNames.get(j), layerCollection), lineInvadedTolorence);
-//							if (typeErrorLayer != null) {
-//								errorLayer.mergeErrorLayer(typeErrorLayer);
-//							}
-//						}
-					}
-
-					if (option instanceof HoleMisplacement) {
-						typeErrorLayer = layerValidator.validateHoleMisplacement();
-						if (typeErrorLayer != null) {
-							geometricResult.mergeErrorLayer(typeErrorLayer);
-						}
-					}
-
-					if (option instanceof EntityInHole) {
-						List<String> relationNames = ((EntityInHole) option).getRelationType();
-						for (int j = 0; j < relationNames.size(); j++) {
-							typeErrorLayer = layerValidator
-									.validateEntityInHole(types.getTypeLayers(relationNames.get(j), layerCollection));
-							if (typeErrorLayer != null) {
-								geometricResult.mergeErrorLayer(typeErrorLayer);
-							}
-						}
-					}
-
-					if (option instanceof LinearDisconnection) {
-//						List<String> relationNames = ((LinearDisconnection) option).getRelationType();
-//						for (int j = 0; j < relationNames.size(); j++) {
-//							try {
-//								typeErrorLayer = layerValidator.valildateLinearDisconnection(
-//										types.getTypeLayers(relationNames.get(j), layerCollection));
-//							} catch (SchemaException e) {
-//								// TODO Auto-generated catch block
-//								e.printStackTrace();
-//							}
-//							if (typeErrorLayer != null) {
-//								geometricResult.mergeErrorLayer(typeErrorLayer);
-//							}
-//						}
-					}
-
-					if (option instanceof MultiPart) {
-						typeErrorLayer = layerValidator.validateMultiPart();
-						if (typeErrorLayer != null) {
-							geometricResult.mergeErrorLayer(typeErrorLayer);
-						}
-					}
 				}
 			}
 		}
-		;
 
 		List<Future<GeometricResult>> futures = new ArrayList<Future<GeometricResult>>();
 		for (int i = 0; i < types.size(); i++) {
@@ -913,15 +605,6 @@ public class CollectionValidator {
 						GeoLayer typeLayer = typeLayers.get(l);
 						if (typeLayer == null) {
 							continue;
-						}
-						LayerValidatorImpl layerValidator = new LayerValidatorImpl(typeLayer);
-						if (option instanceof LayerMiss) {
-							List<String> typeNames = ((LayerMiss) option).getLayerType();
-							typeErrorLayer = layerValidator.validateLayerMiss(typeNames);
-							if (typeErrorLayer != null) {
-								errorLayer.mergeErrorLayer(typeErrorLayer);
-								collectionList.remove(typeLayer);
-							}
 						}
 					}
 				}
@@ -1116,17 +799,8 @@ public class CollectionValidator {
 										.getRefAttributeMaissOpt(layerName);
 								collectionOptions.putRefAttributeMissOption(colunms);
 							}
-							if (option instanceof RefZValueMiss) {
-								HashMap<String, List<String>> opts = ((RefZValueMiss) option).getRefZValueMissOpts();
-								List<String> colunms = opts.get(layerName);
-								collectionOptions.putRefZValueMissOption(colunms);
-							}
 							if (option instanceof EdgeMatchMiss) {
 								collectionOptions.putEdgeMatchMissOption(true);
-							}
-							if (option instanceof UnderShoot) {
-								double tolerence = ((UnderShoot) option).getTolerence();
-								collectionOptions.putUnderShootOption(tolerence);
 							}
 						}
 

@@ -41,10 +41,6 @@ import java.util.Iterator;
 import org.geotools.feature.SchemaException;
 import org.json.simple.JSONObject;
 
-import com.git.gdsbuilder.edit.dxf.EditDXFLayerCollection;
-import com.git.gdsbuilder.edit.dxf.EditDXFLayerCollectionList;
-import com.git.gdsbuilder.edit.ngi.EditNGILayerCollection;
-import com.git.gdsbuilder.edit.ngi.EditNGILayerCollectionList;
 import com.git.gdsbuilder.edit.shp.EditSHPLayerCollection;
 import com.git.gdsbuilder.edit.shp.EditSHPLayerCollectionList;
 import com.vividsolutions.jts.io.ParseException;
@@ -59,8 +55,6 @@ public class EditDTLayerCollectionListParser {
 
 	JSONObject collectionListObj;
 	String type;
-	EditNGILayerCollectionList edtNGICollectionList;
-	EditDXFLayerCollectionList edtDXFCollectionList;
 	EditSHPLayerCollectionList edtSHPCollectionList;
 
 	/**
@@ -77,11 +71,7 @@ public class EditDTLayerCollectionListParser {
 			throws FileNotFoundException, IOException, ParseException, SchemaException {
 		this.type = type;
 		this.collectionListObj = collectionListObj;
-		if (type.equals("ngi")) {
-			ngiLayerCollectionListParse();
-		} else if (type.equals("dxf")) {
-			dxfLayerCollectionListParse();
-		} else if (type.equals("shp")) {
+		if (type.equals("shp")) {
 			shpLayerCollectionListParse();
 		}
 	}
@@ -102,57 +92,12 @@ public class EditDTLayerCollectionListParser {
 		this.collectionListObj = collectionListObj;
 	}
 
-	public EditNGILayerCollectionList getEdtNGICollectionList() {
-		return edtNGICollectionList;
-	}
-
-	public void setEdtNGICollectionList(EditNGILayerCollectionList edtNGICollectionList) {
-		this.edtNGICollectionList = edtNGICollectionList;
-	}
-
-	public EditDXFLayerCollectionList getEdtDXFCollectionList() {
-		return edtDXFCollectionList;
-	}
-
-	public void setEdtDXFCollectionList(EditDXFLayerCollectionList edtDXFCollectionList) {
-		this.edtDXFCollectionList = edtDXFCollectionList;
-	}
-
 	public EditSHPLayerCollectionList getEdtSHPCollectionList() {
 		return edtSHPCollectionList;
 	}
 
 	public void setEdtSHPCollectionList(EditSHPLayerCollectionList edtSHPCollectionList) {
 		this.edtSHPCollectionList = edtSHPCollectionList;
-	}
-
-	public void ngiLayerCollectionListParse()
-			throws FileNotFoundException, IOException, ParseException, SchemaException {
-
-		edtNGICollectionList = new EditNGILayerCollectionList();
-		Iterator editCollections = collectionListObj.keySet().iterator();
-		while (editCollections.hasNext()) {
-			String collectionName = (String) editCollections.next();
-			JSONObject collectionObj = (JSONObject) collectionListObj.get(collectionName);
-			EditDTLayerCollectionParser collectionParser = new EditDTLayerCollectionParser(type, collectionObj);
-			EditNGILayerCollection dtCollection = collectionParser.getEditNGICollection();
-			dtCollection.setCollectionName(collectionName);
-			edtNGICollectionList.add(dtCollection);
-		}
-	}
-
-	public void dxfLayerCollectionListParse()
-			throws FileNotFoundException, IOException, ParseException, SchemaException {
-		edtDXFCollectionList = new EditDXFLayerCollectionList();
-		Iterator editCollections = collectionListObj.keySet().iterator();
-		while (editCollections.hasNext()) {
-			String collectionName = (String) editCollections.next();
-			JSONObject collectionObj = (JSONObject) collectionListObj.get(collectionName);
-			EditDTLayerCollectionParser collectionParser = new EditDTLayerCollectionParser(type, collectionObj);
-			EditDXFLayerCollection dtCollection = collectionParser.getEditDXFCollection();
-			dtCollection.setCollectionName(collectionName);
-			edtDXFCollectionList.add(dtCollection);
-		}
 	}
 
 	public void shpLayerCollectionListParse()

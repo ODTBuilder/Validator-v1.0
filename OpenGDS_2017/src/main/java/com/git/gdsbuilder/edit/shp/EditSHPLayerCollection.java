@@ -3,8 +3,6 @@ package com.git.gdsbuilder.edit.shp;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.git.gdsbuilder.type.dxf.layer.DTDXFLayer;
-import com.git.gdsbuilder.type.dxf.layer.DTDXFLayerList;
 import com.git.gdsbuilder.type.shp.layer.DTSHPLayer;
 import com.git.gdsbuilder.type.shp.layer.DTSHPLayerList;
 

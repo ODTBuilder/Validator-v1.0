@@ -1,9 +1,8 @@
-package com.git.gdsbuilder.validator.collection.opt;
+	package com.git.gdsbuilder.validator.collection.opt;
 
 import java.util.HashMap;
 import java.util.List;
 
-import com.git.gdsbuilder.type.validate.option.UnderShoot;
 import com.git.gdsbuilder.validator.collection.opt.ValCollectionOption.ValCollectionOptionType;
 
 public class ValCollectionOption extends HashMap<ValCollectionOptionType,Object>{

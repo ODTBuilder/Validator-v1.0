@@ -32,10 +32,6 @@ import com.git.gdsbuilder.type.geoserver.layer.GeoLayerInfo;
 import com.git.gdsbuilder.type.geoserver.layer.GeoLayerInfoList;
 import com.git.gdsbuilder.type.validate.error.ErrorLayer;
 import com.git.gdsbuilder.type.validate.error.ErrorLayerList;
-import com.git.opengds.file.dxf.dbManager.DXFDBQueryManager;
-import com.git.opengds.file.dxf.persistence.DXFLayerCollectionDAO;
-import com.git.opengds.file.ngi.dbManager.NGIDBQueryManager;
-import com.git.opengds.file.ngi.persistence.NGILayerCollectionDAO;
 import com.git.opengds.file.shp.dbManager.SHPDBQueryManager;
 import com.git.opengds.file.shp.persistence.SHPLayerCollectionDAO;
 import com.git.opengds.geoserver.service.GeoserverService;
@@ -54,11 +50,6 @@ public class ErrorLayerServiceImpl implements ErrorLayerService {
 	/*
 	 * @Autowired private DataSourceTransactionManager txManager;
 	 */
-	@Inject
-	private DXFLayerCollectionDAO qa10DAO;
-
-	@Inject
-	private NGILayerCollectionDAO qa20DAO;
 
 	@Inject
 	private SHPLayerCollectionDAO shpDAO;
@@ -101,16 +92,6 @@ public class ErrorLayerServiceImpl implements ErrorLayerService {
 				String errTableName = "\"" + "err_" + fileType + "_";
 				Integer cIdx = null;
 				Long errTbCount = null;
-				if (fileType.equals("ngi")) {
-					NGIDBQueryManager qa20dbQueryManager = new NGIDBQueryManager();
-					cIdx = qa20DAO.selectNGILayerCollectionIdx(userVO,
-							qa20dbQueryManager.getSelectNGILayerCollectionIdx(collectionName));
-				}
-				if (fileType.equals("dxf")) {
-					DXFDBQueryManager qa10dbQueryManager = new DXFDBQueryManager();
-					cIdx = qa10DAO.selectDXFLayerCollectionIdx(userVO,
-							qa10dbQueryManager.getSelectDXFLayerCollectionIdxQuery(collectionName));
-				}
 				if (fileType.equals("shp")) {
 					SHPDBQueryManager shpdbQueryManager = new SHPDBQueryManager();
 					cIdx = shpDAO.selectSHPLayerCollectionIdx(userVO,
@@ -175,16 +156,6 @@ public class ErrorLayerServiceImpl implements ErrorLayerService {
 			String errTableName = "err_" + fileType + "_";
 			Integer cIdx = null;
 			Long errTbCount = null;
-			if (fileType.equals("ngi")) {
-				NGIDBQueryManager qa20dbQueryManager = new NGIDBQueryManager();
-				cIdx = qa20DAO.selectNGILayerCollectionIdx(userVO,
-						qa20dbQueryManager.getSelectNGILayerCollectionIdx(collectionName));
-			}
-			if (fileType.equals("dxf")) {
-				DXFDBQueryManager qa10dbQueryManager = new DXFDBQueryManager();
-				cIdx = qa10DAO.selectDXFLayerCollectionIdx(userVO,
-						qa10dbQueryManager.getSelectDXFLayerCollectionIdxQuery(collectionName));
-			}
 			if (fileType.equals("shp")) {
 				SHPDBQueryManager shpdbQueryManager = new SHPDBQueryManager();
 				cIdx = shpDAO.selectSHPLayerCollectionIdx(userVO,

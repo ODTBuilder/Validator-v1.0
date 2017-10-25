@@ -17,7 +17,6 @@
 
 package com.git.opengds.parser.edit.feature;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -28,14 +27,9 @@ import org.json.simple.JSONObject;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 
-import com.git.gdsbuilder.type.dxf.feature.DTDXFFeature;
-import com.git.gdsbuilder.type.ngi.feature.DTNGIFeature;
 import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.geojson.GeoJsonReader;
-
-import junit.framework.Protectable;
 
 /**
  * JSONObject를 QA20Feature 객체로 파싱하는 클래스
@@ -46,36 +40,14 @@ import junit.framework.Protectable;
 public class EditDTFeatureParser {
 
 	JSONObject featureObj;
-	DTNGIFeature ngiFeature;
-	DTDXFFeature dxfFeature;
 	SimpleFeature shpFeature;
 
 	public EditDTFeatureParser(String type, JSONObject featureObj, String state)
 			throws ParseException, SchemaException {
 		this.featureObj = featureObj;
-		if (type.equals("dxf")) {
-			dxfFeatureParse();
-		} else if (type.equals("ngi")) {
-			ngiFeatureParse();
-		} else if (type.equals("shp")) {
+		if (type.equals("shp")) {
 			shpFeatureParse();
 		}
-	}
-
-	public DTNGIFeature getNGIFeature() {
-		return ngiFeature;
-	}
-
-	public void setNGIFeature(DTNGIFeature ngiFeature) {
-		this.ngiFeature = ngiFeature;
-	}
-
-	public DTDXFFeature getDXFFeature() {
-		return dxfFeature;
-	}
-
-	public void setDXFFeature(DTDXFFeature dxfFeature) {
-		this.dxfFeature = dxfFeature;
 	}
 
 	public SimpleFeature getSHPFeature() {
@@ -131,88 +103,5 @@ public class EditDTFeatureParser {
 
 		simpleFeatureType = DataUtilities.createType(featureID.toString(), keysStr.substring(0, keysStr.length() - 1));
 		this.shpFeature = SimpleFeatureBuilder.build(simpleFeatureType, values, featureID);
-	}
-
-	public void dxfFeatureParse() throws ParseException {
-
-		dxfFeature = new DTDXFFeature();
-
-		GeoJsonReader re = new GeoJsonReader();
-		JSONObject geomObj = (JSONObject) featureObj.get("geometry");
-		String geomStr = geomObj.toJSONString();
-		Geometry geom = re.read(geomStr);
-		dxfFeature.setGeom(geom);
-
-		String featureID = (String) featureObj.get("id");
-		dxfFeature.setFeatureID(featureID);
-
-		Object propertiesObj = featureObj.get("properties");
-		if (propertiesObj != null) {
-			JSONObject properties = (JSONObject) propertiesObj;
-			Iterator iterator = properties.keySet().iterator();
-			while (iterator.hasNext()) {
-				String propertyKey = (String) iterator.next();
-				if (propertyKey.equals("feature_type")) {
-					Object value = properties.get(propertyKey);
-					dxfFeature.setFeatureType(value.toString());
-				}
-				if (propertyKey.equals("elevation")) {
-					Object value = properties.get(propertyKey);
-					dxfFeature.setElevation(Double.parseDouble(value.toString()));
-				}
-				if (propertyKey.equals("rotate")) {
-					Object value = properties.get(propertyKey);
-					dxfFeature.setRotate(Double.parseDouble(value.toString()));
-				}
-				if (propertyKey.equals("width")) {
-					Object value = properties.get(propertyKey);
-					dxfFeature.setWidth(Double.parseDouble(value.toString()));
-				}
-				if (propertyKey.equals("height")) {
-					Object value = properties.get(propertyKey);
-					dxfFeature.setHeight(Double.parseDouble(value.toString()));
-				}
-				if (propertyKey.equals("textValue")) {
-					Object value = properties.get(propertyKey);
-					dxfFeature.setTextValue(value.toString());
-				}
-			}
-		}
-	}
-
-	public void ngiFeatureParse() throws ParseException {
-
-		String featureID = (String) featureObj.get("id");
-
-		GeoJsonReader re = new GeoJsonReader();
-		JSONObject geomObj = (JSONObject) featureObj.get("geometry");
-		String geomStr = geomObj.toJSONString();
-		Geometry geom = re.read(geomStr);
-
-		String featureType = geom.getGeometryType();
-		String coorSize = String.valueOf(geom.getNumGeometries());
-		String numparts = null;
-
-		if (featureType.equals("Polyon")) {
-			Polygon polygon = (Polygon) geom;
-			numparts = String.valueOf(polygon.getNumInteriorRing());
-		}
-
-		JSONObject propertiesObj = (JSONObject) featureObj.get("properties");
-		HashMap<String, Object> properties = new HashMap<String, Object>();
-		if (propertiesObj != null) {
-			Iterator iterator = propertiesObj.keySet().iterator();
-			while (iterator.hasNext()) {
-				String key = (String) iterator.next();
-				if (!key.equals("feature_id") && !key.equals("feature_type") && !key.equals("num_rings")
-						&& !key.equals("num_vertexes")) {
-					Object value = propertiesObj.get(key);
-					properties.put(key, value);
-				}
-			}
-			ngiFeature = new DTNGIFeature(featureID, featureType, numparts, coorSize, geom, null, properties);
-		} else {
-			ngiFeature = new DTNGIFeature(featureID, featureType, numparts, coorSize, geom, null, null);
-		}
 	}
 }

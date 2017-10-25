@@ -29,9 +29,5 @@ public interface FileDAO {
 	 * @return boolean
 	 * @throws
 	 * */
-	public boolean selectNGIDuplicateCheck(UserVO userVO, String fileName);
-	
-	public boolean selectDXFDuplicateCheck(UserVO userVO, String fileName);
-	
 	public boolean selectSHPDuplicateCheck(UserVO userVO, String fileName);
 }

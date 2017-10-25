@@ -35,8 +35,6 @@ public class EditServiceImpl implements EditService {
 	protected static final String isCreated = "create";
 	protected static final String isDeleted = "remove";
 
-	protected static final String isNgi = "ngi";
-	protected static final String isDxf = "dxf";
 	protected static final String isShp = "shp";
 
 	@Inject
@@ -55,14 +53,6 @@ public class EditServiceImpl implements EditService {
 
 		JSONParser jsonParser = new JSONParser();
 		JSONObject editJSONObject = (JSONObject) jsonParser.parse(editJSONStr);
-
-		// BufferedReader reader = new BufferedReader(
-		// new InputStreamReader(new FileInputStream(new
-		// File("d:\\editNGIFinal.txt")), "euc-kr"));
-		//
-		// JSONParser parser = new JSONParser();
-		// Object obj = parser.parse(reader);
-		// JSONObject editJSONObject = (JSONObject) obj;
 
 		boolean isSuccessed = false;
 
