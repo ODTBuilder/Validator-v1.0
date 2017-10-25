@@ -1139,7 +1139,8 @@ gb.modal.ValidationDefinition.prototype._printDetailedOption = function(mix) {
 						}
 					}
 					if (flag) {
-						that.optiondefinition_label_rel_multi(this);
+						that.labelattr_text();
+						// that.optiondefinition_label_rel_multi(this);
 					}
 				});
 			} else {
@@ -1159,7 +1160,8 @@ gb.modal.ValidationDefinition.prototype._printDetailedOption = function(mix) {
 						}
 					}
 					if (flag) {
-						that.optiondefinition_label_rel_single(this);
+						that.labelattr_text();
+						// that.optiondefinition_label_rel_single(this);
 					}
 				});
 			}
@@ -1966,6 +1968,7 @@ gb.modal.ValidationDefinition.prototype.labelattr_text = function(jqobj) {
 	var that = this;
 	var tr = $(that.labelAttrForm).find("tr");
 	var obj = {};
+	var flag = false;
 	for (var i = 0; i < tr.length; i = i + 2) {
 		var key = $(tr[i]).find("input[type=text]").val();
 		var values = $(tr[i + 1]).find("input[type=text]").val().replace(/(\s*)/g, '').split(",");
@@ -1984,8 +1987,11 @@ gb.modal.ValidationDefinition.prototype.labelattr_text = function(jqobj) {
 				}
 				obj[key] = values;
 			}
+			flag = true;
 		}
 	}
+
+	// if (flag) {
 	var selected = $(that.labelCodeSelect).val();
 	if (!that.getOptDefCopy().hasOwnProperty(that.selectedLayerNow)) {
 		that.getOptDefCopy()[that.selectedLayerNow] = {};
@@ -1997,9 +2003,11 @@ gb.modal.ValidationDefinition.prototype.labelattr_text = function(jqobj) {
 		that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]["label"] = {};
 	}
 	that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]["label"][selected] = obj;
+
 	var keys = Object.keys(that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]["label"]);
 	var count = 0;
 	for (var i = 0; i < keys.length; i++) {
+		that.optDefCopy[that.selectedLayerNow][that.selectedValidationNow][keys[i]];
 		var length = Object.keys(that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]["label"][keys[i]]).length;
 		if (length === 0) {
 			delete that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]["label"][keys[i]];
@@ -2007,10 +2015,21 @@ gb.modal.ValidationDefinition.prototype.labelattr_text = function(jqobj) {
 		count = count + length;
 	}
 	that._toggleCheckbox(that.selectedValidationNow, !!count);
+	
+	if (count === 0) {
+		delete that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow];
+	}
+	
+	
+	// }
 
-	Object.keys(that.optDefCopy[that.selectedLayerNow][that.selectedValidationNow]);
+	// if
+	// (that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]["label"]
+	// !== undefined) {
+	//		
+	// }
 
-	that.optDefCopy[that.selectedLayerNow][that.selectedValidationNow][keys[i]];
+	// Object.keys(that.optDefCopy[that.selectedLayerNow][that.selectedValidationNow]);
 
 };
 
@@ -2182,12 +2201,13 @@ gb.modal.ValidationDefinition.prototype.optiondefinition_label_rel_single = func
 						that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]["relation"].indexOf(that.radio), 1);
 			}
 		}
-
-		that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]["relation"].push($(jqobj).val());
-		that.updateRelation($(jqobj).val(), "upradio");
-		that.radio = $(jqobj).val();
-		console.log(that.emptyLayers);
-		that._toggleCheckbox(that.selectedValidationNow, true);
+		if (that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]["relation"].indexOf($(jqobj).val()) === -1) {
+			that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]["relation"].push($(jqobj).val());
+			that.updateRelation($(jqobj).val(), "upradio");
+			that.radio = $(jqobj).val();
+			console.log(that.emptyLayers);
+			that._toggleCheckbox(that.selectedValidationNow, true);
+		}
 	}
 	var checks = $(jqobj).parent().parent().parent().find("input:checked");
 	if (checks.length === 0) {
