@@ -20,140 +20,31 @@ gb.modal.ValidationDefinition = function(obj) {
 	this.definition = obj.definition ? obj.definition : undefined;
 	this.layerDefinition = obj.layerDefinition ? obj.layerDefinition : undefined;
 	this.itemList = {
-		polyline : [ "SelfEntity", "BuildingOpen", "WaterOpen", "EntityNone", "EdgeMatchMiss", "ConBreak", "ConIntersected",
-				"ConOverDegree", "UselessEntity", "EntityDuplicated", "PointDuplicated", "UselessPoint", "LayerMiss", "ZValueAmbiguous",
-				"OverShoot", "UnderShoot", "RefLayerMiss", "RefZValueMiss" ],
-		lwpolyline : [ "SelfEntity", "BSymbolOutSided", "BuildingOpen", "WaterOpen", "EntityNone", "EdgeMatchMiss", "ConBreak",
-				"ConIntersected", "ConOverDegree", "UselessEntity", "EntityDuplicated", "PointDuplicated", "UselessPoint", "LayerMiss",
-				"ZValueAmbiguous", "OverShoot", "UnderShoot", "RefLayerMiss", "RefZValueMiss" ],
-		text : [ "SelfEntity", "LayerMiss", "UselessEntity", "EntityDuplicated", "OverShoot", "UFIDLength", "NumericalValue", "UFIDRule" ],
-		insert : [ "SelfEntity", "LayerMiss", "UselessEntity", "EntityDuplicated", "BSymbolOutSided", "OverShoot" ],
-		point : [ "LayerMiss", "UselessEntity", "EntityDuplicated", "SelfEntity", "AttributeFix", "OutBoundary", "CharacterAccuracy",
-				"OverShoot", "UnderShoot", "UFIDLength", "NumericalValue", "UFIDRule", "UFIDDuplicated" ],
-		multipoint : [ "LayerMiss", "UselessEntity", "EntityDuplicated", "SelfEntity", "AttributeFix", "OutBoundary", "CharacterAccuracy",
-				"OverShoot", "UnderShoot", "UFIDLength", "NumericalValue", "UFIDRule", "UFIDDuplicated" ],
-		linestring : [ "RefAttributeMiss", "EdgeMatchMiss", "UselessEntity", "LayerMiss", "RefLayerMiss", "SmallLength",
-				"EntityDuplicated", "SelfEntity", "PointDuplicated", "ConIntersected", "ConOverDegree", "ConBreak", "AttributeFix",
-				"OutBoundary", "ZValueAmbiguous", "UselessPoint", "OverShoot", "UnderShoot", "RefZValueMiss", "UFIDLength",
-				"NeatLineAttribute", "NumericalValue", "UFIDRule", "LinearDisconnection", "MultiPart", "UFIDDuplicated", "NodeMiss" ],
-		multilinestring : [ "RefAttributeMiss", "EdgeMatchMiss", "UselessEntity", "LayerMiss", "RefLayerMiss", "SmallLength",
-				"EntityDuplicated", "SelfEntity", "PointDuplicated", "ConIntersected", "ConOverDegree", "ConBreak", "AttributeFix",
-				"OutBoundary", "ZValueAmbiguous", "UselessPoint", "OverShoot", "UnderShoot", "RefZValueMiss", "UFIDLength",
-				"NeatLineAttribute", "NumericalValue", "UFIDRule", "LinearDisconnection", "MultiPart", "UFIDDuplicated", "NodeMiss" ],
-		polygon : [ "Admin", "CrossRoad", "RefAttributeMiss", "BridgeName", "EdgeMatchMiss", "UselessEntity", "LayerMiss", "RefLayerMiss",
-				"SmallArea", "EntityDuplicated", "SelfEntity", "PointDuplicated", "AttributeFix", "OutBoundary", "OverShoot", "UnderShoot",
-				"OneAcre", "OneStage", "BuildingSiteDanger", "BuildingSiteRelaxation", "UFIDLength", "HouseAttribute", "CemeterySite",
-				"NumericalValue", "RiverBoundaryMiss", "UFIDRule", "HoleMisplacement", "CenterLineMiss", "EntityInHole", "TwistedPolygon",
-				"MultiPart", "UFIDDuplicated" ],
-		multipolygon : [ "Admin", "CrossRoad", "RefAttributeMiss", "BridgeName", "EdgeMatchMiss", "UselessEntity", "LayerMiss",
-				"RefLayerMiss", "SmallArea", "EntityDuplicated", "SelfEntity", "PointDuplicated", "AttributeFix", "OutBoundary",
-				"OverShoot", "UnderShoot", "OneAcre", "OneStage", "BuildingSiteDanger", "BuildingSiteRelaxation", "UFIDLength",
-				"HouseAttribute", "CemeterySite", "NumericalValue", "RiverBoundaryMiss", "UFIDRule", "HoleMisplacement", "CenterLineMiss",
-				"EntityInHole", "TwistedPolygon", "MultiPart", "UFIDDuplicated" ]
+
+		polyline : [ "ConBreak", "ConIntersected", "ConOverDegree", "EdgeMatchMiss", "EntityDuplicated", "EntityNone", "LayerMiss",
+				"OverShoot", "PointDuplicated", "SelfEntity", "UselessPoint", "ZValueAmbiguous" ],
+		lwpolyline : [ "ConBreak", "ConIntersected", "ConOverDegree", "EdgeMatchMiss", "EntityDuplicated", "EntityNone", "LayerMiss",
+				"OverShoot", "PointDuplicated", "SelfEntity", "UselessPoint", "ZValueAmbiguous" ],
+		text : [ "EntityDuplicated", "LayerMiss", "OverShoot", "SelfEntity" ],
+		insert : [ "EntityDuplicated", "LayerMiss", "OverShoot", "SelfEntity" ],
+		point : [ "AttributeFix", "EntityDuplicated", "LayerMiss", "OutBoundary", "OverShoot", "SelfEntity" ],
+		multipoint : [ "AttributeFix", "EntityDuplicated", "LayerMiss", "OutBoundary", "OverShoot", "SelfEntity" ],
+		linestring : [ "AttributeFix", "ConBreak", "ConIntersected", "ConOverDegree", "EdgeMatchMiss", "EntityDuplicated", "LayerMiss",
+				"OutBoundary", "OverShoot", "PointDuplicated", "RefAttributeMiss", "SelfEntity", "SmallLength", "UselessPoint",
+				"ZValueAmbiguous" ],
+		multilinestring : [ "AttributeFix", "ConBreak", "ConIntersected", "ConOverDegree", "EdgeMatchMiss", "EntityDuplicated",
+				"LayerMiss", "OutBoundary", "OverShoot", "PointDuplicated", "RefAttributeMiss", "SelfEntity", "SmallLength",
+				"UselessPoint", "ZValueAmbiguous" ],
+		polygon : [ "AttributeFix", "EdgeMatchMiss", "EntityDuplicated", "LayerMiss", "OutBoundary", "OverShoot", "PointDuplicated",
+				"RefAttributeMiss", "SelfEntity", "SmallArea", "TwistedPolygon" ],
+		multipolygon : [ "AttributeFix", "EdgeMatchMiss", "EntityDuplicated", "LayerMiss", "OutBoundary", "OverShoot", "PointDuplicated",
+				"RefAttributeMiss", "SelfEntity", "SmallArea", "TwistedPolygon" ]
 	};
 	this.optItem = {
-		"UFIDDuplicated" : {
-			"title" : "UFID Duplication",
-			"alias" : "UFIDDuplicated",
-			"type" : "none"
-		},
-		"MultiPart" : {
-			"title" : "Entity Looking Like Multipart",
-			"alias" : "MultiPart",
-			"type" : "none"
-		},
 		"TwistedPolygon" : {
 			"title" : "Twisted Polygon",
 			"alias" : "TwistedPolygon",
 			"type" : "none"
-		},
-		"LinearDisconnection" : {
-			"title" : "Linear Disconnection",
-			"alias" : "LinearDisconnection",
-			"type" : "relation"
-		},
-		"EntityInHole" : {
-			"title" : "Entity In Hole",
-			"alias" : "EntityInHole",
-			"type" : "relation"
-		},
-		"HoleMisplacement" : {
-			"title" : "Misplaced Hole Error",
-			"alias" : "HoleMisplacement",
-			"type" : "none"
-		},
-		"CenterLineMiss" : {
-			"title" : "Missing Centerline Error",
-			"alias" : "CenterLineMiss",
-			"type" : "relation"
-		},
-		"UFIDRule" : {
-			"title" : "UFID Rule Violation",
-			"alias" : "UFIDRule",
-			"type" : "none"
-		},
-		"RiverBoundaryMiss" : {
-			"title" : "Missing River Boundary Error",
-			"alias" : "RiverBoundaryMiss",
-			"type" : "relation"
-		},
-		"NumericalValue" : {
-			"title" : "Numerical Value Error",
-			"alias" : "NumericalValue",
-			"type" : "conditionalfigure"
-		},
-		"CemeterySite" : {
-			"title" : "Cemetery Site Error",
-			"alias" : "CemeterySite",
-			"type" : "relation"
-		},
-		"HouseAttribute" : {
-			"title" : "House Attribute Error",
-			"alias" : "HouseAttribute",
-			"type" : "none"
-		},
-		"NeatLineAttribute" : {
-			"title" : "Neat Line Attribute Error",
-			"alias" : "NeatLineAttribute",
-			"type" : "none"
-		},
-		"UFIDLength" : {
-			"title" : "UFID Length Error",
-			"alias" : "UFIDLength",
-			"type" : "figure",
-			"unit" : "Characters"
-		},
-		"BuildingSiteDanger" : {
-			"title" : "Building Site Error(Dangerous Facility)",
-			"alias" : "BuildingSiteDanger",
-			"type" : "labelnrelation",
-			"multi" : false
-		},
-		"BuildingSiteRelaxation" : {
-			"title" : "Building Site Error(Relaxation Facility)",
-			"alias" : "BuildingSiteRelaxation",
-			"type" : "labelnrelation",
-			"multi" : false
-		},
-		"OneAcre" : {
-			"title" : "Tributary Error",
-			"alias" : "OneAcre",
-			"type" : "relation"
-		},
-		"OneStage" : {
-			"title" : "Farmland Error",
-			"alias" : "OneStage",
-			"type" : "relation"
-		},
-		"Admin" : {
-			"title" : "Administrative Boundary Error",
-			"alias" : "Admin",
-			"type" : "none"
-		},
-		"CrossRoad" : {
-			"title" : "Crossroad Boundary Error",
-			"alias" : "CrossRoad",
-			"type" : "relation"
 		},
 		"RefAttributeMiss" : {
 			"title" : "Attribute Error Between Map Sheets",
@@ -161,30 +52,10 @@ gb.modal.ValidationDefinition = function(obj) {
 			"type" : "notnull",
 			"multi" : true
 		},
-		"BridgeName" : {
-			"title" : "Bridge Name Error",
-			"alias" : "BridgeName",
-			"type" : "relation"
-		},
 		"NodeMiss" : {
 			"title" : "Node Missing Error",
 			"alias" : "NodeMiss",
 			"type" : "relation"
-		},
-		"BSymbolOutSided" : {
-			"title" : "Erroneous Position of Building Symbol",
-			"alias" : "BSymbolOutSided",
-			"type" : "relation"
-		},
-		"BuildingOpen" : {
-			"title" : "Building Boundary Error",
-			"alias" : "BuildingOpen",
-			"type" : "none"
-		},
-		"WaterOpen" : {
-			"title" : "Water Boundary Error",
-			"alias" : "WaterOpen",
-			"type" : "none"
 		},
 		"EntityNone" : {
 			"title" : "Entity missing in current map sheet",
@@ -196,31 +67,10 @@ gb.modal.ValidationDefinition = function(obj) {
 			"alias" : "EdgeMatchMiss",
 			"type" : "none"
 		},
-		"UselessEntity" : {
-			"title" : "Unknown use entity",
-			"alias" : "UselessEntity",
-			"type" : "none"
-		},
 		"LayerMiss" : {
 			"title" : "Layer Error",
 			"alias" : "LayerMiss",
 			"type" : "geometry"
-		},
-		"RefLayerMiss" : {
-			"title" : "Layer Error Between Map Sheets",
-			"alias" : "RefLayerMiss",
-			"type" : "none"
-		},
-		"RefZValueMiss" : {
-			"title" : "Altitude Error Between Map Sheets",
-			"alias" : "RefZValueMiss",
-			"type" : "notnull",
-			"multi" : false
-		},
-		"CharacterAccuracy" : {
-			"title" : "Accuracy of Characters",
-			"alias" : "CharacterAccuracy",
-			"type" : "none"
 		},
 		"EntityDuplicated" : {
 			"title" : "Entity Duplication",
@@ -290,12 +140,6 @@ gb.modal.ValidationDefinition = function(obj) {
 		"OverShoot" : {
 			"title" : "Entity Crossing the Baseline",
 			"alias" : "OverShoot",
-			"type" : "figure",
-			"unit" : "meter"
-		},
-		"UnderShoot" : {
-			"title" : "Entity Not Reaching the Baseline",
-			"alias" : "UnderShoot",
 			"type" : "figure",
 			"unit" : "meter"
 		}
@@ -2015,12 +1859,11 @@ gb.modal.ValidationDefinition.prototype.labelattr_text = function(jqobj) {
 		count = count + length;
 	}
 	that._toggleCheckbox(that.selectedValidationNow, !!count);
-	
+
 	if (count === 0) {
 		delete that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow];
 	}
-	
-	
+
 	// }
 
 	// if
