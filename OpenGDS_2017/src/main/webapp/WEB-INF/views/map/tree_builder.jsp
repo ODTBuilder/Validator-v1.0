@@ -115,8 +115,7 @@ html {
 				aria-expanded="false" title="Validation">QA 2.0</a>
 				<ul class="dropdown-menu" role="menu">
 					<li><a href="#" title="Layer Definition" id="layerDefinition">Layer Definition</a></li>
-					<li><a href="#" title="Validating Option" id="validDefinition">Validating Option</a></li>
-					<li><a href="#" title="Validating Option" id="validDefinition2">Validating Option(test)</a></li>
+					<li><a href="#" title="Validating Option" id="validDefinition2">Validating Option</a></li>
 					<li><a href="#" title="Layer Weight" id="weight">Layer Weight</a></li>
 					<li><a href="#" title="Validation" id="validation">Validation</a></li>
 				</ul></li>
@@ -487,7 +486,6 @@ html {
 		});
 
 		$("#saveAll").click(function() {
-			// 			var selected = $('#builderClientLayer').jstreeol3(true).get_selected();
 			var root = $('#builderClientLayer').jstreeol3(true).get_node("#");
 			var children = root.children;
 			var olselected = [];
@@ -510,26 +508,21 @@ html {
 			}
 		});
 
-		// 		$("#edit").editingtool({
-		// 			url : "geoserver/geoserverWFSGetFeature.ajax",
-		// 			map : map,
-		// 			featureRecord : frecord,
-		// 			treeInstance : $('#builderClientLayer').jstreeol3(true),
-		// 			selected : function() {
-		// 				return $('#builderClientLayer').jstreeol3("get_selected_layer");
-		// 			}
-		// 		});
-
 		$("#changeBase").changebase({
 			map : map2
 		});
 
 		$("#layerDefinition1").layerdefinition10({});
 
-		$("#validDefinition1").optiondefinition({
-			layerDefinition : function() {
+		var optwin1 = new gb.modal.ValidationDefinition({
+			"autoOpen" : false,
+			"title" : "Option Definition",
+			"layerDefinition" : function() {
 				return $("#layerDefinition1").layerdefinition10("getDefinition");
 			}
+		});
+		$("#validDefinition1").click(function() {
+			optwin1.open();
 		});
 
 		$("#weight1").weightdefinition({
@@ -537,7 +530,7 @@ html {
 				return $("#layerDefinition1").layerdefinition10("getDefinition");
 			},
 			optionDefinition : function() {
-				return $("#validDefinition1").optiondefinition("getDefinition");
+				return optwin1.getDefinition();
 			}
 		});
 
@@ -548,7 +541,7 @@ html {
 				return $("#layerDefinition1").layerdefinition10("getDefinition");
 			},
 			optionDefinition : function() {
-				return $("#validDefinition1").optiondefinition("getDefinition");
+				return optwin1.getDefinition();
 			},
 			weightDefinition : function() {
 				return $("#weight1").weightdefinition("getDefinition");
@@ -557,10 +550,15 @@ html {
 
 		$("#layerDefinition").layerdefinition20({});
 
-		$("#validDefinition").optiondefinition({
-			layerDefinition : function() {
+		var optwin2 = new gb.modal.ValidationDefinition({
+			"autoOpen" : false,
+			"title" : "Option Definition",
+			"layerDefinition" : function() {
 				return $("#layerDefinition").layerdefinition20("getDefinition");
 			}
+		});
+		$("#validDefinition2").click(function() {
+			optwin2.open();
 		});
 
 		$("#weight").weightdefinition({
@@ -568,20 +566,8 @@ html {
 				return $("#layerDefinition").layerdefinition20("getDefinition");
 			},
 			optionDefinition : function() {
-				return $("#validDefinition").optiondefinition("getDefinition");
+				return optwin2.getDefinition();
 			}
-		});
-
-		var optwin = new gb.modal.ValidationDefinition({
-			"autoOpen" : false,
-			"title" : "Option Definition",
-			"layerDefinition" : function() {
-				return $("#layerDefinition").layerdefinition20("getDefinition");
-			}
-		});
-
-		$("#validDefinition2").click(function() {
-			optwin.open();
 		});
 
 		$("#validation").validation({
@@ -591,8 +577,7 @@ html {
 				return $("#layerDefinition").layerdefinition20("getDefinition");
 			},
 			optionDefinition : function() {
-				return $("#validDefinition").optiondefinition("getDefinition");
-				// 				return optwin.getDefinition();
+				return optwin.getDefinition();
 			},
 			weightDefinition : function() {
 				return $("#weight").weightdefinition("getDefinition");

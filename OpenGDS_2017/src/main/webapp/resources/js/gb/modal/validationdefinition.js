@@ -20,140 +20,31 @@ gb.modal.ValidationDefinition = function(obj) {
 	this.definition = obj.definition ? obj.definition : undefined;
 	this.layerDefinition = obj.layerDefinition ? obj.layerDefinition : undefined;
 	this.itemList = {
-		polyline : [ "SelfEntity", "BuildingOpen", "WaterOpen", "EntityNone", "EdgeMatchMiss", "ConBreak", "ConIntersected",
-				"ConOverDegree", "UselessEntity", "EntityDuplicated", "PointDuplicated", "UselessPoint", "LayerMiss", "ZValueAmbiguous",
-				"OverShoot", "UnderShoot", "RefLayerMiss", "RefZValueMiss" ],
-		lwpolyline : [ "SelfEntity", "BSymbolOutSided", "BuildingOpen", "WaterOpen", "EntityNone", "EdgeMatchMiss", "ConBreak",
-				"ConIntersected", "ConOverDegree", "UselessEntity", "EntityDuplicated", "PointDuplicated", "UselessPoint", "LayerMiss",
-				"ZValueAmbiguous", "OverShoot", "UnderShoot", "RefLayerMiss", "RefZValueMiss" ],
-		text : [ "SelfEntity", "LayerMiss", "UselessEntity", "EntityDuplicated", "OverShoot", "UFIDLength", "NumericalValue", "UFIDRule" ],
-		insert : [ "SelfEntity", "LayerMiss", "UselessEntity", "EntityDuplicated", "BSymbolOutSided", "OverShoot" ],
-		point : [ "LayerMiss", "UselessEntity", "EntityDuplicated", "SelfEntity", "AttributeFix", "OutBoundary", "CharacterAccuracy",
-				"OverShoot", "UnderShoot", "UFIDLength", "NumericalValue", "UFIDRule", "UFIDDuplicated" ],
-		multipoint : [ "LayerMiss", "UselessEntity", "EntityDuplicated", "SelfEntity", "AttributeFix", "OutBoundary", "CharacterAccuracy",
-				"OverShoot", "UnderShoot", "UFIDLength", "NumericalValue", "UFIDRule", "UFIDDuplicated" ],
-		linestring : [ "RefAttributeMiss", "EdgeMatchMiss", "UselessEntity", "LayerMiss", "RefLayerMiss", "SmallLength",
-				"EntityDuplicated", "SelfEntity", "PointDuplicated", "ConIntersected", "ConOverDegree", "ConBreak", "AttributeFix",
-				"OutBoundary", "ZValueAmbiguous", "UselessPoint", "OverShoot", "UnderShoot", "RefZValueMiss", "UFIDLength",
-				"NeatLineAttribute", "NumericalValue", "UFIDRule", "LinearDisconnection", "MultiPart", "UFIDDuplicated", "NodeMiss" ],
-		multilinestring : [ "RefAttributeMiss", "EdgeMatchMiss", "UselessEntity", "LayerMiss", "RefLayerMiss", "SmallLength",
-				"EntityDuplicated", "SelfEntity", "PointDuplicated", "ConIntersected", "ConOverDegree", "ConBreak", "AttributeFix",
-				"OutBoundary", "ZValueAmbiguous", "UselessPoint", "OverShoot", "UnderShoot", "RefZValueMiss", "UFIDLength",
-				"NeatLineAttribute", "NumericalValue", "UFIDRule", "LinearDisconnection", "MultiPart", "UFIDDuplicated", "NodeMiss" ],
-		polygon : [ "Admin", "CrossRoad", "RefAttributeMiss", "BridgeName", "EdgeMatchMiss", "UselessEntity", "LayerMiss", "RefLayerMiss",
-				"SmallArea", "EntityDuplicated", "SelfEntity", "PointDuplicated", "AttributeFix", "OutBoundary", "OverShoot", "UnderShoot",
-				"OneAcre", "OneStage", "BuildingSiteDanger", "BuildingSiteRelaxation", "UFIDLength", "HouseAttribute", "CemeterySite",
-				"NumericalValue", "RiverBoundaryMiss", "UFIDRule", "HoleMisplacement", "CenterLineMiss", "EntityInHole", "TwistedPolygon",
-				"MultiPart", "UFIDDuplicated" ],
-		multipolygon : [ "Admin", "CrossRoad", "RefAttributeMiss", "BridgeName", "EdgeMatchMiss", "UselessEntity", "LayerMiss",
-				"RefLayerMiss", "SmallArea", "EntityDuplicated", "SelfEntity", "PointDuplicated", "AttributeFix", "OutBoundary",
-				"OverShoot", "UnderShoot", "OneAcre", "OneStage", "BuildingSiteDanger", "BuildingSiteRelaxation", "UFIDLength",
-				"HouseAttribute", "CemeterySite", "NumericalValue", "RiverBoundaryMiss", "UFIDRule", "HoleMisplacement", "CenterLineMiss",
-				"EntityInHole", "TwistedPolygon", "MultiPart", "UFIDDuplicated" ]
+
+		polyline : [ "ConBreak", "ConIntersected", "ConOverDegree", "EdgeMatchMiss", "EntityDuplicated", "EntityNone", "LayerMiss",
+				"OverShoot", "PointDuplicated", "SelfEntity", "UselessPoint", "ZValueAmbiguous" ],
+		lwpolyline : [ "ConBreak", "ConIntersected", "ConOverDegree", "EdgeMatchMiss", "EntityDuplicated", "EntityNone", "LayerMiss",
+				"OverShoot", "PointDuplicated", "SelfEntity", "UselessPoint", "ZValueAmbiguous" ],
+		text : [ "EntityDuplicated", "LayerMiss", "OverShoot", "SelfEntity" ],
+		insert : [ "EntityDuplicated", "LayerMiss", "OverShoot", "SelfEntity" ],
+		point : [ "AttributeFix", "EntityDuplicated", "LayerMiss", "OutBoundary", "OverShoot", "SelfEntity" ],
+		multipoint : [ "AttributeFix", "EntityDuplicated", "LayerMiss", "OutBoundary", "OverShoot", "SelfEntity" ],
+		linestring : [ "AttributeFix", "ConBreak", "ConIntersected", "ConOverDegree", "EdgeMatchMiss", "EntityDuplicated", "LayerMiss",
+				"OutBoundary", "OverShoot", "PointDuplicated", "RefAttributeMiss", "SelfEntity", "SmallLength", "UselessPoint",
+				"ZValueAmbiguous" ],
+		multilinestring : [ "AttributeFix", "ConBreak", "ConIntersected", "ConOverDegree", "EdgeMatchMiss", "EntityDuplicated",
+				"LayerMiss", "OutBoundary", "OverShoot", "PointDuplicated", "RefAttributeMiss", "SelfEntity", "SmallLength",
+				"UselessPoint", "ZValueAmbiguous" ],
+		polygon : [ "AttributeFix", "EdgeMatchMiss", "EntityDuplicated", "LayerMiss", "OutBoundary", "OverShoot", "PointDuplicated",
+				"RefAttributeMiss", "SelfEntity", "SmallArea", "TwistedPolygon" ],
+		multipolygon : [ "AttributeFix", "EdgeMatchMiss", "EntityDuplicated", "LayerMiss", "OutBoundary", "OverShoot", "PointDuplicated",
+				"RefAttributeMiss", "SelfEntity", "SmallArea", "TwistedPolygon" ]
 	};
 	this.optItem = {
-		"UFIDDuplicated" : {
-			"title" : "UFID Duplication",
-			"alias" : "UFIDDuplicated",
-			"type" : "none"
-		},
-		"MultiPart" : {
-			"title" : "Entity Looking Like Multipart",
-			"alias" : "MultiPart",
-			"type" : "none"
-		},
 		"TwistedPolygon" : {
 			"title" : "Twisted Polygon",
 			"alias" : "TwistedPolygon",
 			"type" : "none"
-		},
-		"LinearDisconnection" : {
-			"title" : "Linear Disconnection",
-			"alias" : "LinearDisconnection",
-			"type" : "relation"
-		},
-		"EntityInHole" : {
-			"title" : "Entity In Hole",
-			"alias" : "EntityInHole",
-			"type" : "relation"
-		},
-		"HoleMisplacement" : {
-			"title" : "Misplaced Hole Error",
-			"alias" : "HoleMisplacement",
-			"type" : "none"
-		},
-		"CenterLineMiss" : {
-			"title" : "Missing Centerline Error",
-			"alias" : "CenterLineMiss",
-			"type" : "relation"
-		},
-		"UFIDRule" : {
-			"title" : "UFID Rule Violation",
-			"alias" : "UFIDRule",
-			"type" : "none"
-		},
-		"RiverBoundaryMiss" : {
-			"title" : "Missing River Boundary Error",
-			"alias" : "RiverBoundaryMiss",
-			"type" : "relation"
-		},
-		"NumericalValue" : {
-			"title" : "Numerical Value Error",
-			"alias" : "NumericalValue",
-			"type" : "conditionalfigure"
-		},
-		"CemeterySite" : {
-			"title" : "Cemetery Site Error",
-			"alias" : "CemeterySite",
-			"type" : "relation"
-		},
-		"HouseAttribute" : {
-			"title" : "House Attribute Error",
-			"alias" : "HouseAttribute",
-			"type" : "none"
-		},
-		"NeatLineAttribute" : {
-			"title" : "Neat Line Attribute Error",
-			"alias" : "NeatLineAttribute",
-			"type" : "none"
-		},
-		"UFIDLength" : {
-			"title" : "UFID Length Error",
-			"alias" : "UFIDLength",
-			"type" : "figure",
-			"unit" : "Characters"
-		},
-		"BuildingSiteDanger" : {
-			"title" : "Building Site Error(Dangerous Facility)",
-			"alias" : "BuildingSiteDanger",
-			"type" : "labelnrelation",
-			"multi" : false
-		},
-		"BuildingSiteRelaxation" : {
-			"title" : "Building Site Error(Relaxation Facility)",
-			"alias" : "BuildingSiteRelaxation",
-			"type" : "labelnrelation",
-			"multi" : false
-		},
-		"OneAcre" : {
-			"title" : "Tributary Error",
-			"alias" : "OneAcre",
-			"type" : "relation"
-		},
-		"OneStage" : {
-			"title" : "Farmland Error",
-			"alias" : "OneStage",
-			"type" : "relation"
-		},
-		"Admin" : {
-			"title" : "Administrative Boundary Error",
-			"alias" : "Admin",
-			"type" : "none"
-		},
-		"CrossRoad" : {
-			"title" : "Crossroad Boundary Error",
-			"alias" : "CrossRoad",
-			"type" : "relation"
 		},
 		"RefAttributeMiss" : {
 			"title" : "Attribute Error Between Map Sheets",
@@ -161,30 +52,10 @@ gb.modal.ValidationDefinition = function(obj) {
 			"type" : "notnull",
 			"multi" : true
 		},
-		"BridgeName" : {
-			"title" : "Bridge Name Error",
-			"alias" : "BridgeName",
-			"type" : "relation"
-		},
 		"NodeMiss" : {
 			"title" : "Node Missing Error",
 			"alias" : "NodeMiss",
 			"type" : "relation"
-		},
-		"BSymbolOutSided" : {
-			"title" : "Erroneous Position of Building Symbol",
-			"alias" : "BSymbolOutSided",
-			"type" : "relation"
-		},
-		"BuildingOpen" : {
-			"title" : "Building Boundary Error",
-			"alias" : "BuildingOpen",
-			"type" : "none"
-		},
-		"WaterOpen" : {
-			"title" : "Water Boundary Error",
-			"alias" : "WaterOpen",
-			"type" : "none"
 		},
 		"EntityNone" : {
 			"title" : "Entity missing in current map sheet",
@@ -196,31 +67,10 @@ gb.modal.ValidationDefinition = function(obj) {
 			"alias" : "EdgeMatchMiss",
 			"type" : "none"
 		},
-		"UselessEntity" : {
-			"title" : "Unknown use entity",
-			"alias" : "UselessEntity",
-			"type" : "none"
-		},
 		"LayerMiss" : {
 			"title" : "Layer Error",
 			"alias" : "LayerMiss",
 			"type" : "geometry"
-		},
-		"RefLayerMiss" : {
-			"title" : "Layer Error Between Map Sheets",
-			"alias" : "RefLayerMiss",
-			"type" : "none"
-		},
-		"RefZValueMiss" : {
-			"title" : "Altitude Error Between Map Sheets",
-			"alias" : "RefZValueMiss",
-			"type" : "notnull",
-			"multi" : false
-		},
-		"CharacterAccuracy" : {
-			"title" : "Accuracy of Characters",
-			"alias" : "CharacterAccuracy",
-			"type" : "none"
 		},
 		"EntityDuplicated" : {
 			"title" : "Entity Duplication",
@@ -292,12 +142,6 @@ gb.modal.ValidationDefinition = function(obj) {
 			"alias" : "OverShoot",
 			"type" : "figure",
 			"unit" : "meter"
-		},
-		"UnderShoot" : {
-			"title" : "Entity Not Reaching the Baseline",
-			"alias" : "UnderShoot",
-			"type" : "figure",
-			"unit" : "meter"
 		}
 	};
 	var that = this;
@@ -339,30 +183,15 @@ gb.modal.ValidationDefinition = function(obj) {
 		"margin-bottom" : 0,
 		"float" : "left"
 	});
-	this.codeSelect = $("<select>").addClass("gb-form").change(function() {
-		var isMulti = that.optItem[that.selectedValidationNow].multi;
-		that._updateAttribute($(this).val(), isMulti);
-	});
-	this.nnullCodeSelect = $("<select>").addClass("gb-form").change(function() {
-		var isMulti = that.optItem[that.selectedValidationNow].multi;
-		that._updateNotNullAttribute($(this).val(), isMulti);
-	});
-	this.labelCodeSelect = $("<select>").addClass("gb-form").change(function() {
-		var isMulti = that.optItem[that.selectedValidationNow].multi;
-		that._updateLabelAttribute($(this).val(), isMulti);
-	});
+	this.codeSelect = $("<select>").addClass("gb-form");
+	this.nnullCodeSelect = $("<select>").addClass("gb-form");
+	this.labelCodeSelect = $("<select>").addClass("gb-form");
 	this.attrForm = $("<tbody>");
 	this.nnullAttrForm = $("<tbody>");
 	this.labelAttrForm = $("<tbody>");
-	this.addBtn = $("<button>").text("Add Attribute").addClass("gb-button").addClass("gb-button-default").click(function() {
-		that.attr_addrow(this);
-	});
-	this.addAttrBtn = $("<button>").text("Add Attribute").addClass("gb-button").addClass("gb-button-default").click(function() {
-		that.nnullattr_addrow(this);
-	});
-	this.addLabelAttrBtn = $("<button>").text("Add Attribute").addClass("gb-button").addClass("gb-button-default").click(function() {
-		that.labelattr_addrow(this);
-	});
+	this.addBtn = $("<button>").text("Add Attribute").addClass("gb-button").addClass("gb-button-default");
+	this.addAttrBtn = $("<button>").text("Add Attribute").addClass("gb-button").addClass("gb-button-default");
+	this.addLabelAttrBtn = $("<button>").text("Add Attribute").addClass("gb-button").addClass("gb-button-default");
 	this.file = $("<input>").attr({
 		"type" : "file"
 	});
@@ -938,27 +767,34 @@ gb.modal.ValidationDefinition.prototype._printDetailedOption = function(mix) {
 		}
 		break;
 	case "attribute":
-		$(that.codeSelect).empty();
-		var codes = that.getLayerDefinition()[that.selectedLayerNow].code;
-		var geom = that.getLayerDefinition()[that.selectedLayerNow].geom.toUpperCase();
+		$(this.codeSelect).empty();
+		var codes = that.getLayerDefinition()[this.selectedLayerNow].code;
+		var geom = that.getLayerDefinition()[this.selectedLayerNow].geom.toUpperCase();
 		var sCode;
 		for (var i = 0; i < codes.length; i++) {
 			var opt = $("<option>").text(codes[i] + "_" + geom);
-			$(that.codeSelect).append(opt);
+			$(this.codeSelect).append(opt);
 			if (i === 0) {
 				$(opt).prop("selected", true);
 				sCode = codes[i] + "_" + geom;
 			}
 		}
-		that._updateAttribute(sCode, obj.multi);
+		$(this.codeSelect).change(function() {
+			var isMulti = that.optItem[that.selectedValidationNow].multi;
+			that._updateAttribute($(this).val(), isMulti);
+		});
+		this._updateAttribute(sCode, obj.multi);
 
-		var tb = $("<table>").append(that.attrForm);
+		var tb = $("<table>").append(this.attrForm);
 		$(tb).addClass("table");
 		$(tb).addClass("text-center");
 		if (obj.multi) {
-			$(that.dOption).append(that.codeSelect).append(tb).append(that.addBtn);
+			$(this.addBtn).click(function() {
+				that.attr_addrow(this);
+			});
+			$(this.dOption).append(this.codeSelect).append(tb).append(this.addBtn);
 		} else {
-			$(that.dOption).append(that.codeSelect).append(tb);
+			$(this.dOption).append(this.codeSelect).append(tb);
 		}
 
 		break;
@@ -975,6 +811,10 @@ gb.modal.ValidationDefinition.prototype._printDetailedOption = function(mix) {
 				sCode = codes[i] + "_" + geom;
 			}
 		}
+		$(that.nnullCodeSelect).change(function() {
+			var isMulti = that.optItem[that.selectedValidationNow].multi;
+			that._updateNotNullAttribute($(this).val(), isMulti);
+		});
 		that._updateNotNullAttribute(sCode, obj.multi);
 
 		var tb = $("<table>").append(that.nnullAttrForm);
@@ -982,6 +822,9 @@ gb.modal.ValidationDefinition.prototype._printDetailedOption = function(mix) {
 		$(tb).addClass("text-center");
 
 		if (obj.multi) {
+			$(this.addAttrBtn).click(function() {
+				that.nnullattr_addrow(this);
+			});
 			$(that.dOption).append(that.nnullCodeSelect).append(tb).append(that.addAttrBtn);
 		} else {
 			$(that.dOption).append(that.nnullCodeSelect).append(tb);
@@ -1096,12 +939,19 @@ gb.modal.ValidationDefinition.prototype._printDetailedOption = function(mix) {
 				sCode = codes[i] + "_" + geom;
 			}
 		}
+		$(that.labelCodeSelect).change(function() {
+			var isMulti = that.optItem[that.selectedValidationNow].multi;
+			that._updateLabelAttribute($(this).val(), isMulti);
+		});
 		that._updateLabelAttribute(sCode, obj.multi);
 
 		var tb = $("<table>").append(that.labelAttrForm);
-		$(tb).addClass("table");
-		$(tb).addClass("text-center");
+		// $(tb).addClass("table");
+		// $(tb).addClass("text-center");
 		if (obj.multi) {
+			$(this.addLabelAttrBtn).click(function() {
+				that.labelattr_addrow(this);
+			});
 			$(that.dOption).append(that.labelCodeSelect).append(tb).append(that.addLabelAttrBtn);
 		} else {
 			$(that.dOption).append(that.labelCodeSelect).append(tb);
@@ -1118,81 +968,46 @@ gb.modal.ValidationDefinition.prototype._printDetailedOption = function(mix) {
 				"margin-right" : "3px"
 			});
 			if (obj.multi) {
-				$(checkbox)
-						.on(
-								"change",
-								function() {
-									if ($(this).prop("checked")) {
-										if (!that.getOptDefCopy().hasOwnProperty(that.selectedLayerNow)) {
-											that.getOptDefCopy()[that.selectedLayerNow] = {};
-										}
-										if (!that.getOptDefCopy()[that.selectedLayerNow].hasOwnProperty(that.selectedValidationNow)) {
-											that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow] = {};
-										}
-										if (!that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]
-												.hasOwnProperty("relation")) {
-											that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]["relation"] = [];
-										}
-										if (that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]["relation"].indexOf($(
-												this).val()) === -1) {
-											that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]["relation"]
-													.push($(this).val());
-											that.updateRelation($(this).val(), "up");
-											console.log(that.emptyLayers);
-										}
-										that._toggleCheckbox(that.selectedValidationNow, true);
-									} else {
-										if (that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]["relation"].indexOf($(
-												this).val()) !== -1) {
-											that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]["relation"].splice(that
-													.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]["relation"]
-													.indexOf($(this).val()), 1);
-											that.updateRelation($(this).val(), "down");
-											console.log(that.emptyLayers);
-										}
-									}
-									var checks = $(this).parent().parent().parent().find("input:checked");
-									if (checks.length === 0) {
-										delete that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow];
-										that._toggleCheckbox(that.selectedValidationNow, false);
-									}
-								});
+				$(checkbox).on("change", function() {
+					var flag = false;
+					var tr = $(that.labelAttrForm).find("tr");
+					for (var i = 0; i < tr.length; i = i + 2) {
+						var key = $(tr[i]).find("input[type=text]").val();
+						var value = $(tr[i + 1]).find("input[type=text]").val().replace(/(\s*)/g, '');
+						var values;
+						if (value === "") {
+							values = undefined;
+						} else {
+							values = value.split(",");
+							flag = true;
+						}
+					}
+					if (flag) {
+						that.labelattr_text();
+						// that.optiondefinition_label_rel_multi(this);
+					}
+				});
 			} else {
-				$(checkbox).on(
-						"change",
-						function() {
-							console.log("radio");
-							if ($(this).prop("checked")) {
-								if (!that.getOptDefCopy().hasOwnProperty(that.selectedLayerNow)) {
-									that.getOptDefCopy()[that.selectedLayerNow] = {};
-								}
-								if (!that.getOptDefCopy()[that.selectedLayerNow].hasOwnProperty(that.selectedValidationNow)) {
-									that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow] = {};
-								}
-								if (!that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow].hasOwnProperty("relation")) {
-									that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]["relation"] = [];
-								}
-								if (that.radio !== undefined) {
-									if (that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]["relation"]
-											.indexOf(that.radio) !== -1) {
-										that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]["relation"].splice(that
-												.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]["relation"]
-												.indexOf(that.radio), 1);
-									}
-								}
-
-								that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]["relation"].push($(this).val());
-								that.updateRelation($(this).val(), "upradio");
-								that.radio = $(this).val();
-								console.log(that.emptyLayers);
-								that._toggleCheckbox(that.selectedValidationNow, true);
-							}
-							var checks = $(this).parent().parent().parent().find("input:checked");
-							if (checks.length === 0) {
-								delete that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow];
-								that._toggleCheckbox(that.selectedValidationNow, false);
-							}
-						});
+				$(checkbox).on("change", function() {
+					console.log("radio");
+					var flag = false;
+					var tr = $(that.labelAttrForm).find("tr");
+					for (var i = 0; i < tr.length; i = i + 2) {
+						var key = $(tr[i]).find("input[type=text]").val();
+						var value = $(tr[i + 1]).find("input[type=text]").val().replace(/(\s*)/g, '');
+						var values;
+						if (value === "") {
+							values = undefined;
+						} else {
+							values = value.split(",");
+							flag = true;
+						}
+					}
+					if (flag) {
+						that.labelattr_text();
+						// that.optiondefinition_label_rel_single(this);
+					}
+				});
 			}
 			// $(checkbox).addClass("optiondefinition-label-rel");
 			if (that.getOptDefCopy().hasOwnProperty(that.selectedLayerNow)) {
@@ -1266,6 +1081,9 @@ gb.modal.ValidationDefinition.prototype._printDetailedOption = function(mix) {
 			"type" : "number",
 			"placeholder" : "figure"
 		}).val(figure ? figure : "");
+		$(this.conFigure).on("input", function() {
+			that.conditionalfigure_figure(this);
+		});
 		// $(this.conFigure).addClass("optiondefinition-conditionalfigure-figure");
 		$(this.conFigure).addClass("gb-form");
 		var div3 = $("<div>").css({
@@ -1457,6 +1275,9 @@ gb.modal.ValidationDefinition.prototype._updateLabelAttribute = function(code, m
 			}).append(icon);
 			$(btn).addClass("gb-button");
 			$(btn).addClass("gb-button-default");
+			$(btn).on("click", function() {
+				that.labelattr_del(this);
+			});
 			// $(btn).addClass("optiondefinition-labelattr-del");
 			var td2 = $("<td>").append(btn);
 
@@ -1909,12 +1730,18 @@ gb.modal.ValidationDefinition.prototype.labelattr_del = function(jqobj) {
 
 gb.modal.ValidationDefinition.prototype.attr_text = function(jqobj) {
 	var that = this;
-	var attrs = $(that.attrForm).find("input[type=text]:eq(0)");
+	// var attrs = $(that.attrForm).find("input[type=text]:eq(0)");
+	var tr = $(that.attrForm).find("tr");
 	var obj = {};
-	for (var i = 0; i < attrs.length; i++) {
-		var key = $(attrs[i]).val();
-		var values = $(attrs[i]).parent().parent().next().find("input[type=text]:eq(1)").val().replace(/(\s*)/g, '').split(",");
-		obj[key] = values;
+	for (var i = 0; i < tr.length; i = i + 2) {
+		var key = $(tr[i]).find("input[type=text]").val();
+		var values = $(tr[i + 1]).find("input[type=text]").val().replace(/(\s*)/g, '').split(",");
+		if (values.length === 1 && values[0] === "") {
+			values = undefined;
+		}
+		if (key !== "" && values !== undefined) {
+			obj[key] = values;
+		}
 	}
 	var selected = $(that.codeSelect).val();
 	if (!that.getOptDefCopy().hasOwnProperty(that.selectedLayerNow)) {
@@ -1983,13 +1810,32 @@ gb.modal.ValidationDefinition.prototype.nnullattr_text = function(jqobj) {
 
 gb.modal.ValidationDefinition.prototype.labelattr_text = function(jqobj) {
 	var that = this;
-	var attrs = $(that.labelAttrForm).find("input[type=text]:eq(0)");
+	var tr = $(that.labelAttrForm).find("tr");
 	var obj = {};
-	for (var i = 0; i < attrs.length; i++) {
-		var key = $(attrs[i]).val();
-		var values = $(attrs[i]).parent().parent().next().find("input[type=text]:eq(1)").val().replace(/(\s*)/g, '').split(",");
-		obj[key] = values;
+	var flag = false;
+	for (var i = 0; i < tr.length; i = i + 2) {
+		var key = $(tr[i]).find("input[type=text]").val();
+		var values = $(tr[i + 1]).find("input[type=text]").val().replace(/(\s*)/g, '').split(",");
+		if (values.length === 1 && values[0] === "") {
+			values = undefined;
+		}
+		var checkbox = $("input[name=optiondefinition-label-rel]:checked");
+
+		if (key !== "" && values !== undefined && checkbox.length > 0) {
+			if (checkbox.length === 1) {
+				that.optiondefinition_label_rel_single(checkbox[0]);
+				obj[key] = values;
+			} else if (checkbox.length > 1) {
+				for (var i = 0; i < checkbox.length; i++) {
+					that.optiondefinition_label_rel_multi(checkbox[i]);
+				}
+				obj[key] = values;
+			}
+			flag = true;
+		}
 	}
+
+	// if (flag) {
 	var selected = $(that.labelCodeSelect).val();
 	if (!that.getOptDefCopy().hasOwnProperty(that.selectedLayerNow)) {
 		that.getOptDefCopy()[that.selectedLayerNow] = {};
@@ -2001,9 +1847,11 @@ gb.modal.ValidationDefinition.prototype.labelattr_text = function(jqobj) {
 		that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]["label"] = {};
 	}
 	that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]["label"][selected] = obj;
+
 	var keys = Object.keys(that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]["label"]);
 	var count = 0;
 	for (var i = 0; i < keys.length; i++) {
+		that.optDefCopy[that.selectedLayerNow][that.selectedValidationNow][keys[i]];
 		var length = Object.keys(that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]["label"][keys[i]]).length;
 		if (length === 0) {
 			delete that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]["label"][keys[i]];
@@ -2012,9 +1860,19 @@ gb.modal.ValidationDefinition.prototype.labelattr_text = function(jqobj) {
 	}
 	that._toggleCheckbox(that.selectedValidationNow, !!count);
 
-	Object.keys(that.optDefCopy[that.selectedLayerNow][that.selectedValidationNow]);
+	if (count === 0) {
+		delete that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow];
+	}
 
-	that.optDefCopy[that.selectedLayerNow][that.selectedValidationNow][keys[i]];
+	// }
+
+	// if
+	// (that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]["label"]
+	// !== undefined) {
+	//		
+	// }
+
+	// Object.keys(that.optDefCopy[that.selectedLayerNow][that.selectedValidationNow]);
 
 };
 
@@ -2132,5 +1990,71 @@ gb.modal.ValidationDefinition.prototype.conditionalfigure_figure = function(jqob
 			}
 			that._toggleCheckbox(that.selectedValidationNow, !!count);
 		}
+	}
+};
+
+gb.modal.ValidationDefinition.prototype.optiondefinition_label_rel_multi = function(jqobj) {
+	var that = this;
+	if ($(jqobj).prop("checked")) {
+		if (!that.getOptDefCopy().hasOwnProperty(that.selectedLayerNow)) {
+			that.getOptDefCopy()[that.selectedLayerNow] = {};
+		}
+		if (!that.getOptDefCopy()[that.selectedLayerNow].hasOwnProperty(that.selectedValidationNow)) {
+			that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow] = {};
+		}
+		if (!that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow].hasOwnProperty("relation")) {
+			that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]["relation"] = [];
+		}
+		if (that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]["relation"].indexOf($(jqobj).val()) === -1) {
+			that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]["relation"].push($(jqobj).val());
+			that.updateRelation($(jqobj).val(), "up");
+			console.log(that.emptyLayers);
+		}
+		that._toggleCheckbox(that.selectedValidationNow, true);
+	} else {
+		if (that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]["relation"].indexOf($(jqobj).val()) !== -1) {
+			that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]["relation"].splice(
+					that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]["relation"].indexOf($(jqobj).val()), 1);
+			that.updateRelation($(jqobj).val(), "down");
+			console.log(that.emptyLayers);
+		}
+	}
+	var checks = $(jqobj).parent().parent().parent().find("input:checked");
+	if (checks.length === 0) {
+		delete that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow];
+		that._toggleCheckbox(that.selectedValidationNow, false);
+	}
+};
+
+gb.modal.ValidationDefinition.prototype.optiondefinition_label_rel_single = function(jqobj) {
+	var that = this;
+	if ($(jqobj).prop("checked")) {
+		if (!that.getOptDefCopy().hasOwnProperty(that.selectedLayerNow)) {
+			that.getOptDefCopy()[that.selectedLayerNow] = {};
+		}
+		if (!that.getOptDefCopy()[that.selectedLayerNow].hasOwnProperty(that.selectedValidationNow)) {
+			that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow] = {};
+		}
+		if (!that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow].hasOwnProperty("relation")) {
+			that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]["relation"] = [];
+		}
+		if (that.radio !== undefined) {
+			if (that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]["relation"].indexOf(that.radio) !== -1) {
+				that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]["relation"].splice(
+						that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]["relation"].indexOf(that.radio), 1);
+			}
+		}
+		if (that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]["relation"].indexOf($(jqobj).val()) === -1) {
+			that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow]["relation"].push($(jqobj).val());
+			that.updateRelation($(jqobj).val(), "upradio");
+			that.radio = $(jqobj).val();
+			console.log(that.emptyLayers);
+			that._toggleCheckbox(that.selectedValidationNow, true);
+		}
+	}
+	var checks = $(jqobj).parent().parent().parent().find("input:checked");
+	if (checks.length === 0) {
+		delete that.getOptDefCopy()[that.selectedLayerNow][that.selectedValidationNow];
+		that._toggleCheckbox(that.selectedValidationNow, false);
 	}
 };
