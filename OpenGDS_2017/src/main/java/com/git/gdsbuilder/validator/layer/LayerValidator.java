@@ -53,6 +53,14 @@ import com.git.gdsbuilder.type.validate.error.ErrorLayer;
  * @Date 2017. 4. 18. 오후 3:32:00
  */
 public interface LayerValidator {
+	
+	/**
+	 * 검수항목 중 "계층오류(LayerMiss)" 검수를 수행 @author JY.Kim @Date 2017. 6. 26. 오후
+	 * 4:21:17 @param typeNames @return @throws SchemaException
+	 * ErrorLayer @throws
+	 */
+	public ErrorLayer validateLayerMiss(List<String> typeNames) throws SchemaException;
+
 
 	/**
 	 * 검수 항목 중 “등고선 끊김 오류(ConBreak)” 검수 @author DY.Oh @Date 2017. 4. 18. 오후

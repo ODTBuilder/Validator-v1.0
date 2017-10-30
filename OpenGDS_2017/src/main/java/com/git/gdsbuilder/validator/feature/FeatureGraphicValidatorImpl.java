@@ -51,6 +51,7 @@ import com.git.gdsbuilder.type.validate.option.ConBreak;
 import com.git.gdsbuilder.type.validate.option.ConIntersected;
 import com.git.gdsbuilder.type.validate.option.ConOverDegree;
 import com.git.gdsbuilder.type.validate.option.EntityDuplicated;
+import com.git.gdsbuilder.type.validate.option.LayerMiss;
 import com.git.gdsbuilder.type.validate.option.NodeMiss;
 import com.git.gdsbuilder.type.validate.option.OutBoundary;
 import com.git.gdsbuilder.type.validate.option.OverShoot;
@@ -70,6 +71,35 @@ import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 
 public class FeatureGraphicValidatorImpl implements FeatureGraphicValidator {
+
+	public ErrorFeature validateLayerMiss(SimpleFeature simpleFeature, List<String> typeNames) throws SchemaException {
+
+		Geometry geometry = (Geometry) simpleFeature.getDefaultGeometry();
+		String upperType = simpleFeature.getAttribute("feature_type").toString().toUpperCase();
+		String upperMultiType = "MULTI" + upperType;
+		Boolean flag = false;
+
+		for (int i = 0; i < typeNames.size(); i++) {
+			String typeName = typeNames.get(i);
+			String upperTpyeName = typeName.toUpperCase();
+			if (upperTpyeName.equals(upperType) || upperTpyeName.equals(upperMultiType)) {
+				flag = true;
+				break;
+			} else {
+				flag = false;
+			}
+		}
+		if (flag == false) {
+			String featureIdx = simpleFeature.getID();
+			Property featuerIDPro = simpleFeature.getProperty("feature_id");
+			String featureID = (String) featuerIDPro.getValue();
+			ErrorFeature errorFeature = new ErrorFeature(featureIdx, featureID, LayerMiss.Type.LAYERMISS.errType(),
+					LayerMiss.Type.LAYERMISS.errName(), geometry.getInteriorPoint());
+			return errorFeature;
+		} else {
+			return null;
+		}
+	}
 
 	@Override
 	public List<ErrorFeature> validateConBreak(SimpleFeature simpleFeature, SimpleFeatureCollection aop,

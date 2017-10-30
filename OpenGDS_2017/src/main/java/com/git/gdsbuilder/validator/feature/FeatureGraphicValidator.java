@@ -35,11 +35,9 @@
 package com.git.gdsbuilder.validator.feature;
 
 import java.util.List;
-import java.util.Map;
 
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.feature.SchemaException;
-import org.json.simple.JSONObject;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
@@ -54,6 +52,13 @@ import com.git.gdsbuilder.type.validate.error.ErrorFeature;
  * @Date 2017. 4. 18. 오후 3:34:07
  */
 public interface FeatureGraphicValidator {
+	
+	/**
+	 * 검수 항목 중 "계층 오류(LayerMiss)" 검수 @author JY.Kim @Date 2017. 6. 12. 오전
+	 * 11:42:43 @param simpleFeature @param typeNames @return
+	 * ErrorFeature @throws SchemaException ErrorFeature @throws
+	 */
+	public ErrorFeature validateLayerMiss(SimpleFeature simpleFeature, List<String> typeNames) throws SchemaException;
 
 	/**
 	 * 검수 항목 중 “등고선 교차 오류(ConIntersected)” 검수를 수행 @author DY.Oh @Date 2017. 4.

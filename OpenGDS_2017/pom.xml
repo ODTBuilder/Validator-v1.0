@@ -345,5 +345,6 @@
 			</plugin>
 		</plugins>
 	</build>
+	<url>hsqldb</url>
 </project>
 	

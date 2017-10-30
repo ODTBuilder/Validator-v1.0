@@ -103,6 +103,27 @@ public class LayerValidatorImpl implements LayerValidator {
 		this.validatorLayer = validatorLayer;
 	}
 
+	public ErrorLayer validateLayerMiss(List<String> typeNames) throws SchemaException {
+		ErrorLayer errorLayer = new ErrorLayer();
+		SimpleFeatureCollection sfc = validatorLayer.getSimpleFeatureCollection();
+		SimpleFeatureIterator simpleFeatureIterator = sfc.features();
+		while (simpleFeatureIterator.hasNext()) {
+			SimpleFeature simpleFeature = simpleFeatureIterator.next();
+			ErrorFeature errorFeature = graphicValidator.validateLayerMiss(simpleFeature, typeNames);
+			if (errorFeature != null) {
+				errorFeature.setLayerName(validatorLayer.getLayerName());
+				errorLayer.addErrorFeature(errorFeature);
+			} else {
+				continue;
+			}
+		}
+		if (errorLayer.getErrFeatureList().size() > 0) {
+			return errorLayer;
+		} else {
+			return null;
+		}
+	}
+
 	public ErrorLayer validateConBreakLayers(GeoLayer neatLayer, double tolerence) throws SchemaException {
 
 		ErrorLayer errLayer = new ErrorLayer();
