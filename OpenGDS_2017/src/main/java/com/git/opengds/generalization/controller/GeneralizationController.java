@@ -25,6 +25,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.git.gdsbuilder.generalization.Simplification;
+import com.git.gdsbuilder.generalization.impl.SimplificationImpl;
 import com.git.opengds.common.AbstractController;
 import com.git.opengds.generalization.service.GeneralizationService;
 import com.git.opengds.user.domain.UserVO;
@@ -41,13 +43,16 @@ public class GeneralizationController extends AbstractController {
 	@RequestMapping(value = "/exeGeneralization.ajax")
 	@ResponseBody
 	public void exeGeneralization(HttpServletRequest request, @RequestBody String jsonObject) throws Exception {
-		
-		UserVO generalUser  = (UserVO) getSession(request,EnUserType.GENERAL.getTypeName());
-		if(generalUser==null){
-//			return null;
+
+		UserVO generalUser = (UserVO) getSession(request, EnUserType.GENERAL.getTypeName());
+		if (generalUser == null) {
+			// return null;
 		}
-		generalizationService.exeGeneralization(generalUser, jsonObject);
-//		return 
+
+		Simplification sf = new SimplificationImpl();
+		sf.getSimplification();
+		System.out.println("");
+		// generalizationService.exeGeneralization(generalUser, jsonObject);
+		// return
 	}
 }
-	

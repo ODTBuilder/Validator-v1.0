@@ -38,6 +38,7 @@ import com.git.gdsbuilder.generalization.data.res.DTGeneralEAfLayer;
 import com.git.gdsbuilder.generalization.opt.SimplificationOption;
 import com.git.gdsbuilder.generalization.rep.DTGeneralReport;
 import com.git.gdsbuilder.generalization.rep.type.DTGeneralReportNums;
+import com.vividsolutions.jts.algorithm.Angle;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
@@ -48,6 +49,9 @@ public class SimplificationImpl implements Simplification {
 
 	private SimplificationOption option;
 	private SimpleFeatureCollection collection;
+
+	public SimplificationImpl() {
+	}
 
 	public SimplificationImpl(SimpleFeatureCollection collection, SimplificationOption option) {
 		this.collection = collection;
@@ -122,7 +126,7 @@ public class SimplificationImpl implements Simplification {
 
 		// 임의
 
-		File file = new File("C:\\Users\\GIT\\Desktop\\일반화전", "CoastlineTest.shp");
+		File file = new File("C:\\Users\\GIT\\Desktop\\CoastlineOrigin", "CoastlineOrigin_multilinestring.shp");
 		SimpleFeatureCollection collection = getShpObject(file);
 
 		this.collection = collection;
@@ -141,7 +145,7 @@ public class SimplificationImpl implements Simplification {
 		// SimpleFeatureCollection 생성 및 초기화 -> 일반화 결과 SimpleFeatureCollection
 		DefaultFeatureCollection resultCollection = new DefaultFeatureCollection();
 
-		if (collection != null && option != null) {
+		if (collection != null) {
 			SimpleFeatureIterator featureIterator = collection.features();
 
 			// Simplification Report Nums 결과
@@ -172,27 +176,22 @@ public class SimplificationImpl implements Simplification {
 
 			// 객체 라인 허용최대거리
 			int maximalDistance = 1000;
-			int kj = 0;
 
-			double rTolerance = 850;
+			double rTolerance = 1000;
 			double angle = 10;
 
 			// 일반화 진행
 			while (featureIterator.hasNext()) {
 				SimpleFeature feature = featureIterator.next();
 
-				featuerIDPro = feature.getProperty("osm_id");
-				String featureID = (String) featuerIDPro.getValue();
-				/*
-				 * System.out.println(featureID);
-				 * 
-				 * System.out.println("객체수 : " + kj);
-				 */
-				kj++;
+				String featureId = feature.getID();
+				System.out.println(featureId);
+
 				Geometry geometry = (Geometry) feature.getDefaultGeometry();
 				Coordinate[] coordinates = geometry.getCoordinates();
 				int size = coordinates.length;
 				double allDistance = 0;
+				boolean isLargeClosed = false;
 
 				if (size > 0) {
 					Coordinate chkStart = coordinates[0];
@@ -214,7 +213,49 @@ public class SimplificationImpl implements Simplification {
 						}
 						if (allDistance < minLength) {
 							continue;
+						} else if (allDistance > minLength) {
+							isLargeClosed = true;
 						}
+					}
+					// 폐합됐는데 길이 500 이상
+					if (isLargeClosed) {
+						// 임시 List에 넣기
+						List<Coordinate> tmpCoos = new ArrayList<>();
+						for (int i = 0; i < coordinates.length; i++) {
+							tmpCoos.add(coordinates[i]);
+						}
+
+						int key = 0;
+						int listSize = tmpCoos.size();
+
+						for (int i = key; i < listSize - 3; i++) {
+							Coordinate start = tmpCoos.get(key);
+							Coordinate secnd = tmpCoos.get(key + 1);
+							Coordinate third = tmpCoos.get(key + 2);
+							try {
+								if (Math.abs(180 - Angle.toDegrees(Angle.angleBetween(start, secnd, third))) < 58) {
+									key++;
+									continue;
+								} else if (JTS.orthodromicDistance(start, third, crs) < rTolerance) {
+									tmpCoos.remove(key + 1);
+									// 동기화
+									Collections.synchronizedCollection(tmpCoos);
+								}
+							} catch (TransformException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+						}
+						if (tmpCoos.size() < 4) {
+							continue;
+						}
+						Coordinate[] finCoors = new Coordinate[tmpCoos.size()];
+						for (int i = 0; i < tmpCoos.size(); i++) {
+							finCoors[i] = tmpCoos.get(i);
+						}
+						Geometry returnGeom = new GeometryFactory().createLineString(finCoors);
+						feature.setDefaultGeometry(returnGeom);
+						resultCollection.add(feature);
 					} else {
 						// 임시 List에 넣기
 						List<Coordinate> tmpCoos = new ArrayList<>();
@@ -230,13 +271,14 @@ public class SimplificationImpl implements Simplification {
 							Coordinate secnd = tmpCoos.get(key + 1);
 							Coordinate third = tmpCoos.get(key + 2);
 							try {
-								if (key + 2 < listSize && JTS.orthodromicDistance(start, third, crs) < rTolerance) {
-									System.out.println("들어옴");
-									// 두번째점 지움
-									tmpCoos.remove(secnd);
+								if (key + 2 < listSize && JTS.orthodromicDistance(start, third, crs) < rTolerance
+										&& Math.abs(
+												180 - Angle.toDegrees(Angle.angleBetween(start, secnd, third))) < 58) {
+									tmpCoos.remove(key + 1);
 									// 동기화
 									Collections.synchronizedCollection(tmpCoos);
 								} else {
+									key++;
 									continue;
 								}
 							} catch (TransformException e) {
@@ -248,11 +290,13 @@ public class SimplificationImpl implements Simplification {
 						for (int i = 0; i < tmpCoos.size(); i++) {
 							finCoors[i] = tmpCoos.get(i);
 						}
-						feature.setDefaultGeometry(new GeometryFactory().createLineString(finCoors));
+						Geometry returnGeom = new GeometryFactory().createLineString(finCoors);
+						feature.setDefaultGeometry(returnGeom);
 						resultCollection.add(feature);
 					}
 				}
 			}
+
 			try {
 				entityAfNum = resultCollection.getCount();
 			} catch (IOException e) {
@@ -275,7 +319,9 @@ public class SimplificationImpl implements Simplification {
 		} else
 			return null;
 
-		try {
+		try
+
+		{
 			this.writeSHP(resultCollection, "D:\\Generalization\\test.shp");
 		} catch (NoSuchAuthorityCodeException e) {
 			// TODO Auto-generated catch block
@@ -314,9 +360,13 @@ public class SimplificationImpl implements Simplification {
 			if (currentSegment.getLength() > maximalDistance) {
 				// calculate distance between coordinates as fraction (0-1)
 				double distanceFraction = 1 / (currentSegment.getLength() / maximalDistance);
-				for (double currentFraction = distanceFraction; currentFraction < 1; currentFraction += distanceFraction) {
+				for (double currentFraction = distanceFraction; currentFraction < 1; currentFraction +=
+
+						distanceFraction) {
 					// add coordinates from calculated fraction
-					resultLineStringCoordinates.add(new Coordinate(currentSegment.pointAlong(currentFraction)));
+					resultLineStringCoordinates.add(new Coordinate(currentSegment.pointAlong
+
+					(currentFraction)));
 				}
 			}
 			// add segment endpoint coordinate to result list

@@ -65,10 +65,7 @@
 <%-- 1.0 레이어 코드 정의 --%>
 <script src="${pageContext.request.contextPath}/resources/js/gitbuilder/layerdefinition10.js"></script>
 
-<%-- 2.0 검수 옵션 정의 --%>
-<script src="${pageContext.request.contextPath}/resources/js/gitbuilder/optiondefinition20.js"></script>
-
-<%-- 1.0 검수 옵션 정의 --%>
+<%-- 검수 옵션 정의 --%>
 <script src="${pageContext.request.contextPath}/resources/js/gitbuilder/optiondefinition.js"></script>
 
 <%-- 가중치 정의 --%>
