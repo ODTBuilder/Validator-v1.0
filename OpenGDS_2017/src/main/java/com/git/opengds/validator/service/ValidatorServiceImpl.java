@@ -65,17 +65,8 @@ public class ValidatorServiceImpl implements ValidatorService {
 	@Autowired
 	private ErrorLayerService errorLayerService;
 
-	// @Autowired
-	// private ErrorLayerExportService errorLayerExportService;
-
 	@Autowired
 	private ValidatorProgressService progressService;
-
-	/*
-	 * public ValidatorServiceImpl(UserVO generalUser) { // TODO Auto-generated
-	 * constructor stub errorLayerService = new
-	 * ErrorLayerServiceImpl(generalUser); }
-	 */
 
 	@SuppressWarnings("unchecked")
 	@Override
