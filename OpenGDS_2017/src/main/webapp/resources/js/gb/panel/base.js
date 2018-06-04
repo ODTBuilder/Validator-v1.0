@@ -41,7 +41,7 @@ gb.panel.Base = function(obj) {
 		$(this.panelBody).append(body);
 	}
 	this.panel = $("<div>").addClass("gb-panel").css({
-		"width" : this.width + "px",
+		"width" : !isNaN(parseInt(this.width)) ? this.width + "px" : "auto",
 		"height" : this.height + "px",
 		"position" : "absolute",
 		"z-Index" : "999",

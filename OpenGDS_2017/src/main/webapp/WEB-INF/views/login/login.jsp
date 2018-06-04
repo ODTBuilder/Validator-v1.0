@@ -3,7 +3,7 @@
 <head>
 <jsp:include page="/WEB-INF/views/common/common3.jsp" />
 <meta charset="UTF-8">
-<title>GeoDT Online Login</title>
+<title>OpenGDS/Builder Login</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes">
 
 <link rel='stylesheet prefetch' href='https://fonts.googleapis.com/css?family=Open+Sans'>
@@ -18,9 +18,8 @@
 		<div class="demo">
 			<div class="login">
 				<div style="padding-top: 100px; text-align: center;">
-					<!--  <img src="logo.png" class="logo" style="margin-top:100px; margin-left:20px"> !-->
-					<img src="${pageContext.request.contextPath}/resources/img/loginlogo.png" style="width: 80%; height: auto;"
-						class="logo">
+					<img src="logo.png" class="logo" style="margin-top: 100px; margin-left: 20px"><img
+						src="${pageContext.request.contextPath}/resources/img/ogds.png" style="width: 80%; height: auto;" class="logo">
 				</div>
 
 				<div class="login__form">

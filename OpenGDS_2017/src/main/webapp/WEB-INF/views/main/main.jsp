@@ -3,7 +3,7 @@
 <html>
 <head>
 <jsp:include page="/WEB-INF/views/common/common3.jsp" />
-<title>GeoDT Online</title>
+<title>OpenGDS/Builder</title>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
@@ -59,15 +59,13 @@ h1, h3, h4 {
 		<div style="position: relative; margin: 0 auto;">
 			<div id='textinfo'>
 				<p style="font-size: 300%; color: white">Web기반 공간정보 검수솔루션</p>
-				<br>
-				<br>
+				<br> <br>
 				<h4>
-					GeoDT-Online은 전부 오픈소스로 개발되어 졌으며 <br> 정위치, 구조화검수를 지원합니다.
+					OpenGDS/Builer는 오픈소스로 개발되어 졌으며 <br> 정위치, 구조화검수를 지원합니다.
 					</h3>
-					<br>
-					<br>
+					<br> <br>
 					<p>
-						<a class="btn btn-warning btn-lg" href="/opengds/builder.do" role="button">체험하기</a>
+						<a class="btn btn-warning btn-lg" href="${pageContext.request.contextPath}/builder.do" role="button">체험하기</a>
 					</p>
 			</div>
 		</div>
@@ -75,11 +73,9 @@ h1, h3, h4 {
 	<nav id='footer' class="navbar navbar-default navbar-fixed-bottom">
 		<div class="container-fluid text-center" style="background-color: gray; padding-top: 20px">
 			<h4>
-				검수 대상파일을 업로드하고, 검수옵션을 설정하면 검수가 가능합니다. DXF, NGI, SHP 포맷을 지원합니다. <br>
-				<br>로그인 후 GeoDT-Online을 경험해보세요.
+				검수 대상파일을 업로드하고, 검수옵션을 설정하면 검수가 가능합니다.<br> <br>로그인 후 OpenGDS/Builder를 경험해보세요.
 				</h3>
-				<br>
-				<br>
+				<br> <br>
 		</div>
 		<footer class="container-fluid text-center">
 			<img class="img-rounded" src="${pageContext.request.contextPath}/resources/img/openlayers.png" height="40px"
