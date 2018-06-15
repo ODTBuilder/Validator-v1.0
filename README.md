@@ -112,9 +112,9 @@ Getting Started
 - 검수 수행
 <pre><code> 화면 상단 메뉴 QA 2.0 -> Validation -> 좌측 레이어 트리에서 37712012, 37712013 그룹 레이어 클릭 -> Start </code></pre>
 - 검수 결과 확인
-<pre><code> 화면 좌측 Geoserver 레이어 트리 새로고침 후 ValidatorLayers 하단에 37712012_1, 37712013_1 각각의 오류 레이어 생성 확인 </code></pre>
+<pre><code> 화면 좌측 Geoserver Layers 트리 새로고침 후 ValidatorLayers Layers 하단에 37712012_1, 37712013_1 각각의 오류 레이어 생성 확인 </code></pre>
 - 오류 네비게이터 실행
-<pre><code> 화면 상단 메뉴 QA Edit -> 하단 Geoserver Layers 트리에서 검수 대상 레이어 우클릭 후 Center 클릭 -> 하단 ValidatorLayers에서 검수 대상 레이어의 오류 레이어 우클릭 후 Error 클릭 -> OK </code></pre>
+<pre><code> 화면 상단 메뉴 QA Edit -> 하단 Geoserver Layers 트리에서 검수 대상 레이어 우클릭 후 Center 클릭 -> 하단 ValidatorLayers 트리에서 검수 대상 레이어의 오류 레이어 우클릭 후 Error 클릭 -> OK </code></pre>
 - 화면 우측에 오류 네비게이터의 화살표 버튼을 클릭하며 오류 사항 확인
 
 
