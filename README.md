@@ -72,12 +72,12 @@ Getting Started
 - server.xml 파일의 Context path를 "/opengds"로 변경
 - src\main\resources\geoserver.properties 파일에 Geoserver 정보 입력
 <pre><code> url=http://[host]:[port]/geoserver<br>
- id=admin<br>
- pw=geoserver<br> </code></pre>
+ id=[admin]<br>
+ pw=[geoserver]<br> </code></pre>
 - src\main\webapp\WEB-INF\spring\root-context.xml 파일에 생성한 Database 정보 입력
-<pre><code> ex) property name="url" value="jdbc:postgresql://[host]:[port]/admin" <br>
-     property name="username" value="[username]" <br>
-     property name="password" value="[password]" <br> </code></pre>
+<pre><code> property name="url" value="jdbc:postgresql://[host]:[port]/admin" <br>
+ property name="username" value="[username]" <br>
+ property name="password" value="[password]" <br> </code></pre>
 - 서버 실행 후 "http://[host]:[port]/opengds/builder.do" 접속 ex) http://localhost:8080/opengds/builder.do
 - 테스트 계정으로 로그인
  <pre><code> id : admin<br>
