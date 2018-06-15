@@ -54,7 +54,7 @@ Getting Started
     current_layer_name character varying(200),<br>
     c_idx int references shp_layercollection(c_idx)<br> 
     );<br>
- 5) create table "shp_layercollection_qa_progress" (<br>
+ 5) create table shp_layercollection_qa_progress (<br>
     p_idx serial primary key,<br>
     collection_name character varying(100),<br>
     file_type character varying(50),<br>
