@@ -86,9 +86,16 @@ Getting Started
 - 편집도구 초기화면 접속 
 
 ### 5. 검수 Test 파일 및 설정 파일 다운로드 ###
-- Test 파일 (37712012.zip, 37712013.zip) 다운로드
-- 레이어 설정 파일 (layer_setting.json) 다운로드 
-- 검수 설정 파일 (validation_setting.json) 다운로드
+- test_data.zip 다운로드 후 압축해체
+- 검수 Test 파일 (37712012.zip, 37712013.zip) 확인
+- 레이어 설정 파일 (layer_setting.json) 확인
+- 검수 설정 파일 (validation_setting.json) 확인
+
+### 6. 검수 실행 및 오류 네비게이터 실행 ###
+- 메인 페이지 url 접속 
+<pre><code> http://[host]:[port]/opengds/builder.do </code></pre>
+- 검수 Test 파일 업로드 
+<pre><code> 화면 상단 메뉴 New -> File -> SHP -> CRS (ex. EPSG:4326 -> 4326으로 입력) 입력 및 Search -> Test 파일 (37712012.zip, 37712013.zip) add -> Start upload </code></pre>
 
 사용 라이브러리
 =====
