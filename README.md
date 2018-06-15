@@ -65,6 +65,17 @@ Getting Started
     c_idx int<br>
     );</code></pre>
 
+### 4. 소스코드 설치 및 프로젝트 실행 ###
+- https://github.com/ODTBuilder/Validator-v1.0 접속 후 소스코드 다운로드
+- eclipse 실행 후 zip 파일 형태로 Project Import
+- eclipse와 톰캣 연동 후 해당 프로젝트 서버 생성
+- server.xml 파일의 Context path를 "/opengds"로 변경
+- src\main\resources\geoserver.properties 파일에 Geoserver 정보 입력
+<pre><code> ex) url=http://localhost:9999/geoserver<br>
+  id=admin<br>
+  pw=geoserver<br>
+
+
 사용 라이브러리
 =====
 
