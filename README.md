@@ -26,7 +26,7 @@ OpenGeoDT 팀
 
 Getting Started
 ----
-### 1. 개발환경 ###
+### 1. 환경 ###
 - Java - OpenGDK 1.8.0.111 64 bit
 - Tomcat - Tomcat8.0.43 64bit
 - eclipse neon 
