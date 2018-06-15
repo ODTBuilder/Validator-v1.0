@@ -20,12 +20,20 @@ OpenGeoDT 팀
 
 Getting Started
 ----
-### 1. 개발환경 설정 ###
+### 1. 개발환경 ###
 - Java - OpenGDK 1.8.0.111 64 bit
 - Tomcat - Tomcat8.0.43 64bit
 - eclipse neon 
 - PostgreSQL 9.4 
 - Geoserver 2.13.0
+
+### 2. Geoserver 설치 및 설정 ###
+- http://geoserver.org/ 접속 후 Geoserver 2.13.0 Windows Installer 다운로드 
+** jdk 1.8 버전 이상 사용 시 Geoserver 2.8 버전 이상 사용
+- Windows Installer 실행 후  C:\Program Files (x86) 경로에 설치
+- C:\Program Files (x86)\GeoServer 2.13.0\bin 경로의 startup.bat 실행
+- Geoserver url 접속 ex) http://localhost:9999/geoserver
+- 사용자 id를 작업공간 이름으로 입력 후 작업공간 생성
 
 사용 라이브러리
 =====
