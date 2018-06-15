@@ -40,7 +40,7 @@ Getting Started
 - C:\Program Files (x86)\GeoServer 2.13.0\bin 경로의 startup.bat 실행
 - Geoserver url 접속
 <pre><code> http://[host]:[port]/geoserver </code></pre> 
-- 사용자 id를 작업공간 이름으로 입력 후 작업공간 생성
+- 사용자 계정(테스트 계정 : admin)을 작업공간 이름으로 입력 후 작업공간 생성
 
 ### 3. PostgreSQL 설치 및 설정 ###
 - http://www.postgresql.org/download/ 접속 후 PostgreSQL 다운로드 및 설치
