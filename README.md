@@ -108,22 +108,22 @@ Getting Started
 - 레이어 설정 파일 (layer_setting.json) 확인<br>
 <pre><code> ** 레이어 설정 파일 json 구조 **
     { 
-      레이어대분류명:{
-        "code":[
+      레이어대분류명 : {
+        "code" : [
           레이어명
          ],
-         "geom":geometry타입,
-         "area":true/false
+         "geom" : geometry 타입,
+         "area" : true/false
       }
     }
 </code></pre>
 - 검수 설정 파일 (validation_setting.json) 확인<br>
 <pre><code> ** 검수 설정 파일 json 구조 **
     { 
-      레이어대분류명:{
-        검수항목1:true/false,
-        검수항목2:{
-          "figure":수치값
+      레이어대분류명 : {
+        검수항목1 : true/false,
+        검수항목2 : {
+          "figure" : 수치값
         }
     }
 </code></pre>
