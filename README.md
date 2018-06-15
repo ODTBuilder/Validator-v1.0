@@ -97,13 +97,13 @@ Getting Started
 ### 5. 검수 Test 파일 및 설정 파일 다운로드 ###
 - test_data.zip 다운로드 후 압축해체
 - 검수 Test 파일 (37712012.zip, 37712013.zip) 확인
-<pre><code> ** 검수 Test 파일 구조 **
+<pre><code> ** 검수 Test zip 파일 구조 **
    압축파일.zip
      ㄴ폴더 (1/5000 수치지형도 인덱스명)
           ㄴ test1.shp
           ㄴ test2.shp
           ㄴ test3.shp
-          ㄴ index.shp (LineString 타입의 검수 영역 레이어)
+          ㄴ area.shp (LineString 타입의 검수 영역 레이어)
    * 모든 폴더 및 파일에 특수문자 입력 불가</code></pre>
 - 레이어 설정 파일 (layer_setting.json) 확인
 - 검수 설정 파일 (validation_setting.json) 확인
