@@ -18,6 +18,7 @@ OpenGeoDT 팀
 
 연구 책임 : 국토연구원 <link>http://www.krihs.re.kr/
 
+
 Getting Started
 ----
 ### 1. 개발환경 ###
@@ -34,6 +35,13 @@ Getting Started
 - C:\Program Files (x86)\GeoServer 2.13.0\bin 경로의 startup.bat 실행
 - Geoserver url 접속 ex) http://localhost:9999/geoserver
 - 사용자 id를 작업공간 이름으로 입력 후 작업공간 생성
+
+### 3. PostgreSQL 설치 및 설정 ###
+- http://www.postgresql.org/download/ 접속 후 PostgreSQL 다운로드 및 설치
+- pgAdmin 실행 후 Databases 생성 후 New Database 클릭 
+- 사용자 id를 Name으로 입력 후 Database 생성 ex) Name:admin
+- Query Tool 실행 후 아래의 query를 차례로 실행
+<pre><code>C:\F4DConverter>F4DConverter.exe -inputFolder C:\demo_f4d -outputFolder C:\f4d\프로젝트명 -log C:\demo_f4d/logTest.txt -indexing y</code></pre>
 
 사용 라이브러리
 =====
