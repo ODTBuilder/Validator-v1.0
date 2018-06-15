@@ -78,7 +78,7 @@ Getting Started
 <pre><code> ex) property name="url" value="jdbc:postgresql://localhost:5432/admin" <br>
      property name="username" value="postgis" <br>
      property name="password" value="postgis" <br> </code></pre>
-- 서버 실행 후 "http://<host>:<port>/opengds/builder.do" 접속 ex) http://localhost:8080/opengds/builder.do
+- 서버 실행 후 "http://[host]:[port]/opengds/builder.do" 접속 ex) http://localhost:8080/opengds/builder.do
 - 테스트 계정으로 로그인
  <pre><code> id : admin<br>
  pw : 1234<br> </code></pre>
