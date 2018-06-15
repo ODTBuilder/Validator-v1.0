@@ -77,8 +77,10 @@ Getting Started
 - src\main\webapp\WEB-INF\spring\root-context.xml 파일에 생성한 Database 정보 입력
 <pre><code> property name="url" value="jdbc:postgresql://[host]:[port]/admin" <br>
  property name="username" value="[username]" <br>
- property name="password" value="[password]" <br> </code></pre>
-- 서버 실행 후 "http://[host]:[port]/opengds/builder.do" 접속 ex) http://localhost:8080/opengds/builder.do
+ property name="password" value="[password]" <br></code></pre>
+- 서버 실행 후 메인 페이지 url 접속 
+ <pre><code> http://[host]:[port]/opengds/builder.do <br>
+  ex) http://localhost:8080/opengds/builder.do </code></pre>
 - 테스트 계정으로 로그인
  <pre><code> id : admin<br>
  pw : 1234<br> </code></pre>
