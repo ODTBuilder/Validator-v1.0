@@ -41,29 +41,29 @@ Getting Started
 - pgAdmin 실행 후 Databases 생성 후 New Database 클릭 
 - 사용자 id를 Name으로 입력 후 Database 생성 ex) Name:admin
 - Query Tool 실행 후 아래의 query를 차례로 실행
-<pre><code>create extension postgis;<br>
-create extension postgis_topology;<br> 
-create table shp_layercollection(<br>
-  c_idx serial primary key,<br>
-  c_name character varying(200)<br>
-);<br>
-create table shp_layer_metadata (<br>
- lm_idx serial primary key,<br>
- layer_name varchar(200),<br>
- layer_t_name varchar(200),<br>
- current_layer_name character varying(200),<br>
- c_idx int references shp_layercollection(c_idx)<br> 
- );<br>
-create table "shp_layercollection_qa_progress" (<br>
-p_idx serial primary key,<br>
-collection_name character varying(100),<br>
-file_type character varying(50),<br>
-state int,<br>
-request_time timestamp,<br> 
-response_time timestamp,<br> 
-err_layer_name character varying(100),<br>
-c_idx int<br>
-);<br></code></pre>
+<pre><code> 1) create extension postgis;<br>
+ 2) create extension postgis_topology;<br> 
+ 3) create table shp_layercollection (<br>
+    c_idx serial primary key,<br>
+    c_name character varying(200)<br>
+    );<br>
+ 4) create table shp_layer_metadata (<br>
+    lm_idx serial primary key,<br>
+    layer_name varchar(200),<br>
+    layer_t_name varchar(200),<br>
+    current_layer_name character varying(200),<br>
+    c_idx int references shp_layercollection(c_idx)<br> 
+    );<br>
+ 5) create table "shp_layercollection_qa_progress" (<br>
+    p_idx serial primary key,<br>
+    collection_name character varying(100),<br>
+    file_type character varying(50),<br>
+    state int,<br>
+    request_time timestamp,<br> 
+    response_time timestamp,<br> 
+    err_layer_name character varying(100),<br>
+    c_idx int<br>
+    );</code></pre>
 
 사용 라이브러리
 =====
