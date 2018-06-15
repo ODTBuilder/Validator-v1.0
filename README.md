@@ -8,8 +8,8 @@ Validator-v1.0 (공간자료 검증도구 v1.0)
 이 프로그램들은 완성되지 않았으며, 최종 완료 전 까지 문제가 발생할 수도 있습니다.
 발생된 문제는 최종 사용자에게 있으며, 완료가 된다면 제시된 라이선스 및 규약을 적용할 예정입니다.
 
-감사합니다.
-공간정보기술(주) 연구소 <link>http://www.git.co.kr/
+감사합니다.<br>
+공간정보기술(주) 연구소 <link>http://www.git.co.kr/<br>
 OpenGeoDT 팀
 
 특징
@@ -22,7 +22,7 @@ OpenGeoDT 팀
 
 연구기관
 ---
-세부 책임 : 부산대학교 <link>http://www.pusan.ac.kr/
+세부 책임 : 부산대학교 <link>http://www.pusan.ac.kr/<br>
 연구 책임 : 국토연구원 <link>http://www.krihs.re.kr/
 
 Getting Started
