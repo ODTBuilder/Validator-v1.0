@@ -122,7 +122,7 @@ Getting Started
 =====
 1. jQuery 2.2.2 (MIT License, CC0) http://jquery.com/
 2. jQuery UI 1.11.4 (MIT License & GPL License, this case MIT License), start theme. http://jqueryui.com/
-3. GeoTools 13.1 (LGPL) http://www.geotools.org/
+3. GeoTools 16.5 (LGPL) http://www.geotools.org/
 4. ApachePOI 3.14 (Apache License 2.0) http://poi.apache.org
 5. ApacheCommons 1.3.3 (Apache License 2.0) commons.apache.org/proper/commons-logging/
 6. JACKSON 1.9.7 (Apache License (AL) 2.0, LGPL 2.1)
