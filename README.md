@@ -104,8 +104,7 @@ Getting Started
           ㄴ test2.shp
           ㄴ test3.shp
           ㄴ index.shp (LineString 타입의 검수 영역 레이어)
-   * 모든 폴더 및 파일에 특수문자 입력 불가
-  </code></pre>
+   * 모든 폴더 및 파일에 특수문자 입력 불가</code></pre>
 - 레이어 설정 파일 (layer_setting.json) 확인
 - 검수 설정 파일 (validation_setting.json) 확인
 ** 레이어 설정 파일 및 검수 설정 파일은 편집화면에 업로드 후 편집 가능
