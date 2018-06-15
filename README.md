@@ -1,7 +1,7 @@
 
+
 Validator-v1.0 (공간자료 검증도구 v1.0)
 =======
-
 이 프로젝트는 국토공간정보연구사업 중 [공간정보 SW 활용을 위한 오픈소스 가공기술 개발]과제의 4차년도 연구성과 입니다.<br>
 정식 버전은 차후에 통합된 환경에서 제공될 예정입니다.<br>
 이 프로그램들은 완성되지 않았으며, 최종 완료 전 까지 문제가 발생할 수도 있습니다.<br>
@@ -11,21 +11,24 @@ Validator-v1.0 (공간자료 검증도구 v1.0)
 공간정보기술(주) 연구소 <link>http://www.git.co.kr/<br>
 OpenGeoDT 팀
 
+
 특징
----
+=====
 - 공간자료 검증도구 v1.0은 자사 GIS 통합 솔루션인 GeoDT 2.2 기반의 웹 기반 공간데이터 편집/검수 솔루션임.
 - 웹 페이지상에서 공간정보의 기하학적/논리적 구조와 속성값에 대한 검수편집 기능을 제공함.
 - 다양한 웹 브라우저 지원가능, 플러그인 및 ActiveX 설치 없이 사용 가능함.
 - JavaScript, Java 라이브러리 형태로 개발되어 사용자 요구사항에 따라 커스터 마이징 및 확장이 가능함.
 - 국내 수치지형도 작성 작업규정을 따르는 20여종의 검수기능을 제공함. 
 
+
 연구기관
----
+=====
 - 세부 책임 : 부산대학교 <link>http://www.pusan.ac.kr/<br>
 - 연구 책임 : 국토연구원 <link>http://www.krihs.re.kr/
 
+
 Getting Started
-----
+=====
 ### 1. 환경 ###
 - Java - OpenGDK 1.8.0.111 64 bit
 - Tomcat - Tomcat8.0.43 64bit
@@ -114,9 +117,9 @@ Getting Started
 <pre><code> 화면 상단 메뉴 QA Edit -> 하단 Geoserver Layers 트리에서 검수 대상 레이어 우클릭 후 Center 클릭 -> 하단 ValidatorLayers에서 검수 대상 레이어의 오류 레이어 우클릭 후 Error 클릭 -> OK </code></pre>
 - 화면 우측에 오류 네비게이터의 화살표 버튼을 클릭하며 오류 사항 확인
 
+
 사용 라이브러리
 =====
-
 1. jQuery 2.2.2 (MIT License, CC0) http://jquery.com/
 2. jQuery UI 1.11.4 (MIT License & GPL License, this case MIT License), start theme. http://jqueryui.com/
 3. GeoTools 13.1 (LGPL) http://www.geotools.org/
@@ -129,7 +132,8 @@ Getting Started
 10. Bootstrap v3.3.2 (MIT) http://getbootstrap.com
 11. JSTS (EPL) http://bjornharrtell.github.io/jsts/
 
+
 Mail
-====
+=====
 Developer : SG.LEE
 ghre55@git.co.kr
