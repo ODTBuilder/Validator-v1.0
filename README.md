@@ -39,7 +39,7 @@ Getting Started
 ### 3. PostgreSQL 설치 및 설정 ###
 - http://www.postgresql.org/download/ 접속 후 PostgreSQL 다운로드 및 설치
 - pgAdmin 실행 후 Databases 생성 후 New Database 클릭 
-- 사용자 id를 Name으로 입력 후 Database 생성 ex) Name:admin
+- 사용자 계정(테스트 계정 : admin)을 Name으로 입력 후 Database 생성 
 - Query Tool 실행 후 아래의 query를 차례로 실행
 <pre><code> 1) create extension postgis;<br>
  2) create extension postgis_topology;<br> 
@@ -71,13 +71,13 @@ Getting Started
 - eclipse와 톰캣 연동 후 해당 프로젝트 서버 생성
 - server.xml 파일의 Context path를 "/opengds"로 변경
 - src\main\resources\geoserver.properties 파일에 Geoserver 정보 입력
-<pre><code> ex) url=http://localhost:9999/geoserver<br>
-     id=admin<br>
-     pw=geoserver<br> </code></pre>
+<pre><code> url=http://[host]:[port]/geoserver<br>
+ id=admin<br>
+ pw=geoserver<br> </code></pre>
 - src\main\webapp\WEB-INF\spring\root-context.xml 파일에 생성한 Database 정보 입력
-<pre><code> ex) property name="url" value="jdbc:postgresql://localhost:5432/admin" <br>
-     property name="username" value="postgis" <br>
-     property name="password" value="postgis" <br> </code></pre>
+<pre><code> ex) property name="url" value="jdbc:postgresql://[host]:[port]/admin" <br>
+     property name="username" value="[username]" <br>
+     property name="password" value="[password]" <br> </code></pre>
 - 서버 실행 후 "http://[host]:[port]/opengds/builder.do" 접속 ex) http://localhost:8080/opengds/builder.do
 - 테스트 계정으로 로그인
  <pre><code> id : admin<br>
