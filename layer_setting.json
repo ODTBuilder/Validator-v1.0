@@ -1,1 +1,0 @@
-{"등고선":{"code":["F0010000"],"geom":"linestring","area":false},"건물":{"code":["B0010000"],"geom":"polygon","area":false},"도로경계":{"code":["A0010000"],"geom":"polygon","area":false},"도로중심선":{"code":["A0020000"],"geom":"linestring","area":false},"교량":{"code":["A0070000"],"geom":"polygon","area":false},"영역":{"code":["H0010000"],"geom":"linestring","area":true}}
