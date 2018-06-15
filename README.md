@@ -21,8 +21,8 @@ OpenGeoDT 팀
 
 연구기관
 ---
-세부 책임 : 부산대학교 <link>http://www.pusan.ac.kr/<br>
-연구 책임 : 국토연구원 <link>http://www.krihs.re.kr/
+- 세부 책임 : 부산대학교 <link>http://www.pusan.ac.kr/<br>
+- 연구 책임 : 국토연구원 <link>http://www.krihs.re.kr/
 
 Getting Started
 ----
