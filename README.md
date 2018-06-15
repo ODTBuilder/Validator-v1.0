@@ -105,8 +105,28 @@ Getting Started
           ㄴ test3.shp
           ㄴ area.shp (LineString 타입의 검수 영역 레이어)
    * 모든 폴더 및 파일에 특수문자 입력 불가</code></pre>
-- 레이어 설정 파일 (layer_setting.json) 확인
-- 검수 설정 파일 (validation_setting.json) 확인
+- 레이어 설정 파일 (layer_setting.json) 확인<br>
+<pre><code> ** 레이어 설정 파일 json 구조 **
+    { 
+      레이어대분류명:{
+        "code":[
+          레이어명
+         ],
+         "geom":geometry타입,
+         "area":true/false
+      }
+    }
+</code></pre>
+- 검수 설정 파일 (validation_setting.json) 확인<br>
+<pre><code> ** 검수 설정 파일 json 구조 **
+    { 
+      레이어대분류명:{
+        검수항목1:true/false,
+        검수항목2:{
+          "figure":수치값
+        }
+    }
+</code></pre>
 ** 레이어 설정 파일 및 검수 설정 파일은 편집화면에 업로드 후 편집 가능
 
 ### 6. 검수 실행 및 오류 네비게이터 실행 ###
