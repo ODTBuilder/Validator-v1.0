@@ -72,8 +72,8 @@ Getting Started
 - server.xml 파일의 Context path를 "/opengds"로 변경
 - src\main\resources\geoserver.properties 파일에 Geoserver 정보 입력
 <pre><code> ex) url=http://localhost:9999/geoserver<br>
-  id=admin<br>
-  pw=geoserver<br>
+                id=admin<br>
+                pw=geoserver<br> </code></pre>
 
 
 사용 라이브러리
