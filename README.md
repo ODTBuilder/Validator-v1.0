@@ -81,7 +81,7 @@ Getting Started
 - 서버 실행 후 "http://<host>:<port>/opengds/builder.do" 접속 ex) http://localhost:8080/opengds/builder.do
 - 테스트 계정으로 로그인
  <pre><code> id : admin<br>
-     pw : 1234<br> </code></pre>
+   pw : 1234<br> </code></pre>
      
 사용 라이브러리
 =====
