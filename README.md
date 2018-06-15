@@ -41,8 +41,7 @@ Getting Started
 - pgAdmin 실행 후 Databases 생성 후 New Database 클릭 
 - 사용자 id를 Name으로 입력 후 Database 생성 ex) Name:admin
 - Query Tool 실행 후 아래의 query를 차례로 실행
-<pre><code>
-create extension postgis;<br>
+<pre><code>create extension postgis;<br>
 create extension postgis_topology;<br> 
 create table shp_layercollection(<br>
   c_idx serial primary key,<br>
