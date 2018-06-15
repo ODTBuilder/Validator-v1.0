@@ -18,11 +18,14 @@ OpenGeoDT 팀
 
 연구 책임 : 국토연구원 <link>http://www.krihs.re.kr/
 
-
-동작환경
+Getting Started
 ----
-1. Java - OpenJDK 1.8.0.111 64bit
-2. Tomcat - Tomcat8.0.43 64bit
+### 1. 개발환경 설정 ###
+- Java - OpenGDK 1.8.0.111 64 bit
+- Tomcat - Tomcat8.0.43 64bit
+- eclipse neon 
+- PostgreSQL 9.4 
+- Geoserver 2.13.0
 
 사용 라이브러리
 =====
