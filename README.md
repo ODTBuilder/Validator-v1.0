@@ -83,7 +83,13 @@ Getting Started
 - 테스트 계정으로 로그인
  <pre><code> id : admin<br>
  pw : 1234<br> </code></pre>
-     
+- 편집도구 초기화면 접속 
+
+### 5. 검수 Test 파일 및 설정 파일 다운로드 ###
+- Test 파일 (37712012.zip, 37712013.zip) 다운로드
+- 레이어 설정 파일 (layer_setting.json) 다운로드 
+- 검수 설정 파일 (validation_setting.json) 다운로드
+
 사용 라이브러리
 =====
 
