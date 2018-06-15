@@ -79,8 +79,7 @@ Getting Started
  property name="username" value="[username]" <br>
  property name="password" value="[password]" <br></code></pre>
 - 서버 실행 후 메인 페이지 url 접속 
- <pre><code> http://[host]:[port]/opengds/builder.do <br>
-  ex) http://localhost:8080/opengds/builder.do </code></pre>
+ <pre><code> http://[host]:[port]/opengds/builder.do </code></pre>
 - 테스트 계정으로 로그인
  <pre><code> id : admin<br>
  pw : 1234<br> </code></pre>
