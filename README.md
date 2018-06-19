@@ -1,5 +1,9 @@
+[![License: LGPL v3](https://img.shields.io/badge/License-LGPL%20v3-blue.svg)](https://www.gnu.org/licenses/lgpl-3.0)
+[![Korean](https://img.shields.io/badge/language-Korean-blue.svg)](#korean)
+[![Englsh](https://img.shields.io/badge/language-English-orange.svg)](#english)
 
 
+<a name="korean"></a>
 Validator-v1.0 (공간자료 검증도구 v1.0) 
 =======
 이 프로젝트는 국토공간정보연구사업 중 [공간정보 SW 활용을 위한 오픈소스 가공기술 개발]과제의 4차년도 연구성과 입니다.<br>
@@ -26,7 +30,6 @@ OpenGeoDT 팀
 - 세부 책임 : 부산대학교 <link>http://www.pusan.ac.kr/<br>
 - 연구 책임 : 국토연구원 <link>http://www.krihs.re.kr/
 
------
 
 Getting Started
 =====
@@ -171,7 +174,7 @@ ghre55@git.co.kr
 
 
 ------------
-
+# <a name="english"></a>
 Validator-v1.0 (Validation tool for geospatial data v1.0) 
 =======
 
