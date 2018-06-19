@@ -65,23 +65,12 @@ public class ValidatorServiceImpl implements ValidatorService {
 	@Autowired
 	private ErrorLayerService errorLayerService;
 
-	// @Autowired
-	// private ErrorLayerExportService errorLayerExportService;
-
 	@Autowired
 	private ValidatorProgressService progressService;
-
-	/*
-	 * public ValidatorServiceImpl(UserVO generalUser) { // TODO Auto-generated
-	 * constructor stub errorLayerService = new
-	 * ErrorLayerServiceImpl(generalUser); }
-	 */
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public void validate(final UserVO userVO, String jsonObject) throws Exception {
-
-		System.out.println(jsonObject);
 
 		JSONParser parser = new JSONParser();
 		JSONObject jsonObj = (JSONObject) parser.parse(jsonObject);

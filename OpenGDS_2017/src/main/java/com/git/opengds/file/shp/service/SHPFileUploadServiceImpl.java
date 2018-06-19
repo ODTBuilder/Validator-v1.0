@@ -36,7 +36,7 @@ public class SHPFileUploadServiceImpl implements SHPFileUploadService {
 		String upZipFilePath = unZipFile.getFileDirectory();
 		String entryName = unZipFile.getEntryName();
 		SHPFileReader fileReader = new SHPFileReader();
-		Map<String, Object> fileNameMap = unZipFile.getFileNamesMap();
+		Map<String, Object> fileNameMap = unZipFile.getFileNames();
 		DTSHPLayerCollection dtCollection = fileReader.read(upZipFilePath, entryName, fileNameMap);
 
 		// create GeoLayerInfo

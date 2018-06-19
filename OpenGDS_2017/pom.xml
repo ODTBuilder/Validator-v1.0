@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.git</groupId>
 	<artifactId>gdsbuilder</artifactId>
@@ -15,14 +17,17 @@
 		<geotools.version>16.5</geotools.version>
 	</properties>
 
-	<!-- repository 추가 -->
 	<repositories>
 		<repository>
-			<id>mvn2</id>
-			<url>http://repo1.maven.org/maven2/</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
+			<id>oracleReleases</id>
+			<name>Oracle Released Java Packages</name>
+			<url>http://download.oracle.com/maven</url>
+			<layout>default</layout>
+		</repository>
+		<repository>
+			<id>boundless</id>
+			<name>Boundless Maven Repository</name>
+			<url>http://repo.boundlessgeo.com/main</url>
 			<snapshots>
 				<enabled>true</enabled>
 			</snapshots>
@@ -31,11 +36,35 @@
 			<id>osgeo</id>
 			<name>Open Source Geospatial Foundation Repository</name>
 			<url>http://download.osgeo.org/webdav/geotools/</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>oracle</id>
+			<name>Oracles Maven Repository</name>
+			<url>http://download.oracle.com/maven/</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>caucho</id>
+			<name>caucho</name>
+			<url>http://caucho.com/m2</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>mapfish</id>
+			<name>mapfish</name>
+			<url>http://dev.mapfish.org/maven/repository/</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
 		</repository>
 	</repositories>
-
-
-
 
 	<dependencies>
 		<!-- Spring -->
@@ -209,11 +238,6 @@
 		<dependency>
 			<groupId>org.geotools</groupId>
 			<artifactId>gt-validation</artifactId>
-			<version>8.0</version>
-		</dependency>
-		<dependency>
-			<groupId>org.geotools</groupId>
-			<artifactId>gt-swing</artifactId>
 			<version>${geotools.version}</version>
 		</dependency>
 		<dependency>
@@ -256,10 +280,53 @@
 			<artifactId>gt-wfs</artifactId>
 			<version>${geotools.version}</version>
 		</dependency>
-		<!-- <dependency> <groupId>org.geotools</groupId> <artifactId>gt-wfs-ng</artifactId> 
-			<version>${geotools.version}</version> </dependency> -->
 
+		<!-- geogig -->
+		<dependency>
+			<groupId>org.locationtech.geogig</groupId>
+			<artifactId>geogig-web-api</artifactId>
+			<version>1.2.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.locationtech.geogig</groupId>
+			<artifactId>geogig-geotools</artifactId>
+			<version>1.2.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.locationtech.geogig</groupId>
+			<artifactId>geogig-datastore</artifactId>
+			<version>1.2.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.locationtech.geogig</groupId>
+			<artifactId>geogig-postgres</artifactId>
+			<version>1.2.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.locationtech.geogig</groupId>
+			<artifactId>geogig-rocksdb</artifactId>
+			<version>1.2.0</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.locationtech.geogig</groupId>
+			<artifactId>geogig-api</artifactId>
+			<version>1.2.0</version>
+		</dependency>
 
+		<dependency>
+			<groupId>org.locationtech.geogig</groupId>
+			<artifactId>geogig-core</artifactId>
+			<version>1.2.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.geoserver.community</groupId>
+			<artifactId>gs-geogig</artifactId>
+			<version>2.13.0</version>
+		</dependency>
+
+		<!-- commons -->
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
@@ -271,10 +338,6 @@
 			<artifactId>commons-fileupload</artifactId>
 			<version>1.2</version>
 		</dependency>
-
-
-
-		<!-- commons -->
 		<dependency>
 			<groupId>commons-dbcp</groupId>
 			<artifactId>commons-dbcp</artifactId>
@@ -298,6 +361,7 @@
 			<version>2.6</version>
 		</dependency>
 
+<<<<<<< HEAD
 		<!-- https://mvnrepository.com/artifact/org.jasypt/jasypt -->
 		<dependency>
 			<groupId>org.jasypt</groupId>
@@ -310,6 +374,25 @@
 			<groupId>org.jasypt</groupId>
 			<artifactId>jasypt-spring31</artifactId>
 			<version>1.9.2</version>
+=======
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>4.5</version>
+		</dependency>
+
+		<dependency>
+			<groupId>javax.xml</groupId>
+			<artifactId>jaxp-api</artifactId>
+			<version>1.4</version>
+		</dependency>
+
+		<dependency>
+			<groupId>xerces</groupId>
+			<artifactId>xercesImpl</artifactId>
+			<version>2.11.0</version>
+			<scope>test</scope>
+>>>>>>> 01d77f973616bc28f387afa762aed9e1144caf3b
 		</dependency>
 
 		<!-- Test -->
@@ -323,42 +406,107 @@
 	<build>
 		<plugins>
 			<plugin>
-				<artifactId>maven-eclipse-plugin</artifactId>
-				<version>2.9</version>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.17</version>
 				<configuration>
-					<additionalProjectnatures>
-						<projectnature>org.springframework.ide.eclipse.core.springnature</projectnature>
-					</additionalProjectnatures>
-					<additionalBuildcommands>
-						<buildcommand>org.springframework.ide.eclipse.core.springbuilder</buildcommand>
-					</additionalBuildcommands>
-					<downloadSources>true</downloadSources>
-					<downloadJavadocs>true</downloadJavadocs>
+					<includes>
+						<include>**/*Test.java</include>
+					</includes>
+					<excludes>
+						<exclude>${online.skip.pattern}</exclude>
+						<exclude>${sqlServerOnline.skip.pattern}</exclude>
+					</excludes>
+					<forkCount>1C</forkCount> <!-- i.e. 1 x # of processor cores -->
+					<reuseForks>true</reuseForks>
+					<argLine>-Xms256m -Xmx512m</argLine>
+					<workingDirectory>${project.build.directory}</workingDirectory>
+					<systemPropertyVariables>
+						<java.io.tmpdir>${test.tmpDir}</java.io.tmpdir>
+					</systemPropertyVariables>
 				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.5.1</version>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.4</version>
 				<configuration>
+					<archive>
+						<manifest>
+							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+							<addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+						</manifest>
+					</archive>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>test-jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.1</version>
+				<configuration>
+					<source>1.8</source>
+					<target>1.8</target>
+					<debug>true</debug>
 					<encoding>UTF-8</encoding>
-					<source>1.6</source>
-					<target>1.6</target>
-					<compilerArgument>-Xlint:all</compilerArgument>
-					<showWarnings>true</showWarnings>
-					<showDeprecation>true</showDeprecation>
 				</configuration>
 			</plugin>
 			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>exec-maven-plugin</artifactId>
-				<version>1.2.1</version>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>2.6</version>
 				<configuration>
-					<mainClass>org.test.int1.Main</mainClass>
+					<encoding>UTF-8</encoding>
+				</configuration>
+			</plugin>
+			<plugin>
+				<inherited>true</inherited>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>2.2.1</version>
+				<configuration>
+					<attach>true</attach>
+				</configuration>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<goals>
+							<goal>jar</goal>
+							<goal>test-jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>pl.project13.maven</groupId>
+				<artifactId>git-commit-id-plugin</artifactId>
+				<version>2.1.8</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>revision</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<prefix>git</prefix>
+					<dateFormat>MMMM dd, yyyy 'at' HH:mm:ss z</dateFormat>
+					<failOnNoGitDirectory>false</failOnNoGitDirectory>
+					<dotGitDirectory>${project.basedir}/../../.git</dotGitDirectory>
+					<skipPoms>false</skipPoms>
+					<verbose>false</verbose>
+					<generateGitPropertiesFile>true</generateGitPropertiesFile>
+					<generateGitPropertiesFilename>src/main/resources/git.properties</generateGitPropertiesFilename>
 				</configuration>
 			</plugin>
 		</plugins>
 	</build>
-	<url>hsqldb</url>
 </project>
 	
