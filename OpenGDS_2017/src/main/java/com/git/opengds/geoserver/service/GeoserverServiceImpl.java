@@ -28,6 +28,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import org.geotools.geometry.jts.JTSFactoryFinder;
+import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
+import org.jasypt.properties.EncryptableProperties;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.stereotype.Service;
@@ -41,14 +43,10 @@ import com.git.gdsbuilder.geoserver.factory.DTGeoserverPublisher;
 import com.git.gdsbuilder.geoserver.factory.DTGeoserverReader;
 import com.git.gdsbuilder.geosolutions.geoserver.rest.decoder.RESTFeatureType;
 import com.git.gdsbuilder.geosolutions.geoserver.rest.decoder.RESTLayer;
-import com.git.gdsbuilder.geosolutions.geoserver.rest.decoder.RESTLayerList;
-import com.git.gdsbuilder.geosolutions.geoserver.rest.decoder.RESTPublishedList;
 import com.git.gdsbuilder.geosolutions.geoserver.rest.encoder.GSLayerEncoder;
 import com.git.gdsbuilder.geosolutions.geoserver.rest.encoder.GSLayerGroupEncoder;
 import com.git.gdsbuilder.geosolutions.geoserver.rest.encoder.GSResourceEncoder.ProjectionPolicy;
 import com.git.gdsbuilder.geosolutions.geoserver.rest.encoder.feature.GSFeatureTypeEncoder;
-import com.git.gdsbuilder.geosolutions.geoserver.rest.encoder.utils.NestedElementEncoder;
-import com.git.gdsbuilder.geosolutions.geoserver.rest.encoder.utils.XmlElement;
 import com.git.gdsbuilder.type.geoserver.layer.GeoLayerInfo;
 import com.git.gdsbuilder.type.geoserver.layer.GeoLayerInfoList;
 import com.git.opengds.geoserver.data.style.GeoserverSldTextType;
@@ -79,9 +77,13 @@ public class GeoserverServiceImpl implements GeoserverService {
 
 	static {
 		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-		Properties properties = new Properties();
+		 StandardPBEStringEncryptor encryptor = new StandardPBEStringEncryptor();
+		 encryptor.setPassword("gitrnd");
+//		Properties properties = new Properties();
+		 Properties properties = new EncryptableProperties(encryptor);
 		try {
 			properties.load(classLoader.getResourceAsStream("geoserver.properties"));
+			
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();

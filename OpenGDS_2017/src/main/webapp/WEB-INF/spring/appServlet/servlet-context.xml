@@ -40,8 +40,6 @@ http://www.springframework.org/schema/aop/spring-aop.xsd http://www.springframew
 	</context:component-scan>
 
 
-
-
 	<!-- json -->
 	<beans:bean id="jacksonMessageConverter"
 		class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter" />
@@ -53,5 +51,6 @@ http://www.springframework.org/schema/aop/spring-aop.xsd http://www.springframew
 			</beans:list>
 		</beans:property>
 	</beans:bean>
+
 
 </beans:beans>

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
@@ -281,51 +280,6 @@
 			<version>${geotools.version}</version>
 		</dependency>
 
-		<!-- geogig -->
-		<dependency>
-			<groupId>org.locationtech.geogig</groupId>
-			<artifactId>geogig-web-api</artifactId>
-			<version>1.2.0</version>
-		</dependency>
-		<dependency>
-			<groupId>org.locationtech.geogig</groupId>
-			<artifactId>geogig-geotools</artifactId>
-			<version>1.2.0</version>
-		</dependency>
-		<dependency>
-			<groupId>org.locationtech.geogig</groupId>
-			<artifactId>geogig-datastore</artifactId>
-			<version>1.2.0</version>
-		</dependency>
-		<dependency>
-			<groupId>org.locationtech.geogig</groupId>
-			<artifactId>geogig-postgres</artifactId>
-			<version>1.2.0</version>
-		</dependency>
-		<dependency>
-			<groupId>org.locationtech.geogig</groupId>
-			<artifactId>geogig-rocksdb</artifactId>
-			<version>1.2.0</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.locationtech.geogig</groupId>
-			<artifactId>geogig-api</artifactId>
-			<version>1.2.0</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.locationtech.geogig</groupId>
-			<artifactId>geogig-core</artifactId>
-			<version>1.2.0</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.geoserver.community</groupId>
-			<artifactId>gs-geogig</artifactId>
-			<version>2.13.0</version>
-		</dependency>
-
 		<!-- commons -->
 		<dependency>
 			<groupId>commons-io</groupId>
@@ -361,7 +315,6 @@
 			<version>2.6</version>
 		</dependency>
 
-<<<<<<< HEAD
 		<!-- https://mvnrepository.com/artifact/org.jasypt/jasypt -->
 		<dependency>
 			<groupId>org.jasypt</groupId>
@@ -374,7 +327,8 @@
 			<groupId>org.jasypt</groupId>
 			<artifactId>jasypt-spring31</artifactId>
 			<version>1.9.2</version>
-=======
+		</dependency>
+
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpclient</artifactId>
@@ -392,7 +346,6 @@
 			<artifactId>xercesImpl</artifactId>
 			<version>2.11.0</version>
 			<scope>test</scope>
->>>>>>> 01d77f973616bc28f387afa762aed9e1144caf3b
 		</dependency>
 
 		<!-- Test -->
