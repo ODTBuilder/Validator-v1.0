@@ -13,14 +13,19 @@ if (!gb)
 if (!gb.panel)
 	gb.panel = {};
 gb.panel.LayerStyle = function(obj) {
+	obj.width = 247;
+	obj.height = 491;
+	obj.positionX = 380;
+	obj.positionY = 466;
 	gb.panel.Base.call(this, obj);
 	var options = obj ? obj : {};
 	this.layer = options.layer instanceof ol.layer.Base ? options.layer : undefined;
-	if (this.autoOpen) {
-		this.open();
-	} else {
-		this.close();
-	}
+	this.layerName = $("<div>");
+	this.linePicker = $("<div>");
+	var lineStyle = $("<div>").append(this.linePicker);
+	this.polyPicker = $("<div>");
+	var polyStyle = $("<div>").append(this.polyPicker);
+	$(this.panelBody).append();
 	$("body").append(this.panel);
 };
 gb.panel.LayerStyle.prototype = Object.create(gb.panel.Base.prototype);

@@ -1,17 +1,28 @@
 /**
- * 일반화 모달 객체를 정의한다.
+ * 베이스 좌표계 변경 모달 객체를 정의한다.
  * 
+ * @class gb.modal.BaseCRS
+ * @memberof gb.modal
+ * @param {Object}
+ *            obj - 생성자 옵션을 담은 객체
+ * @param {String}
+ *            obj.title - 모달의 제목
+ * @param {Number}
+ *            obj.width - 모달의 너비 (픽셀)
+ * @param {Number}
+ *            obj.height - 모달의 높이 (픽셀)
+ * @param {Boolean}
+ *            obj.autoOpen - 선언과 동시에 표출 할 것인지 선택
+ * @param {DOM}
+ *            obj.message - 현재 좌표계를 출력할 DOM
+ * @param {ol.Map}
+ *            obj.map - 베이스 좌표계를 변경할 ol.Map 객체
+ * @param {String}
+ *            obj.epsg - 설정하고자 하는 좌표계의 EPSG 코드
+ * @version 0.01
  * @author yijun.so
  * @date 2017. 07.26
- * @version 0.01
- * @class gb.modal.BaseCRS
- * @constructor
  */
-var gb;
-if (!gb)
-	gb = {};
-if (!gb.modal)
-	gb.modal = {};
 gb.modal.BaseCRS = function(obj) {
 	obj.width = 435;
 	gb.modal.Base.call(this, obj);
@@ -49,49 +60,74 @@ gb.modal.BaseCRS.prototype = Object.create(gb.modal.Base.prototype);
 gb.modal.BaseCRS.prototype.constructor = gb.modal.BaseCRS;
 
 /**
- * @name getMap
+ * 베이스 좌표계를 변경하고자 하는 ol.Map 객체를 반환한다.
+ * 
+ * @method gb.modal.BaseCRS#getMap
+ * @return {ol.Map} 베이스 좌표계를 변경하고자 하는 ol.Map 객체
  */
 gb.modal.BaseCRS.prototype.getMap = function() {
 	return this.map;
 };
 
 /**
- * @name setMap
+ * 베이스 좌표계를 변경하고자 하는 ol.Map 객체를 설정한다.
+ * 
+ * @method gb.modal.BaseCRS#setMap
+ * @param {ol.Map}
+ *            map - 베이스 좌표계를 변경하고자 하는 ol.Map 객체
  */
 gb.modal.BaseCRS.prototype.setMap = function(map) {
 	this.map = map;
 };
 
 /**
- * @name getMessage
+ * 현재 좌표계를 표시할 DOM 객체를 반환한다.
+ * 
+ * @method gb.modal.BaseCRS#getMessage
+ * @return 현재 좌표계를 표시할 DOM 객체
  */
 gb.modal.BaseCRS.prototype.getMessage = function() {
 	return this.message;
 };
 
 /**
- * @name setMessage
+ * 현재 좌표계를 표시할 DOM 객체를 설정한다.
+ * 
+ * @method gb.modal.BaseCRS#setMessage
+ * @param {DOM}
+ *            message - 현재 좌표계를 표시할 DOM 객체
  */
 gb.modal.BaseCRS.prototype.setMessage = function(message) {
 	this.message = message;
 };
 
 /**
- * @name getEPSGCode
+ * 현재 적용된 베이스 좌표계의 EPSG 코드를 반환한다.
+ * 
+ * @method gb.modal.BaseCRS#getEPSGCode
+ * @return {String} 현재 적용된 베이스 좌표계의 EPSG 코드
  */
 gb.modal.BaseCRS.prototype.getEPSGCode = function() {
 	return this.epsg;
 };
 
 /**
- * @name getEPSGCode
+ * 현재 적용된 베이스 좌표계의 EPSG 코드를 설정한다.
+ * 
+ * @method gb.modal.BaseCRS#getEPSGCode
+ * @param {String}
+ *            code - 현재 적용된 베이스 좌표계의 EPSG 코드
  */
 gb.modal.BaseCRS.prototype.setEPSGCode = function(code) {
 	this.epsg = code;
 };
 
 /**
- * @name searchEPSGCode
+ * 베이스 좌표계를 변경하기 위한 EPSG 코드를 검색한다.
+ * 
+ * @method gb.modal.BaseCRS#searchEPSGCode
+ * @param {String}
+ *            code - 베이스 좌표계를 변경하기 위한 EPSG 코드
  */
 gb.modal.BaseCRS.prototype.searchEPSGCode = function(code) {
 	console.log(code);
@@ -122,7 +158,17 @@ gb.modal.BaseCRS.prototype.searchEPSGCode = function(code) {
 };
 
 /**
- * @name setProjection
+ * 베이스 좌표계를 적용한다.
+ * 
+ * @method gb.modal.BaseCRS#setProjection
+ * @param {String}
+ *            code - EPSG 코드
+ * @param {String}
+ *            name - 좌표계 이름
+ * @param {String}
+ *            proj4def - proj4 좌표계
+ * @param {Number[]}
+ *            bbox - 좌표계 영역
  */
 gb.modal.BaseCRS.prototype.setProjection = function(code, name, proj4def, bbox) {
 	var that = this;
@@ -178,7 +224,8 @@ gb.modal.BaseCRS.prototype.setProjection = function(code, name, proj4def, bbox) 
 /**
  * 모달을 연다
  * 
- * @name open
+ * @method gb.modal.BaseCRS#open
+ * @override
  */
 gb.modal.BaseCRS.prototype.open = function() {
 	gb.modal.Base.prototype.open.call(this);

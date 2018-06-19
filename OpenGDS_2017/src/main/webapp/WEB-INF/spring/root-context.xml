@@ -12,7 +12,7 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
 	<bean id="adminDataSource" class="org.apache.commons.dbcp.BasicDataSource"
 		destroy-method="close">
 		<property name="driverClassName" value="org.postgresql.Driver" />
-		<property name="url" value="jdbc:postgresql://localhost:5433/admin" />
+		<property name="url" value="jdbc:postgresql://175.116.181.42:5433/admin" />
 		<property name="username" value="postgis" />
 		<property name="password" value="postgis" />
 	</bean>
@@ -70,7 +70,7 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
 	<bean id="admin2DataSource" class="org.apache.commons.dbcp.BasicDataSource"
 		destroy-method="close">
 		<property name="driverClassName" value="org.postgresql.Driver" />
-		<property name="url" value="jdbc:postgresql://localhost:5433/admin2" />
+		<property name="url" value="jdbc:postgresql://175.116.181.42:5433/admin2" />
 		<property name="username" value="postgis" />
 		<property name="password" value="postgis" />
 	</bean>
@@ -114,7 +114,7 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
 	<bean id="admin3DataSource" class="org.apache.commons.dbcp.BasicDataSource"
 		destroy-method="close">
 		<property name="driverClassName" value="org.postgresql.Driver" />
-		<property name="url" value="jdbc:postgresql://localhost:5433/admin3" />
+		<property name="url" value="jdbc:postgresql://175.116.181.42:5433/admin3" />
 		<property name="username" value="postgis" />
 		<property name="password" value="postgis" />
 	</bean>

@@ -4,7 +4,7 @@
 <head>
 <jsp:include page="/WEB-INF/views/common/common3.jsp" />
 <script src='${pageContext.request.contextPath}/resources/js/login/login.js'></script>
-<title>GeoDT Online</title>
+<title>OpenGDS/Builder</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
 html {
@@ -88,12 +88,13 @@ html {
 	<jsp:include page="/WEB-INF/views/common/header.jsp" />
 	<nav id="builderHeader" class="navbar navbar-default fixed-top">
 		<ul class="nav navbar-nav">
-			<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
-				aria-expanded="false" title="New layer">New</a>
-				<ul class="dropdown-menu" role="menu">
-					<li><a href="#" id="uploadFile" title="Upload File" onclick="gitbuilder.ui.NewFileWindow()">File</a></li>
-					<li><a href="#" id="newVector" title="Vector">Layer</a></li>
-				</ul></li>
+			<li><a href="#" id="uploadFile" title="Upload File" onclick="gitbuilder.ui.NewFileWindow()">File</a></li>
+			<!-- 			<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" -->
+			<!-- 				aria-expanded="false" title="New layer">New</a> -->
+			<!-- 				<ul class="dropdown-menu" role="menu"> -->
+			<!-- 					<li><a href="#" id="uploadFile" title="Upload File" onclick="gitbuilder.ui.NewFileWindow()">File</a></li> -->
+			<!-- 					<li><a href="#" id="newVector" title="Vector">Layer</a></li> -->
+			<!-- 				</ul></li> -->
 			<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
 				aria-expanded="false" title="Save">Save</a>
 				<ul class="dropdown-menu" role="menu">
@@ -125,25 +126,26 @@ html {
 				aria-expanded="false" title="Generalization">Generalization</a>
 				<ul class="dropdown-menu" role="menu">
 					<li><a href="#" title="Generalization Process" id="gen">Generalization</a></li>
-					<li><a href="#" title="Validating Option" id="sepview">Separate View</a></li>
+					<li><a href="#" title="Generalization Result" id="genstat">Result</a></li>
+					<!-- 					<li><a href="#" title="Validating Option" id="sepview">Separate View</a></li> -->
 				</ul></li>
-			<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
-				aria-expanded="false" title="ToolBox">ToolBox</a>
-				<ul class="dropdown-menu" role="menu">
-					<li><a href="#">CRS Transformation</a></li>
-					<li><a href="#">Spatial Operation</a></li>
-				</ul></li>
+			<!-- 			<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" -->
+			<!-- 				aria-expanded="false" title="ToolBox">ToolBox</a> -->
+			<!-- 				<ul class="dropdown-menu" role="menu"> -->
+			<!-- 					<li><a href="#">Base CRS</a></li> -->
+			<!-- 					<li><a href="#">Spatial Operation</a></li> -->
+			<!-- 				</ul></li> -->
 
-			<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
-				aria-expanded="false" title="History">History</a>
-				<ul class="dropdown-menu" role="menu">
-					<li><a href="#">History</a></li>
-					<li role="presentation" class="divider"></li>
-					<li><a href="#">Download History</a></li>
-					<li><a href="#">Upload History</a></li>
-				</ul></li>
+			<!-- 			<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" -->
+			<!-- 				aria-expanded="false" title="History">History</a> -->
+			<!-- 				<ul class="dropdown-menu" role="menu"> -->
+			<!-- 					<li><a href="#">History</a></li> -->
+			<!-- 					<li role="presentation" class="divider"></li> -->
+			<!-- 					<li><a href="#">Download History</a></li> -->
+			<!-- 					<li><a href="#">Upload History</a></li> -->
+			<!-- 				</ul></li> -->
 
-			<li><a href="#" title="Information">Information</a></li>
+			<li><a href="#" title="Information" id="binfo">Information</a></li>
 		</ul>
 	</nav>
 
@@ -182,7 +184,8 @@ html {
 	</div>
 	<nav id="builderFooter" class="navbar navbar-default">
 		<div class="container-fluid">
-			<span class="text-muted">OpenGDS Builder/Validator</span> <span class="text-muted epsg-now"></span>
+			<span class="text-muted">OpenGDS Builder/Validator</span> <span class="text-muted"><a href="#"
+				class="epsg-now"></a></span>
 		</div>
 	</nav>
 
@@ -249,53 +252,6 @@ html {
 				map.updateSize();
 				map2.updateSize();
 			},
-			setProjection : function(code, name, proj4def, bbox) {
-				if (code === null || name === null || proj4def === null || bbox === null) {
-					map.setView(new ol.View({
-						projection : 'EPSG:3857',
-						center : [ 0, 0 ],
-						zoom : 1
-					}));
-					return;
-				}
-
-				var newProjCode = 'EPSG:' + code;
-				$(".epsg-now").text("[" + newProjCode + "]");
-				proj4.defs(newProjCode, proj4def);
-				var newProj = ol.proj.get(newProjCode);
-				var fromLonLat = ol.proj.getTransform('EPSG:4326', newProj);
-
-				// very approximate calculation of projection extent
-				var extent = ol.extent.applyTransform([ bbox[1], bbox[2], bbox[3], bbox[0] ], fromLonLat);
-				newProj.setExtent(extent);
-				var newView = new ol.View({
-					projection : newProj
-				});
-				map.setView(newView);
-				map2.setView(newView);
-				newView.fit(extent);
-			},
-			search : function(query) {
-				fetch('https://epsg.io/?format=json&q=' + query).then(function(response) {
-					return response.json();
-				}).then(function(json) {
-					var results = json['results'];
-					if (results && results.length > 0) {
-						for (var i = 0, ii = results.length; i < ii; i++) {
-							var result = results[i];
-							if (result) {
-								var code = result['code'], name = result['name'], proj4def = result['proj4'], bbox = result['bbox'];
-								if (code && code.length > 0 && proj4def && proj4def.length > 0 && bbox && bbox.length == 4) {
-									gitrnd.setProjection(code, name, proj4def, bbox);
-									return;
-								}
-							}
-						}
-					}
-					gitrnd.setProjection(null, null, null, null);
-					return;
-				});
-			},
 			addRemoveHistoryList : function(layer, arr) {
 				if (layer instanceof ol.layer.Group) {
 					if (layer.get("id")) {
@@ -348,7 +304,7 @@ html {
 			}
 		}
 
-		gitrnd.search("5186");
+		// 		gitrnd.search("5186");
 
 		$(window).resize(function() {
 			gitrnd.resize();
@@ -358,6 +314,17 @@ html {
 			gitrnd.resize();
 		});
 
+		var crs = new gb.modal.BaseCRS({
+			"autoOpen" : false,
+			"title" : "Base CRS",
+			"message" : $(".epsg-now"),
+			"map" : [ map, map2 ],
+			"epsg" : "5186"
+		});
+
+		$(".epsg-now").click(function() {
+			crs.open();
+		});
 		var lrecord = new gb.edit.LayerRecord({});
 
 		var frecord = new gb.edit.FeatureRecord({
@@ -390,12 +357,16 @@ html {
 			selected : function() {
 				return $('#builderClientLayer').jstreeol3("get_selected_layer");
 			},
-			getFeatureInfo : "http://175.116.181.42:9990/geoserver/wms",
+			getFeatureInfo : "http://www.opengds.re.kr:19080/geoserver/wms",
 			layerInfo : "geoserver/getGeoLayerInfoList.ajax",
 			imageTile : "geoserver/geoserverWMSLayerLoad.do",
 			getFeature : "geoserver/geoserverWFSGetFeature.ajax"
 		});
 
+		var lstyle = new gb.panel.LayerStyle({
+			
+		});
+		
 		$('#builderClientLayer').jstreeol3({
 			"core" : {
 				"map" : map,
@@ -408,6 +379,7 @@ html {
 				"properties" : lprop,
 				"layerRecord" : lrecord,
 				"featureRecord" : frecord,
+				"style" : lstyle,
 				"editingTool" : epan
 			},
 			"search" : {
@@ -442,7 +414,7 @@ html {
 					}
 				},
 				"geoserver" : {
-					"url" : "http://175.116.181.42:9990/geoserver/wms",
+					"url" : "http://www.opengds.re.kr:19080/geoserver/wms",
 					"width" : "15",
 					"height" : "15",
 					"format" : "image/png"
@@ -457,7 +429,8 @@ html {
 		var transfer = new gb.edit.RecordTransfer({
 			url : "editLayerCollection/editLayerCollection.ajax",
 			layer : lrecord,
-			feature : frecord
+			feature : frecord,
+			map : map
 		});
 
 		$("#savePart").click(function() {
@@ -545,7 +518,8 @@ html {
 			},
 			weightDefinition : function() {
 				return $("#weight1").weightdefinition("getDefinition");
-			}
+			},
+			map : map
 		});
 
 		$("#layerDefinition").layerdefinition20({});
@@ -572,16 +546,17 @@ html {
 
 		$("#validation").validation({
 			validatorURL : "validator/validate.ajax",
-			layersURL : "geoserver/getGeolayerCollectionTree.ajax?treeType=qa2.0",
+			layersURL : "geoserver/getGeolayerCollectionTree.ajax?treeType=shp",
 			layerDefinition : function() {
 				return $("#layerDefinition").layerdefinition20("getDefinition");
 			},
 			optionDefinition : function() {
-				return optwin.getDefinition();
+				return optwin2.getDefinition();
 			},
 			weightDefinition : function() {
 				return $("#weight").weightdefinition("getDefinition");
-			}
+			},
+			map : map
 		});
 
 		$("#qaedit").qaedit({
@@ -598,10 +573,14 @@ html {
 		});
 
 		var createLayer = new gb.geoserver.CreateLayer({
+			map : map,
+			URL : "editLayerCollection/editLayerCollection.ajax"
+		});
+		var deleteGroupLayer = new gb.geoserver.DeleteGroupLayer({
 			URL : "editLayerCollection/editLayerCollection.ajax"
 		});
 		var deleteLayer = new gb.geoserver.DeleteLayer({
-			URL : "editLayerCollection/editLayerCollection.ajax"
+			URL : "editLayerCollection/editLayer.ajax"
 		});
 		var layerInfo = new gb.geoserver.ModifyLayer({
 			infoURL : "geoserver/getGeoLayerInfoList.ajax",
@@ -628,6 +607,7 @@ html {
 				"groupLayerInfoURL" : "geoserver/getGeoGroupLayerInfoList.ajax",
 				"WMSLayerURL" : "geoserver/geoserverWMSLayerLoad.do",
 				"createLayer" : createLayer,
+				"deleteGroupLayer" : deleteGroupLayer,
 				"deleteLayer" : deleteLayer,
 				"downloadNGIDXF" : "fileExport/fileExport.ajax",
 				"downloadGeoserver" : "geoserver/downloadRequest.do",
@@ -654,6 +634,15 @@ html {
 			qastat.open();
 		});
 
+		var genstat = new gb.gen.GenStatus({
+			"statusURL" : "generalization/getGeneralizationResult.ajax",
+			"errorURL" : "",
+			"downloadURL" : "fileExport/fileExport.ajax"
+		});
+		$("#genstat").click(function() {
+			genstat.open();
+		});
+
 		$("#edit").click(function() {
 			epan.open();
 		});
@@ -664,7 +653,8 @@ html {
 			"title" : "Generalization",
 			"jstreeURL" : "geoserver/getGeolayerCollectionTree.ajax?treeType=all",
 			"items" : [ "Simplification", "Elimination" ],
-			"requestURL" : "generalization/exeGeneralization.ajax"
+			"requestURL" : "generalization/exeGeneralization.ajax",
+			"map" : map
 		});
 
 		$("#gen").click(function() {
@@ -695,6 +685,34 @@ html {
 			});
 
 		});
+
+		var binfo = new gb.modal.Base(
+				{
+					"title" : "Information",
+					"width" : "600px",
+					"autoOpen" : false,
+					"body" : $("<div>")
+							.css("margin", "10px")
+							.html(
+									'이 프로젝트는 국토공간정보연구사업 중,<br/> [공간정보 SW 활용을 위한 오픈소스 가공기술 개발]과제 연구성과 입니다.<br/> 정식 버전은 차후에 통합된 환경에서 제공될 예정입니다. 이 프로그램들은 완성되지 않았으며, 최종 완료 전 까지 문제가 발생할 수도 있습니다. 발생된 문제는 최종 사용자에게 있으며, 완료가 된다면 제시된 라이선스 및 규약을 적용할 예정입니다.<br/>감사합니다. <br/>공간정보기술(주) 연구소 http://www.git.co.kr/ <br/>OpenGeoDT 팀')
+				});
+		$("#binfo").click(function() {
+			binfo.open();
+		});
+
+		var source = new ol.source.Vector({
+
+		});
+		var layer = new ol.layer.Vector({
+			"source" : source
+		});
+		var opt = {
+			"editable" : true,
+			"geometry" : "Polygon"
+		};
+		layer.set("git", opt);
+		layer.set("name", "test polygon");
+		map.addLayer(layer);
 	</script>
 
 </body>
