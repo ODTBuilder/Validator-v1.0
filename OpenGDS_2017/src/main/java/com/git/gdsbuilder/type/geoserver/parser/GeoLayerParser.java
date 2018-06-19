@@ -52,28 +52,60 @@ import com.git.gdsbuilder.type.geoserver.layer.GeoLayer;
 import com.git.gdsbuilder.type.geoserver.layer.GeoLayerList;
 
 /**
- * GeoServer로부터 레이어 정보를 받아오는 클래스
+ * GeoServer로부터 레이어 정보를 받아오는 클래스. GeoLayer 객체로 파싱
  * 
  * @author DY.Oh
  * @Date 2017. 3. 11. 오후 1:39:13
  */
 public class GeoLayerParser {
 
+	/**
+	 * Geoserver 작업공간 이름
+	 */
 	private String workspaceName;
 	private String getCapabilities; // http://서버주소/geoserver/wfs?REQUEST=GetCapabilities&version=1.0.0
+	/**
+	 * Geoserver 저장소 이름
+	 */
 	private DataStore dataStore;
+	/**
+	 * 파일포맷
+	 */
 	private EnFileFormat fileFormat;
+	/**
+	 * 파일이름
+	 */
 	private String collectionName;
+	/**
+	 * 레이어 이름
+	 */
 	private String layerName;
+	/**
+	 * 
+	 */
 	private JSONArray layers;
+	/**
+	 * Geoserver 레이어 정보를 담고 있는 GeoLayer 객체
+	 */
 	private GeoLayer layer;
+	/**
+	 * 다수의 Geoserver 레이어 정보를 담고 있는 GeoLayer 객체 목록
+	 */
 	private GeoLayerList layerList;
 
 	/**
-	 * LayerParser 생성자
+	 * GeoLayerParser 생성자. Geoserver 레이어를 GeoLayer 객체로 파싱
 	 * 
+	 * @param workspaceName
+	 *            작업공간 이름
+	 * @param dataStore
+	 *            저장소 이름
+	 * @param fileFormat
+	 *            파일포맷
 	 * @param collectionName
+	 *            파일이름
 	 * @param layerName
+	 *            레이어 이름
 	 * @throws FileNotFoundException
 	 * @throws IOException
 	 * @throws ParseException
@@ -89,6 +121,23 @@ public class GeoLayerParser {
 		this.layer = layerParse();
 	}
 
+	/**
+	 * GeoLayerParser 생성자. Geoserver 레이어를 GeoLayer 객체로 파싱
+	 * 
+	 * @param workspaceName
+	 *            작업공간 이름
+	 * @param getCapabilities
+	 * @param fileFormat
+	 *            파일포맷
+	 * @param collectionName
+	 *            파일이름
+	 * @param layerName
+	 *            레이어 이름
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 * @throws ParseException
+	 * @throws SchemaException
+	 */
 	public GeoLayerParser(String workspaceName, String getCapabilities, EnFileFormat fileFormat, String collectionName,
 			String layerName) throws FileNotFoundException, IOException, ParseException, SchemaException {
 		this.workspaceName = workspaceName;
@@ -104,10 +153,18 @@ public class GeoLayerParser {
 	}
 
 	/**
-	 * LayerParser 생성자
+	 * GeoLayerParser 생성자. 다수의 Geoserver 레이어를 GeoLayerList 객체로 파싱
 	 * 
+	 * @param workspaceName
+	 *            작업공간 이름
+	 * @param dataStore
+	 *            저장소 이름
+	 * @param fileFormat
+	 *            파일포맷
 	 * @param collectionName
+	 *            파일이름
 	 * @param layers
+	 *            레이어 이름 목록
 	 * @throws FileNotFoundException
 	 * @throws IOException
 	 * @throws ParseException
@@ -123,58 +180,85 @@ public class GeoLayerParser {
 		this.layerList = layersParse();
 	}
 
+	/**
+	 * 작업공간 이름 반환
+	 * 
+	 * @return String
+	 */
 	public String getWorkspaceName() {
 		return workspaceName;
 	}
 
+	/**
+	 * 작업공간 이름 설정
+	 * 
+	 * @param workspaceName
+	 *            작업공간 이름
+	 */
 	public void setWorkspaceName(String workspaceName) {
 		this.workspaceName = workspaceName;
 	}
 
 	/**
-	 * layer getter @author DY.Oh @Date 2017. 3. 11. 오후 1:39:21 @return
-	 * Layer @throws
+	 * GeoLayer 객체 반환
+	 * 
+	 * @return GeoLayer
 	 */
 	public GeoLayer getLayer() {
 		return layer;
 	}
 
 	/**
-	 * layer setter @author DY.Oh @Date 2017. 3. 11. 오후 1:39:30 @param layer
-	 * void @throws
+	 * GeoLayer 객체 설정
+	 * 
+	 * @param layer
+	 *            GeoLayer 객체
 	 */
 	public void setLayer(GeoLayer layer) {
 		this.layer = layer;
 	}
 
 	/**
-	 * layerList getter @author DY.Oh @Date 2017. 3. 11. 오후 1:39:28 @return
-	 * LayerList @throws
+	 * GeoLayerList 객체 반환
+	 * 
+	 * @return GeoLayerList
 	 */
 	public GeoLayerList getLayerList() {
 		return layerList;
 	}
 
 	/**
-	 * layerList setter @author DY.Oh @Date 2017. 3. 11. 오후 1:39:26 @param
-	 * layerList void @throws
+	 * GeoLayerList 객체 설정
+	 * 
+	 * @param layerList
+	 *            GeoLayerList 객체
 	 */
 	public void setLayerList(GeoLayerList layerList) {
 		this.layerList = layerList;
 	}
 
+	/**
+	 * @return
+	 */
 	public String getGetCapabilities() {
 		return getCapabilities;
 	}
 
+	/**
+	 * @param getCapabilities
+	 */
 	public void setGetCapabilities(String getCapabilities) {
 		this.getCapabilities = getCapabilities;
 	}
 
 	/**
-	 * 해당하는 Layer 객체를 GeoServer로부터 받아 반환 @author DY.Oh @Date 2017. 3. 11. 오후
-	 * 1:39:24 @return @throws FileNotFoundException @throws IOException @throws
-	 * ParseException @throws SchemaException Layer @throws
+	 * GeoServer로부터 레이어 정보를 받아 GeoLayer 객체로 변환하여 반환
+	 * 
+	 * @return GeoLayer
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 * @throws ParseException
+	 * @throws SchemaException
 	 */
 	@SuppressWarnings("unchecked")
 	public GeoLayer layerParse() throws FileNotFoundException, IOException, ParseException, SchemaException {
@@ -185,11 +269,6 @@ public class GeoLayerParser {
 			try {
 				SimpleFeatureSource source = this.dataStore.getFeatureSource(workspaceName + ":" + fullLayerName);
 				sfc = source.getFeatures();
-				// SimpleFeatureIterator iter = sfc.features();
-				// while(iter.hasNext()) {
-				// SimpleFeature sf = iter.next();
-				// System.out.println(sf.getDefaultGeometry().toString());
-				// }
 			} catch (NullPointerException e) {
 				return null;
 			}
@@ -207,9 +286,13 @@ public class GeoLayerParser {
 	}
 
 	/**
-	 * 해당하는 Layer 객체를 GeoServer로부터 받아 반환 @author DY.Oh @Date 2017. 3. 11. 오후
-	 * 1:39:35 @return @throws FileNotFoundException @throws IOException @throws
-	 * ParseException @throws SchemaException LayerList @throws
+	 * GeoServer로부터 다수의 레이어 정보를 받아 GeoLayerList 객체로 변환하여 반환
+	 * 
+	 * @return GeoLayerList
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 * @throws ParseException
+	 * @throws SchemaException
 	 */
 	public GeoLayerList layersParse() throws FileNotFoundException, IOException, ParseException, SchemaException {
 

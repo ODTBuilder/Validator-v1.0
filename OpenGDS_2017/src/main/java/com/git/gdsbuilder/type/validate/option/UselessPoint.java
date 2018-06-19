@@ -19,16 +19,12 @@ package com.git.gdsbuilder.type.validate.option;
 
 /**
  * UselessPoint 정보를 담고 있는 클래스
+ * 
  * @author DY.Oh
  * @Date 2017. 4. 18. 오후 3:09:34
- * */
+ */
 public class UselessPoint extends ValidatorOption {
 
-	/**
-	 * UselessPoint 타입 정보를 담고 있는 클래스
-	 * @author DY.Oh
-	 * @Date 2017. 4. 18. 오후 3:10:55
-	 * */
 	public enum Type {
 
 		USELESSPOINT("UselessPoint", "GeometricError");
@@ -36,34 +32,15 @@ public class UselessPoint extends ValidatorOption {
 		String errName;
 		String errType;
 
-		/**
-		 * Type 생성자
-		 * @param errName
-		 * @param errType
-		 */
 		Type(String errName, String errType) {
 			this.errName = errName;
 			this.errType = errType;
 		}
 
-		/**
-		 * errName getter
-		 * @author DY.Oh
-		 * @Date 2017. 4. 18. 오후 3:09:38
-		 * @return String
-		 * @throws
-		 * */
 		public String errName() {
 			return errName;
 		}
 
-		/**
-		 * errType getter
-		 * @author DY.Oh
-		 * @Date 2017. 4. 18. 오후 3:09:40
-		 * @return String
-		 * @throws
-		 * */
 		public String errType() {
 			return errType;
 		}

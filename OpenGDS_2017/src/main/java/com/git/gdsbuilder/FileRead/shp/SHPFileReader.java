@@ -1,3 +1,19 @@
+/*
+ *    OpenGDS/Builder
+ *    http://git.co.kr
+ *
+ *    (C) 2014-2017, GeoSpatial Information Technology(GIT)
+ *    
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    version 3 of the License.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
+ */
 package com.git.gdsbuilder.FileRead.shp;
 
 import java.io.File;
@@ -18,8 +34,26 @@ import com.git.gdsbuilder.type.shp.collection.DTSHPLayerCollection;
 import com.git.gdsbuilder.type.shp.layer.DTSHPLayer;
 import com.git.gdsbuilder.type.shp.layer.DTSHPLayerList;
 
+/**
+ * SHP 파일을 읽어 DTSHPLayerCollection 객체로 변환하는 기능을 제공
+ * 
+ * @author DY.Oh
+ *
+ */
 public class SHPFileReader {
 
+	/**
+	 * zip 파일 압축 해제 경로의 shp 파일을 읽어 DTSHPLayerCollection 객체로 변환하여 반환
+	 * 
+	 * @param upZipFilePath
+	 *            zip 파일 압축 해제 경로
+	 * @param entryName
+	 *            zip 파일 내 폴더명
+	 * @param fileNameMap
+	 *            shp, shx, dbf 파일명
+	 * @return DTSHPLayerCollection
+	 * @throws Exception
+	 */
 	@SuppressWarnings("unchecked")
 	public DTSHPLayerCollection read(String upZipFilePath, String entryName, Map<String, Object> fileNameMap)
 			throws Exception {
@@ -125,6 +159,13 @@ public class SHPFileReader {
 		return isValid;
 	}
 
+	/**
+	 * shp 파일 객체를 SimpleFeatureCollection으로 변환하여 반환
+	 * 
+	 * @param shpFile
+	 *            shp 파일 객체
+	 * @return SimpleFeatureCollection
+	 */
 	public SimpleFeatureCollection getShpObject(File shpFile) {
 
 		Map<String, Object> map = new HashMap<String, Object>();

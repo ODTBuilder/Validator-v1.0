@@ -27,13 +27,16 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.Point;
 
 /**
- * ErrorLayerDBQuery 생성 클래스
+ * Error Layer DB Table Query를 생성하는 클래스
  * 
  * @author DY.Oh
  * @Date 2017. 4. 18. 오후 4:09:29
  */
 public class ErrorLayerDBQueryManager {
 
+	/**
+	 * ErrorLayer 객체
+	 */
 	ErrorLayer errLayer;
 
 	/**
@@ -47,6 +50,7 @@ public class ErrorLayerDBQueryManager {
 	 * ErrorLayerDBQueryManager 생성자
 	 * 
 	 * @param errLayer
+	 *            ErrorLayer 객체
 	 */
 	public ErrorLayerDBQueryManager(ErrorLayer errLayer) {
 		super();
@@ -54,10 +58,11 @@ public class ErrorLayerDBQueryManager {
 	}
 
 	/**
-	 * err_layer Tb Create Query 생성 @author DY.Oh @Date 2017. 4. 18. 오후
-	 * 4:09:35 @return HashMap<String,Object> @throws
+	 * err_layer Tb Create Query 생성
 	 * 
 	 * @param errTableName
+	 *            err_layer Tb명
+	 * @return HashMap<String, Object>
 	 */
 	public HashMap<String, Object> createErrorLayerTbQuery(String errTableName) {
 
@@ -72,10 +77,11 @@ public class ErrorLayerDBQueryManager {
 	}
 
 	/**
-	 * err_layer field insert Query 생성 @author DY.Oh @Date 2017. 4. 18. 오후
-	 * 4:09:39 @return List<HashMap<String,Object>> @throws
+	 * err_layer field insert Query 생성
 	 * 
 	 * @param errTableName
+	 *            err_layer Tb 명
+	 * @return List<HashMap<String,Object>>
 	 */
 	public List<HashMap<String, Object>> insertErrorLayerQuery(String errTableName) {
 
@@ -107,8 +113,11 @@ public class ErrorLayerDBQueryManager {
 	}
 
 	/**
-	 * err_layer Tb selectAll Query 생성 @author DY.Oh @Date 2017. 4. 18. 오후
-	 * 4:09:42 @param collectionName @return HashMap<String,Object> @throws
+	 * err_layer Tb selectAll Query 생성
+	 * 
+	 * @param tableName
+	 *            err_layer Tb 명
+	 * @return HashMap<String, Object>
 	 */
 	public HashMap<String, Object> selectAllErrorFeaturesQuery(String tableName) {
 
@@ -122,16 +131,17 @@ public class ErrorLayerDBQueryManager {
 	}
 
 	/**
-	 * err_layer Tb select Query 생성 @author DY.Oh @Date 2017. 4. 18. 오후
-	 * 4:09:44 @param collectionName @param layerNames @return
-	 * HashMap<String,Object> @throws
+	 * err_layer Tb select Query 생성
+	 * 
+	 * @param collectionName
+	 *            Layer Collection명
+	 * @param layerNames
+	 *            Layer명 목록
+	 * @return HashMap<String, Object>
 	 */
 	public HashMap<String, Object> selecctErrorFeaturesQuery(String collectionName, List<String> layerNames) {
 		String collectionType = this.errLayer.getCollectionType();
 		String tableName = "\"" + "err_" + collectionType + "_" + collectionName + "\"";
-		// String selectQuery = " select " + "collection_name, layer_name,
-		// feature_id, err_type, err_name, ST_AsText(geom) as geom " + "from " +
-		// tableName + " where ";
 		String selectQuery = " select "
 				+ "collection_name, layer_name, feature_id, err_type, err_name, round(cast(ST_X(geom) AS numeric), 2) as x_Coordinate, round(cast(ST_Y(geom) AS numeric), 2) as y_Coordinate "
 				+ "from " + tableName + " where ";
@@ -148,18 +158,22 @@ public class ErrorLayerDBQueryManager {
 	}
 
 	/**
-	 * err_layer Tb select All Count Query 생성 @author DY.Oh @Date 2017. 4. 18.
-	 * 오후 4:09:48 @param layerCollectionName @param layerIDList @return
-	 * HashMap<String,Object> @throws
+	 * err_layer Tb select All Count Query 생성
+	 * 
+	 * @param layerCollectionName
+	 *            Layer Collection명
+	 * @param layerNames
+	 *            Layer명 목록
+	 * @return HashMap<String, Object>
 	 */
-	public HashMap<String, Object> selectCountAllFeaturesQuery(String layerCollectionName, List<String> layerIDList) {
+	public HashMap<String, Object> selectCountAllFeaturesQuery(String layerCollectionName, List<String> layerNames) {
 
 		String countQueryStr = "select ";
-		for (int i = 0; i < layerIDList.size(); i++) {
+		for (int i = 0; i < layerNames.size(); i++) {
 			if (i > 0) {
 				countQueryStr += " + ";
 			}
-			String layerID = layerIDList.get(i);
+			String layerID = layerNames.get(i);
 			String tableName = "\"geo" + "_" + layerCollectionName + "_" + layerID + "\"";
 			countQueryStr += "(select count (*) from " + tableName + ")";
 		}
@@ -169,6 +183,13 @@ public class ErrorLayerDBQueryManager {
 		return countQueryMap;
 	}
 
+	/**
+	 * err_layer Tb selet All Query 생성
+	 * 
+	 * @param tableName
+	 *            err_layer Tb 명
+	 * @return HashMap<String, Object>
+	 */
 	public HashMap<String, Object> getSelectErrorLayerQuery(String tableName) {
 
 		String selectQuery = "select * from " + tableName;
@@ -177,37 +198,27 @@ public class ErrorLayerDBQueryManager {
 		return selectQueryMap;
 	}
 
-	public HashMap<String, Object> selectQA10ErrorLayerTbNamesCountQuery(String fileType, String collectionName,
-			int cIdx) {
-		String tableName = "\"" + "qa10_layercollection_qa_progress" + "\"";
-		String countQueryStr = "select count (*) from " + tableName + "where c_idx = " + cIdx;
-		HashMap<String, Object> selectQueryMap = new HashMap<String, Object>();
-		selectQueryMap.put("selectQuery", countQueryStr);
-		return selectQueryMap;
-	}
-
-	public HashMap<String, Object> selectQA20ErrorLayerTbNamesCountQuery(String fileType, String collectionName,
-			Integer cIdx) {
-		String tableName = "\"" + "qa20_layercollection_qa_progress" + "\"";
-		String countQueryStr = "select count (*) from " + tableName + "where c_idx = " + cIdx;
-		HashMap<String, Object> selectQueryMap = new HashMap<String, Object>();
-		selectQueryMap.put("selectQuery", countQueryStr);
-		return selectQueryMap;
-	}
-
+	/**
+	 * Layer Collection Error Table 개수 count Query 생성
+	 * 
+	 * @param fileType
+	 *            파일타입
+	 * @param collectionName
+	 *            Layer Collection명
+	 * @param cIdx
+	 *            Layer Collection Table Index
+	 * @return HashMap<String, Object>
+	 */
 	public HashMap<String, Object> selectErrorLayerTbNamesCountQuery(String fileType, String collectionName,
 			Integer cIdx) {
-		
-		
+
 		String tableName = "";
-		
-		if(fileType.equals("dxf")) {
+
+		if (fileType.equals("dxf")) {
 			tableName = "\"" + "qa10_layercollection_qa_progress" + "\"";
-		}
-		else if(fileType.equals("ngi")) {
+		} else if (fileType.equals("ngi")) {
 			tableName = "\"" + "qa20_layercollection_qa_progress" + "\"";
-		}
-		else if(fileType.equals("shp")) {
+		} else if (fileType.equals("shp")) {
 			tableName = "\"" + "qa20_layercollection_qa_progress" + "\"";
 		}
 		String countQueryStr = "select count (*) from " + tableName + " where c_idx = " + cIdx;
@@ -216,7 +227,14 @@ public class ErrorLayerDBQueryManager {
 		return selectQueryMap;
 	}
 
-	public HashMap<String, Object> dropjErrorLayerTbQuery(String errTableName) {
+	/**
+	 * err_layer Tb drop Query 생성
+	 * 
+	 * @param errTableName
+	 *            err_layer Tb명
+	 * @return HashMap<String, Object>
+	 */
+	public HashMap<String, Object> dropErrorLayerTbQuery(String errTableName) {
 		HashMap<String, Object> dropQueryMap = new HashMap<String, Object>();
 		String queryStr = "drop table " + "\"" + errTableName + "\"";
 		dropQueryMap.put("dropQuery", queryStr);

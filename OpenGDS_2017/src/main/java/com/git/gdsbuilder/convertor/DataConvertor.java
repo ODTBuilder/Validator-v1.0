@@ -40,11 +40,6 @@ import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.feature.SchemaException;
 import org.json.simple.JSONObject;
 
-/**
- * 데이터 변환을 지원하는 클래스
- * @author SG.Lee
- * @Date 2017. 5. 11. 오전 12:06:59
- * */
 public interface DataConvertor {
 
 	/**

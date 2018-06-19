@@ -101,25 +101,54 @@ import com.vividsolutions.jts.geom.Polygon;
  */
 public class CollectionValidator {
 
-	protected static double lineInvadedTolorence = 0.01; // 선형이 면형 객체 침범 (m)
-	protected static double polygonInvadedTolorence = 0.01; // 면형이 면형 객체 침범
-	// (m2)
-	protected static double lineOverTolorence = 0.01; // 중심선이 경계면 초과 (m2)
-	protected static double areaRatioTolorence = 0.1; // 지류계와 경지계 불일치 (%)
-	protected static double spatialAccuracyTolorence = 0.01; // 공간분석 정밀도 설정 (m)
-	protected static double underShootTolorence = 0.2;
-	protected static double selfEntityLineTolerance = 0.01;
+	/**
+	 * 선형이 면형 객체 침범 (m) tolerance
+	 */
+	protected static double lineInvadedTolorence = 0.01;
+	/**
+	 * 면형이 면형 객체 침범 (m2) tolerance
+	 */
+	protected static double polygonInvadedTolorence = 0.01;
+	/**
+	 * 중심선이 경계면 초과 (m2)
+	 */
+	protected static double lineOverTolorence = 0.01;
+	/**
+	 * 지류계와 경지계 불일치 (%)
+	 */
+	protected static double areaRatioTolorence = 0.1;
+	/**
+	 * 공간분석 정밀도 설정 (m)
+	 */
+	protected static double spatialAccuracyTolorence = 0.01;
 
-	// ValidateLayerCollectionList validateLayerCollectionList;
+	/**
+	 * 오류 레이어 목록
+	 */
 	ErrorLayerList errLayerList;
-	// Map<String, Object> progress;
-	// String collectionType;
-
+	/**
+	 * 검수 영역 GeoLayerCollection 객체
+	 */
 	GeoLayerCollection collection;
+	/**
+	 * 인접 영역 GeoLayerCollection 목록
+	 */
 	List<GeoLayerCollection> nearCollections;
+	/**
+	 * 검수 항목 옵션 목록
+	 */
 	ValidateLayerTypeList types;
+	/**
+	 * 인접 검수 영역 Index Rule
+	 */
 	MapSystemRule mapSystemRule;
+	/**
+	 * 검수 진행 사항
+	 */
 	Map<String, Object> progress;
+	/**
+	 * 파일 타입
+	 */
 	String collectionType;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(CollectionValidator.class);
@@ -127,23 +156,22 @@ public class CollectionValidator {
 	/**
 	 * CollectionValidator 생성자
 	 * 
-	 * @param validateLayerCollectionList
+	 * @param collection
+	 *            검수 영역 GeoLayerCollection 객체
+	 * @param nearCollections
+	 *            인접 영역 GeoLayerCollection 목록
+	 * @param types
+	 *            검수 항목 옵션 목록
+	 * @param mapSystemRule
+	 *            인접 검수 영역 Index Rule
 	 * @param fileType
+	 *            검수 파일 타입
 	 * @throws NoSuchAuthorityCodeException
 	 * @throws SchemaException
 	 * @throws FactoryException
 	 * @throws TransformException
 	 * @throws IOException
 	 */
-	/*
-	 * public CollectionValidator(ValidateLayerCollectionList
-	 * validateLayerCollectionList, String fileType) throws
-	 * NoSuchAuthorityCodeException, SchemaException, FactoryException,
-	 * TransformException, IOException { this.validateLayerCollectionList =
-	 * validateLayerCollectionList; this.progress = new HashMap<String,
-	 * Object>(); this.collectionType = fileType; collectionValidate(); }
-	 */
-
 	public CollectionValidator(GeoLayerCollection collection, List<GeoLayerCollection> nearCollections,
 			ValidateLayerTypeList types, MapSystemRule mapSystemRule, String fileType)
 			throws NoSuchAuthorityCodeException, SchemaException, FactoryException, TransformException, IOException {
@@ -157,63 +185,26 @@ public class CollectionValidator {
 		collectionValidate();
 	}
 
-	public String getCollectionType() {
-		return collectionType;
-	}
-
-	public void setCollectionType(String collectionType) {
-		this.collectionType = collectionType;
-	}
-
 	/**
-	 * validateLayerCollectionList getter @author DY.Oh @Date 2017. 4. 18. 오후
-	 * 3:30:23 @return ValidateLayerCollectionList @throws
-	 */
-	/*
-	 * public ValidateLayerCollectionList getValidateLayerCollectionList() {
-	 * return validateLayerCollectionList; }
+	 * 검수 진행 상태 반환
 	 * 
-	 *//**
-		 * validateLayerCollectionList setter @author DY.Oh @Date 2017. 4. 18.
-		 * 오후 3:30:24 @param validateLayerCollectionList void @throws
-		 *//*
-		 * public void
-		 * setValidateLayerCollectionList(ValidateLayerCollectionList
-		 * validateLayerCollectionList) { this.validateLayerCollectionList =
-		 * validateLayerCollectionList; }
-		 */
+	 * @return Map<String, Object>
+	 */
+	public Map<String, Object> getProgress() {
+		return this.progress;
+	}
 
 	/**
-	 * errLayerList getter @author DY.Oh @Date 2017. 4. 18. 오후 3:30:26 @return
-	 * ErrorLayerList @throws
+	 * 오류 레이어 목록 반환
+	 * 
+	 * @return ErrorLayerList
 	 */
 	public ErrorLayerList getErrLayerList() {
-		return errLayerList;
+		return this.errLayerList;
 	}
 
 	/**
-	 * errLayerList setter @author DY.Oh @Date 2017. 4. 18. 오후 3:30:30 @param
-	 * errLayerList void @throws
-	 */
-	public void setErrLayerList(ErrorLayerList errLayerList) {
-		this.errLayerList = errLayerList;
-	}
-
-	public Map<String, Object> getProgress() {
-		return progress;
-	}
-
-	public void setProgress(Map<String, Object> progress) {
-		this.progress = progress;
-	}
-
-	/**
-	 * validateLayerCollectionList를 검수 @author DY.Oh @Date 2017. 4. 18. 오후
-	 * 3:30:31 @throws SchemaException @throws
-	 * NoSuchAuthorityCodeException @throws FactoryException @throws
-	 * TransformException void @throws
 	 * 
-	 * @throws IOException
 	 */
 	public void collectionValidate() {
 
@@ -491,7 +482,7 @@ public class CollectionValidator {
 							try {
 								typeErrorLayer = layerValidator.validateSelfEntity(
 										types.getTypeLayers(relationNames.get(r), layerCollection),
-										selfEntityLineTolerance, polygonInvadedTolorence);
+										spatialAccuracyTolorence, polygonInvadedTolorence);
 							} catch (SchemaException e) {
 								// TODO Auto-generated catch block
 								e.printStackTrace();
@@ -711,10 +702,10 @@ public class CollectionValidator {
 			LineString bottomLineString = geometryFactory.createLineString(bottomLineCoords);
 			LineString leftLineString = geometryFactory.createLineString(leftLineCoords);
 			LineString rightLineString = geometryFactory.createLineString(rightLineCoords);
-			Polygon topBuffer = (Polygon) topLineString.buffer(underShootTolorence);
-			Polygon bottomBuffer = (Polygon) bottomLineString.buffer(underShootTolorence);
-			Polygon leftBuffer = (Polygon) leftLineString.buffer(underShootTolorence);
-			Polygon rightBuffer = (Polygon) rightLineString.buffer(underShootTolorence);
+			Polygon topBuffer = (Polygon) topLineString.buffer(spatialAccuracyTolorence);
+			Polygon bottomBuffer = (Polygon) bottomLineString.buffer(spatialAccuracyTolorence);
+			Polygon leftBuffer = (Polygon) leftLineString.buffer(spatialAccuracyTolorence);
+			Polygon rightBuffer = (Polygon) rightLineString.buffer(spatialAccuracyTolorence);
 
 			Map<MapSystemRuleType, LineString> collectionBoundary = new HashMap<MapSystemRule.MapSystemRuleType, LineString>();
 
@@ -906,6 +897,7 @@ public class CollectionValidator {
 
 		return returncoordinate;
 	}
+
 }
 
 /**

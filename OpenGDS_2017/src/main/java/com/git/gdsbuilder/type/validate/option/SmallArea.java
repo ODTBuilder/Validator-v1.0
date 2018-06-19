@@ -18,19 +18,18 @@
 package com.git.gdsbuilder.type.validate.option;
 
 /**
- * SmallArea 정보를 담고 있는 클래스
+ * SmallArea(허용범위 이하 면적) 정보를 담고 있는 클래스
+ * 
  * @author DY.Oh
  * @Date 2017. 4. 18. 오후 3:09:34
- * */
+ */
 public class SmallArea extends ValidatorOption {
 
+	/**
+	 * 허용범위 면적
+	 */
 	double area;
 
-	/**
-	 * SmallArea 타입 정보를 담고 있는 클래스
-	 * @author DY.Oh
-	 * @Date 2017. 4. 18. 오후 3:10:55
-	 * */
 	public enum Type {
 
 		SMALLAREA("SmallArea", "GeometricError");
@@ -38,43 +37,25 @@ public class SmallArea extends ValidatorOption {
 		String errName;
 		String errType;
 
-		/**
-		 * Type 생성자
-		 * @param errName
-		 * @param errType
-		 */
 		Type(String errName, String errType) {
 			this.errName = errName;
 			this.errType = errType;
 		}
 
-		/**
-		 * errName getter
-		 * @author DY.Oh
-		 * @Date 2017. 4. 18. 오후 3:09:38
-		 * @return String
-		 * @throws
-		 * */
 		public String errName() {
 			return errName;
 		}
 
-		/**
-		 * errType getter
-		 * @author DY.Oh
-		 * @Date 2017. 4. 18. 오후 3:09:40
-		 * @return String
-		 * @throws
-		 * */
 		public String errType() {
 			return errType;
 		}
 	};
 
-	
 	/**
 	 * SmallArea 생성자
+	 * 
 	 * @param area
+	 *            허용범위 면적
 	 */
 	public SmallArea(double area) {
 		super();
@@ -82,23 +63,20 @@ public class SmallArea extends ValidatorOption {
 	}
 
 	/**
-	 * area getter
-	 * @author DY.Oh
-	 * @Date 2017. 4. 18. 오후 3:19:24
+	 * 허용범위 면적 반환
+	 * 
 	 * @return double
-	 * @throws
-	 * */
+	 */
 	public double getArea() {
 		return area;
 	}
 
 	/**
-	 * area setter
-	 * @author DY.Oh
-	 * @Date 2017. 4. 18. 오후 3:19:26
-	 * @param area void
-	 * @throws
-	 * */
+	 * 허용범위 면적 설정
+	 * 
+	 * @param area
+	 *            허용범위 면적
+	 */
 	public void setArea(double area) {
 		this.area = area;
 	}

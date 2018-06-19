@@ -32,24 +32,59 @@ import com.git.gdsbuilder.type.geoserver.layer.GeoLayerList;
  */
 public class ValidateLayerTypeList extends ArrayList<ValidateLayerType> {
 
+	/**
+	 * 검수를 수행할 레이어 이름 목록
+	 */
 	List<String> layerIDList = new ArrayList<String>();
 
+	/**
+	 * 검수를 수행할 레이어 이름 목록 반환
+	 * 
+	 * @return List<String>
+	 */
 	public List<String> getLayerIDList() {
 		return layerIDList;
 	}
 
+	/**
+	 * 검수를 수행할 레이어 이름 목록 설정
+	 * 
+	 * @param layerIDList
+	 *            검수를 수행할 레이어 이름 목록
+	 */
 	public void setLayerIDList(List<String> layerIDList) {
 		this.layerIDList = layerIDList;
 	}
 
-	public void addAllLayerIdList(List<String> list) {
-		this.layerIDList.addAll(list);
+	/**
+	 * 검수를 수행할 레이어 이름 목록 추가
+	 * 
+	 * @param layerIDList
+	 *            검수를 수행할 레이어 이름 목록
+	 */
+	public void addAllLayerIdList(List<String> layerIDList) {
+		this.layerIDList.addAll(layerIDList);
 	}
 
+	/**
+	 * 검수를 수행할 레이어 이름 추가
+	 * 
+	 * @param layerID
+	 *            검수를 수행할 레이어 이름
+	 */
 	public void addLayerId(String layerID) {
 		this.layerIDList.add(layerID);
 	}
-	
+
+	/**
+	 * GeoLayerCollection 중 typeName에 해당되는 GeoLayerList 반환
+	 * 
+	 * @param typeName
+	 *            ValidateLayerType의 레이어 별칭
+	 * @param layerCollection
+	 *            GeoLayerCollection 객체
+	 * @return GeoLayerList
+	 */
 	public GeoLayerList getTypeLayers(String typeName, GeoLayerCollection layerCollection) {
 		GeoLayerList layers = new GeoLayerList();
 		for (int j = 0; j < this.size(); j++) {
@@ -69,5 +104,4 @@ public class ValidateLayerTypeList extends ArrayList<ValidateLayerType> {
 		}
 		return layers;
 	}
-
 }

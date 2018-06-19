@@ -48,20 +48,27 @@ import com.git.gdsbuilder.type.validate.option.ValidatorOption;
 import com.git.gdsbuilder.type.validate.option.ZValueAmbiguous;
 
 /**
- * JSONArray를 ValidateLayerTypeList 객체로 파싱하는 클래스
+ * 검수 옵션 JSONArray를 ValidateLayerTypeList 객체로 파싱하는 클래스
  * 
  * @author DY.Oh
  * @Date 2017. 4. 18. 오후 3:25:49
  */
 public class ValidateTypeParser {
 
+	/**
+	 * 검수 옵션 JSONArray
+	 */
 	JSONArray validateTypeArray;
+	/**
+	 * ValidateLayerTypeList 객체
+	 */
 	ValidateLayerTypeList validateLayerTypeList;
 
 	/**
 	 * ValidateTypeParser 생성자
 	 * 
 	 * @param validateTypeArray
+	 *            검수 옵션 JSONArray
 	 */
 	public ValidateTypeParser(JSONArray validateTypeArray) {
 		this.validateTypeArray = validateTypeArray;
@@ -69,24 +76,26 @@ public class ValidateTypeParser {
 	}
 
 	/**
-	 * validateLayerTypeList getter @author DY.Oh @Date 2017. 4. 18. 오후
-	 * 3:25:53 @return ValidateLayerTypeList @throws
+	 * ValidateLayerTypeList 객체 반환
+	 * 
+	 * @return ValidateLayerTypeList
 	 */
 	public ValidateLayerTypeList getValidateLayerTypeList() {
 		return validateLayerTypeList;
 	}
 
 	/**
-	 * validateLayerTypeList setter @author DY.Oh @Date 2017. 4. 18. 오후
-	 * 3:25:57 @param validateLayerTypeList void @throws
+	 * ValidateLayerTypeList 객체 설정
+	 * 
+	 * @param validateLayerTypeList
+	 *            ValidateLayerTypeList 객체
 	 */
 	public void setValidateLayerTypeList(ValidateLayerTypeList validateLayerTypeList) {
 		this.validateLayerTypeList = validateLayerTypeList;
 	}
 
 	/**
-	 * JSONArray를 ValidateLayerTypeList 객체로 파싱 @author DY.Oh @Date 2017. 4. 18.
-	 * 오후 3:25:59 void @throws
+	 * 검수 옵션 JSONArray를 ValidateLayerTypeList 객체로 파싱
 	 */
 	public void typeListParser() {
 
@@ -102,26 +111,11 @@ public class ValidateTypeParser {
 	}
 
 	/**
-	 * layerType를 ValidateLayerType 객체로 파싱 @author DY.Oh @Date 2017. 4. 18. 오후
-	 * 3:26:01 @param layerType @return ValidateLayerType @throws
-	 */
-	public static ValidateLayerType typeParser(JSONObject layerType) {
-
-		ValidateLayerType type = new ValidateLayerType();
-		String typeName = (String) layerType.get("typeName");
-		JSONArray typeLayers = (JSONArray) layerType.get("layers");
-
-		String weightStr = (String) layerType.get("weight");
-		double weight = Double.parseDouble(weightStr);
-		type.setTypeName(typeName);
-		type.setLayerIDList(typeLayers);
-		type.setWeight(weight);
-		return type;
-	}
-
-	/**
-	 * layerType를 ValidateLayerType 객체로 파싱 @author DY.Oh @Date 2017. 4. 18. 오후
-	 * 3:26:03 @param layerType @return ValidateLayerType @throws
+	 * 검수 옵션 JSONObject를 ValidateLayerType 객체로 파싱
+	 * 
+	 * @param layerType
+	 *            검수 레이어 및 옵션 JSONObject
+	 * @return ValidateLayerType
 	 */
 	public ValidateLayerType typeOptionParser(JSONObject layerType) {
 
@@ -143,19 +137,11 @@ public class ValidateTypeParser {
 		}
 	}
 
-	/**
-	 * qaOptions를 List<ValidatorOption> 객체로 파싱 @author DY.Oh @Date 2017. 4. 18.
-	 * 오후 3:26:05 @param qaOptions @return List<ValidatorOption> @throws
-	 */
 	@SuppressWarnings("unchecked")
-	public List<ValidatorOption> parseOption(JSONObject qaOptions) {
+	private List<ValidatorOption> parseOption(JSONObject qaOptions) {
 
 		List<ValidatorOption> optionList = new ArrayList<ValidatorOption>();
-
 		Iterator optionNames = qaOptions.keySet().iterator();
-
-		// TwistedPolygon twistedPolygon = new TwistedPolygon();
-
 		while (optionNames.hasNext()) {
 			String optionName = (String) optionNames.next();
 			if (optionName.equalsIgnoreCase(TwistedPolygon.Type.TWISTEDPOLYGON.errName())) {

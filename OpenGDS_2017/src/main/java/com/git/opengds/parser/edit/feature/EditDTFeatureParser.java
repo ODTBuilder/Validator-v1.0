@@ -32,16 +32,34 @@ import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.geojson.GeoJsonReader;
 
 /**
- * JSONObject를 QA20Feature 객체로 파싱하는 클래스
+ * JSONObject를 SimpleFeature 객체로 파싱하는 클래스.
+ * SHP 파일 레이어 Table 행 수정
  * 
  * @author DY.Oh
  * @Date 2017. 3. 11. 오후 1:49:32
  */
 public class EditDTFeatureParser {
 
+	/**
+	 * SimpleFeature 객체로 변환할 JSONObject 객체
+	 */
 	JSONObject featureObj;
+	/**
+	 * JSONObject가 변환된 SimpleFeature 객체
+	 */
 	SimpleFeature shpFeature;
 
+	/**
+	 * EditDTFeatureParser 생성자
+	 * 
+	 * @param type
+	 *            파일타입
+	 * @param featureObj
+	 *            SimpleFeature 객체로 변환할 JSONObject 객체
+	 * @param state
+	 * @throws ParseException
+	 * @throws SchemaException
+	 */
 	public EditDTFeatureParser(String type, JSONObject featureObj, String state)
 			throws ParseException, SchemaException {
 		this.featureObj = featureObj;
@@ -50,14 +68,31 @@ public class EditDTFeatureParser {
 		}
 	}
 
+	/**
+	 * 변환된 SimpleFeature 반환
+	 * 
+	 * @return SimpleFeature
+	 */
 	public SimpleFeature getSHPFeature() {
 		return shpFeature;
 	}
 
+	/**
+	 * 변환된 SimpleFeature 설정
+	 * 
+	 * @param shpFeature
+	 *            SimpleFeature
+	 */
 	public void setSHPFeature(SimpleFeature shpFeature) {
 		this.shpFeature = shpFeature;
 	}
 
+	/**
+	 * JSONObject를 SimpleFeature 객체로 변환
+	 * 
+	 * @throws ParseException
+	 * @throws SchemaException
+	 */
 	private void shpFeatureParse() throws ParseException, SchemaException {
 
 		// SimpleFeature
@@ -100,7 +135,6 @@ public class EditDTFeatureParser {
 			}
 			// }
 		}
-
 		simpleFeatureType = DataUtilities.createType(featureID.toString(), keysStr.substring(0, keysStr.length() - 1));
 		this.shpFeature = SimpleFeatureBuilder.build(simpleFeatureType, values, featureID);
 	}

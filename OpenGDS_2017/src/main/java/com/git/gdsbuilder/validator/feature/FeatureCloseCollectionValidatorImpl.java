@@ -41,9 +41,7 @@ public class FeatureCloseCollectionValidatorImpl implements FeatureCloseCollecti
 		// 인접도엽 옵션객체 선언
 		boolean matchMiss = false;
 		boolean refAttributeMiss = false;
-		boolean refZvalueMiss = false;
 		boolean entityNon = false;
-		boolean underShoot = false;
 		if (closeValidateOptions != null) {
 			Iterator<ValCollectionOptionType> typeItr = closeValidateOptions.keySet().iterator();
 			while (typeItr.hasNext()) {
@@ -54,14 +52,8 @@ public class FeatureCloseCollectionValidatorImpl implements FeatureCloseCollecti
 				if (iteratorVal.equals(ValCollectionOptionType.REFATTRIBUTEMISS.getTypeName())) {
 					refAttributeMiss = true;
 				}
-				if (iteratorVal.equals(ValCollectionOptionType.REFZVALUEMISS.getTypeName())) {
-					refZvalueMiss = true;
-				}
 				if (iteratorVal.equals(ValCollectionOptionType.ENTITYNONE.getTypeName())) {
 					entityNon = true;
-				}
-				if (iteratorVal.equals(ValCollectionOptionType.UNDERSHOOT.getTypeName())) {
-					underShoot = true;
 				}
 			}
 		} else

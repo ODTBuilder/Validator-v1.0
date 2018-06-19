@@ -49,25 +49,34 @@ import com.git.gdsbuilder.type.shp.layer.DTSHPLayerList;
 import com.vividsolutions.jts.io.ParseException;
 
 /**
- * JSONObject를 QA20LayerCollection 객체로 파싱하는 클래스
+ * JSONObject를 EditDTLayerCollection 객체로 파싱하는 클래스. SHP 파일 레이어 Collection Table
+ * 수정
  * 
  * @author DY.Oh
  * @Date 2017. 3. 11. 오후 2:14:22
  */
 public class EditDTLayerCollectionParser {
 
+	/**
+	 * EditDTLayerCollection 객체로 변환할 JSONObject 객체
+	 */
 	JSONObject collectionObj;
+	/**
+	 * 파일타입
+	 */
 	String type;
+	/**
+	 * JSONObject 객체가 변환된 EditSHPLayerCollection 객체
+	 */
 	EditSHPLayerCollection editSHPCollection;
 
 	/**
-	 * EditLayerCollectionParser 생성자
+	 * EditDTLayerCollectionParser 생성자
 	 * 
 	 * @param type
-	 * 
-	 * @param type
-	 * 
+	 *            파일타입
 	 * @param collectionObject
+	 *            EditDTLayerCollection 객체로 변환할 JSONObject 객체
 	 * @throws FileNotFoundException
 	 * @throws IOException
 	 * @throws ParseException
@@ -82,30 +91,69 @@ public class EditDTLayerCollectionParser {
 		}
 	}
 
+	/**
+	 * 파일타입 반환
+	 * 
+	 * @return String
+	 */
 	public String getType() {
 		return type;
 	}
 
+	/**
+	 * 파일타입 설정
+	 * 
+	 * @param type
+	 *            파일타입
+	 */
 	public void setType(String type) {
 		this.type = type;
 	}
 
+	/**
+	 * EditDTLayerCollection 객체로 변환할 JSONObject 객체 반환
+	 * 
+	 * @return JSONObject
+	 */
 	public JSONObject getCollectionObj() {
 		return collectionObj;
 	}
 
+	/**
+	 * EditDTLayerCollection 객체로 변환할 JSONObject 객체 설정
+	 * 
+	 * @param collectionObj
+	 *            EditDTLayerCollection 객체로 변환할 JSONObject 객체
+	 */
 	public void setCollectionObj(JSONObject collectionObj) {
 		this.collectionObj = collectionObj;
 	}
 
+	/**
+	 * JSONObject 객체가 변환된 EditSHPLayerCollection 객체 반환
+	 * 
+	 * @return EditSHPLayerCollection
+	 */
 	public EditSHPLayerCollection getEditSHPCollection() {
 		return editSHPCollection;
 	}
 
+	/**
+	 * JSONObject 객체가 변환된 EditSHPLayerCollection 객체 설정
+	 * 
+	 * @param editSHPCollection
+	 *            JSONObject 객체가 변환된 EditSHPLayerCollection 객체
+	 */
 	public void setEditSHPCollection(EditSHPLayerCollection editSHPCollection) {
 		this.editSHPCollection = editSHPCollection;
 	}
 
+	/**
+	 * JSONObject를 EditDTLayerCollection 객체로 파싱
+	 * 
+	 * @throws ParseException
+	 * @throws SchemaException
+	 */
 	public void shpCollectionParser() throws ParseException, SchemaException {
 
 		this.editSHPCollection = new EditSHPLayerCollection();
@@ -140,8 +188,6 @@ public class EditDTLayerCollectionParser {
 				}
 				editSHPCollection.addAllDeleteLayer(deletedLayerList);
 				editSHPCollection.setDeleted(true);
-			} else if (state.equals("modify")) {
-				// 잠시 보류
 			}
 		}
 	}

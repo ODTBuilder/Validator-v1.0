@@ -15,15 +15,35 @@
  *    Lesser General Public License for more details.
  */
 
-package com.git.gdsbuilder.type.geoserver.layer;
+package com.git.gdsbuilder.type.validate.result;
 
 import java.util.ArrayList;
 
+import org.json.JSONObject;
+import org.json.simple.JSONArray;
+
 /**
- * GeoLayerList 정보를 저장하는 클래스
+ * DetailsValidateResultList 정보를 담고 있는 클래스
  * 
  * @author DY.Oh
+ * @Date 2017. 4. 18. 오후 3:56:14
  */
-public class GeoLayerList extends ArrayList<GeoLayer> {
+public class DetailsValidattionResultList extends ArrayList<DetailsValidationResult> {
+
+	/**
+	 * DetailsValidateResultList를 JSONArray로 파싱
+	 * 
+	 * @return JSONArray
+	 */
+	public JSONArray parseJSON() {
+
+		JSONArray jsonArray = new JSONArray();
+		for (int i = 0; i < this.size(); i++) {
+			DetailsValidationResult dtResult = this.get(i);
+			JSONObject dtReport = dtResult.parseJSON();
+			jsonArray.add(dtReport);
+		}
+		return jsonArray;
+	}
 
 }

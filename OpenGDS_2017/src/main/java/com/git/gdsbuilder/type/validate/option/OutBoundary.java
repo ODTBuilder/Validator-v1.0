@@ -20,19 +20,17 @@ package com.git.gdsbuilder.type.validate.option;
 import java.util.List;
 
 /**
- * OutBoundary 정보를 담고 있는 클래스
+ * OutBoundary(경계초과오류) 정보를 담고 있는 클래스
+ * 
  * @author DY.Oh
  * @Date 2017. 4. 18. 오후 3:09:34
- * */
+ */
 public class OutBoundary extends ValidatorOption {
-
+	/**
+	 * 관계 레이어 별칭 목록
+	 */
 	List<String> relationType;
 
-	/**
-	 * OutBoundary 타입 정보를 담고 있는 클래스
-	 * @author DY.Oh
-	 * @Date 2017. 4. 18. 오후 3:10:55
-	 * */
 	public enum Type {
 
 		OUTBOUNDARY("OutBoundary", "GeometricError");
@@ -40,34 +38,15 @@ public class OutBoundary extends ValidatorOption {
 		String errName;
 		String errType;
 
-		/**
-		 * Type 생성자
-		 * @param errName
-		 * @param errType
-		 */
 		Type(String errName, String errType) {
 			this.errName = errName;
 			this.errType = errType;
 		}
 
-		/**
-		 * errName getter
-		 * @author DY.Oh
-		 * @Date 2017. 4. 18. 오후 3:09:38
-		 * @return String
-		 * @throws
-		 * */
 		public String errName() {
 			return errName;
 		}
 
-		/**
-		 * errType getter
-		 * @author DY.Oh
-		 * @Date 2017. 4. 18. 오후 3:09:40
-		 * @return String
-		 * @throws
-		 * */
 		public String errType() {
 			return errType;
 		}
@@ -75,7 +54,9 @@ public class OutBoundary extends ValidatorOption {
 
 	/**
 	 * OutBoundary 생성자
+	 * 
 	 * @param relationType
+	 *            관계 레이어 별칭 목록
 	 */
 	public OutBoundary(List<String> relationType) {
 		super();
@@ -83,36 +64,31 @@ public class OutBoundary extends ValidatorOption {
 	}
 
 	/**
-	 * relationType getter
-	 * @author DY.Oh
-	 * @Date 2017. 4. 18. 오후 3:13:55
+	 * 관계 레이어 별칭 목록 반환
+	 * 
 	 * @return List<String>
-	 * @throws
-	 * */
+	 */
 	public List<String> getRelationType() {
 		return relationType;
 	}
 
 	/**
-	 * relationType setter
-	 * @author DY.Oh
-	 * @Date 2017. 4. 18. 오후 3:13:57
-	 * @param relationType void
-	 * @throws
-	 * */
+	 * 관계 레이어 별칭 목록 설정
+	 * 
+	 * @param relationType
+	 *            관계 레이어 별칭 목록
+	 */
 	public void setRelationType(List<String> relationType) {
 		this.relationType = relationType;
 	}
 
 	/**
-	 * relationType에 layerTypeName를 더함
-	 * @author DY.Oh
-	 * @Date 2017. 4. 18. 오후 3:13:59
-	 * @param layerTypeName void
-	 * @throws
-	 * */
+	 * 관계 레이어 별칭 추가
+	 * 
+	 * @param layerTypeName
+	 *            관계 레이어 별칭
+	 */
 	public void addRelationLayerType(String layerTypeName) {
 		relationType.add(layerTypeName);
 	}
-
 }

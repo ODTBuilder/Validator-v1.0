@@ -20,8 +20,27 @@ import com.git.gdsbuilder.type.shp.feature.DTSHPFeatureList;
 import com.git.opengds.parser.edit.feature.EditDTFeatureParser;
 import com.git.opengds.parser.edit.layer.EditDTLayerCollectionListParser;
 
+/**
+ * 편집 레이어 정보 JSONObject를 EditSHPLayerCollectionList로 파싱하는 클래스. Client 파라미터 파싱
+ * 
+ * @author GIT
+ *
+ */
 public class BuilderJSONSHPParser {
 
+	/**
+	 * 편집 레이어 정보 JSONObject를 EditSHPLayerCollectionList로 파싱
+	 * 
+	 * @param editLayerObj
+	 *            편집 레이어 정보 JSONObject
+	 * @param type
+	 *            파일 타입
+	 * @return EditSHPLayerCollectionList
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 * @throws com.vividsolutions.jts.io.ParseException
+	 * @throws SchemaException
+	 */
 	public static EditSHPLayerCollectionList parseEditLayerObj(JSONObject editLayerObj, String type)
 			throws FileNotFoundException, IOException, com.vividsolutions.jts.io.ParseException, SchemaException {
 
@@ -33,6 +52,18 @@ public class BuilderJSONSHPParser {
 		return edtCollectionList;
 	}
 
+	/**
+	 * 편집 피처 정보 JSONObject를 Map 객체로 파싱
+	 * 
+	 * @param stateObj
+	 *            편집 상태(created, modified, deleted)
+	 * @param layerType
+	 *            레이어 타입
+	 * @return Map<String, Object>
+	 * @throws ParseException
+	 * @throws com.vividsolutions.jts.io.ParseException
+	 * @throws SchemaException
+	 */
 	public static Map<String, Object> parseSHPFeature(JSONObject stateObj, String layerType)
 			throws ParseException, com.vividsolutions.jts.io.ParseException, SchemaException {
 

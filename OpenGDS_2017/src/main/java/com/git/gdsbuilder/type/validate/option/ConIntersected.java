@@ -18,17 +18,13 @@
 package com.git.gdsbuilder.type.validate.option;
 
 /**
- * ConIntersected 정보를 담고 있는 클래스
+ * ConIntersected(등고선 교차) 정보를 담고 있는 클래스
+ * 
  * @author DY.Oh
  * @Date 2017. 4. 18. 오후 3:09:34
- * */
+ */
 public class ConIntersected extends ValidatorOption {
 
-	/**
-	 * ConIntersected 타입 정보를 담고 있는 클래스
-	 * @author DY.Oh
-	 * @Date 2017. 4. 18. 오후 3:10:55
-	 * */
 	public enum Type {
 
 		CONINTERSECTED("ConIntersected", "GeometricError");
@@ -36,34 +32,15 @@ public class ConIntersected extends ValidatorOption {
 		String errName;
 		String errType;
 
-		/**
-		 * Type 생성자
-		 * @param errName
-		 * @param errType
-		 */
 		Type(String errName, String errType) {
 			this.errName = errName;
 			this.errType = errType;
 		}
 
-		/**
-		 * errName getter
-		 * @author DY.Oh
-		 * @Date 2017. 4. 18. 오후 3:09:38
-		 * @return String
-		 * @throws
-		 * */
 		public String errName() {
 			return errName;
 		}
 
-		/**
-		 * errType getter
-		 * @author DY.Oh
-		 * @Date 2017. 4. 18. 오후 3:09:40
-		 * @return String
-		 * @throws
-		 * */
 		public String errType() {
 			return errType;
 		}

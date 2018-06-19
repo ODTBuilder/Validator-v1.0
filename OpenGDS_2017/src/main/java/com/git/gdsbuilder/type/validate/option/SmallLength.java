@@ -18,19 +18,18 @@
 package com.git.gdsbuilder.type.validate.option;
 
 /**
- * SmallLength 정보를 담고 있는 클래스
+ * SmallLength(허용면적 이하 길이) 정보를 담고 있는 클래스
+ * 
  * @author DY.Oh
  * @Date 2017. 4. 18. 오후 3:09:34
- * */
+ */
 public class SmallLength extends ValidatorOption {
 
+	/**
+	 * 허용면적 길이
+	 */
 	double length;
 
-	/**
-	 * SmallLength 타입 정보를 담고 있는 클래스
-	 * @author DY.Oh
-	 * @Date 2017. 4. 18. 오후 3:10:55
-	 * */
 	public enum Type {
 
 		SMALLLENGTH("SmallLength", "GeometricError");
@@ -38,34 +37,15 @@ public class SmallLength extends ValidatorOption {
 		String errName;
 		String errType;
 
-		/**
-		 * Type 생성자
-		 * @param errName
-		 * @param errType
-		 */
 		Type(String errName, String errType) {
 			this.errName = errName;
 			this.errType = errType;
 		}
 
-		/**
-		 * errName getter
-		 * @author DY.Oh
-		 * @Date 2017. 4. 18. 오후 3:09:38
-		 * @return String
-		 * @throws
-		 * */
 		public String errName() {
 			return errName;
 		}
 
-		/**
-		 * errType getter
-		 * @author DY.Oh
-		 * @Date 2017. 4. 18. 오후 3:09:40
-		 * @return String
-		 * @throws
-		 * */
 		public String errType() {
 			return errType;
 		}
@@ -73,7 +53,9 @@ public class SmallLength extends ValidatorOption {
 
 	/**
 	 * SmallLength 생성자
+	 * 
 	 * @param length
+	 *            허용면적 길이
 	 */
 	public SmallLength(double length) {
 		super();
@@ -81,23 +63,20 @@ public class SmallLength extends ValidatorOption {
 	}
 
 	/**
-	 * length getter
-	 * @author DY.Oh
-	 * @Date 2017. 4. 18. 오후 3:20:21
+	 * 허용면적 길이 반환
+	 * 
 	 * @return double
-	 * @throws
-	 * */
+	 */
 	public double getLength() {
 		return length;
 	}
 
 	/**
-	 * length setter
-	 * @author DY.Oh
-	 * @Date 2017. 4. 18. 오후 3:20:23
-	 * @param length void
-	 * @throws
-	 * */
+	 * 허용면적 길이 설정
+	 * 
+	 * @param length
+	 *            허용면적 길이
+	 */
 	public void setLength(double length) {
 		this.length = length;
 	}

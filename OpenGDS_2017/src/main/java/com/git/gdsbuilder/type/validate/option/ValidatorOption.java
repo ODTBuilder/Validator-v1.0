@@ -19,9 +19,10 @@ package com.git.gdsbuilder.type.validate.option;
 
 /**
  * ValidatorOption 정보를 담고 있는 클래스
+ * 
  * @author DY.Oh
  * @Date 2017. 4. 18. 오후 3:25:20
- * */
+ */
 public abstract class ValidatorOption {
 
 }

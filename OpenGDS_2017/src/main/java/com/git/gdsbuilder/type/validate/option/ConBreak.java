@@ -18,52 +18,29 @@
 package com.git.gdsbuilder.type.validate.option;
 
 /**
- * ConBreak 정보를 담고 있는 클래스
+ * ConBreak(등고선 끊김오류) 정보를 담고 있는 클래스
+ * 
  * @author DY.Oh
  * @Date 2017. 4. 18. 오후 3:09:34
- * */
+ */
 public class ConBreak extends ValidatorOption {
 
-	/**
-	 * ConBreak 타입 정보를 담고 있는 클래스
-	 * @author DY.Oh
-	 * @Date 2017. 4. 18. 오후 3:09:35
-	 * */
 	public enum Type {
 
 		CONBREAK("ConBreak", "GeometricError");
 
 		String errName;
 		String errType;
-		
-		/**
-		 * Type 생성자
-		 * @param errName
-		 * @param errType
-		 */
+
 		Type(String errName, String errType) {
 			this.errName = errName;
 			this.errType = errType;
 		}
 
-		/**
-		 * errName getter
-		 * @author DY.Oh
-		 * @Date 2017. 4. 18. 오후 3:09:38
-		 * @return String
-		 * @throws
-		 * */
 		public String errName() {
 			return errName;
 		}
 
-		/**
-		 * errType getter
-		 * @author DY.Oh
-		 * @Date 2017. 4. 18. 오후 3:09:40
-		 * @return String
-		 * @throws
-		 * */
 		public String errType() {
 			return errType;
 		}

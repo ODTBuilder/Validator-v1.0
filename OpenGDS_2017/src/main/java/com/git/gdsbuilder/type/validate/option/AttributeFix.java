@@ -21,18 +21,21 @@ import java.util.HashMap;
 
 import org.json.simple.JSONObject;
 
-/** 
-* @ClassName: AttributeFix 
-* @Description: AttributeFix 정보를 담고 있는 클래스
-* @author JY.Kim 
-* @date 2017. 8. 16. 오후 2:08:58 
-*  
-*/
+/**
+ * AttributeFix(속성오류) 검수항목 정보를 담고 있는 클래스
+ * 
+ * @author JY.Kim
+ * @date 2017. 8. 16. 오후 2:08:58
+ * 
+ */
 public class AttributeFix extends ValidatorOption {
 
+	/**
+	 * 속성 컬럼명, 속성값
+	 */
 	HashMap<String, Object> attributeKey;
 
-	public enum Type{
+	public enum Type {
 
 		ATTRIBUTEFIX("AttributeFix", "AttributeError");
 
@@ -44,49 +47,62 @@ public class AttributeFix extends ValidatorOption {
 			this.errType = errType;
 		}
 
-		/**
-		 * @return the errName
-		 */
 		public String errName() {
 			return errName;
 		}
 
-		/**
-		 * @return the errType
-		 */
 		public String errType() {
 			return errType;
 		}
 	}
 
 	/**
-	 * @param relationType
+	 * AttributeFix 생성자
+	 * 
+	 * @param attributeKey
+	 *            속성 컬럼값, 속성값
 	 */
 	public AttributeFix(HashMap<String, Object> attributeKey) {
 		super();
 		this.attributeKey = attributeKey;
 	}
-	
-	public AttributeFix(){
+
+	/**
+	 * AttributeFix 생성자
+	 */
+	public AttributeFix() {
 		super();
 		this.attributeKey = new HashMap<String, Object>();
 	}
 
 	/**
-	 * @return the relationType
+	 * 속성 반환
+	 * 
+	 * @return
 	 */
 	public HashMap<String, Object> getRelationType() {
 		return attributeKey;
 	}
 
 	/**
-	 * @param relationType the relationType to set
+	 * 속성 설정
+	 * 
+	 * @param attributeKey
+	 *            속성 컬럼값, 속성값
 	 */
 	public void setAttributeType(HashMap<String, Object> attributeKey) {
 		this.attributeKey = attributeKey;
 	}
-	
-	public void addRelationLayerType(String notNullAtt, JSONObject attJsonObject){
+
+	/**
+	 * 검수 대상 속성 추가
+	 * 
+	 * @param notNullAtt
+	 *            속성 컬럼값
+	 * @param attJsonObject
+	 *            속성값
+	 */
+	public void addRelationLayerType(String notNullAtt, JSONObject attJsonObject) {
 		attributeKey.put(notNullAtt, attJsonObject);
 	}
 

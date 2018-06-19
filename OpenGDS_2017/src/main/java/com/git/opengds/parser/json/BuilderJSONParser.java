@@ -20,11 +20,26 @@ import com.git.gdsbuilder.type.validate.layer.ValidateLayerTypeList;
 import com.git.opengds.parser.validate.ValidateTypeParser;
 import com.git.opengds.user.domain.UserVO;
 
+/**
+ * 검수 레이어 및 옵션 정보 JSONObject를 GeoLayerCollectionList로 파싱하는 클래스. Client 파라미터 파싱
+ * 
+ * @author GIT
+ *
+ */
 public class BuilderJSONParser {
 
+	/**
+	 * 파일타입
+	 */
 	protected static final String isShp = "shp";
 
+	/**
+	 * Geoserver URL
+	 */
 	private static final String URL;
+	/**
+	 * Geoserver Id
+	 */
 	private static final String ID;
 
 	static {
@@ -41,10 +56,17 @@ public class BuilderJSONParser {
 	}
 
 	/**
-	 * JSONObject를 ValidateLayerTypeList, LayerCollectionList로 파싱 @author
-	 * DY.Oh @Date 2017. 4. 18. 오후 4:08:26 @param j @return
-	 * HashMap<String,Object> @throws FileNotFoundException @throws
-	 * IOException @throws ParseException @throws SchemaException @throws
+	 * 검수 레이어 및 옵션 정보 JSONObject를 GeoLayerCollectionList로 파싱
+	 * 
+	 * @param jsonObj
+	 *            검수 레이어 정보 JSONObject
+	 * @param userVO
+	 *            사용자 정보
+	 * @return HashMap<String, Object>
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 * @throws ParseException
+	 * @throws SchemaException
 	 */
 	public static HashMap<String, Object> parseValidateObj(JSONObject jsonObj, UserVO userVO)
 			throws FileNotFoundException, IOException, ParseException, SchemaException {
@@ -81,25 +103,16 @@ public class BuilderJSONParser {
 		}
 	}
 
-	// public static void parseEditLayerObj(JSONObject editLayerObj)
-	// throws FileNotFoundException, IOException,
-	// com.vividsolutions.jts.io.ParseException, SchemaException {
-	//
-	// Iterator layerIterator = editLayerObj.keySet().iterator();
-	// while (layerIterator.hasNext()) {
-	// String type = (String) layerIterator.next();
-	// if (type.equals(isNgi)) {
-	// EditQA20LayerCollectionList edtQA20CollectionListObj =
-	// BuilderJSONQA20Parser
-	// .parseEditLayerObj(editLayerObj, type);
-	// } else if (type.equals(isDxf)) {
-	// EditQA10LayerCollectionList edtCollectionList =
-	// BuilderJSONQA10Parser.parseEditLayerObj(editLayerObj,
-	// type);
-	// }
-	// }
-	// }
-
+	/**
+	 * 수정된 Feature 정보 JSONObject 객체를 Map객체로 파싱
+	 * 
+	 * @param editFeatureObj
+	 *            수정된 Feature 정보 JSONObject 객체
+	 * @return Map<String, Object>
+	 * @throws com.vividsolutions.jts.io.ParseException
+	 * @throws ParseException
+	 * @throws SchemaException
+	 */
 	public static Map<String, Object> parseEditFeatureObj(JSONObject editFeatureObj)
 			throws com.vividsolutions.jts.io.ParseException, ParseException, SchemaException {
 
@@ -120,6 +133,13 @@ public class BuilderJSONParser {
 		return editFeatureListMap;
 	}
 
+	/**
+	 * Layer명에 포함된 Collection Type 반환
+	 * 
+	 * @param layerName
+	 *            Layer명
+	 * @return String
+	 */
 	public static String getCollectionType(String layerName) {
 
 		int firstIndex = layerName.indexOf("_");
@@ -130,6 +150,13 @@ public class BuilderJSONParser {
 		return layerType;
 	}
 
+	/**
+	 * Layer명에 포함된 Layer Type 반환
+	 * 
+	 * @param layerName
+	 *            Layer명
+	 * @return String
+	 */
 	public static String getLayerType(String layerName) {
 
 		int firstIndex = layerName.lastIndexOf("_");

@@ -1,3 +1,19 @@
+/*
+ *    OpenGDS/Builder
+ *    http://git.co.kr
+ *
+ *    (C) 2014-2017, GeoSpatial Information Technology(GIT)
+ *    
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    version 3 of the License.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
+ */
 package com.git.gdsbuilder.FileRead;
 
 import java.io.File;
@@ -12,45 +28,104 @@ import java.util.zip.ZipInputStream;
 
 import org.apache.commons.io.FileUtils;
 
+/**
+ * ZIP 파일을 지정된 경로에 압축해제하는 기능을 제공
+ * 
+ * @author DY.Oh
+ *
+ */
 public class UnZipFile {
 
+	/**
+	 * 압축해제 경로
+	 */
 	public final String OUTPUT_DIR = "d:\\";
+	/**
+	 * 압축폴더명
+	 */
 	public String entryName;
+	/**
+	 * 압축파일 경로
+	 */
 	public String fileDirectory;
+	/**
+	 * 파일 포맷별 목록
+	 */
 	public Map<String, Object> fileNames;
 
+	/**
+	 * 압축폴더명 반환
+	 * 
+	 * @return String
+	 */
 	public String getEntryName() {
 		return entryName;
 	}
 
+	/**
+	 * 압축폴더명 설정
+	 * 
+	 * @param entryName
+	 *            압축폴더명
+	 */
 	public void setEntryName(String entryName) {
 		this.entryName = entryName;
 	}
 
+	/**
+	 * 파일 포맷별 목록 반환
+	 * 
+	 * @return Map<String, Object>
+	 */
 	public Map<String, Object> getFileNames() {
 		return fileNames;
 	}
 
+	/**
+	 * 압축파일 경로 반환
+	 * 
+	 * @return String
+	 */
 	public String getFileDirectory() {
 		return fileDirectory;
 	}
 
+	/**
+	 * 압축파일 경로 설정
+	 * 
+	 * @param fileDirectory
+	 *            압축파일 경로
+	 */
 	public void setFileDirectory(String fileDirectory) {
 		this.fileDirectory = fileDirectory;
 	}
 
-	public Map<String, Object> getFileNamesMap() {
-		return fileNames;
-	}
-
+	/**
+	 * 파일 포맷별 목록 설정
+	 * 
+	 * @param fileNames
+	 *            파일 포맷별 목록
+	 */
 	public void setFileNames(Map<String, Object> fileNames) {
 		this.fileNames = fileNames;
 	}
 
+	/**
+	 * 압축해제 경로 반환
+	 * 
+	 * @return String
+	 */
 	public String getOUTPUT_DIR() {
 		return OUTPUT_DIR;
 	}
 
+	/**
+	 * zip 파일의 압축 해제 후 지정된 경로에 압축 해제
+	 * 
+	 * @param zipFile
+	 *            zip 파일 객체
+	 * @throws Throwable
+	 */
 	public void decompress(File zipFile) throws Throwable {
 
 		FileInputStream fis = null;

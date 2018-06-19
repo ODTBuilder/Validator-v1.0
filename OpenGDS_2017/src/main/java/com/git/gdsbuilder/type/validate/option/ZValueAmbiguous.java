@@ -20,22 +20,19 @@ package com.git.gdsbuilder.type.validate.option;
 import java.util.HashMap;
 
 /**
- * Z_ValueAmbiguous 정보를 담고 있는 클래스
+ * Z_ValueAmbiguous(고도값 오류) 정보를 담고 있는 클래스
+ * 
  * @author DY.Oh
  * @Date 2017. 4. 18. 오후 3:09:34
- * */
+ */
 public class ZValueAmbiguous extends ValidatorOption {
 
-	
-	HashMap<String, Object> attributeKey;
-	//String attributeKey;
-	
 	/**
-	 * Z_ValueAmbiguous 타입 정보를 담고 있는 클래스
-	 * @author DY.Oh
-	 * @Date 2017. 4. 18. 오후 3:10:55
-	 * */
-	public enum Type{
+	 * 고도값 속성 컬럼명
+	 */
+	HashMap<String, Object> attributeKey;
+
+	public enum Type {
 
 		ZVALUEAMBIGUOUS("ZValueAmbiguous", "AttributeError");
 
@@ -47,50 +44,61 @@ public class ZValueAmbiguous extends ValidatorOption {
 			this.errType = errType;
 		}
 
-		/**
-		 * @return the errName
-		 */
 		public String errName() {
 			return errName;
 		}
 
-		/**
-		 * @return the errType
-		 */
 		public String errType() {
 			return errType;
 		}
 	}
 
 	/**
-	 * @param relationType
+	 * @param attributeKey
+	 *            고도값 속성 컬럼명
 	 */
 	public ZValueAmbiguous(HashMap<String, Object> attributeKey) {
 		super();
 		this.attributeKey = attributeKey;
 	}
-	
-	public ZValueAmbiguous(){
+
+	/**
+	 * 
+	 */
+	public ZValueAmbiguous() {
 		super();
 		this.attributeKey = new HashMap<String, Object>();
 	}
 
 	/**
-	 * @return the relationType
+	 * 고도값 속성 컬럼명 반환
+	 * 
+	 * @return HashMap<String, Object>
 	 */
 	public HashMap<String, Object> getRelationType() {
 		return attributeKey;
 	}
 
 	/**
-	 * @param relationType the relationType to set
+	 * 고도값 속성 컬럼명 설정
+	 * 
+	 * @param attributeKey
+	 *            고도값 속성 컬럼명
 	 */
 	public void setAttributeType(HashMap<String, Object> attributeKey) {
 		this.attributeKey = attributeKey;
 	}
-	
-	public void addRelationLayerType(String notNullAtt, String zValue){
-		attributeKey.put(notNullAtt, zValue);
+
+	/**
+	 * 검수 고도값 속성 추가
+	 * 
+	 * @param key
+	 *            속성 컬럼명
+	 * @param zValue
+	 *            속성값
+	 */
+	public void addRelationLayerType(String key, String zValue) {
+		attributeKey.put(key, zValue);
 	}
 
 }

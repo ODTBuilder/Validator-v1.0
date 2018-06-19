@@ -46,130 +46,219 @@ import org.opengis.referencing.operation.TransformException;
 import com.git.gdsbuilder.type.validate.error.ErrorFeature;
 
 /**
- * SimpleFeatureCollection를 그래픽 검수하는 클래스
+ * SimpleFeature를 그래픽 검수하는 클래스
  * 
  * @author DY.Oh
  * @Date 2017. 4. 18. 오후 3:34:07
  */
 public interface FeatureGraphicValidator {
-	
+
 	/**
-	 * 검수 항목 중 "계층 오류(LayerMiss)" 검수 @author JY.Kim @Date 2017. 6. 12. 오전
-	 * 11:42:43 @param simpleFeature @param typeNames @return
-	 * ErrorFeature @throws SchemaException ErrorFeature @throws
+	 * 검수 항목 중 "계층 오류(LayerMiss)" 검수
+	 * 
+	 * @param simpleFeature
+	 *            검수 대상 Simplefeature 객체
+	 * @param typeNames
+	 *            계층 타입(Geometry 타입)
+	 * @return ErrorFeature
+	 * @throws SchemaException
 	 */
 	public ErrorFeature validateLayerMiss(SimpleFeature simpleFeature, List<String> typeNames) throws SchemaException;
 
 	/**
-	 * 검수 항목 중 “등고선 교차 오류(ConIntersected)” 검수를 수행 @author DY.Oh @Date 2017. 4.
-	 * 18. 오후 3:34:23 @param simpleFeatureI @param simpleFeatureJ @return
-	 * List<ErrorFeature> @throws SchemaException @throws
+	 * 검수 항목 중 “등고선 교차 오류(ConIntersected)” 검수를 수행
+	 * 
+	 * @param simpleFeatureI
+	 *            검수 대상 Simplefeature 객체
+	 * @param simpleFeatureJ
+	 *            비교 대상 Simplefeature 객체
+	 * @return List<ErrorFeature>
+	 * @throws SchemaException
 	 */
 	public List<ErrorFeature> validateConIntersected(SimpleFeature simpleFeatureI, SimpleFeature simpleFeatureJ)
 			throws SchemaException;
 
 	/**
-	 * 검수 항목 중 “등고선 꺾임 오류(ConOverDegree)” 검수를 수행 @author DY.Oh @Date 2017. 4.
-	 * 18. 오후 3:34:34 @param simpleFeature @param inputDegree @return
-	 * List<ErrorFeature> @throws SchemaException @throws
+	 * 검수 항목 중 “등고선 꺾임 오류(ConOverDegree)” 검수를 수행
+	 * 
+	 * @param simpleFeature
+	 *            검수 대상 Simplefeature 객체
+	 * @param inputDegree
+	 *            등고선 꺾임 허용 각도
+	 * @return List<ErrorFeature>
+	 * @throws SchemaException
 	 */
 	public List<ErrorFeature> validateConOverDegree(SimpleFeature simpleFeature, double inputDegree)
 			throws SchemaException;
 
 	/**
-	 * 검수 항목 중 “요소 중복 오류(EntityDuplicaated)” 검수를 수행 @author DY.Oh @Date 2017. 4.
-	 * 18. 오후 3:34:44 @param simpleFeatureI @param simpleFeatureJ @return
-	 * ErrorFeature @throws SchemaException @throws
+	 * 검수 항목 중 “요소 중복 오류(EntityDuplicaated)” 검수를 수행
+	 * 
+	 * @param simpleFeatureI
+	 *            검수 대상 Simplefeature 객체
+	 * @param simpleFeatureJ
+	 *            비교 대상 Simplefeature 객체
+	 * @return ErrorFeature
+	 * @throws SchemaException
 	 */
 	public ErrorFeature validateEntityDuplicated(SimpleFeature simpleFeatureI, SimpleFeature simpleFeatureJ)
 			throws SchemaException;
 
 	/**
-	 * 검수 항목 중 “중복점오류(Duplicated Point)” 검수를 수행 @author DY.Oh @Date 2017. 4. 18.
-	 * 오후 3:34:56 @param validatorLayer @return ErrorLayer @throws
-	 * SchemaException @throws
+	 * 검수 항목 중 “중복점오류(Duplicated Point)” 검수를 수행
+	 * 
+	 * @param simpleFeature
+	 *            검수 대상 Simplefeature 객체
+	 * @return List<ErrorFeature>
 	 */
 	public List<ErrorFeature> validatePointDuplicated(SimpleFeature simpleFeature);
 
 	/**
-	 * 검수 항목 중 두 레이어의 “단독 존재 오류 (Self Entity)” 검수를 수행 @author DY.Oh @Date 2017.
-	 * 4. 18. 오후 3:35:06 @param simpleFeatureI @param simpleFeatureJ @return
-	 * List<ErrorFeature> @throws SchemaException @throws
+	 * 검수 항목 중 두 SimpleFeature 객체의 “단독 존재 오류 (Self Entity)” 검수를 수행
+	 * 
+	 * @param simpleFeatureI
+	 *            검수 대상 Simplefeature 객체
+	 * @param simpleFeatureJ
+	 *            비교 대상 Simplefeature 객체
+	 * @param selfEntityTolerance
+	 *            공간분석 정밀도 설정 (m) tolerance
+	 * @param polygonInvadedTolorence
+	 *            면형이 면형 객체 침범 (m2) tolerance
+	 * @return List<ErrorFeature>
+	 * @throws SchemaException
 	 */
 	public List<ErrorFeature> validateSelfEntity(SimpleFeature simpleFeatureI, SimpleFeature simpleFeatureJ,
 			double selfEntityTolerance, double polygonInvadedTolorence) throws SchemaException;
 
 	/**
-	 * 검수 항목 중 “허용 범위 이하 면적 (Small Area)” 검수 @author DY.Oh @Date 2017. 4. 18. 오후
-	 * 3:35:21 @param simpleFeature @param inputArea @return
-	 * ErrorFeature @throws SchemaException @throws
+	 * 검수 항목 중 “허용 범위 이하 면적 (Small Area)” 검수
+	 * 
+	 * @param simpleFeature
+	 *            검수 대상 Simplefeature 객체
+	 * @param inputArea
+	 *            허용 범위 면적
+	 * @return ErrorFeature
+	 * @throws SchemaException
 	 */
 	public ErrorFeature validateSmallArea(SimpleFeature simpleFeature, double inputArea) throws SchemaException;
 
 	/**
-	 * 검수 항목 중 “허용 범위 이하 길이 (Small Length)” 검수 @author DY.Oh @Date 2017. 4. 18.
-	 * 오후 3:35:32 @param simpleFeature @param inputLength @return
-	 * ErrorFeature @throws SchemaException @throws
+	 * 검수 항목 중 “허용 범위 이하 길이 (Small Length)” 검수
+	 * 
+	 * @param simpleFeature
+	 *            검수 대상 Simplefeature 객체
+	 * @param inputLength
+	 *            허용 범위 길이
+	 * @return ErrorFeature
+	 * @throws SchemaException
 	 */
 	public ErrorFeature validateSmallLength(SimpleFeature simpleFeature, double inputLength) throws SchemaException;
 
 	/**
-	 * 검수 항목 중 “등고선 끊김 오류(ConBreak)” 검수 @author DY.Oh @Date 2017. 4. 18. 오후
-	 * 3:35:40 @param validatorLayer @param aop @return
-	 * List<ErrorFeature> @throws SchemaException @throws
+	 * 검수 항목 중 “등고선 끊김 오류(ConBreak)” 검수
+	 * 
+	 * @param simpleFeature
+	 *            검수 대상 Simplefeature 객체
+	 * @param aop
+	 *            검수 영역
+	 * @param tolerance
+	 *            공간분석 정밀도 설정 (m) tolerance
+	 * @return List<ErrorFeature>
+	 * @throws SchemaException
 	 */
-	public List<ErrorFeature> validateConBreak(SimpleFeature validatorLayer, SimpleFeatureCollection aop,
-			double tolerence) throws SchemaException;
+	public List<ErrorFeature> validateConBreak(SimpleFeature simpleFeature, SimpleFeatureCollection aop,
+			double tolerance) throws SchemaException;
 
 	/**
-	 * 검수 항목 중 “등고선 직선화 미처리 오류 (Useless Point)” 검수 @author DY.Oh @Date 2017. 4.
-	 * 18. 오후 3:35:48 @param simpleFeature @return List<ErrorFeature> @throws
-	 * SchemaException @throws NoSuchAuthorityCodeException @throws
-	 * FactoryException @throws TransformException @throws
+	 * 검수 항목 중 “등고선 직선화 미처리 오류 (Useless Point)” 검수
+	 * 
+	 * @param simpleFeature
+	 *            검수 대상 Simplefeature 객체
+	 * @return List<ErrorFeature>
+	 * @throws SchemaException
+	 * @throws NoSuchAuthorityCodeException
+	 * @throws FactoryException
+	 * @throws TransformException
 	 */
 	public List<ErrorFeature> validateUselessPoint(SimpleFeature simpleFeature)
 			throws SchemaException, NoSuchAuthorityCodeException, FactoryException, TransformException;
 
 	/**
-	 * @param spatialAccuracyTolorence
-	 *            검수 항목 중 두 레이어의 “경계초과오류 (Out Boundary)” 검수 @author DY.Oh @Date
-	 *            2017. 4. 18. 오후 3:35:57 @param simpleFeature @param
-	 *            relationSimpleFeature @return ErrorFeature @throws
-	 *            SchemaException @throws
+	 * 검수 항목 중 두 레이어의 “경계초과오류 (Out Boundary)” 검수
+	 * 
+	 * @param simpleFeature
+	 *            검수 대상 Simplefeature 객체
+	 * @param relationSimpleFeature
+	 *            비교 대상 Simplefeature 객체
+	 * @param tolerance
+	 *            공간분석 정밀도 설정 (m) tolerance
+	 * @return ErrorFeature
+	 * @throws SchemaException
 	 */
 	public ErrorFeature validateOutBoundary(SimpleFeature simpleFeature, SimpleFeature relationSimpleFeature,
-			double spatialAccuracyTolorence) throws SchemaException;
+			double tolerance) throws SchemaException;
 
 	/**
-	 * 검수 항목 중 두 레이어의 “기준점 초과 (OverShoot)” 검수 @author DY.Oh @Date 2017. 4. 18.
-	 * 오후 3:36:05 @param simpleFeature @param aop @param tolerence @return
-	 * List<ErrorFeature> @throws SchemaException @throws
+	 * 검수 항목 중 두 레이어의 “기준점 초과 (OverShoot)” 검수
+	 * 
+	 * @param simpleFeature
+	 *            검수 대상 Simplefeature 객체
+	 * @param aop
+	 *            검수 영역
+	 * @param tolerance
+	 *            공간분석 정밀도 설정 (m) tolerance
+	 * @return List<ErrorFeature>
+	 * @throws SchemaException
 	 */
 	public List<ErrorFeature> validateOverShoot(SimpleFeature simpleFeature, SimpleFeatureCollection aop,
-			double tolerence) throws SchemaException;
+			double tolerance) throws SchemaException;
 
 	/**
-	 * 검수 항목 중 "꼬인객체(TwistedPolygon)" 검수 @author JY.Kim @Date 2017. 7. 28. 오후
-	 * 5:51:10 @param simpleFeature @return ErrorFeature @throws
-	 * SchemaException @throws
+	 * 검수 항목 중 "꼬인객체(TwistedPolygon)" 검수
+	 * 
+	 * @param simpleFeature
+	 *            검수 대상 Simplefeature 객체
+	 * @return ErrorFeature
+	 * @throws SchemaException
 	 */
 	public ErrorFeature validateTwistedPolygon(SimpleFeature simpleFeature) throws SchemaException;
 
 	/**
-	 * 검수 항목 중 "노드오류(NodeMiss)" 검수 @author JY.Kim @Date 2017. 7. 28. 오후
-	 * 5:53:08 @param simpleFeature @param relationSimpleFeature @param
-	 * tolerence @return List<ErrorFeature> @throws SchemaException @throws
+	 * 검수 항목 중 "노드오류(NodeMiss)" 검수
+	 * 
+	 * @param simpleFeature
+	 *            검수 대상 Simplefeature 객체
+	 * @param relationSfc
+	 *            비교 대상 SimplefeatureCollection 객체
+	 * @param simpleFeatureCollection
+	 *            검수 대상 SimplefeatureCollection 객체
+	 * @return List<ErrorFeature>
+	 * @throws SchemaException
 	 */
 	public List<ErrorFeature> validateNodeMiss(SimpleFeature simpleFeature, SimpleFeatureCollection relationSfc,
-			SimpleFeatureCollection sfc) throws SchemaException;
+			SimpleFeatureCollection simpleFeatureCollection) throws SchemaException;
 
 	/**
-	 * 검수 항목 중 "등고선 교차오류(ConIntersected)" 검수 @author JY.Kim @Date 2017. 7. 28.
-	 * 오후 5:53:36 @param tmpSimpleFeatureI @return List<ErrorFeature> @throws
+	 * 검수 항목 중 단일 SimpleFeature 객체의 "등고선 교차오류(ConIntersected)" 검수
+	 * 
+	 * @param simpleFeature
+	 *            검수 대상 Simplefeature 객체
+	 * @return List<ErrorFeature>
 	 */
-	public List<ErrorFeature> validateConIntersected(SimpleFeature tmpSimpleFeatureI);
+	public List<ErrorFeature> validateConIntersected(SimpleFeature simpleFeature);
 
-	public List<ErrorFeature> validateSelfEntity(SimpleFeature tmpSimpleFeatureI, double selfEntityLineTolerance,
+	/**
+	 * 검수 항목 중 단일 SimpleFeature 객체의 “단독 존재 오류 (Self Entity)” 검수를 수행
+	 * 
+	 * @param simpleFeature
+	 *            검수 대상 Simplefeature 객체
+	 * @param selfEntityLineTolerance
+	 *            공간분석 정밀도 설정 (m) tolerance
+	 * @param polygonInvadedTolorence
+	 *            면형이 면형 객체 침범 (m2) tolerance
+	 * @return List<ErrorFeature>
+	 */
+	public List<ErrorFeature> validateSelfEntity(SimpleFeature simpleFeature, double selfEntityLineTolerance,
 			double polygonInvadedTolorence);
 
 }

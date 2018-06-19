@@ -18,19 +18,18 @@
 package com.git.gdsbuilder.type.validate.option;
 
 /**
- * ConOverDegree 정보를 담고 있는 클래스
+ * ConOverDegree(등고선 꺾임 오류) 정보를 담고 있는 클래스
+ * 
  * @author DY.Oh
  * @Date 2017. 4. 18. 오후 3:09:34
- * */
+ */
 public class ConOverDegree extends ValidatorOption {
 
+	/**
+	 * 등고선 꺾임 허용 각도
+	 */
 	double degree;
 
-	/**
-	 * ConOverDegree 타입 정보를 담고 있는 클래스
-	 * @author DY.Oh
-	 * @Date 2017. 4. 18. 오후 3:10:55
-	 * */
 	public enum Type {
 
 		CONOVERDEGREE("ConOverDegree", "GeometricError");
@@ -38,43 +37,25 @@ public class ConOverDegree extends ValidatorOption {
 		String errName;
 		String errType;
 
-		/**
-		 * Type 생성자
-		 * @param errName
-		 * @param errType
-		 */
 		Type(String errName, String errType) {
 			this.errName = errName;
 			this.errType = errType;
 		}
 
-		/**
-		 * errName getter
-		 * @author DY.Oh
-		 * @Date 2017. 4. 18. 오후 3:09:38
-		 * @return String
-		 * @throws
-		 * */
 		public String errName() {
 			return errName;
 		}
 
-		/**
-		 * errType getter
-		 * @author DY.Oh
-		 * @Date 2017. 4. 18. 오후 3:09:40
-		 * @return String
-		 * @throws
-		 * */
 		public String errType() {
 			return errType;
 		}
 	};
 
-	
 	/**
 	 * ConOverDegree 생성자
+	 * 
 	 * @param degree
+	 *            등고선 꺾임 허용 각도
 	 */
 	public ConOverDegree(double degree) {
 		super();
@@ -82,23 +63,20 @@ public class ConOverDegree extends ValidatorOption {
 	}
 
 	/**
-	 * degree getter
-	 * @author DY.Oh
-	 * @Date 2017. 4. 18. 오후 3:12:52
+	 * 등고선 꺾임 허용 각도 반환
+	 * 
 	 * @return double
-	 * @throws
-	 * */
+	 */
 	public double getDegree() {
 		return degree;
 	}
 
 	/**
-	 * degree setter
-	 * @author DY.Oh
-	 * @Date 2017. 4. 18. 오후 3:12:53
-	 * @param degree void
-	 * @throws
-	 * */
+	 * 등고선 꺾임 각도 설정
+	 * 
+	 * @param degree
+	 *            등고선 꺾임 허용 각도
+	 */
 	public void setDegree(double degree) {
 		this.degree = degree;
 	}
