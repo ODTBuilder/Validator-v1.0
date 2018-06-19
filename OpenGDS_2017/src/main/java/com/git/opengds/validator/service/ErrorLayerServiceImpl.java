@@ -198,7 +198,7 @@ public class ErrorLayerServiceImpl implements ErrorLayerService {
 			returnMap.put("errTbName", errTableName);
 			return returnMap;
 		} else {
-			HashMap<String, Object> dropQuery = queryManager.dropjErrorLayerTbQuery(errTableName);
+			HashMap<String, Object> dropQuery = queryManager.dropErrorLayerTbQuery(errTableName);
 			errLayerDAO.dropErrorLayerTb(userVO, dropQuery);
 			returnMap.put("flag", false);
 			return returnMap;
