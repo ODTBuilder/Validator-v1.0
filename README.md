@@ -257,7 +257,7 @@ Getting Started
 <pre><code> url=http://[host]:[port]/geoserver<br>
  id=[admin]<br>
  pw=[geoserver]<br> </code></pre>
-- src\main\webapp\WEB-INF\spring\root-context.xml 파일에 생성한 Database 정보 입력
+- Enter Database information in the src\main\webapp\WEB-INF\spring\root-context.xml file that has been created
 <pre><code> property name="url" value="jdbc:postgresql://[host]:[port]/admin" <br>
  property name="username" value="[username]" <br>
  property name="password" value="[password]" <br></code></pre>
@@ -303,25 +303,25 @@ Getting Started
 </code></pre>
 ** Layer setting file and inspection setting file can only be edited after uploading them to the editing screen.
 
-### 6. 검수 실행 및 오류 네비게이터 실행 ###
+### 6. Troubleshooting ###
 - Visit main page url 
 <pre><code> http://[host]:[port]/opengds/builder.do </code></pre>
 - Upload inspection Test file 
 <pre><code> Click on top of screen where it says New -> File -> SHP -> CRS (ex. Change EPSG:4326 -> 4326) Enter then Search -> Test file (37712012.zip, 37712013.zip) add -> Start upload </code></pre>
-- Upload Layer Setting file 레이어 설정 파일 업로드 
-<pre><code> 화면 상단 메뉴 QA 2.0 -> Layer Definition -> layer_setting.json upload -> Save </code></pre>
-- 검수 설정 파일 업로드 
-<pre><code> 화면 상단 메뉴 QA 2.0 -> Layer Definition -> layer_setting.json upload -> Save </code></pre>
-- 검수 수행
-<pre><code> 화면 상단 메뉴 QA 2.0 -> Validation -> 좌측 레이어 트리에서 37712012, 37712013 그룹 레이어 클릭 -> Start </code></pre>
-- 검수 결과 확인
-<pre><code> 화면 좌측 Geoserver Layers 트리 새로고침 후 ValidatorLayers Layers 하단에 37712012_1, 37712013_1 각각의 오류 레이어 생성 확인 </code></pre>
-- 오류 네비게이터 실행
-<pre><code> 화면 상단 메뉴 QA Edit -> 하단 Geoserver Layers 트리에서 검수 대상 레이어 우클릭 후 Center 클릭 -> 하단 ValidatorLayers 트리에서 검수 대상 레이어의 오류 레이어 우클릭 후 Error 클릭 -> OK </code></pre>
-- 화면 우측에 오류 네비게이터의 화살표 버튼을 클릭하며 오류 사항 확인
+- Upload Layer Setting file  
+<pre><code> Click on top of screen where it says QA 2.0 -> Layer Definition -> layer_setting.json upload -> Save </code></pre>
+- Upload Inspection setting file 
+<pre><code> Click on top of screen where it says QA 2.0 -> Layer Definition -> layer_setting.json upload -> Save </code></pre>
+- Run Inspection
+<pre><code> Click on top of screen where it says QA 2.0 -> Validation -> Click from the left layer tree the group layers- 37712012, 37712013 -> Start </code></pre>
+- Check Inspection results
+<pre><code> Click on left of screenwhere it says Geoserver Layers Tree,then refresh. Verify that error layers are created at the bottom named  37712012_1, 37712013_1  </code></pre>
+- Run error navigator
+<pre><code> Click on top of screen where it says QA Edit -> then right click at bottom of the screen where it says "Target to be inspected" under  Geoserver Layers Tree Center, then click at the center -> Right click error layer at the ValidatorLayers at the bottom then click on "Error" -> OK </code></pre>
+- Check the errors after clicking the error navigator arror at the right of the screen
 
 
-사용 라이브러리
+Used Libraries
 =====
 1. jQuery 2.2.2 (MIT License, CC0) http://jquery.com/
 2. jQuery UI 1.11.4 (MIT License & GPL License, this case MIT License), start theme. http://jqueryui.com/
