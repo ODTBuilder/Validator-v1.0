@@ -11,19 +11,6 @@ Validator-v1.0 (공간자료 검증도구 v1.0)
 공간정보기술(주) 연구소 <link>http://www.git.co.kr/<br>
 OpenGeoDT 팀
 
-------
-
-Validator-v1.0 (Validation tool for geospatial data v1.0)
-
-This project is still a work in progress at its 4th year. 
-The final version of the project will be integrated in the later years.
-The program may cause some problems since it is not complete.
-The user is responsible to the caused problem and once it is complete, a new set of legal codes will be applied.
-
-Thank you.
-Geospatial Information Technology R&D <link>http://www.git.co.kr/<br>
-Team OpenGeoDT
-
 
 특징
 =====
@@ -34,27 +21,12 @@ Team OpenGeoDT
 - OGC 표준준수, 국내 수치지형도 작성 작업규정을 따르는 20여종의 검수기능을 제공함. 
 
 
--------
-
-Characteristics
-
--Validation tool for geospatial data v1.0 is a GIS integrated solution for inspecting and editing geospatial data based on GeoDT 2.2
--Provides tools for inspecting the geometric/logical structure of geospatial data.
--Supports various types of web browsers without installations of any plugins or ActiveX. 
--Can be customized or extended depending on the needs of the user since the program is written in JavaScript and Java.
--Follows the standards of OGC and provides more than 20 validating functions that follow the Korean law for making maps.
-
 연구기관
 =====
 - 세부 책임 : 부산대학교 <link>http://www.pusan.ac.kr/<br>
 - 연구 책임 : 국토연구원 <link>http://www.krihs.re.kr/
 
 -----
-
-Research Institutes
-
--Pusan National University <link>http://www.pusan.ac.kr/<br>
--Korea Research Institute for Human Settlements <link>http://www.krihs.re.kr/
 
 Getting Started
 =====
@@ -200,6 +172,34 @@ ghre55@git.co.kr
 
 ------------
 
+Validator-v1.0 (Validation tool for geospatial data v1.0) 
+=======
+
+This project is still a work in progress at its 4th year. 
+The final version of the project will be integrated in the later years.
+The program may cause some problems since it is not complete.
+The user is responsible to the caused problem and once it is complete, a new set of legal codes will be applied.
+
+Thank you.
+Geospatial Information Technology R&D <link>http://www.git.co.kr/<br>
+Team OpenGeoDT
+
+
+Characteristics
+=======
+
+-Validation tool for geospatial data v1.0 is a GIS integrated solution for inspecting and editing geospatial data based on GeoDT 2.2
+-Provides tools for inspecting the geometric/logical structure of geospatial data.
+-Supports various types of web browsers without installations of any plugins or ActiveX. 
+-Can be customized or extended depending on the needs of the user since the program is written in JavaScript and Java.
+-Follows the standards of OGC and provides more than 20 validating functions that follow the Korean law for making maps.
+
+
+Research Institutes
+=====
+
+-Pusan National University <link>http://www.pusan.ac.kr/<br>
+-Korea Research Institute for Human Settlements <link>http://www.krihs.re.kr/
 
 
 Getting Started
