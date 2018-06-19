@@ -171,9 +171,8 @@ Mail
 Developer : SG.LEE
 ghre55@git.co.kr
 
-
+<br><br>
 -----
-<
 <a name="english"></a>
 Validator-v1.0 (Validation tool for geospatial data v1.0) 
 =======
