@@ -43,9 +43,7 @@ import org.json.simple.JSONObject;
 
 import com.git.gdsbuilder.convertor.DataConvertor;
 import com.git.gdsbuilder.geolayer.data.DTGeoLayer;
-import com.git.gdsbuilder.geoserver.factory.DTGeoserverPublisher;
 import com.git.gdsbuilder.geoserver.factory.DTGeoserverReader;
-import com.git.gdsbuilder.geosolutions.geoserver.rest.GeoServerRESTReader;
 
 public class JsonFromUrl {
 	private static DTGeoserverReader dtReader;

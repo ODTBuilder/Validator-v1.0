@@ -41,12 +41,6 @@ import com.git.gdsbuilder.geoserver.data.GeoserverLayerCollectionTree;
 import com.git.gdsbuilder.geoserver.data.GeoserverLayerCollectionTree.TreeType;
 import com.git.gdsbuilder.geoserver.factory.DTGeoserverPublisher;
 import com.git.gdsbuilder.geoserver.factory.DTGeoserverReader;
-import com.git.gdsbuilder.geosolutions.geoserver.rest.decoder.RESTFeatureType;
-import com.git.gdsbuilder.geosolutions.geoserver.rest.decoder.RESTLayer;
-import com.git.gdsbuilder.geosolutions.geoserver.rest.encoder.GSLayerEncoder;
-import com.git.gdsbuilder.geosolutions.geoserver.rest.encoder.GSLayerGroupEncoder;
-import com.git.gdsbuilder.geosolutions.geoserver.rest.encoder.GSResourceEncoder.ProjectionPolicy;
-import com.git.gdsbuilder.geosolutions.geoserver.rest.encoder.feature.GSFeatureTypeEncoder;
 import com.git.gdsbuilder.type.geoserver.layer.GeoLayerInfo;
 import com.git.gdsbuilder.type.geoserver.layer.GeoLayerInfoList;
 import com.git.opengds.geoserver.data.style.GeoserverSldTextType;
@@ -58,6 +52,13 @@ import com.vividsolutions.jts.geom.GeometryCollection;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.Polygon;
+
+import it.geosolutions.geoserver.rest.decoder.RESTFeatureType;
+import it.geosolutions.geoserver.rest.decoder.RESTLayer;
+import it.geosolutions.geoserver.rest.encoder.GSLayerEncoder;
+import it.geosolutions.geoserver.rest.encoder.GSLayerGroupEncoder;
+import it.geosolutions.geoserver.rest.encoder.GSResourceEncoder.ProjectionPolicy;
+import it.geosolutions.geoserver.rest.encoder.feature.GSFeatureTypeEncoder;
 
 /**
  * Geoserver와 관련된 요청을 처리하는 클래스
@@ -175,8 +176,8 @@ public class GeoserverServiceImpl implements GeoserverService {
 				fte.setNativeName(layerFullName); // nativeName
 
 				// 성능향상
-				fte.addMetadata("cacheAgeMax", "604800");
-				fte.addMetadata("cachingEnabled", ("true"));
+				// fte.addMetadata("cacheAgeMax", "604800");
+				// fte.addMetadata("cachingEnabled", ("true"));
 
 				// Style 적용
 				String styleName = upperLayerName;

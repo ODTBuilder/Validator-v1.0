@@ -48,7 +48,7 @@ import java.util.List;
 
 import org.jdom.Element;
 
-import com.git.gdsbuilder.geosolutions.geoserver.rest.decoder.utils.JDOMBuilder;
+import it.geosolutions.geoserver.rest.decoder.utils.JDOMBuilder;
 
 
 /**

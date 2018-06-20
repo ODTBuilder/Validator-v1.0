@@ -45,8 +45,8 @@ package com.git.gdsbuilder.geolayer.data;
 import org.jdom.Element;
 import org.json.simple.JSONObject;
 
-import com.git.gdsbuilder.geosolutions.geoserver.rest.decoder.RESTLayerGroup;
-import com.git.gdsbuilder.geosolutions.geoserver.rest.decoder.utils.JDOMBuilder;
+import it.geosolutions.geoserver.rest.decoder.RESTLayerGroup;
+import it.geosolutions.geoserver.rest.decoder.utils.JDOMBuilder;
 
 /**
  * DTGeoGroupLayer에 대한 정보를 담고있는 클래스

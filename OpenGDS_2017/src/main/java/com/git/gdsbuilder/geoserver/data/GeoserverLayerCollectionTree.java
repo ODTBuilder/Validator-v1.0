@@ -49,7 +49,8 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import com.git.gdsbuilder.FileRead.en.EnFileFormat;
-import com.git.gdsbuilder.geosolutions.geoserver.rest.decoder.RESTFeatureTypeList;
+
+import it.geosolutions.geoserver.rest.decoder.RESTFeatureTypeList;
 
 /**
  * @ClassName: GeoserverLayerCollectionTree

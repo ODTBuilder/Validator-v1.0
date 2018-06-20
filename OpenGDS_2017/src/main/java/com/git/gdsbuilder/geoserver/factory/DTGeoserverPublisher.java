@@ -6,13 +6,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.git.gdsbuilder.geoserver.service.en.EnLayerBboxRecalculate;
-import com.git.gdsbuilder.geosolutions.geoserver.rest.GeoServerRESTPublisher;
-import com.git.gdsbuilder.geosolutions.geoserver.rest.HTTPUtils;
-import com.git.gdsbuilder.geosolutions.geoserver.rest.encoder.GSLayerEncoder;
-import com.git.gdsbuilder.geosolutions.geoserver.rest.encoder.GSResourceEncoder;
-import com.git.gdsbuilder.geosolutions.geoserver.rest.encoder.feature.GSFeatureTypeEncoder;
-import com.git.gdsbuilder.geosolutions.geoserver.rest.encoder.utils.NestedElementEncoder;
 import com.git.gdsbuilder.type.geoserver.layer.GeoLayerInfo;
+
+import it.geosolutions.geoserver.rest.GeoServerRESTPublisher;
+import it.geosolutions.geoserver.rest.HTTPUtils;
+import it.geosolutions.geoserver.rest.encoder.GSLayerEncoder;
+import it.geosolutions.geoserver.rest.encoder.GSResourceEncoder;
+import it.geosolutions.geoserver.rest.encoder.feature.GSFeatureTypeEncoder;
 
 public class DTGeoserverPublisher extends GeoServerRESTPublisher
 {
