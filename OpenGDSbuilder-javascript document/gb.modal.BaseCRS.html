@@ -1,0 +1,1549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>BaseCRS - Documentation</title>
+
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="gb.modal.Base.html">Base</a><ul class='methods'><li data-type='method'><a href="gb.modal.Base.html#close">close</a></li><li data-type='method'><a href="gb.modal.Base.html#getHeight">getHeight</a></li><li data-type='method'><a href="gb.modal.Base.html#getModal">getModal</a></li><li data-type='method'><a href="gb.modal.Base.html#getModalBody">getModalBody</a></li><li data-type='method'><a href="gb.modal.Base.html#getWidth">getWidth</a></li><li data-type='method'><a href="gb.modal.Base.html#open">open</a></li><li data-type='method'><a href="gb.modal.Base.html#refreshPosition">refreshPosition</a></li><li data-type='method'><a href="gb.modal.Base.html#setHeight">setHeight</a></li><li data-type='method'><a href="gb.modal.Base.html#setModalBody">setModalBody</a></li><li data-type='method'><a href="gb.modal.Base.html#setWidth">setWidth</a></li></ul></li><li><a href="gb.modal.BaseCRS.html">BaseCRS</a><ul class='methods'><li data-type='method'><a href="gb.modal.BaseCRS.html#getEPSGCode">getEPSGCode</a></li><li data-type='method'><a href="gb.modal.BaseCRS.html#getEPSGCode">getEPSGCode</a></li><li data-type='method'><a href="gb.modal.BaseCRS.html#getMap">getMap</a></li><li data-type='method'><a href="gb.modal.BaseCRS.html#getMessage">getMessage</a></li><li data-type='method'><a href="gb.modal.BaseCRS.html#open">open</a></li><li data-type='method'><a href="gb.modal.BaseCRS.html#searchEPSGCode">searchEPSGCode</a></li><li data-type='method'><a href="gb.modal.BaseCRS.html#setMap">setMap</a></li><li data-type='method'><a href="gb.modal.BaseCRS.html#setMessage">setMessage</a></li><li data-type='method'><a href="gb.modal.BaseCRS.html#setProjection">setProjection</a></li></ul></li><li><a href="gb.panel.Base.html">Base</a><ul class='methods'><li data-type='method'><a href="gb.panel.Base.html#close">close</a></li><li data-type='method'><a href="gb.panel.Base.html#getHeight">getHeight</a></li><li data-type='method'><a href="gb.panel.Base.html#getPanel">getPanel</a></li><li data-type='method'><a href="gb.panel.Base.html#getPositionX">getPositionX</a></li><li data-type='method'><a href="gb.panel.Base.html#getPositionY">getPositionY</a></li><li data-type='method'><a href="gb.panel.Base.html#getWidth">getWidth</a></li><li data-type='method'><a href="gb.panel.Base.html#open">open</a></li><li data-type='method'><a href="gb.panel.Base.html#setHeight">setHeight</a></li><li data-type='method'><a href="gb.panel.Base.html#setPanelBody">setPanelBody</a></li><li data-type='method'><a href="gb.panel.Base.html#setPositionX">setPositionX</a></li><li data-type='method'><a href="gb.panel.Base.html#setPositionY">setPositionY</a></li><li data-type='method'><a href="gb.panel.Base.html#setWidth">setWidth</a></li></ul></li><li><a href="gb.panel.EditingTool.html">EditingTool</a><ul class='methods'><li data-type='method'><a href="gb.panel.EditingTool.html#activeIntrct_">activeIntrct_</a></li><li data-type='method'><a href="gb.panel.EditingTool.html#addSnappingLayer">addSnappingLayer</a></li><li data-type='method'><a href="gb.panel.EditingTool.html#addSnappingLayer">addSnappingLayer</a></li><li data-type='method'><a href="gb.panel.EditingTool.html#clearUnmanaged">clearUnmanaged</a></li><li data-type='method'><a href="gb.panel.EditingTool.html#close">close</a></li><li data-type='method'><a href="gb.panel.EditingTool.html#deactiveIntrct_">deactiveIntrct_</a></li><li data-type='method'><a href="gb.panel.EditingTool.html#draw">draw</a></li><li data-type='method'><a href="gb.panel.EditingTool.html#getFeatures">getFeatures</a></li><li data-type='method'><a href="gb.panel.EditingTool.html#getHeight">getHeight</a></li><li data-type='method'><a href="gb.panel.EditingTool.html#getLayer">getLayer</a></li><li data-type='method'><a href="gb.panel.EditingTool.html#getMap">getMap</a></li><li data-type='method'><a href="gb.panel.EditingTool.html#getPanel">getPanel</a></li><li data-type='method'><a href="gb.panel.EditingTool.html#getPositionX">getPositionX</a></li><li data-type='method'><a href="gb.panel.EditingTool.html#getPositionY">getPositionY</a></li><li data-type='method'><a href="gb.panel.EditingTool.html#getWidth">getWidth</a></li><li data-type='method'><a href="gb.panel.EditingTool.html#isBoolean">isBoolean</a></li><li data-type='method'><a href="gb.panel.EditingTool.html#isDate">isDate</a></li><li data-type='method'><a href="gb.panel.EditingTool.html#isDouble">isDouble</a></li><li data-type='method'><a href="gb.panel.EditingTool.html#isString">isString</a></li><li data-type='method'><a href="gb.panel.EditingTool.html#isString">isString</a></li><li data-type='method'><a href="gb.panel.EditingTool.html#loadSnappingLayer">loadSnappingLayer</a></li><li data-type='method'><a href="gb.panel.EditingTool.html#modify">modify</a></li><li data-type='method'><a href="gb.panel.EditingTool.html#move">move</a></li><li data-type='method'><a href="gb.panel.EditingTool.html#open">open</a></li><li data-type='method'><a href="gb.panel.EditingTool.html#remove">remove</a></li><li data-type='method'><a href="gb.panel.EditingTool.html#removeFeatureFromUnmanaged">removeFeatureFromUnmanaged</a></li><li data-type='method'><a href="gb.panel.EditingTool.html#rotate">rotate</a></li><li data-type='method'><a href="gb.panel.EditingTool.html#select">select</a></li><li data-type='method'><a href="gb.panel.EditingTool.html#setFeatures">setFeatures</a></li><li data-type='method'><a href="gb.panel.EditingTool.html#setHeight">setHeight</a></li><li data-type='method'><a href="gb.panel.EditingTool.html#setLayer">setLayer</a></li><li data-type='method'><a href="gb.panel.EditingTool.html#setMap">setMap</a></li><li data-type='method'><a href="gb.panel.EditingTool.html#setPanelBody">setPanelBody</a></li><li data-type='method'><a href="gb.panel.EditingTool.html#setPositionX">setPositionX</a></li><li data-type='method'><a href="gb.panel.EditingTool.html#setPositionY">setPositionY</a></li><li data-type='method'><a href="gb.panel.EditingTool.html#setWidth">setWidth</a></li><li data-type='method'><a href="gb.panel.EditingTool.html#setWMSSource">setWMSSource</a></li><li data-type='method'><a href="gb.panel.EditingTool.html#updateSelected">updateSelected</a></li><li data-type='method'><a href="gb.panel.EditingTool.html#zoomToFit">zoomToFit</a></li></ul></li></ul><h3>Namespaces</h3><ul><li><a href="gb.html">gb</a></li><li><a href="gb.modal.html">modal</a></li><li><a href="gb.panel.html">panel</a></li></ul>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">BaseCRS</h1>
+    
+
+    
+
+
+
+
+<section>
+
+<header>
+    
+        <h2>
+            <span class="ancestors"><a href="gb.html">gb</a><a href="gb.modal.html">.modal</a>.</span>
+        
+        BaseCRS
+        </h2>
+        
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+
+    
+
+    <h4 class="name" id="BaseCRS"><span class="type-signature"></span>new BaseCRS<span class="signature">(obj)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="modal_basecrs.js.html">modal/basecrs.js</a>, <a href="modal_basecrs.js.html#line1">line 1</a>
+    </li></ul></dd>
+    
+
+    
+    <dt class="tag-version">Version:</dt>
+    <dd class="tag-version"><ul class="dummy"><li>0.01</li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-author">Author:</dt>
+    <dd class="tag-author">
+        <ul>
+            <li>yijun.so</li>
+        </ul>
+    </dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description">
+    베이스 좌표계 변경 모달 객체를 정의한다.
+</div>
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>obj</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">생성자 옵션을 담은 객체
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>title</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">모달의 제목</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>width</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">모달의 너비 (픽셀)</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>height</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">모달의 높이 (픽셀)</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>autoOpen</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">선언과 동시에 표출 할 것인지 선택</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>message</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">DOM</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">현재 좌표계를 출력할 DOM</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>map</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ol.Map</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">베이스 좌표계를 변경할 ol.Map 객체</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>epsg</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">설정하고자 하는 좌표계의 EPSG 코드</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    </div>
+
+    
+
+    
+
+    
+
+     
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        
+            
+
+    
+
+    <h4 class="name" id="getEPSGCode"><span class="type-signature"></span>getEPSGCode<span class="signature">()</span><span class="type-signature"> &rarr; {String}</span></h4>
+
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="modal_basecrs.js.html">modal/basecrs.js</a>, <a href="modal_basecrs.js.html#line104">line 104</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description">
+    현재 적용된 베이스 좌표계의 EPSG 코드를 반환한다.
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    현재 적용된 베이스 좌표계의 EPSG 코드
+</div>
+
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">String</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="getEPSGCode"><span class="type-signature"></span>getEPSGCode<span class="signature">(code)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="modal_basecrs.js.html">modal/basecrs.js</a>, <a href="modal_basecrs.js.html#line114">line 114</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description">
+    현재 적용된 베이스 좌표계의 EPSG 코드를 설정한다.
+</div>
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>code</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">현재 적용된 베이스 좌표계의 EPSG 코드</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="getMap"><span class="type-signature"></span>getMap<span class="signature">()</span><span class="type-signature"> &rarr; {ol.Map}</span></h4>
+
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="modal_basecrs.js.html">modal/basecrs.js</a>, <a href="modal_basecrs.js.html#line62">line 62</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description">
+    베이스 좌표계를 변경하고자 하는 ol.Map 객체를 반환한다.
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    베이스 좌표계를 변경하고자 하는 ol.Map 객체
+</div>
+
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">ol.Map</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="getMessage"><span class="type-signature"></span>getMessage<span class="signature">()</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="modal_basecrs.js.html">modal/basecrs.js</a>, <a href="modal_basecrs.js.html#line83">line 83</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description">
+    현재 좌표계를 표시할 DOM 객체를 반환한다.
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    현재 좌표계를 표시할 DOM 객체
+</div>
+
+
+
+    
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="open"><span class="type-signature"></span>open<span class="signature">()</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="modal_basecrs.js.html">modal/basecrs.js</a>, <a href="modal_basecrs.js.html#line224">line 224</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description">
+    모달을 연다
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="searchEPSGCode"><span class="type-signature"></span>searchEPSGCode<span class="signature">(code)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="modal_basecrs.js.html">modal/basecrs.js</a>, <a href="modal_basecrs.js.html#line125">line 125</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description">
+    베이스 좌표계를 변경하기 위한 EPSG 코드를 검색한다.
+</div>
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>code</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">베이스 좌표계를 변경하기 위한 EPSG 코드</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="setMap"><span class="type-signature"></span>setMap<span class="signature">(map)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="modal_basecrs.js.html">modal/basecrs.js</a>, <a href="modal_basecrs.js.html#line72">line 72</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description">
+    베이스 좌표계를 변경하고자 하는 ol.Map 객체를 설정한다.
+</div>
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>map</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ol.Map</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">베이스 좌표계를 변경하고자 하는 ol.Map 객체</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="setMessage"><span class="type-signature"></span>setMessage<span class="signature">(message)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="modal_basecrs.js.html">modal/basecrs.js</a>, <a href="modal_basecrs.js.html#line93">line 93</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description">
+    현재 좌표계를 표시할 DOM 객체를 설정한다.
+</div>
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>message</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">DOM</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">현재 좌표계를 표시할 DOM 객체</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="setProjection"><span class="type-signature"></span>setProjection<span class="signature">(code, name, proj4def, bbox)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="modal_basecrs.js.html">modal/basecrs.js</a>, <a href="modal_basecrs.js.html#line160">line 160</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description">
+    베이스 좌표계를 적용한다.
+</div>
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>code</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">EPSG 코드</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>name</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">좌표계 이름</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>proj4def</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">proj4 좌표계</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>bbox</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;Number></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">좌표계 영역</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Mon Jun 18 2018 14:28:37 GMT+0900 (대한민국 표준시) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+</body>
+</html>

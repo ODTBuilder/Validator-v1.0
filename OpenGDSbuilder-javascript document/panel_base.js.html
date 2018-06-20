@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>panel/base.js - Documentation</title>
+
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="gb.modal.Base.html">Base</a><ul class='methods'><li data-type='method'><a href="gb.modal.Base.html#close">close</a></li><li data-type='method'><a href="gb.modal.Base.html#getHeight">getHeight</a></li><li data-type='method'><a href="gb.modal.Base.html#getModal">getModal</a></li><li data-type='method'><a href="gb.modal.Base.html#getModalBody">getModalBody</a></li><li data-type='method'><a href="gb.modal.Base.html#getWidth">getWidth</a></li><li data-type='method'><a href="gb.modal.Base.html#open">open</a></li><li data-type='method'><a href="gb.modal.Base.html#refreshPosition">refreshPosition</a></li><li data-type='method'><a href="gb.modal.Base.html#setHeight">setHeight</a></li><li data-type='method'><a href="gb.modal.Base.html#setModalBody">setModalBody</a></li><li data-type='method'><a href="gb.modal.Base.html#setWidth">setWidth</a></li></ul></li><li><a href="gb.modal.BaseCRS.html">BaseCRS</a><ul class='methods'><li data-type='method'><a href="gb.modal.BaseCRS.html#getEPSGCode">getEPSGCode</a></li><li data-type='method'><a href="gb.modal.BaseCRS.html#getEPSGCode">getEPSGCode</a></li><li data-type='method'><a href="gb.modal.BaseCRS.html#getMap">getMap</a></li><li data-type='method'><a href="gb.modal.BaseCRS.html#getMessage">getMessage</a></li><li data-type='method'><a href="gb.modal.BaseCRS.html#open">open</a></li><li data-type='method'><a href="gb.modal.BaseCRS.html#searchEPSGCode">searchEPSGCode</a></li><li data-type='method'><a href="gb.modal.BaseCRS.html#setMap">setMap</a></li><li data-type='method'><a href="gb.modal.BaseCRS.html#setMessage">setMessage</a></li><li data-type='method'><a href="gb.modal.BaseCRS.html#setProjection">setProjection</a></li></ul></li><li><a href="gb.panel.Base.html">Base</a><ul class='methods'><li data-type='method'><a href="gb.panel.Base.html#close">close</a></li><li data-type='method'><a href="gb.panel.Base.html#getHeight">getHeight</a></li><li data-type='method'><a href="gb.panel.Base.html#getPanel">getPanel</a></li><li data-type='method'><a href="gb.panel.Base.html#getPositionX">getPositionX</a></li><li data-type='method'><a href="gb.panel.Base.html#getPositionY">getPositionY</a></li><li data-type='method'><a href="gb.panel.Base.html#getWidth">getWidth</a></li><li data-type='method'><a href="gb.panel.Base.html#open">open</a></li><li data-type='method'><a href="gb.panel.Base.html#setHeight">setHeight</a></li><li data-type='method'><a href="gb.panel.Base.html#setPanelBody">setPanelBody</a></li><li data-type='method'><a href="gb.panel.Base.html#setPositionX">setPositionX</a></li><li data-type='method'><a href="gb.panel.Base.html#setPositionY">setPositionY</a></li><li data-type='method'><a href="gb.panel.Base.html#setWidth">setWidth</a></li></ul></li><li><a href="gb.panel.EditingTool.html">EditingTool</a><ul class='methods'><li data-type='method'><a href="gb.panel.EditingTool.html#activeIntrct_">activeIntrct_</a></li><li data-type='method'><a href="gb.panel.EditingTool.html#addSnappingLayer">addSnappingLayer</a></li><li data-type='method'><a href="gb.panel.EditingTool.html#addSnappingLayer">addSnappingLayer</a></li><li data-type='method'><a href="gb.panel.EditingTool.html#clearUnmanaged">clearUnmanaged</a></li><li data-type='method'><a href="gb.panel.EditingTool.html#close">close</a></li><li data-type='method'><a href="gb.panel.EditingTool.html#deactiveIntrct_">deactiveIntrct_</a></li><li data-type='method'><a href="gb.panel.EditingTool.html#draw">draw</a></li><li data-type='method'><a href="gb.panel.EditingTool.html#getFeatures">getFeatures</a></li><li data-type='method'><a href="gb.panel.EditingTool.html#getHeight">getHeight</a></li><li data-type='method'><a href="gb.panel.EditingTool.html#getLayer">getLayer</a></li><li data-type='method'><a href="gb.panel.EditingTool.html#getMap">getMap</a></li><li data-type='method'><a href="gb.panel.EditingTool.html#getPanel">getPanel</a></li><li data-type='method'><a href="gb.panel.EditingTool.html#getPositionX">getPositionX</a></li><li data-type='method'><a href="gb.panel.EditingTool.html#getPositionY">getPositionY</a></li><li data-type='method'><a href="gb.panel.EditingTool.html#getWidth">getWidth</a></li><li data-type='method'><a href="gb.panel.EditingTool.html#isBoolean">isBoolean</a></li><li data-type='method'><a href="gb.panel.EditingTool.html#isDate">isDate</a></li><li data-type='method'><a href="gb.panel.EditingTool.html#isDouble">isDouble</a></li><li data-type='method'><a href="gb.panel.EditingTool.html#isString">isString</a></li><li data-type='method'><a href="gb.panel.EditingTool.html#isString">isString</a></li><li data-type='method'><a href="gb.panel.EditingTool.html#loadSnappingLayer">loadSnappingLayer</a></li><li data-type='method'><a href="gb.panel.EditingTool.html#modify">modify</a></li><li data-type='method'><a href="gb.panel.EditingTool.html#move">move</a></li><li data-type='method'><a href="gb.panel.EditingTool.html#open">open</a></li><li data-type='method'><a href="gb.panel.EditingTool.html#remove">remove</a></li><li data-type='method'><a href="gb.panel.EditingTool.html#removeFeatureFromUnmanaged">removeFeatureFromUnmanaged</a></li><li data-type='method'><a href="gb.panel.EditingTool.html#rotate">rotate</a></li><li data-type='method'><a href="gb.panel.EditingTool.html#select">select</a></li><li data-type='method'><a href="gb.panel.EditingTool.html#setFeatures">setFeatures</a></li><li data-type='method'><a href="gb.panel.EditingTool.html#setHeight">setHeight</a></li><li data-type='method'><a href="gb.panel.EditingTool.html#setLayer">setLayer</a></li><li data-type='method'><a href="gb.panel.EditingTool.html#setMap">setMap</a></li><li data-type='method'><a href="gb.panel.EditingTool.html#setPanelBody">setPanelBody</a></li><li data-type='method'><a href="gb.panel.EditingTool.html#setPositionX">setPositionX</a></li><li data-type='method'><a href="gb.panel.EditingTool.html#setPositionY">setPositionY</a></li><li data-type='method'><a href="gb.panel.EditingTool.html#setWidth">setWidth</a></li><li data-type='method'><a href="gb.panel.EditingTool.html#setWMSSource">setWMSSource</a></li><li data-type='method'><a href="gb.panel.EditingTool.html#updateSelected">updateSelected</a></li><li data-type='method'><a href="gb.panel.EditingTool.html#zoomToFit">zoomToFit</a></li></ul></li></ul><h3>Namespaces</h3><ul><li><a href="gb.html">gb</a></li><li><a href="gb.modal.html">modal</a></li><li><a href="gb.panel.html">panel</a></li></ul>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">panel/base.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * 패널 객체를 정의한다.
+ * 
+ * @class gb.panel.Base
+ * @memberof gb.panel
+ * @param {Object}
+ *            obj - 생성자 옵션을 담은 객체
+ * @param {Number}
+ *            obj.width - 패널의 너비 (픽셀)
+ * @param {Number}
+ *            obj.height - 패널의 높이 (픽셀)
+ * @param {Number}
+ *            obj.positionX - 패널의 페이지 왼편으로 부터의 거리 (픽셀)
+ * @param {Number}
+ *            obj.positionY - 패널의 페이지 상단으로 부터의 거리 (픽셀)
+ * @param {Boolean}
+ *            obj.autoOpen - 패널이 선언과 동시에 표출 할 것인지 선택
+ * @version 0.01
+ * @author yijun.so
+ * @date 2017. 07.26
+ */
+gb.panel.Base = function(obj) {
+
+	var that = this;
+	var options = obj ? obj : {};
+	this.width = options.width ? options.width : "auto";
+	this.height = options.height ? options.height : "auto";
+	this.x = options.positionX ? options.positionX : 0;
+	this.y = options.positionY ? options.positionY : 0;
+	this.autoOpen = options.autoOpen ? true : false;
+	var span = $("&lt;span>").html("&amp;times;");
+	var btn = $("&lt;button>").append(span).click(function() {
+		that.close();
+	});
+	this.panelHead = $("&lt;div>").addClass("gb-panel-head").append(btn);
+	var body = typeof options.body === "function" ? options.body() : options.body;
+	this.panelBody = $("&lt;div>").addClass("gb-panel-body");
+	if (body) {
+		$(this.panelBody).append(body);
+	}
+	this.panel = $("&lt;div>").addClass("gb-panel").css({
+		"width" : !isNaN(parseInt(this.width)) ? this.width + "px" : "auto",
+		"height" : !isNaN(parseInt(this.height)) ? this.height + "px" : "auto",
+		"position" : "absolute",
+		"z-Index" : "999",
+		"top" : !isNaN(parseInt(this.y)) ? this.y + "px" : 0,
+		"left" : !isNaN(parseInt(this.x)) ? this.x + "px" : 0
+	}).append(this.panelHead).append(this.panelBody);
+
+	// $(this.panel).draggable({
+	// appendTo : "body",
+	// containment : "body"
+	// });
+
+	$("body").append(this.panel);
+
+	if (this.autoOpen) {
+		this.open();
+	} else {
+		this.close();
+	}
+};
+/**
+ * 패널 바디를 삽입한다.
+ * 
+ * @method gb.panel.Base#setPanelBody
+ * @function
+ * @param {(DOM|function)}
+ *            body - 패널에 표시될 내용
+ */
+gb.panel.Base.prototype.setPanelBody = function(body) {
+	if (typeof body === "function") {
+		$(this.panelBody).append(body());
+	} else {
+		$(this.panelBody).append(body);
+	}
+};
+/**
+ * 패널을 DOM 형태로 반환한다.
+ * 
+ * @method gb.panel.Base#getPanel
+ * @return {DOM} DOM 형태의 패널
+ */
+gb.panel.Base.prototype.getPanel = function() {
+	return this.panel;
+};
+/**
+ * 패널을 나타낸다.
+ * 
+ * @method gb.panel.Base#open
+ */
+gb.panel.Base.prototype.open = function() {
+	this.panel.css("display", "block");
+};
+/**
+ * 패널을 숨긴다.
+ * 
+ * @method gb.panel.Base#close
+ */
+gb.panel.Base.prototype.close = function() {
+	this.panel.css("display", "none");
+};
+/**
+ * 패널의 너비를 설정한다.
+ * 
+ * @method gb.panel.Base#setWidth
+ * @param {Number}
+ *            width - 패널의 너비 (픽셀)
+ */
+gb.panel.Base.prototype.setWidth = function(width) {
+	this.width = width;
+	$(this.panel).css("width", (width + "px"));
+};
+/**
+ * 너비를 반환한다.
+ * 
+ * @method gb.panel.Base#getWidth
+ * @return {Number} 패널의 너비 (픽셀)
+ */
+gb.panel.Base.prototype.getWidth = function() {
+	return this.width;
+};
+/**
+ * 높이를 설정한다.
+ * 
+ * @method gb.panel.Base#setHeight
+ * @param {Number}
+ *            height - 패널의 높이 (픽셀)
+ */
+gb.panel.Base.prototype.setHeight = function(height) {
+	this.height = height;
+	$(this.panel).css("height", (height + "px"));
+};
+
+/**
+ * 높이를 반환한다.
+ * 
+ * @method gb.panel.Base#getHeight
+ * @return {Number} 패널의 높이 (픽셀)
+ */
+gb.panel.Base.prototype.getHeight = function() {
+	return this.height;
+};
+/**
+ * 패널의 수평 위치를 설정한다.
+ * 
+ * @method gb.panel.Base#setPositionX
+ * @param {Number}
+ *            x - body 왼편으로 부터의 거리 (픽셀)
+ */
+gb.panel.Base.prototype.setPositionX = function(x) {
+	this.positionX = x;
+	$(this.panel).css("left", (x + "px"));
+};
+
+/**
+ * 패널의 수평 위치를 반환한다.
+ * 
+ * @method gb.panel.Base#getPositionX
+ * @return {Number} body 왼편으로 부터의 거리 (픽셀)
+ */
+gb.panel.Base.prototype.getPositionX = function() {
+	return this.positionX;
+};
+/**
+ * 패널의 수직 위치를 설정한다.
+ * 
+ * @method gb.panel.Base#setPositionY
+ * @param {Number}
+ *            y - body 상단으로 부터의 거리 (픽셀)
+ */
+gb.panel.Base.prototype.setPositionY = function(y) {
+	this.positionY = y;
+	$(this.panel).css("top", (y + "px"));
+};
+
+/**
+ * 패널의 수직 위치를 반환한다.
+ * 
+ * @method gb.panel.Base#getPositionY
+ * @return {Number} body 상단으로 부터의 거리 (픽셀)
+ */
+gb.panel.Base.prototype.getPositionY = function() {
+	return this.positionY;
+};</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Mon Jun 18 2018 14:28:37 GMT+0900 (대한민국 표준시) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+</body>
+</html>
