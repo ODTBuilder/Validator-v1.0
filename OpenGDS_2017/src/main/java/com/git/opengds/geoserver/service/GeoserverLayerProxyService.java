@@ -12,5 +12,6 @@ public interface GeoserverLayerProxyService {
 	public void requestWMSLayer(UserVO userVO, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException;
 	public void requestGetFeature(UserVO userVO, HttpServletRequest request, HttpServletResponse response);
 	public void requestGetFeatureInfo(UserVO userVO, HttpServletRequest request, HttpServletResponse response);
+	public void requestWMSGetLegendGraphic(UserVO userVO, HttpServletRequest request, HttpServletResponse response);
 	public void requestGeoserverDataOutput(UserVO userVO, HttpServletRequest request, HttpServletResponse response);
 }

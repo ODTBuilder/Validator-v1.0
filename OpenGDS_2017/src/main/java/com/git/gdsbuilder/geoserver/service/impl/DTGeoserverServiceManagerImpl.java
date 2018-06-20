@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.git.gdsbuilder.geoserver.service.DTGeoserverServiceManager;
 import com.git.gdsbuilder.geoserver.service.wfs.WFSGetFeature;
 import com.git.gdsbuilder.geoserver.service.wms.WMSGetFeatureInfo;
+import com.git.gdsbuilder.geoserver.service.wms.WMSGetLegendGraphic;
 import com.git.gdsbuilder.geoserver.service.wms.WMSGetMap;
 import com.git.gdsbuilder.net.impl.ProxyServerImpl;
 
@@ -36,6 +37,12 @@ public class DTGeoserverServiceManagerImpl implements DTGeoserverServiceManager 
 	@Override
 	public void requestWMSGetMap(WMSGetMap map) {
 		String url = map.getWMSGetMapURL();
+		this.requestProxyService(url);
+	};
+	
+	@Override
+	public void requestWMSGetLegendGraphic(WMSGetLegendGraphic legendGraphic) {
+		String url = legendGraphic.getWMSGetLegendGraphicURL();
 		this.requestProxyService(url);
 	};
 	

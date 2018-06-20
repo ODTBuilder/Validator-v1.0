@@ -19,7 +19,6 @@ package com.git.opengds.geoserver.controller;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -40,9 +39,7 @@ import com.git.gdsbuilder.geolayer.data.DTGeoLayerList;
 import com.git.gdsbuilder.geoserver.data.GeoserverLayerCollectionTree.TreeType;
 import com.git.opengds.common.AbstractController;
 import com.git.opengds.geoserver.service.GeoserverLayerProxyService;
-import com.git.opengds.geoserver.service.GeoserverLayerProxyServiceImpl;
 import com.git.opengds.geoserver.service.GeoserverService;
-import com.git.opengds.geoserver.service.GeoserverServiceImpl;
 import com.git.opengds.user.domain.UserVO;
 import com.git.opengds.user.domain.UserVO.EnUserType;
 
@@ -154,6 +151,14 @@ public class GeoserverController extends AbstractController {
 			throws ServletException, IOException {
 		UserVO generalUser = (UserVO) getSession(request, EnUserType.GENERAL.getTypeName());
 		proService.requestGetFeatureInfo(generalUser, request, response);
+	}
+	
+	@RequestMapping(value = "getWMSGetLegendGraphic.ajax")
+	@ResponseBody
+	public void getWMSGetLegendGraphic(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		UserVO generalUser = (UserVO) getSession(request, EnUserType.GENERAL.getTypeName());
+		proService.requestWMSGetLegendGraphic(generalUser, request, response);
 	}
 
 	/**

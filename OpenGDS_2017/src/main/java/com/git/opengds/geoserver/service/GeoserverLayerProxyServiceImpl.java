@@ -44,6 +44,7 @@ import com.git.gdsbuilder.geoserver.service.en.EnGeoserverService;
 import com.git.gdsbuilder.geoserver.service.impl.DTGeoserverServiceManagerImpl;
 import com.git.gdsbuilder.geoserver.service.wfs.WFSGetFeature;
 import com.git.gdsbuilder.geoserver.service.wms.WMSGetFeatureInfo;
+import com.git.gdsbuilder.geoserver.service.wms.WMSGetLegendGraphic;
 import com.git.gdsbuilder.geoserver.service.wms.WMSGetMap;
 import com.git.opengds.user.domain.UserVO;
 
@@ -120,24 +121,6 @@ public class GeoserverLayerProxyServiceImpl implements GeoserverLayerProxyServic
 		DTGeoserverServiceManager geoserverService = new DTGeoserverServiceManagerImpl(request, response);
 		geoserverService.requestWMSGetMap(wmsGetMap);
 	}
-	/*
-	 * private void requestTestWMSLayer(HttpServletRequest request,
-	 * HttpServletResponse response) throws ServletException, IOException {
-	 * String serverURL = this.serverURL + "/" + user + "/wms"; String
-	 * version="1.1.0"; String format=EnWMSOutputFormat.JPEG.getStateName();
-	 * String layers="geo_ngi_00000738000124_B0010000_POLYGON"; String
-	 * crs="EPSG:5186"; String bbox="152642.29,75858.31,154868.946,78203.08";
-	 * int width=729; int height=768; String styles="";
-	 * 
-	 * 
-	 * 
-	 * WMSGetMap wmsGetMap = new
-	 * DTGeoserverServiceFactoryImpl().createWMSGetMap(serverURL, version,
-	 * format, layers, "", "", "", crs, bbox, width, height, styles, "","", "",
-	 * ""); GeoserverServiceManager geoserverService = new
-	 * GeoserverServiceManagerImpl(request,response);
-	 * geoserverService.requestWMSGetMap(wmsGetMap); }
-	 */
 
 	private WMSGetMap createWMSGetMap(UserVO userVO, HttpServletRequest request) {
 		String serverURL = this.URL + "/" + userVO.getId() + "/wms";
@@ -257,13 +240,13 @@ public class GeoserverLayerProxyServiceImpl implements GeoserverLayerProxyServic
 
 	private WMSGetFeatureInfo getWMSGetFeatureInfo(UserVO userVO, HttpServletRequest request) {
 		String serverURL = this.URL + "/" + userVO.getId() + "/wms";
-		;
 		String version = "1.0.0";
 		String layers = "";
 		String styles = "";
 		String crs = "";
 		String srs = "";
 		String bbox = "";
+		String format_options = "";
 		int width = 0;
 		int height = 0;
 		String query_layers = "";
@@ -288,7 +271,10 @@ public class GeoserverLayerProxyServiceImpl implements GeoserverLayerProxyServic
 				crs = value;
 			} else if (key.toLowerCase().equals("srs")) {
 				srs = value;
-			} else if (key.toLowerCase().equals("bbox")) {
+			} else if (key.toLowerCase().equals("format_options")) {
+				format_options = value;
+			} 
+			 else if (key.toLowerCase().equals("bbox")) {
 				bbox = value;
 			} else if (key.toLowerCase().equals("width")) {
 				width = Integer.parseInt(value);
@@ -309,6 +295,48 @@ public class GeoserverLayerProxyServiceImpl implements GeoserverLayerProxyServic
 			}
 		}
 		return new WMSGetFeatureInfo(serverURL, version, layers, styles, srs, crs, bbox, width, height, query_layers,
-				info_format, feature_count, x, y, exceptions);
+				info_format, format_options, feature_count, x, y, exceptions);
+	}
+	
+	
+	@Override
+	public void requestWMSGetLegendGraphic(UserVO userVO, HttpServletRequest request, HttpServletResponse response) {
+		WMSGetLegendGraphic getLegendGraphic = this.getWMSGetLegendGraphic(userVO, request);
+		DTGeoserverServiceManager geoserverService = new DTGeoserverServiceManagerImpl(request, response);
+		geoserverService.requestWMSGetLegendGraphic(getLegendGraphic);
+	}
+
+	private WMSGetLegendGraphic getWMSGetLegendGraphic(UserVO userVO, HttpServletRequest request) {
+		String serverURL = this.URL + "/" + userVO.getId() + "/wms";
+		String version = "1.0.0";
+		String format = "";
+		String legend_options = "";
+		String layer = "";
+		int width = 0;
+		int height = 0;
+		int scale = 0;
+
+		Enumeration paramNames = request.getParameterNames();
+		while (paramNames.hasMoreElements()) {
+			String key = paramNames.nextElement().toString();
+			String value = request.getParameter(key);
+
+			if (key.toLowerCase().equals("version")) {
+				version = value;
+			} else if (key.toLowerCase().equals("format")) {
+				format = value;
+			} else if (key.toLowerCase().equals("legend_options")) {
+				legend_options = value;
+			} else if (key.toLowerCase().equals("layer")) {
+				layer = value;
+			} else if (key.toLowerCase().equals("width")) {
+				width = Integer.parseInt(value);
+			} else if (key.toLowerCase().equals("height")) {
+				height = Integer.parseInt(value);
+			} else if (key.toLowerCase().equals("scale")) {
+				scale = Integer.parseInt(value);
+			}
+		}
+		return new WMSGetLegendGraphic(serverURL, version, format, width, height, layer, scale, legend_options);
 	}
 }

@@ -187,6 +187,9 @@ html {
 	</nav>
 
 	<script type="text/javascript">
+		var passphrase = "gitrnd";
+		var crpt1 = "vTP1UIKB]xYGiHPIvyPdpVoW]LeRJSOoqc4STjeKUDBnZzafVJc4XDQvlQd5jUK]reyUzI)Zjd8N4yWXOr]YDGhmNZNO3GVeIA!";
+
 		var projection = ol.proj.get('EPSG:3857');
 
 		var view = new ol.View({
@@ -390,7 +393,7 @@ html {
 			selected : function() {
 				return $('#builderClientLayer').jstreeol3("get_selected_layer");
 			},
-			getFeatureInfo : "http://175.116.181.42:9990/geoserver/wms",
+			getFeatureInfo : "geoserver/geoserverWMSGetFeatureInfo.ajax",
 			layerInfo : "geoserver/getGeoLayerInfoList.ajax",
 			imageTile : "geoserver/geoserverWMSLayerLoad.do",
 			getFeature : "geoserver/geoserverWFSGetFeature.ajax"
@@ -442,7 +445,7 @@ html {
 					}
 				},
 				"geoserver" : {
-					"url" : "http://175.116.181.42:9990/geoserver/wms",
+					"url" : "geoserver/getWMSGetLegendGraphic.ajax",
 					"width" : "15",
 					"height" : "15",
 					"format" : "image/png"

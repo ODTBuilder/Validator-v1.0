@@ -20,13 +20,14 @@ public class WMSGetFeatureInfo {
 	private int height = 0;
 	private String query_layers = "";
 	private String info_format = "";
+	private String format_options = "";
 	private int feature_count = 0;
 	private int x = 0;
 	private int y = 0;
 	private String exceptions = "";
 
 	public WMSGetFeatureInfo(String serverURL, String version, String layers, String styles, String srs, String crs,String bbox,
-			int width, int height, String query_layers, String info_format, int feature_count, int x, int y,String exceptions) {
+			int width, int height, String query_layers, String info_format,String format_options,  int feature_count, int x, int y,String exceptions) {
 		super();
 		if (!serverURL.trim().equals("")) {
 			this.serverURL = serverURL;
@@ -60,6 +61,9 @@ public class WMSGetFeatureInfo {
 		}
 		if (!info_format.trim().equals("")) {
 			this.info_format = info_format;
+		}
+		if (!format_options.trim().equals("")) {
+			this.format_options = format_options;
 		}
 		if (feature_count != 0) {
 			this.feature_count = feature_count;
@@ -238,7 +242,13 @@ public class WMSGetFeatureInfo {
 	public String getExceptions() {
 		return exceptions;
 	}
+	public String getFormat_options() {
+		return format_options;
+	}
 
+	public void setFormat_options(String format_options) {
+		this.format_options = format_options;
+	}
 	public void setExceptions(String exceptions) {
 		this.exceptions = exceptions;
 	}
@@ -274,6 +284,10 @@ public class WMSGetFeatureInfo {
 			if (!this.info_format.equals("")) {
 				urlBuffer.append("&");
 				urlBuffer.append("info_format=" + info_format);
+			}
+			if (!this.format_options.equals("")) {
+				urlBuffer.append("&");
+				urlBuffer.append("format_options=" + format_options);
 			}
 			if (!this.bbox.equals("")) {
 				urlBuffer.append("&");
