@@ -150,6 +150,8 @@
 <!-- 프로토타입 코딩 -->
 <!-- gb css -->
 <link href="${ctx}/resources/js/gb/css/gb.css" rel="stylesheet" />
+<!-- gb 네임스페이스-->
+<script src="${pageContext.request.contextPath}/resources/js/gb/gb_debug.js"></script>
 <!-- gb.panel.Base -->
 <script src="${pageContext.request.contextPath}/resources/js/gb/panel/base.js"></script>
 <!-- gb.panel.EditingTool -->

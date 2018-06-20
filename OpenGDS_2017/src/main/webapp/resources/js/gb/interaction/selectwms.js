@@ -221,7 +221,7 @@ gb.interaction.SelectWMS.prototype.setFeatureId = function(fid) {
 			$("body").css("cursor", "default");
 		},
 		success : function(data) {
-			
+
 			that.features_.clear();
 			var features = new ol.format.GeoJSON().readFeatures(JSON.stringify(data));
 			var ids = [];
@@ -246,45 +246,68 @@ gb.interaction.SelectWMS.prototype.setFeatureId = function(fid) {
 					that.select_.getFeatures().push(f);
 				}
 			}
-			
-//			that.features_.clear();
-//			var features = new ol.format.GeoJSON().readFeatures(JSON.stringify(data));
-//			var ids = [];
-//			for (var i = 0; i < features.length; i++) {
-//				ids.push(features[i].getId());
-//			}
-//			that.destination_.getSource().addFeatures(features);
-//			that.destination_.setMap(that.map_);
-//
-//			var selFeatures = that.select_.getFeatures();
-//			var cFeatures = [];
-//			for (var k = 0; k < selFeatures.getLength(); k++) {
-//				if (selFeatures.item(k).getId().search(that.layer.get("id") + ".new") !== -1) {
-//					cFeatures.push(selFeatures.item(k));
-//				} else {
-//					if (!that.record.isRemoved(that.layer, selFeatures.item(k))) {
-//						cFeatures.push(selFeatures.item(k));
-//					}
-//				}
-//			}
-//			that.select_.getFeatures().clear();
-//			that.select_.getFeatures().extend(cFeatures);
-//			var newFeatures = [];
-//			for (var j = 0; j < ids.length; j++) {
-//				if (!that.record.isRemoved(that.layer, that.destination_.getSource().getFeatureById(ids[j]))) {
-//					newFeatures.push(that.destination_.getSource().getFeatureById(ids[j]));
-//				}
-//			}
-//			that.select_.getFeatures().extend(newFeatures);
+
+			// that.features_.clear();
+			// var features = new
+			// ol.format.GeoJSON().readFeatures(JSON.stringify(data));
+			// var ids = [];
+			// for (var i = 0; i < features.length; i++) {
+			// ids.push(features[i].getId());
+			// }
+			// that.destination_.getSource().addFeatures(features);
+			// that.destination_.setMap(that.map_);
+			//
+			// var selFeatures = that.select_.getFeatures();
+			// var cFeatures = [];
+			// for (var k = 0; k < selFeatures.getLength(); k++) {
+			// if (selFeatures.item(k).getId().search(that.layer.get("id") +
+			// ".new") !== -1)
+			// {
+			// cFeatures.push(selFeatures.item(k));
+			// } else {
+			// if (!that.record.isRemoved(that.layer, selFeatures.item(k))) {
+			// cFeatures.push(selFeatures.item(k));
+			// }
+			// }
+			// }
+			// that.select_.getFeatures().clear();
+			// that.select_.getFeatures().extend(cFeatures);
+			// var newFeatures = [];
+			// for (var j = 0; j < ids.length; j++) {
+			// if (!that.record.isRemoved(that.layer,
+			// that.destination_.getSource().getFeatureById(ids[j]))) {
+			// newFeatures.push(that.destination_.getSource().getFeatureById(ids[j]));
+			// }
+			// }
+			// that.select_.getFeatures().extend(newFeatures);
 		}
 	});
 };
 
 gb.interaction.SelectWMS.prototype.getFeatureAJAX = function(url) {
 	console.log(url);
+	console.log(url.substring(0, url.indexOf("?")));
+	var ctrlr = url.substring(0, url.indexOf("?"));
+	var prm = url.substring(url.indexOf("?") + 1);
+	console.log(prm);
+	var QueryStringToJSON = function(str) {
+		var pairs = str.split('&');
+
+		var result = {};
+		pairs.forEach(function(pair) {
+			pair = pair.split('=');
+			result[pair[0]] = decodeURIComponent(pair[1] || '');
+		});
+
+		return JSON.parse(JSON.stringify(result));
+	}
+
+	console.log(QueryStringToJSON(prm));
 	var that = this;
+	var params = QueryStringToJSON(prm);
 	$.ajax({
-		url : url,
+		url : ctrlr,
+		data : params,
 		dataType : 'jsonp',
 		jsonpCallback : 'getJson',
 		beforeSend : function() {
