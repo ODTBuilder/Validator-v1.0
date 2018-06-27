@@ -1,17 +1,41 @@
 /**
- * 드래그 패널 객체를 정의한다.
+ * 에디팅 툴 패널 객체를 정의한다.
  * 
+ * @class gb.panel.EditingTool
+ * @extends gb.panel.Base
+ * @memberof gb.panel
+ * @param {Object}
+ *            obj - 생성자 옵션을 담은 객체
+ * @param {Number}
+ *            obj.width - 패널의 너비 (픽셀)
+ * @param {Number}
+ *            obj.height - 패널의 높이 (픽셀)
+ * @param {Number}
+ *            obj.positionX - 패널의 페이지 왼편으로 부터의 거리 (픽셀)
+ * @param {Number}
+ *            obj.positionY - 패널의 페이지 상단으로 부터의 거리 (픽셀)
+ * @param {Boolean}
+ *            obj.autoOpen - 패널이 선언과 동시에 표출 할 것인지 선택
+ * @param {gb.edit.FeatureRecord}
+ *            obj.featureRecord - 저장하기 전까지 편집 이력을 임시 보관
+ * @param {jsTreeCustom}
+ *            obj.treeInstance - ol3 레이어 객체를 tree 형태로 표현 및 보관
+ * @param {function}
+ *            obj.selected - 현재 선택된 레이어를 반환하는 함수
+ * @param {String}
+ *            obj.getFeatureInfo - WMS 레이어의 feature 정보를 요청하기 위한 URL
+ * @param {String}
+ *            obj.layerInfo - WMS 레이어의 정보를 요청하기 위한 URL
+ * @param {String}
+ *            obj.imageTile - WMS 레이어의 이미지 타일을 요청하기 위한 URL
+ * @param {String}
+ *            obj.getFeature - WFS 레이어의 feature 정보를 요청하기 위한 URL
+ * @param {String}
+ *            obj.getFeatureInfo - WMS 레이어의 feature 정보를 요청하기 위한 URL
+ * @version 0.01
  * @author yijun.so
  * @date 2017. 07.26
- * @version 0.01
- * @class gb.panel.EditingTool
- * @constructor
  */
-var gb;
-if (!gb)
-	gb = {};
-if (!gb.panel)
-	gb.panel = {};
 gb.panel.EditingTool = function(obj) {
 	gb.panel.Base.call(this, obj);
 	var options = obj ? obj : {};
@@ -312,16 +336,18 @@ gb.panel.EditingTool.prototype.constructor = gb.panel.EditingTool;
 /**
  * 피처목록을 생성한다.
  * 
- * @method setFeatureList_
+ * @method gb.panel.EditingTool#gb.panel.EditingTool#setFeatureList_
+ * @private
  */
 gb.panel.EditingTool.prototype.setFeatureList_ = function() {
-	return this.interaction;
+
 };
 /**
- * 내부 인터랙션 구조를 반환한다.
+ * 내부 인터랙션 저장 객체를 반환한다.
  * 
- * @method getInteractions_
- * @return {Mixed Obj} {select : ol.interaction.Select..}
+ * @method gb.panel.EditingTool#getInteractions_
+ * @private
+ * @return {Object} 내부 인터랙션 저장 객체
  */
 gb.panel.EditingTool.prototype.getInteractions_ = function() {
 	return this.interaction;
@@ -329,8 +355,11 @@ gb.panel.EditingTool.prototype.getInteractions_ = function() {
 /**
  * 내부 인터랙션 하나를 반환한다.
  * 
- * @method getInteraction_
- * @return {Mixed Obj} {select : ol.interaction.Select..}
+ * @method gb.panel.EditingTool#getInteraction_
+ * @private
+ * @param {String}
+ *            반환할 인터랙션
+ * @return {ol.interaction.Interaction}
  */
 gb.panel.EditingTool.prototype.getInteraction_ = function(key) {
 	return this.interaction[key];
@@ -338,11 +367,12 @@ gb.panel.EditingTool.prototype.getInteraction_ = function(key) {
 /**
  * 내부 인터랙션 구조를 설정한다.
  * 
- * @method setInteraction_
+ * @method gb.panel.EditingTool#setInteraction_
+ * @private
  * @param {String}
- *            key - interaction name
+ *            key - 인터랙션 이름
  * @param {ol.interaction.Interaction}
- *            val - interaction
+ *            val - 인터랙션 객체
  */
 gb.panel.EditingTool.prototype.setInteraction_ = function(key, val) {
 	this.interaction[key] = val;
@@ -350,9 +380,9 @@ gb.panel.EditingTool.prototype.setInteraction_ = function(key, val) {
 /**
  * 편집할 레이어를 설정한다.
  * 
- * @method setLayer
+ * @method gb.panel.EditingTool#setLayer
  * @param {ol.layer.Base}
- *            layer - layer to edit
+ *            layer - 편집하고자 하는 레이어
  */
 gb.panel.EditingTool.prototype.setLayer = function(layer) {
 	if (layer instanceof ol.layer.Group) {
@@ -371,19 +401,19 @@ gb.panel.EditingTool.prototype.setLayer = function(layer) {
 /**
  * 편집중인 레이어를 반환한다.
  * 
- * @method getLayer
- * @return {ol.layer.Base}
+ * @method gb.panel.EditingTool#getLayer
+ * @return {ol.layer.Base} 현재 편집중인 레이어
  */
 gb.panel.EditingTool.prototype.getLayer = function() {
 	return this.layer;
 };
 
 /**
- * 해당 인터랙션을 활성화 시킨다.
+ * 인터랙션을 활성화 시킨다.
  * 
- * @method activeIntrct_
- * @param {String ||
- *            Array<String>} 활성화 시킬 인터랙션 이름
+ * @method gb.panel.EditingTool#activeIntrct_
+ * @param {(String |
+ *            String[])} intrct - 활성화 시킬 인터랙션 이름 또는 이름의 배열
  */
 gb.panel.EditingTool.prototype.activeIntrct_ = function(intrct) {
 	// var that = this;
@@ -412,11 +442,11 @@ gb.panel.EditingTool.prototype.activeIntrct_ = function(intrct) {
 	}
 };
 /**
- * 해당 인터랙션을 비활성화 시킨다.
+ * 인터랙션을 비활성화 시킨다.
  * 
- * @method deactiveIntrct_
- * @param {String ||
- *            Array<String>} 인터랙션의 이름 또는 인터랙션 이름의 배열
+ * @method gb.panel.EditingTool#deactiveIntrct_
+ * @param {(String |
+ *            String[])} intrct - 인터랙션의 이름 또는 이름의 배열
  */
 gb.panel.EditingTool.prototype.deactiveIntrct_ = function(intrct) {
 	if (Array.isArray(intrct)) {
@@ -448,11 +478,12 @@ gb.panel.EditingTool.prototype.deactiveIntrct_ = function(intrct) {
 	// this.map.removeLayer(this.managed);
 };
 /**
- * 버튼을 누른상태로 만든다
+ * 버튼을 누른 상태로 스타일을 변경한다.
  * 
- * @method activeBtn_
+ * @method gb.panel.EditingTool#activeBtn_
+ * @private
  * @param {String}
- *            button name
+ *            btn - 버튼 이름
  */
 gb.panel.EditingTool.prototype.activeBtn_ = function(btn) {
 	if (!this.btn[btn].hasClass("active")) {
@@ -468,11 +499,12 @@ gb.panel.EditingTool.prototype.activeBtn_ = function(btn) {
 	}
 };
 /**
- * 버튼을 안 누른 상태로 만든다
+ * 버튼을 안 누른 상태로 스타일을 변경한다.
  * 
- * @method deactiveBtn_
+ * @method gb.panel.EditingTool#deactiveBtn_
+ * @private
  * @param {String}
- *            button name
+ *            btn - 버튼 이름
  */
 gb.panel.EditingTool.prototype.deactiveBtn_ = function(btn) {
 	if (this.btn[btn].hasClass("active")) {
@@ -482,7 +514,7 @@ gb.panel.EditingTool.prototype.deactiveBtn_ = function(btn) {
 /**
  * 피처 선택을 활성화 한다
  * 
- * @method select
+ * @method gb.panel.EditingTool#select
  * @param {ol.layer.Base}
  *            layer - 편집할 레이어
  */
@@ -770,7 +802,7 @@ gb.panel.EditingTool.prototype.select = function(layer) {
 /**
  * 피처 그리기를 활성화 한다
  * 
- * @method draw
+ * @method gb.panel.EditingTool#draw
  * @param {ol.layer.Base}
  *            layer - 편집할 레이어
  */
@@ -940,7 +972,7 @@ gb.panel.EditingTool.prototype.draw = function(layer) {
 /**
  * 피처 이동을 활성화 한다
  * 
- * @method move
+ * @method gb.panel.EditingTool#move
  * @param {ol.layer.Base}
  *            layer - 편집할 레이어
  */
@@ -998,7 +1030,7 @@ gb.panel.EditingTool.prototype.move = function(layer) {
 /**
  * 피처 멀티편집을 활성화 한다
  * 
- * @method rotate
+ * @method gb.panel.EditingTool#rotate
  * @param {ol.layer.Base}
  *            layer - 편집할 레이어
  */
@@ -1055,7 +1087,7 @@ gb.panel.EditingTool.prototype.rotate = function(layer) {
 /**
  * 피처 수정을 활성화 한다
  * 
- * @method modify
+ * @method gb.panel.EditingTool#modify
  * @param {ol.layer.Base}
  *            layer - 편집할 레이어
  */
@@ -1141,7 +1173,7 @@ gb.panel.EditingTool.prototype.modify = function(layer) {
 /**
  * 피처를 삭제한다
  * 
- * @method remove
+ * @method gb.panel.EditingTool#remove
  * @param {ol.layer.Base}
  *            layer - 편집할 레이어
  */
@@ -1206,8 +1238,8 @@ gb.panel.EditingTool.prototype.remove = function(layer) {
 /**
  * 선택한 레이어를 업데이트한다
  * 
- * @method updateSelected
- * @return {ol.layer.Base}
+ * @method gb.panel.EditingTool#updateSelected
+ * @return {ol.layer.Base} 업데이트한 레이어
  */
 gb.panel.EditingTool.prototype.updateSelected = function() {
 	var result;
@@ -1249,8 +1281,9 @@ gb.panel.EditingTool.prototype.updateSelected = function() {
 /**
  * 피처를 선택한다
  * 
- * @method setFeatures
+ * @method gb.panel.EditingTool#setFeatures
  * @param {ol.Feature}
+ *            newFeature - 선택할 feature
  */
 gb.panel.EditingTool.prototype.setFeatures = function(newFeature) {
 	var that = this;
@@ -1280,8 +1313,8 @@ gb.panel.EditingTool.prototype.setFeatures = function(newFeature) {
 /**
  * 선택한 피처를 반환한다.
  * 
- * @method getFeatures
- * @return {ol.Collection<ol.Feature>}
+ * @method gb.panel.EditingTool#getFeatures
+ * @return {ol.Collection<ol.Feature>} 선택한 feature들
  */
 gb.panel.EditingTool.prototype.getFeatures = function() {
 	return this.features;
@@ -1289,9 +1322,9 @@ gb.panel.EditingTool.prototype.getFeatures = function() {
 /**
  * 삭제한 레이어에 포함되는 피처를 임시 레이어에서 지운다
  * 
- * @method removeFeatureFromUnmanaged
+ * @method gb.panel.EditingTool#removeFeatureFromUnmanaged
  * @param {ol.layer.Base}
- *            layer
+ *            layer - feature를 삭제한 레이어
  */
 gb.panel.EditingTool.prototype.removeFeatureFromUnmanaged = function(layer) {
 	var that = this;
@@ -1355,7 +1388,7 @@ gb.panel.EditingTool.prototype.removeFeatureFromUnmanaged = function(layer) {
 /**
  * 임시 레이어에 있는 피처를 전부 삭제한다.
  * 
- * @method clearUnmanaged
+ * @method gb.panel.EditingTool#clearUnmanaged
  */
 gb.panel.EditingTool.prototype.clearUnmanaged = function() {
 	if (this.tempVector instanceof ol.layer.Vector) {
@@ -1368,7 +1401,8 @@ gb.panel.EditingTool.prototype.clearUnmanaged = function() {
 /**
  * 패널을 나타낸다.
  * 
- * @method open
+ * @override
+ * @method gb.panel.EditingTool#open
  */
 gb.panel.EditingTool.prototype.open = function() {
 	var layer = this.updateSelected();
@@ -1394,8 +1428,11 @@ gb.panel.EditingTool.prototype.open = function() {
 /**
  * 베이스 타입 레이어에 소스를 입력한다.
  * 
- * @method setWMSSource(layer)
+ * @method gb.panel.EditingTool#setWMSSource
  * @param {ol.layer.Base}
+ *            sourceLayer - WMS Source를 입력할 레이어
+ * @param {function}
+ *            [callback] - ol.source.Source에 정보를 넣기 위한 함수
  */
 gb.panel.EditingTool.prototype.setWMSSource = function(sourceLayer, callback) {
 	var that = this;
@@ -1502,8 +1539,9 @@ gb.panel.EditingTool.prototype.setWMSSource = function(sourceLayer, callback) {
 /**
  * ol.Map을 입력한다.
  * 
- * @method setMap(map)
- * @param {ol.layer.Base}
+ * @method gb.panel.EditingTool#setMap
+ * @param {ol.Map}
+ *            map - 편집할 레이어를 포함하는 ol.Map
  */
 gb.panel.EditingTool.prototype.setMap = function(map) {
 	this.map = map;
@@ -1511,8 +1549,8 @@ gb.panel.EditingTool.prototype.setMap = function(map) {
 /**
  * ol.Map을 반환한다.
  * 
- * @method getMap(map)
- * @return {ol.layer.Base}
+ * @method gb.panel.EditingTool#getMap
+ * @return {ol.Map} 현재 편집중인 레이어가 포함된 ol.Map
  */
 gb.panel.EditingTool.prototype.getMap = function() {
 	return this.map;
@@ -1520,10 +1558,10 @@ gb.panel.EditingTool.prototype.getMap = function() {
 /**
  * String인지 검사한다.
  * 
- * @method isString()
- * @param {mixed}
- *            va
- * @return {Boolean} is String?
+ * @method gb.panel.EditingTool#isString
+ * @param {*}
+ *            va - String 인지 검사할 변수
+ * @return {Boolean} String 여부
  */
 gb.panel.EditingTool.prototype.isString = function(va) {
 	var result = false;
@@ -1535,10 +1573,10 @@ gb.panel.EditingTool.prototype.isString = function(va) {
 /**
  * Integer인지 검사한다.
  * 
- * @method isString()
- * @param {mixed}
- *            va
- * @return {Boolean} is Integer?
+ * @method gb.panel.EditingTool#isString
+ * @param {*}
+ *            va - Integer 인지 검사할 변수
+ * @return {Boolean} Integer 여부
  */
 gb.panel.EditingTool.prototype.isInteger = function(va) {
 	var result = false;
@@ -1550,10 +1588,10 @@ gb.panel.EditingTool.prototype.isInteger = function(va) {
 /**
  * Double인지 검사한다.
  * 
- * @method isDouble()
- * @param {mixed}
- *            va
- * @return {Boolean} is Double?
+ * @method gb.panel.EditingTool#isDouble
+ * @param {*}
+ *            va - Double 인지 검사할 변수
+ * @return {Boolean} Double 여부
  */
 gb.panel.EditingTool.prototype.isDouble = function(va) {
 	var result = false;
@@ -1568,10 +1606,10 @@ gb.panel.EditingTool.prototype.isDouble = function(va) {
 /**
  * Boolean인지 검사한다.
  * 
- * @method isBoolean()
- * @param {mixed}
- *            va
- * @return {Boolean} is Boolean?
+ * @method gb.panel.EditingTool#isBoolean
+ * @param {*}
+ *            va - Boolean 인지 검사할 변수
+ * @return {Boolean} Boolean 여부
  */
 gb.panel.EditingTool.prototype.isBoolean = function(va) {
 	var result = false;
@@ -1583,10 +1621,10 @@ gb.panel.EditingTool.prototype.isBoolean = function(va) {
 /**
  * Date인지 검사한다.
  * 
- * @method isDate()
- * @param {mixed}
- *            va
- * @return {Boolean} is Date?
+ * @method gb.panel.EditingTool#isDate
+ * @param {*}
+ *            va - Date 인지 검사할 변수
+ * @return {Boolean} Date 여부
  */
 gb.panel.EditingTool.prototype.isDate = function(va) {
 	var result = false;
@@ -1600,8 +1638,10 @@ gb.panel.EditingTool.prototype.isDate = function(va) {
 /**
  * 스냅핑 레이어를 설정한다.
  * 
- * @method addSnappingLayer()
+ * @method gb.panel.EditingTool#addSnappingLayer
  * @param {ol.layer.Base}
+ *            layer - Snapping을 활성화 할 레이어
+ * @return {Boolean} Snapping 활성화 여부
  */
 gb.panel.EditingTool.prototype.addSnappingLayer = function(layer) {
 	var success = false;
@@ -1645,8 +1685,10 @@ gb.panel.EditingTool.prototype.addSnappingLayer = function(layer) {
 /**
  * 스냅핑 레이어를 삭제한다.
  * 
- * @method addSnappingLayer()
+ * @method gb.panel.EditingTool#addSnappingLayer
  * @param {ol.layer.Base}
+ *            layer - Snapping을 비활성화 할 레이어
+ * @return {Boolean} Snapping 비활성화 여부
  */
 gb.panel.EditingTool.prototype.removeSnappingLayer = function(layer) {
 	var that = this;
@@ -1701,8 +1743,9 @@ gb.panel.EditingTool.prototype.removeSnappingLayer = function(layer) {
 /**
  * 스냅핑 레이어를 로드한다.
  * 
- * @method addSnappingLayer()
- * @param {ol.layer.Base}
+ * @method gb.panel.EditingTool#loadSnappingLayer
+ * @param {Number[]}
+ *            extent - Snapping 하기위한 현재 화면 영역
  */
 gb.panel.EditingTool.prototype.loadSnappingLayer = function(extent) {
 	var that = this;
@@ -1757,10 +1800,11 @@ gb.panel.EditingTool.prototype.loadSnappingLayer = function(extent) {
 	}
 };
 /**
- * zoom to fit
+ * 해당 레이어로 화면을 확대한다.
  * 
- * @method zoomToFit()
+ * @method gb.panel.EditingTool#zoomToFit
  * @param {ol.layer.Base}
+ *            layer - 화면을 확대할 레이어
  */
 gb.panel.EditingTool.prototype.zoomToFit = function(layer) {
 	var that = this;

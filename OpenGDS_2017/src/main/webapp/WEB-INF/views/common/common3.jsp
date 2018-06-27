@@ -65,15 +65,11 @@
 <%-- 1.0 레이어 코드 정의 --%>
 <script src="${pageContext.request.contextPath}/resources/js/gitbuilder/layerdefinition10.js"></script>
 
-<%-- 검수 옵션 정의 --%>
-<script src="${pageContext.request.contextPath}/resources/js/gitbuilder/optiondefinition.js"></script>
-
 <%-- 가중치 정의 --%>
 <script src="${pageContext.request.contextPath}/resources/js/gitbuilder/layerweight.js"></script>
 
 <%-- 검수창 --%>
 <script src="${pageContext.request.contextPath}/resources/js/gitbuilder/validation.js"></script>
-<script src="${ctx}/resources/js/gitbuilder/changebase.js"></script>
 <link rel="stylesheet" href="${ctx}/resources/js/gitbuilder/gitbuilder2017.css">
 
 <%-- 검수 편집 --%>
@@ -81,6 +77,9 @@
 
 <%-- 검수 현황 --%>
 <script src="${pageContext.request.contextPath}/resources/js/gitbuilder/qastatus.js"></script>
+
+<%-- 일반화 현황 --%>
+<script src="${pageContext.request.contextPath}/resources/js/gitbuilder/genstatus.js"></script>
 
 <%-- wms편집이력 --%>
 <script src="${pageContext.request.contextPath}/resources/js/gitbuilder/edithistory.js"></script>
@@ -112,7 +111,10 @@
 <%-- 지오서버 레이어 생성--%>
 <script src="${pageContext.request.contextPath}/resources/js/gitbuilder/createlayer.js"></script>
 
-<%-- 지오서버 레이어 삭제--%>
+<%-- 지오서버 그룹 레이어 삭제--%>
+<script src="${pageContext.request.contextPath}/resources/js/gitbuilder/deletegrouplayer.js"></script>
+
+<%-- 지오서버 에러 레이어 삭제--%>
 <script src="${pageContext.request.contextPath}/resources/js/gitbuilder/deletelayer.js"></script>
 
 <%-- 파일업로드 --%>
@@ -148,10 +150,14 @@
 <!-- 프로토타입 코딩 -->
 <!-- gb css -->
 <link href="${ctx}/resources/js/gb/css/gb.css" rel="stylesheet" />
+<!-- gb 네임스페이스-->
+<script src="${pageContext.request.contextPath}/resources/js/gb/gb_debug.js"></script>
 <!-- gb.panel.Base -->
 <script src="${pageContext.request.contextPath}/resources/js/gb/panel/base.js"></script>
 <!-- gb.panel.EditingTool -->
 <script src="${pageContext.request.contextPath}/resources/js/gb/panel/editingtool.js"></script>
+<!-- gb.panel.LayerStyle -->
+<script src="${pageContext.request.contextPath}/resources/js/gb/panel/layerstyle.js"></script>
 <!-- gb.interaction.SelectWMS -->
 <script src="${pageContext.request.contextPath}/resources/js/gb/interaction/selectwms.js"></script>
 <!-- gb.interaction.MultiTransform -->
@@ -162,3 +168,5 @@
 <script src="${pageContext.request.contextPath}/resources/js/gb/modal/generalization.js"></script>
 <!-- gb.modal.ValidationDefinition -->
 <script src="${pageContext.request.contextPath}/resources/js/gb/modal/validationdefinition.js"></script>
+<!-- gb.modal.BaseCRS -->
+<script src="${pageContext.request.contextPath}/resources/js/gb/modal/basecrs.js"></script>

@@ -8988,10 +8988,12 @@
 								var inst = $.jstreeol3.reference(data.reference), obj = inst.get_node(data.reference);
 								if (inst.is_selected(obj)) {
 									// inst.delete_node_layer(inst.get_selected());
+									var layer = inst.get_LayerById(obj.id);
+									inst._data.layerproperties.style.setLayer(layer);
+									inst._data.layerproperties.style.open();
 								} else {
 									// inst.delete_node_layer(obj);
 								}
-								console.log("Not yet");
 							}
 						}
 					};

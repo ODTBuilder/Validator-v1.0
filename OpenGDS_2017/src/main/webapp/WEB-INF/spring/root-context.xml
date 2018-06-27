@@ -8,6 +8,15 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
 	<tx:annotation-driven />
 	<!-- Root Context: defines shared resources visible to all other web components -->
 
+	<!-- JDBC의 연결을 처리하는 기능을 가진 DataSource -->
+	<bean id="adminDataSource" class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close">
+		<property name="driverClassName" value="org.postgresql.Driver" />
+		<property name="url" value="jdbc:postgresql://175.116.181.42:5433/admin" />
+		<property name="username" value="postgis" />
+		<property name="password" value="postgis" />
+	</bean>
+
 	<!-- SqlSessionFactoryBean 생성 -->
 	<bean id="adminSqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
 		<!-- mybatis-config.xml 파일이 스프링이 동작할 때 같이 동작하도록 설정한 것. -->
@@ -55,15 +64,15 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
 		/> </aop:config> -->
 
 
-	<!-- test -->
+<!-- test-->
 
 	<!-- JDBC의 연결을 처리하는 기능을 가진 DataSource -->
 	<bean id="admin2DataSource" class="org.apache.commons.dbcp.BasicDataSource"
 		destroy-method="close">
-		<property name="driverClassName" value="${db.driverClassName}" />
-		<property name="url" value="${db.url2}" />
-		<property name="username" value="${db.username2}" />
-		<property name="password" value="${db.password2}" />
+		<property name="driverClassName" value="org.postgresql.Driver" />
+		<property name="url" value="jdbc:postgresql://175.116.181.42:5433/admin2" />
+		<property name="username" value="postgis" />
+		<property name="password" value="postgis" />
 	</bean>
 
 	<!-- SqlSessionFactoryBean 생성 -->
@@ -104,10 +113,10 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
 	<!-- JDBC의 연결을 처리하는 기능을 가진 DataSource -->
 	<bean id="admin3DataSource" class="org.apache.commons.dbcp.BasicDataSource"
 		destroy-method="close">
-		<property name="driverClassName" value="${db.driverClassName}" />
-		<property name="url" value="${db.url3}" />
-		<property name="username" value="${db.username3}" />
-		<property name="password" value="${db.password3}" />
+		<property name="driverClassName" value="org.postgresql.Driver" />
+		<property name="url" value="jdbc:postgresql://175.116.181.42:5433/admin3" />
+		<property name="username" value="postgis" />
+		<property name="password" value="postgis" />
 	</bean>
 
 	<!-- SqlSessionFactoryBean 생성 -->
@@ -147,10 +156,10 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
 	<!-- JDBC의 연결을 처리하는 기능을 가진 DataSource -->
 	<bean id="userDataSource" class="org.apache.commons.dbcp.BasicDataSource"
 		destroy-method="close">
-		<property name="driverClassName" value="${db.driverClassName}" />
-		<property name="url" value="${db.urlUser}" />
-		<property name="username" value="${db.usernameUser}" />
-		<property name="password" value="${db.passwordUser}" />
+		<property name="driverClassName" value="org.postgresql.Driver" />
+		<property name="url" value="jdbc:postgresql://175.116.181.42:5433/userdb" />
+		<property name="username" value="postgis" />
+		<property name="password" value="postgis" />
 	</bean>
 
 	<!-- SqlSessionFactoryBean 생성 -->
@@ -185,6 +194,11 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
 		</tx:attributes>
 	</tx:advice>
 
+
+
+
+
+
 	<!-- 예제 test -->
 	<context:component-scan base-package="com.git.opengds">
 		<context:exclude-filter expression="org.springframework.stereotype.Controller"
@@ -196,33 +210,5 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
 		type="annotation" /> </context:component-scan> -->
 
 
-	<bean id="encryptorConfig"
-		class="org.jasypt.encryption.pbe.config.EnvironmentStringPBEConfig">
-		<property name="algorithm" value="PBEWithMD5AndDES" />
-		<property name="password" value="gitrnd" />
-	</bean>
 
-	<bean id="encryptor" class="org.jasypt.encryption.pbe.StandardPBEStringEncryptor">
-		<property name="config" ref="encryptorConfig"></property>
-	</bean>
-
-	<bean id="propertyConfigurer"
-		class="org.jasypt.spring31.properties.EncryptablePropertyPlaceholderConfigurer">
-		<constructor-arg ref="encryptor" />
-		<property name="locations">
-			<list>
-				<value>classpath:db.properties</value>
-
-				<!-- 동일한 암호화키값으로 생성된 키값을저장한 다른 properties를 추가할 수 있습니다 -->
-			</list>
-		</property>
-	</bean>
-
-	<bean id="adminDataSource" class="org.apache.commons.dbcp.BasicDataSource"
-		destroy-method="close">
-		<property name="driverClassName" value="${db.driverClassName}" />
-		<property name="url" value="${db.url1}" />
-		<property name="username" value="${db.username1}" />
-		<property name="password" value="${db.password1}" />
-	</bean>
 </beans>
