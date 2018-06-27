@@ -364,9 +364,9 @@ html {
 		});
 
 		var lstyle = new gb.panel.LayerStyle({
-			
+
 		});
-		
+
 		$('#builderClientLayer').jstreeol3({
 			"core" : {
 				"map" : map,
@@ -713,6 +713,34 @@ html {
 		layer.set("git", opt);
 		layer.set("name", "test polygon");
 		map.addLayer(layer);
+
+		var source2 = new ol.source.Vector({
+
+		});
+		var layer2 = new ol.layer.Vector({
+			"source" : source2
+		});
+		var opt2 = {
+			"editable" : true,
+			"geometry" : "LineString"
+		};
+		layer2.set("git", opt2);
+		layer2.set("name", "test linestring");
+		map.addLayer(layer2);
+
+		var source3 = new ol.source.Vector({
+
+		});
+		var layer3 = new ol.layer.Vector({
+			"source" : source3
+		});
+		var opt3 = {
+			"editable" : true,
+			"geometry" : "Point"
+		};
+		layer3.set("git", opt3);
+		layer3.set("name", "test point");
+		map.addLayer(layer3);
 	</script>
 
 </body>

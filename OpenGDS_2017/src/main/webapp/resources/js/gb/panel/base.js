@@ -14,7 +14,7 @@
  * @param {Number}
  *            obj.positionY - 패널의 페이지 상단으로 부터의 거리 (픽셀)
  * @param {Boolean}
- *            obj.autoOpen - 패널이 선언과 동시에 표출 할 것인지 선택
+ *            obj.autoOpen - 패널을 선언과 동시에 표출 할 것인지 선택
  * @version 0.01
  * @author yijun.so
  * @date 2017. 07.26
