@@ -736,7 +736,10 @@ html {
 		});
 		var opt3 = {
 			"editable" : true,
-			"geometry" : "Point"
+			"geometry" : "Point",
+			"geoserver" : "geoserver1",
+			"workspace" : "workspace1",
+			"datastore" : "datastore1"
 		};
 		layer3.set("git", opt3);
 		layer3.set("name", "test point");

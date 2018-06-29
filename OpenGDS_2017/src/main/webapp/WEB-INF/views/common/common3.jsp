@@ -156,8 +156,8 @@
 <script src="${pageContext.request.contextPath}/resources/js/gb/panel/base.js"></script>
 <!-- gb.panel.EditingTool -->
 <script src="${pageContext.request.contextPath}/resources/js/gb/panel/editingtool.js"></script>
-<!-- gb.panel.LayerStyle -->
-<script src="${pageContext.request.contextPath}/resources/js/gb/panel/layerstyle.js"></script>
+<!-- gb.style.LayerStyle -->
+<script src="${pageContext.request.contextPath}/resources/js/gb/style/layerstyle.js"></script>
 <!-- gb.interaction.SelectWMS -->
 <script src="${pageContext.request.contextPath}/resources/js/gb/interaction/selectwms.js"></script>
 <!-- gb.interaction.MultiTransform -->

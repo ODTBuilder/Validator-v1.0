@@ -324,12 +324,12 @@ gb.style.LayerStyle.prototype.applyStyle = function() {
  * 
  * @method gb.style.LayerStyle#hexFromRGB
  * @param {Number}
- *            r - r 계열 수치
+ *            r - R 계열 수치
  * @param {Number}
- *            g- g 계열 수치
+ *            g- G 계열 수치
  * @param {Number}
- *            b - b 계열 수치
- * @return {String} rgb코드
+ *            b - B 계열 수치
+ * @return {String} RGB코드
  */
 gb.style.LayerStyle.prototype.hexFromRGB = function(r, g, b) {
 	// 받아온 파라미터를 16진수로 변환한다
@@ -466,6 +466,7 @@ gb.style.LayerStyle.prototype.parsePolygonSymbolizer = function(sld) {
  * 
  * @param {String}
  *            sld - 레이어의 SLD
+ * @return {Object} 스타일 정보를 가진 객체
  */
 gb.style.LayerStyle.prototype.parseLineSymbolizer = function(sld) {
 	var obj = {};
@@ -882,7 +883,7 @@ gb.style.LayerStyle.prototype.setLayer = function(layer) {
 /**
  * 패널에 레이어 이름을 표시한다.
  * 
- * @method setLayerName
+ * @method gb.style.LayerStyle#setLayerName
  * @param {String}
  *            name - 표시할 레이어의 이름
  */
