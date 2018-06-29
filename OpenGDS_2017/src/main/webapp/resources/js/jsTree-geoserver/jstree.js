@@ -7225,7 +7225,14 @@
 									"label" : "Image",
 									"action" : function(data) {
 										var inst = $.jstree.reference(data.reference), obj = inst.get_node(data.reference);
-										if (obj.type === "n_ngi_layer_pt" || obj.type === "n_ngi_layer_ln" || obj.type === "n_ngi_layer_pg"
+										var arr = inst.get_selected();
+										var wmsInfo = {
+												"refer" : inst,
+												"arr" : arr,
+												"parent" : inst.get_parent(obj)
+											}
+										inst.import_image(wmsInfo);
+										/*if (obj.type === "n_ngi_layer_pt" || obj.type === "n_ngi_layer_ln" || obj.type === "n_ngi_layer_pg"
 												|| obj.type === "n_ngi_layer_txt") {
 											var arr = inst.get_selected();
 											if (inst.get_node(inst.get_parent(obj)).type === "n_ngi_group") {
@@ -7276,7 +7283,7 @@
 											};
 											// inst.import_fake_group(obj);
 											inst.import_fake_group_notload(obj);
-										}
+										}*/
 									}
 								},
 								"vector" : {

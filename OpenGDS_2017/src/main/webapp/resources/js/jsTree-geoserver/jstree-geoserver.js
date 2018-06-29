@@ -636,7 +636,9 @@ $.jstree.plugins.geoserver = function(options, parent) {
 							"editable" : true,
 							"attribute" : data[i].attInfo
 						}
-						wms.set("name", obj.refer.get_node(data[i].lName).text);
+						// wms.set("name",
+						// obj.refer.get_node(data[i].lName).text);
+						wms.set("name", data[i].lName);
 						wms.set("id", data[i].lName);
 						console.log(wms.get("id"));
 						// wms.set("type", "ImageTile");

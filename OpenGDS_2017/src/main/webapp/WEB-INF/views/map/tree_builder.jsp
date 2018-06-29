@@ -357,13 +357,13 @@ html {
 			selected : function() {
 				return $('#builderClientLayer').jstreeol3("get_selected_layer");
 			},
-			getFeatureInfo : "http://www.opengds.re.kr:19080/geoserver/wms",
+			getFeatureInfo : "geoserver/geoserverWMSGetFeatureInfo.ajax",
 			layerInfo : "geoserver/getGeoLayerInfoList.ajax",
 			imageTile : "geoserver/geoserverWMSLayerLoad.do",
 			getFeature : "geoserver/geoserverWFSGetFeature.ajax"
 		});
 
-		var lstyle = new gb.panel.LayerStyle({
+		var lstyle = new gb.style.LayerStyle({
 
 		});
 
@@ -414,7 +414,7 @@ html {
 					}
 				},
 				"geoserver" : {
-					"url" : "http://www.opengds.re.kr:19080/geoserver/wms",
+					"url" : "geoserver/getWMSGetLegendGraphic.ajax",
 					"width" : "15",
 					"height" : "15",
 					"format" : "image/png"
@@ -605,7 +605,7 @@ html {
 				"layerInfo" : layerInfo,
 				"layerInfoURL" : "geoserver/getGeoLayerInfoList.ajax",
 				"groupLayerInfoURL" : "geoserver/getGeoGroupLayerInfoList.ajax",
-				"WMSLayerURL" : "geoserver/geoserverWMSLayerLoad.do",
+				"WMSLayerURL" : "http://175.116.181.42:9990/geoserver/wms",
 				"createLayer" : createLayer,
 				"deleteGroupLayer" : deleteGroupLayer,
 				"deleteLayer" : deleteLayer,
