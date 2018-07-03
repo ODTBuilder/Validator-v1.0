@@ -39,7 +39,9 @@
 <link rel="stylesheet" type="text/css" href="${ctx}/resources/js/datatables/css/jquery.dataTables.min.css" />
 
 <%-- 폰트어썸 --%>
-<link rel="stylesheet" href="${ctx}/resources/css/fontawesome/css/font-awesome.min.css" />
+<%-- <link rel="stylesheet" href="${ctx}/resources/css/fontawesome/css/font-awesome.min.css" /> --%>
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css"
+	integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt" crossorigin="anonymous">
 
 <%-- jsTree openlayers3--%>
 <script type="text/javascript" src="${ctx}/resources/js/jsTree-openlayers3/jstree.js"></script>
@@ -50,10 +52,10 @@
 <script type="text/javascript" src="${ctx}/resources/js/jsTree-openlayers3/jstree-functionmarker.js"></script>
 
 <%-- jsTree geoserver--%>
-<script type="text/javascript" src="${ctx}/resources/js/jsTree-geoserver/jstree.js"></script>
-<link rel="stylesheet" type="text/css" href="${ctx}/resources/js/jsTree-geoserver/themes/default/style.css" />
-<script type="text/javascript" src="${ctx}/resources/js/jsTree-geoserver/jstree-geoserver.js"></script>
-<script type="text/javascript" src="${ctx}/resources/js/jsTree-geoserver/jstree-functionmarker.js"></script>
+<script type="text/javascript" src="${ctx}/resources/js/jsTree/jstree.js"></script>
+<link rel="stylesheet" type="text/css" href="${ctx}/resources/js/jsTree/themes/default/style.css" />
+<%-- <script type="text/javascript" src="${ctx}/resources/js/jsTree-geoserver/jstree-geoserver.js"></script> --%>
+<%-- <script type="text/javascript" src="${ctx}/resources/js/jsTree-geoserver/jstree-functionmarker.js"></script> --%>
 
 <%-- 베이스맵 변경 --%>
 <script src="${pageContext.request.contextPath}/resources/js/gitbuilder/changebase.js"></script>
@@ -130,12 +132,6 @@
 <script src="${ctx}/resources/js/sweetalert/sweetalert.min.js"></script>
 <script src="${ctx}/resources/js/sweetalert/sweetalert.js"></script>
 
-<!-- sockjs -->
-<%-- <script src="${ctx}/resources/js/sockjs/sockjs.min.js"></script> --%>
-
-<!-- stomp -->
-<%-- <script src="${ctx}/resources/js/stomp/stomp.min.js"></script> --%>
-
 <script type="text/javascript">
 	var CONTEXT = "${pageContext.request.contextPath}";
 </script>
@@ -170,3 +166,7 @@
 <script src="${pageContext.request.contextPath}/resources/js/gb/modal/validationdefinition.js"></script>
 <!-- gb.modal.BaseCRS -->
 <script src="${pageContext.request.contextPath}/resources/js/gb/modal/basecrs.js"></script>
+<!-- gb.embed.Base-->
+<script src="${pageContext.request.contextPath}/resources/js/gb/embed/base.js"></script>
+<!-- gb.tree.GeoServer -->
+<script src="${pageContext.request.contextPath}/resources/js/gb/tree/geoserver.js"></script>

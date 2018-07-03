@@ -151,7 +151,7 @@ html {
 
 	<div id="builderContent" class="container-fluid">
 		<div id="builderLayer">
-			<div id="builderLayerGeoServerPanel" class="panel panel-default">
+			<!-- <div id="builderLayerGeoServerPanel" class="panel panel-default">
 				<div class="panel-heading">
 					<h3 class="panel-title" style="display: inline-block;">GeoServer</h3>
 					<button id="srefresh" class="pull-right gitbuilder-clearbtn">
@@ -163,12 +163,13 @@ html {
 					<input type="text" class="form-control builder-tree-search" id="inputSearchServer" />
 					<div id="builderServerLayer" class="gitbuilder-layer-panel"></div>
 				</div>
-			</div>
+			</div> -->
+			<div id="builderLayerGeoServerPanel"></div>
 			<div id="builderLayerClientPanel" class="panel panel-default">
 				<div class="panel-heading">
 					<h3 class="panel-title" style="display: inline-block;">Layer</h3>
 					<button id="crefresh" class="pull-right gitbuilder-clearbtn">
-						<i class="fa fa-refresh" aria-hidden="true"></i>
+						<i class="fas fa-sync-alt"></i>
 					</button>
 				</div>
 				<div class="panel-body" style="padding: 0;">
@@ -586,7 +587,7 @@ html {
 			infoURL : "geoserver/getGeoLayerInfoList.ajax",
 			editURL : "editLayerCollection/editLayerCollection.ajax"
 		});
-		$("#builderServerLayer").jstree({
+		/* $("#builderServerLayer").jstree({
 			"core" : {
 				"animation" : 0,
 				"check_callback" : true,
@@ -617,6 +618,10 @@ html {
 				show_only_matches : true
 			},
 			"plugins" : [ "contextmenu", "search", "state", "types", "geoserver" ]
+		}); */
+
+		var gtree = new gb.tree.GeoServer({
+			"append" : "#builderLayerGeoServerPanel"
 		});
 
 		$("#crefresh").click(function() {

@@ -22,7 +22,7 @@ gb.embed.Base = function(obj) {
 		$(this.panelBody).append(body);
 	}
 	this.panel = $("<div>").addClass("panel").addClass("panel-default").append(this.panelBody);
-	if (options.append === "string") {
+	if (typeof options.append === "string") {
 		$(options.append).append(this.panel);
 	}
 

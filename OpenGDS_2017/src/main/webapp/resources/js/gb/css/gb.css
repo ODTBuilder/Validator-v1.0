@@ -146,6 +146,11 @@ a.gb-list-group-item-info.active, a.gb-list-group-item-info.active:hover, a.gb-l
 	border-radius: 4px;
 }
 
+.gb-button-clear {
+	border: 0;
+	background-color: transparent;
+}
+
 .gb-button-default {
 	color: #333;
 	background-color: #fff;
@@ -199,6 +204,7 @@ a.gb-list-group-item-info.active, a.gb-list-group-item-info.active:hover, a.gb-l
 	height: 40px;
 	padding-top: 9px;
 	padding-left: 13px;
+	padding-right: 13px;
 }
 
 .gb-article-body {
