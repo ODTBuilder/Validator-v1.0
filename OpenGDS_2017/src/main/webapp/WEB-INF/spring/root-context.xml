@@ -9,12 +9,19 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
 	<!-- Root Context: defines shared resources visible to all other web components -->
 
 	<!-- JDBC의 연결을 처리하는 기능을 가진 DataSource -->
+	<!-- <bean id="adminDataSource" class="org.apache.commons.dbcp.BasicDataSource" 
+		destroy-method="close"> <property name="driverClassName" value="${db.driverClassName}" 
+		/> <property name="url" value="${db.urlUser}" /> <property name="username" 
+		value="${db.usernameUser}" /> <property name="password" value="${db.passwordUser}" 
+		/> </bean> -->
+
+	<!-- JDBC의 연결을 처리하는 기능을 가진 DataSource 클라우드 계정 -->
 	<bean id="adminDataSource" class="org.apache.commons.dbcp.BasicDataSource"
 		destroy-method="close">
-		<property name="driverClassName" value="org.postgresql.Driver" />
-		<property name="url" value="jdbc:postgresql://175.116.181.42:5433/admin" />
-		<property name="username" value="postgis" />
-		<property name="password" value="postgis" />
+		<property name="driverClassName" value="${db.driverClassName}" />
+		<property name="url" value="${db.urlgit}" />
+		<property name="username" value="${db.usernamegit}" />
+		<property name="password" value="${db.passwordgit}" />
 	</bean>
 
 	<!-- SqlSessionFactoryBean 생성 -->
@@ -29,7 +36,6 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
 	<bean id="adminSqlSession" class="org.mybatis.spring.SqlSessionTemplate">
 		<constructor-arg index="0" ref="adminSqlSessionFactory" />
 	</bean>
-
 	<bean id="adminTransactionManager"
 		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
 		<property name="dataSource" ref="adminDataSource" />
@@ -38,133 +44,120 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
 	<tx:advice id="txAdvice" transaction-manager="adminTransactionManager">
 		<tx:attributes>
 			<tx:method name="*" rollback-for="Exception" />
-			<!-- <tx:method name="insert*" rollback-for="Exception" /> <tx:method 
-				name="create*" rollback-for="Exception" /> <tx:method name="update*" rollback-for="Exception" 
-				/> <tx:method name="drop*" rollback-for="Exception" /> -->
+			<tx:method name="insert*" rollback-for="Exception" />
+			<tx:method name="create*" rollback-for="Exception" />
+			<tx:method name="update*" rollback-for="Exception" />
+			<tx:method name="drop*" rollback-for="Exception" />
 		</tx:attributes>
 	</tx:advice>
 
 	<aop:config proxy-target-class="true">
-		<!-- <aop:pointcut id="serviceOperation" expression="execution(* com.git.opengds..*.*(..))" 
-			/> -->
-		<!-- <aop:pointcut id="serviceOperation" expression="execution(* com.git.opengds.file.*.service.*Service.*(a..))"/> -->
 		<aop:pointcut id="serviceOperation"
 			expression="execution(* com.git.opengds.file.*.service.*DBManagerServiceImpl.*(..))||
-	    												execution(* com.git.opengds.editor.service.*DBManagerServiceImpl.*(..))" />
-		<!-- <aop:pointcut id="serviceOperation" expression="excution(* com.project.service.service..*.*(..))"/> -->
-
-
+		    												execution(* com.git.opengds.editor.service.*DBManagerServiceImpl.*(..))" />
 		<aop:advisor id="transactionAdvisor" pointcut-ref="serviceOperation"
 			advice-ref="txAdvice" />
 	</aop:config>
 
 
-	<!-- <aop:config proxy-target-class="true"> <aop:pointcut id="controllerOperation" 
-		expression="execution(public * com.git.opengds.file.*.controller.*Controller.*(..))" 
+	<!-- test -->
+
+	<!-- JDBC의 연결을 처리하는 기능을 가진 DataSource -->
+	<!-- <bean id="admin2DataSource" class="org.apache.commons.dbcp.BasicDataSource" 
+		destroy-method="close"> <property name="driverClassName" value="${db.driverClassName}" 
+		/> <property name="url" value="${db.url2}" /> <property name="username" value="${db.username2}" 
+		/> <property name="password" value="${db.password2}" /> </bean> -->
+
+	<!-- SqlSessionFactoryBean 생성 -->
+	<!-- <bean id="admin2SqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean"> 
+		mybatis-config.xml 파일이 스프링이 동작할 때 같이 동작하도록 설정한 것. <property name="configLocation" 
+		value="classpath:mybatis-config.xml"></property> <property name="dataSource" 
+		ref="admin2DataSource"></property> <property name="mapperLocations" value="classpath:mappers/**/**/*.xml"></property> 
+		</bean> -->
+
+	<!-- sqlSession 을 SqlSessionTemplate으로 만든다. -->
+	<!-- <bean id="admin2SqlSession" class="org.mybatis.spring.SqlSessionTemplate"> 
+		<constructor-arg index="0" ref="admin2SqlSessionFactory" /> </bean> <bean 
+		id="admin2TransactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager"> 
+		<property name="dataSource" ref="admin2DataSource" /> </bean> <aop:config 
+		proxy-target-class="true"> <aop:pointcut id="serviceOperation2" expression="execution(* 
+		com.git.opengds.file.*.service.*DBManagerServiceImpl.*(..))|| execution(* 
+		com.git.opengds.editor.service.*DBManagerServiceImpl.*(..))" /> <aop:advisor 
+		id="transactionAdvisor2" pointcut-ref="serviceOperation2" advice-ref="txAdvice2" 
 		/> </aop:config> -->
 
-
-<!-- test-->
-
-	<!-- JDBC의 연결을 처리하는 기능을 가진 DataSource -->
-	<bean id="admin2DataSource" class="org.apache.commons.dbcp.BasicDataSource"
-		destroy-method="close">
-		<property name="driverClassName" value="org.postgresql.Driver" />
-		<property name="url" value="jdbc:postgresql://175.116.181.42:5433/admin2" />
-		<property name="username" value="postgis" />
-		<property name="password" value="postgis" />
-	</bean>
-
-	<!-- SqlSessionFactoryBean 생성 -->
-	<bean id="admin2SqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
-		<!-- mybatis-config.xml 파일이 스프링이 동작할 때 같이 동작하도록 설정한 것. -->
-		<property name="configLocation" value="classpath:mybatis-config.xml"></property>
-		<property name="dataSource" ref="admin2DataSource"></property>
-		<property name="mapperLocations" value="classpath:mappers/**/**/*.xml"></property>
-	</bean>
-
-	<!-- sqlSession 을 SqlSessionTemplate으로 만든다. -->
-	<bean id="admin2SqlSession" class="org.mybatis.spring.SqlSessionTemplate">
-		<constructor-arg index="0" ref="admin2SqlSessionFactory" />
-	</bean>
-
-	<bean id="admin2TransactionManager"
-		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-		<property name="dataSource" ref="admin2DataSource" />
-	</bean>
-
-	<aop:config proxy-target-class="true">
-		<aop:pointcut id="serviceOperation2"
-			expression="execution(* com.git.opengds.file.*.service.*DBManagerServiceImpl.*(..))||
-	    												execution(* com.git.opengds.editor.service.*DBManagerServiceImpl.*(..))" />
-		<aop:advisor id="transactionAdvisor2" pointcut-ref="serviceOperation2"
-			advice-ref="txAdvice2" />
-	</aop:config>
-
-	<tx:advice id="txAdvice2" transaction-manager="admin2TransactionManager">
-		<tx:attributes>
-			<tx:method name="*" rollback-for="Exception" />
-		</tx:attributes>
-	</tx:advice>
+	<!-- <tx:advice id="txAdvice2" transaction-manager="admin2TransactionManager"> 
+		<tx:attributes> <tx:method name="*" rollback-for="Exception" /> </tx:attributes> 
+		</tx:advice> -->
 
 
 
 
 	<!-- JDBC의 연결을 처리하는 기능을 가진 DataSource -->
-	<bean id="admin3DataSource" class="org.apache.commons.dbcp.BasicDataSource"
-		destroy-method="close">
-		<property name="driverClassName" value="org.postgresql.Driver" />
-		<property name="url" value="jdbc:postgresql://175.116.181.42:5433/admin3" />
-		<property name="username" value="postgis" />
-		<property name="password" value="postgis" />
-	</bean>
+	<!-- <bean id="admin3DataSource" class="org.apache.commons.dbcp.BasicDataSource" 
+		destroy-method="close"> <property name="driverClassName" value="${db.driverClassName}" 
+		/> <property name="url" value="${db.url3}" /> <property name="username" value="${db.username3}" 
+		/> <property name="password" value="${db.password3}" /> </bean> -->
 
 	<!-- SqlSessionFactoryBean 생성 -->
-	<bean id="admin3SqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
-		<!-- mybatis-config.xml 파일이 스프링이 동작할 때 같이 동작하도록 설정한 것. -->
-		<property name="configLocation" value="classpath:mybatis-config.xml"></property>
-		<property name="dataSource" ref="admin3DataSource"></property>
-		<property name="mapperLocations" value="classpath:mappers/**/**/*.xml"></property>
-	</bean>
+	<!-- <bean id="admin3SqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean"> 
+		mybatis-config.xml 파일이 스프링이 동작할 때 같이 동작하도록 설정한 것. <property name="configLocation" 
+		value="classpath:mybatis-config.xml"></property> <property name="dataSource" 
+		ref="admin3DataSource"></property> <property name="mapperLocations" value="classpath:mappers/**/**/*.xml"></property> 
+		</bean> -->
 
 	<!-- sqlSession 을 SqlSessionTemplate으로 만든다. -->
-	<bean id="admin3SqlSession" class="org.mybatis.spring.SqlSessionTemplate">
-		<constructor-arg index="0" ref="admin3SqlSessionFactory" />
-	</bean>
-
-	<bean id="admin3TransactionManager"
-		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-		<property name="dataSource" ref="admin3DataSource" />
-	</bean>
-
-	<aop:config proxy-target-class="true">
-		<aop:pointcut id="serviceOperation3"
-			expression="execution(* com.git.opengds.file.*.service.*DBManagerServiceImpl.*(..))||
-	    												execution(* com.git.opengds.editor.service.*DBManagerServiceImpl.*(..))" />
-		<aop:advisor id="transactionAdvisor3" pointcut-ref="serviceOperation3"
-			advice-ref="txAdvice3" />
-	</aop:config>
-
-	<tx:advice id="txAdvice3" transaction-manager="admin3TransactionManager">
-		<tx:attributes>
-			<tx:method name="*" rollback-for="Exception" />
-		</tx:attributes>
-	</tx:advice>
+	<!-- <bean id="admin3SqlSession" class="org.mybatis.spring.SqlSessionTemplate"> 
+		<constructor-arg index="0" ref="admin3SqlSessionFactory" /> </bean> <bean 
+		id="admin3TransactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager"> 
+		<property name="dataSource" ref="admin3DataSource" /> </bean> <aop:config 
+		proxy-target-class="true"> <aop:pointcut id="serviceOperation3" expression="execution(* 
+		com.git.opengds.file.*.service.*DBManagerServiceImpl.*(..))|| execution(* 
+		com.git.opengds.editor.service.*DBManagerServiceImpl.*(..))" /> <aop:advisor 
+		id="transactionAdvisor3" pointcut-ref="serviceOperation3" advice-ref="txAdvice3" 
+		/> </aop:config> <tx:advice id="txAdvice3" transaction-manager="admin3TransactionManager"> 
+		<tx:attributes> <tx:method name="*" rollback-for="Exception" /> </tx:attributes> 
+		</tx:advice> -->
 
 
+	<!-- 계정정보 -->
+	<!-- JDBC의 연결을 처리하는 기능을 가진 DataSource -->
+	<!-- <bean id="userDataSource" class="org.apache.commons.dbcp.BasicDataSource" 
+		destroy-method="close"> <property name="driverClassName" value="${db.driverClassName}" 
+		/> <property name="url" value="${db.urlUser}" /> <property name="username" 
+		value="${db.usernameUser}" /> <property name="password" value="${db.passwordUser}" 
+		/> </bean> -->
 
+	<!-- SqlSessionFactoryBean 생성 -->
+	<!-- <bean id="userSqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean"> 
+		<property name="configLocation" value="classpath:mybatis-config.xml"></property> 
+		<property name="dataSource" ref="userDataSource"></property> <property name="mapperLocations" 
+		value="classpath:mappers/**/**/*.xml"></property> </bean> -->
+
+	<!-- sqlSession 을 SqlSessionTemplate으로 만든다. -->
+	<!-- <bean id="userSqlSession" class="org.mybatis.spring.SqlSessionTemplate"> 
+		<constructor-arg index="0" ref="userSqlSessionFactory" /> </bean> <bean id="userTransactionManager" 
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager"> 
+		<property name="dataSource" ref="userDataSource" /> </bean> <aop:config proxy-target-class="true"> 
+		<aop:pointcut id="userServiceOperation" expression="execution(* com.git.opengds.file.*.service.*DBManagerServiceImpl.*(..))|| 
+		execution(* com.git.opengds.editor.service.*DBManagerServiceImpl.*(..))" 
+		/> <aop:advisor id="userTransactionAdvisor" pointcut-ref="userServiceOperation" 
+		advice-ref="txAdviceUser" /> </aop:config> <tx:advice id="txAdviceUser" transaction-manager="userTransactionManager"> 
+		<tx:attributes> <tx:method name="*" rollback-for="Exception" /> </tx:attributes> 
+		</tx:advice> -->
+
+	<!-- 클라우드 서버 접속정보 계정정보 -->
 	<!-- JDBC의 연결을 처리하는 기능을 가진 DataSource -->
 	<bean id="userDataSource" class="org.apache.commons.dbcp.BasicDataSource"
 		destroy-method="close">
-		<property name="driverClassName" value="org.postgresql.Driver" />
-		<property name="url" value="jdbc:postgresql://175.116.181.42:5433/userdb" />
-		<property name="username" value="postgis" />
-		<property name="password" value="postgis" />
+		<property name="driverClassName" value="${db.driverClassName}" />
+		<property name="url" value="${db.urlgit}" />
+		<property name="username" value="${db.usernamegit}" />
+		<property name="password" value="${db.passwordgit}" />
 	</bean>
 
 	<!-- SqlSessionFactoryBean 생성 -->
 	<bean id="userSqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
-		<!-- mybatis-config.xml 파일이 스프링이 동작할 때 같이 동작하도록 설정한 것. -->
 		<property name="configLocation" value="classpath:mybatis-config.xml"></property>
 		<property name="dataSource" ref="userDataSource"></property>
 		<property name="mapperLocations" value="classpath:mappers/**/**/*.xml"></property>
@@ -174,30 +167,22 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
 	<bean id="userSqlSession" class="org.mybatis.spring.SqlSessionTemplate">
 		<constructor-arg index="0" ref="userSqlSessionFactory" />
 	</bean>
-
 	<bean id="userTransactionManager"
 		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
 		<property name="dataSource" ref="userDataSource" />
 	</bean>
-
 	<aop:config proxy-target-class="true">
 		<aop:pointcut id="userServiceOperation"
-			expression="execution(* com.git.opengds.file.*.service.*DBManagerServiceImpl.*(..))||
-	    												execution(* com.git.opengds.editor.service.*DBManagerServiceImpl.*(..))" />
+			expression="execution(* com.git.opengds.file.*.service.*DBManagerServiceImpl.*(..))|| 
+		execution(* com.git.opengds.editor.service.*DBManagerServiceImpl.*(..))" />
 		<aop:advisor id="userTransactionAdvisor" pointcut-ref="userServiceOperation"
 			advice-ref="txAdviceUser" />
 	</aop:config>
-
 	<tx:advice id="txAdviceUser" transaction-manager="userTransactionManager">
 		<tx:attributes>
 			<tx:method name="*" rollback-for="Exception" />
 		</tx:attributes>
 	</tx:advice>
-
-
-
-
-
 
 	<!-- 예제 test -->
 	<context:component-scan base-package="com.git.opengds">
@@ -210,5 +195,26 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
 		type="annotation" /> </context:component-scan> -->
 
 
+	<bean id="encryptorConfig"
+		class="org.jasypt.encryption.pbe.config.EnvironmentStringPBEConfig">
+		<property name="algorithm" value="PBEWithMD5AndDES" />
+		<property name="password" value="gitrnd" />
+	</bean>
+
+	<bean id="encryptor" class="org.jasypt.encryption.pbe.StandardPBEStringEncryptor">
+		<property name="config" ref="encryptorConfig"></property>
+	</bean>
+
+	<bean id="propertyConfigurer"
+		class="org.jasypt.spring31.properties.EncryptablePropertyPlaceholderConfigurer">
+		<constructor-arg ref="encryptor" />
+		<property name="locations">
+			<list>
+				<value>classpath:db.properties</value>
+
+				<!-- 동일한 암호화키값으로 생성된 키값을저장한 다른 properties를 추가할 수 있습니다 -->
+			</list>
+		</property>
+	</bean>
 
 </beans>

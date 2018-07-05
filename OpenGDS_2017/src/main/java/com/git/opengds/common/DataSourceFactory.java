@@ -11,7 +11,7 @@ abstract public class DataSourceFactory {
 		@Inject
 	    @Qualifier("adminSqlSession")
 	    private SqlSession adminSqlSession;
-	     
+	 /*    
 	    @Autowired
 	    @Inject
 	    @Qualifier("admin2SqlSession")
@@ -20,16 +20,16 @@ abstract public class DataSourceFactory {
 	    @Autowired
 	    @Inject
 	    @Qualifier("admin3SqlSession")
-	    private SqlSession admin3SqlSession;
+	    private SqlSession admin3SqlSession;*/
 	     
 	    public SqlSession getSqlSession(String id) {
 	        switch (id) {
 	        case "admin":
 	            return adminSqlSession;
-	        case "admin2":
+	        /*case "admin2":
 	            return admin2SqlSession;
 	        case "admin3":
-	            return admin3SqlSession;
+	            return admin3SqlSession;*/
 	        default:
 	            return null;
 	        }
