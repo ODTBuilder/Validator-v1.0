@@ -13,8 +13,10 @@
  *            obj.height - 모달의 높이 (픽셀)
  * @param {Boolean}
  *            obj.autoOpen - 선언과 동시에 표출 할 것인지 선택
+ * @param {Function |
+ *            String | DOM} obj.body - Modal 본문에 삽입될 내용
  * @version 0.01
- * @author yijun.so
+ * @author SOYIJUN
  * @date 2017. 07.26
  */
 gb.modal.Base = function(obj) {

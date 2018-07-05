@@ -1097,10 +1097,14 @@ gb.tree.GeoServer = function(obj) {
 	var addIcon = $("<i>").addClass("fas").addClass("fa-plus");
 	this.addBtn = $("<button>").addClass("gb-button-clear").append(addIcon).css({
 		"float" : "right"
+	}).click(function() {
+		that.openAddGeoServer();
 	});
 	var refIcon = $("<i>").addClass("fas").addClass("fa-sync-alt");
 	this.refBtn = $("<button>").addClass("gb-button-clear").append(refIcon).css({
 		"float" : "right"
+	}).click(function() {
+		that.getJSTree().refresh();
 	});
 	var searchIcon = $("<i>").addClass("fas").addClass("fa-search");
 	this.searchBtn = $("<button>").addClass("gb-button-clear").append(searchIcon).css({
@@ -2235,9 +2239,152 @@ gb.tree.GeoServer = function(obj) {
 						"plugins" : [ "contextmenu", "search", "state", "types", "geoserver" ]
 					});
 	this.jstree = $(this.panelBody).jstreeol3(true);
+
+	var gName = $("<div>").text("Name: ").css({
+		"display" : "table-cell",
+		"width" : "20%",
+		"text-align" : "right",
+		"vertical-align" : "middle"
+	});
+	this.gNameInput = $("<input>").attr({
+		"type" : "text"
+	}).css({
+		"width" : "83%",
+		"border" : "none",
+		"border-bottom" : "solid 1px #a9a9a9",
+		"margin-left" : "8px"
+	});
+	var gNameInputDiv = $("<div>").append(this.gNameInput).css({
+		"display" : "table-cell",
+		"width" : "80%",
+		"vertical-align" : "middle"
+	});
+	var gNameArea = $("<div>").append(gName).append(gNameInputDiv).css({
+		"display" : "table-row"
+	});
+
+	var gURL = $("<div>").text("URL: ").css({
+		"display" : "table-cell",
+		"width" : "20%",
+		"text-align" : "right",
+		"vertical-align" : "middle"
+	});
+	this.gURLInput = $("<input>").attr({
+		"type" : "text"
+	}).css({
+		"width" : "83%",
+		"border" : "none",
+		"border-bottom" : "solid 1px #a9a9a9",
+		"margin-left" : "8px"
+	});
+	var gURLInputDiv = $("<div>").append(this.gURLInput).css({
+		"display" : "table-cell",
+		"width" : "80%",
+		"vertical-align" : "middle"
+	});
+	var gURLArea = $("<div>").append(gURL).append(gURLInputDiv).css({
+		"display" : "table-row"
+	});
+
+	var gID = $("<div>").text("ID: ").css({
+		"display" : "table-cell",
+		"width" : "20%",
+		"text-align" : "right",
+		"vertical-align" : "middle"
+	});
+	this.gIDInput = $("<input>").attr({
+		"type" : "text"
+	}).css({
+		"width" : "83%",
+		"border" : "none",
+		"border-bottom" : "solid 1px #a9a9a9",
+		"margin-left" : "8px"
+	});
+	var gIDInputDiv = $("<div>").append(this.gIDInput).css({
+		"display" : "table-cell",
+		"width" : "80%",
+		"vertical-align" : "middle"
+	});
+	var gIDArea = $("<div>").append(gID).append(gIDInputDiv).css({
+		"display" : "table-row"
+	});
+
+	var gPass = $("<div>").text("Password: ").css({
+		"display" : "table-cell",
+		"width" : "20%",
+		"text-align" : "right",
+		"vertical-align" : "middle"
+	});
+	this.gPassInput = $("<input>").attr({
+		"type" : "password"
+	}).css({
+		"width" : "83%",
+		"border" : "none",
+		"border-bottom" : "solid 1px #a9a9a9",
+		"margin-left" : "8px"
+	});
+	var gPassInputDiv = $("<div>").append(this.gPassInput).css({
+		"display" : "table-cell",
+		"width" : "80%",
+		"vertical-align" : "middle"
+	});
+	var gPassArea = $("<div>").append(gPass).append(gPassInputDiv).css({
+		"display" : "table-row"
+	});
+
+	var closeBtn = $("<button>").css({
+		"float" : "right"
+	}).addClass("gb-button").addClass("gb-button-default").text("Close").click(function() {
+		that.closeAddGeoServer();
+	});
+	var okBtn = $("<button>").css({
+		"float" : "right"
+	}).addClass("gb-button").addClass("gb-button-primary").text("Add").click(function() {
+		that.addGeoServer();
+	});
+
+	this.buttonArea = $("<span>").addClass("gb-modal-buttons").append(okBtn).append(closeBtn);
+	this.modalFooter = $("<div>").addClass("gb-modal-footer").append(this.buttonArea);
+
+	var gBody = $("<div>").append(gNameArea).append(gURLArea).append(gIDArea).append(gPassArea).css({
+		"display" : "table",
+		"padding" : "10px"
+	});
+	this.addGeoServerModal = new gb.modal.Base({
+		"title" : "Add GeoServer",
+		"width" : 540,
+		"height" : 400,
+		"autoOpen" : false,
+		"body" : gBody
+	});
+	$(this.addGeoServerModal.getModal()).append(this.modalFooter);
+	var innerHeight = $(this.addGeoServerModal.getModal()).innerHeight();
+	var headHeight = $(this.addGeoServerModal.getModal()).find(".gb-modal-head").outerHeight();
+	var footerHeight = $(this.addGeoServerModal.getModal()).find(".gb-modal-footer").outerHeight();
+	var bodyHeight = innerHeight - (headHeight + footerHeight);
+	$(gBody).outerHeight(bodyHeight);
+	$(gBody).innerWidth(538);
 };
 gb.tree.GeoServer.prototype = Object.create(gb.tree.GeoServer.prototype);
 gb.tree.GeoServer.prototype.constructor = gb.tree.GeoServer;
+
+/**
+ * jstree 객체를 반환한다.
+ * 
+ * @method gb.tree.GeoServer#getJSTree
+ */
+gb.tree.GeoServer.prototype.getJSTree = function() {
+	return this.jstree;
+};
+
+/**
+ * jstree 객체를 설정한다.
+ * 
+ * @method gb.tree.GeoServer#setJSTree
+ */
+gb.tree.GeoServer.prototype.setJSTree = function(jstree) {
+	this.jstree = jstree;
+};
 
 /**
  * GeoServer 등록창을 연다.
@@ -2245,7 +2392,15 @@ gb.tree.GeoServer.prototype.constructor = gb.tree.GeoServer;
  * @method gb.tree.GeoServer#openAddGeoServer
  */
 gb.tree.GeoServer.prototype.openAddGeoServer = function() {
-
+	this.addGeoServerModal.open();
+};
+/**
+ * GeoServer 등록창을 닫는다.
+ * 
+ * @method gb.tree.GeoServer#openAddGeoServer
+ */
+gb.tree.GeoServer.prototype.closeAddGeoServer = function() {
+	this.addGeoServerModal.close();
 };
 /**
  * GeoServer를 등록한다.
@@ -2253,7 +2408,7 @@ gb.tree.GeoServer.prototype.openAddGeoServer = function() {
  * @method gb.tree.GeoServer#addGeoServer
  */
 gb.tree.GeoServer.prototype.addGeoServer = function() {
-
+	console.log("add geoserver");
 };
 /**
  * GeoServer를 삭제한다.
@@ -2261,7 +2416,7 @@ gb.tree.GeoServer.prototype.addGeoServer = function() {
  * @method gb.tree.GeoServer#deleteGeoServer
  */
 gb.tree.GeoServer.prototype.deleteGeoServer = function() {
-
+	console.log("delete geoserver");
 };
 
 /**
@@ -2270,7 +2425,7 @@ gb.tree.GeoServer.prototype.deleteGeoServer = function() {
  * @method gb.tree.GeoServer#refreshGeoServer
  */
 gb.tree.GeoServer.prototype.refreshGeoServer = function() {
-
+	console.log("refresh geoserver");
 };
 /**
  * 레이어 검색창을 연다.
@@ -2278,13 +2433,13 @@ gb.tree.GeoServer.prototype.refreshGeoServer = function() {
  * @method gb.tree.GeoServer#openSearchBar
  */
 gb.tree.GeoServer.prototype.openSearchBar = function() {
-
+	console.log("open search on geoserver");
 };
 /**
  * 레이어 검색창을 닫는다.
  * 
- * @method gb.tree.GeoServer#openSearchBar
+ * @method gb.tree.GeoServer#closeSearchBar
  */
-gb.tree.GeoServer.prototype.openSearchBar = function() {
-
+gb.tree.GeoServer.prototype.closeSearchBar = function() {
+	console.log("close search geoserver");
 };
