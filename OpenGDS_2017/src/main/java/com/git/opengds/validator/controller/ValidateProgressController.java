@@ -25,19 +25,21 @@ public class ValidateProgressController extends AbstractController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/validateProgress.ajax")
 	@ResponseBody
-	public JSONObject getValidateProgressList(HttpServletRequest request, @RequestBody  String atest) throws Exception {
+	public JSONObject getValidateProgressList(HttpServletRequest request, @RequestBody String atest) throws Exception {
 		UserVO generalUser = (UserVO) getSession(request, EnUserType.GENERAL.getTypeName());
 		if (generalUser == null) {
 			return null;
 		}
 
-		ValidateProgressList ngiList = progressService.selectProgressOfCollection(generalUser, "ngi");
-		ValidateProgressList dxfList = progressService.selectProgressOfCollection(generalUser, "dxf");
+		// ValidateProgressList ngiList =
+		// progressService.selectProgressOfCollection(generalUser, "ngi");
+		// ValidateProgressList dxfList =
+		// progressService.selectProgressOfCollection(generalUser, "dxf");
 		ValidateProgressList shpList = progressService.selectProgressOfCollection(generalUser, "shp");
 
 		JSONObject returnList = new JSONObject();
-		returnList.put("ngi", ngiList);
-		returnList.put("dxf", dxfList);
+		// returnList.put("ngi", ngiList);
+		// returnList.put("dxf", dxfList);
 		returnList.put("shp", shpList);
 
 		return returnList;
