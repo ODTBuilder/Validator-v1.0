@@ -667,16 +667,7 @@ html {
 		});
 
 		$(function() {
-			var to = false;
-			$('#inputSearchServer').keyup(function() {
-				if (to) {
-					clearTimeout(to);
-				}
-				to = setTimeout(function() {
-					var v = $('#inputSearchServer').val();
-					$('#builderServerLayer').jstree(true).search(v);
-				}, 250);
-			});
+			
 
 			var to2 = false;
 			$('#inputSearchClient').keyup(function() {
