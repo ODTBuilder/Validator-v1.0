@@ -25,6 +25,7 @@ import java.util.LinkedList;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletResponse;
+import javax.swing.filechooser.FileSystemView;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -42,7 +43,11 @@ import com.git.opengds.user.domain.UserVO;
 @ContextConfiguration(locations = { "file:src/main/webapp/WEB-INF/spring/**/*.xml" })
 public class FileServiceImpl implements FileService {
 
-	private static final String dirPath = "D:\\files";
+	// windows
+	// private static final String dirPath = "D:" + File.separator + "files";
+	// linux
+	private static final String dirPath = FileSystemView.getFileSystemView().getHomeDirectory() + File.separator
+			+ "files";
 
 	@Autowired
 	private SHPFileUploadService shpFileService;
@@ -59,7 +64,7 @@ public class FileServiceImpl implements FileService {
 
 	public LinkedList<FileMeta> filesUpload(UserVO userVO, MultipartHttpServletRequest request,
 			HttpServletResponse response) throws Throwable {
-		String fullDirPath = this.dirPath + "\\" + userVO.getId();
+		String fullDirPath = dirPath + File.separator + userVO.getId();
 		File dir = new File(dirPath);
 		File targetDir = new File(fullDirPath);
 
@@ -70,8 +75,8 @@ public class FileServiceImpl implements FileService {
 
 		// 사용자별 디렉토리 생성
 		if (!targetDir.exists()) {
-			File shpDir = new File(fullDirPath + "\\shp");
-			File otherDir = new File(fullDirPath + "\\other");
+			File shpDir = new File(fullDirPath + File.separator + "shp");
+			File otherDir = new File(fullDirPath + File.separator + "other");
 
 			targetDir.mkdirs();
 			shpDir.mkdirs();
@@ -111,10 +116,11 @@ public class FileServiceImpl implements FileService {
 
 				if (ext.endsWith("zip")) {
 					if (ext.endsWith("zip")) {
-						saveFilePath = fullDirPath + "\\shp\\" + mpf.getOriginalFilename();
+						saveFilePath = fullDirPath + File.separator + "shp" + File.separator
+								+ mpf.getOriginalFilename();
 					}
 				} else
-					saveFilePath = fullDirPath + "\\other\\" + mpf.getOriginalFilename();
+					saveFilePath = fullDirPath + File.separator + "other" + File.separator + mpf.getOriginalFilename();
 
 				// copy file to local disk (make sure the path "e.g.
 				// D:/temp/files" exists)
@@ -135,7 +141,7 @@ public class FileServiceImpl implements FileService {
 	private LinkedList<FileMeta> filesPublish(UserVO userVO, LinkedList<FileMeta> fileMetaList) throws Throwable {
 		LinkedList<FileMeta> fileMetas = fileMetaList;
 
-		int a = fileMetaList.size();
+		// int a = fileMetaList.size();
 		for (int i = 0; i < fileMetas.size(); i++) {
 			FileMeta fileMeta = fileMetas.get(i);
 			int pos = fileMeta.getFilePath().lastIndexOf(".");

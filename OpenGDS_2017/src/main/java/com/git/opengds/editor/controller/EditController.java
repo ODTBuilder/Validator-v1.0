@@ -38,7 +38,7 @@ public class EditController extends AbstractController {
 	private EditService editService;
 
 	@SuppressWarnings("unchecked")
-	@RequestMapping(value = "/editLayerCollection.ajax")
+	@RequestMapping(value = "/editLayer.ajax")
 	@ResponseBody
 	public boolean editLayerCollection(HttpServletRequest request, @RequestBody String geo) throws Exception {
 		UserVO generalUser = (UserVO) getSession(request, EnUserType.GENERAL.getTypeName());

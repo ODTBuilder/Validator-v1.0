@@ -9,11 +9,13 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
 	<!-- Root Context: defines shared resources visible to all other web components -->
 
 	<!-- JDBC의 연결을 처리하는 기능을 가진 DataSource -->
-	<!-- <bean id="adminDataSource" class="org.apache.commons.dbcp.BasicDataSource" 
-		destroy-method="close"> <property name="driverClassName" value="${db.driverClassName}" 
-		/> <property name="url" value="${db.urlUser}" /> <property name="username" 
-		value="${db.usernameUser}" /> <property name="password" value="${db.passwordUser}" 
-		/> </bean> -->
+	<!-- <bean id="adminDataSource" class="org.apache.commons.dbcp.BasicDataSource" -->
+	<!-- destroy-method="close"> -->
+	<!-- <property name="driverClassName" value="${db.driverClassName}" /> -->
+	<!-- <property name="url" value="${db.url1}" /> -->
+	<!-- <property name="username" value="${db.username1}" /> -->
+	<!-- <property name="password" value="${db.password1}" /> -->
+	<!-- </bean> -->
 
 	<!-- JDBC의 연결을 처리하는 기능을 가진 DataSource 클라우드 계정 -->
 	<bean id="adminDataSource" class="org.apache.commons.dbcp.BasicDataSource"
@@ -145,6 +147,15 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
 		advice-ref="txAdviceUser" /> </aop:config> <tx:advice id="txAdviceUser" transaction-manager="userTransactionManager"> 
 		<tx:attributes> <tx:method name="*" rollback-for="Exception" /> </tx:attributes> 
 		</tx:advice> -->
+	<!-- 유저정보 -->
+	<!-- JDBC의 연결을 처리하는 기능을 가진 DataSource -->
+	<!-- <bean id="userDataSource" class="org.apache.commons.dbcp.BasicDataSource" -->
+	<!-- destroy-method="close"> -->
+	<!-- <property name="driverClassName" value="${db.driverClassName}" /> -->
+	<!-- <property name="url" value="${db.urlUser}" /> -->
+	<!-- <property name="username" value="${db.usernameUser}" /> -->
+	<!-- <property name="password" value="${db.passwordUser}" /> -->
+	<!-- </bean> -->
 
 	<!-- 클라우드 서버 접속정보 계정정보 -->
 	<!-- JDBC의 연결을 처리하는 기능을 가진 DataSource -->

@@ -419,6 +419,9 @@ gitbuilder.ui.Validation = $.widget("gitbuilder.validation", {
 					console.log(jqXHR);
 					if (jqXHR.status === 500) {
 						that.setMessage("Error. Check the validating option.");
+						console.error(jqXHR);
+						console.error(textStatus);
+						console.error(errorThrown);
 					}
 				}
 			});

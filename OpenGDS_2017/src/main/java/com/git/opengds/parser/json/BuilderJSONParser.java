@@ -9,6 +9,8 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.geotools.feature.SchemaException;
+import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
+import org.jasypt.properties.EncryptableProperties;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
@@ -44,7 +46,10 @@ public class BuilderJSONParser {
 
 	static {
 		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-		Properties properties = new Properties();
+		StandardPBEStringEncryptor encryptor = new StandardPBEStringEncryptor();
+		encryptor.setPassword("gitrnd");
+		// Properties properties = new Properties();
+		Properties properties = new EncryptableProperties(encryptor);
 		try {
 			properties.load(classLoader.getResourceAsStream("geoserver.properties"));
 		} catch (IOException e1) {
