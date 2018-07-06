@@ -357,7 +357,7 @@ html {
 			selected : function() {
 				return $('#builderClientLayer').jstreeol3("get_selected_layer");
 			},
-			getFeatureInfo : "http://www.opengds.re.kr:19080/geoserver/wms",
+			getFeatureInfo : "geoserver/geoserverWMSGetFeatureInfo.ajax",
 			layerInfo : "geoserver/getGeoLayerInfoList.ajax",
 			imageTile : "geoserver/geoserverWMSLayerLoad.do",
 			getFeature : "geoserver/geoserverWFSGetFeature.ajax"
@@ -414,7 +414,7 @@ html {
 					}
 				},
 				"geoserver" : {
-					"url" : "http://www.opengds.re.kr:19080/geoserver/wms",
+					"url" : "geoserver/getWMSGetLegendGraphic.ajax",
 					"width" : "15",
 					"height" : "15",
 					"format" : "image/png"
