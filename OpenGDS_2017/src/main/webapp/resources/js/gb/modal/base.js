@@ -15,6 +15,8 @@
  *            obj.autoOpen - 선언과 동시에 표출 할 것인지 선택
  * @param {Function |
  *            String | DOM} obj.body - Modal 본문에 삽입될 내용
+ * @param {Function |
+ *            String | DOM} obj.footer- Modal 푸터에 삽입될 내용
  * @version 0.01
  * @author SOYIJUN
  * @date 2017. 07.26
@@ -33,9 +35,14 @@ gb.modal.Base = function(obj) {
 	this.titleArea = $("<span>").addClass("gb-modal-title").text(this.title);
 	this.modalHead = $("<div>").addClass("gb-modal-head").append(this.titleArea).append(btn);
 	var body = typeof options.body === "function" ? options.body() : options.body;
+	var footer = typeof options.footer === "function" ? options.footer() : options.footer;
 	this.modalBody = $("<div>").addClass("gb-modal-body");
 	if (body) {
 		$(this.modalBody).append(body);
+	}
+	this.modalFooter = $("<div>").addClass("gb-modal-footer");
+	if (footer) {
+		$(this.modalFooter).append(footer);
 	}
 // this.buttonArea = $("<span>").addClass("gb-modal-buttons");
 // this.modalFooter =
@@ -45,7 +52,7 @@ gb.modal.Base = function(obj) {
 		"height" : typeof this.height === "number" ? this.height+"px" : this.height,
 		"position" : "absolute",
 		"z-Index" : "999"
-	}).append(this.modalHead).append(this.modalBody);
+	}).append(this.modalHead).append(this.modalBody).append(this.modalFooter);
 
 	if (!$(".gb-modal-background")[0]) {
 		this.background = $("<div>").addClass("gb-modal-background");
@@ -80,6 +87,29 @@ gb.modal.Base.prototype.setModalBody = function(body) {
 		$(this.modalBody).append(body());
 	} else {
 		$(this.modalBody).append(body);
+	}
+};
+/**
+ * 모달 푸터를 반환한다.
+ * 
+ * @method gb.modal.Base#getModalFooter
+ * @return {DOM} 모달 푸터에 해당하는 DOM
+ */
+gb.modal.Base.prototype.getModalFooter= function() {
+	return this.modalFooter;
+};
+/**
+ * 모달 푸터를 설정한다.
+ * 
+ * @method gb.modal.Base#setModalFooter
+ * @param {DOM |
+ *            function} footer - 모달 푸터로 삽입될 내용
+ */
+gb.modal.Base.prototype.setModalFooter = function(footer) {
+	if (typeof footer === "function") {
+		$(this.modalFooter).append(footer());
+	} else {
+		$(this.modalFooter).append(footer);
 	}
 };
 /**

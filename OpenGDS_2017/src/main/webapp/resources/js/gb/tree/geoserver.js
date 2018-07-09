@@ -1888,130 +1888,6 @@ gb.tree.GeoServer = function(obj) {
 			});
 	this.jstree = $(this.panelBody).jstree(true);
 
-	var gName = $("<div>").text("Name: ").css({
-		"display" : "table-cell",
-		"width" : "20%",
-		"text-align" : "right",
-		"vertical-align" : "middle"
-	});
-	this.gNameInput = $("<input>").attr({
-		"type" : "text"
-	}).css({
-		"width" : "83%",
-		"border" : "none",
-		"border-bottom" : "solid 1px #a9a9a9",
-		"margin-left" : "8px"
-	});
-	var gNameInputDiv = $("<div>").append(this.gNameInput).css({
-		"display" : "table-cell",
-		"width" : "80%",
-		"vertical-align" : "middle"
-	});
-	var gNameArea = $("<div>").append(gName).append(gNameInputDiv).css({
-		"display" : "table-row"
-	});
-
-	var gURL = $("<div>").text("URL: ").css({
-		"display" : "table-cell",
-		"width" : "20%",
-		"text-align" : "right",
-		"vertical-align" : "middle"
-	});
-	this.gURLInput = $("<input>").attr({
-		"type" : "text"
-	}).css({
-		"width" : "83%",
-		"border" : "none",
-		"border-bottom" : "solid 1px #a9a9a9",
-		"margin-left" : "8px"
-	});
-	var gURLInputDiv = $("<div>").append(this.gURLInput).css({
-		"display" : "table-cell",
-		"width" : "80%",
-		"vertical-align" : "middle"
-	});
-	var gURLArea = $("<div>").append(gURL).append(gURLInputDiv).css({
-		"display" : "table-row"
-	});
-
-	var gID = $("<div>").text("ID: ").css({
-		"display" : "table-cell",
-		"width" : "20%",
-		"text-align" : "right",
-		"vertical-align" : "middle"
-	});
-	this.gIDInput = $("<input>").attr({
-		"type" : "text"
-	}).css({
-		"width" : "83%",
-		"border" : "none",
-		"border-bottom" : "solid 1px #a9a9a9",
-		"margin-left" : "8px"
-	});
-	var gIDInputDiv = $("<div>").append(this.gIDInput).css({
-		"display" : "table-cell",
-		"width" : "80%",
-		"vertical-align" : "middle"
-	});
-	var gIDArea = $("<div>").append(gID).append(gIDInputDiv).css({
-		"display" : "table-row"
-	});
-
-	var gPass = $("<div>").text("Password: ").css({
-		"display" : "table-cell",
-		"width" : "20%",
-		"text-align" : "right",
-		"vertical-align" : "middle"
-	});
-	this.gPassInput = $("<input>").attr({
-		"type" : "password"
-	}).css({
-		"width" : "83%",
-		"border" : "none",
-		"border-bottom" : "solid 1px #a9a9a9",
-		"margin-left" : "8px"
-	});
-	var gPassInputDiv = $("<div>").append(this.gPassInput).css({
-		"display" : "table-cell",
-		"width" : "80%",
-		"vertical-align" : "middle"
-	});
-	var gPassArea = $("<div>").append(gPass).append(gPassInputDiv).css({
-		"display" : "table-row"
-	});
-
-	var closeBtn = $("<button>").css({
-		"float" : "right"
-	}).addClass("gb-button").addClass("gb-button-default").text("Close").click(function() {
-		that.closeAddGeoServer();
-	});
-	var okBtn = $("<button>").css({
-		"float" : "right"
-	}).addClass("gb-button").addClass("gb-button-primary").text("Add").click(function() {
-		that.addGeoServer();
-	});
-
-	this.buttonArea = $("<span>").addClass("gb-modal-buttons").append(okBtn).append(closeBtn);
-	this.modalFooter = $("<div>").addClass("gb-modal-footer").append(this.buttonArea);
-
-	var gBody = $("<div>").append(gNameArea).append(gURLArea).append(gIDArea).append(gPassArea).css({
-		"display" : "table",
-		"padding" : "10px"
-	});
-	this.addGeoServerModal = new gb.modal.Base({
-		"title" : "Add GeoServer",
-		"width" : 540,
-		"height" : 400,
-		"autoOpen" : false,
-		"body" : gBody
-	});
-	$(this.addGeoServerModal.getModal()).append(this.modalFooter);
-	var innerHeight = $(this.addGeoServerModal.getModal()).innerHeight();
-	var headHeight = $(this.addGeoServerModal.getModal()).find(".gb-modal-head").outerHeight();
-	var footerHeight = $(this.addGeoServerModal.getModal()).find(".gb-modal-footer").outerHeight();
-	var bodyHeight = innerHeight - (headHeight + footerHeight);
-	$(gBody).outerHeight(bodyHeight);
-	$(gBody).innerWidth(538);
 };
 gb.tree.GeoServer.prototype = Object.create(gb.tree.GeoServer.prototype);
 gb.tree.GeoServer.prototype.constructor = gb.tree.GeoServer;
@@ -2040,7 +1916,133 @@ gb.tree.GeoServer.prototype.setJSTree = function(jstree) {
  * @method gb.tree.GeoServer#openAddGeoServer
  */
 gb.tree.GeoServer.prototype.openAddGeoServer = function() {
-	this.addGeoServerModal.open();
+	var gName = $("<div>").text("Name: ").css({
+		"display" : "table-cell",
+		"width" : "20%",
+		"text-align" : "right",
+		"vertical-align" : "middle"
+	});
+	var gNameInput = $("<input>").attr({
+		"type" : "text"
+	}).css({
+		"width" : "83%",
+		"border" : "none",
+		"border-bottom" : "solid 1px #a9a9a9",
+		"margin-left" : "8px"
+	});
+	var gNameInputDiv = $("<div>").append(gNameInput).css({
+		"display" : "table-cell",
+		"width" : "80%",
+		"vertical-align" : "middle"
+	});
+	var gNameArea = $("<div>").append(gName).append(gNameInputDiv).css({
+		"display" : "table-row"
+	});
+
+	var gURL = $("<div>").text("URL: ").css({
+		"display" : "table-cell",
+		"width" : "20%",
+		"text-align" : "right",
+		"vertical-align" : "middle"
+	});
+	var gURLInput = $("<input>").attr({
+		"type" : "text"
+	}).css({
+		"width" : "83%",
+		"border" : "none",
+		"border-bottom" : "solid 1px #a9a9a9",
+		"margin-left" : "8px"
+	});
+	var gURLInputDiv = $("<div>").append(gURLInput).css({
+		"display" : "table-cell",
+		"width" : "80%",
+		"vertical-align" : "middle"
+	});
+	var gURLArea = $("<div>").append(gURL).append(gURLInputDiv).css({
+		"display" : "table-row"
+	});
+
+	var gID = $("<div>").text("ID: ").css({
+		"display" : "table-cell",
+		"width" : "20%",
+		"text-align" : "right",
+		"vertical-align" : "middle"
+	});
+	var gIDInput = $("<input>").attr({
+		"type" : "text"
+	}).css({
+		"width" : "83%",
+		"border" : "none",
+		"border-bottom" : "solid 1px #a9a9a9",
+		"margin-left" : "8px"
+	});
+	var gIDInputDiv = $("<div>").append(gIDInput).css({
+		"display" : "table-cell",
+		"width" : "80%",
+		"vertical-align" : "middle"
+	});
+	var gIDArea = $("<div>").append(gID).append(gIDInputDiv).css({
+		"display" : "table-row"
+	});
+
+	var gPass = $("<div>").text("Password: ").css({
+		"display" : "table-cell",
+		"width" : "20%",
+		"text-align" : "right",
+		"vertical-align" : "middle"
+	});
+	var gPassInput = $("<input>").attr({
+		"type" : "password"
+	}).css({
+		"width" : "83%",
+		"border" : "none",
+		"border-bottom" : "solid 1px #a9a9a9",
+		"margin-left" : "8px"
+	});
+	var gPassInputDiv = $("<div>").append(gPassInput).css({
+		"display" : "table-cell",
+		"width" : "80%",
+		"vertical-align" : "middle"
+	});
+	var gPassArea = $("<div>").append(gPass).append(gPassInputDiv).css({
+		"display" : "table-row"
+	});
+
+	var closeBtn = $("<button>").css({
+		"float" : "right"
+	}).addClass("gb-button").addClass("gb-button-default").text("Close").click(function() {
+		that.closeAddGeoServer();
+	});
+	var okBtn = $("<button>").css({
+		"float" : "right"
+	}).addClass("gb-button").addClass("gb-button-primary").text("Add").click(function() {
+		that.addGeoServer();
+	});
+
+	var buttonArea = $("<span>").addClass("gb-modal-buttons").append(okBtn).append(closeBtn);
+	var modalFooter = $("<div>").append(buttonArea);
+
+	var gBody = $("<div>").append(gNameArea).append(gURLArea).append(gIDArea).append(gPassArea).css({
+		"display" : "table",
+		"padding" : "10px"
+	});
+	var addGeoServerModal = new gb.modal.Base({
+		"title" : "Add GeoServer",
+		"width" : 540,
+		"height" : 400,
+		"autoOpen" : true,
+		"body" : gBody,
+		"footer" : modalFooter
+	});
+	// var innerHeight = $(this.addGeoServerModal.getModal()).innerHeight();
+	// var headHeight =
+	// $(this.addGeoServerModal.getModal()).find(".gb-modal-head").outerHeight();
+	// var footerHeight =
+	// $(this.addGeoServerModal.getModal()).find(".gb-modal-footer").outerHeight();
+	// var bodyHeight = innerHeight - (headHeight + footerHeight);
+	// $(gBody).outerHeight(bodyHeight);
+	// $(gBody).innerWidth(538);
+	// addGeoServerModal.open();
 };
 /**
  * GeoServer 등록창을 닫는다.
