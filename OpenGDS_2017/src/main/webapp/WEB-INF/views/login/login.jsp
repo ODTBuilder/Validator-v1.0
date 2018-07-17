@@ -18,8 +18,7 @@
 		<div class="demo">
 			<div class="login">
 				<div style="padding-top: 100px; text-align: center;">
-					<img src="logo.png" class="logo" style="margin-top: 100px; margin-left: 20px"><img
-						src="${pageContext.request.contextPath}/resources/img/ogds.png" style="width: 80%; height: auto;" class="logo">
+					<img src="${pageContext.request.contextPath}/resources/img/ogds.png" style="width: 80%; height: auto;" class="logo">
 				</div>
 
 				<div class="login__form">
@@ -37,7 +36,7 @@
 					</div>
 					<button type="button" class="login__submit">Sign in</button>
 					<p class="login__signup">
-						Don't have an account? &nbsp;<a>Sign up</a>
+<!-- 						Don't have an account? &nbsp;<a>Sign up</a> -->
 					</p>
 				</div>
 			</div>

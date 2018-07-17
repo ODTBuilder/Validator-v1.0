@@ -135,8 +135,8 @@ gitbuilder.ui.NewFileWindow = function NewFileWindow() {
 		 */
 		fileWindow += '<div class="col-lg-3 text-right">';
 		fileWindow += '<select class="form-control col-xs-2" style="padding-bottom: 1%;width: 83%;" id="filetype">';
-		fileWindow += '<option value="dxf">DXF</option>';
-		fileWindow += '<option value="ngi">NGI</option>';
+		// fileWindow += '<option value="dxf">DXF</option>';
+		// fileWindow += '<option value="ngi">NGI</option>';
 		fileWindow += '<option value="shp">SHP</option>';
 		fileWindow += '</select>';
 		fileWindow += '</div>'

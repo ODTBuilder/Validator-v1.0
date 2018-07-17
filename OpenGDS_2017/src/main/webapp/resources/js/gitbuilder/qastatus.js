@@ -101,7 +101,10 @@ gb.qa.QAStatus = function(obj) {
 
 	var dialog = $("<div>").html(content);
 	$(dialog).addClass("modal-dialog");
-	$(dialog).addClass("modal-lg");
+	// $(dialog).addClass("modal-lg");
+	$(dialog).css({
+		"width" : "1290px"
+	});
 	this.window = $("<div>").hide().attr({
 		// Setting tabIndex makes the div focusable
 		tabIndex : -1,

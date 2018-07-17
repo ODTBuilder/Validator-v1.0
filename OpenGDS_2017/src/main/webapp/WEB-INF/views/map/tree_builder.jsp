@@ -104,16 +104,16 @@ html {
 
 			<li><a href="#" title="Edit" id="edit">Edit</a></li>
 			<li><a href="#" title="Base map" id="changeBase">Base Map</a></li>
-			<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
+			<!-- <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
 				aria-expanded="false" title="Validation">QA 1.0</a>
 				<ul class="dropdown-menu" role="menu">
 					<li><a href="#" title="Layer Definition" id="layerDefinition1">Layer Definition</a></li>
 					<li><a href="#" title="Validating Option" id="validDefinition1">Validating Option</a></li>
 					<li><a href="#" title="Layer Weight" id="weight1">Layer Weight</a></li>
 					<li><a href="#" title="Validation" id="validation1">Validation</a></li>
-				</ul></li>
+				</ul></li> -->
 			<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
-				aria-expanded="false" title="Validation">QA 2.0</a>
+				aria-expanded="false" title="Validation">QA</a>
 				<ul class="dropdown-menu" role="menu">
 					<li><a href="#" title="Layer Definition" id="layerDefinition">Layer Definition</a></li>
 					<li><a href="#" title="Validating Option" id="validDefinition2">Validating Option</a></li>
@@ -122,13 +122,13 @@ html {
 				</ul></li>
 			<li><a href="#" title="QA Edit" id="qaedit">QA Edit</a></li>
 			<li><a href="#" title="QA Status" id="qastat">QA Status</a></li>
-			<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
+		<!-- 	<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
 				aria-expanded="false" title="Generalization">Generalization</a>
 				<ul class="dropdown-menu" role="menu">
 					<li><a href="#" title="Generalization Process" id="gen">Generalization</a></li>
 					<li><a href="#" title="Generalization Result" id="genstat">Result</a></li>
-					<!-- 					<li><a href="#" title="Validating Option" id="sepview">Separate View</a></li> -->
-				</ul></li>
+										<li><a href="#" title="Validating Option" id="sepview">Separate View</a></li>
+				</ul></li> -->
 			<!-- 			<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" -->
 			<!-- 				aria-expanded="false" title="ToolBox">ToolBox</a> -->
 			<!-- 				<ul class="dropdown-menu" role="menu"> -->
