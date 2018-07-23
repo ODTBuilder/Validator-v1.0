@@ -139,11 +139,11 @@ Getting Started
 - 검수 Test 파일 업로드 
 <pre><code> 화면 상단 메뉴 New -> File -> SHP -> CRS (ex. EPSG:4326 -> 4326으로 입력) 입력 및 Search -> Test 파일 (37712012.zip, 37712013.zip) add -> Start upload </code></pre>
 - 레이어 설정 파일 업로드 
-<pre><code> 화면 상단 메뉴 QA 2.0 -> Layer Definition -> layer_setting.json upload -> Save </code></pre>
+<pre><code> 화면 상단 메뉴 QA -> Layer Definition -> layer_setting.json upload -> Save </code></pre>
 - 검수 설정 파일 업로드 
-<pre><code> 화면 상단 메뉴 QA 2.0 -> Layer Definition -> layer_setting.json upload -> Save </code></pre>
+<pre><code> 화면 상단 메뉴 QA -> Layer Definition -> layer_setting.json upload -> Save </code></pre>
 - 검수 수행
-<pre><code> 화면 상단 메뉴 QA 2.0 -> Validation -> 좌측 레이어 트리에서 37712012, 37712013 그룹 레이어 클릭 -> Start </code></pre>
+<pre><code> 화면 상단 메뉴 QA -> Validation -> 좌측 레이어 트리에서 37712012, 37712013 그룹 레이어 클릭 -> Start </code></pre>
 - 검수 결과 확인
 <pre><code> 화면 좌측 Geoserver Layers 트리 새로고침 후 ValidatorLayers Layers 하단에 37712012_1, 37712013_1 각각의 오류 레이어 생성 확인 </code></pre>
 - 오류 네비게이터 실행
