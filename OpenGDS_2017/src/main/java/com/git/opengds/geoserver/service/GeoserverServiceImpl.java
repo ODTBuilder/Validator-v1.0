@@ -1,20 +1,3 @@
-/*
- *    OpenGDS/Builder
- *    http://git.co.kr
- *
- *    (C) 2014-2017, GeoSpatial Information Technology(GIT)
- *    
- *    This library is free software; you can redistribute it and/or
- *    modify it under the terms of the GNU Lesser General Public
- *    License as published by the Free Software Foundation;
- *    version 3 of the License.
- *
- *    This library is distributed in the hope that it will be useful,
- *    but WITHOUT ANY WARRANTY; without even the implied warranty of
- *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- *    Lesser General Public License for more details.
- */
-
 package com.git.opengds.geoserver.service;
 
 import java.io.IOException;
@@ -41,6 +24,12 @@ import com.git.gdsbuilder.geoserver.data.GeoserverLayerCollectionTree;
 import com.git.gdsbuilder.geoserver.data.GeoserverLayerCollectionTree.TreeType;
 import com.git.gdsbuilder.geoserver.factory.DTGeoserverPublisher;
 import com.git.gdsbuilder.geoserver.factory.DTGeoserverReader;
+import com.git.gdsbuilder.geosolutions.geoserver.rest.decoder.RESTFeatureType;
+import com.git.gdsbuilder.geosolutions.geoserver.rest.decoder.RESTLayer;
+import com.git.gdsbuilder.geosolutions.geoserver.rest.encoder.GSLayerEncoder;
+import com.git.gdsbuilder.geosolutions.geoserver.rest.encoder.GSLayerGroupEncoder;
+import com.git.gdsbuilder.geosolutions.geoserver.rest.encoder.GSResourceEncoder.ProjectionPolicy;
+import com.git.gdsbuilder.geosolutions.geoserver.rest.encoder.feature.GSFeatureTypeEncoder;
 import com.git.gdsbuilder.type.geoserver.layer.GeoLayerInfo;
 import com.git.gdsbuilder.type.geoserver.layer.GeoLayerInfoList;
 import com.git.opengds.geoserver.data.style.GeoserverSldTextType;
@@ -52,13 +41,6 @@ import com.vividsolutions.jts.geom.GeometryCollection;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.Polygon;
-
-import it.geosolutions.geoserver.rest.decoder.RESTFeatureType;
-import it.geosolutions.geoserver.rest.decoder.RESTLayer;
-import it.geosolutions.geoserver.rest.encoder.GSLayerEncoder;
-import it.geosolutions.geoserver.rest.encoder.GSLayerGroupEncoder;
-import it.geosolutions.geoserver.rest.encoder.GSResourceEncoder.ProjectionPolicy;
-import it.geosolutions.geoserver.rest.encoder.feature.GSFeatureTypeEncoder;
 
 /**
  * Geoserver와 관련된 요청을 처리하는 클래스
@@ -78,13 +60,13 @@ public class GeoserverServiceImpl implements GeoserverService {
 
 	static {
 		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-		 StandardPBEStringEncryptor encryptor = new StandardPBEStringEncryptor();
-		 encryptor.setPassword("gitrnd");
-//		Properties properties = new Properties();
-		 Properties properties = new EncryptableProperties(encryptor);
+		StandardPBEStringEncryptor encryptor = new StandardPBEStringEncryptor();
+		encryptor.setPassword("gitrnd");
+		// Properties properties = new Properties();
+		Properties properties = new EncryptableProperties(encryptor);
 		try {
 			properties.load(classLoader.getResourceAsStream("geoserver.properties"));
-			
+
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -352,23 +334,22 @@ public class GeoserverServiceImpl implements GeoserverService {
 		return layerInfo;
 
 		/*
-		 * class GeoCollectionResult{ Collection<Geometry> geometryCollection =
-		 * new ArrayList<Geometry>(); synchronized void add(Geometry geometry) {
+		 * class GeoCollectionResult{ Collection<Geometry> geometryCollection = new
+		 * ArrayList<Geometry>(); synchronized void add(Geometry geometry) {
 		 * geometryCollection.add(geometry); } }
 		 */
 		/*
 		 * for (int i = 0; i < layerNameList.size(); i++) {
 		 * 
 		 * GSFeatureTypeEncoder fte = new GSFeatureTypeEncoder(); GSLayerEncoder
-		 * layerEncoder = new GSLayerEncoder(); String layerName =
-		 * layerNameList.get(i);
+		 * layerEncoder = new GSLayerEncoder(); String layerName = layerNameList.get(i);
 		 * 
 		 * String upperLayerName = layerName.toUpperCase();
 		 * 
 		 * int dash = layerName.indexOf("_"); String cutLayerName =
-		 * layerName.substring(0, dash); String layerType =
-		 * layerName.substring(dash + 1); String layerFullName = "geo_" +
-		 * fileType + "_" + fileName + "_" + layerName;
+		 * layerName.substring(0, dash); String layerType = layerName.substring(dash +
+		 * 1); String layerFullName = "geo_" + fileType + "_" + fileName + "_" +
+		 * layerName;
 		 * 
 		 * fte.setProjectionPolicy(ProjectionPolicy.REPROJECT_TO_DECLARED);
 		 * fte.setTitle(layerFullName); // 제목 fte.setName(layerFullName); // 이름
@@ -389,28 +370,26 @@ public class GeoserverServiceImpl implements GeoserverService {
 		 * 
 		 * boolean isTextStyle = false;
 		 * 
-		 * for (String stext : smallTextList) { if (cutLayerName.equals(stext))
-		 * { styleName = "SMALL_TEXT"; isTextStyle = true; } }
+		 * for (String stext : smallTextList) { if (cutLayerName.equals(stext)) {
+		 * styleName = "SMALL_TEXT"; isTextStyle = true; } }
 		 * 
 		 * if (!isTextStyle) { for (String mtext : mediumTextList) { if
-		 * (cutLayerName.equals(mtext)) { styleName = "MEDIUM_TEXT"; isTextStyle
-		 * = true; break; } } if (!isTextStyle) { for (String ltext :
-		 * largeTextList) { if (cutLayerName.equals(ltext)) { styleName =
-		 * "LARGE_TEXT"; isTextStyle = true; } } } if (!isTextStyle) { if
-		 * (cutLayerName.toUpperCase().equals("H0059153")) { if
-		 * (fileType.equals("dxf")) { styleName = "DXF_" + cutLayerName +
-		 * "+_TEXT"; isTextStyle = true; } else if (fileType.equals("ngi")) {
-		 * styleName = "NGI_" + cutLayerName + "+_TEXT"; isTextStyle = true; } }
-		 * else if (cutLayerName.equals("H0040000")) { styleName = cutLayerName
-		 * + "+_TEXT"; isTextStyle = true; } } } }
+		 * (cutLayerName.equals(mtext)) { styleName = "MEDIUM_TEXT"; isTextStyle = true;
+		 * break; } } if (!isTextStyle) { for (String ltext : largeTextList) { if
+		 * (cutLayerName.equals(ltext)) { styleName = "LARGE_TEXT"; isTextStyle = true;
+		 * } } } if (!isTextStyle) { if (cutLayerName.toUpperCase().equals("H0059153"))
+		 * { if (fileType.equals("dxf")) { styleName = "DXF_" + cutLayerName + "+_TEXT";
+		 * isTextStyle = true; } else if (fileType.equals("ngi")) { styleName = "NGI_" +
+		 * cutLayerName + "+_TEXT"; isTextStyle = true; } } else if
+		 * (cutLayerName.equals("H0040000")) { styleName = cutLayerName + "+_TEXT";
+		 * isTextStyle = true; } } } }
 		 * 
 		 * if (layerType.equals("LWPOLYLINE") || layerType.equals("POLYLINE") ||
 		 * layerType.equals("LINE")) { styleName = cutLayerName.toUpperCase() +
-		 * "_LWPOLYLINE"; } if (layerType.equals("MULTILINESTRING")) { styleName
-		 * = cutLayerName.toUpperCase() + "_LINESTRING"; } if
-		 * (layerType.equals("MULTIPOLYGON")) { styleName =
-		 * cutLayerName.toUpperCase() + "_POLYGON"; } if
-		 * (layerType.equals("MULTIPOINT")) { styleName =
+		 * "_LWPOLYLINE"; } if (layerType.equals("MULTILINESTRING")) { styleName =
+		 * cutLayerName.toUpperCase() + "_LINESTRING"; } if
+		 * (layerType.equals("MULTIPOLYGON")) { styleName = cutLayerName.toUpperCase() +
+		 * "_POLYGON"; } if (layerType.equals("MULTIPOINT")) { styleName =
 		 * cutLayerName.toUpperCase() + "_POINT"; }
 		 * 
 		 * boolean styleFlag = dtReader.existsStyle(styleName); if (styleFlag) {
@@ -419,53 +398,47 @@ public class GeoserverServiceImpl implements GeoserverService {
 		 * 
 		 * flag = dtPublisher.publishDBLayer(wsName, dsName, fte, layerEncoder);
 		 * 
-		 * if (flag == true) { RESTLayer layer =
-		 * dtReader.getLayer(userVO.getId(), layerFullName); RESTFeatureType
-		 * featureType = dtReader.getFeatureType(layer);
+		 * if (flag == true) { RESTLayer layer = dtReader.getLayer(userVO.getId(),
+		 * layerFullName); RESTFeatureType featureType = dtReader.getFeatureType(layer);
 		 * 
-		 * double minx = featureType.getNativeBoundingBox().getMinX(); double
-		 * miny = featureType.getNativeBoundingBox().getMinY(); double maxx =
+		 * double minx = featureType.getNativeBoundingBox().getMinX(); double miny =
+		 * featureType.getNativeBoundingBox().getMinY(); double maxx =
 		 * featureType.getNativeBoundingBox().getMaxX(); double maxy =
 		 * featureType.getNativeBoundingBox().getMaxY();
 		 * 
-		 * if (minx != 0 && minx != -1 && miny != 0 && miny != -1 && maxx != 0
-		 * && maxx != -1 && maxy != 0 && maxy != -1) { Coordinate[] coords = new
-		 * Coordinate[] { new Coordinate(minx, miny), new Coordinate(maxx,
-		 * miny), new Coordinate(maxx, maxy), new Coordinate(minx, maxy), new
-		 * Coordinate(minx, miny) };
+		 * if (minx != 0 && minx != -1 && miny != 0 && miny != -1 && maxx != 0 && maxx
+		 * != -1 && maxy != 0 && maxy != -1) { Coordinate[] coords = new Coordinate[] {
+		 * new Coordinate(minx, miny), new Coordinate(maxx, miny), new Coordinate(maxx,
+		 * maxy), new Coordinate(minx, maxy), new Coordinate(minx, miny) };
 		 * 
-		 * LinearRing ring = geometryFactory.createLinearRing(coords);
-		 * LinearRing holes[] = null; // use LinearRing[] to represent // holes
-		 * Polygon polygon = geometryFactory.createPolygon(ring, holes);
-		 * Geometry geometry = polygon; geometryCollection.add(geometry); } }
-		 * else if (flag == false) { for (String sucLayerName :
-		 * successLayerList) { dtPublisher.removeLayer(wsName, sucLayerName); }
-		 * dtPublisher.removeLayer(wsName, layerName);
+		 * LinearRing ring = geometryFactory.createLinearRing(coords); LinearRing
+		 * holes[] = null; // use LinearRing[] to represent // holes Polygon polygon =
+		 * geometryFactory.createPolygon(ring, holes); Geometry geometry = polygon;
+		 * geometryCollection.add(geometry); } } else if (flag == false) { for (String
+		 * sucLayerName : successLayerList) { dtPublisher.removeLayer(wsName,
+		 * sucLayerName); } dtPublisher.removeLayer(wsName, layerName);
 		 * layerInfo.setServerPublishFlag(flag); return layerInfo; }
 		 * successLayerList.add(userVO.getId() + ":" + layerFullName); }
 		 * 
 		 * if (layerNameList.size() != 0) { GeometryCollection collection =
-		 * (GeometryCollection)
-		 * geometryFactory.buildGeometry(geometryCollection); Geometry geometry
-		 * = collection.union(); GSLayerGroupEncoder group = new
-		 * GSLayerGroupEncoder(); for (int i = 0; i < successLayerList.size();
-		 * i++) { String layer = (String) successLayerList.get(i);
-		 * group.addLayer(layer); }
+		 * (GeometryCollection) geometryFactory.buildGeometry(geometryCollection);
+		 * Geometry geometry = collection.union(); GSLayerGroupEncoder group = new
+		 * GSLayerGroupEncoder(); for (int i = 0; i < successLayerList.size(); i++) {
+		 * String layer = (String) successLayerList.get(i); group.addLayer(layer); }
 		 * 
-		 * Coordinate[] coordinateArray =
-		 * geometry.getEnvelope().getCoordinates(); Coordinate minCoordinate =
-		 * new Coordinate(); Coordinate maxCoordinate = new Coordinate();
+		 * Coordinate[] coordinateArray = geometry.getEnvelope().getCoordinates();
+		 * Coordinate minCoordinate = new Coordinate(); Coordinate maxCoordinate = new
+		 * Coordinate();
 		 * 
-		 * minCoordinate = coordinateArray[0]; maxCoordinate =
-		 * coordinateArray[2];
+		 * minCoordinate = coordinateArray[0]; maxCoordinate = coordinateArray[2];
 		 * 
-		 * double minx = minCoordinate.x; double miny = minCoordinate.y; double
-		 * maxx = maxCoordinate.x; double maxy = maxCoordinate.y;
+		 * double minx = minCoordinate.x; double miny = minCoordinate.y; double maxx =
+		 * maxCoordinate.x; double maxy = maxCoordinate.y;
 		 * 
 		 * group.setBounds(originSrc, minx, maxx, miny, maxy);
 		 * 
-		 * dtPublisher.createLayerGroup(wsName, "gro_" + fileType + "_" +
-		 * fileName, group); } layerInfo.setServerPublishFlag(flag);
+		 * dtPublisher.createLayerGroup(wsName, "gro_" + fileType + "_" + fileName,
+		 * group); } layerInfo.setServerPublishFlag(flag);
 		 * 
 		 * return layerInfo;
 		 */

@@ -53,6 +53,7 @@ import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.operation.TransformException;
 
+import com.git.gdsbuilder.geosolutions.geoserver.rest.decoder.RESTLayerList;
 import com.git.gdsbuilder.type.geoserver.layer.GeoLayer;
 import com.git.gdsbuilder.type.validate.collection.close.ValidateCloseCollectionLayer;
 import com.git.gdsbuilder.type.validate.error.ErrorFeature;
@@ -439,31 +440,22 @@ public class LayerValidatorImpl implements LayerValidator {
 			throws SchemaException {
 
 		ErrorLayer errLayer = new ErrorLayer();
-
+		// a001
 		SimpleFeatureCollection sfc = validatorLayer.getSimpleFeatureCollection();
-		List<SimpleFeature> simpleFeatures = new ArrayList<SimpleFeature>();
-		SimpleFeatureIterator simpleFeatureIterator = sfc.features();
-		while (simpleFeatureIterator.hasNext()) {
-			SimpleFeature simpleFeature = simpleFeatureIterator.next();
-			simpleFeatures.add(simpleFeature);
-		}
-
 		for (int i = 0; i < relationLayers.size(); i++) {
 			GeoLayer relationLayer = relationLayers.get(i);
+			// a007
 			SimpleFeatureCollection relationSfc = relationLayer.getSimpleFeatureCollection();
-			SimpleFeatureIterator relationSimpleFeatureIterator = relationSfc.features();
-			while (relationSimpleFeatureIterator.hasNext()) {
-				SimpleFeature relationSimpleFeature = relationSimpleFeatureIterator.next();
-				for (int j = 0; j < simpleFeatures.size(); j++) {
-					SimpleFeature simpleFeature = simpleFeatures.get(j);
-					ErrorFeature errFeature = graphicValidator.validateOutBoundary(simpleFeature, relationSimpleFeature,
-							spatialAccuracyTolorence);
-					if (errFeature != null) {
-						errFeature.setLayerName(validatorLayer.getLayerName());
-						errLayer.addErrorFeature(errFeature);
-					} else {
-						continue;
-					}
+			SimpleFeatureIterator iterator = relationSfc.features();
+			while (iterator.hasNext()) {
+				SimpleFeature relationSf = iterator.next();
+				ErrorFeature errFeature = graphicValidator.validateOutBoundary(relationSf, sfc,
+						spatialAccuracyTolorence);
+				if (errFeature != null) {
+					errFeature.setLayerName(validatorLayer.getLayerName());
+					errLayer.addErrorFeature(errFeature);
+				} else {
+					continue;
 				}
 			}
 		}
@@ -608,21 +600,17 @@ public class LayerValidatorImpl implements LayerValidator {
 			throws SchemaException, IOException {
 
 		ErrorLayer errLayer = new ErrorLayer();
+
+		// A002
 		SimpleFeatureCollection sfc = validatorLayer.getSimpleFeatureCollection();
-		List<SimpleFeature> simpleFeatures = new ArrayList<SimpleFeature>();
 		SimpleFeatureIterator simpleFeatureIterator = sfc.features();
 		while (simpleFeatureIterator.hasNext()) {
 			SimpleFeature simpleFeature = simpleFeatureIterator.next();
-			simpleFeatures.add(simpleFeature);
-		}
-
-		for (int i = 0; i < relationLayers.size(); i++) {
-			GeoLayer relationLayer = relationLayers.get(i);
-			SimpleFeatureCollection relationSfc = relationLayer.getSimpleFeatureCollection();
-			for (int j = 0; j < simpleFeatures.size(); j++) {
-				SimpleFeature simpleFeature = simpleFeatures.get(j);
-				// 단독지류계 검수
-				List<ErrorFeature> errFeatures = graphicValidator.validateNodeMiss(simpleFeature, relationSfc, sfc);
+			for (int i = 0; i < relationLayers.size(); i++) {
+				GeoLayer relationLayer = relationLayers.get(i);
+				SimpleFeatureCollection relationSfc = relationLayer.getSimpleFeatureCollection();
+				List<ErrorFeature> errFeatures = graphicValidator.validateNodeMiss(simpleFeature, sfc, relationSfc,
+						tolerence);
 				if (errFeatures != null) {
 					for (ErrorFeature errFeature : errFeatures) {
 						errFeature.setLayerName(validatorLayer.getLayerName());

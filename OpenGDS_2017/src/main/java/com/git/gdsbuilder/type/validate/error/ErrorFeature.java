@@ -27,37 +27,13 @@ import com.vividsolutions.jts.geom.Geometry;
  */
 public class ErrorFeature {
 
-	/**
-	 * 검수 파일 이름
-	 */
 	String collectionName;
-	/**
-	 * 검수 레이어 ID
-	 */
 	String layerID;
-	/**
-	 * 검수 레이어명
-	 */
 	String layerName;
-	/**
-	 * 오류 피처 ID
-	 */
 	String featureID;
-	/**
-	 * 오류 피처 Index
-	 */
 	String featureIdx;
-	/**
-	 * 오류 종류
-	 */
 	String errType;
-	/**
-	 * 오류명
-	 */
 	String errName;
-	/**
-	 * 오류 포인트
-	 */
 	Geometry errPoint;
 
 	/**
@@ -65,28 +41,9 @@ public class ErrorFeature {
 	 */
 	public ErrorFeature() {
 		super();
+		// TODO Auto-generated constructor stub
 	}
 
-	/**
-	 * ErrorFeature 생성자
-	 * 
-	 * @param collectionName
-	 *            검수 파일 이름
-	 * @param layerID
-	 *            검수 레이어 ID
-	 * @param layerName
-	 *            검수 레이어명
-	 * @param featureID
-	 *            오류 피처 ID
-	 * @param featureIdx
-	 *            오류 피처 Index
-	 * @param errType
-	 *            오류 종류
-	 * @param errName
-	 *            오류명
-	 * @param errPoint
-	 *            오류 포인트
-	 */
 	public ErrorFeature(String collectionName, String layerID, String layerName, String featureID, String featureIdx,
 			String errType, String errName, Geometry errPoint) {
 		super();
@@ -104,13 +61,9 @@ public class ErrorFeature {
 	 * ErrorFeature 생성자
 	 * 
 	 * @param featureID
-	 *            오류 피처 ID
 	 * @param errType
-	 *            오류 종류
 	 * @param errName
-	 *            오류명
 	 * @param errPoint
-	 *            오류 포인트
 	 */
 	public ErrorFeature(String featureId, String featureID, String errType, String errName, Geometry errPoint) {
 		super();
@@ -123,153 +76,113 @@ public class ErrorFeature {
 		this.errPoint = errPoint;
 	}
 
-	/**
-	 * 검수 파일 이름 반환
-	 * 
-	 * @return String
-	 */
 	public String getCollectionName() {
 		return collectionName;
 	}
 
-	/**
-	 * 검수 파일 이름 설정
-	 * 
-	 * @param collectionName
-	 *            검수 파일 이름
-	 */
 	public void setCollectionName(String collectionName) {
 		this.collectionName = collectionName;
 	}
 
-	/**
-	 * 오류 피처 Index 반환
-	 * 
-	 * @return String
-	 */
 	public String getFeatureIdx() {
 		return featureIdx;
 	}
 
-	/**
-	 * 오류 피처 Index 설정
-	 * 
-	 * @param featureIdx
-	 *            오류 피처 Index
-	 */
 	public void setFeatureIdx(String featureIdx) {
 		this.featureIdx = featureIdx;
 	}
 
 	/**
-	 * 검수 레이어 ID 반환
-	 * 
-	 * @return String
+	 * layerID getter @author DY.Oh @Date 2017. 3. 11. 오후 2:57:47 @return
+	 * String @throws
 	 */
 	public String getLayerID() {
 		return layerID;
 	}
 
 	/**
-	 * 검수 레이어 ID 설정
-	 * 
-	 * @param layerID
-	 *            검수 레이어 ID
+	 * layerID setter @author DY.Oh @Date 2017. 3. 11. 오후 2:57:48 @param layerID
+	 * void @throws
 	 */
 	public void setLayerID(String layerID) {
 		this.layerID = layerID;
 	}
 
 	/**
-	 * 검수 레이어명 반환
-	 * 
-	 * @return String
+	 * layerName getter @author DY.Oh @Date 2017. 3. 11. 오후 2:57:53 @return
+	 * String @throws
 	 */
 	public String getLayerName() {
 		return layerName;
 	}
 
 	/**
-	 * 검수 레이어명 설정
-	 * 
-	 * @param layerName
-	 *            검수 레이어명
+	 * layerName setter @author DY.Oh @Date 2017. 3. 11. 오후 2:57:56 @param
+	 * layerName void @throws
 	 */
 	public void setLayerName(String layerName) {
 		this.layerName = layerName;
 	}
 
 	/**
-	 * 오류 피처 ID 반환
-	 * 
-	 * @return String
+	 * featureID getter @author DY.Oh @Date 2017. 3. 11. 오후 2:57:58 @return
+	 * String @throws
 	 */
 	public String getFeatureID() {
 		return featureID;
 	}
 
 	/**
-	 * 오류 피처 ID 설정
-	 * 
-	 * @param featureID
-	 *            오류 피처 ID
+	 * featureID setter @author DY.Oh @Date 2017. 3. 11. 오후 2:58:01 @param
+	 * featureID void @throws
 	 */
 	public void setFeatureID(String featureID) {
 		this.featureID = featureID;
 	}
 
 	/**
-	 * 오류 종류 반환
-	 * 
-	 * @return String
+	 * errType getter @author DY.Oh @Date 2017. 3. 11. 오후 2:58:03 @return
+	 * String @throws
 	 */
 	public String getErrType() {
 		return errType;
 	}
 
 	/**
-	 * 오류 종류 설정
-	 * 
-	 * @param errType
-	 *            오류 종류
+	 * errType setter @author DY.Oh @Date 2017. 3. 11. 오후 2:58:05 @param errType
+	 * void @throws
 	 */
 	public void setErrType(String errType) {
 		this.errType = errType;
 	}
 
 	/**
-	 * 오류명 반환
-	 * 
-	 * @return String
+	 * errName getter @author DY.Oh @Date 2017. 3. 11. 오후 2:58:07 @return
+	 * String @throws
 	 */
 	public String getErrName() {
 		return errName;
 	}
 
 	/**
-	 * 오류명 설정
-	 * 
-	 * @param errName
-	 *            오류명
+	 * errName setter @author DY.Oh @Date 2017. 3. 11. 오후 2:58:10 @param errName
+	 * void @throws
 	 */
 	public void setErrName(String errName) {
 		this.errName = errName;
 	}
 
 	/**
-	 * 오류 포인트 반환
-	 * 
-	 * @return Geometry
+	 * errPoint getter @author DY.Oh @Date 2017. 3. 11. 오후 2:58:13 @return
+	 * Geometry @throws
 	 */
 	public Geometry getErrPoint() {
 		return errPoint;
 	}
 
 	/**
-	 * 오류 포인트 설정
-	 * 
-	 * @param errPoint
-	 *            오류 포인트
+	 * errPoint setter @author DY.Oh @Date 2017. 3. 11. 오후 2:58:15 @param
+	 * errPoint void @throws
 	 */
 	public void setErrPoint(Geometry errPoint) {
 		this.errPoint = errPoint;

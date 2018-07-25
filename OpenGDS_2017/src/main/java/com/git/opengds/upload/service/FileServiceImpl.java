@@ -25,7 +25,6 @@ import java.util.LinkedList;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletResponse;
-import javax.swing.filechooser.FileSystemView;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -44,10 +43,11 @@ import com.git.opengds.user.domain.UserVO;
 public class FileServiceImpl implements FileService {
 
 	// windows
-	// private static final String dirPath = "D:" + File.separator + "files";
+	private static final String dirPath = "D:" + File.separator + "files";
 	// linux
-	private static final String dirPath = FileSystemView.getFileSystemView().getHomeDirectory() + File.separator
-			+ "files";
+	// private static final String dirPath =
+	// FileSystemView.getFileSystemView().getHomeDirectory() + File.separator
+	// + "files";
 
 	@Autowired
 	private SHPFileUploadService shpFileService;
@@ -56,8 +56,8 @@ public class FileServiceImpl implements FileService {
 	private FileDAO fileDAO;
 
 	/*
-	 * public FileServiceImpl(UserVO userVO) { // TODO Auto-generated
-	 * constructor stub id = userVO.getId(); qa20FileService = new
+	 * public FileServiceImpl(UserVO userVO) { // TODO Auto-generated constructor
+	 * stub id = userVO.getId(); qa20FileService = new
 	 * QA20FileUploadServiceImpl(userVO); qa10FileService = new
 	 * QA10FileUploadServiceImpl(userVO); fileDAO = new FileDAOImpl(userVO); }
 	 */

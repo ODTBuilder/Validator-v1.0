@@ -34,22 +34,14 @@ import com.git.gdsbuilder.type.validate.layer.ValidateLayerTypeList;
  */
 public class ValidateLayerCollectionList {
 
-	/**
-	 * 검수 대상 GeoLayerCollectionList
-	 */
 	GeoLayerCollectionList layerCollectionList;
-	/**
-	 * 검수 옵션 ValidateLayerTypeList
-	 */
 	ValidateLayerTypeList validateLayerTypeList;
 
 	/**
 	 * ValidateLayerCollectionList 생성자
 	 * 
 	 * @param layerCollectionList
-	 *            검수 대상 GeoLayerCollectionList
 	 * @param validateLayerTypeList
-	 *            검수 옵션 ValidateLayerTypeList
 	 */
 	public ValidateLayerCollectionList(GeoLayerCollectionList layerCollectionList,
 			ValidateLayerTypeList validateLayerTypeList) {
@@ -58,51 +50,41 @@ public class ValidateLayerCollectionList {
 	}
 
 	/**
-	 * 검수 대상 GeoLayerCollectionList 반환
-	 * 
-	 * @return GeoLayerCollectionList
+	 * layerCollectionList getter @author DY.Oh @Date 2017. 3. 11. 오후
+	 * 2:56:09 @return LayerCollectionList @throws
 	 */
 	public GeoLayerCollectionList getLayerCollectionList() {
 		return layerCollectionList;
 	}
 
 	/**
-	 * 검수 대상 GeoLayerCollectionList 설정
-	 * 
-	 * @param layerCollectionList
-	 *            검수 대상 GeoLayerCollectionList
+	 * layerCollectionList setter @author DY.Oh @Date 2017. 3. 11. 오후
+	 * 2:56:12 @param layerCollectionList void @throws
 	 */
 	public void setLayerCollectionList(GeoLayerCollectionList layerCollectionList) {
 		this.layerCollectionList = layerCollectionList;
 	}
 
 	/**
-	 * 검수 옵션 ValidateLayerTypeList 반환
-	 * 
-	 * @return ValidateLayerTypeList
+	 * validateLayerTypeList getter @author DY.Oh @Date 2017. 3. 11. 오후
+	 * 2:56:14 @return ValidateLayerTypeList @throws
 	 */
 	public ValidateLayerTypeList getValidateLayerTypeList() {
 		return validateLayerTypeList;
 	}
 
 	/**
-	 * 검수 옵션 ValidateLayerTypeList 설정
-	 * 
-	 * @param validateLayerTypeList
-	 *            검수 옵션 ValidateLayerTypeList
+	 * validateLayerTypeList setter @author DY.Oh @Date 2017. 3. 11. 오후
+	 * 2:56:16 @param validateLayerTypeList void @throws
 	 */
 	public void setValidateLayerTypeList(ValidateLayerTypeList validateLayerTypeList) {
 		this.validateLayerTypeList = validateLayerTypeList;
 	}
 
 	/**
-	 * layerCollection에서 typeName을 가진 LayerList를 반환
-	 * 
-	 * @param typeName
-	 *            레이어 별칭
-	 * @param layerCollection
-	 *            GeoLayerCollection 객체
-	 * @return GeoLayerList
+	 * layerCollection에서 typeName을 가진 LayerList를 반환 @author DY.Oh @Date 2017. 3.
+	 * 11. 오후 2:56:19 @param typeName @param layerCollection @return
+	 * LayerList @throws
 	 */
 	public GeoLayerList getTypeLayers(String typeName, GeoLayerCollection layerCollection) {
 

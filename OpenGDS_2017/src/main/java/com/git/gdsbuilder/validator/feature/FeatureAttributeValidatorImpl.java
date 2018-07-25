@@ -65,7 +65,8 @@ public class FeatureAttributeValidatorImpl implements FeatureAttributeValidator 
 				String key = (String) iterator.next();
 				Object attributeValue = simpleFeature.getAttribute(key);
 				if (attributeValue != null) {
-					if (attributeValue.toString().equals("") || attributeValue.toString().equals("0.0")) {
+					if (attributeValue.toString().equals("") || attributeValue.toString().equals("0.0")
+							|| attributeValue.toString().equals("0")) {
 						errorFeature = new ErrorFeature(featureIdx, featureID,
 								ZValueAmbiguous.Type.ZVALUEAMBIGUOUS.errType(),
 								ZValueAmbiguous.Type.ZVALUEAMBIGUOUS.errName(), geometry.getInteriorPoint());

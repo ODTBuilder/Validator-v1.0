@@ -43,9 +43,9 @@ public class EditServiceImpl implements EditService {
 	@Inject
 	private EditDTFeatureService editFeatureService;
 	/*
-	 * public EditServiceImpl(UserVO userVO) { // TODO Auto-generated
-	 * constructor stub editLayerService = new EditLayerServiceImpl(userVO);
-	 * editFeatureService = new EditFeatureServiceImpl(userVO); }
+	 * public EditServiceImpl(UserVO userVO) { // TODO Auto-generated constructor
+	 * stub editLayerService = new EditLayerServiceImpl(userVO); editFeatureService
+	 * = new EditFeatureServiceImpl(userVO); }
 	 */
 
 	@Override
@@ -62,6 +62,23 @@ public class EditServiceImpl implements EditService {
 			JSONObject layerEdit = (JSONObject) layerEditObj;
 			isSuccessed = editLayerService.editLayer(userVO, layerEdit);
 		}
+		return isSuccessed;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.git.opengds.editor.service.EditService#editFeature(com.git.opengds.user.
+	 * domain.UserVO, java.lang.String)
+	 */
+	@Override
+	public boolean editFeature(UserVO userVO, String editJSONStr) throws Exception {
+
+		JSONParser jsonParser = new JSONParser();
+		JSONObject editJSONObject = (JSONObject) jsonParser.parse(editJSONStr);
+
+		boolean isSuccessed = false;
 
 		// featureEdit
 		Object featureEditObj = editJSONObject.get("feature");
@@ -69,7 +86,6 @@ public class EditServiceImpl implements EditService {
 			JSONObject featureEdit = (JSONObject) featureEditObj;
 			isSuccessed = editFeatureService.editFeature(userVO, featureEdit);
 		}
-		
 		return isSuccessed;
 	}
 }

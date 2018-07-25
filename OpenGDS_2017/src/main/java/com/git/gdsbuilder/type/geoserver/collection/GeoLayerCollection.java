@@ -24,32 +24,20 @@ import com.git.gdsbuilder.FileRead.en.EnFileFormat;
 import com.git.gdsbuilder.type.geoserver.layer.GeoLayer;
 
 /**
- * GeoLayerCollection 객체 정보를 담고있는 클래스. 검수 대상 레이어 목록, 검수 대상영역 등의 정보가 포함됨.
+ * LayerCollection 정보를 저장하는 클래스
  * 
  * @author DY.Oh
- *
+ * @Date 2017. 3. 11. 오전 11:45:40
  */
 public class GeoLayerCollection {
 
-	/**
-	 * GeoLayerCollection명, 파일명
-	 */
-	String collectionName;
-	/**
-	 * 검수 영역 GeoLayer
-	 */
-	GeoLayer neatLine;
-	/**
-	 * GeoLayer 목록
-	 */
-	List<GeoLayer> layers;
-	/**
-	 * GeoLayerCollection 파일 포맷
-	 */
+	String collectionName; // 도엽번호
+	GeoLayer neatLine; // 도곽
+	List<GeoLayer> layers; // 레이어
 	EnFileFormat fileFormat;
 
 	/**
-	 * GeoLayerCollection 생성자
+	 * LayerCollection 생성자
 	 */
 	public GeoLayerCollection() {
 		super();
@@ -60,10 +48,9 @@ public class GeoLayerCollection {
 	}
 
 	/**
-	 * GeoLayerCollection 생성자
+	 * LayerCollection 생성자
 	 * 
 	 * @param collectionName
-	 *            GeoLayerCollection명
 	 */
 	public GeoLayerCollection(String collectionName) {
 		this.collectionName = collectionName;
@@ -72,14 +59,11 @@ public class GeoLayerCollection {
 	}
 
 	/**
-	 * GeoLayerCollection 생성자
+	 * LayerCollection 생성자
 	 * 
 	 * @param collectionName
-	 *            GeoLayerCollection명
 	 * @param neatLine
-	 *            검수 영역 GeoLayer
 	 * @param layers
-	 *            GeoLayer 목록
 	 */
 	public GeoLayerCollection(String collectionName, GeoLayer neatLine, List<GeoLayer> layers) {
 		super();
@@ -89,108 +73,83 @@ public class GeoLayerCollection {
 	}
 
 	/**
-	 * GeoLayerCollection명 반환
-	 * 
-	 * @return String
+	 * collectionName getter @author DY.Oh @Date 2017. 3. 11. 오전
+	 * 11:46:31 @return String @throws
 	 */
 	public String getCollectionName() {
 		return collectionName;
 	}
 
 	/**
-	 * GeoLayerCollection명 설정
-	 * 
-	 * @param collectionName
-	 *            GeoLayerCollection명
+	 * collectionName setter @author DY.Oh @Date 2017. 3. 11. 오전 11:46:33 @param
+	 * collectionName void @throws
 	 */
 	public void setCollectionName(String collectionName) {
 		this.collectionName = collectionName;
 	}
 
-	/**
-	 * GeoLayerCollection 파일 포맷 반환
-	 * 
-	 * @return EnFileFormat
-	 */
 	public EnFileFormat getFileFormat() {
 		return fileFormat;
 	}
 
-	/**
-	 * GeoLayerCollection 파일 포맷 설정
-	 * 
-	 * @param fileFormat
-	 *            GeoLayerCollection 파일 포맷
-	 */
 	public void setFileFormat(EnFileFormat fileFormat) {
 		this.fileFormat = fileFormat;
 	}
 
 	/**
-	 * 검수 영역 GeoLayer
-	 * 
-	 * @return GeoLayer
+	 *
+	 * @author DY.Oh @Date 2017. 3. 11. 오전 11:46:35 @return Layer @throws
 	 */
 	public GeoLayer getNeatLine() {
 		return neatLine;
 	}
 
 	/**
-	 * 검수 영역 GeoLayer 설정
-	 * 
-	 * @param neatLine
-	 *            검수 영역 GeoLayer
+	 * neatLine getter @author DY.Oh @Date 2017. 3. 11. 오전 11:46:38 @param
+	 * neatLine void @throws
 	 */
 	public void setNeatLine(GeoLayer neatLine) {
 		this.neatLine = neatLine;
 	}
 
 	/**
-	 * GeoLayer 목록 반환
-	 * 
-	 * @return List<GeoLayer>
+	 * layers getter @author DY.Oh @Date 2017. 3. 11. 오전 11:46:40 @return
+	 * List<Layer> @throws
 	 */
 	public List<GeoLayer> getLayers() {
 		return layers;
 	}
 
 	/**
-	 * GeoLayer 목록 설정
-	 * 
-	 * @param layers
-	 *            GeoLayer 목록
+	 * layers setter @author DY.Oh @Date 2017. 3. 11. 오전 11:46:42 @param layers
+	 * void @throws
 	 */
 	public void setLayers(List<GeoLayer> layers) {
 		this.layers = layers;
 	}
 
 	/**
-	 * GeoLayer 목록에 GeoLayer 추가
-	 * 
-	 * @param layer
-	 *            GeoLayer
+	 * layers에 layer를 추가함 @author DY.Oh @Date 2017. 3. 11. 오전 11:46:45 @param
+	 * layer void @throws
 	 */
 	public void addValidateLayer(GeoLayer layer) {
 		layers.add(layer);
 	}
 
 	/**
-	 * geoLayerCollection에서 geoLayerName에 해당하는 GeoLayer 객체를 반환
-	 * 
-	 * @param geoLayerName
-	 *            GeoLayer명
-	 * @param geoLayerCollection
-	 *            GeoLayerCollection
-	 * @return GeoLayer
+	 * layerCollection에서 layerName에 해당하는 Layer 객체를 반환 
+	 * @author DY.Oh 
+	 * @Date 2017. 03. 11. 오전 11:48:22 @param layerName @param layerCollection @return
+	 * Layer @throws
 	 */
-	public GeoLayer getLayer(String geoLayerName, GeoLayerCollection geoLayerCollection) {
+	public GeoLayer getLayer(String layerName, GeoLayerCollection layerCollection) {
 
 		GeoLayer layer = null;
-		List<GeoLayer> layers = geoLayerCollection.getLayers();
+		List<GeoLayer> layers = layerCollection.getLayers();
 		for (int i = 0; i < layers.size(); i++) {
 			GeoLayer tmp = layers.get(i);
 			String validateLayerName = tmp.getLayerName();
-			if (validateLayerName.equalsIgnoreCase(geoLayerName)) {
+			if (validateLayerName.equalsIgnoreCase(layerName)) {
 				layer = tmp;
 				break;
 			} else {
@@ -200,11 +159,6 @@ public class GeoLayerCollection {
 		return layer;
 	}
 
-	/**
-	 * GeoLayerCollection의 파일 포맷 반환
-	 * 
-	 * @return String
-	 */
 	public String getLayerCollectionType() {
 		return this.fileFormat.getStateName();
 	}

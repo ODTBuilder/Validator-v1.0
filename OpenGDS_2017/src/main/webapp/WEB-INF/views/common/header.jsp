@@ -11,7 +11,7 @@
 			<ul class="nav navbar-nav ">
 				<li class="active"><a href="${pageContext.request.contextPath}/main.do">Home</a></li>
 				<li><a href="${pageContext.request.contextPath}/builder.do">Map</a></li>
-				<li><a href="#">Contact</a></li>
+<!-- 				<li><a href="#">Contact</a></li> -->
 			</ul>
 			<ul class="nav navbar-nav navbar-right">
 				<c:choose>

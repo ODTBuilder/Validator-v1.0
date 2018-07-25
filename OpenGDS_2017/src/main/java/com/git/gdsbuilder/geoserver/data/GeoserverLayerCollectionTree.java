@@ -49,8 +49,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import com.git.gdsbuilder.FileRead.en.EnFileFormat;
-
-import it.geosolutions.geoserver.rest.decoder.RESTFeatureTypeList;
+import com.git.gdsbuilder.geosolutions.geoserver.rest.decoder.RESTFeatureTypeList;
 
 /**
  * @ClassName: GeoserverLayerCollectionTree
@@ -147,7 +146,7 @@ public class GeoserverLayerCollectionTree extends JSONArray {
 			return this;
 		}
 
-		if (featureTypeList.size() > 1) {
+		if (featureTypeList.size() > 0) {
 			List<String> layerNames = new ArrayList<String>(); // 레이어 이름 리스트
 			layerNames = featureTypeList.getNames();
 			List<String> shpFileNames = new ArrayList<String>(); // 파일명 리스트(서로

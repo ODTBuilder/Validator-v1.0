@@ -23,4 +23,11 @@ public interface EditService {
 
 	public boolean editLayerCollection(UserVO userVO, String editJSON) throws Exception;
 
+	/**
+	 * @param generalUser
+	 * @param geo
+	 * @return
+	 */
+	public boolean editFeature(UserVO generalUser, String geo) throws Exception;
+
 }

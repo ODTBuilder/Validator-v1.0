@@ -37,47 +37,31 @@ package com.git.gdsbuilder.type.geoserver.layer;
 import org.geotools.data.simple.SimpleFeatureCollection;
 
 /**
- * GeoLayer 정보를 저장하는 클래스
- * 
+ * layer 정보를 저장하는 클래스
  * @author DY.Oh
- */
+ * @Date 2017. 3. 11. 오전 11:49:01
+ * */
 public class GeoLayer {
 
-	/**
-	 * GeoLayer 타입
-	 */
 	String layerType;
-	/**
-	 * GeoLayer ID
-	 */
 	String layerID;
-	/**
-	 * GeoLayer명
-	 */
 	String layerName;
-	/**
-	 * GeoLayer에 해당하는 SimpleFeatureCollection 객체
-	 */
 	SimpleFeatureCollection simpleFeatureCollection;
-
+	
 	/**
 	 * Layer 생성자
 	 */
 	public GeoLayer() {
 		super();
+		// TODO Auto-generated constructor stub
 	}
-
+	
 	/**
 	 * Layer 생성자
-	 * 
 	 * @param layerType
-	 *            GeoLayer 타입
 	 * @param layerID
-	 *            GeoLayer ID
 	 * @param layerName
-	 *            GeoLayer명
 	 * @param simpleFeatureCollection
-	 *            GeoLayer에 해당하는 SimpleFeatureCollection 객체
 	 */
 	public GeoLayer(String layerType, String layerID, String layerName,
 			SimpleFeatureCollection simpleFeatureCollection) {
@@ -89,77 +73,89 @@ public class GeoLayer {
 	}
 
 	/**
-	 * GeoLayer ID 반환
-	 * 
+	 * layerID getter
+	 * @author DY.Oh
+	 * @Date 2017. 3. 11. 오전 11:49:58
 	 * @return String
-	 */
+	 * @throws
+	 * */
 	public String getLayerID() {
 		return layerID;
 	}
 
 	/**
-	 * GeoLayer ID 설정
-	 * 
-	 * @param layerID
-	 *            GeoLayer ID
-	 */
+	 * layerID setter
+	 * @author DY.Oh
+	 * @Date 2017. 3. 11. 오전 11:50:00
+	 * @param layerID void
+	 * @throws
+	 * */
 	public void setLayerID(String layerID) {
 		this.layerID = layerID;
 	}
 
 	/**
-	 * GeoLayer 타입 반환
-	 * 
+	 * layerType getter
+	 * @author DY.Oh
+	 * @Date 2017. 3. 11. 오전 11:50:02
 	 * @return String
-	 */
+	 * @throws
+	 * */
 	public String getLayerType() {
 		return layerType;
 	}
 
 	/**
-	 * GeoLayer 타입 설정
-	 * 
-	 * @param layerType
-	 *            GeoLayer 타입
-	 */
+	 * layerType setter
+	 * @author DY.Oh
+	 * @Date 2017. 3. 11. 오전 11:50:08
+	 * @param layerType void
+	 * @throws
+	 * */
 	public void setLayerType(String layerType) {
 		this.layerType = layerType;
 	}
 
 	/**
-	 * GeoLayer명
-	 * 
+	 * layerName getter
+	 * @author DY.Oh
+	 * @Date 2017. 3. 11. 오전 11:50:10
 	 * @return String
-	 */
+	 * @throws
+	 * */
 	public String getLayerName() {
 		return layerName;
 	}
 
 	/**
-	 * GeoLayer명 설정
-	 * 
-	 * @param layerName
-	 *            GeoLayer명
-	 */
+	 * layerName setter
+	 * @author DY.Oh
+	 * @Date 2017. 3. 11. 오전 11:50:12
+	 * @param layerName void
+	 * @throws
+	 * */
 	public void setLayerName(String layerName) {
 		this.layerName = layerName;
 	}
 
 	/**
-	 * GeoLayer에 해당하는 SimpleFeatureCollection 객체 반환
-	 * 
+	 * simpleFeatureCollection getter
+	 * @author DY.Oh
+	 * @Date 2017. 5. 1. 오후 1:24:58
 	 * @return SimpleFeatureCollection
-	 */
+	 * @throws
+	 * */
 	public SimpleFeatureCollection getSimpleFeatureCollection() {
 		return simpleFeatureCollection;
 	}
 
 	/**
-	 * GeoLayer에 해당하는 SimpleFeatureCollection 객체 설정
-	 * 
-	 * @param simpleFeatureCollection
-	 *            GeoLayer에 해당하는 SimpleFeatureCollection 객체
-	 */
+	 * simpleFeatureCollection setter
+	 * @author DY.Oh
+	 * @Date 2017. 5. 1. 오후 1:25:09
+	 * @param simpleFeatureCollection void
+	 * @throws
+	 * */
 	public void setSimpleFeatureCollection(SimpleFeatureCollection simpleFeatureCollection) {
 		this.simpleFeatureCollection = simpleFeatureCollection;
 	}

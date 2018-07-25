@@ -38,11 +38,22 @@ public class EditController extends AbstractController {
 	private EditService editService;
 
 	@SuppressWarnings("unchecked")
-	@RequestMapping(value = "/editLayer.ajax")
+	@RequestMapping(value = "/editLayerCollection.ajax")
 	@ResponseBody
 	public boolean editLayerCollection(HttpServletRequest request, @RequestBody String geo) throws Exception {
 		UserVO generalUser = (UserVO) getSession(request, EnUserType.GENERAL.getTypeName());
-		boolean isSuccessed =  editService.editLayerCollection(generalUser, geo);
+
+		boolean isSuccessed = editService.editLayerCollection(generalUser, geo);
+		return isSuccessed;
+	}
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping(value = "/editFeature.ajax")
+	@ResponseBody
+	public boolean editFeature(HttpServletRequest request, @RequestBody String geo) throws Exception {
+		UserVO generalUser = (UserVO) getSession(request, EnUserType.GENERAL.getTypeName());
+
+		boolean isSuccessed = editService.editFeature(generalUser, geo);
 		return isSuccessed;
 	}
 }

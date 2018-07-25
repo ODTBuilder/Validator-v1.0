@@ -22,28 +22,16 @@ import java.util.List;
 import com.git.gdsbuilder.type.validate.option.ValidatorOption;
 
 /**
- * ValidateLayerType 정보를 담고 있는 클래스. 검수 옵션 정보를 가지고 있음.
+ * ValidateLayerType 정보를 담고 있는 클래스
  * 
  * @author DY.Oh
  * @Date 2017. 3. 11. 오후 3:02:56
  */
 public class ValidateLayerType {
 
-	/**
-	 * 검수 레이어 별칭
-	 */
 	String typeName;
-	/**
-	 * 검수를 수행할 레이어 이름 목록
-	 */
 	List<String> layerIDList;
-	/**
-	 * 검수 가중치
-	 */
 	double weight;
-	/**
-	 * 검수 항목 목록
-	 */
 	List<ValidatorOption> optionList;
 
 	/**
@@ -58,11 +46,8 @@ public class ValidateLayerType {
 	 * ValidateLayerType 생성자
 	 * 
 	 * @param typeName
-	 *            검수 레이어 별칭
 	 * @param layerIDList
-	 *            검수를 수행할 레이어 이름 목록
 	 * @param weight
-	 *            검수 가중치
 	 */
 	public ValidateLayerType(String typeName, List<String> layerIDList, double weight) {
 		super();
@@ -75,11 +60,8 @@ public class ValidateLayerType {
 	 * ValidateLayerType 생성자
 	 * 
 	 * @param typeName
-	 *            검수 레이어 별칭
 	 * @param layerIDList
-	 *            검수를 수행할 레이어 이름 목록
 	 * @param optionList
-	 *            검수 항목 목록
 	 */
 	public ValidateLayerType(String typeName, List<String> layerIDList, List<ValidatorOption> optionList) {
 		super();
@@ -89,76 +71,64 @@ public class ValidateLayerType {
 	}
 
 	/**
-	 * 검수 레이어 별칭 반환
-	 * 
-	 * @return String
+	 * typeName getter @author DY.Oh @Date 2017. 3. 11. 오후 3:03:08 @return
+	 * String @throws
 	 */
 	public String getTypeName() {
 		return typeName;
 	}
 
 	/**
-	 * 검수 레이어 별칭 설정
-	 * 
-	 * @param typeName
-	 *            검수 레이어 별칭
+	 * typeName setter @author DY.Oh @Date 2017. 3. 11. 오후 3:03:10 @param
+	 * typeName void @throws
 	 */
 	public void setTypeName(String typeName) {
 		this.typeName = typeName;
 	}
 
 	/**
-	 * 검수 가중치 반환
-	 * 
-	 * @return double
+	 * weight getter @author DY.Oh @Date 2017. 3. 11. 오후 3:03:12 @return
+	 * double @throws
 	 */
 	public double getWeight() {
 		return weight;
 	}
 
 	/**
-	 * 검수 가중치 설정
-	 * 
-	 * @param weight
-	 *            검수 가중치
+	 * weight setter @author DY.Oh @Date 2017. 3. 11. 오후 3:03:15 @param weight
+	 * void @throws
 	 */
 	public void setWeight(double weight) {
 		this.weight = weight;
 	}
 
 	/**
-	 * 검수를 수행할 레이어 이름 목록 반환
-	 * 
-	 * @return List<String>
+	 * layerIDList getter @author DY.Oh @Date 2017. 3. 11. 오후 3:03:16 @return
+	 * List<String> @throws
 	 */
 	public List<String> getLayerIDList() {
 		return layerIDList;
 	}
 
 	/**
-	 * 검수를 수행할 레이어 이름 목록 설정
-	 * 
-	 * @param layerIDList
-	 *            검수를 수행할 레이어 이름 목록
+	 * layerIDList setter @author DY.Oh @Date 2017. 3. 11. 오후 3:03:18 @param
+	 * layerIDList void @throws
 	 */
 	public void setLayerIDList(List<String> layerIDList) {
 		this.layerIDList = layerIDList;
 	}
 
 	/**
-	 * 검수 항목 목록 반환
-	 * 
-	 * @return List<ValidatorOption>
+	 * optionList getter @author DY.Oh @Date 2017. 3. 11. 오후 3:03:20 @return
+	 * List<ValidatorOption> @throws
 	 */
 	public List<ValidatorOption> getOptionList() {
 		return optionList;
 	}
 
 	/**
-	 * 검수 항목 목록 설정
-	 * 
-	 * @param optionList
-	 *            검수 항목 목록
+	 * optionList setter @author DY.Oh @Date 2017. 3. 11. 오후 3:03:21 @param
+	 * optionList void @throws
 	 */
 	public void setOptionList(List<ValidatorOption> optionList) {
 		this.optionList = optionList;

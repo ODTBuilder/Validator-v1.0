@@ -20,10 +20,10 @@ package com.git.gdsbuilder.type.geoserver.layer;
 import java.util.ArrayList;
 
 /**
- * GeoLayerList 정보를 저장하는 클래스
- * 
+ * LayerList 정보를 저장하는 클래스
  * @author DY.Oh
- */
+ * @Date 2017. 3. 11. 오후 1:32:25
+ * */
 public class GeoLayerList extends ArrayList<GeoLayer> {
 
 }
