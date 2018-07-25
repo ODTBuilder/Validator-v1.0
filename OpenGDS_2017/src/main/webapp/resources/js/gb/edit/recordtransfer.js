@@ -15,7 +15,8 @@
 gb.edit.RecordTransfer = function(obj) {
 	this.feature = obj.feature;
 	this.layer = obj.layer;
-	this.url = obj.url;
+	this.layerurl = obj.layerurl;
+	this.featureurl = obj.featureurl;
 }
 gb.edit.RecordTransfer.prototype.getFeatureRecord = function() {
 	return this.feature;
@@ -66,34 +67,66 @@ gb.edit.RecordTransfer.prototype.sendStructure = function(ollayers, editingTool)
 	var that = this;
 	var featureObj = this.getFeatureRecord();
 	console.log(this.getStructure());
-	$.ajax({
-		url : this.url,
-		type : "POST",
-		data : JSON.stringify(this.getStructure()),
-		contentType : "application/json; charset=UTF-8",
-		dataType : 'json',
-		beforeSend : function() {
-			$("body").css("cursor", "wait");
-		},
-		complete : function() {
-			$("body").css("cursor", "default");
-		},
-		success : function(data) {
-			console.log(data);
-			featureObj.clearAll();
-			for (var i = 0; i < ollayers.getLength(); i++) {
-				that.refresh(ollayers.item(i), editingTool);
-			}
+	var strc = this.getStructure();
+	if (Object.keys(strc.layer).length > 0) {
+		if (strc.hasOwnProperty("feature")) {
+			delete strc.feature;
 		}
-	});
+		$.ajax({
+			url : this.layerurl,
+			type : "POST",
+			data : JSON.stringify(strc),
+			contentType : "application/json; charset=UTF-8",
+			dataType : 'json',
+			beforeSend : function() {
+				$("body").css("cursor", "wait");
+			},
+			complete : function() {
+				$("body").css("cursor", "default");
+			},
+			success : function(data) {
+				console.log(data);
+				featureObj.clearAll();
+				for (var i = 0; i < ollayers.getLength(); i++) {
+					that.refresh(ollayers.item(i), editingTool);
+				}
+			}
+		});
+	} else if (Object.keys(strc.feature).length > 0) {
+		if (strc.hasOwnProperty("layer")) {
+			delete strc.layer;
+		}
+		$.ajax({
+			url : this.featureurl,
+			type : "POST",
+			data : JSON.stringify(strc),
+			contentType : "application/json; charset=UTF-8",
+			dataType : 'json',
+			beforeSend : function() {
+				$("body").css("cursor", "wait");
+			},
+			complete : function() {
+				$("body").css("cursor", "default");
+			},
+			success : function(data) {
+				console.log(data);
+				featureObj.clearAll();
+				for (var i = 0; i < ollayers.getLength(); i++) {
+					that.refresh(ollayers.item(i), editingTool);
+				}
+			}
+		});
+	}
+
 };
 
-gb.edit.RecordTransfer.prototype.sendPartStructure = function(layers, ollayers, editingTool) {
+gb.edit.RecordTransfer.prototype.sendPartStructure = function(layers, ollayers,
+		editingTool) {
 	console.log(this.getPartStructure(layers));
 	var featureObj = this.getFeatureRecord();
 
 	$.ajax({
-		url : this.url,
+		url : this.featureurl,
 		type : "POST",
 		data : JSON.stringify(this.getPartStructure(layers)),
 		contentType : "application/json; charset=UTF-8",

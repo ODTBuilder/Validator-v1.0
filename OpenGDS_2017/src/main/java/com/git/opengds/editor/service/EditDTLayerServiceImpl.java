@@ -45,11 +45,12 @@ public class EditDTLayerServiceImpl implements EditDTLayerService {
 		String src = "5186";
 
 		boolean isSuccessed = false;
-
-		Iterator layerIterator = layerEditObj.keySet().iterator();
-		while (layerIterator.hasNext()) {
-			String type = (String) layerIterator.next();
-			isSuccessed = editSHPLayer(userVO, layerEditObj, type);
+		if (layerEditObj.keySet() != null) {
+			Iterator layerIterator = layerEditObj.keySet().iterator();
+			while (layerIterator.hasNext()) {
+				String type = (String) layerIterator.next();
+				isSuccessed = editSHPLayer(userVO, layerEditObj, type);
+			}
 		}
 		return isSuccessed;
 	}
