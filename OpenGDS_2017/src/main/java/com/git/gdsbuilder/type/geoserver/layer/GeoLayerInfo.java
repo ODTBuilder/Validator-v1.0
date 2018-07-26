@@ -25,56 +25,27 @@ import java.util.Map;
 import com.git.opengds.upload.domain.FileMeta;
 
 /**
- * Geoserver에 발행할 레이어 정보를 저장하는 클래스
+ * GeoserverLayer 정보를 저장하는 클래스
  * 
  * @author DY.Oh
  * @Date 2017. 5. 1. 오후 1:26:32
  */
 public class GeoLayerInfo extends FileMeta {
 
-	/**
-	 * Geoserver에 발행할 레이어의 feature id로 사용될 DB Table 컬럼명
-	 */
 	private static final String fid = "f_idx";
-	/**
-	 * Geoserver에 발행할 레이어의 geometry로 사용될 DB Table 컬럼명
-	 */
 	private static final String geom = "geom";
-	/**
-	 * Geoserver에 발행할 레이어의 boundary로 사용될 DB Table 컬럼명
-	 */
 	private static final String boundary = "st_extent";
-	/**
-	 * 파일 포맷
-	 */
 	private String fileType;
-	/**
-	 * 레이어 좌표계 EPSG 코드
-	 */
 	private String transSrc;
-	/**
-	 * 레이어 명 목록
-	 */
+	private String layerFullName;
 	private List<String> layerNames;
-	/**
-	 * 레이어 타입 목록
-	 */
 	private Map<String, String> layerTypes;
-	/**
-	 * 레이어 column 목록
-	 */
 	private Map<String, List<String>> layerColumns;
-	/**
-	 * 레이어 boundary 목록
-	 */
 	private Map<String, HashMap<String, Object>> boundarys;
-	/**
-	 * 
-	 */
-	// private Map<String, Boolean> isFeatureMap;
+	private Map<String, Boolean> isFeatureMap;
 
 	/**
-	 * GeoLayerInfo 생성자
+	 * LayerInfo 생성자
 	 */
 	public GeoLayerInfo() {
 		super();
@@ -84,199 +55,150 @@ public class GeoLayerInfo extends FileMeta {
 		layerTypes = new HashMap<String, String>();
 		layerColumns = new HashMap<String, List<String>>();
 		boundarys = new HashMap<String, HashMap<String, Object>>();
-		// isFeatureMap = new HashMap<String, Boolean>();
+		isFeatureMap = new HashMap<String, Boolean>();
+		layerFullName = "";
 	}
 
-	// public Map<String, Boolean> getIsFeatureMap() {
-	// return isFeatureMap;
-	// }
-	//
-	// public void setIsFeatureMap(Map<String, Boolean> isFeatureMap) {
-	// this.isFeatureMap = isFeatureMap;
-	// }
+	public String getLayerFullName() {
+		return layerFullName;
+	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.git.opengds.upload.domain.FileMeta#getFileType()
-	 */
+	public void setLayerFullName(String layerFullName) {
+		this.layerFullName = layerFullName;
+	}
+
+	public Map<String, Boolean> getIsFeatureMap() {
+		return isFeatureMap;
+	}
+
+	public void setIsFeatureMap(Map<String, Boolean> isFeatureMap) {
+		this.isFeatureMap = isFeatureMap;
+	}
+
 	public String getFileType() {
 		return fileType;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.git.opengds.upload.domain.FileMeta#setFileType(java.lang.String)
-	 */
 	public void setFileType(String fileType) {
 		this.fileType = fileType;
 	}
 
-	/**
-	 * Geoserver 레이어의 boundary로 사용될 DB Table 컬럼명 반환
-	 * 
-	 * @return String
-	 */
 	public static String getBoundary() {
 		return boundary;
 	}
 
 	/**
-	 * 레이어 좌표계 EPSG 코드 반환
-	 * 
-	 * @return String
+	 * transSrc getter @author DY.Oh @Date 2017. 5. 1. 오후 1:25:38 @return
+	 * String @throws
 	 */
 	public String getTransSrc() {
 		return transSrc;
 	}
 
 	/**
-	 * * 레이어 좌표계 EPSG 코드 반환 설정
-	 * 
-	 * @param transSrc
-	 *            레이어 좌표계 EPSG 코드
+	 * transSrc setter @author DY.Oh @Date 2017. 5. 1. 오후 1:25:54 @param
+	 * transSrc void @throws
 	 */
 	public void setTransSrc(String transSrc) {
 		this.transSrc = transSrc;
 	}
 
 	/**
-	 * 레이어 타입 목록 반환
-	 * 
-	 * @return Map<String, String>
+	 * layerTypes getter @author DY.Oh @Date 2017. 5. 1. 오후 1:26:04 @return
+	 * Map<String,String> @throws
 	 */
 	public Map<String, String> getLayerTypes() {
 		return layerTypes;
 	}
 
 	/**
-	 * 레이어 타입 목록 설정
-	 * 
-	 * @param layerTypes
-	 *            레이어 타입 목록
+	 * layerTypes setter @author DY.Oh @Date 2017. 5. 1. 오후 1:26:12 @param
+	 * layerTypes void @throws
 	 */
 	public void setLayerTypes(Map<String, String> layerTypes) {
 		this.layerTypes = layerTypes;
 	}
 
 	/**
-	 * 레이어 column 목록 반환
-	 * 
-	 * @return Map<String, List<String>>
+	 * layerColumns getter @author DY.Oh @Date 2017. 5. 1. 오후 1:26:19 @return
+	 * Map<String,List<String>> @throws
 	 */
 	public Map<String, List<String>> getLayerColumns() {
 		return layerColumns;
 	}
 
 	/**
-	 * 레이어 column 목록 설정
-	 * 
-	 * @param layerColumns
-	 *            레이어 column 목록
+	 * layerColumns setter @author DY.Oh @Date 2017. 5. 1. 오후 1:26:21 @param
+	 * layerColumns void @throws
 	 */
 	public void setLayerColumns(Map<String, List<String>> layerColumns) {
 		this.layerColumns = layerColumns;
 	}
 
 	/**
-	 * 레이어 ID, 레이어 타입을 레이어 타입 목록에 추가
-	 * 
-	 * @param layerID
-	 *            레이어 ID
-	 * @param layerType
-	 *            레이어 타입
+	 * layerTypes에 layerType을 추가 @author DY.Oh @Date 2017. 5. 1. 오후
+	 * 1:26:24 @param layerID @param layerType void @throws
 	 */
 	public void putLayerType(String layerID, String layerType) {
 		layerTypes.put(layerID, layerType);
 	}
 
 	/**
-	 * 레이어 ID, 레이어 타입을 레이어 column 목록에 추가
-	 * 
-	 * @param layerID
-	 *            레이어 ID
-	 * @param columns
-	 *            레이어 column 목록
+	 * layerColumns layerColum 리스트를 추가 @author DY.Oh @Date 2017. 5. 1. 오후
+	 * 1:26:26 @param layerID @param columns void @throws
 	 */
 	public void putLayerColumns(String layerID, List<String> columns) {
 		layerColumns.put(layerID, columns);
 	}
 
 	/**
-	 * 레이어 명 목록 반환
-	 * 
-	 * @return List<String>
+	 * layerNames getter @author DY.Oh @Date 2017. 5. 1. 오후 1:26:44 @return
+	 * List<String> @throws
 	 */
 	public List<String> getLayerNames() {
 		return layerNames;
 	}
 
 	/**
-	 * 레이어 명 목록 설정
-	 * 
-	 * @param layerNames
-	 *            레이어 명 목록
+	 * layerNames setter @author DY.Oh @Date 2017. 5. 1. 오후 1:26:42 @param
+	 * layerNames void @throws
 	 */
 	public void setLayerNames(List<String> layerNames) {
 		this.layerNames = layerNames;
 	}
 
 	/**
-	 * 레이어 명 목록에 레이어 명 추가
-	 * 
-	 * @param layerName
-	 *            레이어 명
+	 * layerNames layerName 추가 @author DY.Oh @Date 2017. 5. 1. 오후 1:26:40 @param
+	 * layerName void @throws
 	 */
 	public void putLayerName(String layerName) {
 		layerNames.add(layerName);
 	}
 
 	/**
-	 * Geoserver 레이어의 feature id로 사용될 DB Table 컬럼명 반환
-	 * 
-	 * @return String
+	 * fid getter @author DY.Oh @Date 2017. 5. 1. 오후 1:26:37 @return
+	 * String @throws
 	 */
 	public static String getFid() {
 		return fid;
 	}
 
 	/**
-	 * Geoserver 레이어의 geometry로 사용될 DB Table 컬럼명
-	 * 
-	 * @return String
+	 * geom getter @author DY.Oh @Date 2017. 5. 1. 오후 1:26:29 @return
+	 * String @throws
 	 */
 	public static String getGeom() {
 		return geom;
 	}
 
-	/**
-	 * 레이어 boundary 목록 반환
-	 * 
-	 * @return Map<String, HashMap<String, Object>>
-	 */
 	public Map<String, HashMap<String, Object>> getBoundarys() {
 		return boundarys;
 	}
 
-	/**
-	 * 레이어 boundary 목록 설정
-	 * 
-	 * @param boundary
-	 *            레이어 boundary 목록
-	 */
 	public void setBoundarys(Map<String, HashMap<String, Object>> boundary) {
 		this.boundarys = boundary;
 	}
 
-	/**
-	 * 레이어 boundary 목록에 레이어명, 레이어 boundary 추가
-	 * 
-	 * @param layerName
-	 *            레이어명
-	 * @param boundary
-	 *            레이어 boundary
-	 */
 	public void putLayerBoundary(String layerName, HashMap<String, Object> boundary) {
 
 		String boundaryValue = (String) boundary.get(this.boundary);

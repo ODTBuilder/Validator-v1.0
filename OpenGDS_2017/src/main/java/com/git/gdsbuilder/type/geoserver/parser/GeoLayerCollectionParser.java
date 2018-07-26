@@ -54,151 +54,91 @@ import com.git.gdsbuilder.type.geoserver.layer.GeoLayer;
 import com.git.gdsbuilder.type.geoserver.layer.GeoLayerList;
 
 /**
- * 검수 레이어 설정 JSONObject를 GeoLayerCollection 객체로 파싱하는 클래스
+ * JSONObject를 LayerCollection 객체로 파싱하는 클래스
  * 
  * @author DY.Oh
+ * @Date 2017. 3. 11. 오후 1:35:41
  */
 public class GeoLayerCollectionParser {
 
-	/**
-	 * 검수 레이어 설정 JSONObject
-	 */
 	private JSONObject collectionObj;
-	/**
-	 * 검수 레이어 설정 JSONObject에 해당하는 GeoLayerCollectionList
-	 */
 	private GeoLayerCollectionList layerCollections;
-	/**
-	 * 작업공간 이름
-	 */
 	private String workspaceName;
-	/**
-	 * 
-	 */
 	private String getCapabilities;
-	/**
-	 * 파일포맷
-	 */
 	private EnFileFormat fileFormat;
-	/**
-	 * 저장소 이름
-	 */
 	private DataStore dataStore;
-	/**
-	 * 검수 레이어 이름 목록
-	 */
-	private List<String> layerList;
+	private List<String> validateLayerList;
 
 	/**
+	 * LayerCollectionParser 생성자
+	 * 
 	 * @param collectionObject
-	 *            검수 레이어 설정 JSONObject
-	 * @param workspaceName
-	 *            작업공간 이름
-	 * @param getCapabilities
-	 * @param fileFormat
-	 *            파일포맷
-	 * @param layerList
-	 *            레이어 이름 목록
+	 * @param validateLayerList
 	 * @throws FileNotFoundException
 	 * @throws IOException
 	 * @throws ParseException
 	 * @throws SchemaException
 	 */
 	public GeoLayerCollectionParser(JSONObject collectionObject, String workspaceName, String getCapabilities,
-			EnFileFormat fileFormat, List<String> layerList)
+			EnFileFormat fileFormat, List<String> validateLayerList)
 			throws FileNotFoundException, IOException, ParseException, SchemaException {
 		this.workspaceName = workspaceName;
 		this.collectionObj = collectionObject;
 		this.getCapabilities = getCapabilities;
 		this.fileFormat = fileFormat;
-		this.layerList = layerList;
+		this.validateLayerList = validateLayerList;
 		Map connectionParameters = new HashMap();
 		connectionParameters.put("WFSDataStoreFactory:GET_CAPABILITIES_URL", getCapabilities);
 		connectionParameters.put("WFSDataStoreFactory.TIMEOUT.key", 999999999);
-		// connectionParameters.put("WFSDataStoreFactory:BUFFER_SIZE", 999999999);
+	//	connectionParameters.put("WFSDataStoreFactory:BUFFER_SIZE", 999999999);
 		this.dataStore = DataStoreFinder.getDataStore(connectionParameters);
 		collectionParser();
 	}
 
 	/**
-	 * GeoLayerCollectionList 반환
-	 * 
-	 * @return GeoLayerCollectionList
+	 * layerCollections getter @author DY.Oh @Date 2017. 3. 11. 오후
+	 * 1:36:58 @return LayerCollectionList @throws
 	 */
 	public GeoLayerCollectionList getLayerCollections() {
 		return layerCollections;
 	}
 
 	/**
-	 * GeoLayerCollectionList 설정
-	 * 
-	 * @param layerCollections
-	 *            GeoLayerCollectionList 객체
+	 * layerCollections setter @author DY.Oh @Date 2017. 3. 11. 오후
+	 * 1:37:01 @param layerCollections void @throws
 	 */
 	public void setLayerCollections(GeoLayerCollectionList layerCollections) {
 		this.layerCollections = layerCollections;
 	}
 
-	/**
-	 * 작업공간 이름 반환
-	 * 
-	 * @return String
-	 */
 	public String getWorkspaceName() {
 		return workspaceName;
 	}
 
-	/**
-	 * 작업공간 이름 설정
-	 * 
-	 * @param workspaceName
-	 *            작업공간 이름
-	 */
 	public void setWorkspaceName(String workspaceName) {
 		this.workspaceName = workspaceName;
 	}
 
-	/**
-	 * @return String
-	 */
 	public String getGetCapabilities() {
 		return getCapabilities;
 	}
 
-	/**
-	 * @param getCapabilities
-	 */
 	public void setGetCapabilities(String getCapabilities) {
 		this.getCapabilities = getCapabilities;
 	}
 
-	/**
-	 * 파일포맷 반환
-	 * 
-	 * @return EnFileFormat
-	 */
 	public EnFileFormat getFileFormat() {
 		return fileFormat;
 	}
 
-	/**
-	 * 파일포맷 설정
-	 * 
-	 * @param fileFormat
-	 *            파일포맷
-	 */
 	public void setFileFormat(EnFileFormat fileFormat) {
 		this.fileFormat = fileFormat;
 	}
 
 	/**
-	 * 검수 레이어 설정 정보가 담겨있는 JSONObject를 GeoLayerCollection 객체로 파싱하여
-	 * GeoLayerCollectionList 목록에 추가
-	 * 
-	 * @throws FileNotFoundException
-	 * @throws IOException
-	 * @throws ParseException
-	 * @throws SchemaException
+	 * 레이어 정의정보가 저장되어있는 JSONObject를 LayerCollection 객체로 파싱하는 클래스 @author
+	 * DY.Oh @Date 2017. 3. 11. 오후 1:37:03 @throws FileNotFoundException @throws
+	 * IOException @throws ParseException @throws SchemaException void @throws
 	 */
 	private void collectionParser() throws FileNotFoundException, IOException, ParseException, SchemaException {
 
@@ -233,8 +173,8 @@ public class GeoLayerCollectionParser {
 		JSONArray checkedLayerNames = new JSONArray();
 		for (int i = 0; i < layerNames.size(); i++) {
 			String layer = ((String) layerNames.get(i)).replaceAll(" ", "");
-			for (int j = 0; j < layerList.size(); j++) {
-				String validateLayer = layerList.get(j);
+			for (int j = 0; j < validateLayerList.size(); j++) {
+				String validateLayer = validateLayerList.get(j);
 				if (layer.equals(validateLayer)) {
 					checkedLayerNames.add(layer);
 				} else {

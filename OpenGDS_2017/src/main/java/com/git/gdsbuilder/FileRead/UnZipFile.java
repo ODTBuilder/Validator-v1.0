@@ -16,9 +16,6 @@ import org.apache.commons.io.FileUtils;
 
 public class UnZipFile {
 
-	// windows
-	// private static final String dirPath = "D:" + File.separator + "output";
-	// linux
 	public final String OUTPUT_DIR = FileSystemView.getFileSystemView().getHomeDirectory() + File.separator + "output";
 	public String entryName;
 	public String fileDirectory;

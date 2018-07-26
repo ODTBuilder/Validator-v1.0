@@ -55,11 +55,10 @@ import com.git.gdsbuilder.geolayer.data.DTGeoLayer;
 import com.git.gdsbuilder.geolayer.data.DTGeoLayerList;
 import com.git.gdsbuilder.geoserver.data.GeoserverLayerCollectionTree;
 import com.git.gdsbuilder.geoserver.data.GeoserverLayerCollectionTree.TreeType;
-
-import it.geosolutions.geoserver.rest.GeoServerRESTReader;
-import it.geosolutions.geoserver.rest.HTTPUtils;
-import it.geosolutions.geoserver.rest.decoder.RESTFeatureTypeList;
-import it.geosolutions.geoserver.rest.decoder.RESTLayer;
+import com.git.gdsbuilder.geosolutions.geoserver.rest.GeoServerRESTReader;
+import com.git.gdsbuilder.geosolutions.geoserver.rest.HTTPUtils;
+import com.git.gdsbuilder.geosolutions.geoserver.rest.decoder.RESTFeatureTypeList;
+import com.git.gdsbuilder.geosolutions.geoserver.rest.decoder.RESTLayer;
 
 
 /** 

@@ -16,7 +16,8 @@ gb.qa.QAStatus = function(obj) {
 	this.window;
 	this.statusURL = options.statusURL ? options.statusURL : undefined;
 	this.errorURL = options.errorURL ? options.errorURL : undefined;
-	this.downloadNGIDXFURL = options.downloadNGIDXFURL ? options.downloadNGIDXFURL : undefined;
+	this.downloadNGIDXFURL = options.downloadNGIDXFURL ? options.downloadNGIDXFURL
+			: undefined;
 	this.listInstance = undefined;
 	this.reportInstance = undefined;
 
@@ -48,25 +49,28 @@ gb.qa.QAStatus = function(obj) {
 	this.tb = $("<table>").addClass("gb-qastatus-list");
 	this.listArea = $("<div>").append(this.tb);
 
-	$(document).on('click', '.gb-qastatus-list tbody .gb-qastatus-reportBtn', function() {
-		var data = that.listInstance.row($(this).parents('tr')).data();
-		that.setReport(data[2]);
-		console.log(data);
-	});
-	$(document).on('click', '.gb-qastatus-list tbody .gb-qastatus-downBtn', function() {
-		// var data = table.row( $(this).parents('tr') ).data();
-		// alert( data[0] +"'s salary is: "+ data[ 5 ] );
-		console.log("down");
-		var data = that.listInstance.row($(this).parents('tr')).data();
-		var format = data[0];
-		var layerName = data[2];
-		that.downloadErrorLayer(format, layerName);
-	});
+	$(document).on('click', '.gb-qastatus-list tbody .gb-qastatus-reportBtn',
+			function() {
+				var data = that.listInstance.row($(this).parents('tr')).data();
+				that.setReport(data[2]);
+				console.log(data);
+			});
+//	$(document).on('click', '.gb-qastatus-list tbody .gb-qastatus-downBtn',
+//			function() {
+//				// var data = table.row( $(this).parents('tr') ).data();
+//				// alert( data[0] +"'s salary is: "+ data[ 5 ] );
+//				console.log("down");
+//				var data = that.listInstance.row($(this).parents('tr')).data();
+//				var format = data[0];
+//				var layerName = data[2];
+//				that.downloadErrorLayer(format, layerName);
+//			});
 
 	this.rtb = $("<table>").addClass("table").addClass("table-striped");
 	this.reportArea = $("<div>").append(this.rtb);
 
-	this.body = $("<div>").append(this.naviArea).append(this.listArea).append(this.reportArea);
+	this.body = $("<div>").append(this.naviArea).append(this.listArea).append(
+			this.reportArea);
 	$(this.body).addClass("modal-body");
 	/*
 	 * 
@@ -100,11 +104,10 @@ gb.qa.QAStatus = function(obj) {
 	$(content).addClass("modal-content");
 
 	var dialog = $("<div>").html(content);
-	$(dialog).addClass("modal-dialog");
-	// $(dialog).addClass("modal-lg");
-	$(dialog).css({
-		"width" : "1290px"
+	$(dialog).addClass("modal-dialog").css({
+		"width" : "1300px"
 	});
+	// $(dialog).addClass("modal-lg");
 	this.window = $("<div>").hide().attr({
 		// Setting tabIndex makes the div focusable
 		tabIndex : -1,
@@ -162,9 +165,10 @@ gb.qa.QAStatus.prototype.switchNavi = function(area) {
 		var icon = $("<i>").addClass("fa").addClass("fa-reply").attr({
 			"aria-hidden" : true
 		});
-		var backBtn = $("<button>").addClass("btn").addClass("btn-default").append(icon).append(" Back").click(function() {
-			that.switchArea("list");
-		});
+		var backBtn = $("<button>").addClass("btn").addClass("btn-default")
+				.append(icon).append(" Back").click(function() {
+					that.switchArea("list");
+				});
 		$(this.naviArea).append(backBtn);
 	}
 };
@@ -183,159 +187,163 @@ gb.qa.QAStatus.prototype.setList = function() {
 	var obj = {
 		"atest" : "hi"
 	};
-	$.ajax({
-		url : that.getStatusURL(),
-		method : "POST",
-		contentType : "application/json; charset=UTF-8",
-		cache : false,
-		data : JSON.stringify(obj),
-		beforeSend : function() { // 호출전실행
-			$("body").css("cursor", "wait");
-		},
-		complete : function() {
-			$("body").css("cursor", "default");
-		},
-		traditional : true,
-		success : function(data, textStatus, jqXHR) {
-			console.log(data);
-			var dxf = data["dxf"];
-			var ngi = data["ngi"];
-			var shp = data["shp"];
-			var total = [];
-			if (Array.isArray(dxf)) {
-				for (var i = 0; i < dxf.length; i++) {
-					var stat = dxf[i].state;
-					var statText;
-					switch (stat) {
-					case 0:
-						statText = "Request successful";
-						break;
-					case 1:
-						statText = "Validating";
-						break;
-					case 2:
-						statText = "Validation successful";
-						break;
-					case 3:
-						statText = "Validation failure";
-						break;
-					case 4:
-						statText = "Error layer created";
-						break;
-					case 5:
-						statText = "Error layer failed";
-						break;
-					default:
-						break;
-					}
+	$
+			.ajax({
+				url : that.getStatusURL(),
+				method : "POST",
+				contentType : "application/json; charset=UTF-8",
+				cache : false,
+				data : JSON.stringify(obj),
+				beforeSend : function() { // 호출전실행
+					$("body").css("cursor", "wait");
+				},
+				complete : function() {
+					$("body").css("cursor", "default");
+				},
+				traditional : true,
+				success : function(data, textStatus, jqXHR) {
+					console.log(data);
+					var dxf = data["dxf"];
+					var ngi = data["ngi"];
+					var shp = data["shp"];
+					var total = [];
+					if (Array.isArray(dxf)) {
+						for (var i = 0; i < dxf.length; i++) {
+							var stat = dxf[i].state;
+							var statText;
+							switch (stat) {
+							case 0:
+								statText = "Request successful";
+								break;
+							case 1:
+								statText = "Validating";
+								break;
+							case 2:
+								statText = "Validation successful";
+								break;
+							case 3:
+								statText = "Validation failure";
+								break;
+							case 4:
+								statText = "Error layer created";
+								break;
+							case 5:
+								statText = "Error layer failed";
+								break;
+							default:
+								break;
+							}
 
-					var tbData = [ dxf[i].fileType, dxf[i].collectionName, dxf[i].errLayerName, statText, dxf[i].requestTime,
-							dxf[i].responseTime ];
-					total.push(tbData);
+							var tbData = [ dxf[i].fileType,
+									dxf[i].collectionName, dxf[i].errLayerName,
+									statText, dxf[i].requestTime,
+									dxf[i].responseTime ];
+							total.push(tbData);
+
+						}
+					}
+					if (Array.isArray(ngi)) {
+						for (var i = 0; i < ngi.length; i++) {
+							var stat = ngi[i].state;
+							var statText;
+							switch (stat) {
+							case 0:
+								statText = "Request successful";
+								break;
+							case 1:
+								statText = "Validating";
+								break;
+							case 2:
+								statText = "Validation successful";
+								break;
+							case 3:
+								statText = "Validation failure";
+								break;
+							case 4:
+								statText = "Error layer created";
+								break;
+							case 5:
+								statText = "Error layer failed";
+								break;
+							default:
+								break;
+							}
+
+							var tbData = [ ngi[i].fileType,
+									ngi[i].collectionName, ngi[i].errLayerName,
+									statText, ngi[i].requestTime,
+									ngi[i].responseTime ];
+							total.push(tbData);
+						}
+					}
+					if (Array.isArray(shp)) {
+						for (var i = 0; i < shp.length; i++) {
+							var stat = shp[i].state;
+							var statText;
+							switch (stat) {
+							case 0:
+								statText = "Request successful";
+								break;
+							case 1:
+								statText = "Validating";
+								break;
+							case 2:
+								statText = "Validation successful";
+								break;
+							case 3:
+								statText = "Validation failure";
+								break;
+							case 4:
+								statText = "Error layer created";
+								break;
+							case 5:
+								statText = "Error layer failed";
+								break;
+							default:
+								break;
+							}
+
+							var tbData = [ shp[i].fileType,
+									shp[i].collectionName, shp[i].errLayerName,
+									statText, shp[i].requestTime,
+									shp[i].responseTime ];
+							total.push(tbData);
+						}
+					}
+					if (!!that.listInstance) {
+						that.listInstance.destroy();
+						that.listInstance = undefined;
+					}
+					that.listInstance = $(that.tb)
+							.DataTable(
+									{
+										"data" : total,
+										"columns" : [ {
+											title : "Format"
+										}, {
+											title : "Map sheet number"
+										}, {
+											title : "Layer name"
+										}, {
+											title : "Status"
+										}, {
+											title : "Requested time"
+										}, {
+											title : "Completed time"
+										}, {
+											title : "Report"
+										} ],
+										"columnDefs" : [
+												{
+													"targets" : 6,
+													"data" : null,
+													"defaultContent" : "<button class='btn btn-default gb-qastatus-reportBtn'>Click</button>"
+												} ],
+										"order" : [ [ 4, "desc" ] ]
+									});
 
 				}
-			}
-			if (Array.isArray(ngi)) {
-				for (var i = 0; i < ngi.length; i++) {
-					var stat = ngi[i].state;
-					var statText;
-					switch (stat) {
-					case 0:
-						statText = "Request successful";
-						break;
-					case 1:
-						statText = "Validating";
-						break;
-					case 2:
-						statText = "Validation successful";
-						break;
-					case 3:
-						statText = "Validation failure";
-						break;
-					case 4:
-						statText = "Error layer created";
-						break;
-					case 5:
-						statText = "Error layer failed";
-						break;
-					default:
-						break;
-					}
-
-					var tbData = [ ngi[i].fileType, ngi[i].collectionName, ngi[i].errLayerName, statText, ngi[i].requestTime,
-							ngi[i].responseTime ];
-					total.push(tbData);
-				}
-			}
-			if (Array.isArray(shp)) {
-				for (var i = 0; i < shp.length; i++) {
-					var stat = shp[i].state;
-					var statText;
-					switch (stat) {
-					case 0:
-						statText = "Request successful";
-						break;
-					case 1:
-						statText = "Validating";
-						break;
-					case 2:
-						statText = "Validation successful";
-						break;
-					case 3:
-						statText = "Validation failure";
-						break;
-					case 4:
-						statText = "Error layer created";
-						break;
-					case 5:
-						statText = "Error layer failed";
-						break;
-					default:
-						break;
-					}
-
-					var tbData = [ shp[i].fileType, shp[i].collectionName, shp[i].errLayerName, statText, shp[i].requestTime,
-							shp[i].responseTime ];
-					total.push(tbData);
-				}
-			}
-			if (!!that.listInstance) {
-				that.listInstance.destroy();
-				that.listInstance = undefined;
-			}
-			that.listInstance = $(that.tb).DataTable({
-				"data" : total,
-				"columns" : [ {
-					title : "Format"
-				}, {
-					title : "Map sheet number"
-				}, {
-					title : "Layer name"
-				}, {
-					title : "Status"
-				}, {
-					title : "Requested time"
-				}, {
-					title : "Completed time"
-				}, {
-					title : "Report"
-				}, {
-					title : "Download"
-				} ],
-				"columnDefs" : [ {
-					"targets" : 6,
-					"data" : null,
-					"defaultContent" : "<button class='btn btn-default gb-qastatus-reportBtn'>Click</button>"
-				}, {
-					"targets" : 7,
-					"data" : null,
-					"defaultContent" : "<button class='btn btn-default gb-qastatus-downBtn'>Click</button>"
-				} ],
-				"order" : [ [ 4, "desc" ] ]
 			});
-
-		}
-	});
 
 };
 gb.qa.QAStatus.prototype.setReport = function(layer) {

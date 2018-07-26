@@ -43,7 +43,7 @@ import org.opengis.feature.simple.SimpleFeature;
 import com.git.gdsbuilder.type.validate.error.ErrorFeature;
 
 /**
- * SimpleFeature를 속성 검수하는 클래스
+ * SimpleFeatureCollection를 속성 검수하는 클래스
  * 
  * @author DY.Oh
  * @Date 2017. 4. 18. 오후 3:32:00
@@ -51,40 +51,21 @@ import com.git.gdsbuilder.type.validate.error.ErrorFeature;
 public interface FeatureAttributeValidator {
 
 	/**
-	 * 검수 항목 중 “속성 오류(Attribute Fix)” 검수. 검수 대상
-	 * 
-	 * @param simpleFeature
-	 *            검수 대상 Simplefeature 객체
-	 * @param notNullAtt
-	 *            속성 컬럼명 및 속성 값
-	 * @return ErrorFeature
-	 * @throws SchemaException
+	 * 검수 항목 중 “필수 속성 오류(Attribute Fix)” 검수 @author DY.Oh @Date 2017. 4. 18. 오후
+	 * 3:32:33 @param validatorLayer @param notNullAtt @return @throws
+	 * SchemaException ErrorLayer @throws
 	 */
 	public ErrorFeature validateAttributeFix(SimpleFeature simpleFeature, Map<String, List<String>> notNullAtt)
 			throws SchemaException;
 
 	/**
-	 * 검수 항목 중 “고도값 오류 (Z-Value Abmiguous)” 검수
-	 * 
-	 * @param simpleFeature
-	 *            검수 대상 Simplefeature 객체
-	 * @param attributeKey
-	 *            고도값 속성 컬럼명
-	 * @return ErrorFeature
-	 * @throws SchemaException
+	 * 검수 항목 중 “고도값 오류 (Z-Value Abmiguous)” 검수 @author DY.Oh @Date 2017. 4. 18.
+	 * 오후 3:32:55 @param simpleFeature @param notNullAtt @return @throws
+	 * SchemaException ErrorFeature @throws
 	 */
 	public ErrorFeature validateZvalueAmbiguous(SimpleFeature simpleFeature, Map<String, List<String>> attributeKey)
 			throws SchemaException;
 
-	/**
-	 * 검수 항목 중 “요소 중복 오류(EntityDuplicaated)” 속성 중복 검수
-	 * 
-	 * @param simpleFeatureI
-	 *            검수 대상 Simplefeature 객체
-	 * @param simpleFeatureJ
-	 *            비교 대상 Simplefeature 객체
-	 * @return ErrorFeature
-	 */
 	public ErrorFeature validateEntityDuplicated(SimpleFeature simpleFeatureI, SimpleFeature simpleFeatureJ);
 
 }

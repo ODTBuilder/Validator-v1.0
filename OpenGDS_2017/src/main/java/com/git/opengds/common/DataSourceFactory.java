@@ -27,10 +27,10 @@ abstract public class DataSourceFactory {
 
 	public SqlSession getSqlSession(String id) {
 		switch (id) {
-		case "git":
-			return adminSqlSession;
-		// case "admin":
+		// case "git":
 		// return adminSqlSession;
+		case "admin":
+			return adminSqlSession;
 		/*
 		 * case "admin2": return admin2SqlSession; case "admin3": return
 		 * admin3SqlSession;

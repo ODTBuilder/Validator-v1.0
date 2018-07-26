@@ -28,21 +28,9 @@ import java.util.List;
  */
 public class ErrorLayer {
 
-	/**
-	 * 오류 레이어명
-	 */
 	String layerName;
-	/**
-	 * 검수 파일 이름
-	 */
 	String collectionName;
-	/**
-	 * 오류 Feature 목록
-	 */
 	List<ErrorFeature> errFeatureList;
-	/**
-	 * 검수 파일 포맷
-	 */
 	String collectionType;
 
 	/**
@@ -60,7 +48,6 @@ public class ErrorLayer {
 	 * ErrorLayer 생성자
 	 * 
 	 * @param errFeatureList
-	 *            오류 Feature 목록
 	 */
 	public ErrorLayer(List<ErrorFeature> errFeatureList) {
 		super();
@@ -69,108 +56,74 @@ public class ErrorLayer {
 		this.collectionType = "";
 	}
 
-	/**
-	 * 오류 레이어명 반환
-	 * 
-	 * @return String
-	 */
 	public String getLayerName() {
 		return layerName;
 	}
 
-	/**
-	 * 오류 레이어명 설정
-	 * 
-	 * @param layerName
-	 *            오류 레이어명
-	 */
 	public void setLayerName(String layerName) {
 		this.layerName = layerName;
 	}
 
 	/**
-	 * 검수 파일 이름
-	 * 
-	 * @return String
+	 * collectionName getter @author DY.Oh @Date 2017. 3. 11. 오후 3:00:44 @return
+	 * String @throws
 	 */
 	public String getCollectionName() {
 		return collectionName;
 	}
 
 	/**
-	 * 검수 파일 이름 설정
-	 * 
-	 * @param collectionName
-	 *            검수 파일 이름
+	 * collectionName setter @author DY.Oh @Date 2017. 3. 11. 오후 3:00:45 @param
+	 * collectionName void @throws
 	 */
 	public void setCollectionName(String collectionName) {
 		this.collectionName = collectionName;
 	}
 
 	/**
-	 * 오류 Feature 목록 반환
-	 * 
-	 * @return
+	 * errFeatureList getter @author DY.Oh @Date 2017. 3. 11. 오후 3:00:48 @return
+	 * List<ErrorFeature> @throws
 	 */
 	public List<ErrorFeature> getErrFeatureList() {
 		return errFeatureList;
 	}
 
 	/**
-	 * 오류 Feature 목록 설정
-	 * 
-	 * @param errFeatureList
-	 *            오류 Feature 목록
+	 * errFeatureList setter @author DY.Oh @Date 2017. 3. 11. 오후 3:00:50 @param
+	 * errFeatureList void @throws
 	 */
 	public void setErrFeatureList(List<ErrorFeature> errFeatureList) {
 		this.errFeatureList = errFeatureList;
 	}
 
 	/**
-	 * 오류 Feature 목록에 ErrorFeature를 더함
-	 * 
-	 * @param errFeature
-	 *            오류 Feature
+	 * errFeatureList에 errFeature를 더함 @author DY.Oh @Date 2017. 3. 11. 오후
+	 * 3:00:51 @param errFeature void @throws
 	 */
 	public void addErrorFeature(ErrorFeature errFeature) {
 		this.errFeatureList.add(errFeature);
 	}
 
 	/**
-	 * 오류 Feature 목록에 List<ErrorFeature>를 더함
-	 * 
-	 * @param errFeatures
-	 *            오류 Feature 목록
+	 * errFeatureList에 errFeatures를 더함 @author DY.Oh @Date 2017. 3. 11. 오후
+	 * 3:00:53 @param errFeatures void @throws
 	 */
 	public void addErrorFeatureCollection(List<ErrorFeature> errFeatures) {
 		this.errFeatureList.addAll(errFeatures);
 	}
 
 	/**
-	 * 두 ErrorLayer를 합침
-	 * 
-	 * @param errLayer
-	 *            오류 레이어
+	 * 두 ErrorLayer를 합침 @author DY.Oh @Date 2017. 3. 11. 오후 3:01:09 @param
+	 * errLayer void @throws
 	 */
 	public void mergeErrorLayer(ErrorLayer errLayer) {
 		this.errFeatureList.addAll(errLayer.getErrFeatureList());
 	}
 
-	/**
-	 * 검수 파일 포맷 반환
-	 * 
-	 * @return String
-	 */
 	public String getCollectionType() {
 		return collectionType;
 	}
 
-	/**
-	 * 검수 파일 포맷 설정
-	 * 
-	 * @param collectionType
-	 *            검수 파일 포맷
-	 */
 	public void setCollectionType(String collectionType) {
 		this.collectionType = collectionType;
 	}

@@ -47,8 +47,8 @@ import java.util.List;
 import org.jdom.Element;
 import org.json.simple.JSONObject;
 
-import it.geosolutions.geoserver.rest.decoder.RESTFeatureType;
-import it.geosolutions.geoserver.rest.decoder.utils.JDOMBuilder;
+import com.git.gdsbuilder.geosolutions.geoserver.rest.decoder.RESTFeatureType;
+import com.git.gdsbuilder.geosolutions.geoserver.rest.decoder.utils.JDOMBuilder;
 
 
 /**

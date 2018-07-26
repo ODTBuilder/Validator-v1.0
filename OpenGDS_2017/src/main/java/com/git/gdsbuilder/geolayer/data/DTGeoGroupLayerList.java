@@ -49,7 +49,7 @@ import java.util.List;
 
 import org.jdom.Element;
 
-import it.geosolutions.geoserver.rest.decoder.utils.JDOMBuilder;
+import com.git.gdsbuilder.geosolutions.geoserver.rest.decoder.utils.JDOMBuilder;
 
 /**
  * DTGeoGroupLayer의 리스트 정보를 담고있는 클래스
